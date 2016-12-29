@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-12-06 11:12+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2016-12-05 21:09+0100\n"
 "Last-Translator: Oriol Debian <oriol.debian@gmail.com>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -1700,13 +1700,17 @@ msgstr "No es pot minimitzar el joc de versions revisades"
 msgid " Done"
 msgstr " Fet"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Potser voldreu executar «apt-get -f install» per a corregir-ho."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "Potser voldreu executar «apt --fix-broken install» per a corregir-ho."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Dependències sense satisfer. Proveu-ho emprant -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Dependències insatisfetes. Proveu amb «apt --fix-broken install» sense "
+"paquets (o especifiqueu una solució)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2091,18 +2095,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Empreu «%s» per a suprimir-lo."
 msgstr[1] "Empreu «%s» per a suprimir-los."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Potser voldreu executar «apt-get -f install» per corregir-ho:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Dependències insatisfetes. Proveu amb «apt-get -f install» sense paquets (o "
-"especifiqueu una solució)."
 
 #: apt-private/private-install.cc
 msgid "The following additional packages will be installed:"
@@ -3914,3 +3906,9 @@ msgstr "Error intern"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Els fitxers buits no poden ser arxius vàlids"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Dependències sense satisfer. Proveu-ho emprant --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr "Potser voldreu executar «apt --fix-broken install» per corregir-ho:"

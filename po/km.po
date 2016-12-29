@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2006-10-10 09:48+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -410,8 +410,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1605,13 +1605,17 @@ msgstr "មិនអាច​បង្រួម​ការ​កំណត់​
 msgid " Done"
 msgstr " ធ្វើ​រួច"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "អ្នក​ប្រហែល​ជា​ចង់រត់ 'apt-get -f install' ដើម្បី​កែ​វា​​ទាំងនេះ​ហើយ ។"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "អ្នក​ប្រហែល​ជា​ចង់រត់ 'apt --fix-broken install' ដើម្បី​កែ​វា​​ទាំងនេះ​ហើយ ។"
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "ភាព​អាស្រ័យ​ដែល​ខុស​គ្នា ។ ព្យាយាម​ការ​ប្រើ -f ។"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"ភាពអស្រ័យ​ដែល​ខុស​គ្នា ។ ព្យាយាម​ 'apt --fix-broken install' ដោយ​គ្មាន​កញ្ចប់ (ឬ បញ្ជាក់​"
+"ដំណោះស្រាយ) ។"
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1969,17 +1973,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] ""
 msgstr[1] ""
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "អ្នក​ប្រហែល​ជា​ចង់​រត់ 'apt-get -f install' ដើម្បី​កែ​ពួក​វា​ទាំង​នេះ ៖"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"ភាពអស្រ័យ​ដែល​ខុស​គ្នា ។ ព្យាយាម​ 'apt-get -f install' ដោយ​គ្មាន​កញ្ចប់ (ឬ បញ្ជាក់​ដំណោះស្រាយ) ។"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2361,7 +2354,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "ពាក្យ​បញ្ជា​ស្រាយ '%s' បាន​បរាជ័យ​ ។\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "ពិនិត្យ​ប្រសិន​បើកញ្ចប់ 'dpkg-dev' មិន​ទាន់​បាន​ដំឡើង​ ។\n"
 
@@ -3729,6 +3721,12 @@ msgstr "កំហុស​ខាង​ក្នុង​"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "ភាព​អាស្រ័យ​ដែល​ខុស​គ្នា ។ ព្យាយាម​ការ​ប្រើ --fix-broken ។"
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr "អ្នក​ប្រហែល​ជា​ចង់​រត់ 'apt --fix-broken install' ដើម្បី​កែ​ពួក​វា​ទាំង​នេះ ៖"
 
 #~ msgid "(not found)"
 #~ msgstr "(រក​មិន​ឃើញ)"

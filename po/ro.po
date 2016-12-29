@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2008-11-15 02:21+0200\n"
 "Last-Translator: Eddy Petrișor <eddy.petrisor@gmail.com>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -413,8 +413,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1622,13 +1622,18 @@ msgstr "Nu s-a putut micșora mulțimea pachetelor de înnoit"
 msgid " Done"
 msgstr " Terminat"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Ați putea să porniți 'apt-get -f install' pentru a corecta acestea."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr ""
+"Ați putea să porniți 'apt --fix-broken install' pentru a corecta acestea."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Dependențe neîndeplinite. Încercați să folosiți -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Dependențe neîndeplinite. Încercați 'apt --fix-broken install' fără nici un "
+"pachet (sau oferiți o altă soluție)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2000,18 +2005,6 @@ msgid_plural "Use '%s' to remove them."
 msgstr[0] "Folosiți '%s' pentru a le șterge."
 msgstr[1] "Folosiți '%s' pentru a le șterge."
 msgstr[2] "Folosiți '%s' pentru a le șterge."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Ați putea porni 'apt-get -f install' pentru a corecta acestea:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Dependențe neîndeplinite. Încercați 'apt-get -f install' fără nici un pachet "
-"(sau oferiți o altă soluție)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2396,7 +2389,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Comanda de despachetare '%s' eșuată.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Verificați dacă pachetul 'dpkg-dev' este instalat.\n"
 
@@ -3787,6 +3779,13 @@ msgstr "Eroare internă"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Dependențe neîndeplinite. Încercați să folosiți --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Ați putea porni 'apt --fix-broken install' pentru a corecta acestea:"
 
 #~ msgid "(not found)"
 #~ msgstr "(negăsit)"

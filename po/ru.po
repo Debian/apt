@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.12\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2016-05-19 20:50+0300\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -431,10 +431,13 @@ msgstr ""
 "В системе не пользователя «%s» для песочницы, невозможно сбросить права"
 
 #: apt-pkg/acquire.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "Can't drop privileges for downloading as file '%s' couldn't be accessed "
+#| "by user '%s'."
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 "Невозможно сбросить права для скачивания, так как файл «%s» недоступен для "
 "пользователя «%s»."
@@ -1695,15 +1698,19 @@ msgstr "Невозможно минимизировать набор обнов�
 msgid " Done"
 msgstr " Готово"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
 msgstr ""
 "Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-get -"
 "f install»."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Неудовлетворённые зависимости. Попытайтесь использовать -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Неудовлетворённые зависимости. Попытайтесь выполнить «apt --fix-broken "
+"install», не указывая имени пакета, (или найдите другое решение)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2089,20 +2096,6 @@ msgid_plural "Use '%s' to remove them."
 msgstr[0] "Для его удаления используйте «%s»."
 msgstr[1] "Для их удаления используйте «%s»."
 msgstr[2] "Для их удаления используйте «%s»."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr ""
-"Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-get -"
-"f install»:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Неудовлетворённые зависимости. Попытайтесь выполнить «apt-get -f install», "
-"не указывая имени пакета, (или найдите другое решение)."
 
 #: apt-private/private-install.cc
 msgid "The following additional packages will be installed:"
@@ -2493,7 +2486,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Команда распаковки «%s» завершилась неудачно.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Проверьте, установлен ли пакет «dpkg-dev».\n"
 
@@ -3905,6 +3897,15 @@ msgstr "Внутренняя ошибка"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Пустые файлы не могут быть допустимыми архивами"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr ""
+#~ "Неудовлетворённые зависимости. Попытайтесь использовать --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Возможно, для исправления этих ошибок вы захотите воспользоваться «apt-"
+#~ "get -f install»:"
 
 #~ msgid "(not found)"
 #~ msgstr "(не найдено)"

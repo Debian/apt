@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -406,8 +406,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1602,13 +1602,17 @@ msgstr "स्तर वृद्धि सेटलाई न्यूनतम
 msgid " Done"
 msgstr "काम भयो"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "यी सुधार गर्न तपाईँले 'apt-get -f install' चलाउन पर्छ ।"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "यी सुधार गर्न तपाईँले 'apt --fix-broken install' चलाउन पर्छ ।"
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "नभेटिएका निर्भरताहरू । -f प्रयोग गरेर प्रयास गर्नुहोस् ।"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"नभेटिएका निर्भरताहरू । प्याकेजहरू बिना 'apt --fix-broken install' प्रयास गर्नुहोस् "
+"( वा समाधान निर्दिष्ट गर्नुहोस्) ।"
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1967,18 +1971,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] ""
 msgstr[1] ""
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "तपाईँ यसलाई सुधार गर्न 'apt-get -f install' चलाउन चाहनुहुन्छ:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"नभेटिएका निर्भरताहरू । प्याकेजहरू बिना 'apt-get -f install' प्रयास गर्नुहोस् ( वा "
-"समाधान निर्दिष्ट गर्नुहोस्) ।"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2360,7 +2352,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "अनप्याक आदेश '%s' असफल भयो ।\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "जाँच्नुहोस् यदि 'dpkg-dev' प्याकेज स्थापना भयो ।\n"
 
@@ -3729,6 +3720,12 @@ msgstr "आन्तरिक त्रुटि"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "नभेटिएका निर्भरताहरू । --fix-broken प्रयोग गरेर प्रयास गर्नुहोस् ।"
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr "तपाईँ यसलाई सुधार गर्न 'apt --fix-broken install' चलाउन चाहनुहुन्छ:"
 
 #~ msgid "(not found)"
 #~ msgstr "(फेला परेन)"

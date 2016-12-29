@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -424,8 +424,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1673,14 +1673,19 @@ msgstr "Неможливо мінімізувати набір оновлень"
 msgid " Done"
 msgstr " Виконано"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
 msgstr ""
-"Для виправлення цих помилок ви можете скористатися 'apt-get -f install'."
+"Для виправлення цих помилок ви можете скористатися 'apt --fix-broken "
+"install'."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Незадоволені залежності. Спробуйте використати -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Незадоволені залежності. Спробуйте виконати 'apt --fix-broken install', не "
+"вказуючи назв пакунків (або вкажіть рішення)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2055,20 +2060,6 @@ msgid_plural "Use '%s' to remove them."
 msgstr[0] "Використовуйте '%s' щоб видалити його."
 msgstr[1] "Використовуйте '%s' щоб видалити їх."
 msgstr[2] "Використовуйте '%s' щоб видалити їх."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr ""
-"Можливо, для виправлення цих помилок Ви захочете скористатися 'apt-get -f "
-"install':"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Незадоволені залежності. Спробуйте виконати 'apt-get -f install', не "
-"вказуючи назв пакунків (або вкажіть рішення)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2465,7 +2456,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Команда розпакування '%s' завершилася невдало.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Перевірте, чи встановлений пакунок 'dpkg-dev'.\n"
 
@@ -3865,6 +3855,14 @@ msgstr "Внутрішня помилка"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Пусті файли не можуть бути правильними архівами"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Незадоволені залежності. Спробуйте використати --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Можливо, для виправлення цих помилок Ви захочете скористатися 'apt-get -f "
+#~ "install':"
 
 #~ msgid "(not found)"
 #~ msgstr "(не знайдено)"

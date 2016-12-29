@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -416,8 +416,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1671,15 +1671,19 @@ msgstr "Неуспех при минимизирането на набора а�
 msgid " Done"
 msgstr " Готово"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
 msgstr ""
-"Възможно е да изпълните „apt-get -f install“, за да коригирате тези "
+"Възможно е да изпълните „apt --fix-broken install“, за да коригирате тези "
 "неизправности."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Неудовлетворени зависимости. Опитайте с „-f“."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Неудовлетворени зависимости. Опитайте „apt --fix-broken install“ без пакети "
+"(или укажете разрешение)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2046,18 +2050,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Използвайте „%s“ за да го премахнете."
 msgstr[1] "Използвайте „%s“ за да ги премахнете."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Възможно е да изпълните „apt-get -f install“, за да коригирате:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Неудовлетворени зависимости. Опитайте „apt-get -f install“ без пакети (или "
-"укажете разрешение)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2452,7 +2444,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Командата за разпакетиране „%s“ пропадна.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Проверете дали имате инсталиран пакета „dpkg-dev“.\n"
 
@@ -3836,6 +3827,13 @@ msgstr "Вътрешна грешка"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Празни файлове не могат да бъдат валидни архиви"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Неудовлетворени зависимости. Опитайте с „--fix-broken“."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Възможно е да изпълните „apt --fix-broken install“, за да коригирате:"
 
 #~ msgid "(not found)"
 #~ msgstr "(не са намерени)"

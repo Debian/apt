@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2006-10-20 21:28+0300\n"
 "Last-Translator: Ossama M. Khayat <okhayat@yahoo.com>\n"
 "Language-Team: Arabic <support@arabeyes.org>\n"
@@ -406,8 +406,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1591,13 +1591,17 @@ msgstr "لم يمكن تقليص مجموعة الترقية"
 msgid " Done"
 msgstr " تم"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "قد ترغب بتنفيذ الأمر 'apt-get -f install' لتصحيح هذه."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "قد ترغب بتنفيذ الأمر 'apt --fix-broken install' لتصحيح هذه."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "مُعتمدات غير مستوفاة. حاول استخدام -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"مُعتمدات غير مستوفاة. جرب 'apt --fix-broken install' بدون أسماء حزم (أو حدّد "
+"حلاً)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1945,17 +1949,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] ""
 msgstr[1] ""
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "قد ترغب بتشغيل 'apt-get -f install' لتصحيح هذه:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"مُعتمدات غير مستوفاة. جرب 'apt-get -f install' بدون أسماء حزم (أو حدّد حلاً)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2337,7 +2330,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "أمر فك الحزمة '%s' فشل.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr ""
 
@@ -3621,6 +3613,12 @@ msgstr "خطأ داخلي"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "مُعتمدات غير مستوفاة. حاول استخدام --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr "قد ترغب بتشغيل 'apt --fix-broken install' لتصحيح هذه:"
 
 #~ msgid "(not found)"
 #~ msgstr "(غير موجود)"

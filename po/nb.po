@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2016-06-11 22:38+0200\n"
 "Last-Translator: Petter Reinholdtsen <pere@hungry.com>\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
@@ -413,8 +413,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1635,13 +1635,17 @@ msgstr "Klarer ikke å minimere oppgraderingsettet"
 msgid " Done"
 msgstr " Utført"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Du vil kanskje kjøre «apt-get -f install» for å rette på dette."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "Du vil kanskje kjøre «apt --fix-broken install» for å rette på dette."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Uinnfridde avhengighetsforhold - Prøv «-f»."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Uinnfridde avhengighetsforhold. Prøv «apt --fix-broken install» uten pakker "
+"(eller angi en løsning)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2012,18 +2016,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Bruk «%s» for å fjerne den."
 msgstr[1] "Bruk «%s» for å fjerne dem."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Du vil kanskje utføre «apt-get -f install» for å rette på disse:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Uinnfridde avhengighetsforhold. Prøv «apt-get -f install» uten pakker (eller "
-"angi en løsning)."
 
 #: apt-private/private-install.cc
 msgid "The following additional packages will be installed:"
@@ -2421,7 +2413,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Utpakkingskommandoen «%s» mislyktes.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Sjekk om pakken «dpkg-dev» er installert.\n"
 
@@ -3802,6 +3793,13 @@ msgstr "Intern feil"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomme filer kan ikke være gyldige arkiver"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Uinnfridde avhengighetsforhold - Prøv «--fix-broken»."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Du vil kanskje utføre «apt --fix-broken install» for å rette på disse:"
 
 #~ msgid "Failed to fetch %s  %s\n"
 #~ msgstr "Klarte ikke å skaffe %s  %s\n"

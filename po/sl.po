@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -416,8 +416,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1642,13 +1642,18 @@ msgstr "Ni mogoče pomanjšati zbirke za nadgradnjo"
 msgid " Done"
 msgstr " Opravljeno"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Če želite popraviti napake, poskusite pognati 'apt-get -f install'."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr ""
+"Če želite popraviti napake, poskusite pognati 'apt --fix-broken install'."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Nerešene odvisnosti. Poskusite uporabiti -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Nerešene odvisnosti. Poskusite 'apt --fix-broken install' brez paketov (ali "
+"navedite rešitev)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2026,18 +2031,6 @@ msgstr[0] "Uporabite '%s' za njihovo odstranitev."
 msgstr[1] "Uporabite '%s' za njegovo odstranitev."
 msgstr[2] "Uporabite '%s' za njuno odstranitev."
 msgstr[3] "Uporabite '%s' za njihovo odstranitev."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Poskusite zagnati 'apt-get -f install', če želite popraviti naslednje:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Nerešene odvisnosti. Poskusite 'apt-get -f install' brez paketov (ali "
-"navedite rešitev)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2432,7 +2425,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Ukaz odpakiranja '%s' ni uspel.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Izberite, če je paket 'dpkg-dev' nameščen.\n"
 
@@ -3808,6 +3800,14 @@ msgstr "Notranja napaka"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prazne datoteke ne morejo biti veljavni arhivi"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Nerešene odvisnosti. Poskusite uporabiti --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Poskusite zagnati 'apt --fix-broken install', če želite popraviti "
+#~ "naslednje:"
 
 #~ msgid "(not found)"
 #~ msgstr "(ni najdeno)"

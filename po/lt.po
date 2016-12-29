@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2008-08-02 01:47-0400\n"
 "Last-Translator: Gintautas Miliauskas <gintas@akl.lt>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
@@ -406,8 +406,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1596,13 +1596,18 @@ msgstr "Nepavyko minimizuoti atnaujinimo rinkinio"
 msgid " Done"
 msgstr " Įvykdyta"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Įvykdykite „apt-get -f install“, jei norite ištaisyti šias klaidas."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr ""
+"Įvykdykite „apt --fix-broken install“, jei norite ištaisyti šias klaidas."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Nepatenkintos priklausomybės. Bandykit naudoti -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Nepatenkintos priklausomybės. Pabandykite įvykdyti 'apt --fix-broken "
+"install' be nurodytų paketų (arba nurodykite išeitį)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1957,18 +1962,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Norėdami juos pašalinti, paleiskite „%s“"
 msgstr[1] "Norėdami juos pašalinti, paleiskite „%s“"
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Jūs galite norėti paleisti 'apt-get -f install\" klaidų taisymui:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Nepatenkintos priklausomybės. Pabandykite įvykdyti 'apt-get -f install' be "
-"nurodytų paketų (arba nurodykite išeitį)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2351,7 +2344,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Nepavyko įvykdyti išpakavimo komandos „%s“\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Patikrinkite, ar įdiegtas „dpkg-dev“ paketas.\n"
 
@@ -3723,6 +3715,13 @@ msgstr "Vidinė klaida"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Nepatenkintos priklausomybės. Bandykit naudoti --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Jūs galite norėti paleisti 'apt --fix-broken install\" klaidų taisymui:"
 
 #~ msgid "(not found)"
 #~ msgstr "(nerasta)"

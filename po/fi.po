@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -408,8 +408,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1606,13 +1606,17 @@ msgstr "Päivitysjoukon minimointi ei onnistu"
 msgid " Done"
 msgstr " Valmis"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Halunnet suorittaa \"apt-get -f install\" korjaamaan nämä."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "Halunnet suorittaa \"apt --fix-broken install\" korjaamaan nämä."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Tyydyttämättömiä riippuvuuksia. Koita käyttää -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Kaikkia riippuvuuksia ei ole tyydytetty. Kokeile \"apt --fix-broken install"
+"\" ilmanpaketteja (tai ratkaise itse)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1979,18 +1983,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Poista ne komennolla \"%s\"."
 msgstr[1] "Poista ne komennolla \"%s\"."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Saatat haluta suorittaa \"apt-get -f install\" korjaamaan nämä:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Kaikkia riippuvuuksia ei ole tyydytetty. Kokeile \"apt-get -f install\" "
-"ilmanpaketteja (tai ratkaise itse)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2372,7 +2364,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Purkukomento \"%s\" ei onnistunut.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Tarkista onko paketti \"dpkg-dev\" asennettu.\n"
 
@@ -3748,6 +3739,13 @@ msgstr "Sisäinen virhe"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Tyydyttämättömiä riippuvuuksia. Koita käyttää --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Saatat haluta suorittaa \"apt --fix-broken install\" korjaamaan nämä:"
 
 #~ msgid "(not found)"
 #~ msgstr "(ei löydy)"

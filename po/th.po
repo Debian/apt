@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -411,8 +411,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1613,13 +1613,17 @@ msgstr "ไม่สามารถจำกัดรายการปรับ
 msgid " Done"
 msgstr " เสร็จแล้ว"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "คุณอาจต้องเรียก 'apt-get -f install' เพื่อแก้ปัญหาเหล่านี้"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "คุณอาจต้องเรียก 'apt --fix-broken install' เพื่อแก้ปัญหาเหล่านี้"
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "รายการแพกเกจที่ต้องใช้ไม่ครบ กรุณาลองใช้ตัวเลือก -f"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"มีปัญหาความขึ้นต่อกันระหว่างแพกเกจ กรุณาลองใช้ 'apt --fix-broken install' "
+"โดยไม่ระบุแพกเกจ (หรือจะระบุทางแก้ก็ได้)"
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1970,18 +1974,6 @@ msgstr[0] "มีแพกเกจ %lu แพกเกจถูกติดต�
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "ใช้ '%s' เพื่อถอดถอนแพกเกจดังกล่าวได้"
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "คุณอาจเรียก 'apt-get -f install' เพื่อแก้ปัญหานี้ได้:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"มีปัญหาความขึ้นต่อกันระหว่างแพกเกจ กรุณาลองใช้ 'apt-get -f install' โดยไม่ระบุแพกเกจ "
-"(หรือจะระบุทางแก้ก็ได้)"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2366,7 +2358,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "คำสั่งแตกแฟ้ม '%s' ล้มเหลว\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "กรุณาตรวจสอบว่าได้ติดตั้งแพกเกจ 'dpkg-dev' แล้ว\n"
 
@@ -3723,6 +3714,12 @@ msgstr "ข้อผิดพลาดภายใน"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "แฟ้มว่างเปล่าไม่สามารถเป็นแฟ้มจัดเก็บที่ใช้การได้"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "รายการแพกเกจที่ต้องใช้ไม่ครบ กรุณาลองใช้ตัวเลือก --fix-broken"
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr "คุณอาจเรียก 'apt --fix-broken install' เพื่อแก้ปัญหานี้ได้:"
 
 #~ msgid "(not found)"
 #~ msgstr "(ไม่พบ)"

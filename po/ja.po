@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.9.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2016-05-18 15:31+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -434,10 +434,13 @@ msgid "No sandbox user '%s' on the system, can not drop privileges"
 msgstr "システムにサンドボックスユーザ '%s' がありません。権限を削除できません"
 
 #: apt-pkg/acquire.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "Can't drop privileges for downloading as file '%s' couldn't be accessed "
+#| "by user '%s'."
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 "ダウンロード権限を削除できません。ファイル '%s' がユーザ '%s' からアクセスで"
 "きません。"
@@ -1687,15 +1690,19 @@ msgstr "アップグレードセットを最小化できません"
 msgid " Done"
 msgstr " 完了"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
 msgstr ""
-"これらを直すためには 'apt-get -f install' を実行する必要があるかもしれませ"
-"ん。"
+"これらを直すためには 'apt --fix-broken install' を実行する必要があるかもしれ"
+"ません。"
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "未解決の依存関係があります。-f オプションを試してください。"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"未解決の依存関係です。'apt --fix-broken install' を実行してみてください (また"
+"は解法を明示してください)。"
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2065,20 +2072,6 @@ msgstr[0] ""
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "これを削除するには '%s' を利用してください。"
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr ""
-"以下の問題を解決するために 'apt-get -f install' を実行する必要があるかもしれ"
-"ません:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"未解決の依存関係です。'apt-get -f install' を実行してみてください (または解法"
-"を明示してください)。"
 
 #: apt-private/private-install.cc
 msgid "The following additional packages will be installed:"
@@ -2471,7 +2464,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "展開コマンド '%s' が失敗しました。\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr ""
 "'dpkg-dev' パッケージがインストールされていることを確認してください。\n"
@@ -3861,6 +3853,15 @@ msgstr "内部エラー"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "空のファイルは有効なアーカイブと認められません"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr ""
+#~ "未解決の依存関係があります。--fix-broken オプションを試してください。"
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "以下の問題を解決するために 'apt --fix-broken install' を実行する必要がある"
+#~ "かもしれません:"
 
 #~ msgid "Failed to fetch %s  %s\n"
 #~ msgstr "%s の取得に失敗しました  %s\n"

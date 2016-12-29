@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2012-06-28 20:49+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -414,8 +414,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1642,13 +1642,17 @@ msgstr "Sada na aktualizáciu sa nedá minimalizovať"
 msgid " Done"
 msgstr " Hotovo"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Možno to budete chcieť napraviť spustením „apt-get -f install“."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "Možno to budete chcieť napraviť spustením „apt --fix-broken install“."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Nesplnené závislosti. Skúste použiť -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Nesplnené závislosti. Skúste spustiť „apt --fix-broken install“ bez balíkov "
+"(alebo navrhnite riešenie)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2022,18 +2026,6 @@ msgid_plural "Use '%s' to remove them."
 msgstr[0] "Na jeho odstránenie použite „%s“."
 msgstr[1] "Na ich odstránenie použite „%s“."
 msgstr[2] "Na ich odstránenie použite „%s“."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Možno to budete chcieť napraviť spustením „apt-get -f install“:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Nesplnené závislosti. Skúste spustiť „apt-get -f install“ bez balíkov (alebo "
-"navrhnite riešenie)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2428,7 +2420,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Príkaz na rozbalenie „%s“ zlyhal.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Skontrolujte, či je nainštalovaný balík „dpkg-dev“.\n"
 
@@ -3802,6 +3793,13 @@ msgstr "Vnútorná chyba"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prázdne súbory nemôžu byť platné archívy"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Nesplnené závislosti. Skúste použiť --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Možno to budete chcieť napraviť spustením „apt --fix-broken install“:"
 
 #~ msgid "(not found)"
 #~ msgstr "(nenájdené)"

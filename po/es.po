@@ -34,7 +34,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2016-01-26 01:51+0100\n"
 "Last-Translator: Manuel \"Venturi\" Porras Peralta <venturi@openmailbox."
 "org>\n"
@@ -490,10 +490,13 @@ msgstr ""
 "privilegios"
 
 #: apt-pkg/acquire.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "Can't drop privileges for downloading as file '%s' couldn't be accessed "
+#| "by user '%s'."
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 "No se podrán ignorar los privilegios para descargar mientras no se pueda "
 "acceder a «%s» con el usuario «%s»."
@@ -1763,13 +1766,17 @@ msgstr "No se puede minimizar el conjunto de actualización"
 msgid " Done"
 msgstr " Listo"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Tal vez quiera ejecutar «apt-get -f install» para corregirlo."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "Tal vez quiera ejecutar «apt --fix-broken install» para corregirlo."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Dependencias incumplidas. Pruebe de nuevo utilizando -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Dependencias incumplidas. Intente «apt --fix-broken install» sin paquetes (o "
+"especifique una solución)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2151,18 +2158,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Utilice «%s» para eliminarlo."
 msgstr[1] "Utilice «%s» para eliminarlos."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Tal vez quiera ejecutar «apt-get -f install» para corregirlo:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Dependencias incumplidas. Intente «apt-get -f install» sin paquetes (o "
-"especifique una solución)."
 
 #: apt-private/private-install.cc
 msgid "The following additional packages will be installed:"
@@ -2554,7 +2549,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Falló la orden de desempaquetamiento «%s».\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Compruebe que el paquete «dpkg-dev» esté instalado.\n"
 
@@ -3973,6 +3967,12 @@ msgstr "Error interno"
 msgid "Empty files can't be valid archives"
 msgstr "Los ficheros vacíos no pueden ser archivos válidos"
 
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Dependencias incumplidas. Pruebe de nuevo utilizando --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr "Tal vez quiera ejecutar «apt --fix-broken install» para corregirlo:"
+
 #~ msgid "(not found)"
 #~ msgstr "(no encontrado)"
 
@@ -4559,11 +4559,11 @@ msgstr "Los ficheros vacíos no pueden ser archivos válidos"
 #~ msgid ""
 #~ "Some broken packages were found while trying to process build-"
 #~ "dependencies.\n"
-#~ "You might want to run 'apt-get -f install' to correct these."
+#~ "You might want to run 'apt --fix-broken install' to correct these."
 #~ msgstr ""
 #~ "Se encontraron algunos paquetes rotos mientras se intentaba procesar\n"
 #~ "las dependencies de construcción. Tal vez quiera ejecutar \n"
-#~ "'apt-get -f install' para corregirlos."
+#~ "'apt --fix-broken install' para corregirlos."
 
 #~ msgid ""
 #~ "Usage: apt-cache [options] command\n"

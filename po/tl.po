@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2007-03-29 21:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -412,8 +412,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1626,13 +1626,18 @@ msgstr "Hindi mai-minimize ang upgrade set"
 msgid " Done"
 msgstr " Tapos"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Maaari ninyong patakbuhin ang 'apt-get -f install' upang ayusin ito."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr ""
+"Maaari ninyong patakbuhin ang 'apt --fix-broken install' upang ayusin ito."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "May mga kulang na dependensiya. Subukan niyong gamitin ang -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"May mga dependensiyang kulang. Subukan ang 'apt --fix-broken install' na "
+"walang mga pakete (o magtakda ng solusyon)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1995,19 +2000,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] ""
 msgstr[1] ""
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr ""
-"Maaaring patakbuhin niyo ang 'apt-get -f install' upang ayusin ang mga ito:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"May mga dependensiyang kulang. Subukan ang 'apt-get -f install' na walang "
-"mga pakete (o magtakda ng solusyon)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2391,7 +2383,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Bigo ang utos ng pagbuklat '%s'.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Paki-siguro na nakaluklok ang paketeng 'dpkg-dev'.\n"
 
@@ -3768,6 +3759,15 @@ msgstr "Internal na error"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr ""
+#~ "May mga kulang na dependensiya. Subukan niyong gamitin ang --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Maaaring patakbuhin niyo ang 'apt --fix-broken install' upang ayusin ang "
+#~ "mga ito:"
 
 #~ msgid "(not found)"
 #~ msgstr "(hindi nahanap)"

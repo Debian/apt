@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2014-09-19 13:04+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
@@ -422,8 +422,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1691,13 +1691,17 @@ msgstr "Menge der zu aktualisierenden Pakete konnte nicht minimiert werden."
 msgid " Done"
 msgstr " Fertig"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Probieren Sie »apt-get -f install«, um dies zu korrigieren."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "Probieren Sie »apt --fix-broken install«, um dies zu korrigieren."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Unerfüllte Abhängigkeiten. Versuchen Sie, -f zu benutzen."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Unerfüllte Abhängigkeiten. Versuchen Sie »apt --fix-broken install« ohne "
+"Angabe eines Pakets (oder geben Sie eine Lösung an)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2069,18 +2073,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Verwenden Sie »%s«, um es zu entfernen."
 msgstr[1] "Verwenden Sie »%s«, um sie zu entfernen."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Probieren Sie »apt-get -f install«, um dies zu korrigieren:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Unerfüllte Abhängigkeiten. Versuchen Sie »apt-get -f install« ohne Angabe "
-"eines Pakets (oder geben Sie eine Lösung an)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2489,7 +2481,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Entpackbefehl »%s« fehlgeschlagen.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Überprüfen Sie, ob das Paket »dpkg-dev« installiert ist.\n"
 
@@ -3917,6 +3908,12 @@ msgstr "Interner Fehler"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Leere Dateien können kein gültiges Archiv sein."
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Unerfüllte Abhängigkeiten. Versuchen Sie, --fix-broken zu benutzen."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr "Probieren Sie »apt --fix-broken install«, um dies zu korrigieren:"
 
 #~ msgid "(not found)"
 #~ msgstr "(nicht gefunden)"

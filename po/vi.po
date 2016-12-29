@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -420,8 +420,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1656,13 +1656,17 @@ msgstr "Không thể tối thiểu hóa tập hợp nâng cấp"
 msgid " Done"
 msgstr " Xong"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Bạn có thể chạy lệnh “apt-get -f install” để sửa những lỗi trên."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "Bạn có thể chạy lệnh “apt --fix-broken install” để sửa những lỗi trên."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Chưa thỏa mãn quan hệ phụ thuộc. Hãy thử dùng tùy chọn “-f”."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Thưa thỏa mãn quan hệ phụ thuộc. Hãy thử chạy lệnh “apt --fix-broken "
+"install” mà không có gói nào (hoặc chỉ định cách thức giải quyết)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2022,18 +2026,6 @@ msgstr[0] "%lu gói đã được tự động cài đặt nên không còn cầ
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Hãy dùng lệnh “%s” để gỡ bỏ chúng."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Có lẽ bạn cần chạy lệnh “apt-get -f install” để sửa những cái đó:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Thưa thỏa mãn quan hệ phụ thuộc. Hãy thử chạy lệnh “apt-get -f install” mà "
-"không có gói nào (hoặc chỉ định cách thức giải quyết)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2421,7 +2413,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Lệnh giải nén “%s” bị lỗi.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Hãy kiểm tra xem gói “dpkg-dev” đã được cài đặt chưa.\n"
 
@@ -3833,6 +3824,14 @@ msgstr "Gặp lỗi nội bộ"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr ""
+#~ "Chưa thỏa mãn quan hệ phụ thuộc. Hãy thử dùng tùy chọn “--fix-broken”."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Có lẽ bạn cần chạy lệnh “apt --fix-broken install” để sửa những cái đó:"
 
 #~ msgid "(not found)"
 #~ msgstr "(không tìm thấy)"

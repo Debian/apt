@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2016-08-20 13:00+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -410,10 +410,13 @@ msgid "No sandbox user '%s' on the system, can not drop privileges"
 msgstr "系统中不存在沙箱用户'%s'，无法降低权限"
 
 #: apt-pkg/acquire.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "Can't drop privileges for downloading as file '%s' couldn't be accessed "
+#| "by user '%s'."
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr "文件'%s'无法被用户'%s'访问，无法降低权限以进行下载。"
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1609,13 +1612,17 @@ msgstr "无法最小化待升级软件包集合"
 msgid " Done"
 msgstr " 完成"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "您也许需要运行“apt-get -f install”来修正上面的错误。"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "您也许需要运行“apt --fix-broken install”来修正上面的错误。"
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "不能满足依赖关系。不妨试一下 -f 选项。"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"有未能满足的依赖关系。请尝试不指明软件包的名字来运行“apt --fix-broken "
+"install”(也可以指定一个解决办法)。"
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1967,18 +1974,6 @@ msgstr[0] "%lu 个自动安装的的软件包现在已不再需要了。\n"
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "使用'%s'来卸载它(它们)。"
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "您可能需要运行“apt-get -f install”来纠正下列错误："
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"有未能满足的依赖关系。请尝试不指明软件包的名字来运行“apt-get -f install”(也可"
-"以指定一个解决办法)。"
 
 #: apt-private/private-install.cc
 msgid "The following additional packages will be installed:"
@@ -2361,7 +2356,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "运行解包的命令“%s”出错。\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "请检查是否安装了“dpkg-dev”软件包。\n"
 
@@ -3720,6 +3714,12 @@ msgstr "内部错误"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "空文件不是有效归档"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "不能满足依赖关系。不妨试一下 --fix-broken 选项。"
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr "您可能需要运行“apt --fix-broken install”来纠正下列错误："
 
 #~ msgid "(not found)"
 #~ msgstr "(没有找到)"

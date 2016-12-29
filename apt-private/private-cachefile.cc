@@ -108,10 +108,9 @@ bool CacheFile::CheckDeps(bool AllowBroken)
    }
    else
    {
-      c1out << _("You might want to run 'apt-get -f install' to correct these.") << endl;
+      c1out << _("You might want to run 'apt --fix-broken install' to correct these.") << endl;
       ShowBroken(c1out,*this,true);
-
-      return _error->Error(_("Unmet dependencies. Try using -f."));
+      return _error->Error(_("Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution)."));
    }
       
    return true;

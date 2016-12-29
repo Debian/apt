@@ -657,9 +657,9 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<std::stri
 	 packages */
       if (BrokenFix == true && Cache->BrokenCount() != 0)
       {
-	 c1out << _("You might want to run 'apt-get -f install' to correct these:") << std::endl;
+	 c1out << _("You might want to run 'apt --fix-broken install' to correct these.") << std::endl;
 	 ShowBroken(c1out,Cache,false);
-	 return _error->Error(_("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."));
+	 return _error->Error(_("Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution)."));
       }
 
       if (Fix != NULL)

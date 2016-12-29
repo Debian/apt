@@ -22,10 +22,10 @@ setupaptarchive
 
 testfailureequal "Reading package lists...
 Building dependency tree...
-You might want to run 'apt-get -f install' to correct these.
+You might want to run 'apt --fix-broken install' to correct these.
 The following packages have unmet dependencies:
  foo:amd64 : Depends: libfoo1:amd64 but it is not installable
-E: Unmet dependencies. Try using -f." aptget check -s
+E: Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution)." aptget check -s
 
 insertinstalledpackage 'libfoo1' 'amd64' '1' 'Multi-Arch: same'
 

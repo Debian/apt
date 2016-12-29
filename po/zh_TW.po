@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.X\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -408,8 +408,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1599,13 +1599,17 @@ msgstr "無法將升級計劃最小化"
 msgid " Done"
 msgstr " 完成"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "您也許得執行 'apt-get -f install' 以修正這些問題。"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "您也許得執行 'apt --fix-broken install' 以修正這些問題。"
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "未能滿足相依關係。試試 -f 選項。"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"未能滿足相依關係。請試著不指定套件來執行 'apt --fix-broken install'（或採取其"
+"它的解決方案）。"
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1957,18 +1961,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "使用 '%s' 來將其移除。"
 msgstr[1] "使用 '%s' 來將其移除。"
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "您也許得執行 'apt-get -f install' 以修正這些問題："
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"未能滿足相依關係。請試著不指定套件來執行 'apt-get -f install'（或採取其它的解"
-"決方案）。"
 
 #: apt-private/private-install.cc
 msgid "The following additional packages will be installed:"
@@ -2349,7 +2341,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "解開指令 '%s' 失敗。\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "請檢查是否已安裝了 'dpkg-dev' 套件。\n"
 
@@ -3708,6 +3699,12 @@ msgstr "內部錯誤"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "未能滿足相依關係。試試 --fix-broken 選項。"
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr "您也許得執行 'apt --fix-broken install' 以修正這些問題："
 
 #~ msgid "(not found)"
 #~ msgstr "(未找到)"

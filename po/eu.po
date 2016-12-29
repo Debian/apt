@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2009-05-17 00:41+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
@@ -408,8 +408,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1611,13 +1611,17 @@ msgstr "Ezin da bertsio berritzeko multzoa minimizatu"
 msgid " Done"
 msgstr " Eginda"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Beharbada 'apt-get -f install' exekutatu nahiko duzu zuzentzeko."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "Beharbada 'apt --fix-broken install' exekutatu nahiko duzu zuzentzeko."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Bete gabeko mendekotasunak. Probatu -f erabiliz."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Bete gabeko mendekotasunak. Probatu 'apt --fix-broken install' paketerik "
+"gabe (edo zehaztu konponbide bat)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1984,18 +1988,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "'%s' erabili ezabatzeko."
 msgstr[1] "'%s' erabili ezabatzeko."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Beharbada 'apt-get -f install' exekutatu nahiko duzu hauek zuzentzeko:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Bete gabeko mendekotasunak. Probatu 'apt-get -f install' paketerik gabe (edo "
-"zehaztu konponbide bat)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2380,7 +2372,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Deskonprimitzeko '%s' komandoak huts egin du.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Egiaztatu 'dpkg-dev' paketea instalaturik dagoen.\n"
 
@@ -3756,6 +3747,14 @@ msgstr "Barne errorea"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Bete gabeko mendekotasunak. Probatu --fix-broken erabiliz."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Beharbada 'apt --fix-broken install' exekutatu nahiko duzu hauek "
+#~ "zuzentzeko:"
 
 #~ msgid "(not found)"
 #~ msgstr "(ez da aurkitu)"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2016-09-24 03:24+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -431,10 +431,13 @@ msgstr ""
 "'%s' kullanıcısı sistemde mevcut olmadığı için ayrıcalıklar bırakılamıyor"
 
 #: apt-pkg/acquire.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "Can't drop privileges for downloading as file '%s' couldn't be accessed "
+#| "by user '%s'."
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 "'%2$s' kullanıcısının '%1$s' dosyasına erişimi olmadığı için dosya "
 "indirilirken ayrıcalıklar bırakılamıyor."
@@ -1668,15 +1671,19 @@ msgstr "Yükseltme kümesi küçültülemiyor"
 msgid " Done"
 msgstr " Tamamlandı"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
 msgstr ""
-"Bu sorunları düzeltmek için 'apt-get -f install' komutunu çalıştırmanız "
-"gerekebilir."
+"Bu sorunları düzeltmek için 'apt --fix-broken install' komutunu "
+"çalıştırmanız gerekebilir."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Karşılanmayan bağımlılıklar. -f kullanmayı deneyin."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Karşılanmamış bağımlılıklar. 'apt --fix-broken install' komutunu paket "
+"seçeneği vermeden deneyin (ya da bir çözüm belirtin)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2057,20 +2064,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Bu paketi kaldırmak için '%s' komutunu kullanın."
 msgstr[1] "Bu paketleri kaldırmak için '%s' komutunu kullanın."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr ""
-"Bunları düzeltmek için 'apt-get -f install' komutunu çalıştırmanız "
-"gerekebilir:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Karşılanmamış bağımlılıklar. 'apt-get -f install' komutunu paket seçeneği "
-"vermeden deneyin (ya da bir çözüm belirtin)."
 
 #: apt-private/private-install.cc
 msgid "The following additional packages will be installed:"
@@ -2465,7 +2458,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Paket açma komutu '%s' başarısız.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "'dpkg-dev' paketinin kurulu olduğundan emin olun.\n"
 
@@ -3859,6 +3851,14 @@ msgstr "İç hata"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Boş dosyalar geçerli birer arşiv dosyası olamazlar"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Karşılanmayan bağımlılıklar. --fix-broken kullanmayı deneyin."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Bunları düzeltmek için 'apt --fix-broken install' komutunu çalıştırmanız "
+#~ "gerekebilir:"
 
 #~ msgid "(not found)"
 #~ msgstr "(bulunamadı)"

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -407,8 +407,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1616,14 +1616,20 @@ msgstr "업그레이드 집합을 최소화할 수 없습니다"
 msgid " Done"
 msgstr " 완료"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
 msgstr ""
-"이 상황을 바로잡으려면 'apt-get -f install'을 실행해야 할 수도 있습니다."
+"이 상황을 바로잡으려면 'apt --fix-broken install'을 실행해야 할 수도 있습니"
+"다."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "의존성이 맞지 않습니다. -f 옵션을 사용해 보십시오."
+# FIXME: specify a solution?  무슨 솔루션?
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"의존성이 맞지 않습니다. 패키지 없이 'apt --fix-broken install'을 시도해 보십"
+"시오 (아니면 해결 방법을 지정하십시오)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1980,19 +1986,6 @@ msgstr[0] "패키지 %lu개가 자동으로 설치되었지만 더 이상 필요
 msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "이들을 지우려면 '%s'를 사용하십시오."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "다음을 바로잡으려면 'apt-get -f install'을 실행해 보십시오:"
-
-# FIXME: specify a solution?  무슨 솔루션?
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"의존성이 맞지 않습니다. 패키지 없이 'apt-get -f install'을 시도해 보십시오 "
-"(아니면 해결 방법을 지정하십시오)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2381,7 +2374,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "압축 풀기 명령 '%s' 실패.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "'dpkg-dev' 패키지가 설치되었는지를 확인하십시오.\n"
 
@@ -3744,6 +3736,12 @@ msgstr "내부 오류"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "의존성이 맞지 않습니다. --fix-broken 옵션을 사용해 보십시오."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr "다음을 바로잡으려면 'apt --fix-broken install'을 실행해 보십시오:"
 
 #~ msgid "(not found)"
 #~ msgstr "(없음)"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2012-06-29 15:45+0100\n"
 "Last-Translator: Miguel Figueiredo <elmig@debianpt.org>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -417,8 +417,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1676,13 +1676,18 @@ msgstr "Não foi possível minimizar o conjunto de actualizações"
 msgid " Done"
 msgstr " Feito"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Você pode querer executar 'apt-get -f install' para corrigir isso."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr ""
+"Você pode querer executar 'apt --fix-broken install' para corrigir isso."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Dependências não satisfeitas. Tente utilizar -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Dependências não satisfeitas. Tente 'apt --fix-broken install' sem nenhum "
+"pacote (ou especifique uma solução)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2049,18 +2054,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Utilize '%s' para o remover."
 msgstr[1] "Utilize '%s' para os remover."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Você deve querer executar 'apt-get -f install' para corrigir estes:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Dependências não satisfeitas. Tente 'apt-get -f install' sem nenhum pacote "
-"(ou especifique uma solução)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2455,7 +2448,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "O comando de descompactação '%s' falhou.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Verifique se o pacote 'dpkg-dev' está instalado.\n"
 
@@ -3841,6 +3833,13 @@ msgstr "Erro interno"
 msgid "Empty files can't be valid archives"
 msgstr "Ficheiros vazios não podem ser arquivos válidos"
 
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Dependências não satisfeitas. Tente utilizar --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Você deve querer executar 'apt --fix-broken install' para corrigir estes:"
+
 #~ msgid "(not found)"
 #~ msgstr "(não encontrado)"
 
@@ -4436,12 +4435,12 @@ msgstr "Ficheiros vazios não podem ser arquivos válidos"
 #~ msgid ""
 #~ "Some broken packages were found while trying to process build-"
 #~ "dependencies.\n"
-#~ "You might want to run 'apt-get -f install' to correct these."
+#~ "You might want to run 'apt --fix-broken install' to correct these."
 #~ msgstr ""
 #~ "Alguns pacotes quebrados foram encontrados enquanto se tentava "
 #~ "processar \n"
 #~ "as dependências de construção.\n"
-#~ "Você pode querer rodar 'apt-get -f install' para corrigí-los."
+#~ "Você pode querer rodar 'apt --fix-broken install' para corrigí-los."
 
 #~ msgid "Sorry, you don't have enough free space in %s to hold all the .debs."
 #~ msgstr ""

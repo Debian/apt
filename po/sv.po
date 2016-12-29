@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -416,10 +416,13 @@ msgid "No sandbox user '%s' on the system, can not drop privileges"
 msgstr ""
 
 #: apt-pkg/acquire.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "Can't drop privileges for downloading as file '%s' couldn't be accessed "
+#| "by user '%s'."
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 "Kan inte släppa privilegier för hämtning eftersom filen ”%s” inte kunde "
 "kommas åt av användaren ”%s”."
@@ -1661,13 +1664,17 @@ msgstr "Kunde inte minimera uppgraderingsuppsättningen"
 msgid " Done"
 msgstr " Färdig"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Du bör köra ”apt-get -f install” för att korrigera dessa."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr "Du bör köra ”apt --fix-broken install” för att korrigera dessa."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Otillfredsställda beroenden. Prova med -f."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Otillfredsställda beroenden. Prova med ”apt --fix-broken install” utan paket "
+"(eller ange en lösning)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2037,18 +2044,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Använd ”%s” för att ta bort det."
 msgstr[1] "Använd ”%s” för att ta bort dem."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Du bör köra ”apt-get -f install” för att korrigera dessa:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Otillfredsställda beroenden. Prova med ”apt-get -f install” utan paket "
-"(eller ange en lösning)."
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2443,7 +2438,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "Uppackningskommandot ”%s” misslyckades.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Försäkra dig om att paketet ”dpkg-dev” är installerat.\n"
 
@@ -3839,6 +3833,12 @@ msgstr "Internt fel"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomma filer kan inte vara giltiga arkiv"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Otillfredsställda beroenden. Prova med --fix-broken."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr "Du bör köra ”apt --fix-broken install” för att korrigera dessa:"
 
 #~ msgid "(not found)"
 #~ msgstr "(hittades inte)"

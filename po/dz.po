@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -409,8 +409,8 @@ msgstr ""
 #: apt-pkg/acquire.cc
 #, c-format
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
@@ -1612,13 +1612,18 @@ msgstr "ཡར་བསྐྱེད་འབད་ཡོད་པའི་ཆ་
 msgid " Done"
 msgstr "འབད་ཚར་ཡི།"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "འ་ནི་འདི་ཚུ་ནོར་བཅོས་འབད་ནི་ལུ་ཁྱོད་ཀྱི་'apt-get -f install'དེ་གཡོག་བཀོལ་དགོཔ་འོང་།"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr ""
+"འ་ནི་འདི་ཚུ་ནོར་བཅོས་འབད་ནི་ལུ་ཁྱོད་ཀྱི་'apt --fix-broken install'དེ་གཡོག་བཀོལ་དགོཔ་འོང་།"
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "མ་ཚང་པའི་རྟེན་འབྲེལ་ཚུ། -f ལག་ལེན་འཐབ་སྟེ་འབད་རྩོལ་བསྐྱེད།"
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"མ་ཚང་བའི་རྟེན་འབྲེལ་  ཐུས་སྒྲིལ་མེད་མི་ཚུ་དང་གཅིག་ཁར་ 'apt --fix-broken install'དེ་འབཐ་རྩོལ་"
+"བསྐྱེདཔ།(ཡང་ན་ཐབས་ཤེས་ཅིག་གསལ་བཀོད་འབད།)"
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -1979,18 +1984,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] ""
 msgstr[1] ""
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "འདི་ཚུ་ནོར་བཅོས་འབད་ནིའི་དོན་ལུ་ཁྱོད་ཀྱི་'apt-get -f install'དེ་གཡོག་བཀོལ་དགོཔ་འོང་:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"མ་ཚང་བའི་རྟེན་འབྲེལ་  ཐུས་སྒྲིལ་མེད་མི་ཚུ་དང་གཅིག་ཁར་ 'apt-get -f install'དེ་འབཐ་རྩོལ་བསྐྱེདཔ།"
-"(ཡང་ན་ཐབས་ཤེས་ཅིག་གསལ་བཀོད་འབད།)"
 
 #: apt-private/private-install.cc
 #, fuzzy
@@ -2377,7 +2370,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "'%s'སྦུང་ཚན་བཟོ་བཤོལ་འཐུས་ཤོར་བྱུང་ཡོད།\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "'dpkg-dev'་ཐུམ་སྒྲིལ་དེ་གཞི་བཙུགས་འབད་ཡོད་པ་ཅིན་ཨེབ་གཏང་འབད།\n"
 
@@ -3760,6 +3752,13 @@ msgstr "ནང་འཁོད་འཛོལ་བ།"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "མ་ཚང་པའི་རྟེན་འབྲེལ་ཚུ། --fix-broken ལག་ལེན་འཐབ་སྟེ་འབད་རྩོལ་བསྐྱེད།"
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "འདི་ཚུ་ནོར་བཅོས་འབད་ནིའི་དོན་ལུ་ཁྱོད་ཀྱི་'apt --fix-broken install'དེ་གཡོག་བཀོལ་དགོཔ་འོང་:"
 
 #~ msgid "(not found)"
 #~ msgstr "(མ་ཐོབ།)"

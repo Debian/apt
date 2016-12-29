@@ -69,7 +69,7 @@ insertinstalledpackage 'pkgb' 'amd64' '2'
 testequalor2 "Reading package lists...
 Building dependency tree...
 Reading state information...
-You might want to run 'apt-get -f install' to correct these.
+You might want to run 'apt --fix-broken install' to correct these.
 The following packages have unmet dependencies:
  pkgb : Conflicts: pkgb:none but 1 is installed
  pkgb:none : Conflicts: pkgb but 2 is installed
@@ -77,10 +77,10 @@ The following packages have unmet dependencies:
              Conflicts: pkgb but 2 is installed
  pkgg : Conflicts: pkgb but 2 is installed
         Conflicts: pkgb:none but 1 is installed
-E: Unmet dependencies. Try using -f." "Reading package lists...
+E: Unmet dependencies. Try using --fix-broken." "Reading package lists...
 Building dependency tree...
 Reading state information...
-You might want to run 'apt-get -f install' to correct these.
+You might want to run 'apt --fix-broken install' to correct these.
 The following packages have unmet dependencies:
  pkgb : Conflicts: pkgb:none but 1 is installed
  pkgb:none : Conflicts: pkgb but 2 is installed
@@ -88,7 +88,7 @@ The following packages have unmet dependencies:
              Conflicts: pkgb:none but 1 is installed
  pkgg : Conflicts: pkgb but 2 is installed
         Conflicts: pkgb:none but 1 is installed
-E: Unmet dependencies. Try using -f." aptget check
+E: Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution)." aptget check
 
 # check that dependencies are generated for none-packages
 rm rootdir/var/lib/dpkg/status

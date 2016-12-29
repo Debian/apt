@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-11-25 23:46+0100\n"
+"POT-Creation-Date: 2016-12-29 13:23+0100\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -429,10 +429,13 @@ msgid "No sandbox user '%s' on the system, can not drop privileges"
 msgstr "Nincs „%s” felhasználó a rendszeren, a jogosultságok nem dobhatók el"
 
 #: apt-pkg/acquire.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "Can't drop privileges for downloading as file '%s' couldn't be accessed "
+#| "by user '%s'."
 msgid ""
-"Can't drop privileges for downloading as file '%s' couldn't be accessed by "
-"user '%s'."
+"Download is performed unsandboxed as root as file '%s' couldn't be accessed "
+"by user '%s'."
 msgstr ""
 "Nem dobhatók el a jogosultságok a letöltéshez, mivel a(z) „%s” fájl nem "
 "érhető el a felhasználó („%s”) által."
@@ -1685,13 +1688,18 @@ msgstr "Nem lehet minimalizálni a frissítendő csomagok mennyiségét"
 msgid " Done"
 msgstr " Kész"
 
-#: apt-private/private-cachefile.cc
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Próbálja futtatni az „apt-get -f install” parancsot ezek javításához."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid "You might want to run 'apt --fix-broken install' to correct these."
+msgstr ""
+"Próbálja futtatni az „apt --fix-broken install” parancsot ezek javításához."
 
-#: apt-private/private-cachefile.cc
-msgid "Unmet dependencies. Try using -f."
-msgstr "Teljesítetlen függőségek. Próbálja a -f használatával."
+#: apt-private/private-cachefile.cc apt-private/private-install.cc
+msgid ""
+"Unmet dependencies. Try 'apt --fix-broken install' with no packages (or "
+"specify a solution)."
+msgstr ""
+"Teljesítetlen függőségek. Próbálja kiadni az „apt --fix-broken install” "
+"parancsot csomagok nélkül (vagy telepítse a függőségeket is!)."
 
 #: apt-private/private-cacheset.cc apt-private/private-search.cc
 msgid "Sorting"
@@ -2065,19 +2073,6 @@ msgid "Use '%s' to remove it."
 msgid_plural "Use '%s' to remove them."
 msgstr[0] "Ezt az „%s” paranccsal törölheti."
 msgstr[1] "Ezeket az „%s” paranccsal törölheti."
-
-#: apt-private/private-install.cc
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr ""
-"Próbálja futtatni az „apt-get -f install” parancsot az alábbiak javításához:"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"Teljesítetlen függőségek. Próbálja kiadni az „apt-get -f install” parancsot "
-"csomagok nélkül (vagy telepítse a függőségeket is!)."
 
 #: apt-private/private-install.cc
 msgid "The following additional packages will be installed:"
@@ -2470,7 +2465,6 @@ msgid "Unpack command '%s' failed.\n"
 msgstr "„%s” kibontási parancs nem sikerült.\n"
 
 #: apt-private/private-source.cc
-#, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Ellenőrizze, hogy a „dpkg-dev” csomag telepítve van-e.\n"
 
@@ -3870,6 +3864,14 @@ msgstr "Belső hiba"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Az üres fájlok biztosan nem érvényes csomagok"
+
+#~ msgid "Unmet dependencies. Try using --fix-broken."
+#~ msgstr "Teljesítetlen függőségek. Próbálja a --fix-broken használatával."
+
+#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
+#~ msgstr ""
+#~ "Próbálja futtatni az „apt --fix-broken install” parancsot az alábbiak "
+#~ "javításához:"
 
 #~ msgid "(not found)"
 #~ msgstr "(nem található)"
