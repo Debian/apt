@@ -931,14 +931,18 @@ bool EDSP::WriteProgress(unsigned short const percent, const char* const message
 }
 									/*}}}*/
 // EDSP::WriteError - format an error message to be send to file descriptor /*{{{*/
+static std::string formatMessage(std::string const &msg)
+{
+	return SubstVar(SubstVar(APT::String::Strip(msg), "\n\n", "\n.\n"), "\n", "\n ");
+}
 bool EDSP::WriteError(char const * const uuid, std::string const &message, FILE* output) {
 	fprintf(output, "Error: %s\n", uuid);
-	fprintf(output, "Message: %s\n\n", SubstVar(SubstVar(message, "\n\n", "\n.\n"), "\n", "\n ").c_str());
+	fprintf(output, "Message: %s\n\n", formatMessage(message).c_str());
 	return true;
 }
 bool EDSP::WriteError(char const * const uuid, std::string const &message, FileFd &output) {
 	return WriteOkay(output, "Error: ", uuid, "\n",
-	      "Message: ", SubstVar(SubstVar(message, "\n\n", "\n.\n"), "\n", "\n "),
+	      "Message: ", formatMessage(message),
 	      "\n\n");
 }
 									/*}}}*/
