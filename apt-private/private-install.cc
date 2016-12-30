@@ -398,7 +398,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 /* Remove unused automatic packages */
 bool DoAutomaticRemove(CacheFile &Cache)
 {
-   bool Debug = _config->FindI("Debug::pkgAutoRemove",false);
+   bool Debug = _config->FindB("Debug::pkgAutoRemove",false);
    bool doAutoRemove = _config->FindB("APT::Get::AutomaticRemove", false);
    bool hideAutoRemove = _config->FindB("APT::Get::HideAutoRemove");
 

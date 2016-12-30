@@ -1082,7 +1082,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
    pkgCache::PkgIterator I = Cache.PkgBegin();
    for (;I.end() != true; ++I) {
       if (Cache[I].NewInstall() && !(Flags[I->ID] & PreInstalled)) {
-	 if(_config->FindI("Debug::pkgAutoRemove",false)) {
+	 if(_config->FindB("Debug::pkgAutoRemove",false)) {
 	    std::clog << "Resolve installed new pkg: " << I.FullName(false) 
 		      << " (now marking it as auto)" << std::endl;
 	 }
