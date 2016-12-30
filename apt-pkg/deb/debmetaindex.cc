@@ -1101,8 +1101,11 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
       UseByHash = _config->Find("Acquire::By-Hash", UseByHash);
       {
 	 std::string const host = ::URI(URI).Host;
-	 UseByHash = _config->Find("APT::Acquire::" + host + "::By-Hash", UseByHash);
-	 UseByHash = _config->Find("Acquire::" + host + "::By-Hash", UseByHash);
+	 if (host.empty() == false)
+	 {
+	    UseByHash = _config->Find("APT::Acquire::" + host + "::By-Hash", UseByHash);
+	    UseByHash = _config->Find("Acquire::" + host + "::By-Hash", UseByHash);
+	 }
 	 std::map<std::string, std::string>::const_iterator const opt = Options.find("by-hash");
 	 if (opt != Options.end())
 	    UseByHash = opt->second;
