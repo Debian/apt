@@ -985,7 +985,8 @@ void pkgDPkgPM::WriteHistoryTag(string const &tag, string value)
 // DPkgPM::OpenLog							/*{{{*/
 bool pkgDPkgPM::OpenLog()
 {
-   string const logdir = _config->FindDir("Dir::Log");
+   string const logfile_name =  _config->FindFile("Dir::Log::Terminal");
+   string logdir = flNotFile(logfile_name);
    if(CreateAPTDirectoryIfNeeded(logdir, logdir) == false)
       // FIXME: use a better string after freeze
       return _error->Error(_("Directory '%s' missing"), logdir.c_str());
@@ -998,8 +999,6 @@ bool pkgDPkgPM::OpenLog()
    strftime(timestr, sizeof(timestr), "%F  %T", tmp);
 
    // open terminal log
-   string const logfile_name = flCombine(logdir,
-				   _config->Find("Dir::Log::Terminal"));
    if (!logfile_name.empty())
    {
       d->term_out = fopen(logfile_name.c_str(),"a");
@@ -1020,8 +1019,10 @@ bool pkgDPkgPM::OpenLog()
    }
 
    // write your history
-   string const history_name = flCombine(logdir,
-				   _config->Find("Dir::Log::History"));
+   string const history_name = _config->FindFile("Dir::Log::History");
+   string logdir2 = flNotFile(logfile_name);
+   if(logdir != logdir2 && CreateAPTDirectoryIfNeeded(logdir2, logdir2) == false)
+      return _error->Error(_("Directory '%s' missing"), logdir.c_str());
    if (!history_name.empty())
    {
       d->history_out = fopen(history_name.c_str(),"a");
