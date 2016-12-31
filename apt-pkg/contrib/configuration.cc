@@ -31,10 +31,13 @@
 #include <string.h>
 
 #include <algorithm>
+#include <iterator>
 #include <string>
 #include <stack>
 #include <vector>
 #include <fstream>
+#include <sstream>
+#include <unordered_map>
 
 #include <apti18n.h>
 
@@ -42,6 +45,150 @@ using namespace std;
 									/*}}}*/
 
 Configuration *_config = new Configuration;
+
+/* TODO: This config verification shouldn't be using a static variable
+   but a Cnf-member – but that would need ABI breaks and stuff and for now
+   that really is an apt-dev-only tool, so it isn't that bad that it is
+   unusable and allaround a bit strange */
+enum class APT_HIDDEN ConfigType { UNDEFINED, INT, BOOL, STRING, STRING_OR_BOOL, STRING_OR_LIST, FILE, DIR, LIST, PROGRAM_PATH = FILE };
+APT_HIDDEN std::unordered_map<std::string, ConfigType> apt_known_config {};
+static std::string getConfigTypeString(ConfigType const type)		/*{{{*/
+{
+   switch (type)
+   {
+      case ConfigType::UNDEFINED: return "UNDEFINED";
+      case ConfigType::INT: return "INT";
+      case ConfigType::BOOL: return "BOOL";
+      case ConfigType::STRING: return "STRING";
+      case ConfigType::STRING_OR_BOOL: return "STRING_OR_BOOL";
+      case ConfigType::FILE: return "FILE";
+      case ConfigType::DIR: return "DIR";
+      case ConfigType::LIST: return "LIST";
+      case ConfigType::STRING_OR_LIST: return "STRING_OR_LIST";
+   }
+   return "UNKNOWN";
+}
+									/*}}}*/
+static ConfigType getConfigType(std::string const &type)		/*{{{*/
+{
+   if (type == "<INT>")
+      return ConfigType::INT;
+   else if (type == "<BOOL>")
+      return ConfigType::BOOL;
+   else if (type == "<STRING>")
+      return ConfigType::STRING;
+   else if (type == "<STRING_OR_BOOL>")
+      return ConfigType::STRING_OR_BOOL;
+   else if (type == "<FILE>")
+      return ConfigType::FILE;
+   else if (type == "<DIR>")
+      return ConfigType::DIR;
+   else if (type == "<LIST>")
+      return ConfigType::LIST;
+   else if (type == "<STRING_OR_LIST>")
+      return ConfigType::STRING_OR_LIST;
+   else if (type == "<PROGRAM_PATH>")
+      return ConfigType::PROGRAM_PATH;
+   return ConfigType::UNDEFINED;
+}
+									/*}}}*/
+static void checkFindConfigOptionType(std::string name, ConfigType const type)/*{{{*/
+{
+   if (apt_known_config.empty())
+      return;
+   std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+   auto known = apt_known_config.find(name);
+   if (known == apt_known_config.cend())
+   {
+      auto const rcolon = name.rfind(':');
+      if (rcolon != std::string::npos)
+      {
+	 known = apt_known_config.find(name.substr(0, rcolon) + ":*");
+	 if (known == apt_known_config.cend())
+	 {
+	    auto const parts = StringSplit(name, "::");
+	    size_t psize = parts.size();
+	    if (psize > 1)
+	    {
+	       for (size_t max = psize; max != 1; --max)
+	       {
+		  std::ostringstream os;
+		  std::copy(parts.begin(), parts.begin() + max, std::ostream_iterator<std::string>(os, "::"));
+		  os << "**";
+		  known = apt_known_config.find(os.str());
+		  if (known != apt_known_config.cend() && known->second == ConfigType::UNDEFINED)
+		     return;
+	       }
+	       for (size_t max = psize - 1; max != 1; --max)
+	       {
+		  std::ostringstream os;
+		  std::copy(parts.begin(), parts.begin() + max - 1, std::ostream_iterator<std::string>(os, "::"));
+		  os << "*::";
+		  std::copy(parts.begin() + max + 1, parts.end() - 1, std::ostream_iterator<std::string>(os, "::"));
+		  os << *(parts.end() - 1);
+		  known = apt_known_config.find(os.str());
+		  if (known != apt_known_config.cend())
+		     break;
+	       }
+	    }
+	 }
+      }
+   }
+   if (known == apt_known_config.cend())
+      _error->Warning("Using unknown config option »%s« of type %s",
+	    name.c_str(), getConfigTypeString(type).c_str());
+   else if (known->second != type)
+   {
+      if (known->second == ConfigType::DIR && type == ConfigType::FILE)
+	 ; // implementation detail
+      else if (type == ConfigType::STRING && (known->second == ConfigType::FILE || known->second == ConfigType::DIR))
+	 ; // TODO: that might be an error or not, we will figure this out later
+      else if (known->second == ConfigType::STRING_OR_BOOL && (type == ConfigType::BOOL || type == ConfigType::STRING))
+	 ;
+      else if (known->second == ConfigType::STRING_OR_LIST && (type == ConfigType::LIST || type == ConfigType::STRING))
+	 ;
+      else
+	 _error->Warning("Using config option »%s« of type %s as a type %s",
+	       name.c_str(), getConfigTypeString(known->second).c_str(), getConfigTypeString(type).c_str());
+   }
+}
+									/*}}}*/
+static bool LoadConfigurationIndex(std::string const &filename)		/*{{{*/
+{
+   apt_known_config.clear();
+   if (filename.empty())
+      return true;
+   Configuration Idx;
+   if (ReadConfigFile(Idx, filename) == false)
+      return false;
+
+   Configuration::Item const * Top = Idx.Tree(nullptr);
+   if (unlikely(Top == nullptr))
+      return false;
+
+   do {
+      if (Top->Value.empty() == false)
+      {
+	 std::string fulltag = Top->FullTag();
+	 std::transform(fulltag.begin(), fulltag.end(), fulltag.begin(), ::tolower);
+	 apt_known_config.emplace(std::move(fulltag), getConfigType(Top->Value));
+      }
+
+      if (Top->Child != nullptr)
+      {
+	 Top = Top->Child;
+	 continue;
+      }
+
+      while (Top != nullptr && Top->Next == nullptr)
+	 Top = Top->Parent;
+      if (Top != nullptr)
+	 Top = Top->Next;
+   } while (Top != nullptr);
+
+   return true;
+}
+									/*}}}*/
 
 // Configuration::Configuration - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -160,6 +307,7 @@ Configuration::Item *Configuration::Lookup(const char *Name,bool const &Create)
 /* */
 string Configuration::Find(const char *Name,const char *Default) const
 {
+   checkFindConfigOptionType(Name, ConfigType::STRING);
    const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
    {
@@ -179,6 +327,7 @@ string Configuration::Find(const char *Name,const char *Default) const
  */
 string Configuration::FindFile(const char *Name,const char *Default) const
 {
+   checkFindConfigOptionType(Name, ConfigType::FILE);
    const Item *RootItem = Lookup("RootDir");
    std::string result =  (RootItem == 0) ? "" : RootItem->Value;
    if(result.empty() == false && result[result.size() - 1] != '/')
@@ -233,6 +382,7 @@ string Configuration::FindFile(const char *Name,const char *Default) const
 /* This is like findfile execept the result is terminated in a / */
 string Configuration::FindDir(const char *Name,const char *Default) const
 {
+   checkFindConfigOptionType(Name, ConfigType::DIR);
    string Res = FindFile(Name,Default);
    if (Res.end()[-1] != '/')
    {
@@ -249,6 +399,7 @@ string Configuration::FindDir(const char *Name,const char *Default) const
 /* Returns a vector of config values under the given item */
 vector<string> Configuration::FindVector(const char *Name, std::string const &Default, bool const Keys) const
 {
+   checkFindConfigOptionType(Name, ConfigType::LIST);
    vector<string> Vec;
    const Item *Top = Lookup(Name);
    if (Top == NULL)
@@ -274,6 +425,7 @@ vector<string> Configuration::FindVector(const char *Name, std::string const &De
 /* */
 int Configuration::FindI(const char *Name,int const &Default) const
 {
+   checkFindConfigOptionType(Name, ConfigType::INT);
    const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
       return Default;
@@ -291,6 +443,7 @@ int Configuration::FindI(const char *Name,int const &Default) const
 /* */
 bool Configuration::FindB(const char *Name,bool const &Default) const
 {
+   checkFindConfigOptionType(Name, ConfigType::BOOL);
    const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
       return Default;
@@ -774,7 +927,8 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 
 	 if ((*I == '/' && I + 1 != End && I[1] == '/') ||
 	     (*I == '#' && strcmp(string(I,I+6).c_str(),"#clear") != 0 &&
-	      strcmp(string(I,I+8).c_str(),"#include") != 0))
+	      strcmp(string(I,I+8).c_str(),"#include") != 0 &&
+	      strcmp(string(I,I+strlen("#x-apt-configure-index")).c_str(), "#x-apt-configure-index") != 0))
 	 {
 	    End = I;
 	    break;
@@ -938,6 +1092,11 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 		     if (ReadConfigFile(Conf,Word,AsSectional,Depth+1) == false)
 			return _error->Error(_("Syntax error %s:%u: Included from here"),FName.c_str(),CurLine);
 		  }
+	       }
+	       else if (Tag == "x-apt-configure-index")
+	       {
+		  if (LoadConfigurationIndex(Word) == false)
+		     return _error->Warning("Loading the configure index %s in file %s:%u failed!", Word.c_str(), FName.c_str(), CurLine);
 	       }
 	       else
 		  return _error->Error(_("Syntax error %s:%u: Unsupported directive '%s'"),FName.c_str(),CurLine,Tag.c_str());

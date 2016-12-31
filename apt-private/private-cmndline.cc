@@ -501,9 +501,6 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
    for (auto const& cmd : CmdsWithHelp)
       Cmds.push_back({cmd.Match, cmd.Handler});
 
-   // Args running out of scope invalidates the pointer stored in CmdL,
-   // but we don't use the pointer after this function, so we ignore
-   // this problem for now and figure something out if we have to.
    char const * CmdCalled = nullptr;
    if (Cmds.empty() == false && Cmds[0].Handler != nullptr)
       CmdCalled = CommandLine::GetCommand(Cmds.data(), argc, argv);
@@ -511,6 +508,10 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
       BinaryCommandSpecificConfiguration(argv[0], CmdCalled);
    std::string const conf = "Binary::" + _config->Find("Binary");
    _config->MoveSubTree(conf.c_str(), nullptr);
+
+   // Args running out of scope invalidates the pointer stored in CmdL,
+   // but we don't use the pointer after this function, so we ignore
+   // this problem for now and figure something out if we have to.
    auto Args = getCommandArgs(Binary, CmdCalled);
    CmdL = CommandLine(Args.data(), _config);
 

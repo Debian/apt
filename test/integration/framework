@@ -340,6 +340,7 @@ setupenvironment() {
         # -----
 
 	cd "$TMPWORKINGDIRECTORY"
+	echo "#x-apt-configure-index \"${SOURCEDIRECTORY}/doc/examples/configure-index\";" > aptconfig.conf
 	mkdir rootdir aptarchive keys
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d

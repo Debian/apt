@@ -1,85 +1,140 @@
-/* This file is an index of all APT configuration directives. It should
-   NOT actually be used as a real config file, though it is (except for the
-   last line) a completely valid file. Most of the options have sane default
-   values, unless you have specific needs you should NOT include arbitrary
+/* This file is an index of all APT configuration directives.
+   Instead of actual values the option has the type as value.
+   Additional explanations and possible values might be detailed in a comment.
+
+   Most of the options have sane default values,
+   unless you have specific needs you should NOT include arbitrary
    items in a custom configuration.
-   
+
    In some instances involving filenames it is possible to set the default
    directory when the path is evaluated. This means you can use relative
    paths within the sub scope.
-   
+
    The configuration directives are specified in a tree with {} designating
    a subscope relative to the tag before the {}. You can further specify
-   a subscope using scope notation eg,
+   a subscope using scope notation e.g.,
      APT::Architecture "i386";
    This is prefixed with the current scope. Scope notation must be used
    if an option is specified on the command line with -o.
+
+   The most complex type is perhaps <LIST>:
+      APT::Architectures "<LIST>";
+   In configuration files it usually appears as a subscope of its own like:
+      APT::Architectures { "amd64"; "i386"; };
+   but the same can be achieved with (needed for commandline)
+      APT::Architectures "amd64,i386";
+   which overrides the values in the scope notation.
+
+   See apt.conf manpage for a detailed description of many common options
+   and the syntax of configuration files and commandline options!
 */
 
-quiet "0";
-quiet::NoUpdate "true"; // never update progress information - included in -q=1
+quiet "<INT>";
+quiet::NoUpdate "<BOOL>"; // never update progress information - included in -q=1
+quiet::NoProgress "<BOOL>"; // disables the 0% → 100% progress on cache generation and stuff
+quiet::NoStatistic "<BOOL>"; // no "42 kB downloaded" stats in update
 
 // Options for APT in general
-APT 
+APT
 {
-  Architecture "i386";
-  Architectures { "amd64"; "armel"; };
-  Build-Essential "build-essential";
+  Architecture "<STRING>"; // debian architecture like amd64, i386, powerpc, armhf, mips, …
+  Architectures "<LIST>"; // a list of (foreign) debian architectures, defaults to: dpkg --print-foreign-architectures
 
-  NeverAutoRemove  { "linux-image.*";  };  // packages that should never
-                                            // considered for autoRemove
+  Build-Essential "<LIST>"; // list of package names
+  Build-Profiles "<STRING_OR_LIST>";
+
+  NeverAutoRemove "<LIST>";  // list of package name regexes
 
   // Options for apt-get
-  Get 
+  Get
   {
-     Host-Architecture "armel";
-     Arch-Only "false";
-     AllowUnauthenticated "false";        // packages from unauthenticated
-     AutomaticRemove "false";       
-     HideAutoRemove "false";
-     Download-Only "false";
-     Simulate "false";
-     Assume-Yes "false";
-     Force-Yes "false";             // I would never set this.
-     Fix-Broken "false";  
-     Fix-Missing "false";     
-     Show-Upgraded "false";
-     Show-Versions "false";
-     Upgrade "true";
-     Print-URIs "false";
-     Compile "false";
-     Download "true";
-     Purge "false";
-     List-Cleanup "true";
-     ReInstall "false";
-     Trivial-Only "false";
-     Remove "true";
-     Only-Source "";
-     Diff-Only "false";
-     Tar-Only "false";
-     Build-Dep-Automatic "true";
-     Show-User-Simulation-Note "true";
+     // build-dep options:
+     Host-Architecture "<STRING>"; // debian architecture
+     Arch-Only "<BOOL>";
+     Indep-Only "<BOOL>";
+     Build-Dep-Automatic "<BOOL>";
+
+     // (non-)confirming options
+     Force-Yes "<BOOL>"; // allows downgrades, essential removal and eats children
+     Allow-Downgrades "<BOOL>";
+     Allow-Change-Held-Packages "<BOOL>";
+     Allow-Remove-Essential "<BOOL>";
+     Assume-Yes "<BOOL>"; // not as dangerous, but use with care still
+     Assume-No "<BOOL>";
+     Trivial-Only "<BOOL>";
+     Remove "<BOOL>";
+     AllowUnauthenticated "<BOOL>"; // skip security
+
+     AutomaticRemove "<BOOL>";
+     HideAutoRemove "<STRING_OR_BOOL>"; // yes, no, small
+
+     Simulate "<BOOL>";
+     Show-User-Simulation-Note "<BOOL>";
+     Fix-Broken "<BOOL>";
+     Fix-Policy-Broken "<BOOL>";
+
+     Download "<BOOL>";
+     Download-Only "<BOOL>";
+     Fix-Missing "<BOOL>";
+     Print-URIs "<BOOL>";
+     List-Cleanup "<BOOL>";
+
+     Show-Upgraded "<BOOL>";
+     Show-Versions "<BOOL>";
+     Upgrade "<BOOL>";
+     Only-Upgrade "<BOOL>";
+     Upgrade-Allow-New "<BOOL>";
+     Purge "<BOOL>";
+     ReInstall "<BOOL>";
+     Compile "<BOOL>";
+     Only-Source "<BOOL>";
+     Diff-Only "<BOOL>";
+     Tar-Only "<BOOL>";
+     Dsc-Only "<BOOL>";
+
+     Autosolving "<BOOL>";
+     CallResolver "<BOOL>";
+     IndexTargets::ReleaseInfo "<BOOL>";
+     IndexTargets::format "<STRING>";
   };
 
-  Cache 
+  Cache
   {
-     Important "false";
-     AllVersions "false";
-     GivenOnly "false";
-     RecurseDepends "false";
-     ShowFull "false";
-     Generate "true";
-     NamesOnly "false";
-     AllNames "false";
-     Installed "false";
+     AllNames "<BOOL>";
+     AllVersions "<BOOL>";
+     Only-Source "<BOOL>";
+     GivenOnly "<BOOL>";
+     RecurseDepends "<BOOL>";
+     Installed "<BOOL>";
+     Important "<BOOL>";
+     ShowDependencyType "<BOOL>";
+     ShowVersion "<BOOL>";
+     ShowPre-Depends "<BOOL>";
+     ShowDepends "<BOOL>";
+     ShowRecommends "<BOOL>";
+     ShowSuggests "<BOOL>";
+     ShowReplaces "<BOOL>";
+     ShowConflicts "<BOOL>";
+     ShowBreaks "<BOOL>";
+     ShowEnhances "<BOOL>";
+     ShowOnlyFirstOr "<BOOL>";
+     ShowImplicit "<BOOL>";
+     ShowVirtuals "<BOOL>";
+     ShowFull "<BOOL>";
+     NamesOnly "<BOOL>";
+
+     show::version "<INT>";
+     search::version "<INT>";
   };
 
-  CDROM 
+  CDROM
   {
-     Rename "false";
-     NoMount "false";
-     Fast "false";
-     NoAct "false";
+     Rename "<BOOL>";
+     NoMount "<BOOL>";
+     Fast "<BOOL>";
+     NoAct "<BOOL>";
+     Thorough "<BOOL>";
+     DropTranslation "<BOOL>";
   };
 
   Update
@@ -88,8 +143,8 @@ APT
      Post-Invoke {"touch /var/lib/apt/post-update-stamp"; };
   };
 
-  // define a new supported compressor on the fly
-  APT::Compressor::rev {
+  /* define a new supported compressor on the fly
+  Compressor::rev {
      Name "rev";
      Extension ".reversed";
      Binary "rev";
@@ -97,109 +152,75 @@ APT
      UncompressArg {};
      Cost "10";
   };
+  */
+  Compressor "<LIST>";
+  Compressor::** "<UNDEFINED>";
 
   Authentication
   {
-     TrustCDROM "false";            // consider the CD-ROM always trusted
+     TrustCDROM "false"; // consider the CD-ROM always trusted
   };
 
-  // Some general options
-  Ignore-Hold "false";
-  Clean-Installed "true";
-  Immediate-Configure "true";      // DO NOT turn this off, see the man page
-  Force-LoopBreak "false";         // DO NOT turn this on, see the man page
-  Cache-Start "20971520";
-  Cache-Grow "1048576";
-  Cache-Limit "0";
-  Default-Release "";
+  Clean-Installed "<BOOL>";
 
-  // consider Recommends, Suggests as important dependencies that should
+  // Some general options
+  Default-Release "<STRING>";
+  Ignore-Hold "<BOOL>";
+  Immediate-Configure "<BOOL>";
+  Immediate-Configure-All "<BOOL>";
+  Force-LoopBreak "<BOOL>";
+
+  Cache-Start "<INT>";
+  Cache-Grow "<INT>";
+  Cache-Limit "<INT>";
+  Cache-Fallback "<BOOL>";
+  Cache-HashTableSize "<INT>";
+
+  // consider Recommends/Suggests as important dependencies that should
   // be installed by default
-  Install-Recommends "true";
-  Install-Suggests "false";
+  Install-Recommends "<BOOL>";
+  Install-Suggests "<BOOL>";
   // reverse Recommends or Suggests prevent autoremoval
-  AutoRemove::RecommendsImportant "true";
-  AutoRemove::SuggestsImportant "true";
+  AutoRemove::RecommendsImportant "<BOOL>";
+  AutoRemove::SuggestsImportant "<BOOL>";
 
   // consider dependencies of packages in this section manual
   Never-MarkAuto-Sections {"metapackages"; "universe/metapackages"; };
 
   // Write progress messages on this fd (for stuff like base-config)
-  Status-Fd "-1";
+  Status-Fd "<INT>";
+  Status-deb822-Fd "<INT>";
   // Keep the list of FDs open (normally apt closes all fds when it
   // does a ExecFork)
   Keep-Fds {};
 
-  // control parameters for cron jobs by /etc/cron.daily/apt
-  Periodic
-  {
-    BackupArchiveInterval "0";
-    // - Backup after n-days if archive contents changed.(0=disable)
-
-    BackupLevel "3";
-    // - Backup level.(0=disable), 1 is invalid.
-
-    // APT::Archives::MaxAge "0"; (old, deprecated)
-    MaxAge "0"; // (new)
-    // - Set maximum allowed age of a cache package file. If a cache 
-    //   package file is older it is deleted (0=disable)
-
-    // APT::Archives::MinAge "2"; (old, deprecated)
-    MinAge "2"; // (new)
-    // - Set minimum age of a package file. If a file is younger it
-    //   will not be deleted (0=disable). Useful to prevent races
-    //   and to keep backups of the packages for emergency.
-
-    // APT::Archives::MaxSize "0"; (old, deprecated)
-    MaxSize "0"; // (new)
-    // - Set maximum size of the cache in MB (0=disable). If the cache
-    //   is bigger, cached package files are deleted until the size
-    //   requirement is met (the oldest packages will be deleted 
-    //   first).
-
-    Update-Package-Lists "0";
-    // - Do "apt-get update" automatically every n-days (0=disable)
-    //   
-    Download-Upgradeable-Packages "0";
-    // - Do "apt-get upgrade --download-only" every n-days (0=disable)
-    //
-    Unattended-Upgrade "0";
-    // - Run the "unattended-upgrade" security upgrade script 
-    //   every n-days (0=disabled)
-    //   Requires the package "unattended-upgrades" and will write
-    //   a log in /var/log/unattended-upgrades
-    //
-    AutocleanInterval "0";
-    // - Do "apt-get autoclean" every n-days (0=disable)
-
-    Verbose "0";
-    // - Send report mail to root
-    //   0:  no report             (or null string)
-    //   1:  progress report       (actually any string)
-    //   2:  + command outputs     (remove -qq, remove 2>/dev/null, add -d)
-    //   3:  + trace on            
-  };
+  // control parameters for cron jobs by /etc/cron.daily/apt documented there
+  Periodic {};
 };
 
 // Options for the downloading routines
 Acquire
 {
-  Queue-Mode "host";       // host|access
-  Retries "0";
-  Source-Symlinks "true";
-  ForceHash "sha256"; // hashmethod used for expected hash: sha256, sha1 or md5sum
+  Queue-Mode "<STRING>";       // host or access
+  Retries "<INT>";
+  Source-Symlinks "<BOOL>";
+  ForceHash "<STRING>"; // hashmethod used for expected hash: sha256, sha1 or md5sum
 
-  PDiffs "true";     // try to get the IndexFile diffs
-  PDiffs::FileLimit "4"; // don't use diffs if we would need more than 4 diffs
-  PDiffs::SizeLimit "50"; // don't use diffs if size of all patches excess
-			  // 50% of the size of the original file
+  PDiffs "<BOOL>"; // try to get the IndexFile diffs
+  PDiffs::FileLimit "<INT>"; // don't use diffs if we would need more than 4 diffs
+  PDiffs::SizeLimit "<INT>"; // don't use diffs if size of all patches excess X% of the size of the original file
+  PDiffs::Merge "<BOOL>";
 
-  Check-Valid-Until "true";
-  Max-ValidTime "864000"; // 10 days
-  Max-ValidTime::Debian-Security "604800"; // 7 days, label specific configuration
+  Check-Valid-Until "<BOOL>";
+  Max-ValidTime "<INT>"; // time in seconds
+  Max-ValidTime::* "<INT>"; // repository label specific configuration
+  Min-ValidTime "<INT>"; // time in seconds
+  Min-ValidTime::* "<INT>"; // repository label specific configuration
+
+  SameMirrorForAllIndexes "<BOOL>"; // use the mirror serving the Release file for Packages & co
 
   // HTTP method configuration
-  http 
+  http
   {
     Proxy "http://127.0.0.1:3128";
     Proxy::http.us.debian.org "DIRECT";  // Specific per-host setting
@@ -210,12 +231,10 @@ Acquire
     // Cache Control. Note these do not work with Squid 2.0.2
     No-Cache "false";
     Max-Age "86400";     // 1 Day age on index files
-    No-Store "false";    // Prevent the cache from storing archives    
-    Dl-Limit "7";        // 7Kb/sec maximum download rate
+    No-Store "false";    // Prevent the cache from storing archives
+    Dl-Limit "<INT>"; // Kb/sec maximum download rate
     User-Agent "Debian APT-HTTP/1.3";
   };
-
-
 
   // HTTPS method configuration: uses the http
   // - proxy config
@@ -240,7 +259,7 @@ Acquire
 	No-Cache "false";
 	Max-Age "86400";     // 1 Day age on index files
 	No-Store "false";    // Prevent the cache from storing archives
-	Dl-Limit "7";        // 7Kb/sec maximum download rate
+	Dl-Limit "<INT>"; // Kb/sec maximum download rate
 
 	User-Agent "Debian APT-CURL/1.0";
   };
@@ -271,8 +290,7 @@ Acquire
   
   cdrom
   {
-    // do auto detection of the cdrom mountpoint
-    AutoDetect "true";   
+    AutoDetect "<BOOL>"; // do auto detection of the cdrom mountpoint
     // when auto-detecting, only look for cdrom/dvd. when this is false
     // it will support any removable device as a "cdrom" source
     CdromOnly "true";
@@ -293,99 +311,102 @@ Acquire
    Options {"--ignore-time-conflict";}	// not very useful on a normal system
   };
 
-  CompressionTypes
+  /* CompressionTypes
   {
     bz2 "bzip2";
     lzma "lzma";
     gz "gzip";
 
     Order { "uncompressed"; "gz"; "lzma"; "bz2"; };
-  };
+  }; */
+  CompressionTypes::Order "<LIST>";
+  CompressionTypes::* "<STRING>";
 
-  Languages
-  {
-     "environment";
-     "de";
-     "en";
-     "none";
-     "fr";
-  };
+  Languages "<LIST>"; // "environment,de,en,none,fr";
 
   // Location of the changelogs with the placeholder @CHANGEPATH@ (e.g. "main/a/apt/apt_1.1")
-  Changelogs::URI::Origin::Debian "http://metadata.ftp-master.debian.org/changelogs/@CHANGEPATH@_changelog";
+  Changelogs::URI
+  {
+    // Origin::Debian "http://metadata.ftp-master.debian.org/changelogs/@CHANGEPATH@_changelog";
+    Origin::* "<STRING>";
+    Label::* "<STRING>";
+    Override::Origin::* "<STRING>";
+    Override::Label::* "<STRING>";
+  };
+  Changelogs::AlwaysOnline "<BOOL>"; // even if the changelog file exists get it online (as the file is incomplete)
+  Changelogs::AlwaysOnline::Origin::* "<BOOL>";
 };
 
 // Directory layout
-Dir "/"
+Dir "<DIR>"
 {
+  Ignore-Files-Silently "<LIST>"; // of regexes: "\.dpkg-[a-z]+$,\.bak$,~$";
+
   // Location of the state dir
-  State "var/lib/apt/" 
+  State "<DIR>"
   {
-     Lists "lists/";
-     status "/var/lib/dpkg/status";
-     extended_states "extended_states";
-     cdroms "cdroms.list";
+     Lists "<DIR>";
+     status "<FILE>";
+     extended_states "<FILE>";
+     cdroms "<FILE>";
   };
-  
+
   // Location of the cache dir
-  Cache "var/cache/apt/" {
-     Archives "archives/";
-     // backup directory created by /etc/cron.daily/apt
-     Backup "backup/"; 
-     srcpkgcache "srcpkgcache.bin";
-     pkgcache "pkgcache.bin";     
+  Cache "<DIR>" {
+     Archives "<DIR>";
+     Backup "backup/"; // backup directory created by /etc/cron.daily/apt
+     srcpkgcache "<FILE>";
+     pkgcache "<FILE>";
   };
-  
+
   // Config files
-  Etc "etc/apt/" {
-     Main "apt.conf";
-     Netrc "auth.conf";
-     Parts "apt.conf.d/";
-     Preferences "preferences";
-     PreferencesParts "preferences.d";
-     SourceList "sources.list";
-     SourceParts "sources.list.d";
-     VendorList "vendors.list";
-     VendorParts "vendors.list.d";
-     Trusted "trusted.gpg";
-     TrustedParts "trusted.gpg.d";
+  Etc "<DIR>" {
+     Main "<FILE>";
+     Netrc "<FILE>";
+     Parts "<DIR>";
+     Preferences "<FILE>";
+     PreferencesParts "<DIR>";
+     SourceList "<FILE>";
+     SourceParts "<DIR>";
+     Trusted "<FILE>";
+     TrustedParts "<DIR>";
   };
-  
+
   // Locations of binaries
   Bin {
-     methods "/usr/lib/apt/methods/";
-     gzip "/bin/gzip";
+     methods "<DIR>";
+     methods::* "<FILE>";
      gpg  "/usr/bin/gpgv";
-     dpkg "/usr/bin/dpkg";
-     dpkg-source "/usr/bin/dpkg-source";
+     dpkg "<PROGRAM_PATH>";
+     dpkg-source "<PROGRAM_PATH>";
      dpkg-buildpackage "/usr/bin/dpkg-buildpackage";
-     apt-get "/usr/bin/apt-get";
-     apt-cache "/usr/bin/apt-cache";
+     lz4 "<PROGRAM_PATH>";
+     gzip "<PROGRAM_PATH>";
+     xz "<PROGRAM_PATH>";
+     bzip2 "<PROGRAM_PATH>";
+     lzma "<PROGRAM_PATH>";
+     uncompressed "<PROGRAM_PATH>";
+
+     solvers "<LIST>"; // of directories
+     planners "<LIST>"; // of directories
   };
 
-  // Location of the logfile
-  Log "var/log/apt" {
-	Terminal "term.log";
-	History "history.log";
+  // Location of the logfiles
+  Log "<DIR>" {
+     Terminal "<FILE>";
+     History "<FILE>";
+     Solver "<FILE>";
+     Planner "<FILE>";
   };
 
-  // Media 
-  Media 
+  Media
   {
-	// Media AutoDetect mount path
-	MountPath "/media/apt";
-  };
-
-  // Media 
-  Media 
-  {
-	// Media AutoDetect mount path
-	MountPath "/media/apt";
+     MountPath "/media/apt"; // Media AutoDetect mount path
   };
 };
 
 // Things that effect the APT dselect method
-DSelect 
+DSelect
 {
    Clean "auto";   // always|auto|prompt|never
    Options "-f";
@@ -396,9 +417,9 @@ DSelect
 
 DPkg
 {
-   // let apt aggressivly use dpkg triggers
-   NoTriggers "true";
-   ConfigurePending "true";
+   NoTriggers "<BOOL>";
+   ConfigurePending "<BOOL>";
+   TriggersPending "<BOOL>";
 
    // Probably don't want to use force-downgrade..
    Options {"--force-overwrite";"--force-downgrade";}
@@ -421,9 +442,15 @@ DPkg
    // Flush the contents of stdin before forking dpkg.
    FlushSTDIN "true";
 
-   // Control the size of the command line passed to dpkg.
-   MaxArgBytes 32768;
-   MaxArgs 8192;
+   MaxArgBytes "<INT>"; // Control the size of the command line passed to dpkg.
+   Install::Recursive "<BOOL>" // avoid long commandlines by recursive install in a tmpdir
+   {
+      force "<BOOL>"; // not all dpkg versions support this, so autodetection is default
+      minimum "<INT>"; // don't bother if its just a few packages
+      numbered "<BOOL>"; // avoid M-A:same ordering bug in dpkg
+   };
+
+   UseIONice "<BOOL>";
 
    // controls if apt will apport on the first dpkg error or if it 
    // tries to install as many packages as possible
@@ -434,40 +461,293 @@ DPkg
    of classes in the source code */
 Debug 
 {
-  pkgProblemResolver "false";
-  pkgProblemResolver::ShowScores "false";
-  pkgDepCache::AutoInstall "false"; // what packages apt install to satify dependencies
-  pkgDepCache::Marker "false"; 
-  pkgCacheGen "false";
-  pkgAcquire "false";
-  pkgAcquire::Worker "false";
-  pkgAcquire::Auth "false";
-  pkgDPkgPM "false";
-  pkgDPkgProgressReporting "false";
-  pkgOrderList "false";
-  pkgPackageManager "false"; // OrderList/Configure debugging
-  pkgAutoRemove "false";   // show information about automatic removes
-  BuildDeps "false";
-  pkgInitialize "false";   // This one will dump the configuration space
-  NoLocking "false";
-  Acquire::Ftp "false";    // Show ftp command traffic
-  Acquire::Http "false";   // Show http command traffic
-  Acquire::Https "false";   // Show https debug
-  Acquire::gpgv "false";   // Show the gpgv traffic
-  Acquire::cdrom "false";   // Show cdrom debug output
-  aptcdrom "false";        // Show found package files
-  IdentCdrom "false";
-  acquire::netrc "false";  // netrc parser
-  RunScripts "false";      // debug invocation of external scripts  
-}
+  pkgInitConfig "<BOOL>";
+  pkgProblemResolver "<BOOL>";
+  pkgProblemResolver::ShowScores "<BOOL>";
+  pkgDepCache::AutoInstall "<BOOL>"; // what packages apt install to satify dependencies
+  pkgDepCache::Marker "<BOOL>";
+  pkgCacheGen "<BOOL>";
+  pkgAcquire "<BOOL>";
+  pkgAcquire::Worker "<BOOL>";
+  pkgAcquire::Auth "<BOOL>";
+  pkgAcquire::Diffs "<BOOL>";
+  pkgDPkgPM "<BOOL>";
+  pkgDPkgProgressReporting "<BOOL>";
+  pkgOrderList "<BOOL>";
+  pkgPackageManager "<BOOL>"; // OrderList/Configure debugging
+  pkgAutoRemove "<BOOL>";   // show information about automatic removes
+  BuildDeps "<BOOL>";
+  pkgInitialize "<BOOL>";   // This one will dump the configuration space
+  NoLocking "<BOOL>";
+  Acquire::Ftp "<BOOL>";    // Show ftp command traffic
+  Acquire::Http "<BOOL>";   // Show http command traffic
+  Acquire::Https "<BOOL>";   // Show https debug
+  Acquire::gpgv "<BOOL>";   // Show the gpgv traffic
+  Acquire::cdrom "<BOOL>";   // Show cdrom debug output
+  Acquire::Transaction "<BOOL>";
+  Acquire::Progress "<BOOL>";
+  aptcdrom "<BOOL>";        // Show found package files
+  IdentCdrom "<BOOL>";
+  acquire::netrc "<BOOL>";  // netrc parser
+  RunScripts "<BOOL>";      // debug invocation of external scripts
+  pkgPolicy "<BOOL>";
+  GetListOfFilesInDir "<BOOL>";
+  pkgAcqArchive::NoQueue "<BOOL>";
+  Hashes "<BOOL>";
+  APT::FtpArchive::Clean "<BOOL>";
+  NoDropPrivs "<BOOL>";
+  EDSP::WriteSolution "<BOOL>";
+  InstallProgress::Fancy "<BOOL>";
+  APT::Progress::PackageManagerFd "<BOOL>";
+};
 
 pkgCacheGen
 {
-  Essential "native"; // other modes: all, none, installed
-  ForceEssential { "apt"; };
-  ForceImportant "";
-}
+  Essential "<STRING>"; // native,all, none, installed
+  ForceEssential "<STRING_OR_LIST>"; // package names
+  ForceImportant "<LIST>"; // package names
+};
 
-/* Whatever you do, do not use this configuration file!! Take out ONLY
-   the portions you need! */
-This Is Not A Valid Config File
+// modify points awarded for various facts about packages while
+// resolving conflicts in the dependency resolution process
+pkgProblemResolver::Scores
+{
+  Required "<INT>";
+  Important "<INT>";
+  Standard "<INT>";
+  Optional "<INT>";
+  Extra "<INT>";
+  Essentials "<INT>";
+  NotObsolete "<INT>";
+  Depends "<INT>";
+  PreDepends "<INT>";
+  Suggests "<INT>";
+  Recommends "<INT>";
+  Conflicts "<INT>";
+  Replaces "<INT>";
+  Obsoletes "<INT>";
+  Breaks "<INT>";
+  Enhances "<INT>";
+  AddProtected "<INT>";
+  AddEssential "<INT>";
+};
+pkgProblemResolver::FixByInstall "<BOOL>";
+
+APT::FTPArchive::release
+{
+   Default-Patterns "<BOOL>";
+   NumericTimezone "<BOOL>";
+
+   // set specific fields in the generated Release file
+   Acquire-By-Hash "<BOOL>";
+   ButAutomaticUpgrades "<BOOL>";
+   NotAutomatic "<BOOL>";
+   MD5 "<BOOL>";
+   SHA1 "<BOOL>";
+   SHA256 "<BOOL>";
+   SHA512 "<BOOL>";
+   Architectures "<STRING>";
+   Codename "<STRING>";
+   Components "<STRING>";
+   Date "<STRING>";
+   Description "<STRING>";
+   Label "<STRING>";
+   Origin "<STRING>";
+   Signed-by "<STRING>";
+   Suite "<STRING>";
+   Version "<STRING>";
+};
+
+// having both seems wrong
+dpkgpm::progress "<BOOL>";
+dpkg::progress "<BOOL>";
+apt::acquire::by-hash "<STRING>";
+acquire::by-hash "<STRING>";
+apt::acquire::*::by-hash "<STRING>";
+acquire::*::by-hash "<STRING>";
+
+// Unsorted options: Some of those are used only internally
+
+help "<BOOL>"; // true if the help message was requested via e.g. --help
+version "<BOOL>"; // true if the version number was requested via e.g. --version
+Binary "<STRING>"; // name of the program run like apt-get, apt-cache, …
+
+dir::locale "<DIR>";
+dir::bin::dpkg-source "<STRING>";
+
+pkgcachefile::generate "<BOOL>";
+packagemanager::unpackall "<BOOL>";
+packagemanager::configure "<STRING>";
+commandline::asstring "<STRING>";
+edsp::scenario "<STRING>";
+eipp::scenario "<STRING>";
+cd::* "<STRING>"; // added CDRoms are stored as config
+
+orderlist::score::delete "<INT>";
+orderlist::score::essential "<INT>";
+orderlist::score::immediate "<INT>";
+orderlist::score::predepends "<INT>";
+
+apt::sources::with "<LIST>";
+apt::moo::color "<BOOL>";
+apt::pkgpackagemanager::maxloopcount "<INT>";
+apt::hashes::*::untrusted "<BOOL>";
+apt::list-cleanup "<BOOL>";
+apt::authentication::trustcdrom "<BOOL>";
+apt::solver::strict-pinning "<BOOL>";
+apt::keep-downloaded-packages "<BOOL>";
+apt::solver "<STRING>";
+apt::planner "<STRING>";
+apt::system "<STRING>";
+apt::acquire::translation "<STRING>"; // deprecated in favor of Acquire::Languages
+apt::sandbox::user "<STRING>";
+apt::color::highlight "<STRING>";
+apt::color::neutral "<STRING>";
+
+dpkgpm::reporting-steps "<INT>";
+
+dpkg::chroot-directory "<DIR>";
+dpkg::tools::options::** "<UNDEFINED>";
+dpkg::source-options "<STRING>";
+dpkg::progress-fancy "<BOOL>";
+dpkg::selection::remove::approved "<BOOL>";
+dpkg::remove::crossgrade::implicit "<BOOL>";
+dpkg::selection::current::saveandrestore "<BOOL>";
+dpkg::use-pty "<BOOL>";
+
+apt::cmd::disable-script-warning "<BOOL>";
+apt::cmd::show-update-stats "<BOOL>";
+apt::cmd::use-format "<BOOL>";
+apt::cmd::manual-installed "<BOOL>";
+apt::cmd::upgradable "<BOOL>";
+apt::cmd::installed "<BOOL>";
+apt::cmd::list-include-summary "<BOOL>";
+apt::cmd::use-regexp "<BOOL>";
+apt::cmd::all-versions "<BOOL>";
+apt::cmd::format "<STRING>";
+
+apt::config::dump::emptyvalue "<BOOL>";
+apt::config::dump::format "<STRING>";
+
+apt::mark::simulate "<BOOL>";
+apt::markauto::verbose "<BOOL>";
+apt::sortpkgs::source "<BOOL>";
+apt::extracttemplates::tempdir "<STRING>";
+
+apt::key::archivekeyring "<STRING>";
+apt::key::removedkeys "<STRING>";
+apt::key::gpgvcommand "<STRING>";
+apt::key::gpgcommand "<STRING>";
+apt::key::masterkeyring "<STRING>";
+apt::key::archivekeyringuri "<STRING>";
+apt::key::net-update-enabled "<STRING>";
+
+apt::ftparchive::release::patterns "<LIST>";
+apt::ftparchive::release::validtime "<INT>";
+apt::ftparchive::by-hash-keep "<INT>";
+apt::ftparchive::delinkact "<BOOL>";
+apt::ftparchive::md5 "<BOOL>";
+apt::ftparchive::sha1 "<BOOL>";
+apt::ftparchive::sha256 "<BOOL>";
+apt::ftparchive::sha512 "<BOOL>";
+apt::ftparchive::dobyhash "<BOOL>";
+apt::ftparchive::showcachemisses "<BOOL>";
+apt::ftparchive::sources::md5 "<BOOL>";
+apt::ftparchive::sources::sha1 "<BOOL>";
+apt::ftparchive::sources::sha256 "<BOOL>";
+apt::ftparchive::sources::sha512 "<BOOL>";
+apt::ftparchive::packages::md5 "<BOOL>";
+apt::ftparchive::packages::sha1 "<BOOL>";
+apt::ftparchive::packages::sha256 "<BOOL>";
+apt::ftparchive::packages::sha512 "<BOOL>";
+apt::ftparchive::dobyhash "<BOOL>";
+apt::ftparchive::readonlydb "<BOOL>";
+apt::ftparchive::nooverridemsg "<BOOL>";
+apt::ftparchive::alwaysstat "<BOOL>";
+apt::ftparchive::contents "<BOOL>";
+apt::ftparchive::contentsonly "<BOOL>";
+apt::ftparchive::longdescription "<BOOL>";
+apt::ftparchive::includearchitectureall "<BOOL>";
+apt::ftparchive::architecture "<STRING>";
+apt::ftparchive::db "<STRING>";
+apt::ftparchive::sourceoverride "<STRING>";
+
+apt-helper::cat-file::compress "<STRING>";
+
+acquire::cdrom::mount "<DIR>";
+acquire::maxreleasefilesize "<INT>";
+acquire::queuehost::limit "<INT>";
+acquire::max-pipeline-depth "<INT>";
+acquire::allowinsecurerepositories "<BOOL>";
+acquire::allowweakrepositories "<BOOL>";
+acquire::allowdowngradetoinsecurerepositories "<BOOL>";
+acquire::progress::diffpercent "<BOOL>";
+acquire::gzipindexes "<BOOL>";
+acquire::indextargets::randomized "<BOOL>";
+acquire::indextargets::deb::** "<UNDEFINED>";
+acquire::indextargets::deb-src::** "<UNDEFINED>";
+acquire::progress::ignore::showerrortext "<BOOL>";
+acquire::*::dl-limit "<INT>"; // catches file: and co which do not have these
+methods::mirror::problemreporting "<STRING>";
+acquire::http::proxyautodetect "<STRING>";
+acquire::http::proxy-auto-detect "<STRING>";
+acquire::http::proxy::* "<STRING>";
+acquire::https::proxyautodetect "<STRING>";
+acquire::https::proxy-auto-detect "<STRING>";
+acquire::https::proxy::* "<STRING>";
+
+// Options used by apt-ftparchive
+dir::archivedir "<DIR>";
+dir::cachedir "<DIR>";
+dir::overridedir "<DIR>";
+filemode "<INT>";
+longdescription "<BOOL>";
+external-links "<BOOL>";
+default::contentsage "<INT>";
+default::maxcontentschange "<INT>";
+default::filemode "<INT>";
+default::longdescription "<BOOL>";
+default::translation::compress "<STRING>";
+default::contents::compress "<STRING>";
+default::sources::compress "<STRING>";
+default::packages::compress "<STRING>";
+default::sources::extensions "<STRING>";
+default::packages::extensions "<STRING>";
+treedefault::directory "<STRING>";
+treedefault::srcdirectory "<STRING>";
+treedefault::packages "<STRING>";
+treedefault::translation "<STRING>";
+treedefault::internalprefix "<STRING>";
+treedefault::contents "<STRING>";
+treedefault::contents::header "<STRING>";
+treedefault::bincachedb "<STRING>";
+treedefault::srccachedb "<STRING>";
+treedefault::sources "<STRING>";
+treedefault::filelist "<STRING>";
+treedefault::sourcefilelist "<STRING>";
+sections "<STRING>";
+architectures "<STRING>";
+binoverride "<STRING>";
+internalprefix "<STRING>";
+bincachedb "<STRING>";
+directory "<STRING>";
+packages "<STRING>";
+translation "<STRING>";
+contents "<STRING>";
+filelist "<STRING>";
+extraoverride "<STRING>";
+pathprefix "<STRING>";
+srcdirectory "<STRING>";
+sources "<STRING>";
+sourcefilelist "<STRING>";
+srcextraoverride "<STRING>";
+srccachedb "<STRING>";
+srcoverride "<STRING>";
+contents::header "<STRING>";
+packages::compress "<STRING>";
+sources::compress "<STRING>";
+contents::compress "<STRING>";
+translation::compress "<STRING>";
+sources::extensions "<STRING>";
+packages::extensions "<STRING>";
+dir::filelistdir "<STRING>";
