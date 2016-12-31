@@ -675,8 +675,11 @@ exec '$(escape_shell "${GPG_EXE}")' --ignore-time-conflict --no-options --no-def
     # for advanced operations, we might really need a secret keyring after all
     if [ -n "$FORCED_SECRET_KEYRING" ] && [ -r "$FORCED_SECRET_KEYRING" ]; then
 	if ! aptkey_execute "$GPG" -v --batch --import "$FORCED_SECRET_KEYRING" >"${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
-	    cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
-	    false
+	    # already imported keys cause gpg1 to fail for some reason… ignore this error
+	    if ! grep -q 'already in secret keyring' "${GPGHOMEDIR}/gpgoutput.log"; then
+		cat >&2 "${GPGHOMEDIR}/gpgoutput.log"
+		false
+	    fi
 	fi
     else
        # and then, there are older versions of gpg which panic and implode
