@@ -1508,7 +1508,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 dpkg_recursive_install = Cache.VS().CmpVersion("1.18.5", dpkgpkg.CurrentVer().VerStr()) <= 0;
    }
    // no point in doing this dance for a handful of packages only
-   unsigned int const dpkg_recursive_install_min = _config->FindB("dpkg::install::recursive::minimum", 5);
+   unsigned int const dpkg_recursive_install_min = _config->FindI("dpkg::install::recursive::minimum", 5);
    // FIXME: workaround for dpkg bug, see our ./test-bug-740843-versioned-up-down-breaks test
    bool const dpkg_recursive_install_numbered = _config->FindB("dpkg::install::recursive::numbered", true);
 
