@@ -9,13 +9,15 @@
 
 #include <gtest/gtest.h>
 
-static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlags, bool const ParseRestrictionsList)
+static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlags, bool const ParseRestrictionsList, std::string Arch)
 {
    std::string Package;
    std::string Version;
    unsigned int Op = 5;
    unsigned int Null = 0;
-   _config->Set("APT::Architecture","amd64");
+   // The tests are made for amd64. Specify a different arch here to check if
+   // they still work.
+   _config->Set("APT::Architecture",Arch);
    _config->Set("APT::Build-Profiles","stage1");
 
    const char* Depends =
@@ -47,7 +49,7 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
    const char* Start = Depends;
    const char* End = Depends + strlen(Depends);
 
-   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
    if (StripMultiArch == true)
       EXPECT_EQ("debhelper", Package);
    else
@@ -55,7 +57,7 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
    EXPECT_EQ("5.0", Version);
    EXPECT_EQ(Null | pkgCache::Dep::GreaterEq, Op);
 
-   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
    if (StripMultiArch == true)
       EXPECT_EQ("libdb-dev", Package);
    else
@@ -63,7 +65,7 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
    EXPECT_EQ("", Version);
    EXPECT_EQ(Null | pkgCache::Dep::NoOp, Op);
 
-   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
    if (StripMultiArch == true)
       EXPECT_EQ("gettext", Package);
    else
@@ -71,7 +73,7 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
    EXPECT_EQ("0.12", Version);
    EXPECT_EQ(Null | pkgCache::Dep::LessEq, Op);
 
-   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
    if (StripMultiArch == true)
       EXPECT_EQ("libcurl4-gnutls-dev", Package);
    else
@@ -79,160 +81,160 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
    EXPECT_EQ("", Version);
    EXPECT_EQ(Null | pkgCache::Dep::Or, Op);
 
-   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
    EXPECT_EQ("libcurl3-gnutls-dev", Package);
    EXPECT_EQ("7.15.5", Version);
    EXPECT_EQ(Null | pkgCache::Dep::Greater, Op);
 
-   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
    EXPECT_EQ("docbook-xml", Package);
    EXPECT_EQ("", Version);
    EXPECT_EQ(Null | pkgCache::Dep::NoOp, Op);
 
-   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
    EXPECT_EQ("apt", Package);
    EXPECT_EQ("0.7.25", Version);
    EXPECT_EQ(Null | pkgCache::Dep::GreaterEq, Op);
 
    if (ParseArchFlags == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("", Package); // not-for-me
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseArchFlags == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("only-for-me", Package);
       EXPECT_EQ("", Version);
       EXPECT_EQ(Null | pkgCache::Dep::NoOp, Op);
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseArchFlags == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("any-for-me", Package);
       EXPECT_EQ("", Version);
       EXPECT_EQ(Null | pkgCache::Dep::NoOp, Op);
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseArchFlags == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("not-for-darwin", Package);
       EXPECT_EQ("", Version);
       EXPECT_EQ(Null | pkgCache::Dep::NoOp, Op);
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseArchFlags == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("cpu-for-me", Package);
       EXPECT_EQ("", Version);
       EXPECT_EQ(Null | pkgCache::Dep::NoOp, Op);
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseArchFlags == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("os-for-me", Package);
       EXPECT_EQ("", Version);
       EXPECT_EQ(Null | pkgCache::Dep::NoOp, Op);
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseArchFlags == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("libc-for-me", Package);
       EXPECT_EQ("", Version);
       EXPECT_EQ(Null | pkgCache::Dep::NoOp, Op);
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseArchFlags == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("", Package); // libc-not-for-me
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseArchFlags == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("", Package); // cpu-not-for-me
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseArchFlags == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("", Package); // os-not-for-me
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseRestrictionsList == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("", Package); // not-in-stage1
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseRestrictionsList == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("", Package); // not-stage1-and-not-nodoc
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseRestrictionsList == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("not-stage1-or-not-nodoc", Package);
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
    if (ParseRestrictionsList == true) {
-      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
       EXPECT_EQ("", Package); // unknown-profile
    } else {
-      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64"));
       Start = strstr(Start, ",");
       Start++;
    }
 
-   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+   Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
    if (StripMultiArch == true)
       EXPECT_EQ("overlord-dev", Package);
    else
@@ -240,7 +242,7 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
    EXPECT_EQ("7.15.3~", Version);
    EXPECT_EQ(Null | pkgCache::Dep::Equals | pkgCache::Dep::Or, Op);
 
-   debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+   debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList, "amd64");
    if (StripMultiArch == true)
       EXPECT_EQ("overlord-dev", Package);
    else
@@ -262,7 +264,8 @@ test:
       SCOPED_TRACE(std::string("StripMultiArch: ") + (StripMultiArch ? "true" : "false"));
       SCOPED_TRACE(std::string("ParseArchFlags: ") + (ParseArchFlags ? "true" : "false"));
       SCOPED_TRACE(std::string("ParseRestrictionsList: ") + (ParseRestrictionsList ? "true" : "false"));
-      parseDependency(StripMultiArch, ParseArchFlags, ParseRestrictionsList);
+      parseDependency(StripMultiArch, ParseArchFlags, ParseRestrictionsList, "kfreebsd-i386");
+      parseDependency(StripMultiArch, ParseArchFlags, ParseRestrictionsList, "amd64");
    }
    if (StripMultiArch == false) {
        if (ParseArchFlags == false)
