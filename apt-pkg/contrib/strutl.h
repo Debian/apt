@@ -44,6 +44,8 @@ namespace APT {
       std::string Strip(const std::string &s);
       bool Endswith(const std::string &s, const std::string &ending);
       bool Startswith(const std::string &s, const std::string &starting);
+      std::string Join(std::vector<std::string> list, const std::string &sep);
+
    }
 }
 

@@ -27,6 +27,7 @@
 #include <locale>
 #include <sstream>
 #include <string>
+#include <sstream>
 #include <vector>
 
 #include <stddef.h>
@@ -83,6 +84,17 @@ bool Startswith(const std::string &s, const std::string &start)
    if (start.size() > s.size())
       return false;
    return (s.compare(0, start.size(), start) == 0);
+}
+
+std::string Join(std::vector<std::string> list, const std::string &sep)
+{
+   std::ostringstream oss;
+   for (auto it = list.begin(); it != list.end(); it++)
+   {
+      if (it != list.begin()) oss << sep;
+      oss << *it;
+   }
+   return oss.str();
 }
 
 }
