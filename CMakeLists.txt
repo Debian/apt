@@ -172,6 +172,12 @@ set(PACKAGE ${PROJECT_NAME})
 set(PACKAGE_MAIL "APT Development Team <deity@lists.debian.org>")
 set(PACKAGE_VERSION "1.4~beta3")
 
+if (NOT DEFINED DPKG_DATADIR)
+  execute_process(COMMAND perl -MDpkg -e "print $Dpkg::DATADIR;"
+                  OUTPUT_VARIABLE DPKG_DATADIR_CMD OUTPUT_STRIP_TRAILING_WHITESPACE)
+  message(STATUS "Found dpkg data dir: ${DPKG_DATADIR_CMD}")
+  set(DPKG_DATADIR "${DPKG_DATADIR_CMD}" CACHE PATH "dpkg data directory")
+endif()
 if (NOT DEFINED COMMON_ARCH)
   execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
                   OUTPUT_VARIABLE COMMON_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)

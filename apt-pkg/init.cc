@@ -20,6 +20,11 @@
 
 #include <string.h>
 #include <cstdlib>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -30,6 +35,89 @@ const char *pkgVersion = PACKAGE_VERSION;
 const char *pkgLibVersion = Stringfy(APT_PKG_MAJOR) "."
                             Stringfy(APT_PKG_MINOR) "." 
                             Stringfy(APT_PKG_RELEASE);
+namespace APT {
+   APT_HIDDEN extern std::unordered_map<std::string, std::vector<std::string>> ArchToTupleMap;
+}
+
+// Splits by whitespace. There may be continous spans of whitespace - they
+// will be considered as one.
+static std::vector<std::string> split(std::string const & s)
+{
+   std::vector<std::string> vec;
+   std::istringstream iss(s);
+   iss.imbue(std::locale::classic());
+   for(std::string current_s; iss >> current_s; )
+      vec.push_back(current_s);
+   return vec;
+}
+
+
+// pkgInitArchTupleMap - Initialize the architecture tuple map				/*{{{*/
+// ---------------------------------------------------------------------
+/* This initializes */
+static bool pkgInitArchTupleMap()
+{
+   auto tuplepath = _config->FindFile("Dir::dpkg::tupletable", DPKG_DATADIR "/tupletable");
+   auto tripletpath = _config->FindFile("Dir::dpkg::triplettable", DPKG_DATADIR "/triplettable");
+   auto cpupath = _config->FindFile("Dir::dpkg::cputable", DPKG_DATADIR "/cputable");
+
+   // Load a list of CPUs
+   std::vector<std::string> cpus;
+   std::ifstream cputable(cpupath);
+   for (std::string cpuline; std::getline(cputable, cpuline); )
+   {
+      if (cpuline[0] == '#' || cpuline[0] == '\0')
+         continue;
+      auto cpurow = split(cpuline);
+      auto cpu = APT::String::Strip(cpurow.at(0));
+
+      cpus.push_back(cpu);
+   }
+   if (!cputable.eof())
+      return _error->Error("Error reading the CPU table");
+
+   // Load the architecture tuple
+   std::ifstream tupletable;
+   if (FileExists(tuplepath))
+      tupletable.open(tuplepath);
+   else if (FileExists(tripletpath))
+      tupletable.open(tripletpath);
+   else
+      return _error->Error("Cannot find dpkg tuplet or triplet table");
+
+   APT::ArchToTupleMap.clear();
+   for (std::string tupleline; std::getline(tupletable, tupleline); )
+   {
+      if (tupleline[0] == '#' || tupleline[0] == '\0')
+         continue;
+
+      std::vector<std::string> tuplerow = split(tupleline);
+
+      auto tuple = APT::String::Strip(tuplerow.at(0));
+      auto arch = APT::String::Strip(tuplerow.at(1));
+
+      if (tuple.find("<cpu>") == tuple.npos && arch.find("<cpu>") == arch.npos)
+      {
+         APT::ArchToTupleMap.insert({arch, VectorizeString(tuple, '-')});
+      }
+      else
+      {
+         for (auto && cpu : cpus)
+         {
+            auto mytuple = SubstVar(tuple, std::string("<cpu>"), cpu);
+            auto myarch = SubstVar(arch, std::string("<cpu>"), cpu);
+
+            APT::ArchToTupleMap.insert({myarch, VectorizeString(mytuple, '-')});
+         }
+      }
+   }
+   if (!tupletable.eof())
+      return _error->Error("Error reading the Tuple table");
+
+   return true;
+}
+									/*}}}*/
+
     
 // pkgInitConfig - Initialize the configuration class			/*{{{*/
 // ---------------------------------------------------------------------
@@ -193,6 +281,9 @@ bool pkgInitSystem(Configuration &Cnf,pkgSystem *&Sys)
       if (Sys == 0)
 	 return _error->Error(_("Unable to determine a suitable packaging system type"));
    }
+
+   if (pkgInitArchTupleMap() == false)
+      return false;
    
    return Sys->Initialize(Cnf);
 }

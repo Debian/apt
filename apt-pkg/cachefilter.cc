@@ -14,7 +14,9 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/macros.h>
 
+#include <algorithm>
 #include <string>
+#include <unordered_map>
 #include <string.h>
 #include <regex.h>
 #include <fnmatch.h>
@@ -22,6 +24,9 @@
 #include <apti18n.h>
 									/*}}}*/
 namespace APT {
+
+APT_HIDDEN std::unordered_map<std::string, std::vector<std::string>> ArchToTupleMap;
+
 namespace CacheFilter {
 APT_CONST Matcher::~Matcher() {}
 APT_CONST PackageMatcher::~PackageMatcher() {}
@@ -68,38 +73,72 @@ bool PackageNameMatchesFnmatch::operator() (pkgCache::GrpIterator const &Grp) {
    return fnmatch(Pattern.c_str(), Grp.Name(), FNM_CASEFOLD) == 0;
 }
 									/*}}}*/
-// Architecture matches <libc>-<kernel>-<cpu> specification		/*{{{*/
+// Architecture matches <abi>-<libc>-<kernel>-<cpu> specification	/*{{{*/
 //----------------------------------------------------------------------
-/* The complete architecture, consisting of <libc>-<kernel>-<cpu>. */
-static std::string CompleteArch(std::string const &arch, bool const isPattern) {
-   auto const found = arch.find('-');
-   if (found != std::string::npos)
+
+static std::vector<std::string> ArchToTuple(std::string arch) {
+   // Strip leading linux- from arch if present
+   // dpkg says this may disappear in the future
+   if (APT::String::Startswith(arch, std::string("linux-")))
+      arch = arch.substr(6);
+
+   auto it = ArchToTupleMap.find(arch);
+   if (it != ArchToTupleMap.end())
    {
-      // ensure that only -any- is replaced and not something like company-
-      std::string complete = std::string("-").append(arch).append("-");
-      size_t pos = 0;
-      char const * const search = "-any-";
-      auto const search_len = strlen(search) - 2;
-      while((pos = complete.find(search, pos)) != std::string::npos) {
-	 complete.replace(pos + 1, search_len, "*");
-	 pos += 2;
-      }
-      complete = complete.substr(1, complete.size()-2);
-      if (arch.find('-', found+1) != std::string::npos)
-	 // <libc>-<kernel>-<cpu> format
-	 return complete;
-      // <kernel>-<cpu> format
-      else if (isPattern)
-	 return "*-" + complete;
-      else
-	 return "gnu-" + complete;
+      std::vector<std::string> result = it->second;
+      // Hack in support for triplets
+      if (result.size() == 3)
+	 result.emplace(result.begin(), "base");
+      return result;
+   } else
+   {
+      return {};
    }
-   else if (arch == "any")
-      return "*-*-*";
-   else if (isPattern)
-      return "*-linux-" + arch;
-   else
-      return "gnu-linux-" + arch;
+}
+
+static std::vector<std::string> PatternToTuple(std::string const &arch) {
+   std::vector<std::string> tuple = VectorizeString(arch, '-');
+   if (std::find(tuple.begin(), tuple.end(), std::string("any")) != tuple.end() ||
+       std::find(arch.begin(), arch.end(), '*') != arch.end()) {
+      while (tuple.size() < 4) {
+	 tuple.emplace(tuple.begin(), "any");
+      }
+      return tuple;
+   } else
+      return ArchToTuple(arch);
+}
+
+/* The complete architecture, consisting of <abi>-<libc>-<kernel>-<cpu>. */
+static std::string CompleteArch(std::string const &arch, bool const isPattern) {
+   auto tuple = isPattern ? PatternToTuple(arch) : ArchToTuple(arch);
+
+   // Bah, the commandline will try and pass us stuff like amd64- -- we need
+   // that not to match an architecture, but the code below would turn it into
+   // a valid tuple. Let's just use an invalid tuple here.
+   if (APT::String::Endswith(arch, "-") || APT::String::Startswith(arch, "-"))
+      return "invalid-invalid-invalid-invalid";
+
+   if (tuple.empty()) {
+      // Fallback for unknown architectures
+      // Patterns never fail if they contain wildcards, so by this point, arch
+      // has no wildcards.
+      tuple = VectorizeString(arch, '-');
+      switch (tuple.size()) {
+	 case 1:
+	    tuple.emplace(tuple.begin(), "linux");
+	    /* fall through */
+	 case 2:
+	    tuple.emplace(tuple.begin(), "gnu");
+	    /* fall through */
+	 case 3:
+	    tuple.emplace(tuple.begin(), "base");
+	    /* fall through */
+	    break;
+      }
+   }
+
+   std::replace(tuple.begin(), tuple.end(), std::string("any"), std::string("*"));
+   return APT::String::Join(tuple, "-");
 }
 PackageArchitectureMatchesSpecification::PackageArchitectureMatchesSpecification(std::string const &pattern, bool const pisPattern) :
 					literal(pattern), complete(CompleteArch(pattern, pisPattern)), isPattern(pisPattern) {
