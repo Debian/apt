@@ -1,5 +1,7 @@
 include_directories(${BERKELEY_DB_INCLUDE_DIRS})
-# Create the executable tasks
+# Definition of the C++ files used to build the program - note that this
+# is expanded at CMake time, so you have to rerun cmake if you add or remove
+# a file (you can just run cmake . in the build directory)
 file(GLOB_RECURSE source "*.cc")
 add_executable(apt-ftparchive ${source})
 

@@ -22,6 +22,9 @@ if(NOT GTEST_FOUND AND EXISTS ${GTEST_ROOT})
 endif()
 
 if(GTEST_FOUND)
+   # Definition of the C++ files used to build the test binary - note that this
+   # is expanded at CMake time, so you have to rerun cmake if you add or remove
+   # a file (you can just run cmake . in the build directory)
    file(GLOB files gtest_runner.cc *-helpers.cc *_test.cc)
    add_executable(libapt_test ${files})
    target_include_directories(libapt_test PRIVATE ${GTEST_INCLUDE_DIRS})

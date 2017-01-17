@@ -29,7 +29,9 @@ execute_process(COMMAND grep "^#define APT_PKG_RELEASE"
 message(STATUS "Building libapt-pkg ${MAJOR} (release ${MINOR})")
 set(APT_PKG_MAJOR ${MAJOR} PARENT_SCOPE) # exporting for methods/CMakeLists.txt
 
-# Definition of the C++ files used to build the library
+# Definition of the C++ files used to build the library - note that this
+# is expanded at CMake time, so you have to rerun cmake if you add or remove
+# a file (you can just run cmake . in the build directory)
 file(GLOB_RECURSE library "*.cc"  "${CMAKE_CURRENT_BINARY_DIR}/tagfile-keys.cc")
 file(GLOB_RECURSE headers "*.h")
 
