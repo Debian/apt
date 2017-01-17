@@ -2,6 +2,9 @@ language: cpp
 cache: ccache
 sudo: required
 dist: trusty
+env:
+ - TEST_SUITE=user
+ - TEST_SUITE=root
 before_install:
  - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ wily main universe' -y
  - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial main' -y
@@ -19,11 +22,11 @@ before_script:
 script:
  - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
  - DESTDIR=$PWD/rootdir chronic ninja -C build install
- - ./test/integration/run-tests -qq
+ - test "$TEST_SUITE" != "user"  || ./test/integration/run-tests -qq
  - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
  - sudo chmod  go+x /home/travis
  - sudo chmod -R go+rwX /home/travis/build
- - sudo ./test/integration/run-tests -qq
+ - test "$TEST_SUITE" != "root" || sudo ./test/integration/run-tests -qq
 after_script:
  - cd build
  - gcov -r $(find -name '*.gcno')
