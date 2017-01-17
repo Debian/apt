@@ -36,6 +36,8 @@ find_package(Threads)
 find_package(LFS REQUIRED)
 find_package(Iconv REQUIRED)
 
+find_package(Perl REQUIRED)
+
 if(USE_NLS)
   find_package(Intl REQUIRED)
   link_libraries(${Intl_LIBRARIES})
@@ -173,7 +175,7 @@ set(PACKAGE_MAIL "APT Development Team <deity@lists.debian.org>")
 set(PACKAGE_VERSION "1.4~beta3")
 
 if (NOT DEFINED DPKG_DATADIR)
-  execute_process(COMMAND perl -MDpkg -e "print $Dpkg::DATADIR;"
+  execute_process(COMMAND ${PERL_EXECUTABLE} -MDpkg -e "print $Dpkg::DATADIR;"
                   OUTPUT_VARIABLE DPKG_DATADIR_CMD OUTPUT_STRIP_TRAILING_WHITESPACE)
   message(STATUS "Found dpkg data dir: ${DPKG_DATADIR_CMD}")
   set(DPKG_DATADIR "${DPKG_DATADIR_CMD}" CACHE PATH "dpkg data directory")
