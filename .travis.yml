@@ -1,6 +1,9 @@
 language: cpp
 sudo: required
 dist: trusty
+env:
+ - TEST_SUITE=user
+ - TEST_SUITE=root
 before_install:
  - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ wily main universe' -y
  - |
@@ -13,6 +16,6 @@ install:
  - make
 script:
  - make test
- - ./test/integration/run-tests -q
+ - test "$TEST_SUITE" != "user"  || ./test/integration/run-tests -q
  - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
- - sudo ./test/integration/run-tests -q
+ - test "$TEST_SUITE" != "root"  || sudo ./test/integration/run-tests -q
