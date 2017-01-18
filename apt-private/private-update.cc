@@ -71,13 +71,13 @@ bool DoUpdate(CommandLine &CmdL)
       ListUpdate(Stat, *List);
    }
 
+   if (_config->FindB("pkgCacheFile::Generate", true) == false)
+      return true;
+
    // Rebuild the cache.
-   if (_config->FindB("pkgCacheFile::Generate", true) == true)
-   {
-      pkgCacheFile::RemoveCaches();
-      if (Cache.BuildCaches() == false)
-	 return false;
-   }
+   pkgCacheFile::RemoveCaches();
+   if (Cache.BuildCaches() == false)
+      return false;
 
    // show basic stats (if the user whishes)
    if (_config->FindB("APT::Cmd::Show-Update-Stats", false) == true)
