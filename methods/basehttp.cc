@@ -175,7 +175,11 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
       return true;
    }
 
-   if (stringcasecmp(Tag,"Content-Range:") == 0)
+   // The Content-Range field only has a meaning in HTTP/1.1 for the
+   // 206 (Partial Content) and 416 (Range Not Satisfiable) responses
+   // according to RFC7233 "Range Requests", §4.2, so only consider it
+   // for such responses.
+   if ((Result == 416 || Result == 206) && stringcasecmp(Tag,"Content-Range:") == 0)
    {
       HaveContent = true;
 
