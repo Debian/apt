@@ -1363,24 +1363,27 @@ public:
    ScopedErrorRevert() { _error->PushToStack(); }
    ~ScopedErrorRevert() { _error->RevertToStack(); }
 };
-static bool CheckValidity(const string &CacheFile,
+static bool CheckValidity(FileFd &CacheFile, std::string const &CacheFileName,
                           pkgSourceList &List,
                           FileIterator const Start,
                           FileIterator const End,
                           MMap **OutMap = 0,
 			  pkgCache **OutCache = 0)
 {
+   if (CacheFileName.empty())
+      return false;
    ScopedErrorRevert ser;
+
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
    // No file, certainly invalid
-   if (CacheFile.empty() == true || FileExists(CacheFile) == false)
+   if (CacheFile.Open(CacheFileName, FileFd::ReadOnly, FileFd::None) == false)
    {
       if (Debug == true)
-	 std::clog << "CacheFile " << CacheFile << " doesn't exist" << std::endl;
+	 std::clog << "CacheFile " << CacheFileName << " doesn't exist" << std::endl;
       return false;
    }
 
-   if (List.GetLastModifiedTime() > GetModificationTime(CacheFile))
+   if (List.GetLastModifiedTime() > CacheFile.ModificationTime())
    {
       if (Debug == true)
 	 std::clog << "sources.list is newer than the cache" << std::endl;
@@ -1388,8 +1391,7 @@ static bool CheckValidity(const string &CacheFile,
    }
 
    // Map it
-   FileFd CacheF(CacheFile,FileFd::ReadOnly);
-   std::unique_ptr<MMap> Map(new MMap(CacheF,0));
+   std::unique_ptr<MMap> Map(new MMap(CacheFile,0));
    if (unlikely(Map->validData()) == false)
       return false;
    std::unique_ptr<pkgCache> CacheP(new pkgCache(Map.get()));
@@ -1397,7 +1399,7 @@ static bool CheckValidity(const string &CacheFile,
    if (_error->PendingError() || Map->Size() == 0)
    {
       if (Debug == true)
-	 std::clog << "Errors are pending or Map is empty() for " << CacheFile << std::endl;
+	 std::clog << "Errors are pending or Map is empty() for " << CacheFileName << std::endl;
       return false;
    }
 
@@ -1623,13 +1625,12 @@ static bool writeBackMMapToFile(pkgCacheGenerator * const Gen, DynamicMMap * con
    return true;
 }
 static bool loadBackMMapFromFile(std::unique_ptr<pkgCacheGenerator> &Gen,
-      std::unique_ptr<DynamicMMap> &Map, OpProgress * const Progress, std::string const &FileName)
+      std::unique_ptr<DynamicMMap> &Map, OpProgress * const Progress, FileFd &CacheF)
 {
    Map.reset(CreateDynamicMMap(NULL, 0));
    if (unlikely(Map->validData()) == false)
       return false;
-   FileFd CacheF(FileName, FileFd::ReadOnly);
-   if (CacheF.IsOpen() == false || CacheF.Failed())
+   if (CacheF.IsOpen() == false || CacheF.Seek(0) == false || CacheF.Failed())
       return false;
    _error->PushToStack();
    map_pointer_t const alloc = Map->RawAllocate(CacheF.Size());
@@ -1661,20 +1662,20 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       return false;
 
    // Decide if we can write to the files..
-   string const CacheFile = _config->FindFile("Dir::Cache::pkgcache");
-   string const SrcCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
+   string const CacheFileName = _config->FindFile("Dir::Cache::pkgcache");
+   string const SrcCacheFileName = _config->FindFile("Dir::Cache::srcpkgcache");
 
    // ensure the cache directory exists
-   if (CacheFile.empty() == false || SrcCacheFile.empty() == false)
+   if (CacheFileName.empty() == false || SrcCacheFileName.empty() == false)
    {
       string dir = _config->FindDir("Dir::Cache");
       size_t const len = dir.size();
       if (len > 5 && dir.find("/apt/", len - 6, 5) == len - 5)
 	 dir = dir.substr(0, len - 5);
-      if (CacheFile.empty() == false)
-	 CreateDirectory(dir, flNotFile(CacheFile));
-      if (SrcCacheFile.empty() == false)
-	 CreateDirectory(dir, flNotFile(SrcCacheFile));
+      if (CacheFileName.empty() == false)
+	 CreateDirectory(dir, flNotFile(CacheFileName));
+      if (SrcCacheFileName.empty() == false)
+	 CreateDirectory(dir, flNotFile(SrcCacheFileName));
    }
 
    if (Progress != NULL)
@@ -1683,8 +1684,8 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    bool pkgcache_fine = false;
    bool srcpkgcache_fine = false;
    bool volatile_fine = List.GetVolatileFiles().empty();
-
-   if (CheckValidity(CacheFile, List, Files.begin(), Files.end(), volatile_fine ? OutMap : NULL,
+   FileFd CacheFile;
+   if (CheckValidity(CacheFile, CacheFileName, List, Files.begin(), Files.end(), volatile_fine ? OutMap : NULL,
 		     volatile_fine ? OutCache : NULL) == true)
    {
       if (Debug == true)
@@ -1692,9 +1693,11 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       pkgcache_fine = true;
       srcpkgcache_fine = true;
    }
+
+   FileFd SrcCacheFile;
    if (pkgcache_fine == false)
    {
-      if (CheckValidity(SrcCacheFile, List, Files.end(), Files.end()) == true)
+      if (CheckValidity(SrcCacheFile, SrcCacheFileName, List, Files.end(), Files.end()) == true)
       {
 	 if (Debug == true)
 	    std::clog << "srcpkgcache.bin is valid - it can be reused" << std::endl;
@@ -1712,10 +1715,10 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    bool Writeable = false;
    if (srcpkgcache_fine == false || pkgcache_fine == false)
    {
-      if (CacheFile.empty() == false)
-	 Writeable = access(flNotFile(CacheFile).c_str(),W_OK) == 0;
-      else if (SrcCacheFile.empty() == false)
-	 Writeable = access(flNotFile(SrcCacheFile).c_str(),W_OK) == 0;
+      if (CacheFileName.empty() == false)
+	 Writeable = access(flNotFile(CacheFileName).c_str(),W_OK) == 0;
+      else if (SrcCacheFileName.empty() == false)
+	 Writeable = access(flNotFile(SrcCacheFileName).c_str(),W_OK) == 0;
 
       if (Debug == true)
 	 std::clog << "Do we have write-access to the cache files? " << (Writeable ? "YES" : "NO") << std::endl;
@@ -1754,8 +1757,8 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 	       Files.end(),Files.end()) == false)
 	 return false;
 
-      if (Writeable == true && SrcCacheFile.empty() == false)
-	 if (writeBackMMapToFile(Gen.get(), Map.get(), SrcCacheFile) == false)
+      if (Writeable == true && SrcCacheFileName.empty() == false)
+	 if (writeBackMMapToFile(Gen.get(), Map.get(), SrcCacheFileName) == false)
 	    return false;
    }
 
@@ -1767,8 +1770,8 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 	       Files.begin(), Files.end()) == false)
 	 return false;
 
-      if (Writeable == true && CacheFile.empty() == false)
-	 if (writeBackMMapToFile(Gen.get(), Map.get(), CacheFile) == false)
+      if (Writeable == true && CacheFileName.empty() == false)
+	 if (writeBackMMapToFile(Gen.get(), Map.get(), CacheFileName) == false)
 	    return false;
    }
 
