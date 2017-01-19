@@ -15,6 +15,7 @@
 
 #include <apt-private/private-moo.h>
 #include <apt-private/private-output.h>
+#include <apt-private/private-utils.h>
 
 #include <stddef.h>
 #include <string.h>
@@ -26,8 +27,8 @@
 #include <apti18n.h>
 									/*}}}*/
 
-static std::string getMooLine() {					/*{{{*/
-   time_t const timenow = time(NULL);
+static std::string getMooLine(time_t const timenow)			/*{{{*/
+{
    struct tm special;
    localtime_r(&timenow, &special);
    enum { NORMAL, PACKAGEMANAGER, APPRECIATION, AGITATION, AIRBORN } line;
@@ -64,17 +65,18 @@ static std::string getMooLine() {					/*{{{*/
    return out.str();
 }
 									/*}}}*/
-static bool printMooLine() {						/*{{{*/
-   std::cerr << getMooLine() << std::endl;
+static bool printMooLine(time_t const timenow)				/*{{{*/
+{
+   std::cerr << getMooLine(timenow);
    return true;
 }
 									/*}}}*/
-bool DoMoo1(CommandLine &)						/*{{{*/
+static bool DoMoo1(time_t const timenow)				/*{{{*/
 {
    // our trustworthy super cow since 2001
    if (_config->FindI("quiet") >= 2)
-      return printMooLine();
-   std::string const moo = getMooLine();
+      return printMooLine(timenow);
+   std::string const moo = getMooLine(timenow);
    size_t const depth = moo.length()/4;
    c1out <<
       OutputInDepth(depth, " ") << "         (__) \n" <<
@@ -87,12 +89,12 @@ bool DoMoo1(CommandLine &)						/*{{{*/
    return true;
 }
 									/*}}}*/
-bool DoMoo2(CommandLine &)						/*{{{*/
+static bool DoMoo2(time_t const timenow)				/*{{{*/
 {
    // by Fernando Ribeiro in lp:56125
    if (_config->FindI("quiet") >= 2)
-      return printMooLine();
-   std::string const moo = getMooLine();
+      return printMooLine(timenow);
+   std::string const moo = getMooLine(timenow);
    size_t const depth = moo.length()/4;
    if (_config->FindB("APT::Moo::Color", false) == false)
       c1out <<
@@ -121,12 +123,12 @@ bool DoMoo2(CommandLine &)						/*{{{*/
    return true;
 }
 									/*}}}*/
-bool DoMoo3(CommandLine &)						/*{{{*/
+static bool DoMoo3(time_t const timenow)				/*{{{*/
 {
    // by Robert Millan in deb:134156
    if (_config->FindI("quiet") >= 2)
-      return printMooLine();
-   std::string const moo = getMooLine();
+      return printMooLine(timenow);
+   std::string const moo = getMooLine(timenow);
    size_t const depth = moo.length()/16;
    c1out <<
       OutputInDepth(depth, " ") << "                   \\_/ \n" <<
@@ -138,7 +140,7 @@ bool DoMoo3(CommandLine &)						/*{{{*/
    return true;
 }
 									/*}}}*/
-bool DoMooApril(CommandLine &)						/*{{{*/
+static bool DoMooApril()						/*{{{*/
 {
    // by Christopher Allan Webber and proposed by Paul Tagliamonte
    // in a "Community outreach": https://lists.debian.org/debian-devel/2013/04/msg00045.html
@@ -163,11 +165,12 @@ bool DoMooApril(CommandLine &)						/*{{{*/
 									/*}}}*/
 bool DoMoo(CommandLine &CmdL)						/*{{{*/
 {
-   time_t const timenow = time(NULL);
+   time_t const timenow = GetSecondsSinceEpoch();
+
    struct tm april;
    localtime_r(&timenow, &april);
    if (april.tm_mday == 1 && april.tm_mon == 3)
-      return DoMooApril(CmdL);
+      return DoMooApril();
 
    signed short SuperCow = 1;
    if (CmdL.FileSize() != 0)
@@ -185,11 +188,11 @@ bool DoMoo(CommandLine &CmdL)						/*{{{*/
    }
 
    switch(SuperCow) {
-      case 1: return DoMoo1(CmdL);
-      case 2: return DoMoo2(CmdL);
-      case 3: return DoMoo3(CmdL);
-      case 4: return DoMooApril(CmdL);
-      default: return DoMoo1(CmdL);
+      case 1: return DoMoo1(timenow);
+      case 2: return DoMoo2(timenow);
+      case 3: return DoMoo3(timenow);
+      case 4: return DoMooApril();
+      default: return DoMoo1(timenow);
    }
 
    return true;

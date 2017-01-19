@@ -63,3 +63,25 @@ testsuccess aptget moo moo moo
 testsuccess aptget moo moo moo -q=2
 testsuccess aptget moo moo moo moo
 testsuccess aptget moo moo moo moo -q=2
+
+export SOURCE_DATE_EPOCH=moo
+testwarningmsg 'W: Environment variable SOURCE_DATE_EPOCH was ignored as it has an invalid value: "moo"' apt moo
+testmoo() {
+	export SOURCE_DATE_EPOCH="$(date -d "$1" +'%s')"
+	testsuccess aptget moo
+	cp rootdir/tmp/testsuccess.output moo.output
+	testsuccess grep "$2" moo.output
+	testsuccessequal "$2" apt moo -qqq
+	unset SOURCE_DATE_EPOCH
+}
+testmoo '@0' 'Have you mooed today?'
+testmoo '0-12-25' 'Happy package management day!'
+testmoo '1930-02-18' "It's a Bird ... It's a Plane ... It's Super Cow!"
+testmoo '1966-11-07' 'Whoever needs milk, bows to the animal.'
+testmoo '1988-03-29' 'Have you mooed today?'
+testmoo '1993-08-16' 'Three moos for Debian!'
+testmoo '1998-04-01' 'Have you smashed some milk today?'
+testmoo '@1484822790' 'Have you mooed today?'
+testmoo '@1484822791' 'Have you mooed today?'
+testmoo '@1484822792' 'Have you mooed today?'
+testmoo '@1484822793' 'Have you mooed today?'

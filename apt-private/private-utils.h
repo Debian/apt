@@ -5,5 +5,6 @@
 
 bool DisplayFileInPager(std::string const &filename);
 bool EditFileInSensibleEditor(std::string const &filename);
+time_t GetSecondsSinceEpoch();
 
 #endif
