@@ -76,14 +76,14 @@ bool DoUpdate(CommandLine &CmdL)
 
    // Rebuild the cache.
    pkgCacheFile::RemoveCaches();
-   if (Cache.BuildCaches() == false)
+   if (Cache.BuildCaches(false) == false)
       return false;
 
    // show basic stats (if the user whishes)
    if (_config->FindB("APT::Cmd::Show-Update-Stats", false) == true)
    {
       int upgradable = 0;
-      if (Cache.Open() == false)
+      if (Cache.Open(false) == false)
          return false;
       for (pkgCache::PkgIterator I = Cache->PkgBegin(); I.end() != true; ++I)
       {
