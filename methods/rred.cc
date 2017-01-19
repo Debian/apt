@@ -662,12 +662,14 @@ class RredMethod : public aptMethod {
 	 FileFd inp, out;
 	 if (inp.Open(Path, FileFd::ReadOnly, FileFd::Extension) == false)
 	 {
-	    std::cerr << "FAILED to open inp " << Path << std::endl;
+	    if (Debug == true)
+	       std::clog << "FAILED to open inp " << Path << std::endl;
 	    return _error->Error("Failed to open inp %s", Path.c_str());
 	 }
 	 if (out.Open(Itm->DestFile, FileFd::WriteOnly | FileFd::Create | FileFd::Empty | FileFd::BufferedWrite, FileFd::Extension) == false)
 	 {
-	    std::cerr << "FAILED to open out " << Itm->DestFile << std::endl;
+	    if (Debug == true)
+	       std::clog << "FAILED to open out " << Itm->DestFile << std::endl;
 	    return _error->Error("Failed to open out %s", Itm->DestFile.c_str());
 	 }
 
@@ -686,7 +688,8 @@ class RredMethod : public aptMethod {
 	 inp.Close();
 
 	 if (_error->PendingError() == true) {
-	    std::cerr << "FAILED to read or write files" << std::endl;
+	    if (Debug == true)
+	       std::clog << "FAILED to read or write files" << std::endl;
 	    return false;
 	 }
 
