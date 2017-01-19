@@ -117,6 +117,12 @@ static bool SetupAPTPartialDirectory(std::string const &grand, std::string const
    if (chmod(partial.c_str(), 0700) != 0)
       _error->WarningE("SetupAPTPartialDirectory", "chmod 0700 of directory %s failed", partial.c_str());
 
+   _error->PushToStack();
+   // remove 'old' FAILED files to stop us from collecting them for no reason
+   for (auto const &Failed: GetListOfFilesInDir(partial, "FAILED", false, false))
+      RemoveFile("SetupAPTPartialDirectory", Failed);
+   _error->RevertToStack();
+
    return true;
 }
 bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
