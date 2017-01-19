@@ -23,6 +23,7 @@ test_inreleasetoobig() {
 	rm -f update.output
 	# ensure the failed InRelease file got renamed
 	testsuccess ls rootdir/var/lib/apt/lists/partial/*InRelease.FAILED
+	testfailure test -e rootdir/var/lib/apt/lists/partial/Old.FAILED
 }
 
 test_packagestoobig() {
@@ -38,6 +39,8 @@ test_packagestoobig() {
 	NEW_SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
 	testfailuremsg "E: Failed to fetch ${1}/dists/unstable/main/binary-i386/Packages  Writing more data than expected ($NEW_SIZE > $SIZE)
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::Transaction=0
+	testsuccess ls rootdir/var/lib/apt/lists/partial/*Packages*.FAILED
+	testfailure test -e rootdir/var/lib/apt/lists/partial/Old.FAILED
 }
 
 methodtest() {
@@ -49,6 +52,7 @@ methodtest() {
 	rm -rf rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists.good
 	# normal update works fine
 	testsuccess aptget update
+	touch rootdir/var/lib/apt/lists/partial/Old.FAILED
 	mv rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists.good
 
 	# starting fresh works
