@@ -136,16 +136,19 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
        _error->PendingError() == true)
       return false;
 
-   if (_config->FindB("APT::Get::Fix-Missing",false) == true &&
-	 _config->FindB("APT::Get::Download",true) == false)
+   if (_config->FindB("APT::Get::Download",true) == false)
    {
       bool Missing = false;
       RemoveDownloadNeedingItemsFromFetcher(Fetcher, Missing);
       if (Missing)
-	 PM->FixMissing();
+      {
+	 if (_config->FindB("APT::Get::Fix-Missing",false))
+	    PM->FixMissing();
+	 else
+	    return _error->Error(_("Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?"));
+      }
       Fetcher.Shutdown();
-      if (PM->GetArchives(&Fetcher,List,&Recs) == false ||
-	    _error->PendingError() == true)
+      if (_error->PendingError() == true)
 	 return false;
    }
 

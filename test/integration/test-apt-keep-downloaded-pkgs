@@ -15,13 +15,24 @@ buildsimplenativepackage 'pkg4' 'all' '1.0' 'stable'
 # local (file) installs
 setupaptarchive
 
+# a file:// "download" is not a real download and hence passes
+testsuccess aptget install pkg1 --no-download --download-only -y
+testfailure test -f rootdir/var/cache/apt/archives/pkg1_1.0_all.deb
+testsuccess test -f aptarchive/pool/pkg1_1.0_all.deb
+
 # ensure that install from local sources does not remove debs
 testsuccess aptget install pkg1 -o APT::Keep-Downloaded-Packages=false
 testsuccess test -f aptarchive/pool/pkg1_1.0_all.deb
+testfailure test -f rootdir/var/cache/apt/archives/pkg1_1.0_all.deb
 
 # now switch to http and downloading debs
 changetowebserver
 testsuccess aptget update
+
+# see if no-download really doesn't download the package
+testfailuremsg 'E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?' aptget install pkg2 --no-download -y
+testsuccess test -f aptarchive/pool/pkg2_1.0_all.deb
+testfailure test -f rootdir/var/cache/apt/archives/pkg2_1.0_all.deb
 
 # ensure that the downloaded pkg is kept with "keep=true"
 testsuccess aptget install pkg2 -o APT::Keep-Downloaded-Packages=true
