@@ -361,7 +361,7 @@ bool DoAutoClean(CommandLine &)
    }
 
    CacheFile Cache;
-   if (Cache.Open() == false)
+   if (Cache.Open(false) == false)
       return false;
 
    LogCleaner Cleaner;
