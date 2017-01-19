@@ -2,8 +2,8 @@
 // Description								/*{{{*/
 /* ######################################################################
 
-   Upgrade - Upgrade/DistUpgrade releated code
-   
+   Upgrade - Upgrade/DistUpgrade related code
+
    ##################################################################### */
 									/*}}}*/
 

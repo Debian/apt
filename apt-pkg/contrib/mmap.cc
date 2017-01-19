@@ -156,9 +156,9 @@ bool MMap::Close(bool DoSync)
    return true;
 }
 									/*}}}*/
-// MMap::Sync - Syncronize the map with the disk			/*{{{*/
+// MMap::Sync - Synchronize the map with the disk			/*{{{*/
 // ---------------------------------------------------------------------
-/* This is done in syncronous mode - the docs indicate that this will 
+/* This is done in synchronous mode - the docs indicate that this will 
    not return till all IO is complete */
 bool MMap::Sync()
 {
@@ -183,7 +183,7 @@ bool MMap::Sync()
    return true;
 }
 									/*}}}*/
-// MMap::Sync - Syncronize a section of the file to disk		/*{{{*/
+// MMap::Sync - Synchronize a section of the file to disk		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool MMap::Sync(unsigned long Start,unsigned long Stop)

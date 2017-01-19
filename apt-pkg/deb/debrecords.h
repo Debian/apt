@@ -5,8 +5,8 @@
    
    Debian Package Records - Parser for debian package records
    
-   This provides display-type parsing for the Packages file. This is 
-   different than the the list parser which provides cache generation
+   This provides display-type parsing for the Packages file. This is
+   different than the list parser which provides cache generation
    services. There should be no overlap between these two.
    
    ##################################################################### */

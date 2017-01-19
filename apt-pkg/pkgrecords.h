@@ -10,7 +10,7 @@
    package files. This is different than the generators parser in that
    it is used to access information not generate information. No 
    information touched by the generator should be parable from here as
-   it can always be retreived directly from the cache.
+   it can always be retrieved directly from the cache.
    
    ##################################################################### */
 									/*}}}*/

@@ -306,7 +306,7 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 									/*}}}*/
 // DoSource - Fetch a source archive					/*{{{*/
 // ---------------------------------------------------------------------
-/* Fetch souce packages */
+/* Fetch source packages */
 struct DscFile
 {
    std::string Package;

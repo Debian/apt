@@ -304,14 +304,14 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
 // ShowBroken - Debugging aide						/*{{{*/
 // ---------------------------------------------------------------------
 /* This prints out the names of all the packages that are broken along
-   with the name of each each broken dependency and a quite version 
+   with the name of each broken dependency and a quite version
    description.
-   
+
    The output looks like:
  The following packages have unmet dependencies:
      exim: Depends: libc6 (>= 2.1.94) but 2.1.3-10 is to be installed
            Depends: libldap2 (>= 2.0.2-2) but it is not going to be installed
-           Depends: libsasl7 but it is not going to be installed   
+           Depends: libsasl7 but it is not going to be installed
  */
 static void ShowBrokenPackage(ostream &out, pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg, bool const Now)
 {

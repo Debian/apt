@@ -8,7 +8,7 @@
    standard 'Version 0' engine is included inside the DepCache which is
    it's historical location.
    
-   The V4 engine allows the user to completly control all aspects of
+   The V4 engine allows the user to completely control all aspects of
    version selection. There are three primary means to choose a version
     * Selection by version match
     * Selection by Release file match

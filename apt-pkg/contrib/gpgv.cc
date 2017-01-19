@@ -431,7 +431,7 @@ bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &Me
       free(message);
       return _error->Errno("mkstemp", "Couldn't create temporary file to work with %s", ClearSignedFileName.c_str());
    }
-   // we have the fd, thats enough for us
+   // we have the fd, that's enough for us
    unlink(message);
    free(message);
 

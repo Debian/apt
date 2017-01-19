@@ -135,7 +135,7 @@ bool pkgPackageManager::FixMissing()
    return Resolve.ResolveByKeep() == true && Cache.BrokenCount() == 0;   
 }
 									/*}}}*/
-// PM::ImmediateAdd - Add the immediate flag recursivly			/*{{{*/
+// PM::ImmediateAdd - Add the immediate flag recursively		/*{{{*/
 // ---------------------------------------------------------------------
 /* This adds the immediate flag to the pkg and recursively to the
    dependencies
@@ -806,7 +806,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		     break;
 		  }
 
-		  // check if it needs unpack or if if configure is enough
+		  // check if it needs unpack or if configure is enough
 		  if (List->IsFlag(DepPkg,pkgOrderList::UnPacked) == false)
 		  {
 		     // two packages pre-depending on each other can't be handled sanely
@@ -1015,7 +1015,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
       return false;
 
    if (Immediate == true) {
-      // Perform immedate configuration of the package. 
+      // Perform immediate configuration of the package. 
          if (SmartConfigure(Pkg, Depth + 1) == false)
             _error->Error(_("Could not perform immediate configuration on '%s'. "
                "Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.FullName().c_str(),2);

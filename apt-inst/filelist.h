@@ -12,7 +12,7 @@
    The storage content of the class is maintained in a memory map and is
    written directly to the file system. Performance is traded against 
    space to give something that performs well and remains small.
-   The average per file usage is 32 bytes which yeilds about a meg every
+   The average per file usage is 32 bytes which yields about a meg every
    36k files. Directory paths are collected into a binary tree and stored
    only once, this offsets the cost of the hash nodes enough to keep 
    memory usage slightly less than the sum of the filenames.

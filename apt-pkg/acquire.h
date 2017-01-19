@@ -10,11 +10,11 @@
    
    Each file to download is represented by an Acquire::Item class subclassed
    into a specialization. The Item class can add itself to several URI
-   acquire queues each prioritized by the download scheduler. When the 
-   system is run the proper URI handlers are spawned and the the acquire 
+   acquire queues each prioritized by the download scheduler. When the
+   system is run the proper URI handlers are spawned and the acquire
    queues are fed into the handlers by the schedular until the queues are
    empty. This allows for an Item to be downloaded from an alternate source
-   if the first try turns out to fail. It also alows concurrent downloading
+   if the first try turns out to fail. It also allows concurrent downloading
    of multiple items from multiple sources as well as dynamic balancing
    of load between the sources.
    
@@ -241,7 +241,7 @@ class pkgAcquire
     */
    bool RunFdsSane(fd_set *RSet,fd_set *WSet);
 
-   // just here for compatbility, needs to be removed on the next
+   // just here for compatibility, needs to be removed on the next
    // ABI/API break. RunFdsSane() is what should be used as it
    // returns if there is an error condition on one of the fds
    virtual void RunFds(fd_set *RSet,fd_set *WSet);
@@ -395,7 +395,7 @@ class pkgAcquire
 /** \brief Represents a single download source from which an item
  *  should be downloaded.
  *
- *  An item may have several assocated ItemDescs over its lifetime.
+ *  An item may have several associated ItemDescs over its lifetime.
  */
 struct pkgAcquire::ItemDesc : public WeakPointable
 {

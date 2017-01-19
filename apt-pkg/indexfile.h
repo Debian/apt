@@ -155,7 +155,7 @@ class pkgIndexFile
       rather bad (doesn't take three character like ast into account).*/
    APT_DEPRECATED_MSG("These methods make no sense anymore with multi-language support") static bool CheckLanguageCode(const char * const Lang);
    /* As we have now possibly more than one LanguageCode this method is
-      superseeded by a) private classmembers or b) getLanguages() */
+      superseded by a) private classmembers or b) getLanguages() */
    APT_DEPRECATED_MSG("These methods make no sense anymore with multi-language support") static std::string LanguageCode();
 
    bool IsTrusted() const { return Trusted; };

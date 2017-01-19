@@ -6,7 +6,7 @@
    FTP Acquire Method - This is the FTP acquire method for APT.
 
    This is a very simple implementation that does not try to optimize
-   at all. Commands are sent syncronously with the FTP server (as the
+   at all. Commands are sent synchronously with the FTP server (as the
    rfc recommends, but it is not really necessary..) and no tricks are
    done to speed things along.
 			
@@ -974,7 +974,7 @@ FtpMethod::FtpMethod() : aptMethod("ftp","1.0",SendConfig)
 // FtpMethod::SigTerm - Handle a fatal signal				/*{{{*/
 // ---------------------------------------------------------------------
 /* This closes and timestamps the open file. This is necessary to get
-   resume behavoir on user abort */
+   resume behavior on user abort */
 void FtpMethod::SigTerm(int)
 {
    if (FailFd == -1)

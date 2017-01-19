@@ -210,7 +210,7 @@ static bool pkgAllUpgradeWithNewPackages(pkgDepCache &Cache, OpProgress * const 
    if (Progress != NULL)
       Progress->Progress(50);
 
-   // ... but it may remove stuff, we we need to clean up afterwards again
+   // ... but it may remove stuff, we need to clean up afterwards again
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
       if (Cache[I].Delete() == true)
 	 Cache.MarkKeep(I, false, false);

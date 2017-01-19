@@ -146,7 +146,7 @@ class pkgTagSection
 
    /** \brief amount of Tags in the current section
     *
-    * Note: if a Tag is mentioned repeatly it will be counted multiple
+    * Note: if a Tag is mentioned repeatedly it will be counted multiple
     * times, but only the last occurrence is available via Find methods.
     */
    unsigned int Count() const;

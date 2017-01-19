@@ -465,7 +465,7 @@ APT_IGNORE_DEPRECATED_POP
 	/** \brief returns all packages in the cache who belong to the given task
 
 	    A simple helper responsible for search for all members of a task
-	    in the cache. Optional it prints a a notice about the
+	    in the cache. Optional it prints a notice about the
 	    packages chosen cause of the given task.
 	    \param Cache the packages are in
 	    \param pattern name of the task
@@ -483,7 +483,7 @@ APT_IGNORE_DEPRECATED_POP
 	/** \brief returns all packages in the cache whose name matchs a given pattern
 
 	    A simple helper responsible for executing a regular expression on all
-	    package names in the cache. Optional it prints a a notice about the
+	    package names in the cache. Optional it prints a notice about the
 	    packages chosen cause of the given package.
 	    \param Cache the packages are in
 	    \param pattern regular expression for package names

@@ -239,7 +239,7 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    Dequeue();
 }
 									/*}}}*/
-// AcqMethod::MediaFail - Syncronous request for new media		/*{{{*/
+// AcqMethod::MediaFail - Synchronous request for new media		/*{{{*/
 // ---------------------------------------------------------------------
 /* This sends a 403 Media Failure message to the APT and waits for it
    to be ackd */

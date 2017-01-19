@@ -67,7 +67,7 @@ bool pkgCdrom::FindPackages(string CD,
 	 InfoDir = InfoDir + CD + ".disk/";
    }
 
-   // Don't look into directories that have been marked to ingore.
+   // Don't look into directories that have been marked to ignore.
    if (RealFileExists(".aptignr") == true)
       return true;
 

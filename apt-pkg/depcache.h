@@ -21,7 +21,7 @@
    3 dependency results.
      Now - Compared using the Currently install version
      Install - Compared using the install version (final state)
-     CVer - (Candidate Verion) Compared using the Candidate Version
+     CVer - (Candidate Version) Compared using the Candidate Version
    The candidate and now results are used to decide wheather a package
    should be automatically installed or if it should be left alone.
    

@@ -787,7 +787,7 @@ bool pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
 
    ActionGroup group(*this);
 
-#if 0 // reseting the autoflag here means we lose the 
+#if 0 // resetting the autoflag here means we lose the 
       // auto-mark information if a user selects a package for removal
       // but changes  his mind then and sets it for keep again
       // - this makes sense as default when all Garbage dependencies
@@ -1079,7 +1079,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 
    StateCache &P = PkgState[Pkg->ID];
 
-   // See if there is even any possible instalation candidate
+   // See if there is even any possible installation candidate
    if (P.CandidateVer == 0)
       return false;
 
@@ -1781,7 +1781,7 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep) const
    {
       if (InstallRecommends)
 	 return true;
-      // we suport a special mode to only install-recommends for certain
+      // we support a special mode to only install-recommends for certain
       // sections
       // FIXME: this is a meant as a temporarly solution until the
       //        recommends are cleaned up

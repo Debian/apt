@@ -45,7 +45,7 @@ function(add_vendor_file)
         VERBATIM
     )
 
-    # Woud like to use ${AVF_OUTPUT} as target name, but then ninja gets
+    # Would like to use ${AVF_OUTPUT} as target name, but then ninja gets
     # cycles.
     add_custom_target(vendor-${AVF_OUTPUT} ALL DEPENDS ${out})
 endfunction()

@@ -10,7 +10,7 @@
    from file fd's this function will use read and normal allocated 
    memory.
    
-   Writing to a public mmap will always fully comit all changes when the 
+   Writing to a public mmap will always fully commit all changes when the
    class is deleted. Ie it will rewrite the file, unless it is readonly
 
    The DynamicMMap class is used to help the on-disk data structure 

@@ -1092,7 +1092,7 @@ bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
 	 Rewrite[J].NewTag = Rewrite[J].Tag;
    }
    
-   // Write all all of the tags, in order.
+   // Write all of the tags, in order.
    if (Order != NULL)
    {
       for (unsigned int I = 0; Order[I] != 0; I++)

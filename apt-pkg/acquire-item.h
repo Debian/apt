@@ -114,7 +114,7 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
 
    /** \brief A client-supplied unique identifier.
     *
-    *  This field is initalized to 0; it is meant to be filled in by
+    *  This field is initialized to 0; it is meant to be filled in by
     *  clients that wish to use it to uniquely identify items.
     *
     *  APT progress reporting will store an ID there as shown in "Get:42 …"

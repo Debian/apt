@@ -56,7 +56,7 @@ Conf dependsb (1 unstable [i386])
 Conf dependsa (1 unstable [i386])' aptget install --reinstall dependsa dependsb -s
 
 # there is a chance dpkg can actually do these, BUT this depends on the maintainerscripts (not) present
-# which is very very risky to depend on (and apt doesn't know about that anyhow).
+# which is very risky to depend on (and apt doesn't know about that anyhow).
 testfailure aptget install --reinstall predependsa predependsb -s -o Debug::pkgPackageManager=1
 testsuccess grep "^E: Couldn't configure predependsa:i386, probably a dependency cycle.$" rootdir/tmp/testfailure.output
 
@@ -89,7 +89,7 @@ Conf dependsb (1 unstable [i386])
 Conf dependsa (1 unstable [i386])' aptget install dependsa dependsb -s
 
 # there is a chance dpkg can actually do these, BUT this depends on the maintainerscripts (not) present
-# which is very very risky to depend on (and apt doesn't know about that anyhow).
+# which is very risky to depend on (and apt doesn't know about that anyhow).
 testfailure aptget install predependsa predependsb -s -o Debug::pkgPackageManager=1
 testsuccess grep "^E: Couldn't configure predependsa:i386, probably a dependency cycle.$" rootdir/tmp/testfailure.output
 

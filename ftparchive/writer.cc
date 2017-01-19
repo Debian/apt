@@ -411,7 +411,7 @@ bool PackagesWriter::DoPackage(string FileName)
    if (Delink(FileName,OriginalPath,Stats.DeLinkBytes,FileSize) == false)
       return false;
    
-   // Lookup the overide information
+   // Lookup the override information
    pkgTagSection &Tags = Db.Control.Section;
    string Package = Tags.FindS("Package");
    string Architecture;
@@ -659,7 +659,7 @@ bool SourcesWriter::DoPackage(string FileName)
       return _error->Error("Could not find a Source entry in the DSC '%s'",FileName.c_str());
    Tags.Trim();
 
-   // Lookup the overide information, finding first the best priority.
+   // Lookup the override information, finding first the best priority.
    string BestPrio;
    string Bins = Tags.FindS("Binary");
    char Buffer[Bins.length() + 1];

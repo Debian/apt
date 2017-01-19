@@ -140,7 +140,7 @@ GenContents::Node *GenContents::Grab(GenContents::Node *Top,const char *Name,
       // Collision!
       if (Res == 0)
       {
-	 // See if this the the same package (multi-version dup)
+	 // See if this is the same package (multi-version dup)
 	 if (Top->Package == Package ||
 	     strcasecmp(Top->Package,Package) == 0)
 	    return Top;

@@ -195,7 +195,7 @@ map_ptrloc pkgFLCache::TreeLookup(map_ptrloc *Base,const char *Text,
 									/*}}}*/
 // FLCache::PrintTree - Print out a tree				/*{{{*/
 // ---------------------------------------------------------------------
-/* This is a simple generic tree dumper, ment for debugging. */
+/* This is a simple generic tree dumper, meant for debugging. */
 void pkgFLCache::PrintTree(map_ptrloc Base,unsigned long Size)
 {
    if (Base == 0)

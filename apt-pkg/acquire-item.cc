@@ -1907,7 +1907,7 @@ void pkgAcqMetaSig::Done(string const &Message, HashStringList const &Hashes,
    {
       auto const Releasegpg = GetFinalFilename();
       auto const Release = MetaIndex->GetFinalFilename();
-      // if this is an IMS-Hit on Release ensure we also have the the Release.gpg file stored
+      // if this is an IMS-Hit on Release ensure we also have the Release.gpg file stored
       // (previously an unknown pubkey) – but only if the Release file exists locally (unlikely
       // event of InRelease removed from the mirror causing fallback but still an IMS-Hit)
       if (TransactionManager->IMSHit == false ||
@@ -2892,7 +2892,7 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire * const Owner,
                 << TransactionManager << std::endl;
 }
 									/*}}}*/
-// AcqIndex::Init - defered Constructor					/*{{{*/
+// AcqIndex::Init - deferred Constructor				/*{{{*/
 static void NextCompressionExtension(std::string &CurrentCompressionExtension, std::string &CompressionExtensions, bool const preview)
 {
    size_t const nextExt = CompressionExtensions.find(' ');

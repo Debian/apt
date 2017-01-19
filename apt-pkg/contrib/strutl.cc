@@ -760,7 +760,7 @@ int StringToBool(const string &Text,int Default)
 // TimeRFC1123 - Convert a time_t into RFC1123 format			/*{{{*/
 // ---------------------------------------------------------------------
 /* This converts a time_t into a string time representation that is
-   year 2000 complient and timezone neutral */
+   year 2000 compliant and timezone neutral */
 string TimeRFC1123(time_t Date)
 {
    return TimeRFC1123(Date, false);
@@ -1478,7 +1478,7 @@ string StripEpoch(const string &VerStr)
 // tolower_ascii - tolower() function that ignores the locale		/*{{{*/
 // ---------------------------------------------------------------------
 /* This little function is the most called method we have and tries
-   therefore to do the absolut minimum - and is notable faster than
+   therefore to do the absolute minimum - and is notable faster than
    standard tolower/toupper and as a bonus avoids problems with different
    locales - we only operate on ascii chars anyway. */
 #undef tolower_ascii
@@ -1492,7 +1492,7 @@ int tolower_ascii(int const c)
 // isspace_ascii - isspace() function that ignores the locale		/*{{{*/
 // ---------------------------------------------------------------------
 /* This little function is one of the most called methods we have and tries
-   therefore to do the absolut minimum - and is notable faster than
+   therefore to do the absolute minimum - and is notable faster than
    standard isspace() and as a bonus avoids problems with different
    locales - we only operate on ascii chars anyway. */
 #undef isspace_ascii

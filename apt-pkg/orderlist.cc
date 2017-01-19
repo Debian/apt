@@ -57,7 +57,7 @@
    There are complications in this algorithm when presented with cycles.
    For all known practical cases it works, all cases where it doesn't work
    is fixable by tweaking the package descriptions. However, it should be
-   possible to impove this further to make some better choices when 
+   possible to improve this further to make some better choices when 
    presented with cycles. 
    
    ##################################################################### */
@@ -134,7 +134,7 @@ bool pkgOrderList::IsMissing(PkgIterator Pkg)
 									/*}}}*/
 // OrderList::DoRun - Does an order run					/*{{{*/
 // ---------------------------------------------------------------------
-/* The caller is expeted to have setup the desired probe state */
+/* The caller is expected to have setup the desired probe state */
 bool pkgOrderList::DoRun()
 {   
    // Temp list
@@ -587,7 +587,7 @@ bool pkgOrderList::VisitNode(PkgIterator Pkg, char const* from)
 
    DepFunc Old = Primary;
    
-   // Perform immedate configuration of the package if so flagged.
+   // Perform immediate configuration of the package if so flagged.
    if (IsFlag(Pkg,Immediate) == true && Primary != &pkgOrderList::DepUnPackPre)
       Primary = &pkgOrderList::DepUnPackPreD;
 
@@ -875,7 +875,7 @@ bool pkgOrderList::DepUnPackDep(DepIterator D)
    orders configuration so that when a package comes to be configured it's
    dependents are configured. 
  
-   Loops are ingored. Depends loop entry points are chaotic. */
+   Loops are ignored. Depends loop entry points are chaotic. */
 bool pkgOrderList::DepConfigure(DepIterator D)
 {
    // Never consider reverse configuration dependencies.

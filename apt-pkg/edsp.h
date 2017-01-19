@@ -133,7 +133,7 @@ namespace EDSP								/*{{{*/
 	 *  \param[out] remove is a list which gets populated with requested removals
 	 *  \param[out] upgrade is true if it is a request like apt-get upgrade
 	 *  \param[out] distUpgrade is true if it is a request like apt-get dist-upgrade
-	 *  \param[out] autoRemove is true if removal of uneeded packages should be performed
+	 *  \param[out] autoRemove is true if removal of unneeded packages should be performed
 	 *
 	 *  \return true if the request could be found and worked on, otherwise false
 	 */

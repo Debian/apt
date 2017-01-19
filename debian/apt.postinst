@@ -54,7 +54,7 @@ case "$1" in
 	    chown -R root:root /var/lib/apt/lists /var/cache/apt/archives || true
 	fi
 
-        # ensure tighter permissons on the logs, see LP: #975199
+        # ensure tighter permissions on the logs, see LP: #975199
         if dpkg --compare-versions "$2" lt-nl 0.9.7.7; then
             # ensure permissions are right
             chmod -f 0640 /var/log/apt/term.log* || true

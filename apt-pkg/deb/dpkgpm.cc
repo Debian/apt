@@ -1446,7 +1446,7 @@ bool pkgDPkgPM::ExpandPendingCalls(std::vector<Item> &List, pkgDepCache &Cache)
 }
 bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 {
-   // explicitely remove&configure everything for hookscripts and progress building
+   // explicitly remove&configure everything for hookscripts and progress building
    // we need them only temporarily through, so keep the length and erase afterwards
    decltype(List)::const_iterator::difference_type explicitIdx =
       std::distance(List.cbegin(), List.cend());
@@ -1909,7 +1909,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	       ADDARG(fullname);
 	    }
 	 }
-	 // skip configure action if all sheduled packages disappeared
+	 // skip configure action if all scheduled packages disappeared
 	 if (oldSize == Size)
 	    continue;
       }
@@ -2101,7 +2101,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 
    if (d->dpkg_error.empty() == false)
    {
-      // no point in reseting packages we already completed removal for
+      // no point in resetting packages we already completed removal for
       StripAlreadyDoneFrom(approvedStates.Remove());
       StripAlreadyDoneFrom(approvedStates.Purge());
       APT::StateChanges undo;

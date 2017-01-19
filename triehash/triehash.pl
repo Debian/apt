@@ -296,7 +296,7 @@ package Trie {
         return $self->alignpower2(length $key);
     }
 
-    # Rebuild the trie, splitting at ambigous chars, and unifying key lengths
+    # Rebuild the trie, splitting at ambiguous chars, and unifying key lengths
     sub rebuild_tree {
         my $self = shift;
         # Determine if/where we need to split before an ambiguous character

@@ -1202,7 +1202,7 @@ signreleasefiles() {
 		# FIXME: This should be the full name, but we can't encode the space properly currently
 		SIGUSERS="${SIGUSERS} -u ${SIGNER#* }"
 		if [ "${SIGNER}" = 'Rex Expired' ]; then
-			# the key is expired, so gpg doesn't allow to sign with and the --faked-system-time
+			# the key is expired, so gpg doesn't allow one to sign with and the --faked-system-time
 			# option doesn't exist anymore (and using faketime would add a new obscure dependency)
 			# therefore we 'temporary' make the key not expired and restore a backup after signing
 			cp "${REXKEY}.sec" "$SECEXPIREBAK"

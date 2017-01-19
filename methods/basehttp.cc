@@ -443,7 +443,7 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 // BaseHttpMethod::SigTerm - Handle a fatal signal			/*{{{*/
 // ---------------------------------------------------------------------
 /* This closes and timestamps the open file. This is necessary to get
-   resume behavoir on user abort */
+   resume behavior on user abort */
 void BaseHttpMethod::SigTerm(int)
 {
    if (FailFd == -1)
@@ -585,7 +585,7 @@ int BaseHttpMethod::Loop()
       if (Server->IsOpen() == false)
 	 QueueBack = Queue;
 
-      // Connnect to the host
+      // Connect to the host
       if (Server->Open() == false)
       {
 	 Fail(true);

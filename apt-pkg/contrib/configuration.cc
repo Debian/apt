@@ -1043,7 +1043,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	    {
 	       Stack.push(ParentTag);
 
-	       /* Make sectional tags incorperate the section into the
+	       /* Make sectional tags incorporate the section into the
 	          tag string */
 	       if (AsSectional == true && Word.empty() == false)
 	       {

@@ -858,7 +858,7 @@ APT_IGNORE_DEPRECATED_PUSH
 	case TASK: showTaskSelection(pkg, pattern); break;
 	case FNMATCH: showFnmatchSelection(pkg, pattern); break;
 APT_IGNORE_DEPRECATED_POP
-	case PACKAGENAME: /* no suprises here */ break;
+	case PACKAGENAME: /* no surprises here */ break;
 	case STRING: /* handled by the special cases */ break;
 	case UNKNOWN: break;
 	}
@@ -898,7 +898,7 @@ APT_IGNORE_DEPRECATED_POP
 	case INSTCAND:
 	case ALL:
 	case CANDANDINST:
-		// not really suprises, but in fact: just not implemented
+		// not really surprises, but in fact: just not implemented
 		break;
 	}
 }

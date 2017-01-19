@@ -3,7 +3,7 @@
 // $Id: error.h,v 1.8 2001/05/07 05:06:52 jgg Exp $
 /* ######################################################################
    
-   Global Erorr Class - Global error mechanism
+   Global Error Class - Global error mechanism
 
    This class has a single global instance. When a function needs to 
    generate an error condition, such as a read error, it calls a member

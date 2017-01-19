@@ -612,8 +612,8 @@ bool pkgCache::DepIterator::IsNegative() const
 /* This intellegently looks at dep target packages and tries to figure
    out which package should be used. This is needed to nicely handle
    provide mapping. If the target package has no other providing packages
-   then it returned. Otherwise the providing list is looked at to 
-   see if there is one one unique providing package if so it is returned.
+   then it returned. Otherwise the providing list is looked at to
+   see if there is one unique providing package if so it is returned.
    Otherwise true is returned and the target package is set. The return
    result indicates whether the node should be expandable 
  

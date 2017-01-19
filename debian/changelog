@@ -1464,7 +1464,7 @@ apt (1.1~exp9) experimental; urgency=medium
   * Make auto-remove and auto-clean aliases for the versions without -
     (Closes: #274159)
   * apt: Add autoremove and auto-remove commands
-  * changelog: Replace spelling reenable by re-enable everywhere.
+  * changelog: Replace spelling typo for re-enable everywhere.
     Thanks to Lintian
   * debian/control: Replace debian by Debian.
     Thanks to Lintian
@@ -1607,7 +1607,7 @@ apt (1.1~exp4) experimental; urgency=medium
     Do not download more data in the mehotds than expected if we know
     the size. For the InRelease/Release/Release.gpg add new 
     Acquire::MaxReleaseFileSize that defaults to 10Mb for now
-  * Verify the the hashes of the downloaded compressed files early
+  * Verify the hashes of the downloaded compressed files early
   * Only load unauthenticated data into our parsers when the user
     explicitly asked for it via --allow-insecure-repositories
     (Acquire::AllowInsecureRepositories)
@@ -1638,7 +1638,7 @@ apt (1.1~exp4) experimental; urgency=medium
     (Closes: 733028)
   * use apt-key adv (+ gnupg) instead of gpgv for verify
   * support gnupg2 as drop-in replacement for gnupg
-  * allow to specify fingerprints in 'apt-key del'
+  * allows one to specify fingerprints in 'apt-key del'
   * use only one --keyring in gpg interactions
   * add and use 'apt-key verify' which prefers gpgv over gpg
   * remove empty keyrings in trusted.gpg.d on upgrade
@@ -2668,7 +2668,7 @@ apt (0.9.13~exp1) experimental; urgency=low
 
   * Improve the API for APT::Upgrade::Upgrade()
   * Re-add "Calculating upgrade..." message
-  * move upgrade releated code into upgrade.{cc,h}
+  * move upgrade related code into upgrade.{cc,h}
   * Move ListUpdate/AcquireUpdate into update.{cc,h}
   * Add new apt-pkg/install-progress.h with APT::Progress::PackageManager
     progress reporting classes
@@ -2889,7 +2889,7 @@ apt (0.9.10) unstable; urgency=low
   * exclude config.{sub,guess} from source package
   * update the symbol files to reflect current state
   * unset LANGUAGE for showing [Y/n] answer hints
-  * fix some unitialized data members
+  * fix some uninitialized data members
   * specific pins below 1000 cause downgrades (Closes: 543966)
   * use pkgTagFile to parse "header" of Release files
   * fix: --print-uris removes authentication (Closes: 719263)
@@ -3051,7 +3051,7 @@ apt (0.9.8.1) unstable; urgency=low
   [ Michael Vogt ]
   * moved source to http://git.debian.org/apt/apt.git
   * updated gbp.conf to match what bzr-buildpackage is doing
-  * remove .bzr-buildpackage/default.conf (superseeded by gbp.conf)
+  * remove .bzr-buildpackage/default.conf (superseded by gbp.conf)
 
  -- Michael Vogt <mvo@debian.org>  Thu, 16 May 2013 14:50:43 +0200
 
@@ -4169,7 +4169,7 @@ apt (0.8.16~exp8) experimental; urgency=low
     - show a debug why a package was kept by ResolveByKeep()
   * apt-pkg/packagemanager.cc:
     - do not fail on unpacked packages in SmartUnPack, just don't
-      shedule them for unpack, but do all checks and configure them
+      schedule them for unpack, but do all checks and configure them
     - do not enter an endless loop for (essential) pre-dependency loops
   * apt-pkg/contrib/sha2_internal.cc:
     - use a pointer-union to peace gcc strict-aliasing warning
@@ -5037,9 +5037,9 @@ apt (0.8.12) unstable; urgency=low
     - honor Dpkg::Chroot-Directory in the RunScripts*() methods
   * apt-pkg/contrib/cdromutl.{cc,h}, apt-pkg/cdrom.{cc,h}:
     - deal with missing FSTAB_DIR when using libudev to discover cdrom
-    - add experimental APT::cdrom::CdromOnly option (on by default). 
+    - add experimental APT::cdrom::CdromOnly option (on by default).
       When this is set to false apt-cdrom will handle any removable
-      deivce (like a usb-stick) as a "cdrom/dvd" source
+      device (like a usb-stick) as a "cdrom/dvd" source
 
   [ Christian Perrier ]
   * Fix error in French translation of manpages (apt_preferences(5)).
@@ -5462,7 +5462,7 @@ apt (0.8.5) unstable; urgency=low
   * apt-pkg/deb/deblistparser.cc:
     - overrule NotAutomatic in case of ButAutomaticUpgrades
   * debian/apt.cron.daily:
-    - handle absolut directory paths correctly by loading directories
+    - handle absolute directory paths correctly by loading directories
       directly instead of building the paths on our own (Closes: #596421)
   * debian/control:
     - build-depend on docbook-xml to ensure that the xml DTDs are always
@@ -5714,7 +5714,7 @@ apt (0.7.26~exp11) experimental; urgency=low
     - handle "circular" conflicts for "all" packages correctly
   * cmdline/apt-cache.cc:
     - be able to omit dependency types in (r)depends (Closes: #319006)
-    - show in (r)depends the canidate per default instead of newest
+    - show in (r)depends the candidate per default instead of newest
     - share the (r)depends code instead of codecopy
   * apt-pkg/cacheset.cc:
     - move them back to the library as they look stable now
@@ -5834,7 +5834,7 @@ apt (0.7.26~exp8) experimental; urgency=low
     - add another round of const& madness as the previous round accidentally
       NOT overrides the virtual GetCandidateVer() method (Closes: #587725)
   * apt-pkg/pkgcachegen.{cc,h}:
-    - make the used MMap moveable (and therefore dynamic resizeable) by
+    - make the used MMap moveable (and therefore dynamic resizable) by
       applying (some) mad pointer magic (Closes: #195018)
 
   [ Michael Vogt ]
@@ -6624,7 +6624,7 @@ apt (0.7.23.1) unstable; urgency=low
 
   [ Michael Vogt ]
   * apt-pkg/pkgcache.cc:
-    - do not set internel "needs-configure" state for packages in 
+    - do not set internal "needs-configure" state for packages in 
       triggers-pending state. dpkg will deal with the trigger and
       it if does it before we trigger it, dpkg will error out
       (LP: #414631)
@@ -6813,7 +6813,7 @@ apt (0.7.22) unstable; urgency=low
   * doc/apt.conf.5.xml:
     - merged patch from Aurélien Couderc to improve the text
       (thanks!)
-  * [ABI] merged the libudev-dlopen branch, this allows to pass
+  * [ABI] merged the libudev-dlopen branch, this allows one to pass
     "apt-udev-auto" to Acquire::Cdrom::mount and the cdrom method will  
     dynamically find/mount the cdrom device (if libhal is available)
 
@@ -7343,7 +7343,7 @@ apt (0.7.12) unstable; urgency=low
       so that it can correct any missing dependencies
   * debian/apt.cron.daily:
     - sleep random amount of time (default within 0-30min) before
-      starting the upate to hit the mirrors less hard
+      starting the update to hit the mirrors less hard
   * doc/apt_preferences.5.xml:
     - fix typo
   * added debian/README.source
@@ -7834,7 +7834,7 @@ apt (0.6.46.4) unstable; urgency=high
     - added "Dpkg::StopOnError" variable that controls if apt
       will abort on errors from dpkg
   * apt-pkg/deb/debsrcrecords.{cc,h}:
-    - make the Buffer grow dynmaically (closes: #400874)
+    - make the Buffer grow dynamically (closes: #400874)
   * Merged from Christian Perrier bzr branch:
     - uk.po: New Ukrainian translation: 483t28f3u
     - el.po: Update to 503t9f2u
@@ -9441,7 +9441,7 @@ apt (0.5.5) unstable; urgency=low
   * When matching regexs always print a message. Change regex activation
     charset. Closes: #147817
   * Don't die if lines in sources.list are too long. Closes: #146846
-  * Show file name on apt-extracttemplate error messges. Closes: #151835
+  * Show file name on apt-extracttemplate error messages. Closes: #151835
   * i18n gettext stuff, based on work from Michael Piefel: Closes: #95933
   * Some highly unlikely memory faults. Closes: #155842
   * C++ stuff for G++3.2. Closes: #162617, #165515,
@@ -9559,7 +9559,7 @@ apt (0.5.4) unstable; urgency=low
   * Various changes to the locking metholodgy for --print-uris.
     Closes: #100590
   * Lame LD_LIBRARY_PATH thing. Closes: #98928
-  * apt-cache search searchs provide names too now. Closes: #98695
+  * apt-cache search searches provide names too now. Closes: #98695
   * Checksum and long lines problem. Closes: #106591
   * .aptignr and empty files are just a warning. Closes: #97364
 
@@ -9669,7 +9669,7 @@ apt (0.5.0) unstable; urgency=low
   * Caching can be turned off by setting the cache file names blank.
   * Ignores arches it does not know about when autocleaning. Closes: #72862
   * New function in apt-config to return dirs, files, bools and integers.
-  * Fixed an odd litle bug in MarkInstall and fixed it up to handle
+  * Fixed an odd little bug in MarkInstall and fixed it up to handle
     complex cases involving OR groups and provides.
     68754 describes confusing messages which are the result of this..
     Closes: #63149, #69394, #68754, #77683, #66806, #81486, #78712
@@ -9719,7 +9719,7 @@ apt (0.3.19) frozen unstable; urgency=low
   * Fixed Jay's relative path bug
   * Allowed source only CDs. Closes: #58952
   * Space check is suppressed if --print-uris is given. Closes: #58965
-  * Clarified the documenation examples for non-us. Closes: #58646
+  * Clarified the documentation examples for non-us. Closes: #58646
   * Typo in the package description. Closes: #60230
   * Man Page typo. Closes: #60347
   * Typo in Algorithms.cc. Closes: #63577
@@ -9770,7 +9770,7 @@ apt (0.3.16) unstable; urgency=low
   * Now compiles on OpenBSD, Solaris and HP-UX
   * Clarify segfault errors
   * More debhelper fixes. Closes: #52662, #54566, #52090, #53531, #54769
-  * Fix for Joel's discovery of glibc removal behavoir.
+  * Fix for Joel's discovery of glibc removal behavior.
   * Fix for Ben Collins file: uri from slink upgrade.
   * Fixed resume code in FTP. Closes: #54323
   * Take more precautions to prevent the corruption Joey Hess saw.
@@ -9896,7 +9896,7 @@ apt (0.3.7) unstable; urgency=low
   * Added a check for an empty cache directory. Closes: #37963
   * Return a failure code if -d is given and packages fail to download.
     Closes: #38127
-  * Arranged for an ftp proxy specifing an http server to work. See the
+  * Arranged for an ftp proxy specifying an http server to work. See the
     important note in the sources.list man page.
   * Accounted for resumed files in the cps calculation. Closes: #36787
   * Deal with duplicate same version different packages. Closes: #30237

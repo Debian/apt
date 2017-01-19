@@ -1051,7 +1051,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	       }
 	    }
 
-	    // Hm, nothing can possibly satisify this dep. Nuke it.
+	    // Hm, nothing can possibly satisfy this dep. Nuke it.
 	    if (VList[0] == 0 &&
 		Start.IsNegative() == false &&
 		(Flags[I->ID] & Protected) != Protected)
@@ -1283,7 +1283,7 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 	    continue;
 
 	 /* Hm, the group is broken.. I suppose the best thing to do is to
-	    is to try every combination of keep/not-keep for the set, but thats
+	    is to try every combination of keep/not-keep for the set, but that's
 	    slow, and this never happens, just be conservative and assume the
 	    list of ors is in preference and keep till it starts to work. */
 	 while (true)
@@ -1373,7 +1373,7 @@ void pkgProblemResolver::InstallProtect()
 									/*}}}*/
 // PrioSortList - Sort a list of versions by priority			/*{{{*/
 // ---------------------------------------------------------------------
-/* This is ment to be used in conjunction with AllTargets to get a list 
+/* This is meant to be used in conjunction with AllTargets to get a list 
    of versions ordered by preference. */
 
 struct PrioComp {

@@ -7,7 +7,7 @@
    Three steps are 
      - Aquiration of archives (stores the list of final file names)
      - Sorting of operations
-     - Invokation of package manager
+     - Invocation of package manager
    
    This is the final stage when the package cache entities get converted
    into file names and the state stored in a DepCache is transformed

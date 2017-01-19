@@ -37,7 +37,7 @@
         is invoked. 
    
    As we unpack we record the file list differences in the FL cache. If
-   we need to unroll the the FL cache knows which files have been unpacked
+   we need to unroll the FL cache knows which files have been unpacked
    and can undo. When we need to erase then it knows which files have not 
    been unpacked.
    
