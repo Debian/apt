@@ -39,7 +39,7 @@ namespace APT {
    APT_HIDDEN extern std::unordered_map<std::string, std::vector<std::string>> ArchToTupleMap;
 }
 
-// Splits by whitespace. There may be continous spans of whitespace - they
+// Splits by whitespace. There may be continuous spans of whitespace - they
 // will be considered as one.
 static std::vector<std::string> split(std::string const & s)
 {

@@ -402,7 +402,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	 _error->Warning("Clearsigned file '%s' contains unsigned lines.", InFile.c_str());
    }
 
-   // An error occured during reading - propagate it up
+   // An error occurred during reading - propagate it up
    bool const hasErrored = _error->PendingError();
    _error->MergeWithStack();
    if (hasErrored)

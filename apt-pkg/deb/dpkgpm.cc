@@ -670,7 +670,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
       if (unlikely(candset.empty()))
       {
 	 if (Debug == true)
-	    std::clog << "unable to figure out which package is dpkg refering to with '" << pkgname << "'! (1)" << std::endl;
+	    std::clog << "unable to figure out which package is dpkg referring to with '" << pkgname << "'! (1)" << std::endl;
 	 return;
       }
       else if (candset.size() == 1) // we are lucky
@@ -760,7 +760,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 	    if (pkgname.find(':') != std::string::npos)
 	    {
 	       if (Debug == true)
-		  std::clog << "unable to figure out which package is dpkg refering to with '" << pkgname << "'! (2)" << std::endl;
+		  std::clog << "unable to figure out which package is dpkg referring to with '" << pkgname << "'! (2)" << std::endl;
 	       return;
 	    }
 	 }
