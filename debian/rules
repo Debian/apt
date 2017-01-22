@@ -13,6 +13,9 @@ export CTEST_OUTPUT_ON_FAILURE=1
 %:
 	dh $@
 
+override_dh_clean:
+	cp COPYING debian/copyright
+
 override_dh_install-indep:
 	dh_install --list-missing
 
