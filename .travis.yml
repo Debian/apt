@@ -3,8 +3,8 @@ cache: ccache
 sudo: required
 dist: trusty
 env:
- - TEST_SUITE=user
- - TEST_SUITE=root
+ - TEST_SUITE=user CMAKE_FLAGS=
+ - TEST_SUITE=root CMAKE_FLAGS=-DWITH_DOC=OFF
 before_install:
  - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ wily main universe' -y
  - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial main' -y
@@ -17,7 +17,7 @@ install:
  - sudo apt-get -qq -y -t xenial install cmake ninja-build
  - sudo ./prepare-release travis-ci
 before_script:
- - ( mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Coverage -G Ninja .. )
+ - ( mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Coverage -G Ninja $CMAKE_FLAGS .. )
  - ninja -C build
 script:
  - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
