@@ -114,7 +114,8 @@ removesigninghome() {
 	GNUPGHOME="${APT_TEST_SIGNINGHOME}" gpgconf --kill gpg-agent >/dev/null 2>&1 || true
 	rm -rf -- "$APT_TEST_SIGNINGHOME"
 }
-trap "removesigninghome; exit 0" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+trap "exit 1" 0 HUP INT ILL ABRT FPE SEGV PIPE TERM
+trap "removesigninghome" 0 QUIT
 export APT_TEST_SIGNINGHOME
 
 TOTAL="$(echo "$TESTLIST" | wc -l)"
