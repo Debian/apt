@@ -843,10 +843,26 @@ pkgAcquire::Queue::~Queue()
 /* */
 bool pkgAcquire::Queue::Enqueue(ItemDesc &Item)
 {
+   // MetaKeysMatch checks whether the two items have no non-matching
+   // meta-keys. If the items are not transaction items, it returns
+   // true, so other items can still be merged.
+   auto MetaKeysMatch = [](pkgAcquire::ItemDesc const &A, pkgAcquire::Queue::QItem const *B) {
+      auto OwnerA = dynamic_cast<pkgAcqTransactionItem*>(A.Owner);
+      if (OwnerA == nullptr)
+	 return true;
+
+      for (auto const & OwnerBUncast : B->Owners) {
+	 auto OwnerB = dynamic_cast<pkgAcqTransactionItem*>(OwnerBUncast);
+
+	 if (OwnerB != nullptr && OwnerA->GetMetaKey() != OwnerB->GetMetaKey())
+	    return false;
+      }
+      return true;
+   };
    QItem **I = &Items;
    // move to the end of the queue and check for duplicates here
    for (; *I != 0; I = &(*I)->Next)
-      if (Item.URI == (*I)->URI)
+      if (Item.URI == (*I)->URI && MetaKeysMatch(Item, *I))
       {
 	 if (_config->FindB("Debug::pkgAcquire::Worker",false) == true)
 	    std::cerr << " @ Queue: Action combined for " << Item.URI << " and " << (*I)->URI << std::endl;
