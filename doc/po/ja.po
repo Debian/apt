@@ -1,5 +1,5 @@
 # Translation of apt package man pages
-# Copyright (C) 2003-2016 Debian Japanese List <debian-japanese@lists.debian.org>
+# Copyright (C) 2003-2017 Debian Japanese List <debian-japanese@lists.debian.org>
 # This file is distributed under the same license as the apt package.
 #
 # Translators:
@@ -8,10 +8,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 1.3\n"
+"Project-Id-Version: apt-doc 1.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-01-17 15:18+0100\n"
-"PO-Revision-Date: 2016-09-03 03:30+0900\n"
+"POT-Creation-Date: 2017-01-27 22:00+0100\n"
+"PO-Revision-Date: 2017-01-06 04:50+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
 "Language: ja\n"
@@ -1907,15 +1907,11 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Only process architecture-dependent build-dependencies.  Configuration "
-#| "Item: <literal>APT::Get::Arch-Only</literal>."
 msgid ""
 "Only process architecture-independent build-dependencies.  Configuration "
 "Item: <literal>APT::Get::Indep-Only</literal>."
 msgstr ""
-"構築依存関係の解決を、アーキテクチャに依存したもののみ行います。設定項目: "
+"構築依存関係の解決を、アーキテクチャに依存しないもののみ行います。設定項目: "
 "<literal>APT::Get::Arch-Only</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -2679,7 +2675,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
 msgid "Supported keyring files"
-msgstr ""
+msgstr "サポートするキーリングファイル"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -2690,6 +2686,12 @@ msgid ""
 "keyring files. Binary keyring files intended to be used with any apt version "
 "should therefore always be created with <command>gpg --export</command>."
 msgstr ""
+"apt-key では拡張子「<literal>gpg</literal>」の付けられた OpenPGP のバイナリ形"
+"式 (いわゆる「GPG キー公開用リング」) を収録するファイルだけをサポートしま"
+"す。&gpg; のもっと新しいバージョンで導入されてキーリングファイルのデフォルト"
+"となっているキーボックスのデータベース形式はサポートしません。そのため、バー"
+"ジョンを問わず apt で利用するためのバイナリキーリングファイルの作成には常に "
+"<command>gpg --export</command> を使ってください。"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -2699,6 +2701,10 @@ msgid ""
 "with the \"<literal>asc</literal>\" extension instead which can be created "
 "with <command>gpg --armor --export</command>."
 msgstr ""
+"また、作成したキーリングを利用するシステムにインストールされている apt のバー"
+"ジョンが全て 1.4 以降であれば、<command>gpg --armor --export</command> で作成"
+"する、拡張子に「<literal>asc</literal>」を付けられた保護付きアスキー形式を代"
+"わりに使うこともできます。 "
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
@@ -2729,22 +2735,17 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
-#, fuzzy
-#| msgid ""
-#| "Instead of using this command a keyring can be placed directly in the "
-#| "<filename>/etc/apt/trusted.gpg.d/</filename> directory with a descriptive "
-#| "name (same rules for filename apply as for &apt-conf; files) and "
-#| "\"<literal>gpg</literal>\" as file extension."
 msgid ""
 "<emphasis>Note</emphasis>: Instead of using this command a keyring should be "
 "placed directly in the <filename>/etc/apt/trusted.gpg.d/</filename> "
 "directory with a descriptive name and either \"<literal>gpg</literal>\" or "
 "\"<literal>asc</literal>\" as file extension."
 msgstr ""
-"このコマンドを使う代わりに、キーリングに記述的な名前 (ファイル名については "
-"&apt-conf; ファイルと同一の規則が適用されます) を付け、ファイルの拡張子を"
-"「<literal>gpg</literal>」として <filename>/etc/apt/trusted.gpg.d/</"
-"filename> ディレクトリに直接配置する方法もあります。"
+"<emphasis>注意</emphasis>: このコマンドを使う代わりに、キーリングに記述的な名"
+"前 (ファイル名については &apt-conf; ファイルと同一の規則が適用されます) を付"
+"けて、ファイルの拡張子を「<literal>gpg</literal>」または「<literal>asc</"
+"literal>」として <filename>/etc/apt/trusted.gpg.d/</filename> ディレクトリに"
+"直接配置する方法もあります。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2768,6 +2769,13 @@ msgstr "信頼キーとそのフィンガープリントを一覧表示します
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
+#, fuzzy
+#| msgid ""
+#| "Pass advanced options to gpg. With <command>adv --recv-key</command> you "
+#| "can e.g. download key from keyservers directly into the the trusted set "
+#| "of keys. Note that there are <emphasis>no</emphasis> checks performed, so "
+#| "it is easy to completely undermine the &apt-secure; infrastructure if "
+#| "used without care."
 msgid ""
 "Pass advanced options to gpg. With <command>adv --recv-key</command> you can "
 "e.g. download key from keyservers directly into the trusted set of keys. "
@@ -9290,6 +9298,10 @@ msgstr "バージョン &apt-product-version;"
 
 #. type: Content of: <book><bookinfo><abstract><para>
 #: guide.dbk
+#, fuzzy
+#| msgid ""
+#| "This document provides an overview of how to use the the APT package "
+#| "manager."
 msgid ""
 "This document provides an overview of how to use the APT package manager."
 msgstr "本文書は APT パッケージマネージャの使い方の概要を提供します。"

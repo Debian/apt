@@ -1,4 +1,4 @@
-# Japanese mesasges for apt.
+# Japanese messages for apt.
 # Copyright (C) 2001 Free Software Foundation, Inc.
 # Project Vine, Daisuke SUZUKI <daisuke@linux.or.jp>, 2001-2002
 # Debian Project, Masato Taruishi <taru@debian.org>, 2002
@@ -8,10 +8,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.0.9.3\n"
+"Project-Id-Version: apt 1.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-01-05 20:50+0100\n"
-"PO-Revision-Date: 2016-05-18 15:31+0900\n"
+"POT-Creation-Date: 2017-01-27 21:41+0100\n"
+"PO-Revision-Date: 2017-01-06 04:50+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
 "Language: ja\n"
@@ -222,9 +222,9 @@ msgid "The repository '%s' is no longer signed."
 msgstr "リポジトリ %s はもう署名されていません。"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' does no longer have a Release file."
-msgstr "リポジトリ %s には Release ファイルがありません。"
+msgstr "リポジトリ %s には Release ファイルがなくなっています。"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -245,11 +245,9 @@ msgid "The repository '%s' does not have a Release file."
 msgstr "リポジトリ %s には Release ファイルがありません。"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' provides only weak security information."
-msgstr ""
-"リポジトリ '%2$s' は弱いセキュリティ情報のみを提供しているため、設定ファイル "
-"'%1$s' の取得をスキップします"
+msgstr "リポジトリ '%s' は弱いセキュリティ情報しか提供していません。"
 
 #: apt-pkg/acquire-item.cc ftparchive/writer.cc
 #, c-format
@@ -262,7 +260,7 @@ msgstr "ハッシュサムが適合しません"
 
 #: apt-pkg/acquire-item.cc
 msgid "Insufficient information available to perform this download securely"
-msgstr ""
+msgstr "このダウンロードを安全に実施するのに十分な情報が得られません。"
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -383,12 +381,13 @@ msgstr "%s=%s のため変更履歴が利用できません"
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "The method '%s' is explicitly disabled via configuration."
-msgstr ""
+msgstr "メソッド '%s' は設定によりはっきりと無効にされています。"
 
 #: apt-pkg/acquire-worker.cc methods/connect.cc
 #, c-format
 msgid "If you meant to use Tor remember to use %s instead of %s."
 msgstr ""
+"Tor を利用する場合には %2$s ではなく %1$s を使うことを覚えておいてください。"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -434,16 +433,13 @@ msgid "No sandbox user '%s' on the system, can not drop privileges"
 msgstr "システムにサンドボックスユーザ '%s' がありません。権限を削除できません"
 
 #: apt-pkg/acquire.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Can't drop privileges for downloading as file '%s' couldn't be accessed "
-#| "by user '%s'."
+#, c-format
 msgid ""
 "Download is performed unsandboxed as root as file '%s' couldn't be accessed "
 "by user '%s'."
 msgstr ""
-"ダウンロード権限を削除できません。ファイル '%s' がユーザ '%s' からアクセスで"
-"きません。"
+"ファイル '%s' がユーザ '%s' からアクセスできないため、ダウンロードは root で"
+"サンドボックスを通さずに行われます。"
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
 #, c-format
@@ -1084,9 +1080,10 @@ msgstr ""
 "ソース %2$s %3$s (%4$s) に関してオプション %1$s に設定された値が無効です"
 
 #: apt-pkg/deb/debmetaindex.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
-msgstr "ソース %2$s %3$s に関してオプション %1$s の値が競合します"
+msgstr ""
+"ソース %2$s %3$s に関してオプション %1$s の値が競合します: %4$s != %5$s"
 
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
@@ -1312,24 +1309,20 @@ msgid "Execute external solver"
 msgstr "外部ソルバを実行"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Execute external planner"
-msgstr "外部ソルバを実行"
+msgstr "外部プランナーを実行"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send request to planner"
-msgstr "ソルバにリクエストを送信"
+msgstr "プランナーにリクエストを送信"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send scenario to planner"
-msgstr "ソルバにシナリオを送信"
+msgstr "プランナーにシナリオを送信"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "External planner failed without a proper error message"
-msgstr "外部ソルバが適切なエラーメッセージなしに失敗しました"
+msgstr "外部プランナーが適切なエラーメッセージなしに失敗しました"
 
 #: apt-pkg/indexcopy.cc
 #, c-format
@@ -1894,6 +1887,14 @@ msgid "Broken packages"
 msgstr "壊れたパッケージ"
 
 #: apt-private/private-install.cc
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"いくつかのアーカイブを取得できません。apt-get update を実行するか --fix-"
+"missing オプションを付けて試してみてください。"
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "内部エラー、InstallPackages が壊れたパッケージで呼び出されました!"
 
@@ -1996,14 +1997,6 @@ msgstr "いくつかのファイルの取得に失敗しました"
 #: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "ダウンロードオンリーモードでパッケージのダウンロードが完了しました"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"いくつかのアーカイブを取得できません。apt-get update を実行するか --fix-"
-"missing オプションを付けて試してみてください。"
 
 #: apt-private/private-install.cc
 msgid "--fix-missing and media swapping is not currently supported"
@@ -2745,6 +2738,10 @@ msgid ""
 "apt-dump-solver is an interface to store an EDSP scenario in\n"
 "a file and optionally forwards it to another solver.\n"
 msgstr ""
+"使用方法: apt-dump-solver\n"
+"\n"
+"apt-dump-solver は EDSP シナリオをファイルに残し、\n"
+"オプションで別のソルバに転送するインターフェイスです。\n"
 
 #: cmdline/apt-extracttemplates.cc
 msgid ""
@@ -2923,7 +2920,6 @@ msgid "detect proxy using apt.conf"
 msgstr "apt.conf を使ってプロキシを検出する"
 
 #: cmdline/apt-internal-planner.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-planner\n"
 "\n"
@@ -2933,8 +2929,8 @@ msgid ""
 msgstr ""
 "使用方法: apt-internal-solver\n"
 "\n"
-"apt-internal-solver は、デバッグなどの用途で、現在の内部リゾルバを\n"
-"APT ファミリの外部リゾルバのように使うためのインターフェイスです。\n"
+"apt-internal-planner は、デバッグなどの用途で、現在の内部プランナーを\n"
+"APT ファミリの外部プランナーのように使うためのインターフェイスです。\n"
 
 #: cmdline/apt-internal-solver.cc
 msgid ""
@@ -3531,7 +3527,7 @@ msgstr "ファイルが見つかりません"
 #: methods/connect.cc
 #, c-format
 msgid "Direct connection to %s domains is blocked by default."
-msgstr ""
+msgstr "%s ドメインへの直接の接続はデフォルトでブロックされています。"
 
 #: methods/connect.cc methods/http.cc
 #, c-format
@@ -3748,12 +3744,11 @@ msgstr "呼び出せません"
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Signed file isn't valid, got '%s' (does the network require authentication?)"
 msgstr ""
-"クリアサインされたファイルが有効ではなく、'%s' を得ました (認証にネットワーク"
-"が必要?)"
+"署名されたファイルが有効ではなく、'%s' を得ました (ネットワークに認証が必要?)"
 
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
@@ -3853,301 +3848,3 @@ msgstr "途中で接続がクローズされました"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "空のファイルは有効なアーカイブと認められません"
-
-#~ msgid "Unmet dependencies. Try using --fix-broken."
-#~ msgstr ""
-#~ "未解決の依存関係があります。--fix-broken オプションを試してください。"
-
-#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
-#~ msgstr ""
-#~ "以下の問題を解決するために 'apt --fix-broken install' を実行する必要がある"
-#~ "かもしれません:"
-
-#~ msgid "Failed to fetch %s  %s\n"
-#~ msgstr "%s の取得に失敗しました  %s\n"
-
-#~ msgid "(not found)"
-#~ msgstr "(見つかりません)"
-
-#~ msgid "  Package pin: "
-#~ msgstr "  パッケージ Pin: "
-
-#~ msgid "Invalid 'Valid-Until' entry in Release file %s"
-#~ msgstr "Release ファイル %s に無効な 'Valid-Until' エントリがあります"
-
-#~ msgid "There is no public key available for the following key IDs:\n"
-#~ msgstr "以下の鍵 ID に対して利用可能な公開鍵がありません:\n"
-
-#, fuzzy
-#~ msgid "The repository is insufficiently signed by key %s (%s)"
-#~ msgstr "ディレクトリ %s は divert されています"
-
-#~ msgid ""
-#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-#~ "packages"
-#~ msgstr ""
-#~ "パッケージ %3$s が '%4$s' パッケージで許されていないため、%2$s に対する "
-#~ "%1$s の依存関係を満たすことができません"
-
-#~ msgid ""
-#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
-#~ "found"
-#~ msgstr ""
-#~ "パッケージ %3$s が見つからないため、%2$s に対する %1$s の依存関係を満たす"
-#~ "ことができません"
-
-#~ msgid ""
-#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-#~ msgstr ""
-#~ "%2$s の依存関係 %1$s を満たすことができません: インストールされた %3$s "
-#~ "パッケージは新しすぎます"
-
-#~ msgid ""
-#~ "%s dependency for %s cannot be satisfied because candidate version of "
-#~ "package %s can't satisfy version requirements"
-#~ msgstr ""
-#~ "パッケージ %3$s の候補バージョンはバージョンについての要求を満たせないた"
-#~ "め、%2$s に対する %1$s の依存関係を満たすことができません"
-
-#~ msgid ""
-#~ "%s dependency for %s cannot be satisfied because package %s has no "
-#~ "candidate version"
-#~ msgstr ""
-#~ "パッケージ %3$s の候補バージョンが存在しないため、%2$s に対する %1$s の依"
-#~ "存関係を満たすことができません"
-
-#~ msgid "Failed to satisfy %s dependency for %s: %s"
-#~ msgstr "%2$s の依存関係 %1$s を満たすことができません: %3$s"
-
-#~ msgid "Build-dependencies for %s could not be satisfied."
-#~ msgstr "%s のビルド依存関係を満たすことができませんでした。"
-
-#~ msgid "Problem unlinking %s"
-#~ msgstr "%s のリンク解除で問題が発生しました"
-
-#~ msgid "Failed to unlink %s"
-#~ msgstr "%s のリンク解除に失敗しました"
-
-#~ msgid ""
-#~ "Usage: apt-cache [options] command\n"
-#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
-#~ "\n"
-#~ "apt-cache is a low-level tool used to query information\n"
-#~ "from APT's binary cache files\n"
-#~ msgstr ""
-#~ "使用方法: apt-cache [オプション] コマンド\n"
-#~ "          apt-cache [オプション] show pkg1 [pkg2 ...]\n"
-#~ "\n"
-#~ "apt-cache は APT のバイナリキャッシュファイルを操作したり、そこから情\n"
-#~ "報を検索したりするための低レベルのツールです\n"
-
-#~ msgid "Commands:"
-#~ msgstr "コマンド:"
-
-#~ msgid ""
-#~ "Options:\n"
-#~ "  -h   This help text.\n"
-#~ "  -p=? The package cache.\n"
-#~ "  -s=? The source cache.\n"
-#~ "  -q   Disable progress indicator.\n"
-#~ "  -i   Show only important deps for the unmet command.\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-#~ msgstr ""
-#~ "オプション:\n"
-#~ "  -h   このヘルプを表示する\n"
-#~ "  -p=? パッケージキャッシュ\n"
-#~ "  -s=? ソースキャッシュ\n"
-#~ "  -q   プログレス表示をしない\n"
-#~ "  -i   umnet コマンドで重要な依存情報のみを表示する\n"
-#~ "  -c=? 指定した設定ファイルを読み込む\n"
-#~ "  -o=? 指定した設定オプションを読み込む (例: -o dir::cache=/tmp)\n"
-#~ "詳細は、apt-cache(8) や apt.conf(5) のマニュアルページを参照してくださ"
-#~ "い。\n"
-
-#~ msgid ""
-#~ "Usage: apt [options] command\n"
-#~ "\n"
-#~ "CLI for apt.\n"
-#~ msgstr ""
-#~ "使用法: apt [オプション] コマンド\n"
-#~ "\n"
-#~ "apt 用コマンドラインインターフェイス\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Options:\n"
-#~ "  -h   This help text\n"
-#~ "  -d   CD-ROM mount point\n"
-#~ "  -r   Rename a recognized CD-ROM\n"
-#~ "  -m   No mounting\n"
-#~ "  -f   Fast mode, don't check package files\n"
-#~ "  -a   Thorough scan mode\n"
-#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See fstab(5)\n"
-#~ msgstr ""
-#~ "オプション:\n"
-#~ "  -h  このヘルプを表示する\n"
-#~ "  -q  ログファイルに出力可能な形式にする - プログレス表示をしない\n"
-#~ "  -qq エラー以外は表示しない\n"
-#~ "  -s  実際には実行しない。実行シミュレーションのみ行う\n"
-#~ "  -f  指定のファイルを使って自動/手動のマーキングを読み書きする\n"
-#~ "  -c=? 指定した設定ファイルを読み込む\n"
-#~ "  -o=? 任意の設定オプションを指定する (例 -o dir::cache=/tmp)\n"
-#~ "さらなる情報については、マニュアルページ apt-mark(8) および apt.conf(5) を"
-#~ "参照してください。"
-
-#~ msgid ""
-#~ "Options:\n"
-#~ "  -h   This help text.\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "オプション:\n"
-#~ "  -h   このヘルプを表示する\n"
-#~ "  -c=? 指定した設定ファイルを読み込む\n"
-#~ "  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
-
-#~ msgid ""
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -qq No output except for errors\n"
-#~ "  -s  No-act. Just prints what would be done.\n"
-#~ "  -f  read/write auto/manual marking in the given file\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
-#~ msgstr ""
-#~ "オプション:\n"
-#~ "  -h  このヘルプを表示する\n"
-#~ "  -q  ログファイルに出力可能な形式にする - プログレス表示をしない\n"
-#~ "  -qq エラー以外は表示しない\n"
-#~ "  -s  実際には実行しない。実行シミュレーションのみ行う\n"
-#~ "  -f  指定のファイルを使って自動/手動のマーキングを読み書きする\n"
-#~ "  -c=? 指定した設定ファイルを読み込む\n"
-#~ "  -o=? 任意の設定オプションを指定する (例 -o dir::cache=/tmp)\n"
-#~ "さらなる情報については、マニュアルページ apt-mark(8) および apt.conf(5) を"
-#~ "参照してください。"
-
-#~ msgid ""
-#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
-#~ "\n"
-#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
-#~ "used\n"
-#~ "to indicate what kind of file it is.\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h   This help text\n"
-#~ "  -s   Use source file sorting\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "使用方法: apt-sortpkgs [オプション] ファイル名1 [ファイル名2 ...]\n"
-#~ "\n"
-#~ "apt-sortpkgs はパッケージファイルをソートするための簡単なツールです。\n"
-#~ "-s オプションはファイルの種類を示すために使用されます。\n"
-#~ "\n"
-#~ "オプション:\n"
-#~ "  -h   このヘルプを表示する\n"
-#~ "  -s   ソースファイルソートを使用する\n"
-#~ "  -c=? 指定した設定ファイルを読み込む\n"
-#~ "  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
-
-#~ msgid "Child process failed"
-#~ msgstr "子プロセスが失敗しました"
-
-#, fuzzy
-#~ msgid "Must specifc at least one srv record"
-#~ msgstr "少なくとも URL / ファイル名を 1 組指定する必要があります"
-
-#~ msgid "Failed to create pipes"
-#~ msgstr "パイプの生成に失敗しました"
-
-#~ msgid "Failed to exec gzip "
-#~ msgstr "gzip の実行に失敗しました"
-
-#~ msgid "%s %s for %s compiled on %s %s\n"
-#~ msgstr "%s %s for %s コンパイル日時: %s %s\n"
-
-#~ msgid "Failed to create FILE*"
-#~ msgstr "FILE* の作成に失敗しました"
-
-#~ msgid "Malformed stanza %u in source list %s (URI parse)"
-#~ msgstr "ソースリスト %2$s の %1$u 個目の区切りが不正です (URI parse)"
-
-#~ msgid "Malformed line %lu in source list %s ([option] unparseable)"
-#~ msgstr ""
-#~ "ソースリスト %2$s の %1$lu 行目が不正です ([オプション] を解釈できません)"
-
-#~ msgid "Malformed line %lu in source list %s ([option] too short)"
-#~ msgstr ""
-#~ "ソースリスト %2$s の %1$lu 行目が不正です ([オプション] が短かすぎます)"
-
-#~ msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-#~ msgstr ""
-#~ "ソースリスト %2$s の %1$lu 行目が不正です ([%3$s] は割り当てられていませ"
-#~ "ん)"
-
-#~ msgid "Malformed line %lu in source list %s ([%s] has no key)"
-#~ msgstr ""
-#~ "ソースリスト %2$s の %1$lu 行目が不正です ([%3$s にキーがありません)"
-
-#~ msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-#~ msgstr ""
-#~ "ソースリスト %2$s の %1$lu 行目が不正です ([%3$s] キー %4$s に値がありませ"
-#~ "ん)"
-
-#~ msgid "Malformed line %lu in source list %s (URI)"
-#~ msgstr "ソースリスト %2$s の %1$lu 行目が不正です (URI)"
-
-#~ msgid "Malformed line %lu in source list %s (dist)"
-#~ msgstr "ソースリスト %2$s の %1$lu 行目が不正です (dist)"
-
-#~ msgid "Malformed line %lu in source list %s (URI parse)"
-#~ msgstr "ソースリスト %2$s の %1$lu 行目が不正です (URI parse)"
-
-#~ msgid "Malformed line %lu in source list %s (absolute dist)"
-#~ msgstr "ソースリスト %2$s の %1$lu 行目が不正です (absolute dist)"
-
-#~ msgid "Malformed line %lu in source list %s (dist parse)"
-#~ msgstr "ソースリスト %2$s の %1$lu 行目が不正です (dist parse)"
-
-#~ msgid "Package %s %s was not found while processing file dependencies"
-#~ msgstr "パッケージ %s %s がファイル依存の処理中に見つかりませんでした"
-
-#~ msgid "Couldn't stat source package list %s"
-#~ msgstr "ソースパッケージリスト %s の状態を取得できません"
-
-#~ msgid "Collecting File Provides"
-#~ msgstr "ファイル提供情報を収集しています"
-
-#~ msgid "Unable to find hash sum for '%s' in Release file"
-#~ msgstr "Release ファイル中の '%s' のハッシュサムを見つけられません"
-
-#~ msgid "Vendor block %s contains no fingerprint"
-#~ msgstr "ベンダブロック %s は鍵指紋を含んでいません"
-
-#~ msgid "Total dependency version space: "
-#~ msgstr "総依存関係・バージョン容量: "
-
-#~ msgid "You don't have enough free space in %s"
-#~ msgstr "%s に充分な空きスペースがありません"
-
-#~ msgid "Done"
-#~ msgstr "完了"
-
-#~ msgid "No keyring installed in %s."
-#~ msgstr "%s にキーリングがインストールされていません。"
-
-#~ msgid "Is stdout a terminal?"
-#~ msgstr "標準出力はターミナルですか?"
-
-#~ msgid "ioctl(TIOCGWINSZ) failed"
-#~ msgstr "ioctl(TIOCGWINSZ) に失敗しました"
-
-#~ msgid "Internal error, Upgrade broke stuff"
-#~ msgstr "内部エラー、アップグレードで何か壊れました"
