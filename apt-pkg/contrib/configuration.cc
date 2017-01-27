@@ -92,10 +92,9 @@ static ConfigType getConfigType(std::string const &type)		/*{{{*/
    return ConfigType::UNDEFINED;
 }
 									/*}}}*/
-static void checkFindConfigOptionType(std::string name, ConfigType const type)/*{{{*/
+// checkFindConfigOptionType - workhorse of option checking		/*{{{*/
+static void checkFindConfigOptionTypeInternal(std::string name, ConfigType const type)
 {
-   if (apt_known_config.empty())
-      return;
    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
    auto known = apt_known_config.find(name);
    if (known == apt_known_config.cend())
@@ -151,6 +150,12 @@ static void checkFindConfigOptionType(std::string name, ConfigType const type)/*
 	 _error->Warning("Using config option »%s« of type %s as a type %s",
 	       name.c_str(), getConfigTypeString(known->second).c_str(), getConfigTypeString(type).c_str());
    }
+}
+static void checkFindConfigOptionType(char const * const name, ConfigType const type)
+{
+   if (apt_known_config.empty())
+      return;
+   checkFindConfigOptionTypeInternal(name, type);
 }
 									/*}}}*/
 static bool LoadConfigurationIndex(std::string const &filename)		/*{{{*/
