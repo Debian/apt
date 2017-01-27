@@ -3,16 +3,17 @@
 # This file is distributed under the same license as the apt package.
 #
 # Translators:
+#
 # Jérôme Marant, 2000.
 # Philippe Batailler, 2005.
 # Christian Perrier <bubulle@debian.org>, 2009, 2010, 2011, 2012, 2013.
-# Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>, 2014.
+# Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>, 2014, 2017.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-01-17 15:18+0100\n"
-"PO-Revision-Date: 2014-11-15 17:26+0100\n"
+"POT-Creation-Date: 2017-01-27 21:41+0100\n"
+"PO-Revision-Date: 2017-01-24 22:43+0100\n"
 "Last-Translator: Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "Language: fr\n"
@@ -645,6 +646,11 @@ msgid ""
 "enables some options better suited for interactive usage by default compared "
 "to more specialized APT tools like &apt-get; and &apt-cache;."
 msgstr ""
+"<command>apt</command> fournit une interface en ligne de commande pour le "
+"système de gestion de paquets. Elle est conçue comme une interface "
+"utilisateur et permet certaines options plus adaptées à une utilisation "
+"interactive par défaut par rapport aux outils d'APT plus spécialisés tels "
+"que &apt-get; et &apt-cache;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.8.xml
@@ -654,6 +660,11 @@ msgid ""
 "partly to not duplicate information in multiple places and partly to avoid "
 "overwhelming readers with a cornucopia of options and details."
 msgstr ""
+"Exactement comme <command>apt</command> lui-même, cette page de manuel vise "
+"à être une interface pour l'utilisateur et ainsi elle ne mentionne que les "
+"commandes et les options les plus courantes, en partie pour ne pas répéter "
+"les informations à de multiples emplacements et en partie pour ne pas noyer "
+"le lecteur par une surabondance d'options et de détails."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
@@ -668,15 +679,14 @@ msgid ""
 "package upgrades or search in and display details about all packages "
 "available for installation."
 msgstr ""
+"La commande <option>update</option> permet de télécharger les informations "
+"sur les paquets à partir des sources configurées. D'autres commandes "
+"agissent sur ces données, par exemple, réalisent la mise à jour de paquet ou "
+"recherchent et affichent des détails à propos de tous les paquets qui "
+"peuvent être installés."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>upgrade</literal> is used to install the newest versions of all "
-#| "packages currently installed on the system from the sources enumerated in "
-#| "<filename>/etc/apt/sources.list</filename>. New packages will be "
-#| "installed, but existing packages will never be removed."
 msgid ""
 "<option>upgrade</option> is used to install available upgrades of all "
 "packages currently installed on the system from the sources configured via "
@@ -685,32 +695,29 @@ msgid ""
 "a package requires the remove of an installed package the upgrade for this "
 "package isn't performed."
 msgstr ""
-"La commande <literal>upgrade</literal> permet d'installer les versions les "
-"plus récentes de tous les paquets présents sur le système en utilisant les "
-"sources énumérées dans <filename>/etc/apt/sources.list</filename>. De "
-"nouveaux paquets seront installés, mais les paquets installés ne seront "
-"jamais supprimés."
+"La commande <literal>upgrade</literal> permet d'installer les mises à jour "
+"disponibles de tous les paquets présents sur le système en utilisant les "
+"sources énumérées dans &sources-list;. De nouveaux paquets seront installés "
+"si cela est nécessaire pour satisfaire des dépendances, mais les paquets "
+"installés ne seront jamais supprimés. Si la mise à jour d'un paquet "
+"nécessite la suppression d'un paquet installé, la mise à jour n'est pas "
+"réalisée."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>full-upgrade</literal> performs the function of upgrade but may "
-#| "also remove installed packages if that is required in order to resolve a "
-#| "package conflict."
 msgid ""
 "<literal>full-upgrade</literal> performs the function of upgrade but will "
 "remove currently installed packages if this is needed to upgrade the system "
 "as a whole."
 msgstr ""
 "La commande <literal>full-upgrade</literal> remplit la même fonction que "
-"upgrade mais peut aussi supprimer des paquets installés si cela est "
-"nécessaire pour résoudre un conflit entre des paquets."
+"upgrade mais supprimera des paquets actuellement installés si cela est "
+"nécessaire pour mettre à jour le système dans son ensemble."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml apt-key.8.xml
 msgid ","
-msgstr ""
+msgstr ","
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
@@ -720,17 +727,13 @@ msgid ""
 "packages by append a plus (+) to the package name to install this package or "
 "a minus (-) to remove it."
 msgstr ""
+"La commande réalise l'action requise sur un ou plusieurs paquets spécifiés "
+"avec &regex;, &glob; ou avec la correspondance exacte. Les actions requises "
+"peuvent être remplacées pour certains paquets en ajoutant un plus (+) au nom "
+"du paquet pour l'installer et ou un moins (-) pour le supprimer."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
-#, fuzzy
-#| msgid ""
-#| "A specific version of a package can be selected for installation by "
-#| "following the package name with an equals and the version of the package "
-#| "to select. This will cause that version to be located and selected for "
-#| "install. Alternatively a specific distribution can be selected by "
-#| "following the package name with a slash and the version of the "
-#| "distribution or the Archive name (stable, testing, unstable)."
 msgid ""
 "A specific version of a package can be selected for installation by "
 "following the package name with an equals (=) and the version of the package "
@@ -741,11 +744,12 @@ msgid ""
 "dependencies of this package if needed to satisfy the request."
 msgstr ""
 "On peut choisir d'installer une version particulière d'un paquet en faisant "
-"suivre son nom par un signe égal et par la version. Cette version sera "
-"recherchée et l'installation sera demandée. On peut aussi choisir une "
-"distribution particulière en faisant suivre le nom du paquet par une barre "
-"oblique et par le nom de la distribution ou de l'archive (stable, testing, "
-"unstable)."
+"suivre son nom par un signe égal (=) et par la version du paquet à "
+"sélectionner. Autrement, on peut choisir une version spécifique en faisant "
+"suivre le nom du paquet par une barre oblique (/) et le nom de code (&debian-"
+"stable-codename;, &debian-testing-codename;, sid …) ou un nom de suite "
+"(stable, testing, unstable). Cela sélectionnera aussi cette version pour les "
+"dépendances de ce paquet si cela est nécessaire pour satisfaire la requête."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
@@ -758,23 +762,28 @@ msgid ""
 "on already removed packages. Note that this does not affect any data or "
 "configuration stored in your home directory."
 msgstr ""
+"La suppression d'un paquet entraîne la suppression de toutes les données "
+"empaquetées, mais conserve habituellement les petits fichiers (modifiés) de "
+"configuration de l'utilisateur, pour le cas où la suppression a été "
+"accidentelle. Dans ce cas, il suffira d'émettre une demande d'installation "
+"pour le paquet supprimé accidentellement pour restaurer son fonctionnement "
+"antérieur. D'autre part, on peut facilement se débarrasser de ces reliquats "
+"en appelant la commande <command>purge</command> même sur des paquets déjà "
+"supprimés. Notez que cela n'affecte aucune donnée ou configuration stockées "
+"dans votre répertoire personnel."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>autoremove</literal> is used to remove packages that were "
-#| "automatically installed to satisfy dependencies for other packages and "
-#| "are now no longer needed."
 msgid ""
 "<literal>autoremove</literal> is used to remove packages that were "
 "automatically installed to satisfy dependencies for other packages and are "
 "now no longer needed as dependencies changed or the package(s)  needing them "
 "were removed in the meantime."
 msgstr ""
-"Avec la commande <literal>autoremove</literal>, apt-get supprime les paquets "
-"installés dans le but de satisfaire les dépendances d'autres paquets et qui "
-"ne sont plus nécessaires."
+"La commande <literal>autoremove</literal>, supprime les paquets installés "
+"automatiquement dans le but de satisfaire les dépendances d'autres paquets "
+"et qui ne sont plus nécessaires parce que les dépendances ont changé ou "
+"parce que le ou les paquets ont été supprimés entre-temps."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
@@ -785,6 +794,12 @@ msgid ""
 "mark;. Packages which you have installed explicitly via <command>install</"
 "command> are also never proposed for automatic removal."
 msgstr ""
+"Vous devriez vérifier que la liste ne contient pas des applications que vous "
+"avez fini par apprécier, même si elles ont été installées seulement comme "
+"dépendance d'un autre paquet. Vous pouvez marquer ces paquets comme "
+"installés manuellement avec &apt-mark;. Les paquets que vous avez installés "
+"explicitement avec la commande <command>install</command> ne seront jamais "
+"proposés non plus pour une suppression automatique."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
@@ -799,6 +814,11 @@ msgid ""
 "useful if you are looking for packages having a specific feature.  If you "
 "are looking for a package including a specific file try &apt-file;."
 msgstr ""
+"La commande <option>search</option> peut être utilisée pour rechercher le(s) "
+"terme(s) &regex; donné(s) dans la liste de paquets disponibles et affiche "
+"les paquets correspondants. Par exemple, cela peut être utile pour "
+"rechercher des paquets dotés d'une fonctionnalité particulière. Si vous "
+"recherchez un paquet qui fournit un fichier particulier, essayez &apt-file;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
@@ -809,21 +829,20 @@ msgid ""
 "look at this information before allowing &apt; to remove a package or while "
 "searching for new packages to install."
 msgstr ""
+"La commande affiche des informations sur le(s) paquet(s) donné(s) y compris "
+"ses dépendances, sa taille installé et au téléchargement, les sources d’où "
+"provient le paquet, la description du contenu des paquets et bien plus "
+"encore. Cela peut être utile pour consulter ces informations avant "
+"d'autoriser &apt; à supprimer un paquet ou lors d'une recherche de nouveaux "
+"paquets à installer."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
 msgid "(work-in-progress)"
-msgstr ""
+msgstr "(travail en cours)"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>list</literal> is used to display a list of packages. It "
-#| "supports shell pattern for matching package names and the following "
-#| "options: <option>--installed</option>, <option>--upgradable</option>, "
-#| "<option>--upgradeable</option>, <option>--all-versions</option> are "
-#| "supported."
 msgid ""
 "<option>list</option> is somewhat similar to <command>dpkg-query --list</"
 "command> in that it can display a list of packages satisfying certain "
@@ -832,38 +851,31 @@ msgid ""
 "(<option>--upgradeable</option>) or all available (<option>--all-versions</"
 "option>) versions."
 msgstr ""
-"La commande <literal>list</literal> est utilisée pour afficher une liste de "
-"paquets. Il gère les motifs du shell pour chercher les noms de paquets, "
-"ainsi que les options suivantes : <option>--installed</option>, <option>--"
-"upgradable</option>, <option>--all-versions</option>."
+"La commande <literal>list</literal> est à peu près semblable à la commande "
+"<command>dpkg-query --list</command> dans la mesure où elle peut afficher "
+"une liste de paquets qui satisfont à certains critères. Elle gère les motifs "
+"&glob; pour la correspondance des noms de paquets ainsi que des options pour "
+"afficher les versions installées <option>--installed</option>, pouvant être "
+"mises à jour <option>--upgradeable</option>, ou toutes les versions "
+"disponibles <option>--all-versions</option>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>edit-sources</literal> lets you edit your sources.list file and "
-#| "provides basic sanity checks."
 msgid ""
 "<literal>edit-sources</literal> lets you edit your &sources-list; files in "
 "your preferred texteditor while also providing basic sanity checks."
 msgstr ""
 "La commande <literal>edit-sources</literal> permet de modifier le fichier "
-"sources.list et fournit des vérifications de sécurité de base."
+"&sources-list; avec votre éditeur de texte préféré et fournit des "
+"vérifications de sécurité de base."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml
 msgid "Script Usage and Differences from Other APT Tools"
-msgstr ""
+msgstr "Utilisation de scripts et différences avec les autres outils d'APT"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.8.xml
-#, fuzzy
-#| msgid ""
-#| "The &apt; commandline is designed as a end-user tool and it may change "
-#| "the output between versions. While it tries to not break backward "
-#| "compatibility there is no guarantee for it either.  All features of &apt; "
-#| "are available in &apt-cache; and &apt-get; via APT options. Please prefer "
-#| "using these commands in your scripts."
 msgid ""
 "The &apt; commandline is designed as an end-user tool and it may change "
 "behavior between versions. While it tries not to break backward "
@@ -871,11 +883,10 @@ msgid ""
 "interactive use."
 msgstr ""
 "La ligne de commande de &apt; est conçue comme un outil pour l'utilisateur "
-"et les sorties peuvent varier selon ses versions. Bien qu'il s'efforce de ne "
-"pas casser les compatibilités ascendantes, cela ne peut pas non plus être "
-"garanti. Toutes les fonctionnalités de &apt; existent dans &apt-cache; et "
-"&apt-get; grâce aux options de APT. Il est conseillé d'utiliser ces "
-"commandes dans vos scripts."
+"et son comportement peut varier selon ses versions. Bien qu'il s'efforce de "
+"ne pas casser les compatibilités ascendantes, cela ne peut pas non plus être "
+"garanti, si une modification semble bénéfique pour une utilisation "
+"interactive."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.8.xml
@@ -887,6 +898,13 @@ msgid ""
 "enabled) in your scripts as they keep backward compatibility as much as "
 "possible."
 msgstr ""
+"Toutes les fonctionnalités d'&apt; sont aussi proposées dans les outils "
+"dédiés d'APT tels que &apt-get; ou &apt-cache; &apt; modifie seulement la "
+"valeur par défaut de certaines options (voir &apt-conf; et en particulier le "
+"champ d'action Binary). Aussi vous devriez préférer l'utilisation de ces "
+"commandes (éventuellement avec certaines options complémentaires activées) "
+"dans les scripts parce qu'elles conservent autant que possible la "
+"compatibilité ascendante."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml apt-get.8.xml apt-cache.8.xml apt-key.8.xml apt-mark.8.xml
@@ -1302,12 +1320,12 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-get.8.xml
 msgid "(and the"
-msgstr ""
+msgstr "(et"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-get.8.xml
 msgid "alias since 1.1)"
-msgstr ""
+msgstr "l'alias depuis la version 1.1)"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1341,33 +1359,17 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>changelog</literal> downloads a package changelog and displays "
-#| "it through <command>sensible-pager</command>. The server name and base "
-#| "directory is defined in the <literal>APT::Changelogs::Server</literal> "
-#| "variable (e.g. <ulink url=\"http://packages.debian.org/changelogs"
-#| "\">packages.debian.org/changelogs</ulink> for Debian or <ulink url="
-#| "\"http://changelogs.ubuntu.com/changelogs\">changelogs.ubuntu.com/"
-#| "changelogs</ulink> for Ubuntu).  By default it displays the changelog for "
-#| "the version that is installed.  However, you can specify the same options "
-#| "as for the <option>install</option> command."
 msgid ""
 "<literal>changelog</literal> tries to download the changelog of a package "
 "and displays it through <command>sensible-pager</command>.  By default it "
 "displays the changelog for the version that is installed.  However, you can "
 "specify the same options as for the <option>install</option> command."
 msgstr ""
-"<literal>changelog</literal> télécharge le journal des modifications d'un "
-"paquet et l'affiche avec <command>sensible-pager</command>. Le nom du "
-"serveur et le répertoire de base sont définis dans la variable <literal>APT::"
-"Changelogs::Server</literal> (p. ex. <ulink url=\"http://packages.debian.org/"
-"changelogs\">http://packages.debian.org/changelogs</ulink> pour Debian ou "
-"<ulink url=\"http://changelogs.ubuntu.com/changelogs\">http://changelogs."
-"ubuntu.com/changelogs</ulink> pour Ubuntu). Par défaut, c'est le journal des "
-"modifications de la version installée du paquet qui est affiché. Cependant, "
-"il est possible d'utiliser les mêmes options que pour la commande "
-"<option>install</option>."
+"<literal>changelog</literal> tente de télécharger le journal des "
+"modifications d'un paquet et l'affiche avec <command>sensible-pager</"
+"command>. Par défaut, c'est le journal des modifications de la version "
+"installée du paquet qui est affiché. Cependant, il est possible d'utiliser "
+"les mêmes options que pour la commande <option>install</option>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1382,6 +1384,17 @@ msgid ""
 "documentation is omitted here and can instead be found in the file &apt-"
 "acquire-additional-files; shipped by the <package>apt-doc</package> package."
 msgstr ""
+"La commande affiche par défaut une liste au format deb822 des informations "
+"sur tous les fichiers de données (ou cibles d'index) que <command>apt-get "
+"update</command> peut télécharger. Elle prend en charge une option <option>--"
+"format</option> pour modifier le format de sortie et accepte les lignes de "
+"la sortie par défaut pour filtrer les enregistrements. La commande est "
+"utilisée principalement comme interface avec les outils qui fonctionnent "
+"avec APT pour obtenir des informations comme les noms des fichiers "
+"téléchargés de telle sorte qu'ils peuvent les utiliser plutôt que de les "
+"télécharger à nouveau de leur côté. La documentation détaillée, absente ici, "
+"peut être trouvée dans le fichier &apt-acquire-additional-files; fourni par "
+"le paquet <package>apt-doc</package>."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml apt-cache.8.xml apt-config.8.xml apt-extracttemplates.1.xml
@@ -1512,6 +1525,16 @@ msgid ""
 "Simulation-Note</option>).  Configuration Item: <literal>APT::Get::Simulate</"
 "literal>."
 msgstr ""
+"Pas d'action ; réalise une simulation des événements qui pourraient survenir "
+"sur la base de l'état du système actuel, mais ne modifie pas véritablement "
+"le système. Le verrouillage sera désactivé (<option>Debug::NoLocking</"
+"option>), ainsi l'état du système peut changer pendant que <command>apt-get</"
+"command> est exécuté. Les simulations peuvent aussi être exécutées par les "
+"utilisateurs ordinaires qui pourraient ne pas avoir accès en lecture à toute "
+"la configuration d'apt, ce qui fausse la simulation. Une annonce exprimant "
+"cet avertissement est aussi affichée par défaut pour les utilisateurs "
+"ordinaires  (<option>APT::Get::Show-User-Simulation-Note</option>). Élément "
+"de configuration : <literal>APT::Get::Simulate</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1550,22 +1573,17 @@ msgid ""
 "Automatic \"no\" to all prompts.  Configuration Item: <literal>APT::Get::"
 "Assume-No</literal>."
 msgstr ""
-"Répondre automatiquement négativement aux questions.  Élément de "
+"Répondre automatiquement négativement aux questions. Élément de "
 "configuration : <literal>APT::Get::Assume-No</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Show upgraded packages; print out a list of all packages that are to be "
-#| "upgraded.  Configuration Item: <literal>APT::Get::Show-Upgraded</literal>."
 msgid ""
 "Do not show a list of all packages that are to be upgraded.  Configuration "
 "Item: <literal>APT::Get::Show-Upgraded</literal>."
 msgstr ""
-"Afficher les paquets mis à niveau ; affiche une liste de tous les paquets à "
-"mettre à niveau. Élément de configuration : <literal>APT::Get::Show-"
-"Upgraded</literal>."
+"Ne pas afficher la liste de tous les paquets qui doivent être mis à niveau. "
+"Élément de configuration : <literal>APT::Get::Show-Upgraded</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1573,7 +1591,7 @@ msgid ""
 "Show full versions for upgraded and installed packages.  Configuration Item: "
 "<literal>APT::Get::Show-Versions</literal>."
 msgstr ""
-"Afficher les versions complètes des paquets installés ou mis à niveau.  "
+"Afficher les versions complètes des paquets installés ou mis à niveau. "
 "Élément de configuration : <literal>APT::Get::Show-Versions</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -1627,7 +1645,7 @@ msgid ""
 "<literal>dist-upgrade</literal> to override a large number of undesired "
 "holds.  Configuration Item: <literal>APT::Ignore-Hold</literal>."
 msgstr ""
-"Cette commande ignore la marque « Hold » (« garder ») d'un paquet ; par ce "
+"Cette commande ignore la marque « Hold » (« retenu ») d'un paquet ; par ce "
 "biais, <command>apt-get</command> ignore un « hold » placé sur un paquet. "
 "cela peut être utile avec <literal>dist-upgrade</literal> pour annuler un "
 "grand nombre de « hold » indésirables. Élément de configuration : "
@@ -1681,35 +1699,20 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Force yes; this is a dangerous option that will cause apt to continue "
-#| "without prompting if it is doing something potentially harmful. It should "
-#| "not be used except in very special situations. Using <literal>force-yes</"
-#| "literal> can potentially destroy your system! Configuration Item: "
-#| "<literal>APT::Get::force-yes</literal>."
 msgid ""
 "This is a dangerous option that will cause apt to continue without prompting "
 "if it is doing downgrades. It should not be used except in very special "
 "situations. Using it can potentially destroy your system! Configuration "
 "Item: <literal>APT::Get::allow-downgrades</literal>. Introduced in APT 1.1."
 msgstr ""
-"Forcer l'acceptation ; cette option est dangereuse parce qu'elle laisse APT "
-"continuer sans poser de questions quand il réalise quelque chose de "
-"potentiellement dommageable. Cette option ne doit être utilisée que dans des "
-"circonstances très spéciales. Utiliser <literal>force-yes</literal> peut "
-"détruire le système... Élément de configuration : <literal>APT::Get::force-"
-"yes</literal>."
+"Cette option est dangereuse parce qu'elle laisse APT continuer sans poser de "
+"questions quand il réalise un retour en arrière. Elle ne doit être utilisée "
+"que dans des circonstances très spéciales. L'utiliser peut éventuellement "
+"détruire le système ! Élément de configuration : <literal>APT::Get::allow-"
+"downgrades</literal>. Introduite dans APT 1.1"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Force yes; this is a dangerous option that will cause apt to continue "
-#| "without prompting if it is doing something potentially harmful. It should "
-#| "not be used except in very special situations. Using <literal>force-yes</"
-#| "literal> can potentially destroy your system! Configuration Item: "
-#| "<literal>APT::Get::force-yes</literal>."
 msgid ""
 "Force yes; this is a dangerous option that will cause apt to continue "
 "without prompting if it is removing essentials. It should not be used except "
@@ -1718,21 +1721,14 @@ msgid ""
 "Introduced in APT 1.1."
 msgstr ""
 "Forcer l'acceptation ; cette option est dangereuse parce qu'elle laisse APT "
-"continuer sans poser de questions quand il réalise quelque chose de "
-"potentiellement dommageable. Cette option ne doit être utilisée que dans des "
-"circonstances très spéciales. Utiliser <literal>force-yes</literal> peut "
-"détruire le système... Élément de configuration : <literal>APT::Get::force-"
-"yes</literal>."
+"continuer sans poser de questions quand il supprime des paquets essentiels. "
+"Cette option ne doit être utilisée que dans des circonstances très "
+"spéciales. L'utiliser peut éventuellement détruire le système ! Élément de "
+"configuration : <literal>APT::Get::allow-remove-essential</literal>. "
+"Introduite dans APT 1.1."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Force yes; this is a dangerous option that will cause apt to continue "
-#| "without prompting if it is doing something potentially harmful. It should "
-#| "not be used except in very special situations. Using <literal>force-yes</"
-#| "literal> can potentially destroy your system! Configuration Item: "
-#| "<literal>APT::Get::force-yes</literal>."
 msgid ""
 "Force yes; this is a dangerous option that will cause apt to continue "
 "without prompting if it is changing held packages. It should not be used "
@@ -1741,21 +1737,14 @@ msgid ""
 "literal>. Introduced in APT 1.1."
 msgstr ""
 "Forcer l'acceptation ; cette option est dangereuse parce qu'elle laisse APT "
-"continuer sans poser de questions quand il réalise quelque chose de "
-"potentiellement dommageable. Cette option ne doit être utilisée que dans des "
-"circonstances très spéciales. Utiliser <literal>force-yes</literal> peut "
-"détruire le système... Élément de configuration : <literal>APT::Get::force-"
-"yes</literal>."
+"continuer sans poser de questions quand il modifie des paquets retenus. "
+"(« hold »). Cette option ne doit être utilisée que dans des circonstances "
+"très spéciales. L'utiliser peut éventuellement détruire le système ! Élément "
+"de configuration : <literal>APT::Get::allow-change-held-packages</literal>. "
+"Introduite dans APT 1.1."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Force yes; this is a dangerous option that will cause apt to continue "
-#| "without prompting if it is doing something potentially harmful. It should "
-#| "not be used except in very special situations. Using <literal>force-yes</"
-#| "literal> can potentially destroy your system! Configuration Item: "
-#| "<literal>APT::Get::force-yes</literal>."
 msgid ""
 "Force yes; this is a dangerous option that will cause apt to continue "
 "without prompting if it is doing something potentially harmful. It should "
@@ -1769,8 +1758,11 @@ msgstr ""
 "continuer sans poser de questions quand il réalise quelque chose de "
 "potentiellement dommageable. Cette option ne doit être utilisée que dans des "
 "circonstances très spéciales. Utiliser <literal>force-yes</literal> peut "
-"détruire le système... Élément de configuration : <literal>APT::Get::force-"
-"yes</literal>."
+"éventuellement détruire le système ! Élément de configuration : "
+"<literal>APT::Get::force-yes</literal>. Cette option est obsolète et "
+"remplacée par <option>--allow-downgrades</option>, <option>--allow-remove-"
+"essential</option>, et <option>--allow-change-held-packages</option> dans "
+"APT 1.1."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1938,16 +1930,12 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Only process architecture-dependent build-dependencies.  Configuration "
-#| "Item: <literal>APT::Get::Arch-Only</literal>."
 msgid ""
 "Only process architecture-independent build-dependencies.  Configuration "
 "Item: <literal>APT::Get::Indep-Only</literal>."
 msgstr ""
-"Ne traiter que les dépendances de construction dépendantes de "
-"l'architecture. Élément de configuration : <literal>APT::Get::Arch-Only</"
+"Ne traiter que les dépendances de construction indépendantes de "
+"l'architecture. Élément de configuration : <literal>APT::Get::Indep-Only</"
 "literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -1960,6 +1948,14 @@ msgid ""
 "should usually be preferred over this global override.  Configuration Item: "
 "<literal>APT::Get::AllowUnauthenticated</literal>."
 msgstr ""
+"Ignorer le fait que les paquets ne peuvent pas être authentifiés ; ne le "
+"signale pas à l'utilisateur. Cette option peut être utile si on travaille "
+"avec des dépôts locaux, mais cela représente un risque considérable si "
+"l'authenticité des données n'est pas assurée d'une autre manière par "
+"l'utilisateur lui-même. L'utilisation de l'option <option>Trusted</option> "
+"pour les entrées de &sources-list; devrait être habituellement préférée à ce "
+"remplacement global. Élément de configuration : <literal>APT::Get::"
+"AllowUnauthenticated</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1970,6 +1966,11 @@ msgid ""
 "concept and the implications.  Configuration Item: <literal>Acquire::"
 "AllowInsecureRepositories</literal>."
 msgstr ""
+"Interdire la commande update pour obtenir des données non vérifiables des "
+"sources configurées. APT échouera si la commande update vise des dépôts sans "
+"signatures cryptographiques valables. Voir aussi &apt-secure; pour plus de "
+"détails sur le concept et ses implications. Élément de configuration : "
+"<literal>Acquire::AllowInsecureRepositories</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1994,6 +1995,9 @@ msgid ""
 "multiple files.  See <option>--with-source</option> description in &apt-"
 "cache; for further details."
 msgstr ""
+"Ajoute le fichier donné comme source de méta-données. La commande peut être "
+"répétée pour ajouter de multiples fichiers. Voir la description de l'option "
+"<option>--with-source</option> dans &apt-cache; pour plus de détails."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml apt-cache.8.xml apt-key.8.xml apt-mark.8.xml apt.conf.5.xml
@@ -2028,12 +2032,6 @@ msgstr "recherche dans le cache d'APT"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-cache.8.xml
-#, fuzzy
-#| msgid ""
-#| "<command>apt-cache</command> performs a variety of operations on APT's "
-#| "package cache. <command>apt-cache</command> does not manipulate the state "
-#| "of the system but does provide operations to search and generate "
-#| "interesting output from the package metadata."
 msgid ""
 "<command>apt-cache</command> performs a variety of operations on APT's "
 "package cache. <command>apt-cache</command> does not manipulate the state of "
@@ -2047,7 +2045,12 @@ msgstr ""
 "<command>apt-cache</command> réalise différentes opérations sur le cache de "
 "paquet d'APT. <command>apt-cache</command> ne manipule pas l'état du système "
 "mais fournit des moyens de recherche dans les métadonnées d'un paquet "
-"desquelles il extrait les informations intéressantes."
+"desquelles il extrait les informations intéressantes. Les métadonnées sont "
+"obtenues et mises à jour avec la commande update d'<command>apt-get</"
+"command> par exemple, et peuvent donc être périmées si la dernière mise à "
+"jour est trop ancienne, mais en contrepartie <command>apt-cache</command> "
+"fonctionne indépendamment de la disponibilité des sources configurées (par "
+"exemple hors ligne)."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
@@ -2226,22 +2229,14 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
 #: apt-cache.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>Total distinct</literal> versions is the number of package "
-#| "versions found in the cache; this value is therefore at least equal to "
-#| "the number of total package names. If more than one distribution is being "
-#| "accessed (for instance, \"stable\" and \"unstable\"), this value can be "
-#| "considerably larger than the number of total package names."
 msgid ""
 "<literal>Total distinct</literal> versions is the number of package versions "
 "found in the cache. If more than one distribution is being accessed (for "
 "instance, \"stable\" and \"unstable\"), this value can be considerably "
 "larger than the number of total package names."
 msgstr ""
-"<literal>Total distinct versions</literal> est le nombre de versions de "
-"paquets trouvées dans le cache ; cette valeur est par conséquent au moins "
-"égale au nombre total de paquets. Quand on accède à plus d'une distribution "
+"<literal>Total distinct</literal> versions est le nombre de versions de "
+"paquets trouvées dans le cache. Quand on accède à plus d'une distribution "
 "(« stable » et « unstable », par exemple), cette valeur peut être "
 "considérablement plus grande que le nombre total de paquets."
 
@@ -2256,11 +2251,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>showsrc</literal> displays all the source package records that "
-#| "match the given package names. All versions are shown, as well as all "
-#| "records that declare the name to be a binary package."
 msgid ""
 "<literal>showsrc</literal> displays all the source package records that "
 "match the given package names. All versions are shown, as well as all "
@@ -2269,7 +2259,9 @@ msgid ""
 msgstr ""
 "<literal>showsrc</literal> affiche toutes les entrées de paquets source qui "
 "correspondent aux noms donnés. Toutes les versions sont affichées et toutes "
-"les entrées qui déclarent que ces noms correspondent à des paquets binaires."
+"les entrées qui déclarent que ces noms correspondent à des paquets binaires. "
+"Utilisez l'option <option>--only-source</option> pour n'afficher que le nom "
+"des paquets source."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
@@ -2316,16 +2308,6 @@ msgstr "&synopsis-regex;"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>search</literal> performs a full text search on all available "
-#| "package lists for the POSIX regex pattern given, see &regex;.  It "
-#| "searches the package names and the descriptions for an occurrence of the "
-#| "regular expression and prints out the package name and the short "
-#| "description, including virtual package names.  If <option>--full</option> "
-#| "is given then output identical to <literal>show</literal> is produced for "
-#| "each matched package, and if <option>--names-only</option> is given then "
-#| "the long description is not searched, only the package name is."
 msgid ""
 "<literal>search</literal> performs a full text search on all available "
 "package lists for the POSIX regex pattern given, see &regex;.  It searches "
@@ -2341,9 +2323,10 @@ msgstr ""
 "Elle cherche une occurrence de la chaîne dans les noms de paquets et dans "
 "les descriptions puis elle affiche le nom du paquet et sa description "
 "courte. Quand l'option <option>--full</option> est fournie, la sortie est "
-"identique à <literal>show</literal> pour chaque paquet ; l'option <option>--"
-"names-only</option> ne recherche pas la chaîne dans les descriptions longues "
-"mais seulement dans les noms de paquets."
+"identique à <literal>show</literal> pour chaque paquet ; quand l'option "
+"<option>--names-only</option> est fournie, la recherche ne porte pas sur les "
+"descriptions longues, mais seulement sur les noms de paquets et les paquets "
+"fournis."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
@@ -2552,13 +2535,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
-#, fuzzy
-#| msgid ""
-#| "Per default the <literal>depends</literal> and <literal>rdepends</"
-#| "literal> print all dependencies. This can be tweaked with these flags "
-#| "which will omit the specified dependency type.  Configuration Item: "
-#| "<literal>APT::Cache::Show<replaceable>DependencyType</replaceable></"
-#| "literal> e.g. <literal>APT::Cache::ShowRecommends</literal>."
 msgid ""
 "Per default the <command>depends</command> and <command>rdepends</command> "
 "print all dependencies. This can be tweaked with these flags which will omit "
@@ -2566,7 +2542,7 @@ msgid ""
 "Show<replaceable>DependencyType</replaceable></literal> e.g. <literal>APT::"
 "Cache::ShowRecommends</literal>."
 msgstr ""
-"Avec cette option, <literal>depends</literal> et <literal>rdepends</literal> "
+"Par défaut, <command>depends</command> et <command>rdepends</command> "
 "affichent toutes les dépendances. Ce comportement peut être modifié avec ces "
 "réglages qui omettront le type de dépendance indiqué. Élément de "
 "configuration : <literal>APT::Cache::Show<replaceable>TypeDépendance</"
@@ -2582,6 +2558,14 @@ msgid ""
 "package also conflicts with the package foo from any other architecture.  "
 "Configuration Item: <literal>APT::Cache::ShowImplicit</literal>."
 msgstr ""
+"Par défaut, <command>depends</command> et <command>rdepends</command> "
+"n'affichent que les dépendances indiquées explicitement dans les "
+"métadonnées. Avec ce marqueur, ils afficheront aussi les dépendances "
+"ajoutées de façon implicite basées sur les données rencontrées. Par exemple, "
+"un message <literal>Conflicts: foo</literal> exprime de façon implicite que "
+"ce paquet est aussi en conflit avec le paquet foo de n'importe quelle autre "
+"architecture. Élément de configuration : <literal>APT::Cache::ShowImplicit</"
+"literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
@@ -2625,17 +2609,13 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
-#, fuzzy
-#| msgid ""
-#| "Only search on the package names, not the long descriptions.  "
-#| "Configuration Item: <literal>APT::Cache::NamesOnly</literal>."
 msgid ""
 "Only search on the package and provided package names, not the long "
 "descriptions.  Configuration Item: <literal>APT::Cache::NamesOnly</literal>."
 msgstr ""
-"N'effectue une recherche que sur les noms de paquets et pas sur les "
-"descriptions longues. Élément de configuration : <literal>APT::Cache::"
-"NamesOnly</literal>."
+"N'effectue une recherche que sur les noms de paquets et de paquets fournis, "
+"pas sur les descriptions longues. Élément de configuration : <literal>APT::"
+"Cache::NamesOnly</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
@@ -2680,6 +2660,13 @@ msgid ""
 "literal> and <literal>Packages</literal> files as well as source package "
 "directories.  Files are matched based on their name only, not their content!"
 msgstr ""
+"Ajoute le fichier donné comme source de métadonnées. La commande peut être "
+"répétée pour ajouter de multiples fichiers. Actuellement, les "
+"fichiers<literal>*.deb</literal>, <literal>*.dsc</literal>, <literal>*."
+"changes</literal>, <literal>Sources</literal> et <literal>Packages</"
+"literal>, aussi bien que les répertoires de paquets source sont pris en "
+"charge. Les correspondances de fichier sont basées sur leur nom seulement et "
+"non sur leur contenu !"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
@@ -2690,19 +2677,21 @@ msgid ""
 "name of your choice with the last character being an underscore "
 "(\"<literal>_</literal>\"). Example: my.example_Packages.xz"
 msgstr ""
+"Les <literal>Sources</literal> et <literal>Packages</literal> peuvent être "
+"compressés dans n'importe quel format qu'APT prend en charge à condition "
+"qu'ils portent la bonne extension. Si vous avez besoin de stocker plusieurs "
+"de ces fichiers dans un seul répertoire, vous pouvez ajouter comme préfixe "
+"le nom que vous voulez pourvu que le dernier caractère soit un tiret bas "
+"(« <literal>_</literal> »). Exemple : mon.exemple_Packages.xz"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml
-#, fuzzy
-#| msgid ""
-#| "Use source index field ordering.  Configuration Item: <literal>APT::"
-#| "SortPkgs::Source</literal>."
 msgid ""
 "Note that these sources are treated as trusted (see &apt-secure;).  "
 "Configuration Item: <literal>APT::Sources::With</literal>."
 msgstr ""
-"Utiliser un index de sources pour le tri des champs. Élément de "
-"configuration : <literal>APT::SortPkgs::Source</literal>."
+"Veuillez noter que ces sources sont traitées comme fiables (voir &apt-"
+"secure;). Élément de configuration : <literal>APT::Sources::With</literal>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-cache.8.xml
@@ -2744,11 +2733,20 @@ msgid ""
 "whenever the underlying commands change. <command>apt-key</command> will try "
 "to detect such usage and generates warnings on stderr in these cases."
 msgstr ""
+"Notez que si vous souhaitez utiliser <command>apt-key</command>, "
+"l'installation complémentaire de la suite GNU Privacy Guard (paquet "
+"<package>gnupg</package>) est requise. Pour cette raison uniquement, "
+"l'utilisation programmée (en particulier dans les scripts des responsables "
+"des paquets !) est fortement déconseillée. En outre, le format de sortie de "
+"toutes les commandes est indéfini et de plus il peut changer, et il change "
+"réellement chaque fois que les commandes sous-jacentes changent. "
+"<command>apt-key</command> essaiera de détecter un tel usage et, dans ces "
+"cas, enverra des alertes sur l'erreur standard."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
 msgid "Supported keyring files"
-msgstr ""
+msgstr "Trousseaux de clés pris en charge"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -2759,6 +2757,14 @@ msgid ""
 "keyring files. Binary keyring files intended to be used with any apt version "
 "should therefore always be created with <command>gpg --export</command>."
 msgstr ""
+"apt-key ne prend en charge que le format binaire OpenPGP (connu aussi sous "
+"le nom de « trousseau de clés public GPG ») dans les fichiers avec "
+"l'extension « <literal>gpg</literal> », et pas le format de base de données "
+"Keybox, introduit comme format par défaut pour les fichiers de trousseau de "
+"clés dans les versions les plus récentes de &gpg;. Les fichiers binaires de "
+"trousseau de clés destinés à être utilisés dans toutes les versions d'apt "
+"devraient donc toujours être créés avec la commande <command>gpg --export</"
+"command>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -2768,6 +2774,10 @@ msgid ""
 "with the \"<literal>asc</literal>\" extension instead which can be created "
 "with <command>gpg --armor --export</command>."
 msgstr ""
+"Autrement, si tous les systèmes susceptibles d'utiliser le trousseau de clés "
+"créé disposent d'une version d'apt >= 1.4, il est possible d'utiliser plutôt "
+"le format ASCII-Armored, avec l'extension « <literal>asc</literal> », qui "
+"peut être créé par la commande <command>gpg --armor --export</command>."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
@@ -2792,6 +2802,10 @@ msgid ""
 "verified to belong to the owner of the repositories they claim to be for "
 "otherwise the &apt-secure; infrastructure is completely undermined."
 msgstr ""
+"Il est primordial de vérifier que les clés ajoutées manuellement avec "
+"<command>apt-key</command> appartiennent bien au propriétaire des dépôts "
+"comme elles le prétendent, sinon l'infrastructure de  &apt-secure; est "
+"complètement compromise."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2801,6 +2815,11 @@ msgid ""
 "directory with a descriptive name and either \"<literal>gpg</literal>\" or "
 "\"<literal>asc</literal>\" as file extension."
 msgstr ""
+"<emphasis>Attention</emphasis> : plutôt que d'utiliser cette commande, un "
+"trousseau de clés peut être placé directement dans le répertoire  <filename>/"
+"etc/apt/trusted.gpg.d/</filename> avec un nom descriptif et soit "
+"« <literal>gpg</literal> » soit « <literal>asc</literal> » comme extension "
+"de fichier."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2819,10 +2838,8 @@ msgstr "Afficher toutes les clés fiables sur la sortie standard."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
-#, fuzzy
-#| msgid "List trusted keys."
 msgid "List trusted keys with fingerprints."
-msgstr "Afficher la liste des clés fiables."
+msgstr "Afficher la liste des clés fiables avec leurs empreintes."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2832,11 +2849,17 @@ msgid ""
 "Note that there are <emphasis>no</emphasis> checks performed, so it is easy "
 "to completely undermine the &apt-secure; infrastructure if used without care."
 msgstr ""
+"Passer des options avancées à gpg. Avec <command>adv --recv-key</command>, "
+"il est possible par exemple de télécharger une clé directement d'un serveur "
+"de clé dans l'ensemble de clés fiables. Veuillez noter qu'il n'y a  "
+"<emphasis>aucune</emphasis> vérification réalisée, aussi, il peut être "
+"facile de compromettre complètement l'infrastructure  &apt-secure;, si la "
+"commande est utilisée sans précaution."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-key.8.xml
 msgid "(deprecated)"
-msgstr ""
+msgstr "(obsolète)"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2861,6 +2884,12 @@ msgid ""
 "<package>gnupg</package> and it is easier to manage keys by simply adding "
 "and removing files for maintainers and users alike."
 msgstr ""
+"Veuillez noter qu'une distribution n'a pas besoin et, en fait, ne devrait "
+"plus utiliser cette commande et plutôt charger directement les fichiers de "
+"trousseau de clés dans le répertoire <filename>/etc/apt/trusted.gpg.d/</"
+"filename> parce que cela évite une dépendance à <package>gnupg</package> et "
+"qu'il est plus facile pour les responsables et les utilisateurs de gérer les "
+"clés en ajoutant ou en retirant simplement des fichiers."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2919,7 +2948,7 @@ msgstr "&apt-get;, &apt-secure;"
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-mark.8.xml
 msgid "show, set and unset various settings for a package"
-msgstr ""
+msgstr "affiche, définit ou redéfinit divers paramètres d'un paquet"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-mark.8.xml
@@ -2931,22 +2960,21 @@ msgid ""
 "g. by <command>apt-get dselect-upgrade</command> or <command>aptitude</"
 "command>."
 msgstr ""
+"La commande <command>apt-mark</command> peut être utilisée comme interface "
+"unique pour diverses configurations d'un paquet, par exemple pour le marquer "
+"comme installé automatiquement ou manuellement, ou pour modifier les "
+"sélections de <command>dpkg</command> telles que <option>hold</option> "
+"<option>install</option> <option>deinstall</option> et <option>purge</"
+"option> qui sont suivies par exemple par les commandes <command>apt-get "
+"dselect-upgrade</command> ou <command>aptitude</command>."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-mark.8.xml
 msgid "Automatically and Manually Installed Packages"
-msgstr ""
+msgstr "Paquets installés automatiquement et manuellement"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-mark.8.xml
-#, fuzzy
-#| msgid ""
-#| "When you request that a package is installed, and as a result other "
-#| "packages are installed to satisfy its dependencies, the dependencies are "
-#| "marked as being automatically installed.  Once these automatically "
-#| "installed packages are no longer depended on by any manually installed "
-#| "packages, they will be removed by e.g.  <command>apt-get</command> or "
-#| "<command>aptitude</command>."
 msgid ""
 "When you request that a package is installed, and as a result other packages "
 "are installed to satisfy its dependencies, the dependencies are marked as "
@@ -2958,10 +2986,12 @@ msgid ""
 msgstr ""
 "Lorsque l'installation d'un paquet est demandée et que par voie de "
 "dépendances d'autres paquets sont installés, ces paquets sont marqués comme "
-"ayant été automatiquement installés. Une fois que ces paquets "
-"automatiquement installés ne sont plus liés à un paquet existant, ils seront "
-"supprimés par un appel à <command>apt-get</command> ou <command>aptitude</"
-"command>."
+"ayant été automatiquement installés, tandis que le paquet que vous avez "
+"installé explicitement est marqué comme manuellement installé. Une fois que "
+"ces paquets automatiquement installés ne sont plus liés à un paquet installé "
+"manuellement, ils ne seront plus considérés comme nécessaires et "
+"<command>apt-get</command> ou <command>aptitude</command>, par exemple, "
+"proposeront au moins de les supprimer."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
@@ -3026,22 +3056,16 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><title>
 #: apt-mark.8.xml
 msgid "Prevent Changes for a Package"
-msgstr ""
+msgstr "Empêcher les modifications d'un paquet"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>manual</literal> is used to mark a package as being manually "
-#| "installed, which will prevent the package from being automatically "
-#| "removed if no other packages depend on it."
 msgid ""
 "<literal>hold</literal> is used to mark a package as held back, which will "
 "prevent the package from being automatically installed, upgraded or removed."
 msgstr ""
-"<literal>manual</literal> permet de marquer un paquet comme installé "
-"manuellement. Un tel paquet ne sera pas supprimé automatiquement, même si "
-"aucun autre paquet n'en dépend."
+"<literal>hold</literal> permet de marquer un paquet comme retenu, ce qui "
+"empêchera qu'il soit installé, mis à jour ou supprimé automatiquement."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
@@ -3049,9 +3073,8 @@ msgid ""
 "<literal>unhold</literal> is used to cancel a previously set hold on a "
 "package to allow all actions again."
 msgstr ""
-"<literal>unhold</literal> est utilisé pour supprimer  l'état "
-"« hold » (conservé) d'un paquet afin de permettre toute action qui y est "
-"liée."
+"<literal>unhold</literal> est utilisé pour supprimer l'état "
+"« hold » (retenu) d'un paquet afin de permettre toute action qui y est liée."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
@@ -3059,13 +3082,13 @@ msgid ""
 "<literal>showhold</literal> is used to print a list of packages on hold in "
 "the same way as for the other show commands."
 msgstr ""
-"<literal>showhold</literal> permet d'afficher la liste des paquets conservés "
+"<literal>showhold</literal> permet d'afficher la liste des paquets retenus "
 "de manière analogue aux commandes de même type."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-mark.8.xml
 msgid "Schedule Packages for Install, Remove and Purge"
-msgstr ""
+msgstr "Programmer des paquets pour Install, Remove et Purge"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-mark.8.xml
@@ -3079,6 +3102,16 @@ msgid ""
 "<option>showpurge</option> respectively.  More information about these so "
 "called dpkg selections can be found in &dpkg;."
 msgstr ""
+"Certains frontaux comme <command>apt-get dselect-upgrade</command> peuvent "
+"être utilisés pour appliquer des modifications, préalablement programmées, "
+"de l'état d'installation de paquets. Ces modifications peuvent être "
+"programmées avec les commandes <option>install</option>, <option>remove</"
+"option> (connue aussi sous le nom de <option>deinstall</option>) et "
+"<option>purge</option>. Les paquets faisant l'objet d'une sélection "
+"particulière peuvent être affichés respectivement avec les options "
+"<option>showinstall</option>, <option>showremove</option> et "
+"<option>showpurge</option>. Vous trouverez plus d'information sur ce que "
+"l'on appelle les sélections de dpkg dans &dpkg;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-mark.8.xml
@@ -3096,12 +3129,6 @@ msgstr "Gestion de l'authentification d'archive avec APT"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "Starting with version 0.6, <command>apt</command> contains code that does "
-#| "signature checking of the Release file for all archives. This ensures "
-#| "that packages in the archive can't be modified by people who have no "
-#| "access to the Release file signing key."
 msgid ""
 "Starting with version 0.6, <command>APT</command> contains code that does "
 "signature checking of the Release file for all repositories. This ensures "
@@ -3113,7 +3140,9 @@ msgstr ""
 "Depuis sa version 0.6, <command>apt</command> sait vérifier la signature du "
 "fichier Release de chaque archive. On s'assure ainsi que les paquets de "
 "cette archive ne peuvent pas être modifiés par quelqu'un qui ne possède pas "
-"la clé de la signature du fichier Release."
+"la clé de la signature du fichier Release. À partir de la version 1.1, "
+"<command>apt</command> exige que les dépôts fournissent des informations "
+"récentes d'authentification pour une utilisation libre du dépôt."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3124,6 +3153,12 @@ msgid ""
 "ends like &apt-get; will require explicit confirmation if an installation "
 "request includes a package from such an unauthenticated archive."
 msgstr ""
+"Si une archive possède un fichier Release non signé ou pas de fichier "
+"Release du tout, les versions actuelles d'APT refuseront par défaut d'en "
+"télécharger des données dans les opérations <command>update</command>. Même "
+"si un frontal tel que &apt-get; est forcé de télécharger, il demandera une "
+"confirmation explicite si une installation inclut un paquet d'une archive "
+"non authentifiée."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3136,6 +3171,14 @@ msgid ""
 "AllowInsecureRepositories</option> to <literal>false</literal> or <option>--"
 "no-allow-insecure-repositories</option> on the command line."
 msgstr ""
+"Comme exception temporaire, &apt-get; (pas &apt; !) émet seulement une mise "
+"en garde s'il rencontre des archives non authentifiées pour accorder une "
+"période de grâce un peu plus longue à cette modification affectant la "
+"compatibilité ascendante. Cette exception disparaîtra dans les futures "
+"versions et vous pouvez renoncer à ce délai de grâce en configurant l'option "
+"<option>Binary::apt-get::Acquire::AllowInsecureRepositories</option> à "
+"<literal>false</literal> ou en passant l'option <option>--no-allow-insecure-"
+"repositories</option> sur la ligne de commande."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3150,6 +3193,16 @@ msgid ""
 "disable even the warnings, but be sure to understand the implications as "
 "detailed in &sources-list;."
 msgstr ""
+"Vous pouvez contraindre les clients APT à n'émettre que des avertissements "
+"en configurant l'option <option>Acquire::AllowInsecureRepositories</option> "
+"à <literal>true</literal>. L'option <literal>allow-insecure=yes</literal> de "
+"&sources-list; peut aussi permettre à des dépôts individuels d'être non "
+"sécurisés. Veuillez noter que les dépôts non sécurisés sont fortement "
+"déconseillés et toutes les options pour contraindre APT à continuer à les "
+"prendre en charge devront être éventuellement supprimées. Les utilisateurs "
+"disposent aussi de l'option <option>Trusted</option> pour désactiver même "
+"les avertissements, mais il faut être sûr de comprendre ses implications "
+"détaillées dans &sources-list;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3162,38 +3215,34 @@ msgid ""
 "<literal>true</literal> or for Individual repositories with the &sources-"
 "list; option <literal>allow-downgrade-to-insecure=yes</literal>."
 msgstr ""
+"Un dépôt qui auparavant était authentifié, mais qui perdrait cet état lors "
+"d'une opération <command>update</command> envoie un message d'erreur à tous "
+"les clients d'APT quelle que soit l'option d'autoriser ou d'interdire "
+"l'utilisation de dépôts non sécurisés. L'erreur peut être contournée par le "
+"réglage supplémentaire de <option>Acquire::"
+"AllowDowngradeToInsecureRepositories</option> à <literal>true</literal>, ou, "
+"pour des dépôts individuels avec l'option <literal>allow-downgrade-to-"
+"insecure=yes</literal> de &sources-list;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "The package front-ends &apt-get;, &aptitude; and &synaptic; support this "
-#| "new authentication feature."
 msgid ""
 "Note: All APT-based package management front-ends like &apt-get;, &aptitude; "
 "and &synaptic; support this authentication feature, so this manpage uses "
 "<literal>APT</literal> to refer to them all for simplicity only."
 msgstr ""
-"Les interfaces &apt-get;, &aptitude; et &synaptic; possèdent cette nouvelle "
-"fonction de certification."
+"Attention : toutes les interfaces de gestion de paquets comme &apt-get;, "
+"&aptitude; et &synaptic; possèdent cette fonction de certification, aussi "
+"cette page de manuel utilise <literal>APT</literal> pour se référer à "
+"l'ensemble d'entre elles, pour des raisons de simplicité."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid "Trusted archives"
 msgid "Trusted Repositories"
-msgstr "Trusted archives"
+msgstr "Archives de confiance"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "The chain of trust from an apt archive to the end user is made up of "
-#| "several steps. <command>apt-secure</command> is the last step in this "
-#| "chain; trusting an archive does not mean that you trust its packages not "
-#| "to contain malicious code, but means that you trust the archive "
-#| "maintainer. It's the archive maintainer's responsibility to ensure that "
-#| "the archive's integrity is preserved."
 msgid ""
 "The chain of trust from an APT archive to the end user is made up of several "
 "steps. <command>apt-secure</command> is the last step in this chain; "
@@ -3202,12 +3251,12 @@ msgid ""
 "archive maintainer's responsibility to ensure that the archive's integrity "
 "is preserved."
 msgstr ""
-"D'une archive apt jusqu'à l'utilisateur, la confiance se construit en "
-"plusieurs étapes. <command>Apt-secure</command> est la dernière étape. Faire "
-"confiance à une archive ne signifie pas que les paquets qu'elle contient "
-"sont exempts de code malveillant, mais signifie que vous faites confiance au "
-"responsable de l'archive. C'est ensuite au responsable de l'archive de faire "
-"en sorte que l'archive soit fiable."
+"D'une archive APT jusqu'à l'utilisateur, la chaîne de confiance se construit "
+"en plusieurs étapes. <command>Apt-secure</command> est la dernière étape. "
+"Faire confiance à une archive ne signifie pas que les paquets qu'elle "
+"contient sont exempts de code malveillant, mais signifie que vous faites "
+"confiance au responsable de l'archive. C'est ensuite au responsable de "
+"l'archive de faire en sorte que l'archive soit fiable."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3224,14 +3273,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "The chain of trust in Debian starts when a maintainer uploads a new "
-#| "package or a new version of a package to the Debian archive. In order to "
-#| "become effective, this upload needs to be signed by a key contained in "
-#| "the Debian Maintainers keyring (available in the debian-keyring package). "
-#| "Maintainers' keys are signed by other maintainers following pre-"
-#| "established procedures to ensure the identity of the key holder."
 msgid ""
 "The chain of trust in Debian starts (e.g.) when a maintainer uploads a new "
 "package or a new version of a package to the Debian archive. In order to "
@@ -3241,13 +3282,15 @@ msgid ""
 "established procedures to ensure the identity of the key holder. Similar "
 "procedures exist in all Debian-based distributions."
 msgstr ""
-"La chaîne de confiance dans Debian commence quand un responsable de paquet "
-"envoie un nouveau paquet ou une nouvelle version d'un paquet dans l'archive. "
-"Cet envoi, pour être effectif, doit être signé avec la clé d'un responsable "
-"qui se trouve dans le trousseau des responsables Debian (disponible dans le "
-"paquet debian-keyring). Les clés des responsables de paquet sont signées par "
-"d'autres responsables, suivant des procédures préétablies pour s'assurer de "
-"l'identité des propriétaires de la clé."
+"La chaîne de confiance dans Debian commence, par exemple, quand un "
+"responsable de paquet envoie un nouveau paquet ou une nouvelle version d'un "
+"paquet dans l'archive. Cet envoi, pour être effectif, doit être signé avec "
+"la clé d'un responsable qui se trouve dans un des trousseaux des "
+"responsables de paquet Debian (disponibles dans le paquet debian-keyring). "
+"Les clés des responsables de paquet sont signées par d'autres responsables, "
+"suivant des procédures préétablies pour s'assurer de l'identité des "
+"propriétaires de la clé. Des procédures similaires existent dans toutes les "
+"distributions basées sur Debian."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3321,12 +3364,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "However, it does not defend against a compromise of the Debian master "
-#| "server itself (which signs the packages) or against a compromise of the "
-#| "key used to sign the Release files. In any case, this mechanism can "
-#| "complement a per-package signature."
 msgid ""
 "However, it does not defend against a compromise of the master server itself "
 "(which signs the packages) or against a compromise of the key used to sign "
@@ -3334,8 +3371,8 @@ msgid ""
 "signature."
 msgstr ""
 "Cependant cette méthode ne protège pas contre une compromission du serveur "
-"Debian lui-même (qui signe les paquets) ni contre la compromission de la clé "
-"qui sert à signer les fichiers Release. Mais elle peut compléter la "
+"principal lui-même (qui signe les paquets) ni contre la compromission de la "
+"clé qui sert à signer les fichiers Release. Mais elle peut compléter la "
 "signature des paquets."
 
 #. type: Content of: <refentry><refsect1><title>
@@ -3345,22 +3382,18 @@ msgstr "Configuration utilisateur"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "<command>apt-key</command> is the program that manages the list of keys "
-#| "used by apt. It can be used to add or remove keys, although an "
-#| "installation of this release will automatically contain the default "
-#| "Debian archive signing keys used in the Debian package repositories."
 msgid ""
 "<command>apt-key</command> is the program that manages the list of keys used "
 "by APT to trust repositories. It can be used to add or remove keys as well "
 "as list the trusted keys. Limiting which key(s) are able to sign which "
 "archive is possible via the <option>Signed-By</option> in &sources-list;."
 msgstr ""
-"Le programme qui gère la liste des clés utilisées par apt s'appelle "
-"<command>apt-key</command>. Il peut ajouter ou supprimer des clés. Cette "
-"version installe automatiquement les clés qui servent à signer l'archive "
-"Debian et les différents répertoires de paquets."
+"Le programme qui gère la liste des clés utilisées par APT pour faire "
+"confiance aux dépôts s'appelle <command>apt-key</command>. Il peut ajouter "
+"ou supprimer des clés aussi bien que lister les clés de confiance. Il est "
+"possible de limiter la capacité pour une ou plusieurs clés de signer telle "
+"ou telle archive avec l'option <option>Signed-By</option> dans &sources-"
+"list;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3370,6 +3403,10 @@ msgid ""
 "<command>apt-key</command> is only needed if third-party repositories are "
 "added."
 msgstr ""
+"Veuillez noter qu'une installation par défaut possède toutes les clés pour "
+"obtenir en toute sécurité des paquets des dépôts par défaut, aussi, bricoler "
+"avec <command>apt-key</command> n'est nécessaire que si vous souhaitez "
+"ajouter des dépôts tiers."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3426,11 +3463,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "<emphasis>Publish the key fingerprint</emphasis>, that way your users "
-#| "will know what key they need to import in order to authenticate the files "
-#| "in the archive."
 msgid ""
 "<emphasis>Publish the key fingerprint</emphasis>, so that your users will "
 "know what key they need to import in order to authenticate the files in the "
@@ -3440,7 +3472,10 @@ msgid ""
 msgstr ""
 "<emphasis>publier l'empreinte de la clé</emphasis>. Ainsi les utilisateurs "
 "de votre archive connaîtront la clé qu'ils doivent importer pour "
-"authentifier les fichiers de l'archive."
+"authentifier les fichiers de l'archive. Le mieux est de diffuser sa clé dans "
+"son propre paquet de trousseau comme le fait &keyring-distro; avec &keyring-"
+"package; pour ensuite distribuer automatiquement les mises à jour et les "
+"transitions de clés."
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
 #: apt-secure.8.xml
@@ -3452,6 +3487,13 @@ msgid ""
 "included in another archive users already have configured (like the default "
 "repositories of their distribution) to leveraging the web of trust."
 msgstr ""
+"<emphasis>fournir les instructions pour ajouter l'archive et la clé</"
+"emphasis>. Si les utilisateurs ne peuvent récupérer de façon sûre votre clé, "
+"la chaîne de confiance décrite plus haut est rompue. La façon d'aider les "
+"utilisateurs à ajouter votre clé de l'archive dépend de l'archive et de "
+"l'audience cible : cela va d'un paquet de trousseau inclus dans une autre "
+"archive que des utilisateurs ont déjà configurée (comme les dépôts par "
+"défaut de leur distribution) à la mobilisation du web de confiance."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3460,8 +3502,8 @@ msgid ""
 "removed) the archive maintainer has to follow the first two steps outlined "
 "above."
 msgstr ""
-"Chaque fois que le contenu de l'archive change, le responsable doit refaire "
-"les deux premières étapes."
+"Chaque fois que le contenu de l'archive change, (suppression ou ajout de "
+"nouveaux paquets) le responsable doit refaire les deux premières étapes."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3872,6 +3914,8 @@ msgid ""
 "all options set in the binary specific configuration subtree are moved into "
 "the root of the tree."
 msgstr ""
+"toutes les options définie dans le sous-arbre binaire de configuration "
+"spécifique sont déplacées à la racine de l'arbre."
 
 #. type: Content of: <refentry><refsect1><orderedlist><listitem><para>
 #: apt.conf.5.xml
@@ -4126,7 +4170,7 @@ msgid ""
 "are registered via <command>dpkg --add-architecture</command>."
 msgstr ""
 "Toutes les architectures gérées par le système. Par exemple, les processeurs "
-"qui mettent en oeuvre le jeu d'instructions <literal>amd64</literal> (aussi "
+"qui mettent en œuvre le jeu d'instructions <literal>amd64</literal> (aussi "
 "appelé <literal>x86-64</literal>) peuvent exécuter des binaires compilés "
 "pour le jeu d'instructions<literal>i386</literal> (<literal>x86</literal>). "
 "Cette liste est utilisé pour récupérer des fichiers et analyser les listes "
@@ -4147,6 +4191,15 @@ msgid ""
 "pass to the command <command>rev</command> without additional commandline "
 "parameters for compression and uncompression:"
 msgstr ""
+"Ce champ d'action (« scope ») définit quels formats de compression sont "
+"gérés, comment la compression et la décompression peuvent être réalisées si "
+"ce format n'est pas pris en charge directement dans APT et une indication du "
+"coût d'une compression dans ce format. Dans cet exemple, le paragraphe "
+"suivant de la configuration permettra à APT de télécharger, décompresser, "
+"créer et stocker des fichiers avec l'extension de fichier à bas coût "
+"<literal>.reversed</literal> qu'il passera à la commande <command>rev</"
+"command> sans paramètre supplémentaire en ligne de commande pour la "
+"compression et la décompression :"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><informalexample><programlisting>
 #: apt.conf.5.xml
@@ -4161,6 +4214,14 @@ msgid ""
 "\tCost \"10\";\n"
 "};\n"
 msgstr ""
+"APT::Compressor::rev {\n"
+"\tName \"rev\";\n"
+"\tExtension \".reversed\";\n"
+"\tBinary \"rev\";\n"
+"\tCompressArg {};\n"
+"\tUncompressArg {};\n"
+"\tCost \"10\";\n"
+"};\n"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4405,16 +4466,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Security related option defaulting to true, as giving a Release file's "
-#| "validation an expiration date prevents replay attacks over a long "
-#| "timescale, and can also for example help users to identify mirrors that "
-#| "are no longer updated - but the feature depends on the correctness of the "
-#| "clock on the user system. Archive maintainers are encouraged to create "
-#| "Release files with the <literal>Valid-Until</literal> header, but if they "
-#| "don't or a stricter value is desired the <literal>Max-ValidTime</literal> "
-#| "option below can be used."
 msgid ""
 "Security related option defaulting to true, as giving a Release file's "
 "validation an expiration date prevents replay attacks over a long timescale, "
@@ -4433,20 +4484,14 @@ msgstr ""
 "jour. Cependant, cette fonctionnalité a besoin que l'horloge du système soit "
 "à jour. Les gestionnaires d'archives devraient créer des fichiers Release "
 "comportant l'en-tête <literal>Valid-Until</literal>. Cependant, si cet en-"
-"tête est absent, la valeur du paramètre <literal>Max-ValidTime</literal> est "
-"alors utilisée."
+"tête est absent, ou si une valeur plus stricte est désirée, la valeur du "
+"paramètre <literal>Max-ValidTime</literal> est alors utilisée. L'option "
+"<option>Check-Valid-Until</option> des entrées de &sources-list; devrait "
+"être préférée pour désactiver sélectivement la vérification plutôt que "
+"d'utiliser ce remplacement global."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Maximum time (in seconds) after its creation (as indicated by the "
-#| "<literal>Date</literal> header) that the <filename>Release</filename> "
-#| "file should be considered valid.  If the Release file itself includes a "
-#| "<literal>Valid-Until</literal> header the earlier date of the two is used "
-#| "as the expiration date.  The default value is <literal>0</literal> which "
-#| "stands for \"valid forever\".  Archive specific settings can be made by "
-#| "appending the label of the archive to the option name."
 msgid ""
 "Maximum time (in seconds) after its creation (as indicated by the "
 "<literal>Date</literal> header) that the <filename>Release</filename> file "
@@ -4459,24 +4504,18 @@ msgid ""
 "Until-Max</option> option there."
 msgstr ""
 "Durée maximale (en secondes) pendant laquelle un fichier Release est "
-"considéré comme valable, à partir du moment de sa création. Si ce fichier "
-"lui-même comporte un en-tête  la plus ancienne des deux dates est utilisée "
-"comme date d'expiration. La valeur par défaut (<literal>0</literal>) "
-"signifie « valable éternellement ». Un réglage spécifique pour une archive "
-"donnée peut être défini en ajoutant l'étiquette de l'archive au nom de "
-"l'option."
+"considéré comme valable, à partir du moment de sa création (tel que cela est "
+"indiqué dans l'en-tête <literal>Date</literal>). Si ce fichier lui-même "
+"comporte un en-tête <literal>Valid-Until</literal> la plus ancienne des deux "
+"dates est utilisée comme date d'expiration. La valeur par défaut "
+"(<literal>0</literal>) signifie « valable éternellement ». Un réglage "
+"spécifique pour une archive donnée peut être défini en ajoutant l'étiquette "
+"de l'archive au nom de l'option. De préférence, le même résultat peut être "
+"obtenu pour des entrées particulières de &sources-list; en utilisant ici "
+"l'option <option>Valid-Until-Max</option>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Minimum time (in seconds) after its creation (as indicated by the "
-#| "<literal>Date</literal> header) that the <filename>Release</filename> "
-#| "file should be considered valid.  Use this if you need to use a seldom "
-#| "updated (local) mirror of a more frequently updated archive with a "
-#| "<literal>Valid-Until</literal> header instead of completely disabling the "
-#| "expiration date checking.  Archive specific settings can and should be "
-#| "used by appending the label of the archive to the option name."
 msgid ""
 "Minimum time (in seconds) after its creation (as indicated by the "
 "<literal>Date</literal> header) that the <filename>Release</filename> file "
@@ -4489,21 +4528,19 @@ msgid ""
 "Until-Min</option> option there."
 msgstr ""
 "Durée minimale (en secondes) pendant laquelle un fichier Release est "
-"considéré comme valable, à partir du moment de sa création. Il est conseillé "
-"d'utiliser ce réglage si vous utilisez un miroir mis à jour ponctuellement "
-"(par exemple un miroir local) d'une archive mise à jour plus fréquemment "
-"avec un en-tête <literal>Valid-Until</literal> plutôt que de désactiver "
-"complètement le contrôle des dates d'expiration. Un réglage spécifique pour "
-"une archive donnée peut être défini en ajoutant l'étiquette de l'archive au "
-"nom de l'option."
+"considéré comme valable, à partir du moment de sa création (tel que cela est "
+"indiqué dans l'en-tête <literal>Date</literal>). Il est conseillé d'utiliser "
+"ce réglage si vous utilisez un miroir mis à jour ponctuellement (par exemple "
+"un miroir local) d'une archive mise à jour plus fréquemment avec un en-tête "
+"<literal>Valid-Until</literal> plutôt que de désactiver complètement le "
+"contrôle des dates d'expiration. Un réglage spécifique pour une archive "
+"donnée peut être défini en ajoutant l'étiquette de l'archive au nom de "
+"l'option. De préférence, le même résultat peut être obtenu pour des entrées "
+"particulières de &sources-list; en utilisant ici l'option <option>Valid-"
+"Until-Min</option>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Try to download deltas called <literal>PDiffs</literal> for indexes (like "
-#| "<filename>Packages</filename> files) instead of downloading whole ones. "
-#| "True by default."
 msgid ""
 "Try to download deltas called <literal>PDiffs</literal> for indexes (like "
 "<filename>Packages</filename> files) instead of downloading whole ones. True "
@@ -4512,7 +4549,10 @@ msgid ""
 msgstr ""
 "Essayer de télécharger les fichiers différentiels appelés <literal>PDiffs</"
 "literal> pour les index (par exemple les fichiers <filename>Packages</"
-"filename>), plutôt que de les télécharger entièrement. Par défaut à « true »."
+"filename>), plutôt que de les télécharger entièrement. Par défaut à "
+"« true ». De préférence, cela peut être défini pour des entrées "
+"particulières de &sources-list; ou des fichiers d'index en utilisant ici "
+"l'option <option>PDiffs</option>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4535,11 +4575,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Try to download deltas called <literal>PDiffs</literal> for indexes (like "
-#| "<filename>Packages</filename> files) instead of downloading whole ones. "
-#| "True by default."
 msgid ""
 "Try to download indexes via an URI constructed from a hashsum of the "
 "expected file rather than downloaded via a well-known stable filename. True "
@@ -4548,9 +4583,14 @@ msgid ""
 "this can be set for specific &sources-list; entries or index files by using "
 "the <option>By-Hash</option> option there."
 msgstr ""
-"Essayer de télécharger les fichiers différentiels appelés <literal>PDiffs</"
-"literal> pour les index (par exemple les fichiers <filename>Packages</"
-"filename>), plutôt que de les télécharger entièrement. Par défaut à « true »."
+"Essayer de télécharger les index avec un URI construit à partir de la somme "
+"de hachage du fichier attendu plutôt que de les télécharger à partir d'un "
+"nom de fichier stable bien connu. Par défaut à « true », mais "
+"automatiquement désactivé si la source n'indique pas sa prise en charge. Son "
+"utilisation peut être forcée avec la valeur spéciale « force ». De "
+"préférence, cela peut être défini pour des entrées particulières de &sources-"
+"list; ou des fichiers d'index en utilisant ici l'option <option>By-Hash</"
+"option>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4586,7 +4626,7 @@ msgid ""
 msgstr ""
 "Utilise des liens symboliques pour les archives de sources. Positionnée à "
 "« true », cette option crée si possible des liens symboliques vers les "
-"archives de sources au lieu de les copier.  Par défaut à « true »."
+"archives de sources au lieu de les copier. Par défaut à « true »."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4600,7 +4640,7 @@ msgid ""
 "be used."
 msgstr ""
 "<literal>http::Proxy</literal> est le mandataire (proxy) HTTP à utiliser par "
-"défaut pour les URI HTTP.  Il se présente sous la forme standard : "
+"défaut pour les URI HTTP. Il se présente sous la forme standard : "
 "<literal>http://[[utilisateur][:mot_de_passe]@]hôte[:port]/</literal>. On "
 "peut spécifier un mandataire particulier par hôte distant en utilisant la "
 "syntaxe : <literal>http::Proxy::&lt;hôte&gt;</literal>. Le mot-clé spécial "
@@ -4641,15 +4681,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "The setting <literal>Acquire::http::Pipeline-Depth</literal> can be used "
-#| "to enable HTTP pipelining (RFC 2616 section 8.1.2.2) which can be "
-#| "beneficial e.g. on high-latency connections. It specifies how many "
-#| "requests are sent in a pipeline.  Previous APT versions had a default of "
-#| "10 for this setting, but the default value is now 0 (= disabled) to avoid "
-#| "problems with the ever-growing amount of webservers and proxies which "
-#| "choose to not conform to the HTTP/1.1 specification."
 msgid ""
 "The setting <literal>Acquire::http::Pipeline-Depth</literal> can be used to "
 "enable HTTP pipelining (RFC 2616 section 8.1.2.2) which can be beneficial e."
@@ -4662,11 +4693,11 @@ msgstr ""
 "Le réglage <literal>Acquire::http::Pipeline-Depth</literal> permet "
 "d'utiliser l'enchaînement HTTP (« HTTP pipelining », RFC 2616 section "
 "8.1.2.2) ce qui peut être utile par exemple avec des connexions à latence "
-"élevée. Il indique le nombre de requêtes envoyées dans le tuyau. Les "
-"versions précédentes d'APT utilisaient une valeur de 10 pour ce réglage. "
-"Cette valeur est désormais égale à 0 (désactivé) pour éviter des problèmes "
-"avec le nombre en constante augmentation de serveurs web et de mandataires "
-"qui ne respectent pas la norme HTTP/1.1."
+"élevée. Il indique le nombre de requêtes envoyées dans le tuyau. APT tente "
+"de détecter et de contourner les serveurs web et les mandataires qui se "
+"comportent mal à l'exécution, mais si vous savez que vos serveurs ne "
+"respectent pas la norme HTTP/1.1, l'enchaînement peut être désactivé en "
+"définissant cette valeur à 0. Il est activé par défaut avec une valeur de 10."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4707,17 +4738,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>Acquire::http::Proxy-Auto-Detect</literal> can be used to "
-#| "specify an external command to discover the http proxy to use. Apt "
-#| "expects the command to output the proxy on stdout in the style "
-#| "<literal>http://proxy:port/</literal>. This will override the generic "
-#| "<literal>Acquire::http::Proxy</literal> but not any specific host proxy "
-#| "configuration set via <literal>Acquire::http::Proxy::$HOST</literal>.  "
-#| "See the &squid-deb-proxy-client; package for an example implementation "
-#| "that uses avahi. This option takes precedence over the legacy option name "
-#| "<literal>ProxyAutoDetect</literal>."
 msgid ""
 "<literal>Acquire::http::Proxy-Auto-Detect</literal> can be used to specify "
 "an external command to discover the http proxy to use. The first and only "
@@ -4734,13 +4754,17 @@ msgid ""
 msgstr ""
 "L'option <literal>Acquire::http::Proxy-Auto-Detect</literal> peut être "
 "utilisée pour indiquer une commande externe pour découvrir le mandataire "
-"HTTP à utiliser. Apt s'attend à ce que la commande sorte le mandataire sur "
-"la sortie standard dans le style <literal>http://proxy:port/</literal>. Cela "
-"annulera le <literal>Acquire::http::Proxy</literal> générique, mais pas une "
-"configuration spécifique de mandataire hôte établie par <literal>Acquire::"
-"http::Proxy::$HOST</literal>. Voir le paquet &squid-deb-proxy-client; pour "
-"un exemple d'implémentation qui utilise avahi. Cette option l'emporte sur "
-"l'ancien nom d'option <literal>ProxyAutoDetect</literal>."
+"HTTP à utiliser. Le premier et seul paramètre est un URI indiquant l'hôte à "
+"contacter pour permettre une configuration propre à l'hôte. Apt s'attend à "
+"ce que la commande indique le mandataire sur la sortie standard dans le "
+"style <literal>http://proxy:port/</literal> ou le mot <literal>DIRECT</"
+"literal> si aucun mandataire ne doit être utilisé. Aucune sortie indique que "
+"le mandataire générique doit être utilisé. Notez que l'auto-détection ne "
+"sera pas exécutée si une configuration spécifique de mandataire hôte a déjà "
+"été établie par <literal>Acquire::http::Proxy::$HOST</literal>. Voir le "
+"paquet &squid-deb-proxy-client; pour un exemple d'implémentation qui utilise "
+"avahi. Cette option l'emporte sur l'ancien nom d'option "
+"<literal>ProxyAutoDetect</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4787,7 +4811,7 @@ msgstr ""
 "booléenne <literal>Verify-Host</literal> précise s'il faut vérifier ou pas "
 "le nom d'hôte du serveur. <literal>SslCert</literal> détermine le certificat "
 "à utiliser pour l'authentification du client.  <literal>SslKey</literal> "
-"détermine quelle clef privée doit être utilisée pour l'authentification du "
+"détermine quelle clé privée doit être utilisée pour l'authentification du "
 "client. <literal>SslForceVersion</literal> surcharge la valeur par défaut "
 "pour la version de SSL à utiliser et peut contenir l'une des chaînes "
 "<literal>TLSv1</literal> ou <literal>SSLv3</literal>."
@@ -4922,15 +4946,6 @@ msgstr "Acquire::CompressionTypes::<replaceable>ExtensionFichier</replaceable> \
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "List of compression types which are understood by the acquire methods.  "
-#| "Files like <filename>Packages</filename> can be available in various "
-#| "compression formats.  By default the acquire methods can decompress "
-#| "<command>bzip2</command>, <command>lzma</command> and <command>gzip</"
-#| "command> compressed files; with this setting more formats can be added on "
-#| "the fly or the used method can be changed. The syntax for this is: "
-#| "<placeholder type=\"synopsis\" id=\"0\"/>"
 msgid ""
 "List of compression types which are understood by the acquire methods.  "
 "Files like <filename>Packages</filename> can be available in various "
@@ -4943,11 +4958,13 @@ msgstr ""
 "Cette option indique la liste des types de compression comprises par les "
 "méthodes d'acquisition. Des fichiers comme <filename>Packages</filename> "
 "peuvent être disponibles dans divers formats de compression. Par défaut, les "
-"méthodes d'acquisition décompressent les fichiers compressés avec "
-"<command>bzip2</command>, <command>lzma</command> et <command>gzip</"
-"command>. Ce réglage permet d'ajouter à la volée des formats supplémentaires "
-"ou de modifier la méthode utilisée. La syntaxe à utiliser est : <placeholder "
-"type=\"synopsis\" id=\"0\"/>"
+"méthodes d'acquisition décompressent et recompressent dans beaucoup de "
+"formats courants les fichiers compressés comme avec <command>xz</command> et "
+"<command>gzip</command> ; ce champ d'action permet de rechercher les formats "
+"pris en charge ou de les modifier, et l'ajout de prise en charge de formats "
+"supplémentaires est aussi possible (voir aussi <option>APT::Compressor</"
+"option>). La syntaxe à utiliser est : <placeholder type=\"synopsis\" id="
+"\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><synopsis>
 #: apt.conf.5.xml
@@ -4963,21 +4980,6 @@ msgstr "Acquire::CompressionTypes::Order { \"xz\"; \"gz\"; };"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Also, the <literal>Order</literal> subgroup can be used to define in "
-#| "which order the acquire system will try to download the compressed files. "
-#| "The acquire system will try the first and proceed with the next "
-#| "compression type in this list on error, so to prefer one over the other "
-#| "type simply add the preferred type first - default types not already "
-#| "added will be implicitly appended to the end of the list, so e.g. "
-#| "<placeholder type=\"synopsis\" id=\"0\"/> can be used to prefer "
-#| "<command>gzip</command> compressed files over <command>bzip2</command> "
-#| "and <command>lzma</command>.  If <command>lzma</command> should be "
-#| "preferred over <command>gzip</command> and <command>bzip2</command> the "
-#| "configure setting should look like this: <placeholder type=\"synopsis\" "
-#| "id=\"1\"/> It is not needed to add <literal>bz2</literal> to the list "
-#| "explicitly as it will be added automatically."
 msgid ""
 "Also, the <literal>Order</literal> subgroup can be used to define in which "
 "order the acquire system will try to download the compressed files. The "
@@ -4997,15 +4999,15 @@ msgstr ""
 "les fichiers compressés. Le premier système mentionné sera essayé en "
 "premier, puis le suivant en cas d'échec. Ainsi, pour privilégier un format "
 "par rapport à un autre, il suffit de le placer en premier dans cette liste. "
-"Les types par défaut qui ne sont pas déjà indiqués seront ajoutés "
-"implicitement au moment de l'exécution. Ainsi, par exemple,  <placeholder "
-"type=\"synopsis\" id=\"0\"/> peut être utiliser de préférence les fichiers "
-"compressés avec <command>gzip</command> par rapport à <command>bzip2</"
-"command> et <command>lzma</command>. Si l'objectif est d'utiliser "
-"<command>lzma</command> en priorité par rapport à <command>gzip</command> et "
-"<command>bzip2</command>, ce réglage doit ressembler à <placeholder type="
-"\"synopsis\" id=\"1\"/>. Il est inutile d'ajouter explicitement "
-"<literal>bz2</literal> à liste car il sera ajouté automatiquement."
+"Les types qui ne sont pas déjà indiqués seront ajoutés implicitement à la "
+"fin de la liste. Ainsi, par exemple, <placeholder type=\"synopsis\" id=\"0\"/"
+"> peut être utilisé pour préférer les fichiers compressés avec "
+"<command>gzip</command> par rapport à tous les autres formats de "
+"compression. Si l'objectif est d'utiliser <command>xz</command> en priorité "
+"par rapport à <command>gzip</command> et <command>bzip2</command>, ce "
+"réglage doit ressembler à <placeholder type=\"synopsis\" id=\"1\"/>. Il est "
+"inutile d'ajouter explicitement <literal>bz2</literal> à liste car il sera "
+"ajouté automatiquement."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><literallayout>
 #: apt.conf.5.xml
@@ -5015,18 +5017,6 @@ msgstr "Dir::Bin::bzip2 \"/bin/bzip2\";"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Note that the <literal>Dir::Bin::<replaceable>Methodname</replaceable></"
-#| "literal> will be checked at run time. If this option has been set, the "
-#| "method will only be used if this file exists; e.g. for the "
-#| "<literal>bzip2</literal> method (the inbuilt) setting is: <placeholder "
-#| "type=\"literallayout\" id=\"0\"/> Note also that list entries specified "
-#| "on the command line will be added at the end of the list specified in the "
-#| "configuration files, but before the default entries. To prefer a type in "
-#| "this case over the ones specified in the configuration files you can set "
-#| "the option direct - not in list style.  This will not override the "
-#| "defined list; it will only prefix the list with this type."
 msgid ""
 "Note that the <literal>Dir::Bin::<replaceable>Methodname</replaceable></"
 "literal> will be checked at run time. If this option has been set and "
@@ -5040,12 +5030,13 @@ msgid ""
 "This will not override the defined list; it will only prefix the list with "
 "this type."
 msgstr ""
-"Veuillez noter que <literal>Dir::Bin::<replaceable>Methodname</replaceable></"
-"literal> sera contrôlé : si cette option est utilisée, la méthode ne sera "
-"utilisée que si ce fichier existe. Ainsi, pour la méthode <literal>bzip2</"
-"literal>, le réglage (utilisé en interne) est <placeholder type="
-"\"literallayout\" id=\"0\"/>. Veuillez également noter que les éléments de "
-"liste indiqués à la ligne de commande seront ajoutés à la fin de la liste "
+"Veuillez noter que <literal>Dir::Bin::<replaceable>NomMethode</replaceable></"
+"literal> sera contrôlé à l'exécution : si cette option est utilisée et que "
+"la prise en charge de ce format n'est pas construite dans APT, la méthode ne "
+"sera utilisée que si ce fichier existe. Ainsi, pour la méthode "
+"<literal>bzip2</literal>, le réglage (utilisé en interne) est <placeholder "
+"type=\"literallayout\" id=\"0\"/>. Veuillez également noter que les éléments "
+"de liste indiqués à la ligne de commande seront ajoutés à la fin de la liste "
 "indiquée dans les fichiers de configuration, mais avant les valeurs par "
 "défaut. Dans ce cas, pour établir une préférence par rapport aux types "
 "mentionnés dans les fichiers de configuration, il est possible de placer "
@@ -5176,6 +5167,8 @@ msgid ""
 "The maximum file size of Release/Release.gpg/InRelease files.  The default "
 "is 10MB."
 msgstr ""
+"La taille maximale des fichiers Release/Release.gpg/InRelease. La taille par "
+"défaut est 10 Mo."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -5184,6 +5177,9 @@ msgid ""
 "in RFC 2782 to select an alternative server to connect to.  The default is "
 "\"true\"."
 msgstr ""
+"Cette option vérifie si APT utilisera l'entrée de serveur DNS SRV telle que "
+"définie dans la RFC 2782 pour choisir un serveur alternatif auquel se "
+"connecter. La valeur par défaut est « true »."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -5193,6 +5189,10 @@ msgid ""
 "literal>\".  Concept, implications as well as alternatives are detailed in "
 "&apt-secure;."
 msgstr ""
+"Autoriser les opérations de mise à jour à charger des fichiers de données à "
+"partir de dépôts sans informations de sécurité suffisantes. La valeur par "
+"défaut est « <literal>false</literal> ». Le concept, les implications ainsi "
+"que les alternatives sont détaillés dans &apt-secure;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -5202,6 +5202,12 @@ msgid ""
 "strong enough.  The default value is \"<literal>false</literal>\".  Concept, "
 "implications as well as alternatives are detailed in &apt-secure;."
 msgstr ""
+"Autoriser les opérations de mise à jour à charger des fichiers de données à "
+"partir de dépôts qui fournissent des informations de sécurité, mais qui ne "
+"sont plus considérés comme suffisamment robustes sur le plan de la "
+"cryptographie. La valeur par défaut est « <literal>false</literal> ». Le "
+"concept, les implications ainsi que les alternatives sont détaillés dans "
+"&apt-secure;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -5213,11 +5219,18 @@ msgid ""
 "this. The default is <literal>false</literal>.  Concept, implications as "
 "well as alternatives are detailed in &apt-secure;."
 msgstr ""
+"Permettre qu'un dépôt qui était auparavant signé par pgp devienne non signé "
+"durant l'opération de la mise à jour. Quand il n'y a pas de signature "
+"valable pour un ancien dépôt de confiance, APT refusera la mise à jour. "
+"Cette option peut être utilisée pour contourner cette protection. Vous ne "
+"souhaiterez presque certainement jamais activer cette option. La valeur pas "
+"défaut est « <literal>false</literal> ». Le concept, les implications ainsi "
+"que les alternatives sont détaillés dans &apt-secure;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.conf.5.xml
 msgid "scope"
-msgstr ""
+msgstr "champ d'action"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -5246,13 +5259,36 @@ msgid ""
 "used to acquire changelog files from. Another source will be tried if "
 "available in this case."
 msgstr ""
+"La récupération des journaux des modifications n'est possible que si l'URI "
+"où les télécharger est connu. De préférence, le fichier Release l'indique "
+"dans un champ « Changelogs ». S'il n'est pas disponible, les champs Label ou "
+"Origine du fichier Release sont utilisés pour vérifier si les options "
+"<literal>Acquire::Changelogs::URI::Label::<replaceable>LABEL</replaceable></"
+"literal> ou <literal>Acquire::Changelogs::URI::Origin::<replaceable>ORIGINE</"
+"replaceable></literal> existent, et si c'est le cas, cette valeur est prise. "
+"La valeur dans le fichier Release peut être contournée par <literal>Acquire::"
+"Changelogs::URI::Override::Label::<replaceable>LABEL</replaceable></literal> "
+"ou <literal>Acquire::Changelogs::URI::Override::Origin::"
+"<replaceable>ORIGINE</replaceable></literal>. La valeur devrait être un URI "
+"normal vers un fichier texte, à l'exception que les données spécifiques du "
+"paquet sont remplacées par le paramètre <literal>@CHANGEPATH@</literal>. Sa "
+"valeur est la suivante : 1. si le paquet provient d'un composant (par "
+"exemple <literal>main</literal>) il constitue la première partie, sinon elle "
+"est omise ; 2. est la première lettre du nom du paquet source, sauf si le "
+"nom du paquet source commence par <literal>lib</literal> auquel cas les "
+"quatre premières lettres seront utilisées ; 3. le nom complet du paquet "
+"source ; 4. le nom complet une fois de plus ; 5. la version de la source. "
+"Les quatres premières parties (ou trois si le composant est absent) sont "
+"séparées par des barres obliques (« <literal>/</literal> »), et les deux "
+"dernières sont séparées par un caractère de soulignement (« <literal>_</"
+"literal> »). La valeur spéciale « <literal>no</literal> » est disponible "
+"pour indiquer que cette source ne peut être utilisée pour récupérer les "
+"fichiers changelog. Dans ce cas, une autre source sera essayée."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid "User configuration"
 msgid "Binary specific configuration"
-msgstr "Configuration utilisateur"
+msgstr "Configuration spécifique d'exécutable"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml
@@ -5263,6 +5299,12 @@ msgid ""
 "Get::Show-Versions</option> effect <command>apt-get</command> as well as "
 "<command>apt</command>."
 msgstr ""
+"Particulièrement avec l'introduction de l'exécutable <command>apt</command> "
+"il peut être utile de configurer certaines options seulement pour un "
+"exécutable particulier dans la mesure ou même des options qui semblent "
+"affecter seulement certains binaires telles que <option>APT::Get::Show-"
+"Versions</option> affectent <command>apt-get</command> autant "
+"qu'<command>apt</command>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml
@@ -5273,6 +5315,12 @@ msgid ""
 "Versions</option> for the <command>apt</command> only can e.g. by done by "
 "setting <option>Binary::apt::APT::Get::Show-Versions</option> instead."
 msgstr ""
+"La configuration d'une option pour un exécutable particulier peut être "
+"réalisée en réglant l'option dans le champ d'action <option>Binary::"
+"<replaceable>exécutable-spécifique</replaceable></option>. Affecter l'option "
+"<option>APT::Get::Show-Versions</option> à <command>apt</command> seulement "
+"peut être fait, par exemple en configurant plutôt <option>Binary::apt::APT::"
+"Get::Show-Versions</option>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml
@@ -5281,6 +5329,10 @@ msgid ""
 "binary-specific options on the commandline itself nor in configuration files "
 "loaded via the commandline."
 msgstr ""
+"Veuillez noter que comme cela est indiqué dans la section DESCRIPTION plus "
+"haut, il n'est pas possible de configurer les options spécifiques aux "
+"exécutables en ligne de commande ni dans des fichiers de configuration "
+"chargés par la ligne de commande."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml
@@ -5378,16 +5430,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "The configuration item <literal>RootDir</literal> has a special meaning.  "
-#| "If set, all paths in <literal>Dir::</literal> will be relative to "
-#| "<literal>RootDir</literal>, <emphasis>even paths that are specified "
-#| "absolutely</emphasis>.  So, for instance, if <literal>RootDir</literal> "
-#| "is set to <filename>/tmp/staging</filename> and <literal>Dir::State::"
-#| "status</literal> is set to <filename>/var/lib/dpkg/status</filename>, "
-#| "then the status file will be looked up in <filename>/tmp/staging/var/lib/"
-#| "dpkg/status</filename>."
 msgid ""
 "The configuration item <literal>RootDir</literal> has a special meaning.  If "
 "set, all paths will be relative to <literal>RootDir</literal>, "
@@ -5399,14 +5441,15 @@ msgid ""
 "prefix only relative paths, set <literal>Dir</literal> instead."
 msgstr ""
 "L'option de configuration <literal>RootDir</literal> a une signification "
-"particulière. Lorsqu'elle est définie, tous les chemins déclarés dans "
-"<literal>Dir::</literal> sont considérés relativement à <literal>RootDir</"
-"literal>, <emphasis>même les chemins spécifiés de manière absolue</"
-"emphasis>. Ainsi par exemple si <literal>RootDir</literal> est défini comme "
-"<filename>/tmp/staging</filename>, et que chemin du fichier d'état "
-"<literal>Dir::State::status</literal> est déclaré comme <filename>/var/lib/"
-"dpkg/status</filename> alors ce fichier sera cherché dans <filename>/tmp/"
-"staging/var/lib/dpkg/status</filename>."
+"particulière. Lorsqu'elle est définie, tous les chemins sont considérés "
+"relativement à <literal>RootDir</literal>, <emphasis>même les chemins "
+"spécifiés de manière absolue</emphasis>. Ainsi par exemple si "
+"<literal>RootDir</literal> est défini comme <filename>/tmp/staging</"
+"filename>, et que chemin du fichier d'état <literal>Dir::State::status</"
+"literal> est déclaré comme <filename>/var/lib/dpkg/status</filename> alors "
+"ce fichier sera cherché dans <filename>/tmp/staging/var/lib/dpkg/status</"
+"filename>. Si vous souhaitez seulement préfixer des chemins relatifs, "
+"définissez plutôt <literal>Dir</literal>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml
@@ -5557,6 +5600,10 @@ msgid ""
 "configuration space, and a list of package actions with filename and version "
 "information."
 msgstr ""
+"La version 2 de ce protocole envoie plus d'informations à travers le "
+"descripteur du fichier requis : une ligne avec le texte <literal>VERSION 2</"
+"literal>, l'espace de configuration d'APT et une liste d'actions de paquet "
+"avec le nom de fichier et l'information de version."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -5569,6 +5616,13 @@ msgid ""
 "=value</literal> lines with the same key. The configuration section ends "
 "with a blank line."
 msgstr ""
+"Chaque ligne de directive de configuration a la forme <literal>clé=valeur</"
+"literal>. Les caractères spéciaux (signes égal, fin de ligne, caractères non "
+"imprimables, guillemets et signe pourcentage dans <literal>clé</literal> et "
+"fin de ligne, caractères non imprimables et signe pourcentage dans "
+"<literal>valeur</literal>) sont %-encodés (encodage URL). Les listes sont "
+"représentés par des lignes <literal>clé::=valeur</literal> multiples avec la "
+"même clé. Les sections de la configuration se terminent par une ligne vide."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -5583,6 +5637,18 @@ msgid ""
 "the package is being configured, \"**REMOVE**\" if it is being removed, or "
 "the filename of a .deb file if it is being unpacked."
 msgstr ""
+"Les lignes d'action de paquet consistent en cinq champs dans la version 2 : "
+"le nom du paquet (sans qualification d'architecture, même si c'est une "
+"architecture supplémentaire – « foreign »), la version ancienne, la "
+"direction du changement de version (&lt; pour les mises à niveau, &gt; pour "
+"les retours en arrière, = pour pas de modification), la nouvelle version, "
+"l'action. Les champs versions sont « - » pour pas de version du tout (par "
+"exemple lors de la première installation d'un paquet ; pas de version est "
+"traité comme antérieur à n'importe quelle version réelle, ainsi c'est une "
+"mise à jour, indiquée comme <literal>- &lt; 1.23.4</literal>). Le champ "
+"action est « **CONFIGURE** » si le paquet est en cours de configuration, "
+"« **REMOVE** » s'il est en cours de suppression, ou bien le nom d'un "
+"fichier .deb s'il est en cours de dépaquetage."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -5593,6 +5659,12 @@ msgid ""
 "\"none\" is an incorrect typename which is just kept to remain compatible, "
 "it should be read as \"no\" and users are encouraged to support both."
 msgstr ""
+"Dans la Version 3, après chaque champ version, se trouve l’architecture de "
+"cette version qui est « - » s'il n'y a pas de version, puis un champ "
+"montrant le type MultiArch « same », « foreign », « allowed » ou « none ». "
+"Veuillez noter que « none » est un nom de type incorrect qui est juste "
+"conservé pour des raisons de compatibilité, il devrait être lu comme « no » "
+"et les utilisateurs sont encouragés à prendre en charge les deux."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -5650,14 +5722,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "If this option is set APT will call <command>dpkg --configure --pending</"
-#| "command> to let &dpkg; handle all required configurations and triggers. "
-#| "This option is activated automatically per default if the previous option "
-#| "is not set to <literal>all</literal>, but deactivating it could be useful "
-#| "if you want to run APT multiple times in a row - e.g. in an installer. In "
-#| "these sceneries you could deactivate this option in all but the last run."
 msgid ""
 "If this option is set APT will call <command>dpkg --configure --pending</"
 "command> to let &dpkg; handle all required configurations and triggers. This "
@@ -5667,9 +5731,8 @@ msgid ""
 msgstr ""
 "Si cette option est choisie, APT lancera <command>dpkg --configure --"
 "pending</command> pour laisser &dpkg; gérer les configurations de paquets et "
-"les actions différées. Cette option est automatiquement activée si l'option "
-"précédente a une valeur différente de « <literal>all</literal> ». Il peut "
-"par contre être utile de la désactiver pour lancer APT plusieurs fois "
+"les actions différées. Cette option est automatiquement activée. Il peut par "
+"contre être utile de la désactiver pour lancer APT plusieurs fois "
 "successives, par exemple quand il est utilisé depuis un outil "
 "d'installation. Dans ce cas, seul le dernier de tous les appels successifs "
 "peut conserver l'option active."
@@ -5709,7 +5772,7 @@ msgid ""
 msgstr ""
 "Les options de la section <literal>Debug::</literal> servent soit à "
 "provoquer l'affichage d'informations de débogage sur la sortie d'erreur "
-"standard du programme qui utilise les librairies APT, soit à activer des "
+"standard du programme qui utilise les bibliothèques APT, soit à activer des "
 "modes de fonctionnement spéciaux qui sont principalement utiles pour "
 "déboguer le comportement de <literal>APT</literal>. La plupart de ces "
 "options n'ont pas d'intérêt pour un utilisateur normal, mais certaines "
@@ -5820,7 +5883,7 @@ msgid ""
 "Output each cryptographic hash that is generated by the <literal>apt</"
 "literal> libraries."
 msgstr ""
-"Affiche toutes les clefs de hachage cryptographiques créées par les "
+"Affiche toutes les clés de hachage cryptographiques créées par les "
 "librairies d'<literal>apt</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -6241,13 +6304,10 @@ msgstr "une priorité égale à 500"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml
-#, fuzzy
-#| msgid ""
-#| "to the versions that are not installed and belong to the target release."
 msgid "to the versions that do not belong to the target release."
 msgstr ""
-"est affectée aux versions qui ne sont pas installées et qui appartiennent à "
-"la distribution par défaut."
+"est affectée aux versions qui n'appartiennent pas à la distribution par "
+"défaut."
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><term>
 #: apt_preferences.5.xml
@@ -6256,13 +6316,9 @@ msgstr "une priorité égale à 990"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml
-#, fuzzy
-#| msgid ""
-#| "to the versions that are not installed and belong to the target release."
 msgid "to the versions that belong to the target release."
 msgstr ""
-"est affectée aux versions qui ne sont pas installées et qui appartiennent à "
-"la distribution par défaut."
+"est affectée aux versions qui appartiennent à la distribution par défaut."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
@@ -6270,6 +6326,8 @@ msgid ""
 "The highest of those priorities whose description matches the version is "
 "assigned to the version."
 msgstr ""
+"La priorité la plus élevée dont la description correspond à la version est "
+"affectée à la version."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
@@ -6541,7 +6599,7 @@ msgid ""
 "belonging to any distribution whose Codename is \"<literal>&debian-testing-"
 "codename;</literal>\"."
 msgstr ""
-"L'entrée suivante affecte une priorité basse à toutes les versions d'un "
+"L'entrée suivante affecte une priorité haute à toutes les versions d'un "
 "paquet appartenant à toute distribution dont le nom de code est "
 "<literal>&debian-testing-codename;</literal>."
 
@@ -6590,6 +6648,10 @@ msgid ""
 "For any type of condition (such as two \"a\" conditions), only the last such "
 "condition is checked."
 msgstr ""
+"L'effet de l'opérateur virgule est identique à un « and » logique : toutes "
+"les conditions doivent être satisfaites pour que l'épinglage corresponde. Il "
+"existe une exception : pour chaque type de condition (telles que deux "
+"conditions « a »), seule la dernière condition est vérifiée."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
@@ -6763,22 +6825,15 @@ msgstr "cette priorité empêche l'installation de la version."
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><term>
 #: apt_preferences.5.xml
 msgid "P = 0"
-msgstr ""
+msgstr "P = 0"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml
 msgid "has undefined behaviour, do not use it."
-msgstr ""
+msgstr "a un comportement indéfini, ne pas l'utiliser."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
-#, fuzzy
-#| msgid ""
-#| "If any specific-form records match an available package version then the "
-#| "first such record determines the priority of the package version.  "
-#| "Failing that, if any general-form records match an available package "
-#| "version then the first such record determines the priority of the package "
-#| "version."
 msgid ""
 "The first specific-form record matching an available package version "
 "determines the priority of the package version.  Failing that, the priority "
@@ -6786,11 +6841,12 @@ msgid ""
 "generic-form records matching the version.  Records defined using patterns "
 "in the Pin field other than \"*\" are treated like specific-form records."
 msgstr ""
-"Si l'une des entrées de forme particulière correspond à la version "
-"disponible d'un paquet, la première entrée trouvée détermine la priorité de "
-"cette version. S'il n'en existe pas, et si l'une des entrées de forme "
-"générale correspond à la version disponible d'un paquet, la première entrée "
-"trouvée détermine la priorité."
+"La première entrée de forme particulière correspondant à une version "
+"disponible de paquet détermine la priorité de la version du paquet. S'il "
+"n'en existe pas, la priorité du paquet est définie comme la plus haute de "
+"toutes les priorités par les entrées de forme générale correspondant à la "
+"version. Les entrées définies en utilisant des motifs dans le champ Pin "
+"autre que « * » sont traitées comme des entrées de forme générale."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
@@ -7444,14 +7500,6 @@ msgstr "Liste des sources de données APT configurées"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "The source list <filename>/etc/apt/sources.list</filename> is designed to "
-#| "support any number of active sources and a variety of source media. The "
-#| "file lists one source per line, with the most preferred source listed "
-#| "first. The information available from the configured sources is acquired "
-#| "by <command>apt-get update</command> (or by an equivalent command from "
-#| "another APT front-end)."
 msgid ""
 "The source list <filename>/etc/apt/sources.list</filename> and the files "
 "contained in <filename>/etc/apt/sources.list.d/</filename> are designed to "
@@ -7463,12 +7511,16 @@ msgid ""
 "is acquired by <command>apt-get update</command> (or by an equivalent "
 "command from another APT front-end)."
 msgstr ""
-"Le fichier de liste de sources <filename>/etc/apt/sources.list</filename> "
-"est prévu pour pouvoir gérer un nombre quelconque de sources actives et de "
-"supports. Le fichier donne une source par ligne, avec les sources "
-"prioritaires en premier. L'information relative aux sources configurées est "
-"récupérée par la commande <command>apt-get update</command> (ou par une "
-"commande équivalent avec une autre interface à APT)."
+"Le fichier de liste de sources <filename>/etc/apt/sources.list</filename> et "
+"les fichiers contenus dans <filename>/etc/apt/sources.list.d/</filename> "
+"sont conçus pour pouvoir gérer un nombre quelconque de sources actives et de "
+"médias. Le fichier donne une source par ligne (One-Line style) ou fournit "
+"des paragraphes multilignes définissant une ou plusieurs sources par "
+"paragraphe (style deb822), avec les sources prioritaires en premier (dans le "
+"cas où il y a une seule version disponible à partir de plus d'une source). "
+"L'information relative aux sources configurées est récupérée par la commande "
+"<command>apt-get update</command> (ou par une commande équivalente avec une "
+"autre interface à APT)."
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
@@ -7477,17 +7529,6 @@ msgstr "sources.list.d"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "The <filename>/etc/apt/sources.list.d</filename> directory provides a way "
-#| "to add sources.list entries in separate files.  The format is the same as "
-#| "for the regular <filename>sources.list</filename> file.  File names need "
-#| "to end with <filename>.list</filename> and may only contain letters (a-z "
-#| "and A-Z), digits (0-9), underscore (_), hyphen (-) and period (.) "
-#| "characters.  Otherwise APT will print a notice that it has ignored a "
-#| "file, unless that file matches a pattern in the <literal>Dir::Ignore-"
-#| "Files-Silently</literal> configuration list - in which case it will be "
-#| "silently ignored."
 msgid ""
 "The <filename>/etc/apt/sources.list.d</filename> directory provides a way to "
 "add sources.list entries in separate files.  Two different file formats are "
@@ -7501,21 +7542,21 @@ msgid ""
 "ignored."
 msgstr ""
 "Le répertoire <filename>/etc/apt/sources.list.d</filename> permet de "
-"spécifier des sources de paquets dans des fichiers distincts qui se "
-"terminent par <literal>.list</literal>. Leur format est le même que celui du "
-"fichier <filename>sources.list</filename>. Les noms de fichiers doivent se "
-"terminer par <filename>.list</filename> et ne peuvent contenir que des "
-"lettres (a-z et A-Z), des chiffres (0-9), des caractères de soulignement "
-"(_), des tirets et des points. Dans le cas contraire, APT affichera un "
-"avertissement indiquant qu'il a ignoré un fichier si celui-ci ne correspond "
-"par à un motif défini dans <literal>Dir::Ignore-Files-Silently</literal> "
-"(les fichiers correspondant à cette variable de configuration étant, eux, "
-"ignorés silencieusemennt)."
+"spécifier des sources de paquets dans des fichiers distincts. Deux formats "
+"de fichiers différents sont permis comme cela est décrit dans les deux "
+"sections suivantes. Les noms de fichier doivent se terminer par <filename>."
+"list</filename> ou par <filename>.sources</filename> selon le format fourni. "
+"Ils ne peuvent contenir que des lettres (a-z et A-Z), des chiffres (0-9), "
+"des caractères de soulignement (_), des tirets (-) et des points (.). Dans "
+"le cas contraire, APT affichera un avertissement indiquant qu'il a ignoré un "
+"fichier si celui-ci ne correspond par à un motif défini dans <literal>Dir::"
+"Ignore-Files-Silently</literal> (les fichiers correspondant à cette variable "
+"de configuration étant, eux, ignorés silencieusement)."
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
 msgid "One-Line-Style Format"
-msgstr ""
+msgstr "Format One-Line-Style"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -7536,6 +7577,20 @@ msgid ""
 "as separators, which instead of replacing the default with the given "
 "value(s) modify the default value(s) to remove or include the given values."
 msgstr ""
+"Les entrées individuelles ne peuvent pas se poursuivre sur la ligne "
+"suivante. Les lignes vides sont ignorées et un caractère <literal>#</"
+"literal> n'importe où sur une ligne signale que le reste de la ligne est un "
+"commentaire. Par conséquent, une entrée peut être désactivée en commentant "
+"la totalité de la ligne. Si plusieurs options doivent être fournies, elles "
+"sont séparées par des espaces et sont entourées toutes ensembles par des "
+"crochets (<literal>[]</literal>) inclus sur la ligne après le type séparé "
+"par un espace. Si une option permet plusieurs valeurs, elles sont séparées "
+"les unes des autres par une virgule (<literal>,</literal>). Un nom d'option "
+"est séparé de ses options par une signe égal (<literal>=</literal>). Des "
+"options à plusieurs valeurs disposent aussi des séparateurs <literal>-=</"
+"literal> et <literal>+=</literal>, qui, au lieu de remplacer la valeur par "
+"défaut par la ou les valeurs données, modifient la ou les valeurs par défaut "
+"pour supprimer ou inclure les valeurs données."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -7546,11 +7601,17 @@ msgid ""
 "expect to encounter options as they were uncommon before the introduction of "
 "multi-architecture support."
 msgstr ""
+"Il s'agit du format traditionnel, géré par toute les version de APT. "
+"Veuillez noter que toutes les options décrites plus bas ne sont pas prises "
+"en charge par toutes les versions d'APT. Notez aussi que certaine des plus "
+"anciennes applications qui analysent ce format elles-mêmes ne s'attendent "
+"pas à rencontrer des options qui étaient rares avant l'introduction de la "
+"prise en charge multi-architecture."
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
 msgid "deb822-Style Format"
-msgstr ""
+msgstr "Format deb822-Style"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -7572,6 +7633,26 @@ msgid ""
 "also have <literal>Architectures-Add</literal> and <literal>Architectures-"
 "Remove</literal> to modify the default value rather than replacing it."
 msgstr ""
+"Les fichiers dans ce format possèdent l'extension <filename>.sources</"
+"filename>. La syntaxe du format est similaire à celle des autres fichiers "
+"utilisés par Debian et ses dérivés, comme les fichiers de métadonnées qu'APT "
+"télécharge des sources configurées ou le fichier <filename>debian/control</"
+"filename> d'un paquet source de Debian. Les entrées individuelles sont "
+"séparées par une ligne vide ; les lignes vides supplémentaires sont ignorées "
+"et un caractère <literal>#</literal> en début de ligne signale la ligne "
+"comme un commentaire. Une entrée, par conséquent, peut être désactivée en "
+"commentant chaque ligne appartenant au paragraphe, mais il est "
+"habituellement plus facile d'ajouter le champ « Enabled: no » au paragraphe "
+"pour désactiver l'entrée. Retirer ce champ ou le définir à « yes » le "
+"réactive. Les options ont la même syntaxe que tous les autres champs : un "
+"nom de champ séparé par le caracère deux-points (<literal>:</literal>) et "
+"éventuellement des valeurs séparées par des espaces. Veuillez noter "
+"particulièrement que des valeurs multiples sont séparées par des espaces et "
+"non par des virgules comme dans le format « One-Line ». Les champs "
+"multivaleurs comme <literal>Architectures</literal> disposent aussi des "
+"options <literal>Architectures-Add</literal> et <literal>Architectures-"
+"Remove</literal> pour modifier la valeur par défaut plutôt que de la "
+"remplacer."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -7587,28 +7668,26 @@ msgid ""
 "adopt this format already, but may encounter problems with software not "
 "supporting the format yet."
 msgstr ""
+"Il s'agit d'un nouveau format pris en charge par APT lui-même depuis la "
+"version 1.1. Les versions précédentes ignorent ce type de fichier avec un "
+"message d'avertissement tel que décrit précédemment. L'objectif est de faire "
+"de ce format le format par défaut, et de rendre obsolète le format « One-"
+"Line-Style » décrit plus haut, parce qu'il est plus facile à créer, à "
+"étendre et à modifier pour les humains comme pour les machines, surtout s'il "
+"inclut beaucoup de sources et/ou d'options. Les développeurs qui travaillent "
+"avec les sources apt ou les analysent sont fortement encouragés à ajouter la "
+"prise en charge de ce format et à prendre contact avec l'équipe APT pour "
+"coordonner et partager ce travail. Les utilisateurs sont libres d'adopter "
+"déjà ce format, mais peuvent se confronter à des problèmes avec les "
+"logiciels qui ne le gèrent pas encore."
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid "The deb and deb-src types"
 msgid "The deb and deb-src Types: General Format"
-msgstr "Les types deb et deb-src."
+msgstr "Les types deb et deb-src : format général"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "The <literal>deb</literal> type references a typical two-level Debian "
-#| "archive, <filename>distribution/component</filename>. The "
-#| "<literal>distribution</literal> is generally an archive name like "
-#| "<literal>stable</literal> or <literal>testing</literal> or a codename "
-#| "like <literal>&debian-stable-codename;</literal> or <literal>&debian-"
-#| "testing-codename;</literal> while component is one of <literal>main</"
-#| "literal>, <literal>contrib</literal> or <literal>non-free</literal>. The "
-#| "<literal>deb-src</literal> type references a Debian distribution's source "
-#| "code in the same form as the <literal>deb</literal> type.  A <literal>deb-"
-#| "src</literal> line is required to fetch source indexes."
 msgid ""
 "The <literal>deb</literal> type references a typical two-level Debian "
 "archive, <filename>distribution/component</filename>. The "
@@ -7623,7 +7702,7 @@ msgid ""
 msgstr ""
 "Le type <literal>deb</literal> décrit une archive Debian classique à deux "
 "niveaux, <filename>distribution/composant</filename>. <literal>distribution</"
-"literal> peut prendre l'une des valeurs suivantes : un nom d'archive tel que "
+"literal> peut prendre l'une des valeurs suivantes : un nom de suite tel que "
 "<literal>stable</literal> ou <literal>testing</literal> ou bien un nom de "
 "code comme <literal>&debian-stable-codename;</literal> ou <literal>&debian-"
 "testing-codename;</literal>, alors que composant prend les valeurs : "
@@ -7635,16 +7714,12 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "The format for a <filename>sources.list</filename> entry using the "
-#| "<literal>deb</literal> and <literal>deb-src</literal> types is:"
 msgid ""
 "The format for two one-line-style entries using the <literal>deb</literal> "
 "and <literal>deb-src</literal> types is:"
 msgstr ""
-"Le format d'une entrée dans <filename>sources.list</filename> utilisant les "
-"types <literal>deb</literal> et <literal>deb-src</literal> est :"
+"Le format de deux entrées du genre « One-Line-Style » utilisant les types "
+"<literal>deb</literal> et <literal>deb-src</literal> est :"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
@@ -7653,6 +7728,8 @@ msgid ""
 "deb [ option1=value1 option2=value2 ] uri suite [component1] [component2] [...]\n"
 "deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [...]"
 msgstr ""
+"deb [ option1=value1 option2=value2 ] uri suite [component1] [component2] [...]\n"
+"deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [...]"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: sources.list.5.xml
@@ -7666,32 +7743,25 @@ msgid ""
 "     option2: value2\n"
 "   "
 msgstr ""
+"     Types: deb deb-src\n"
+"     URIs: uri\n"
+"     Suites: suite\n"
+"     Components: [component1] [component2] [...]\n"
+"     option1: value1\n"
+"     option2: value2\n"
+"   "
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "Alternatively a rfc822 style format is also supported: <placeholder type="
-#| "\"literallayout\" id=\"0\"/>"
 msgid ""
 "Alternatively the equivalent entry in deb822 style looks like this: "
 "<placeholder type=\"literallayout\" id=\"0\"/>"
 msgstr ""
-"Autrement, un autre format de style rfc822 est aussi géré : <placeholder "
-"type=\"literallayout\" id=\"0\"/>"
+"Autrement, l'entrée équivalente de style deb822 ressemble à ceci : "
+"<placeholder type=\"literallayout\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "The URI for the <literal>deb</literal> type must specify the base of the "
-#| "Debian distribution, from which APT will find the information it needs.  "
-#| "<literal>suite</literal> can specify an exact path, in which case the "
-#| "components must be omitted and <literal>suite</literal> must end with a "
-#| "slash (<literal>/</literal>). This is useful for the case when only a "
-#| "particular sub-section of the archive denoted by the URI is of interest.  "
-#| "If <literal>suite</literal> does not specify an exact path, at least one "
-#| "<literal>component</literal> must be present."
 msgid ""
 "The URI for the <literal>deb</literal> type must specify the base of the "
 "Debian distribution, from which APT will find the information it needs.  "
@@ -7707,21 +7777,12 @@ msgstr ""
 "besoin.  <literal>suite</literal> peut spécifier le chemin exact : dans ce "
 "cas, on doit omettre les composants et <literal>suite</literal> doit se "
 "terminer par une barre oblique (<literal>/</literal>). C'est utile quand "
-"seule une sous-section particulière de l'archive décrite par cet URI est "
-"intéressante. Quand <literal>suite</literal> n'indique pas un chemin exact, "
+"seul un sous-répertoire particulier de l'archive décrite par cet URI est "
+"intéressant. Quand <literal>suite</literal> n'indique pas un chemin exact, "
 "un <literal>composant</literal> au moins doit être présent."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>suite</literal> may also contain a variable, <literal>$(ARCH)</"
-#| "literal> which expands to the Debian architecture (such as "
-#| "<literal>amd64</literal> or <literal>armel</literal>) used on the system. "
-#| "This permits architecture-independent <filename>sources.list</filename> "
-#| "files to be used. In general this is only of interest when specifying an "
-#| "exact path, <literal>APT</literal> will automatically generate a URI with "
-#| "the current architecture otherwise."
 msgid ""
 "<literal>suite</literal> may also contain a variable, <literal>$(ARCH)</"
 "literal> which expands to the Debian architecture (such as <literal>amd64</"
@@ -7741,20 +7802,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "In the traditional style sources.list format since only one distribution "
-#| "can be specified per line it may be necessary to have multiple lines for "
-#| "the same URI, if a subset of all available distributions or components at "
-#| "that location is desired.  APT will sort the URI list after it has "
-#| "generated a complete set internally, and will collapse multiple "
-#| "references to the same Internet host, for instance, into a single "
-#| "connection, so that it does not inefficiently establish an FTP "
-#| "connection, close it, do something else, and then re-establish a "
-#| "connection to that same host. This feature is useful for accessing busy "
-#| "FTP sites with limits on the number of simultaneous anonymous users. APT "
-#| "also parallelizes connections to different hosts to more effectively deal "
-#| "with sites with low bandwidth."
 msgid ""
 "Especially in the one-line-style format since only one distribution can be "
 "specified per line it may be necessary to have multiple lines for the same "
@@ -7767,7 +7814,7 @@ msgid ""
 "connections to different hosts to more effectively deal with sites with low "
 "bandwidth."
 msgstr ""
-"Lorsqu'on utilise le type de style de sources.list traditionnel, puisqu'on "
+"Particulièrement lorsqu'on utilise le format « One-Line-Style », puisqu'on "
 "ne peut indiquer qu'une seule distribution par ligne, il peut être "
 "nécessaire de disposer le même URI sur plusieurs lignes quand on veut "
 "accéder à un sous-ensemble des distributions ou composants disponibles à "
@@ -7777,8 +7824,8 @@ msgstr ""
 "connexion FTP, de la fermer, faire autre chose, puis d'établir encore cette "
 "connexion. Cette fonctionnalité permet l'accès à des sites FTP surchargés "
 "qui limitent le nombre de connexions simultanées pour les utilisateurs "
-"anonymes.  APT parallélise aussi les connexions à différents hôtes pour "
-"tirer plus efficacement parti des sites à faible bande passante."
+"anonymes. APT parallélise aussi les connexions à différents hôtes pour tirer "
+"plus efficacement parti des sites à faible bande passante."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -7797,13 +7844,13 @@ msgstr ""
 #: sources.list.5.xml
 #, no-wrap
 msgid "&sourceslist-list-format;"
-msgstr ""
+msgstr "&sourceslist-list-format;"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: sources.list.5.xml
 #, no-wrap
 msgid "&sourceslist-sources-format;"
-msgstr ""
+msgstr "&sourceslist-sources-format;"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -7812,13 +7859,15 @@ msgid ""
 "line-style format: <placeholder type=\"literallayout\" id=\"0\"/> or like "
 "this in deb822 style format: <placeholder type=\"literallayout\" id=\"1\"/>"
 msgstr ""
+"À titre d'exemple, les sources de votre distribution au format « One-Line-"
+"Style » pourraient ressembler à ceci : <placeholder type=\"literallayout\" "
+"id=\"0\"/> ou à ceci au format de style deb822 : <placeholder type="
+"\"literallayout\" id=\"1\"/>"
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid "The deb and deb-src types"
 msgid "The deb and deb-src types: Options"
-msgstr "Les types deb et deb-src."
+msgstr "Les types deb et deb-src : options"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -7833,37 +7882,34 @@ msgid ""
 "names explicitly here. Unsupported options are silently ignored by all APT "
 "versions."
 msgstr ""
+"Chaque entrée de source peut avoir des options spécifiées pour modifier la "
+"source à laquelle accéder et comment les données y sont récupérées. Le "
+"format, la syntaxe et les noms des options peuvent être différents entre le "
+"format « One-Line-Style » et le format de style deb822, mais les mêmes "
+"options sont disponibles dans les deux formats. Pour simplifier, nous "
+"listons les noms de champ avec deb822 et fournissons le nom « One-Line » "
+"entre parenthèses. Il faut se souvenir que en plus du réglage explicite des "
+"options multi-valeurs, il y a aussi l'option de les modifier en se basant "
+"sur les valeurs par défaut, mais nous ne listons pas ces noms explicitement "
+"ici. Les options non prises en charge sont ignorées par toutes les version "
+"d'APT."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
-#| "replaceable>,…</literal> can be used to specify for which architectures "
-#| "information should be downloaded. If this option is not set all "
-#| "architectures defined by the <literal>APT::Architectures</literal> option "
-#| "will be downloaded."
 msgid ""
 "<option>Architectures</option> (<option>arch</option>) is a multivalue "
 "option defining for which architectures information should be downloaded. If "
 "this option isn't set the default is all architectures as defined by the "
 "<option>APT::Architectures</option> config option."
 msgstr ""
-"<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
-"replaceable>,…</literal> peut être utilisé pour indiquer les architectures "
-"pour lesquelles l'information doit être téléchargée. Si cette option n'est "
-"pas utilisée, toutes les architectures définies par l'option <literal>APT::"
-"Architectures</literal> sera téléchargée."
+"<option>Architectures</option> (<option>arch</option>) est une option "
+"multivaleur pour définir les architectures pour lesquelles l'information "
+"doit être téléchargée. Si cette option n'est pas utilisée, l'option par "
+"défaut est toutes les architectures définies par l'option de configuration "
+"<literal>APT::Architectures</literal>."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
-#| "replaceable>,…</literal> can be used to specify for which architectures "
-#| "information should be downloaded. If this option is not set all "
-#| "architectures defined by the <literal>APT::Architectures</literal> option "
-#| "will be downloaded."
 msgid ""
 "<option>Languages</option> (<option>lang</option>) is a multivalue option "
 "defining for which languages information such as translated package "
@@ -7871,11 +7917,12 @@ msgid ""
 "all languages as defined by the <option>Acquire::Languages</option> config "
 "option."
 msgstr ""
-"<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
-"replaceable>,…</literal> peut être utilisé pour indiquer les architectures "
-"pour lesquelles l'information doit être téléchargée. Si cette option n'est "
-"pas utilisée, toutes les architectures définies par l'option <literal>APT::"
-"Architectures</literal> sera téléchargée."
+"<option>Languages</option> (<option>lang</option>) est une option "
+"multivaleur pour définir les langues pour lesquelles les informations, "
+"telles que les descriptions de paquet traduites, doivent être téléchargées. "
+"Si cette option n'est pas utilisée, l'option par défaut est toutes les "
+"langues définies par l'option de configuration <option>Acquire::Languages</"
+"option>."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -7888,6 +7935,14 @@ msgid ""
 "be enabled or disabled by using the <literal>Identifier</literal> field as "
 "an option with a boolean value instead of using this multivalue option."
 msgstr ""
+"<option>Targets</option> (<option>target</option>) est une option "
+"multivaleur pour définir les cibles qu'apt essaiera d’acquérir à partir de "
+"cette source. Si cette option n'est pas spécifiée, la configuration par "
+"défaut est définie par le champ d'action de configuration <option>Acquire::"
+"IndexTargets</option> (les cibles sont définies par leur nom dans le champ "
+"<literal>Created-By</literal>). De plus, les cibles peuvent être activées ou "
+"désactivées en utilisant le champ <literal>Identifier</literal> comme option "
+"avec une valeur booléenne plutôt que d'utiliser cette option multivaleur."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -7901,6 +7956,15 @@ msgid ""
 "the value of configuration option <option>Acquire::PDiffs</option> which "
 "defaults to <literal>yes</literal>."
 msgstr ""
+"<option>PDiffs</option> (<option>pdiffs</option>) est une valeur yes/no qui "
+"contrôle si APT doit essayer d'utiliser PDiffs pour mettre à jour des index "
+"anciens plutôt que de télécharger les nouveaux index en totalité. La valeur "
+"de cette option est ignorée si le dépôt n'annonce pas la disponibilité de "
+"PDiffs. Elle a, par défaut, la valeur de l'option du même nom pour un "
+"fichier particulier défini dans le champ d'action <option>Acquire::"
+"IndexTargets</option>, qui prend lui-même par défaut la valeur de l'option "
+"de configuration <option>Acquire::PDiffs</option>, dont la valeur par défaut "
+"est <literal>yes</literal>."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -7918,6 +7982,20 @@ msgid ""
 "option> scope, which itself defaults to the value of configuration option "
 "<option>Acquire::By-Hash</option> which defaults to <literal>yes</literal>."
 msgstr ""
+"<option>By-Hash</option> (<option>by-hash</option>)peut avoir la valeur "
+"<literal>yes</literal>, <literal>no</literal> ou <literal>force</literal> et "
+"contrôle si APT doit essayer d’acquérir des index grâce à un URI construit à "
+"partir de la somme de hachage du fichier attendu plutôt que d'utiliser le "
+"nom de fichier de stable bien connu de l'index. Son utilisation peut éviter "
+"des décalages de somme de hachage, mais nécessite un miroir de prise en "
+"charge. Une valeur <literal>yes</literal> ou <literal>no</literal> active ou "
+"désactive l'utilisation de cette fonctionnalité si cette source indique sa "
+"prise en charge, tandis que <literal>force</literal> activera la "
+"fonctionnalité quel que soit ce que la source indique. Elle a, par défaut, "
+"la valeur de l'option du même nom pour un fichier particulier défini dans le "
+"champ d'action <option>Acquire::IndexTargets</option>, qui prend lui-même "
+"par défaut la valeur de l'option de configuration <option>Acquire::By-Hash</"
+"option>, dont la valeur par défaut est <literal>yes</literal>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -7927,6 +8005,11 @@ msgid ""
 "entries and can not be varied between different components. APT will try to "
 "detect and error out on such anomalies."
 msgstr ""
+"Par ailleurs, si certaines options sont définies, elles affectent "
+"<emphasis>toutes</emphasis> les sources avec les mêmes URI et Suite, et donc "
+"doivent être définies sur toutes ces entrées et ne peuvent être modifiées "
+"entre les différents composants. APT essaiera de détecter et provoquera une "
+"erreur avec de telles anomalies."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -7938,6 +8021,13 @@ msgid ""
 "set to <literal>yes</literal> they circumvent parts of &apt-secure; and "
 "should therefore not be used lightly!"
 msgstr ""
+"<option>Allow-Insecure</option> (<option>allow-insecure</option>), "
+"<option>Allow-Weak</option> (<option>allow-weak</option>) et <option>Allow-"
+"Downgrade-To-Insecure</option> (<option>allow-downgrade-to-insecure</"
+"option>) sont des valeurs booléennes dont la valeur par défaut est "
+"<literal>no</literal>. Si elles sont définies à <literal>yes</literal>, "
+"elles contournent certains éléments d'&apt-secure; et par conséquent ne "
+"devraient pas utilisées à la légère."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -7954,6 +8044,18 @@ msgid ""
 "even if the authentication checks passed successfully. The default value "
 "can't be set explicitly."
 msgstr ""
+"<option>Trusted</option> (<option>trusted</option>) comporte trois valeurs "
+"d'état qui définissent par défaut si APT décide de considérer une source "
+"comme sûre ou doit lancer un avertissement avant qu'un paquet soit, par "
+"exemple, installé à partir de cette source. Cette option peut être utilisée "
+"pour outrepasser cette décision. La valeur <literal>yes</literal> dit à APT "
+"de considérer cette source comme sûre, même si elle échoue au test "
+"d'authentification. Elle désactive des éléments d'&apt-secure; et elle ne "
+"devrait être utilisée que dans un contexte local et sécurisé si possible, "
+"parce qu'autrement elle ouvre une brèche dans la sécurité. La valeur "
+"<literal>no</literal> fait le contraire et fait que la source est traitée "
+"comme non sûre, même si les tests d'authentification sont réussis. La valeur "
+"par défaut ne peut pas être définie explicitement."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -7970,6 +8072,20 @@ msgid ""
 "previously acquired <filename>Release</filename> file.  Otherwise all keys "
 "in the trusted keyrings are considered valid signers for this repository."
 msgstr ""
+"<option>Signed-By</option> (<option>signed-by</option>) est soit un chemin "
+"absolu vers un fichier de trousseau de clés (qui doit être accessible en "
+"lecture pour l'utilisateur <literal>_apt</literal>, et donc, il faut "
+"s'assurer que tout le monde a le droit de lecture sur le fichier) ou une ou "
+"plusieurs empreintes de clés situées soit dans le trousseau "
+"<filename>trusted.gpg</filename>, soit dans les trousseaux du répertoire "
+"<filename>trusted.gpg.d/</filename> (voir <command>apt-key fingerprint</"
+"command>). Si cette option est définie, seule la ou les clés dans ce "
+"trousseau, ou seules les clés avec ces empreintes sont utilisées pour la "
+"vérification du répertoire par &apt-secure;. Elle possède la valeur par "
+"défaut de l'option du même nom si elle a été définie dans le fichier "
+"<filename>Release</filename> récupéré auparavant. Autrement, toutes les clés "
+"des trousseaux de confiance sont considérées comme des signatures valables "
+"pour ce dépôt."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -7987,6 +8103,20 @@ msgid ""
 "literal>.  Defaults to the value of configuration option <option>Acquire::"
 "Check-Valid-Until</option> which itself defaults to <literal>yes</literal>."
 msgstr ""
+"<option>Check-Valid-Until</option> (<option>check-valid-until</option>) est "
+"une valeur yes/no qui détermine si APT doit tenter de détecter les attaques "
+"par replay. Un créateur de dépôt peut déclarer une période pendant laquelle "
+"les données fournies par le dépôt peuvent être considérées comme valables, "
+"une fois ce délai échu, et si les données n'ont pas été fournies, elles sont "
+"considérées comme expirées, et un message d'erreur est envoyé. En plus "
+"d'accroître la sécurité, puisqu'un attaquant malveillant ne peut plus "
+"envoyer des données anciennes pour empêcher un utilisateur de mettre à "
+"niveau vers une nouvelle version, elle facilite l'identification de miroirs "
+"qui ne sont plus mis à jour. Néanmoins, certains dépôts, comme les archives "
+"historiques ne sont plus mis à jour à dessein, aussi cette vérification peut "
+"être désactivée en réglant cette option à <literal>no</literal>. Elle "
+"possède la valeur par défaut de l'option <option>Acquire::Check-Valid-Until</"
+"option> qui elle-même possède la valeur <literal>yes</literal> par défaut."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -8003,6 +8133,19 @@ msgid ""
 "<option>Acquire::Min-ValidTime</option> and <option>Acquire::Max-ValidTime</"
 "option> which are both unset by default."
 msgstr ""
+"<option>Valid-Until-Min</option> (<option>valid-until-min</option>) et "
+"<option>Valid-Until-Max</option> (<option>valid-until-max</option>) peuvent "
+"être utilisées pour augmenter ou diminuer la durée, en secondes pendant "
+"laquelle les données de ce dépôt sont considérées comme valables. -Max peut "
+"être particulièrement utile pour définir une valeur propre si le dépôt ne "
+"fournit pas de champ Valid-Until dans son fichier Release, tandis que -Min "
+"peut être utilisé pour augmenter la durée de validité sur des miroirs "
+"(locaux), rarement mis à jour, d'une archive plus fréquemment mise à jour "
+"mais moins accessible (qui est aussi dans le sources.list), plutôt que de "
+"désactiver totalement la vérification. Elle possède la valeur par défaut des "
+"options de configuration <option>Acquire::Min-ValidTime</option> et "
+"<option>Acquire::Max-ValidTime</option> qui toutes les deux ne sont pas "
+"définies par défaut."
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
@@ -8012,7 +8155,7 @@ msgstr "Spécification des URI"
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
 msgid "The currently recognized URI types are:"
-msgstr "Les types d'URI actuellement reconnues sont :"
+msgstr "Les types d'URI actuellement reconnus sont :"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8184,10 +8327,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid "Source line for the above"
 msgid "Sources specification for the above."
-msgstr "La précédente ligne, mais pour les sources."
+msgstr "Indication des sources pour les lignes précédentes."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
@@ -8368,15 +8509,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "Uses HTTP to access the archive at ftp.tlh.debian.org, under the universe "
-#| "directory, and uses only files found under <filename>unstable/binary-"
-#| "i386</filename> on i386 machines, <filename>unstable/binary-amd64</"
-#| "filename> on amd64, and so forth for other supported architectures. [Note "
-#| "this example only illustrates how to use the substitution variable; "
-#| "official debian archives are not structured like this] <placeholder type="
-#| "\"literallayout\" id=\"0\"/>"
 msgid ""
 "Uses HTTP to access the archive at ftp.tlh.debian.org, under the universe "
 "directory, and uses only files found under <filename>unstable/binary-i386</"
@@ -8392,8 +8524,9 @@ msgstr ""
 "<filename>unstable/binary-amd64</filename> pour les machines amd64 et ainsi "
 "de suite pour les autres architectures reconnues. [Notez que cet exemple "
 "montre seulement la manière d'utiliser la variable à substituer, les "
-"archives Debian n'étant plas structurées de cette manière.] <placeholder "
-"type=\"literallayout\" id=\"0\"/>"
+"archives Debian officielles n'étant pas structurées de cette manière.] "
+"<placeholder type=\"literallayout\" id=\"0\"/> <placeholder type="
+"\"literallayout\" id=\"1\"/>"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8401,6 +8534,9 @@ msgid ""
 "Uses HTTP to get binary packages as well as sources from the stable, testing "
 "and unstable suites and the components main and contrib."
 msgstr ""
+"Utiliser HTTP pour pouvoir obtenir les paquets binaires ainsi que les "
+"sources des suites stable, testing et unstable et des composants main et "
+"contrib."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
@@ -8413,6 +8549,12 @@ msgid ""
 "deb http://deb.debian.org/debian unstable main contrib\n"
 "deb-src http://deb.debian.org/debian unstable main contrib"
 msgstr ""
+"deb http://deb.debian.org/debian stable main contrib\n"
+"deb-src http://deb.debian.org/debian stable main contrib\n"
+"deb http://deb.debian.org/debian testing main contrib\n"
+"deb-src http://deb.debian.org/debian testing main contrib\n"
+"deb http://deb.debian.org/debian unstable main contrib\n"
+"deb-src http://deb.debian.org/debian unstable main contrib"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
@@ -8423,6 +8565,10 @@ msgid ""
 "Suites: stable testing unstable\n"
 "Components: main contrib\n"
 msgstr ""
+"Types: deb deb-src\n"
+"URIs: http://deb.debian.org/debian\n"
+"Suites: stable testing unstable\n"
+"Components: main contrib\n"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8656,19 +8802,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
-#, fuzzy
-#| msgid ""
-#| "The <literal>release</literal> command generates a Release file from a "
-#| "directory tree. It recursively searches the given directory for "
-#| "uncompressed <filename>Packages</filename> and <filename>Sources</"
-#| "filename> files and ones compressed with <command>gzip</command>, "
-#| "<command>bzip2</command> or <command>lzma</command> as well as "
-#| "<filename>Release</filename> and <filename>md5sum.txt</filename> files by "
-#| "default (<literal>APT::FTPArchive::Release::Default-Patterns</literal>). "
-#| "Additional filename patterns can be added by listing them in "
-#| "<literal>APT::FTPArchive::Release::Patterns</literal>.  It then writes to "
-#| "stdout a <filename>Release</filename> file containing an MD5, SHA1 and "
-#| "SHA256 digest for each file."
 msgid ""
 "The <literal>release</literal> command generates a Release file from a "
 "directory tree. It recursively searches the given directory for uncompressed "
@@ -8684,15 +8817,17 @@ msgid ""
 msgstr ""
 "La commande <literal>release</literal> crée un fichier Release à partir "
 "d'une arborescence. Elle recherche récursivement dans le répertoire indiqué "
-"des fichiers <filename>Packages</filename> et <filename>Sources</filename> "
-"non compressés et compressés avec <command>gzip</command>, <command>bzip2</"
-"command> ou <command>lzma</command> ainsi que des fichiers "
-"<filename>Release</filename> et <filename>md5sum.txt</filename> par défaut "
-"(<literal>APT::FTPArchive::Release::Default-Patterns</literal>). Des motifs "
-"supplémentaires pour les noms de fichiers peuvent être ajoutés en les "
-"mentionnant dans  <literal>APT::FTPArchive::Release::Patterns</literal>.  Le "
-"fichier <filename>Release</filename> est ensuite affiché et comporte des "
-"sommes de contrôle MD5, SHA1 et SHA256 pour chaque fichier."
+"des fichiers <filename>Packages</filename>, <filename>Sources</filename>, "
+"<filename>Contents</filename>, <filename>Components</filename> et "
+"<filename>icons</filename> non compressés et compressés ainsi que des "
+"fichiers <filename>Release</filename>, <filename>Index</filename> et "
+"<filename>md5sum.txt</filename> par défaut (<literal>APT::FTPArchive::"
+"Release::Default-Patterns</literal>). Des motifs supplémentaires pour les "
+"noms de fichiers peuvent être ajoutés en les mentionnant dans <literal>APT::"
+"FTPArchive::Release::Patterns</literal>. Le fichier <filename>Release</"
+"filename> est ensuite affiché sur la sortie standard et comporte (par "
+"défaut) des sommes de contrôle MD5, SHA1 et SHA256 et SHA512 pour chaque "
+"fichier."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
@@ -8838,12 +8973,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
-#, fuzzy
-#| msgid ""
-#| "Sets the default compression schemes to use for the package index files. "
-#| "It is a string that contains a space separated list of at least one of: "
-#| "'.' (no compression), 'gzip' and 'bzip2'. The default for all compression "
-#| "schemes is '. gzip'."
 msgid ""
 "Sets the default compression schemes to use for the package index files. It "
 "is a string that contains a space separated list of at least one of the "
@@ -8851,9 +8980,10 @@ msgid ""
 "configuration scope.  The default for all compression schemes is '. gzip'."
 msgstr ""
 "Indique comment sont compressés les fichiers d'index. C'est une chaîne qui "
-"contient des valeurs séparées par des espaces ; elle contient au moins l'une "
-"des valeurs suivantes : « . » (pas de compression), « gzip », « bzip2 ».  "
-"Par défaut, c'est la chaîne « . gzip »."
+"contient une liste séparée par des espaces qui contient au moins l'un des "
+"compresseurs configuré à travers le champ d'action de configuration "
+"<option>APT::Compressor</option>. La valeur par défaut pour tous les schémas "
+"de compression est « . gzip »."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
@@ -9177,6 +9307,13 @@ msgid ""
 "include information about architecture <literal>all</literal> packages in "
 "all files as they will be available in a dedicated file."
 msgstr ""
+"C'est une liste de toutes les architectures séparées par des espaces qui "
+"appartiennent à chaque section. L'architecture spéciale « source » indique "
+"que l'arborescence est une arborescence de sources. L'architecture « all » "
+"indique que les fichiers spécifiques à l'architecture comme "
+"<filename>Packages</filename> ne devraient pas inclure d'informations sur "
+"les paquets de l'architecture <literal>all</literal> dans tous les fichiers "
+"comme elles devraient être disponibles dans un fichier dédié."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
@@ -9981,9 +10118,9 @@ msgid ""
 "\n"
 " URL [http://llug.sep.bnl.gov/debian]:\n"
 msgstr ""
-"  Réglage de a liste des emplacements sources de distribution\n"
+"  Réglage de la liste des emplacements sources de distribution\n"
 "\n"
-" Veuillez indiquer l'URL de base de la  distribution Debian.\n"
+" Veuillez indiquer l'URL de base de la distribution Debian.\n"
 " Les schémas d'accès connus sont : http file\n"
 "\n"
 " Exemple:\n"
