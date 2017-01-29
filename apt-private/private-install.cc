@@ -346,7 +346,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 	 return _error->Error(_("Aborting install."));
       }
 
-      _system->UnLock();
+      _system->UnLockInner();
 
       APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
       pkgPackageManager::OrderResult Res = PM->DoInstall(progress);
@@ -356,7 +356,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 	 return false;
       if (Res == pkgPackageManager::Completed)
 	 break;
-      
+
+      _system->LockInner();
+
       // Reload the fetcher object and loop again for media swapping
       Fetcher.Shutdown();
       if (PM->GetArchives(&Fetcher,List,&Recs) == false)

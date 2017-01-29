@@ -1521,6 +1521,11 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	       _exit(100);
 	 }
 
+	 if (dynamic_cast<debSystem*>(_system) != nullptr
+	    && dynamic_cast<debSystem*>(_system)->IsLocked() == true) {
+	    setenv("DPKG_FRONTEND_LOCKED", "true", 1);
+	 }
+
 	 execvp(Args[0], (char**) &Args[0]);
 	 cerr << "Could not exec dpkg!" << endl;
 	 _exit(100);

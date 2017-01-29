@@ -13,6 +13,7 @@
 #include<config.h>
 
 #include <apt-pkg/debsystem.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/macros.h>
 
@@ -64,4 +65,28 @@ std::vector<std::string> pkgSystem::ArchitecturesSupported() const	/*{{{*/
 }
 									/*}}}*/
 
+bool pkgSystem::LockInner()				/*{{{*/
+{
+   debSystem * const deb = dynamic_cast<debSystem *>(this);
+   if (deb != NULL)
+      return deb->LockInner();
+   return _error->Error("LockInner is not implemented");
+}
+									/*}}}*/
+bool pkgSystem::UnLockInner(bool NoErrors)				/*{{{*/
+{
+   debSystem * const deb = dynamic_cast<debSystem *>(this);
+   if (deb != NULL)
+      return deb->UnLockInner(NoErrors);
+   return _error->Error("UnLockInner is not implemented");
+}
+									/*}}}*/
+bool pkgSystem::IsLocked() 						/*{{{*/
+{
+   debSystem * const deb = dynamic_cast<debSystem *>(this);
+   if (deb != NULL)
+      return deb->IsLocked();
+   return true;
+}
+									/*}}}*/
 pkgSystem::~pkgSystem() {}
