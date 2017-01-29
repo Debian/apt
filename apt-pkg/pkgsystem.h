@@ -119,6 +119,18 @@ class pkgSystem
 
    pkgSystem(char const * const Label, pkgVersioningSystem * const VS);
    virtual ~pkgSystem();
+
+
+   /* companions to Lock()/UnLock
+    *
+    * These functions can be called prior to calling dpkg to release an inner
+    * lock without releasing the overall outer lock, so that dpkg can run
+    * correctly but no other APT instance can acquire the system lock.
+    */
+   bool LockInner();
+   bool UnLockInner(bool NoErrors = false);
+   /// checks if the system is currently locked
+   bool IsLocked();
    private:
    pkgSystemPrivate * const d;
 };
