@@ -1189,7 +1189,7 @@ bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
 									/*}}}*/
 // ProblemResolver::ResolveByKeep - Resolve problems using keep		/*{{{*/
 // ---------------------------------------------------------------------
-/* This is the work horse of the soft upgrade routine. It is very gental 
+/* This is the work horse of the soft upgrade routine. It is very gentle
    in that it does not install or remove any packages. It is assumed that the
    system was non-broken previously. */
 bool pkgProblemResolver::ResolveByKeep(OpProgress * const Progress)
@@ -1204,7 +1204,7 @@ bool pkgProblemResolver::ResolveByKeep(OpProgress * const Progress)
 									/*}}}*/
 // ProblemResolver::ResolveByKeepInternal - Resolve problems using keep	/*{{{*/
 // ---------------------------------------------------------------------
-/* This is the work horse of the soft upgrade routine. It is very gental
+/* This is the work horse of the soft upgrade routine. It is very gentle
    in that it does not install or remove any packages. It is assumed that the
    system was non-broken previously. */
 bool pkgProblemResolver::ResolveByKeepInternal()
