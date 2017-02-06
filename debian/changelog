@@ -1,3 +1,38 @@
+apt (1.4~rc1) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * don't show update stats if cache generation is disabled
+  * don't lock dpkg in 'apt-get clean'
+  * don't lock dpkg in update commands
+  * avoid validate/delete/load race in cache generation
+  * fix 'install --no-download' mode
+  * remove 'old' FAILED files in the next acquire call (Closes: 846476)
+  * stop rred from leaking debug messages on recovered errors (Closes: #850759)
+  * make the moo reproducible.
+    Thanks to Chris Lamb for initial patch and guru meditation (Closes: #848721)
+  * update release mappings in documentation
+  * avoid malloc if option whitelist is disabled (default)
+
+  [ Julian Andres Klode ]
+  * basehttp: Only read Content-Range on 416 and 206 responses (LP: #1657567)
+  * test suite: Do not exit 0 in trap for QUIT
+  * Only merge acquire items with the same meta key (Closes: #838441)
+
+  [ Zhou Mo ]
+  * po: update Simplified Chinese program translation
+
+  [ Jean-Pierre Giraud ]
+  * French manpages translation update (Closes: 852460)
+
+  [ victory ]
+  * Japanese manpages & program translation update
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #853761)
+  * Dutch manpage translation update (Closes: #853762)
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 06 Feb 2017 14:41:23 +0100
+
 apt (1.4~beta4) unstable; urgency=medium
 
   * Read dpkg tables to handle architecture wildcards.
