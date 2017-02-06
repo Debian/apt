@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-08-17 19:28+0200\n"
-"PO-Revision-Date: 2017-01-19 17:32+0100\n"
+"POT-Creation-Date: 2017-09-03 13:13+0200\n"
+"PO-Revision-Date: 2017-08-12 16:38+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.6\n"
+"X-Generator: Gtranslator 2.91.7\n"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -223,7 +223,8 @@ msgid "The repository '%s' is no longer signed."
 msgstr "De pakketbron '%s' heeft niet langer een ondertekening."
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid "The repository '%s' does no longer have a Release file."
 msgid "The repository '%s' no longer has a Release file."
 msgstr "De pakketbron '%s' heeft niet langer een Release-bestand."
 
@@ -309,16 +310,14 @@ msgid "GPG error: %s: %s"
 msgstr "GPG-fout: %s: %s"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Skipping acquire of configured file '%s' as repository '%s' doesn't "
-#| "support architecture '%s'"
+#, c-format
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
 "component '%s' (component misspelt in sources.list?)"
 msgstr ""
 "Opvragen van het in de configuratie vermeld bestand '%s' overgeslagen, "
-"vermits pakketbron '%s' de architectuur '%s' niet ondersteunt"
+"vermits pakketbron '%s' de component '%s' niet bevat (fout gespelde "
+"component in sources.list?)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -330,16 +329,14 @@ msgstr ""
 "vermits pakketbron '%s' de architectuur '%s' niet ondersteunt"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Skipping acquire of configured file '%s' as repository '%s' doesn't "
-#| "support architecture '%s'"
+#, c-format
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' does not seem to "
 "provide it (sources.list entry misspelt?)"
 msgstr ""
 "Opvragen van het in de configuratie vermeld bestand '%s' overgeslagen, "
-"vermits pakketbron '%s' de architectuur '%s' niet ondersteunt"
+"vermits pakketbron '%s' het niet schijnt aan te bieden (fout gespeld item in "
+"sources.list?)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -371,12 +368,14 @@ msgstr "Tegenstrijdige distributie: %s (verwachtte %s, maar kreeg %s)"
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
-msgstr ""
+msgstr "Bij pakketbron '%s' is de '%s'-waarde gewijzigd van '%s' naar '%s'"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
 msgstr ""
+"Bij pakketbron '%s' is de standaardprioriteit voor %s gewijzigd van %hi naar "
+"%hi."
 
 #. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
 #: apt-pkg/acquire-item.cc
@@ -384,6 +383,8 @@ msgstr ""
 msgid ""
 "More information about this can be found online in the Release notes at: %s"
 msgstr ""
+"Hierover is online meer informatie te vinden in de Notities bij de release "
+"op: %s"
 
 #. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
 #: apt-pkg/acquire-item.cc
@@ -392,6 +393,9 @@ msgid ""
 "This must be accepted explicitly before updates for this repository can be "
 "applied. See %s manpage for details."
 msgstr ""
+"Dit moet expliciet aanvaard worden vooraleer bijwerkingen uit deze "
+"pakketbron uitgevoerd kunnen worden. Raadpleeg man-pagina %s voor bijkomende "
+"informatie."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -693,7 +697,7 @@ msgstr "Bronlijst-elementen voor deze schijf zijn:\n"
 #: apt-pkg/clean.cc
 #, c-format
 msgid "Unable to change to %s"
-msgstr "Kan %s niet veranderen"
+msgstr "Kan niet veranderen naar %s"
 
 #: apt-pkg/clean.cc
 #, c-format
@@ -1721,6 +1725,8 @@ msgid ""
 "Do you want to accept these changes and continue updating from this "
 "repository?"
 msgstr ""
+"Wilt u deze wijzigingen aanvaarden en voortgaan met bijwerken vanuit deze "
+"pakketbron?"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
