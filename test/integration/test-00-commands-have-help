@@ -75,7 +75,8 @@ testmoo() {
 	unset SOURCE_DATE_EPOCH
 }
 testmoo '@0' 'Have you mooed today?'
-testmoo '0-12-25' 'Happy package management day!'
+# the year 0 is too early for 32bit architectures
+testmoo '2000-12-25' 'Happy package management day!'
 testmoo '1930-02-18' "It's a Bird ... It's a Plane ... It's Super Cow!"
 testmoo '1966-11-07' 'Whoever needs milk, bows to the animal.'
 testmoo '1988-03-29' 'Have you mooed today?'
