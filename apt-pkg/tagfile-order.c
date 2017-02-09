@@ -17,6 +17,7 @@ static const char *iTFRewritePackageOrder[] = {
    "Kernel-Version", // Used only by d-i
    "Built-Using",
    "Built-For-Profiles",
+   "Auto-Built-Package",
    "Multi-Arch",
    "Status",
    "Priority",
