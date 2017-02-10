@@ -39,7 +39,8 @@ Files:
 EOF
 
 test2vcardbuilddep() {
-	testsuccessequal "Note, using file './2vcard_0.5-3.dsc' to get the build dependencies
+  local name="$1"
+	testsuccessequal "Note, using file './$name' to get the build dependencies
 Reading package lists...
 Building dependency tree...
 The following packages will be REMOVED:
@@ -51,14 +52,16 @@ Remv build-conflict [1]
 Inst build-essential (1 stable [i386])
 Inst debhelper (7 stable [i386])
 Conf build-essential (1 stable [i386])
-Conf debhelper (7 stable [i386])" aptget build-dep -s ./2vcard_0.5-3.dsc
-testfailure aptget build-dep --simulate 2vcard_0.5-3.dsc
+Conf debhelper (7 stable [i386])" aptget build-dep -s ./$name
+testfailure aptget build-dep --simulate $name
 cd downloaded
-testsuccess aptget build-dep --simulate ../2vcard_0.5-3.dsc
-testsuccess aptget build-dep --simulate "$(readlink -f ../2vcard_0.5-3.dsc)"
+testsuccess aptget build-dep --simulate ../$name
+testsuccess aptget build-dep --simulate "$(readlink -f ../$name)"
 cd ..
 }
-test2vcardbuilddep
+test2vcardbuilddep "2vcard_0.5-3.dsc"
+cp "2vcard_0.5-3.dsc" "2VCard_0.5-3.dsc"
+test2vcardbuilddep "2VCard_0.5-3.dsc"
 
 msgmsg 'Test with' 'signed dsc'
 cat > 2vcard_0.5-3.dsc <<EOF
@@ -93,7 +96,9 @@ z2UAn1oXgTai6opwhVfkxrlmJ+iRxzuc
 =4eRd
 -----END PGP SIGNATURE-----
 EOF
-test2vcardbuilddep
+test2vcardbuilddep "2vcard_0.5-3.dsc"
+cp "2vcard_0.5-3.dsc" "2VCard_0.5-3.dsc"
+test2vcardbuilddep "2VCard_0.5-3.dsc"
 
 
 msgmsg 'Test with' 'unpacked source dir'
