@@ -61,8 +61,19 @@ string debListParser::Package() {
    string Result = Section.Find("Package").to_string();
 
    // Normalize mixed case package names to lower case, like dpkg does
-   // See Bug#807012 for details
-   std::transform(Result.begin(), Result.end(), Result.begin(), tolower_ascii);
+   // See Bug#807012 for details.
+   // Only do this when the package name does not contain a / - as that
+   // indicates that the package name was derived from a filename given
+   // to install or build-dep or similar (Bug#854794)
+   if (likely(Result.find('/') == string::npos))
+   {
+      for (char &c: Result)
+      {
+	 char l = tolower_ascii_inline(c);
+	 if (unlikely(l != c))
+	    c = l;
+      }
+   }
 
    if(unlikely(Result.empty() == true))
       _error->Error("Encountered a section with no Package: header");
