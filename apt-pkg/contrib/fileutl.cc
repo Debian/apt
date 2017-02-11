@@ -2733,7 +2733,7 @@ static std::string APT_NONNULL(1) GetTempDirEnv(char const * const env)	/*{{{*/
 	 stat(tmpdir, &st) != 0 || (st.st_mode & S_IFDIR) == 0) // exists and is directory
       tmpdir = "/tmp";
    else if (geteuid() != 0 && // root can do everything anyway
-	 faccessat(-1, tmpdir, R_OK | W_OK | X_OK, AT_EACCESS | AT_SYMLINK_NOFOLLOW) != 0) // current user has rwx access to directory
+	 faccessat(AT_FDCWD, tmpdir, R_OK | W_OK | X_OK, AT_EACCESS) != 0) // current user has rwx access to directory
       tmpdir = "/tmp";
 
    return string(tmpdir);
