@@ -1,3 +1,19 @@
+apt (1.4~rc2) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * add Auto-Built-Package to tagfile-order
+  * don't test with "too early for 32bit" years
+
+  [ Julian Andres Klode ]
+  * Do not lowercase package names representing .dsc/.deb/... files (Closes: #854794)
+  * shippable: Perform CI on Debian stretch instead of Ubuntu xenial
+  * Don't use -1 fd and AT_SYMLINK_NOFOLLOW for faccessat()
+    Thanks to James Clarke for debugging these issues
+  * CMake: Install statvfs.h to include/sys, not just include/
+  * debian: Generate debian/copyright during clean
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 22 Feb 2017 16:02:10 +0100
+
 apt (1.4~rc1) unstable; urgency=medium
 
   [ David Kalnischkies ]
