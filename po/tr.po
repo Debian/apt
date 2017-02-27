@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2016-08-30 22:20+0200\n"
+"POT-Creation-Date: 2017-02-27 15:25+0100\n"
 "PO-Revision-Date: 2016-09-24 03:24+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -149,9 +149,8 @@ msgstr "%s/%s dosyası %s paketindeki aynı adlı dosyanın üzerine yazmak isti
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
-#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc
-#: apt-pkg/deb/dpkgpm.cc apt-pkg/init.cc apt-pkg/policy.cc
-#: apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s okunamadı"
@@ -1108,6 +1107,7 @@ msgstr ""
 msgid "Not locked"
 msgstr "Kilitlenmemiş"
 
+#. we don't care for the difference
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
 msgid "Installing %s"
@@ -1870,6 +1870,14 @@ msgid "Broken packages"
 msgstr "Bozuk paketler"
 
 #: apt-private/private-install.cc
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"Bazı arşivler alınamıyor, apt-get update'i çalıştırmayı ya da --fix-missing "
+"seçeneğini ekleyerek düzeltmeyi deneyin."
+
+#: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "İç hata, InstallPackages bozuk paketler ile çağrıldı!"
 
@@ -1975,14 +1983,6 @@ msgstr "Bazı dosyalar indirilemedi"
 #: apt-private/private-install.cc apt-private/private-source.cc
 msgid "Download complete and in download only mode"
 msgstr "İndirme işlemi tamamlandı ve sadece indirme kipinde"
-
-#: apt-private/private-install.cc
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"Bazı arşivler alınamıyor, apt-get update'i çalıştırmayı ya da --fix-missing "
-"seçeneğini ekleyerek düzeltmeyi deneyin."
 
 #: apt-private/private-install.cc
 msgid "--fix-missing and media swapping is not currently supported"

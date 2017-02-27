@@ -1,3 +1,54 @@
+apt (1.3.5) yakkety; urgency=medium
+
+  * Microrelease covering important fixes of 1.4~rc2 (LP: #1668280)
+
+  [ David Kalnischkies ]
+  * don't install new deps of candidates for kept back pkgs
+  * keep Release.gpg on untrusted to trusted IMS-Hit (Closes: 838779)
+    (LP: #1657440)
+  * reset HOME, USER(NAME), TMPDIR & SHELL in DropPrivileges (Closes: 842877)
+  * add TMP/TEMP/TEMPDIR to the TMPDIR DropPrivileges dance
+  * react to trig-pend only if we have nothing else to do
+  * correct cross & disappear progress detection
+  * improve arch-unqualified dpkg-progress parsing
+  * don't perform implicit crossgrades involving M-A:same
+  * do not configure unconfigured to be removed packages
+  * skip unconfigure for unconfigured to-be removed pkgs
+  * get pdiff files from the same mirror as the index
+  * let {dsc,tar,diff}-only implicitly enable download-only
+  * ensure generation of valid EDSP error stanzas
+  * fix minimum pkgs option for dpkg --recursive usage
+  * don't show update stats if cache generation is disabled
+  * don't lock dpkg in 'apt-get clean'
+  * don't lock dpkg in update commands
+  * avoid validate/delete/load race in cache generation
+  * fix 'install --no-download' mode
+  * remove 'old' FAILED files in the next acquire call (Closes: 846476)
+  * stop rred from leaking debug messages on recovered errors (Closes: #850759)
+
+  [ Edgar Fuß ]
+  * http: clear content before reporting the failure (Closes: #465572)
+
+  [ Paul Wise ]
+  * show output as documented for APT::Periodic::Verbose 2 (Closes: 845599)
+
+  [ John R. Lenton ]
+  * bash-completion: Only complete understood file paths for install
+    (LP: #1645815)
+
+  [ Lukasz Kawczynski ]
+  * Honour Acquire::ForceIPv4/6 in the https transport
+
+  [ Julian Andres Klode ]
+  * basehttp: Only read Content-Range on 416 and 206 responses (LP: #1657567)
+  * Only merge acquire items with the same meta key (Closes: #838441)
+  * Do not package names representing .dsc/.deb/... files (Closes: #854794)
+  * Don't use -1 fd and AT_SYMLINK_NOFOLLOW for faccessat()
+    Thanks to James Clarke for debugging these issues
+  * CMake: Install statvfs.h to include/sys, not just include/
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Mon, 27 Feb 2017 15:02:40 +0100
+
 apt (1.3.4) yakkety; urgency=medium
 
   * https: Quote path in URL before passing it to curl (LP: #1651923)
