@@ -172,6 +172,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.disabled$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.bak$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.dpkg-[a-z]+$");
+   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.ucf-[a-z]+$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.save$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.orig$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.distUpgrade$");
