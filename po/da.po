@@ -2,16 +2,18 @@
 # Copyright (C) 2014 apt & nedenstående oversættere.
 # This file is distributed under the same license as the apt package.
 # Claus Hindsgaul <claus.hindsgaul@gmail.com>, 2002, 2003, 2004, 2005, 2006, 2007.
-# Joe Hansen <joedalton2@yahoo.dk>, 2010, 2012, 2013, 2014.
+# Joe Hansen <joedalton2@yahoo.dk>, 2010, 2012, 2013, 2014, 2017.
 #
+# checksum -> kontrolsum
+# signature -> signatur (bemærk at den ikke er underskrift i den her).
 # solver -> problemløser
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.0.5\n"
+"Project-Id-Version: apt 1.4~rc2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2017-02-06 14:41+0100\n"
-"PO-Revision-Date: 2014-07-06 23:51+0200\n"
+"PO-Revision-Date: 2017-03-02 23:51+0200\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <debian-l10n-danish@lists.debian.org>\n"
 "Language: da\n"
@@ -46,9 +48,9 @@ msgid "Failed to read the archive headers"
 msgstr "Kunne ikke læse arkivhovederne"
 
 #: apt-inst/contrib/extracttar.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot find a configured compressor for '%s'"
-msgstr "Kan ikke finde godkendelsesregistrering for: %s"
+msgstr "Kan ikke finde konfigureret komprimeringsprogram for »%s«"
 
 #: apt-inst/contrib/extracttar.cc
 msgid "Corrupted archive"
@@ -56,7 +58,7 @@ msgstr "Ødelagt arkiv"
 
 #: apt-inst/contrib/extracttar.cc
 msgid "Tar checksum failed, archive corrupted"
-msgstr "Tar-tjeksum fejlede, arkivet er ødelagt"
+msgstr "Tar-kontrolsum fejlede, arkivet er ødelagt"
 
 #: apt-inst/contrib/extracttar.cc
 #, c-format
@@ -195,49 +197,57 @@ msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
 "disabled by default."
 msgstr ""
+"Opdatering, fra et sådant arkiv, kan ikke udføres sikkert og er derfor "
+"deaktiveret som standard."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Data from such a repository can't be authenticated and is therefore "
 "potentially dangerous to use."
 msgstr ""
+"Data, fra et sådant arkiv, kan ikke godkendes og er derfor potentielt "
+"farlig at anvende."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
+"Se apt-secure(8)-manualsiden for detaljer om arkivoprettelse og "
+"brugerkonfiguration."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is no longer signed."
-msgstr "Mappen %s er omrokeret"
+msgstr "Arkivet »%s« er ikke længere underskrevet."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' does no longer have a Release file."
-msgstr "Mappen %s er omrokeret"
+msgstr "Arkivet »%s« har ikke længere en udgivelsesfil."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "This is normally not allowed, but the option Acquire::"
 "AllowDowngradeToInsecureRepositories was given to override it."
 msgstr ""
+"Dette er normalt ikke tilladt, men tilvalget Acquire::"
+"AllowDowngradeToInsecureRepositories blev angivet for at overskrive."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is not signed."
-msgstr "Mappen %s er omrokeret"
+msgstr "Arkivet »%s« er ikke underskrevet."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' does not have a Release file."
-msgstr "Mappen %s er omrokeret"
+msgstr "Arkivet »%s« har ikke en udgivelsesfil."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' provides only weak security information."
-msgstr "Mappen %s er omrokeret"
+msgstr "Arkivet »%s« tilbyder kun svag sikkerhedsinformation."
 
 #: apt-pkg/acquire-item.cc ftparchive/writer.cc
 #, c-format
@@ -250,7 +260,7 @@ msgstr "Hashsum stemmer ikke"
 
 #: apt-pkg/acquire-item.cc
 msgid "Insufficient information available to perform this download securely"
-msgstr ""
+msgstr "Utilstrækkelig information er tilgængelig for at udføre denne overførsel sikkert"
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -266,9 +276,8 @@ msgid "Invalid file format"
 msgstr "Ugyldigt filformat"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy
 msgid "Signature error"
-msgstr "Skrivefejl"
+msgstr "Signaturfejl"
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: apt-pkg/acquire-item.cc methods/gpgv.cc
@@ -281,13 +290,13 @@ msgstr ""
 "autentificering?)"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. GPG error: %s: %s"
 msgstr ""
-"Der opstod en fejl under underskriftsbekræftelse. Arkivet er ikke opdateret "
-"og den forrige indeksfil vil blive brugt. GPG-fejl: %s: %s\n"
+"Der opstod en fejl under signaturbekræftelse. Arkivet er ikke opdateret "
+"og den forrige indeksfil vil blive brugt. GPG-fejl: %s: %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
@@ -301,6 +310,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
 msgstr ""
+"Udelader erhvervelse af konfigureret fil »%s«, da arkivet »%s« ikke understøtter "
+"arkitekturen »%s«"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -317,6 +328,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
+"Udelader erhvervelse af konfigureret fil »%s«, da arkivet »%s« kun tilbyder "
+"svag sikkerhedsinformation"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -357,19 +370,19 @@ msgstr "Pakkeindeksfilerne er i stykker. Intet »Filename:«-felt for pakken %s.
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Changelog unavailable for %s=%s"
-msgstr "Ændringslog for %s (%s)"
+msgstr "Ændringslog utilgængelig for %s=%s"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "The method '%s' is explicitly disabled via configuration."
-msgstr ""
+msgstr "Metoden »%s« er eksplicit deaktiveret via konfiguration."
 
 #: apt-pkg/acquire-worker.cc methods/connect.cc
 #, c-format
 msgid "If you meant to use Tor remember to use %s instead of %s."
-msgstr ""
+msgstr "Hvis du ønskede at bruge Tor så husk at bruge %s i stedet for %s."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -387,10 +400,11 @@ msgid "Method %s did not start correctly"
 msgstr "Metoden %s startede ikke korrekt"
 
 #: apt-pkg/acquire-worker.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
-msgstr "Indsæt disken med navnet: »%s« i drevet »%s« og tryk retur."
+msgstr ""
+"Indsæt venligst disken med navnet: »%s« i drevet »%s« og tryk [Retur]."
 
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
@@ -410,7 +424,7 @@ msgstr "Kunne ikke låse mappen %s"
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
+msgstr "Ingen sandkassebruger »%s« på systemet; kan ikke droppe privilegier"
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -418,11 +432,13 @@ msgid ""
 "Download is performed unsandboxed as root as file '%s' couldn't be accessed "
 "by user '%s'."
 msgstr ""
+"Overførsel udføres uden for sandkassen som root, da filen »%s« ikke kunne "
+"tilgås af brugeren »%s«."
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Clean of %s is not supported"
-msgstr "Indeksfiler af typen »%s« understøttes ikke"
+msgstr "Rensning af %s er ikke understøttet"
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
 #: methods/mirror.cc
@@ -637,18 +653,22 @@ msgid "Failed to stat the cdrom"
 msgstr "Kunne ikke finde cdrommen"
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option '%c' [from %s] is not understood in combination with the "
 "other options."
-msgstr "Kommandolinjetilvalget »%c« [fra %s] kendes ikke."
+msgstr ""
+"Kommandolinjetilvalget »%c« [fra %s] forstås ikke i kombination med de andre "
+"tilvalg."
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option %s is not understood in combination with the other "
 "options"
-msgstr "Kommandolinjetilvalget %s blev ikke forstået"
+msgstr ""
+"Kommandolinjetilvalget %s forstås ikke i kombination med de andre "
+"tilvalg"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -828,7 +848,7 @@ msgstr "Problem under lukning af gzip-filen %s"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Unexpected end of file"
-msgstr ""
+msgstr "Uventet filafslutning"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"
@@ -993,7 +1013,7 @@ msgstr "Det valgte %s blev ikke fundet"
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s wants to acquire the same file (%s) as %s from source %s"
-msgstr ""
+msgstr "Målet %s ønsker at erhverve den samme fil (%s) som %s fra kilden %s"
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; filename and linenumber of
@@ -1001,7 +1021,7 @@ msgstr ""
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s (%s) is configured multiple times in %s and %s"
-msgstr ""
+msgstr "Målet %s (%s) er konfigureret flere gange i %s og %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -1024,6 +1044,8 @@ msgid ""
 "No Hash entry in Release file %s which is considered strong enough for "
 "security purposes"
 msgstr ""
+"Intet hash-punkt i Release-filen %s, som anses for stærk nok til "
+"sikkerhedsformål."
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -1034,17 +1056,17 @@ msgstr "Ugyldigt punkt »%s« i udgivelsesfil %s"
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Conflicting values set for option %s regarding source %s %s"
-msgstr ""
+msgstr "Værdisæt er ikke i overensstemmelse for tilvalget %s jævnfør kilden %s %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Invalid value set for option %s regarding source %s %s (%s)"
-msgstr ""
+msgstr "Ugyldigt værdisæt for tilvalget %s jævnfør kilden %s %s (%s)"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
-msgstr ""
+msgstr "Værdisæt er ikke i overenstemmelse for tilvalget %s jævnfør kilden %s %s: %s != %s"
 
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
@@ -1070,7 +1092,7 @@ msgstr "Kunne ikke låse administrationsmappen (%s), er du rod (root)?"
 #, c-format
 msgid ""
 "dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr "dpkg blev afbrudt, du skal manuelt køre »%s« for at rette problemet."
+msgstr "dpkg blev afbrudt, du skal manuelt køre »%s« for at rette problemet. "
 
 #: apt-pkg/deb/debsystem.cc
 msgid "Not locked"
@@ -1264,24 +1286,20 @@ msgid "Execute external solver"
 msgstr "Kør ekstern problemløser"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Execute external planner"
-msgstr "Kør ekstern problemløser"
+msgstr "Kør ekstern planlægger"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send request to planner"
-msgstr "Send forespørgsel til problemløser"
+msgstr "Send forespørgsel til planlægger"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send scenario to planner"
-msgstr "Send scenarie til problemløser"
+msgstr "Send scenarie til planlægger"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "External planner failed without a proper error message"
-msgstr "Ekstern problemløser fejlede uden en korrekt fejlbesked"
+msgstr "Ekstern planlægger mislykkedes uden en korrekt fejlbesked"
 
 #: apt-pkg/indexcopy.cc
 #, c-format
@@ -1376,14 +1394,13 @@ msgid "This APT does not support the versioning system '%s'"
 msgstr "Denne APT understøtter ikke versionssystemet »%s«"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The package cache was built for different architectures: %s vs %s"
-msgstr "Pakke-mellemlageret er lavet til en anden arkitektur"
+msgstr "Pakke-mellemlageret blev kompileret for andre arkitekturer: %s vs %s"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy
 msgid "The package cache file is corrupted, it has the wrong hash"
-msgstr "Pakke-mellemlagerets fil er ødelagt, den er for lille"
+msgstr "Pakke-mellemlagerets fil er ødelagt, den har forkert hash"
 
 #: apt-pkg/pkgcache.cc
 msgid "Depends"
@@ -1505,7 +1522,7 @@ msgstr "Kunne ikke forstå pin-type %s"
 #: apt-pkg/policy.cc
 #, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
-msgstr ""
+msgstr "%s: Værdien %s er uden for intervallet med gyldige pin-prioriteringer (%d til %d)"
 
 #: apt-pkg/policy.cc
 msgid "No priority (or zero) specified for pin"
@@ -1513,9 +1530,9 @@ msgstr "Ingen prioritet (eller prioritet nul) angivet ved pin"
 
 #. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed entry %u in %s file %s (%s)"
-msgstr "Ugyldig overskrivning af %s-linjen %llu (%s)"
+msgstr "Forkert udformet punkt %u i %s-linjen %s (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -1533,9 +1550,9 @@ msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Typen »%s« er ukendt på linje %u i kildelisten %s"
 
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed stanza %u in source list %s (type)"
-msgstr "Ugyldig linje %u i kildelisten %s (type)"
+msgstr "Forkert udformet stanza %u i kildelisten %s (type)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -1545,7 +1562,7 @@ msgstr "Typen »%s« er ukendt på stanza %u i kildelisten %s"
 #: apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
-msgstr ""
+msgstr "Filen %s er ikke understøttet når angivet på kommandolinjen"
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"
@@ -1554,7 +1571,7 @@ msgstr "Du skal have nogle »source«-URI'er i din sources.list"
 #: apt-pkg/tagfile.cc
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
-msgstr ""
+msgstr "Kan ikke konvertere %s til heltal: uden for interval"
 
 #: apt-pkg/update.cc apt-private/private-download.cc
 #, c-format
@@ -1610,15 +1627,15 @@ msgid " [Working]"
 msgstr " [Arbejder]"
 
 #: apt-private/acqprogress.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
 " '%s'\n"
 "in the drive '%s' and press [Enter]\n"
 msgstr ""
-"Medieskift: Indsæt disken med navnet\n"
+"Medieskift: Indsæt venligst disken med navnet\n"
 " »%s«\n"
-"i drevet »%s« og tryk retur\n"
+"i drevet »%s« og tryk [Retur]\n"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -1657,38 +1674,36 @@ msgid "Sorting"
 msgstr "Sortering"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Valgt version »%s« (%s) for »%s«\n"
+msgstr "Bemærk, vælger »%s« for opgaven »%s«\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "Valgt version »%s« (%s) for »%s«\n"
+msgstr "Bemærk, vælger »%s« for glob'en »%s«\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Valgt version »%s« (%s) for »%s«\n"
+msgstr "Bemærk, vælger »%s« for glob'en »%s«\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Package %s is a virtual package provided by:\n"
-msgstr "men det er en virtuel pakke"
+msgstr "Pakken %s er en virtuel pakke tilbudt af:\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Installed]"
-msgstr "[Installeret]"
+msgstr " [Installeret]"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Not candidate version]"
-msgstr "Kandidatversioner"
+msgstr " [Ingen kandidatversion]"
 
 #: apt-private/private-cacheset.cc
 msgid "You should explicitly select one to install."
-msgstr ""
+msgstr "Du skal eksplicit vælge en at installere."
 
 #: apt-private/private-cacheset.cc
 #, c-format
@@ -1697,46 +1712,48 @@ msgid ""
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
 msgstr ""
+"Pakken %s er ikke tilgængelig, men der refereres til den af en\n"
+"anden pakke. Det kan betyde at pakken mangler, er blevet forældet\n"
+"eller kun er tilgængelig fra en anden kilde\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid "However the following packages replace it:"
-msgstr "Følgende pakker vil blive opgraderet:"
+msgstr "De følgende pakker vil dog erstatte den:"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' has no installation candidate"
-msgstr "Pakke »%s« er ikke installeret, så blev ikke fjernet\n"
+msgstr "Pakken »%s« har ingen installationskandidat"
 
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
-msgstr ""
+msgstr "Virtuelle pakker som »%s« kan ikke fjernes\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: apt-private/private-cacheset.cc apt-private/private-install.cc
 #, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "Pakke »%s« er ikke installeret, så blev ikke fjernet. Mente du »%s«?\n"
+msgstr "Pakken »%s« er ikke installeret, så blev ikke fjernet. Mente du »%s«?\n"
 
 #: apt-private/private-cacheset.cc apt-private/private-install.cc
 #, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr "Pakke »%s« er ikke installeret, så blev ikke fjernet\n"
+msgstr "Pakken »%s« er ikke installeret, så blev ikke fjernet\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "Vælger »%s« som kildepakke fremfor »%s«\n"
+msgstr "Bemærk, vælger »%s« i stedet for »%s«\n"
 
 #: apt-private/private-cmndline.cc
 msgid "Most used commands:"
-msgstr ""
+msgstr "De mest anvendte kommandoer:"
 
 #: apt-private/private-cmndline.cc
 #, c-format
 msgid "See %s for more information about the available commands."
-msgstr ""
+msgstr "Se %s for yderligere information om de tilgængelige kommandoer."
 
 #: apt-private/private-cmndline.cc
 msgid ""
@@ -1745,6 +1762,10 @@ msgid ""
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
 msgstr ""
+"Konfigurationstilvalg og -syntaks er omtalt detaljeret i apt.conf(5).\n"
+"Information om hvordan kilder konfigureres kan findes i sources.list(5).\n"
+"Pakke- og versionsvalg kan udtrykkes via apt_preferences(5).\n"
+"Sikkerhedsdetaljer er tilgængelige i apt-secure(8).\n"
 
 #: apt-private/private-cmndline.cc
 msgid "This APT has Super Cow Powers."
@@ -1780,13 +1801,16 @@ msgid ""
 "--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
+"--force-yes er forældet, brug i stedet for et af tilvalgene startende "
+"med --allow"
 
 #: apt-private/private-download.cc
-#, fuzzy
 msgid ""
 "There were unauthenticated packages and -y was used without --allow-"
 "unauthenticated"
-msgstr "Der er problemer og -y blev brugt uden --force-yes"
+msgstr ""
+"Der var pakker uden godkendelser og -y blev brugt uden --allow-"
+"unauthenticated"
 
 #: apt-private/private-download.cc
 #, c-format
@@ -1848,22 +1872,24 @@ msgid "Packages need to be removed but remove is disabled."
 msgstr "Pakker skal afinstalleres, men Remove er deaktiveret."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid ""
 "Essential packages were removed and -y was used without --allow-remove-"
 "essential."
-msgstr "Der er problemer og -y blev brugt uden --force-yes"
+msgstr ""
+"Essentielle pakker blev fjernet og -y blev brugt uden --allow-remove-"
+"essential."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "Der er problemer og -y blev brugt uden --force-yes"
+msgstr "Pakker blev nedgraderet og -y blev brugt uden --allow-downgrades."
 
 #: apt-private/private-install.cc
 msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
 msgstr ""
+"Tilbageholdte pakker blev ændret og -y blev brugt uden --allow-change-held-"
+"packages."
 
 #: apt-private/private-install.cc
 msgid "Internal error, Ordering didn't finish"
@@ -2015,9 +2041,8 @@ msgstr[0] "Brug »%s« til at fjerne den."
 msgstr[1] "Brug »%s« til at fjerne dem."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "The following additional packages will be installed:"
-msgstr "Følgende yderligere pakker vil blive installeret:"
+msgstr "De følgende yderligere pakker vil blive installeret:"
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -2048,9 +2073,9 @@ msgstr "Geninstallation af %s er ikke muligt, pakken kan ikke hentes.\n"
 
 #. TRANSLATORS: First string is package name, second is version
 #: apt-private/private-install.cc
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the newest version (%s).\n"
-msgstr "%s er allerede den nyeste version.\n"
+msgstr "%s er allerede den nyeste version (%s).\n"
 
 #: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
 #, c-format
@@ -2298,7 +2323,7 @@ msgstr "»Pinned« pakker:"
 #: apt-private/private-show.cc
 #, c-format
 msgid "%s -> %s with priority %d\n"
-msgstr ""
+msgstr "%s -> %s med prioritet %d\n"
 
 #: apt-private/private-show.cc
 msgid "  Installed: "
@@ -2444,12 +2469,12 @@ msgstr ""
 #: apt-private/private-source.cc
 #, c-format
 msgid "Note, using directory '%s' to get the build dependencies\n"
-msgstr ""
+msgstr "Bemærk, bruger mappen »%s« til at hente kompileringsafhængighederne\n"
 
 #: apt-private/private-source.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Kunne ikke behandler opbygningsafhængighederne"
+msgstr "Bemærk, bruger filen »%s« til at hente kompileringsafhængighederne\n"
 
 #: apt-private/private-source.cc
 msgid "Failed to process build dependencies"
@@ -2489,9 +2514,8 @@ msgid "All packages are up to date."
 msgstr "Alle pakker er opdateret."
 
 #: cmdline/apt-cache.cc
-#, fuzzy
 msgid "apt-cache stats does not take any arguments"
-msgstr "»update«-kommandoen benytter ingen parametre"
+msgstr "»apt-cache stats« benytter ingen parametre"
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -2574,6 +2598,16 @@ msgid ""
 "too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
 msgstr ""
+"Brug: apt-cache [tilvalg] kommando\n"
+"       apt-cache [tilvalg] vis pakke1 [pakke2 ...]\n"
+"\n"
+"apt-cache forespørger og viser tilgængelig information om installerede\n"
+"pakker og pakker der kan installeres. Programmet fungerer eksklusivt på\n"
+"data hentet i det lokale mellemlager via kommandoen »update« for f.eks.\n"
+"apt-get. Den viste information kan derfor være forældet, hvis den sidste\n"
+"opdatering ikke var så lang tid siden, men til gengæld fungerer apt-cache\n"
+"uafhængig af tilgængeligheden for de konfigurerede kilder (f.eks.\n"
+"frakoblet).\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -2609,14 +2643,13 @@ msgstr ""
 "Angiv venligst et navn for denne disk, som f.eks. »Debian 5.0.3 Disk 1«"
 
 #: cmdline/apt-cdrom.cc
-#, fuzzy
 msgid "Please insert a Disc in the drive and press [Enter]"
-msgstr "Indsæt en disk i drevet og tryk retur"
+msgstr "Indsæt venligst en disk i drevet og tryk [Retur]"
 
 #: cmdline/apt-cdrom.cc
 #, c-format
 msgid "Failed to mount '%s' to '%s'"
-msgstr "Kunne ikke montere %s til %s"
+msgstr "Kunne ikke montere »%s« til »%s«"
 
 #: cmdline/apt-cdrom.cc
 msgid ""
@@ -2642,13 +2675,17 @@ msgid ""
 "media types as package sources to APT. The mount point and device\n"
 "information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
+"Brug: apt-cdrom [tilvalg] kommando\n"
+"\n"
+"apt-cdrom bruges til at tilføje cd-rom'er, USB-flashdrev og andre\n"
+"eksterne medietyper som pakkekilder til APT. Monteringspunktet og\n"
+"enhedsinformationen tages fra apt.conf(5), udev(7) og fstab(5).\n"
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Parametre ikke angivet i par"
 
 #: cmdline/apt-config.cc
-#, fuzzy
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
@@ -2657,15 +2694,17 @@ msgid ""
 msgstr ""
 "Brug: apt-config [tilvalg] kommando\n"
 "\n"
-"apt-config er et simpelt værktøj til at læse APTs opsætningsfil\n"
+"apt-config er en grænseflade til konfigurationsindstillingerne\n"
+"brugt af alle APT-værktøjer, hovedsagelig lavet til fejlsøgning\n"
+"og skalskriptopbygning.\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
-msgstr ""
+msgstr "hent konfigurationsværdier via skalevaluering"
 
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
-msgstr ""
+msgstr "vis den aktive konfigurationsindstilling"
 
 #: cmdline/apt-dump-solver.cc
 msgid ""
@@ -2674,9 +2713,12 @@ msgid ""
 "apt-dump-solver is an interface to store an EDSP scenario in\n"
 "a file and optionally forwards it to another solver.\n"
 msgstr ""
+"Brug: apt-dump-solver\n"
+"\n"
+"apt-dump-solver er en grænseflade til at lagre et EDSP-scenarie i\n"
+"en fil og valgfrit videresende den til en anden problemløser.\n"
 
 #: cmdline/apt-extracttemplates.cc
-#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -2686,14 +2728,10 @@ msgid ""
 msgstr ""
 "Brug: apt-extracttemplates fil1 [fil2 ...]\n"
 "\n"
-"apt-extracttemplates er et værktøj til at uddrage opsætnings- og skabelon-"
-"oplysninger fra Debianpakker\n"
-"\n"
-"Tilvalg:\n"
-"  -h   Denne hjælpetekst\n"
-"  -t   Angiv temp-mappe\n"
-"  -c=? Læs denne opsætningsfil\n"
-"  -o=? Angiv et opsætningstilvalg. F.eks. -o dir::cache=/tmp\n"
+"apt-extracttemplates bruges til at udtrække konfigurations- og\n"
+"skabelonfiler fra Debianpakker. Programmet bruges derfor hovedsagelig\n"
+"af debconf(1) til at stille konfigurationsspørgsmål før installationen\n"
+"af pakker.\n"
 
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
@@ -2726,7 +2764,6 @@ msgid "Supported modules:"
 msgstr "Understøttede moduler:"
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -2741,9 +2778,9 @@ msgstr ""
 "      apt-get [tilvalg] install|remove pakke1 [pakke2 ...]\n"
 "      apt-get [tilvalg] source pakke1 [pakke2 ...]\n"
 "\n"
-"apt-get er en simpel kommandolinjegrænseflade til at hente og\n"
-"installere pakker. De hyppigst brugte kommandoer er update og\n"
-"install.\n"
+"apt-get er en kommandolinjegrænseflade til at hente pakker og\n"
+"information om dem fra godkendte kilder og for installation,\n"
+"opgradering og fjernelse af pakker sammen med deres afhængigheder.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -2807,7 +2844,7 @@ msgstr "Hent og vis ændringsloggen for den angivne pakke"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
-msgstr ""
+msgstr "Skal bruge en adresse som argument"
 
 #: cmdline/apt-helper.cc
 msgid "Must specify at least one pair url/filename"
@@ -2820,10 +2857,9 @@ msgstr "Kunne ikke hente pakkerne"
 #: cmdline/apt-helper.cc
 #, c-format
 msgid "GetSrvRec failed for %s"
-msgstr ""
+msgstr "GetSrvRec mislykkedes for %s"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] cat-file file ...\n"
@@ -2833,9 +2869,12 @@ msgid ""
 "e.g. the same proxy configuration or acquire system as APT would.\n"
 msgstr ""
 "Brug: apt-helper [tilvalg] kommando\n"
-"      apt-helper [tilvalg] download-file uri target-path\n"
+"      apt-helper [tilvalg] cat-file-fil ...\n"
+"      apt-helper [tilvalg] download-file uri mål-sti\n"
 "\n"
-"apt-helper er et internt hjælpeprogram for apt\n"
+"apt-helper samler en række kommandoer som skalskripter kan bruge\n"
+"f.eks. den samme proxykonfiguration eller indhentelsessystem som\n"
+"APT ville anvende.\n"
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -2843,18 +2882,17 @@ msgstr "hent den angivne uri til mål-sti"
 
 #: cmdline/apt-helper.cc
 msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr ""
+msgstr "slå en SRV-post op (f.eks. _http._tcp.ftp.debian.org)"
 
 #: cmdline/apt-helper.cc
 msgid "concatenate files, with automatic decompression"
-msgstr ""
+msgstr "sammenkæd filer, med automatisk dekomprimering"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
-msgstr ""
+msgstr "detekter proxy via apt.conf"
 
 #: cmdline/apt-internal-planner.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-planner\n"
 "\n"
@@ -2862,20 +2900,13 @@ msgid ""
 "installation planner for the APT family like an external one,\n"
 "for debugging or the like.\n"
 msgstr ""
-"Brug: apt-internal-solver\n"
+"Brug: apt-internal-planner\n"
 "\n"
-"apt-internal-solver er en grænseflade, der skal bruge den aktuelle\n"
-"interne som en ekstern problemløser for APT-familien for fejlsøgning\n"
-"eller lignende\n"
-"\n"
-"Tilvalg:\n"
-" -h   Denne hjælpetekst.\n"
-" -q   Logbare uddata - ingen statusindikator\n"
-" -c=? Læs denne konfigurationsfil\n"
-" -o=? Angiv et arbitrærtkonfigurationstilvalg, f.eks. -o dir::cache=/tmp\n"
+"apt-internal-planner er en grænseflade, til at bruge den nuværende\n"
+"interne installationsplanlægger for APT-familien såsom en ekstern,\n"
+"til fejlsøgning eller lignende.\n"
 
 #: cmdline/apt-internal-solver.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -2885,15 +2916,9 @@ msgid ""
 msgstr ""
 "Brug: apt-internal-solver\n"
 "\n"
-"apt-internal-solver er en grænseflade, der skal bruge den aktuelle\n"
-"interne som en ekstern problemløser for APT-familien for fejlsøgning\n"
-"eller lignende\n"
-"\n"
-"Tilvalg:\n"
-" -h   Denne hjælpetekst.\n"
-" -q   Logbare uddata - ingen statusindikator\n"
-" -c=? Læs denne konfigurationsfil\n"
-" -o=? Angiv et arbitrærtkonfigurationstilvalg, f.eks. -o dir::cache=/tmp\n"
+"apt-internal-solver er en grænseflade, der skal bruge den nuværende\n"
+"problemløser for APT-familien som en ekstern, til fejlsøgning eller\n"
+"lignende\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -2937,20 +2962,19 @@ msgstr "Afbrød i bero for %s.\n"
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for purge.\n"
-msgstr ""
+msgstr "Valgte %s for fuldstænding fjernelse.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for removal.\n"
-msgstr ""
+msgstr "Valgte %s for fjernelse.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for installation.\n"
-msgstr ""
+msgstr "Valgte %s for installation.\n"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -2962,8 +2986,9 @@ msgstr ""
 "Brug: apt-mark [tilvalg] {auto|manual} pakke1 [pakke2 ...]\n"
 "\n"
 "apt-mark er en simpel kommandolinjegrænseflade for markering af pakker\n"
-"som manuelt eller automatisk installeret. Programmet kan også vise\n"
-"markeringerne.\n"
+"som manuelt eller automatisk installeret. Programmet kan også bruges\n"
+"til at manipulere dpkg(1)-markeringstilstande for pakker, og til at\n"
+"vise alle pakker med eller uden en bestemt markering.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -3005,6 +3030,12 @@ msgid ""
 "By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
+"Brug: apt-sortpkgs [tilvalg] fil1 [fil2 ...]\n"
+"\n"
+"apt-sortpkgs er et simpelt værktøj til at sortere informationsfiler for\n"
+"pakker. Som standard sorteres efter den binære pakkeinformation, men\n"
+"tilvalget -s kan bruges til at skifte til kildepakkerækkefølge i stedet\n"
+"for.\n"
 
 #: cmdline/apt.cc
 msgid ""
@@ -3016,6 +3047,13 @@ msgid ""
 "like apt-get and apt-cache, but enables options more suitable for\n"
 "interactive use by default.\n"
 msgstr ""
+"Brug: apt [tilvalg] kommando\n"
+"\n"
+"apt er en pakkehåndtering for kommandolinjen og den tilbyder kommandoer\n"
+"for søgning og håndtering samt forespørgsel af information om pakker.\n"
+"Den tilbyder den samme funktionalitet som de specialiserede APT-værktøjer,\n"
+"såsom apt-get og apt-cache, men aktiverer tilvalg mere egnet for\n"
+"interaktiv brug som standard.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -3063,9 +3101,8 @@ msgid "Bad default setting!"
 msgstr "Ugyldig standardindstilling!"
 
 #: dselect/install dselect/update
-#, fuzzy
 msgid "Press [Enter] to continue."
-msgstr "Tryk retur for at fortsætte."
+msgstr "Tryk [Retur] for at fortsætte."
 
 #: dselect/install
 msgid "Do you want to erase any previously downloaded .deb files?"
@@ -3433,6 +3470,8 @@ msgid ""
 "Automatically disabled %s due to incorrect response from server/proxy. (man "
 "5 apt.conf)"
 msgstr ""
+"Deaktiverede automatisk %s på grund af ukorrekt svar fra server/proxy. (man "
+"5 apt.conf)"
 
 #: methods/basehttp.cc
 msgid "Internal error"
@@ -3472,7 +3511,7 @@ msgstr "Fil blev ikke fundet"
 #: methods/connect.cc
 #, c-format
 msgid "Direct connection to %s domains is blocked by default."
-msgstr ""
+msgstr "Direkte forbindelse til %s-domæner er som standard blokeret."
 
 #: methods/connect.cc methods/http.cc
 #, c-format
@@ -3689,12 +3728,11 @@ msgstr "Kunne ikke udføre "
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Signed file isn't valid, got '%s' (does the network require authentication?)"
 msgstr ""
-"Clearsigned-fil er ikke gyldig, fik »%s« (kræver netværket ikke "
-"autentificering?)"
+"Underskrevet fil er ikke gyldig, fik »%s« (kræver netværket godkendelse?)"
 
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
@@ -3720,7 +3758,7 @@ msgstr "Ukendt fejl ved kørsel af apt-key"
 #: methods/gpgv.cc
 #, c-format
 msgid "Signature by key %s uses weak digest algorithm (%s)"
-msgstr ""
+msgstr "Signaturen med nøglen %s bruger en svag sammendragsalgoritme (%s)"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
@@ -3798,309 +3836,3 @@ msgstr "Forbindelsen lukkedes for hurtigt"
 msgid "Empty files can't be valid archives"
 msgstr "Tomme filer kan ikke være gyldige arkiver"
 
-#~ msgid "Unmet dependencies. Try using --fix-broken."
-#~ msgstr "Uopfyldte afhængigheder. Prøv med --fix-broken."
-
-#~ msgid "You might want to run 'apt --fix-broken install' to correct these:"
-#~ msgstr "Du kan muligvis rette det ved at køre »apt --fix-broken install«:"
-
-#~ msgid "(not found)"
-#~ msgstr "(ikke fundet)"
-
-#~ msgid "  Package pin: "
-#~ msgstr "  Pakke-pin: "
-
-#~ msgid "There is no public key available for the following key IDs:\n"
-#~ msgstr ""
-#~ "Der er ingen tilgængelige offentlige nøgler for følgende nøgle-ID'er:\n"
-
-#, fuzzy
-#~ msgid "The repository is insufficiently signed by key %s (%s)"
-#~ msgstr "Mappen %s er omrokeret"
-
-#~ msgid ""
-#~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-#~ "packages"
-#~ msgstr ""
-#~ "Afhængigheden %s for %s kan ikke opfyldes, da %s ikke er tilladt på »%s«"
-
-#~ msgid ""
-#~ "%s dependency for %s cannot be satisfied because the package %s cannot be "
-#~ "found"
-#~ msgstr ""
-#~ "Afhængigheden %s for %s kan ikke opfyldes, da pakken %s ikke blev fundet"
-
-#~ msgid ""
-#~ "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-#~ msgstr ""
-#~ "Kunne ikke opfylde %s-afhængigheden for %s: Den installerede pakke %s er "
-#~ "for ny"
-
-#~ msgid ""
-#~ "%s dependency for %s cannot be satisfied because candidate version of "
-#~ "package %s can't satisfy version requirements"
-#~ msgstr ""
-#~ "Afhængigheden %s for %s kan ikke opfyldes, da ingen af de tilgængelige "
-#~ "kandidater for pakken %s kan tilfredsstille versionskravene"
-
-#~ msgid ""
-#~ "%s dependency for %s cannot be satisfied because package %s has no "
-#~ "candidate version"
-#~ msgstr ""
-#~ "%s-afhængigheden for %s kan ikke opfyldes, da pakken %s ikke har en "
-#~ "kandidatversion"
-
-#~ msgid "Failed to satisfy %s dependency for %s: %s"
-#~ msgstr "Kunne ikke opfylde %s-afhængigheden for %s: %s"
-
-#~ msgid "Build-dependencies for %s could not be satisfied."
-#~ msgstr "Opbygningsafhængigheden for %s kunne ikke opfyldes."
-
-#~ msgid "Problem unlinking %s"
-#~ msgstr "Problem under aflænkning af %s"
-
-#~ msgid "Failed to unlink %s"
-#~ msgstr "Kunne ikke frigøre %s"
-
-#~ msgid ""
-#~ "Usage: apt-cache [options] command\n"
-#~ "       apt-cache [options] show pkg1 [pkg2 ...]\n"
-#~ "\n"
-#~ "apt-cache is a low-level tool used to query information\n"
-#~ "from APT's binary cache files\n"
-#~ msgstr ""
-#~ "Brug: apt-cache [tilvalg] kommando\n"
-#~ "      apt-cache [tilvalg] show pakke1 [pakke2 ...]\n"
-#~ "\n"
-#~ "apt-cache er et lavniveauværktøj, brugt til at manipulere APTs\n"
-#~ "binære mellemlagerfiler og hente oplysninger fra dem.\n"
-
-#~ msgid "Commands:"
-#~ msgstr "Kommandoer:"
-
-#~ msgid ""
-#~ "Options:\n"
-#~ "  -h   This help text.\n"
-#~ "  -p=? The package cache.\n"
-#~ "  -s=? The source cache.\n"
-#~ "  -q   Disable progress indicator.\n"
-#~ "  -i   Show only important deps for the unmet command.\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
-#~ msgstr ""
-#~ "Tilvalg:\n"
-#~ "  -h   Denne hjælpetekst.\n"
-#~ "  -p=? Pakkemellemlageret.\n"
-#~ "  -s=? Kildemellemlageret.\n"
-#~ "  -q   Deaktiver fremgangsindikatoren.\n"
-#~ "  -i   Vis kun vigtige afhængigheder for kommandoen »unmet«.\n"
-#~ "  -c=? Læs denne opsætningsfil\n"
-#~ "  -o=? Angiv et opsætningstilvalg. F.eks. -o dir::cache=/tmp\n"
-#~ "Se manualsiderne for apt-cache(8) og apt.conf(5) for flere oplysninger.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: apt [options] command\n"
-#~ "\n"
-#~ "CLI for apt.\n"
-#~ msgstr ""
-#~ "Brug: apt [tilvalg] kommando\n"
-#~ "\n"
-#~ "CLI for apt.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Options:\n"
-#~ "  -h   This help text\n"
-#~ "  -d   CD-ROM mount point\n"
-#~ "  -r   Rename a recognized CD-ROM\n"
-#~ "  -m   No mounting\n"
-#~ "  -f   Fast mode, don't check package files\n"
-#~ "  -a   Thorough scan mode\n"
-#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See fstab(5)\n"
-#~ msgstr ""
-#~ "Tilvalg:\n"
-#~ "  -h  Denne hjælpetekst.\n"
-#~ "  -q  Logbar uddata - ingen statusindikator\n"
-#~ "  -qq Ingen uddata undtagen for fejl\n"
-#~ "  -s  Ingen handling. Viser kun hvad der ville blive udført.\n"
-#~ "  -f  læs/skriv auto/manuel markering i den givne fil\n"
-#~ "  -c=? Læs denne konfigurationsfil\n"
-#~ "  -o=? Angiv en arbitrær konfigurationsindstilling, f.eks. -o dir::cache=/"
-#~ "tmp\n"
-#~ "Se manualsiderne apt-mark(8) og apt.conf(5) for yderligere information."
-
-#~ msgid ""
-#~ "Options:\n"
-#~ "  -h   This help text.\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "Tilvalg:\n"
-#~ "  -h   Denne hjælpetekst.\n"
-#~ "  -c=? Læs denne opsætningsfil\n"
-#~ "  -o=? Angiv et opsætningstilvalg. F.eks. -o dir::cache=/tmp\n"
-
-#~ msgid ""
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -qq No output except for errors\n"
-#~ "  -s  No-act. Just prints what would be done.\n"
-#~ "  -f  read/write auto/manual marking in the given file\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
-#~ msgstr ""
-#~ "Tilvalg:\n"
-#~ "  -h  Denne hjælpetekst.\n"
-#~ "  -q  Logbar uddata - ingen statusindikator\n"
-#~ "  -qq Ingen uddata undtagen for fejl\n"
-#~ "  -s  Ingen handling. Viser kun hvad der ville blive udført.\n"
-#~ "  -f  læs/skriv auto/manuel markering i den givne fil\n"
-#~ "  -c=? Læs denne konfigurationsfil\n"
-#~ "  -o=? Angiv en arbitrær konfigurationsindstilling, f.eks. -o dir::cache=/"
-#~ "tmp\n"
-#~ "Se manualsiderne apt-mark(8) og apt.conf(5) for yderligere information."
-
-#~ msgid ""
-#~ "Usage: apt-sortpkgs [options] file1 [file2 ...]\n"
-#~ "\n"
-#~ "apt-sortpkgs is a simple tool to sort package files. The -s option is "
-#~ "used\n"
-#~ "to indicate what kind of file it is.\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h   This help text\n"
-#~ "  -s   Use source file sorting\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "Brug: apt-sortpkgs [tilvalg] fil1 [fil2 ...]\n"
-#~ "\n"
-#~ "apt-sortpkgs er et simpelt værktøj til at sortere pakkefiler. Tilvalget -"
-#~ "s\n"
-#~ "bruges til at angive filens type.\n"
-#~ "\n"
-#~ "Tilvalg:\n"
-#~ "  -h   Denne hjælpetekst\n"
-#~ "  -s   Benyt kildefils-sortering\n"
-#~ "  -c=? Læs denne opsætningsfil\n"
-#~ "  -o=? Angiv en opsætningsindstilling. F.eks. -o dir::cache=/tmp\n"
-
-#~ msgid "Child process failed"
-#~ msgstr "Barneprocessen fejlede"
-
-#, fuzzy
-#~ msgid "Must specifc at least one srv record"
-#~ msgstr "Du skal angive mindst et par i form af adresse/filnavn"
-
-#~ msgid "Failed to create pipes"
-#~ msgstr "Kunne ikke oprette videreførsler"
-
-#~ msgid "Failed to exec gzip "
-#~ msgstr "Kunne ikke udføre gzip "
-
-#~ msgid "%s %s for %s compiled on %s %s\n"
-#~ msgstr "%s %s for %s kompileret på %s %s\n"
-
-#~ msgid "Failed to create FILE*"
-#~ msgstr "Kunne ikke oprette FILE*"
-
-#~ msgid "Malformed stanza %u in source list %s (URI parse)"
-#~ msgstr "Ugyldig stanza %u i kildelisten %s (tolkning af URI)"
-
-#~ msgid "Malformed line %lu in source list %s ([option] unparseable)"
-#~ msgstr "Ugyldig linje %lu i kildelisten %s ([tilvalg] kunne ikke fortolkes)"
-
-#~ msgid "Malformed line %lu in source list %s ([option] too short)"
-#~ msgstr "Ugyldig linje %lu i kildelisten %s ([tilvalg] for kort)"
-
-#~ msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-#~ msgstr "Ugyldig linje %lu i kildelisten %s ([%s] er ikke en opgave)"
-
-#~ msgid "Malformed line %lu in source list %s ([%s] has no key)"
-#~ msgstr "Ugyldig linje %lu i kildelisten %s ([%s] har ingen nøgle)"
-
-#~ msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-#~ msgstr "Ugyldig linje %lu i kildelisten %s ([%s] nøgle %s har ingen værdi)"
-
-#~ msgid "Malformed line %lu in source list %s (URI)"
-#~ msgstr "Ugyldig linje %lu i kildelisten %s (URI)"
-
-#~ msgid "Malformed line %lu in source list %s (dist)"
-#~ msgstr "Ugyldig linje %lu i kildelisten %s (dist)"
-
-#~ msgid "Malformed line %lu in source list %s (URI parse)"
-#~ msgstr "Ugyldig linje %lu i kildelisten %s (tolkning af URI)"
-
-#~ msgid "Malformed line %lu in source list %s (absolute dist)"
-#~ msgstr "Ugyldig linje %lu i kildelisten %s (absolut dist)"
-
-#~ msgid "Malformed line %lu in source list %s (dist parse)"
-#~ msgstr "Ugyldig linje %lu i kildelisten %s (tolkning af dist)"
-
-#~ msgid "Package %s %s was not found while processing file dependencies"
-#~ msgstr ""
-#~ "Pakken %s %s blev ikke fundet under behandlingen af filafhængigheder"
-
-#~ msgid "Couldn't stat source package list %s"
-#~ msgstr "Kunne ikke finde kildepakkelisten %s"
-
-#~ msgid "Collecting File Provides"
-#~ msgstr "Samler filudbud"
-
-#~ msgid "Unable to find hash sum for '%s' in Release file"
-#~ msgstr "Kunne ikke finde hashsum for »%s« i udgivelsesfilen"
-
-#~ msgid "Vendor block %s contains no fingerprint"
-#~ msgstr "Leverandørblok %s inderholder intet fingeraftryk"
-
-#~ msgid "Total dependency version space: "
-#~ msgstr "Total afhængighedsversions-plads: "
-
-#~ msgid "You don't have enough free space in %s"
-#~ msgstr "Du har ikke nok ledig plads i %s"
-
-#~ msgid "Done"
-#~ msgstr "Færdig"
-
-#~ msgid "No keyring installed in %s."
-#~ msgstr "Ingen nøglering installeret i %s."
-
-#~ msgid "Is stdout a terminal?"
-#~ msgstr "Er standardud en terminal?"
-
-#~ msgid "ioctl(TIOCGWINSZ) failed"
-#~ msgstr "ioctl(TIOCGWINSZ) mislykkedes"
-
-#~ msgid "Internal error, Upgrade broke stuff"
-#~ msgstr "Intern fejl, opgradering blev afbrudt"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s er ikke en gyldig DEB-pakke."
-
-#~ msgid ""
-#~ "Using CD-ROM mount point %s\n"
-#~ "Mounting CD-ROM\n"
-#~ msgstr ""
-#~ "Bruger cdrom-monteringspunktet %s\n"
-#~ "Monterer cdrom\n"
-
-#~ msgid ""
-#~ "Could not patch %s with mmap and with file operation usage - the patch "
-#~ "seems to be corrupt."
-#~ msgstr ""
-#~ "Kunne ikke fejlrette (patch) %s med mmap og med filhandlingsbrug - "
-#~ "fejlrettelsen ser ud til at være ødelagt."
-
-#~ msgid ""
-#~ "Could not patch %s with mmap (but no mmap specific fail) - the patch "
-#~ "seems to be corrupt."
-#~ msgstr ""
-#~ "Kunne ikke fejlrette (patch) %s med mmap (men ingen mmap specifik fejl) - "
-#~ "fejlrettelsen ser ud til at være ødelagt."
