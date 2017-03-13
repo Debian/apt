@@ -29,6 +29,11 @@ unamer="$(uname -r | tr '[A-Z]' '[a-z]')"
 if [ -n "$unamer" ]; then
 	running_version="$(echo "$list" | awk "\$1 == \"$unamer\" { print \$2;exit; }")"
 fi
+# ignore the currently running version if attempting a reproducible build
+if [ -n "${SOURCE_DATE_EPOCH}" ]; then
+	unamer=""
+	running_version=""
+fi
 latest_version="$(echo "$debverlist" | sed -n 1p)"
 previous_version="$(echo "$debverlist" | sed -n 2p)"
 
@@ -62,7 +67,7 @@ $list
 # list of different kernel versions:
 $debverlist
 # Installing kernel: $installed_version ($1)
-# Running kernel: $running_version ($unamer)
+# Running kernel: ${running_version:-ignored} (${unamer:-ignored})
 # Last kernel: $latest_version
 # Previous kernel: $previous_version
 # Kernel versions list to keep:
