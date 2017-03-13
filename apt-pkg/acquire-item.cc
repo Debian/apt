@@ -3631,7 +3631,7 @@ std::string pkgAcqChangelog::URI(std::string const &Template,
    if (Template.find("@CHANGEPATH@") == std::string::npos)
       return "";
 
-   // the path is: COMPONENT/SRC/SRCNAME/SRCNAME_SRCVER, e.g. main/a/apt/1.1 or contrib/liba/libapt/2.0
+   // the path is: COMPONENT/SRC/SRCNAME/SRCNAME_SRCVER, e.g. main/a/apt/apt_1.1 or contrib/liba/libapt/libapt_2.0
    std::string Src = SrcName;
    std::string path = APT::String::Startswith(SrcName, "lib") ? Src.substr(0, 4) : Src.substr(0,1);
    path.append("/").append(Src).append("/");
