@@ -25,7 +25,9 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
 
    static const char* fname = "apt-filefd-test.txt";
    if (FileExists(fname) == true)
+   {
       EXPECT_EQ(0, unlink(fname));
+   }
 
    FileFd f;
    umask(a_umask);
@@ -290,7 +292,9 @@ TEST(FileUtlTest, Popen)
 
    // ensure that after a close all is good again
    if(FileExists("/proc/self/fd"))
+   {
       EXPECT_EQ(Glob("/proc/self/fd/*").size(), OpenFds.size());
+   }
 
    // ReadWrite is not supported
    _error->PushToStack();

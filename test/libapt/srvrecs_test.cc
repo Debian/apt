@@ -77,7 +77,9 @@ TEST(SrvRecTest,Randomness)
    EXPECT_TRUE(std::all_of(first_pull.begin(), first_pull.end(), [](SrvRec const &R) { return R.priority == 20; }));
    EXPECT_TRUE(std::all_of(second_pull.begin(), second_pull.end(), [](SrvRec const &R) { return R.priority == 20; }));
    if (startingClock != -1 && startingClock != clock())
+   {
       EXPECT_FALSE(std::equal(first_pull.begin(), first_pull.end(), second_pull.begin()));
+   }
 
    EXPECT_TRUE(std::all_of(base2.begin(), base2.end(), [](SrvRec const &R) { return R.priority == 30; }));
 }

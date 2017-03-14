@@ -1002,7 +1002,7 @@ static bool Clean(CommandLine &CmdL)
    stable_sort(PkgList.begin(),PkgList.end(),PackageMap::SrcDBCompare());
 
    string CacheDir = Setup.FindDir("Dir::CacheDir");
-   
+
    for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); )
    {
       if(I->BinCacheDB != "")
@@ -1016,15 +1016,11 @@ static bool Clean(CommandLine &CmdL)
       if (DB_SRC.Clean() == false)
 	 _error->DumpErrors();
 
-      string CacheDB = I->BinCacheDB;
-      string SrcCacheDB = I->SrcCacheDB;
-      while(I != PkgList.end() && 
-            I->BinCacheDB == CacheDB && 
-            I->SrcCacheDB == SrcCacheDB)
-         ++I;
+      I = std::find_if(I, PkgList.end(),
+	    [&](PackageMap const &PM) { return PM.BinCacheDB != I->BinCacheDB || PM.SrcCacheDB != I->SrcCacheDB;
+      });
    }
 
-  
    return true;
 }
 									/*}}}*/
