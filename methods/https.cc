@@ -469,6 +469,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       case BaseHttpMethod::ERROR_WITH_CONTENT_PAGE:
 	 // unlink, no need keep 401/404 page content in partial/
 	 RemoveFile(Binary.c_str(), Req.File.Name());
+	 // Fall through.
       case BaseHttpMethod::ERROR_UNRECOVERABLE:
       case BaseHttpMethod::ERROR_NOT_FROM_SERVER:
 	 return false;
