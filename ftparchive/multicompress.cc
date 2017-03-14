@@ -24,11 +24,13 @@
 #include <apt-pkg/hashsum_template.h>
 
 #include <ctype.h>
-#include <vector>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
+
+#include <algorithm>
+#include <vector>
 
 #include "multicompress.h"
 #include <apti18n.h>
@@ -36,6 +38,21 @@
 
 using namespace std;
 
+static std::vector<APT::Configuration::Compressor>::const_iterator findMatchingCompressor(std::string::const_iterator &I,
+      std::string::const_iterator const &End, std::vector<APT::Configuration::Compressor> const &Compressors)
+{
+      // Grab a word (aka: a compressor name)
+      for (; I != End && isspace(*I); ++I);
+      string::const_iterator Start = I;
+      for (; I != End && !isspace(*I); ++I);
+
+      auto const Comp = std::find_if(Compressors.begin(), Compressors.end(),
+	    [&](APT::Configuration::Compressor const &C) { return stringcmp(Start, I, C.Name.c_str()) == 0;
+      });
+      if (Comp == Compressors.end())
+	 _error->Warning(_("Unknown compression algorithm '%s'"),string(Start,I).c_str());
+      return Comp;
+}
 
 // MultiCompress::MultiCompress - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -48,38 +65,21 @@ MultiCompress::MultiCompress(string const &Output,string const &Compress,
    Outputter = -1;
    UpdateMTime = 0;
 
-   /* Parse the compression string, a space separated lists of compresison
-      types */
-   string::const_iterator I = Compress.begin();
-   for (; I != Compress.end();)
+   auto const Compressors = APT::Configuration::getCompressors();
+   // Parse the compression string, a space separated lists of compression types
+   for (auto I = Compress.cbegin(); I != Compress.cend();)
    {
-      for (; I != Compress.end() && isspace(*I); ++I);
-      
-      // Grab a word
-      string::const_iterator Start = I;
-      for (; I != Compress.end() && !isspace(*I); ++I);
-
-      // Find the matching compressor
-      std::vector<APT::Configuration::Compressor> Compressors = APT::Configuration::getCompressors();
-      std::vector<APT::Configuration::Compressor>::const_iterator Comp = Compressors.begin();
-      for (; Comp != Compressors.end(); ++Comp)
-	 if (stringcmp(Start,I,Comp->Name.c_str()) == 0)
-	    break;
-
-      // Hmm.. unknown.
+      auto const Comp = findMatchingCompressor(I, Compress.cend(), Compressors);
       if (Comp == Compressors.end())
-      {
-	 _error->Warning(_("Unknown compression algorithm '%s'"),string(Start,I).c_str());
 	 continue;
-      }
-      
-      // Create and link in a new output 
+
+      // Create and link in a new output
       Files *NewOut = new Files;
       NewOut->Next = Outputs;
       Outputs = NewOut;
       NewOut->CompressProg = *Comp;
-      NewOut->Output = Output+Comp->Extension;
-      
+      NewOut->Output = Output + Comp->Extension;
+
       struct stat St;
       if (stat(NewOut->Output.c_str(),&St) == 0)
 	 NewOut->OldMTime = St.st_mtime;
@@ -128,34 +128,21 @@ MultiCompress::~MultiCompress()
    one or more of the files is missing. */
 bool MultiCompress::GetStat(string const &Output,string const &Compress,struct stat &St)
 {
-   /* Parse the compression string, a space separated lists of compresison
-      types */
-   string::const_iterator I = Compress.begin();
+   auto const Compressors = APT::Configuration::getCompressors();
+
+   // Parse the compression string, a space separated lists of compression types
    bool DidStat = false;
-   for (; I != Compress.end();)
+   for (auto I = Compress.cbegin(); I != Compress.cend();)
    {
-      for (; I != Compress.end() && isspace(*I); ++I);
-      
-      // Grab a word
-      string::const_iterator Start = I;
-      for (; I != Compress.end() && !isspace(*I); ++I);
-
-      // Find the matching compressor
-      std::vector<APT::Configuration::Compressor> Compressors = APT::Configuration::getCompressors();
-      std::vector<APT::Configuration::Compressor>::const_iterator Comp = Compressors.begin();
-      for (; Comp != Compressors.end(); ++Comp)
-	 if (stringcmp(Start,I,Comp->Name.c_str()) == 0)
-	    break;
-
-      // Hmm.. unknown.
+      auto const Comp = findMatchingCompressor(I, Compress.cend(), Compressors);
       if (Comp == Compressors.end())
 	 continue;
 
-      string Name = Output+Comp->Extension;
+      string Name = Output + Comp->Extension;
       if (stat(Name.c_str(),&St) != 0)
 	 return false;
       DidStat = true;
-   }   
+   }
    return DidStat;
 }
 									/*}}}*/
