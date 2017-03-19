@@ -474,6 +474,16 @@ static void BinaryCommandSpecificConfiguration(char const * const Binary, char c
    std::string const binary = flNotDir(Binary);
    if (binary == "apt-get" && CmdMatches("update"))
       _config->CndSet("Binary::apt-get::Acquire::AllowInsecureRepositories", true);
+   if ((binary == "apt" || binary == "apt-get") && CmdMatches("upgrade", "dist-upgrade", "full-upgrade"))
+   {
+      //FIXME: the option is documented to apply only for install/remove, so
+      // we force it false for configuration files where users can be confused if
+      // we support it anyhow, but allow it on the commandline to take effect
+      // even through it isn't documented as a user who doesn't want it wouldn't
+      // ask for it
+      _config->Set("Binary::apt-get::APT::Get::AutomaticRemove", false);
+      _config->Set("Binary::apt::APT::Get::AutomaticRemove", false);
+   }
 }
 #undef CmdMatches
 									/*}}}*/
