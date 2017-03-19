@@ -12,7 +12,12 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
 setupenvironment
+chmod o+x "${TMPWORKINGDIRECTORY}/.."
 configarchitecture 'amd64'
+
+insertpackage 'unstable' 'bar' 'i386' '1'
+insertsource 'unstable' 'foo' 'all' '1'
+setupaptarchive --no-update
 
 # start from a clean plate again
 cleanplate() {
@@ -249,6 +254,10 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 			chmod 000 "${ROOTDIR}/etc/apt/trusted.gpg.d/unreadablekey.${EXT}"
 			testwarning --nomsg aptkey --quiet --readonly verify "${SIGNATURE}.gpg" "${SIGNATURE}"
 			testwarning aptkey list
+			# check that apt users see warnings, too
+			rm -rf "${ROOTDIR}/var/lib/apt/lists"
+			testwarning apt update
+
 			chmod 644 "${ROOTDIR}/etc/apt/trusted.gpg.d/unreadablekey.${EXT}"
 			rm -f "${ROOTDIR}/etc/apt/trusted.gpg.d/unreadablekey.${EXT}"
 		fi
@@ -275,6 +284,10 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 
 		msgtest 'Test verify fails on' 'bad file'
 		testfailure --nomsg aptkey --quiet --readonly verify "${SIGNATURE}.gpg" "${SIGNATURE}2"
+
+		# try to perform an entire update with this gpgv
+		rm -rf "${ROOTDIR}/var/lib/apt/lists"
+		testsuccess apt update -o Test::Dir="${ROOTDIR}"
 	done
 	rm -f "${ROOTDIR}/etc/apt/apt.conf.d/00gpgvcmd"
 

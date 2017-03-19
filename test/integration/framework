@@ -2059,10 +2059,12 @@ aptautotest_aptget_update() {
 	if ! test -d "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"; then return; fi
 	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
 	testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:755"
+	(
+	cd /
 	# all copied files are properly chmodded
 	local backupIFS="$IFS"
 	IFS="$(printf "\n\b")"
-	for file in $(find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -type f ! -name 'lock'); do
+	find "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists" -type f ! -name 'lock' | while read file; do
 		testfilestats "$file" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 	done
 	IFS="$backupIFS"
@@ -2074,6 +2076,7 @@ aptautotest_aptget_update() {
 		testfileequal "${TMPWORKINGDIRECTORY}/rootdir/var/log/aptgetupdate.before.lst" \
 			"$(find "${TMPWORKINGDIRECTORY}/aptarchive/dists" -type f | while read line; do stat --format '%U:%G:%a:%n' "$line"; done | sort)"
 	fi
+	)
 }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; }
 aptautotest_aptcdrom_add() { aptautotest_aptget_update "$@"; }
