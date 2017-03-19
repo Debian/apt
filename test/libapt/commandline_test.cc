@@ -28,8 +28,16 @@ TEST(CommandLineTest,SaveInConfig)
 	 "apt-get", "install", "-sf");
    APT_EXPECT_CMD("apt-cache -s apt -so Debug::test=Test",
 	 "apt-cache", "-s", "apt", "-so", "Debug::test=Test");
-   APT_EXPECT_CMD("apt-cache -s apt -so Debug::test=\"Das ist ein Test\"",
+   APT_EXPECT_CMD("apt-cache -s apt -so Debug::test='Das ist ein Test'",
 	 "apt-cache", "-s", "apt", "-so", "Debug::test=Das ist ein Test");
+   APT_EXPECT_CMD("apt-cache -s apt -so Debug::test='Das ist ein Test'",
+	 "apt-cache", "-s", "apt", "-so", "Debug::test=\"Das ist ein Test\"");
+   APT_EXPECT_CMD("apt-cache -s apt -so Debug::test='Das ist ein Test' foo",
+	 "apt-cache", "-s", "apt", "-so", "\"Debug::test=Das ist ein Test\"", "foo");
+   APT_EXPECT_CMD("apt-cache -s apt -so Debug::test='Das ist ein Test' foo",
+	 "apt-cache", "-s", "apt", "-so", "\'Debug::test=Das ist ein Test\'", "foo");
+   APT_EXPECT_CMD("apt-cache -s apt -so Debug::test='That 	 is crazy!' foo",
+	 "apt-cache", "-s", "apt", "-so", "\'Debug::test=That 	 \ris\n crazy!\'", "foo");
    APT_EXPECT_CMD("apt-cache -s apt --hallo test=1.0",
 	 "apt-cache", "-s", "apt", "--hallo", "test=1.0");
 #undef APT_EXPECT_CMD
