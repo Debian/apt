@@ -402,21 +402,27 @@ void CommandLine::SaveInConfig(unsigned int const &argc, char const * const * co
    bool closeQuote = false;
    for (unsigned int i = 0; i < argc && length < sizeof(cmdline); ++i, ++length)
    {
-      for (unsigned int j = 0; argv[i][j] != '\0' && length < sizeof(cmdline)-1; ++j, ++length)
+      for (unsigned int j = 0; argv[i][j] != '\0' && length < sizeof(cmdline)-2; ++j)
       {
-	 cmdline[length] = argv[i][j];
+	 // we can't really sensibly deal with quoting so skip it
+	 if (strchr("\"\'\r\n", argv[i][j]) != nullptr)
+	    continue;
+	 cmdline[length++] = argv[i][j];
 	 if (lastWasOption == true && argv[i][j] == '=')
 	 {
 	    // That is possibly an option: Quote it if it includes spaces,
 	    // the benefit is that this will eliminate also most false positives
 	    const char* c = strchr(&argv[i][j+1], ' ');
 	    if (c == NULL) continue;
-	    cmdline[++length] = '"';
+	    cmdline[length++] = '\'';
 	    closeQuote = true;
 	 }
       }
       if (closeQuote == true)
-	 cmdline[length++] = '"';
+      {
+	 cmdline[length++] = '\'';
+	 closeQuote = false;
+      }
       // Problem: detects also --hello
       if (cmdline[length-1] == 'o')
 	 lastWasOption = true;
