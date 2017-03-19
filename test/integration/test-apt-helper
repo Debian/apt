@@ -79,11 +79,11 @@ setupproxydetect() {
 		echo "$@"
 	} > "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
 	chmod 755 "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
-	echo "Acquire::${METH}::Proxy-Auto-Detect \"${TMPWORKINGDIRECTORY}/apt-proxy-detect\";" > rootdir/etc/apt/apt.conf.d/02proxy-detect
+	echo "Acquire::${METH}::${CONFNAME} \"${TMPWORKINGDIRECTORY}/apt-proxy-detect\";" > rootdir/etc/apt/apt.conf.d/02proxy-detect
 }
 
 test_apt_helper_detect_proxy() {
-    msgmsg 'apt-helper auto-detect-proxy' 'no proxy'
+    msgmsg "apt-helper $CONFNAME" 'no proxy'
     testsuccessequal "Using proxy '' for URL 'http://example.com/'" apthelper auto-detect-proxy http://example.com/
     setupproxydetect 'http' 'exit 0'
     testsuccessequal "Using proxy '' for URL 'http://example.com/'" apthelper auto-detect-proxy http://example.com/
@@ -95,18 +95,23 @@ W: ProxyAutoDetect command returned an empty line" apthelper auto-detect-proxy h
     setupproxydetect 'http' 'echo DIRECT'
     testsuccessequal "Using proxy 'DIRECT' for URL 'http://example.com/'" apthelper auto-detect-proxy http://example.com/
 
-    msgmsg 'apt-helper auto-detect-proxy' 'http proxy'
+    msgmsg "apt-helper $CONFNAME" 'http proxy'
     setupproxydetect 'http' 'echo "http://some-proxy"'
     testsuccessequal "Using proxy 'http://some-proxy' for URL 'http://www.example.com/'" apthelper auto-detect-proxy http://www.example.com
+    testsuccessequal "Using proxy '' for URL 'https://ssl.example.com/'" apthelper auto-detect-proxy https://ssl.example.com
 
-    msgmsg 'apt-helper auto-detect-proxy' 'https proxy'
+    msgmsg "apt-helper $CONFNAME" 'https proxy'
     setupproxydetect 'https' 'echo "https://https-proxy"'
+    testsuccessequal "Using proxy '' for URL 'http://no-ssl.example.com/'" apthelper auto-detect-proxy http://no-ssl.example.com
     testsuccessequal "Using proxy 'https://https-proxy' for URL 'https://ssl.example.com/'" apthelper auto-detect-proxy https://ssl.example.com
+    rm -f rootdir/etc/apt/apt.conf.d/02proxy-detect "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
 }
 
 test_apt_helper_download "http://localhost:${APTHTTPPORT}"
 test_apt_helper_download "https://localhost:${APTHTTPSPORT}"
-test_apt_helper_detect_proxy
+for CONFNAME in 'ProxyAutoDetect' 'Proxy-Auto-Detect' ; do
+	test_apt_helper_detect_proxy
+done
 msgmsg 'test various failure modes'
 testfailureequal 'E: Invalid operation download' apthelper download
 testfailureequal 'E: Must specify at least one pair url/filename' apthelper download-file

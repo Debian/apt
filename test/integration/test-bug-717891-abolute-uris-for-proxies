@@ -16,8 +16,28 @@ testfailure --nomsg aptget update --allow-insecure-repositories
 
 echo "Acquire::http::Proxy \"http://localhost:${APTHTTPPORT}\";" > rootdir/etc/apt/apt.conf.d/99proxy
 
-msgtest 'Check that requests to proxies are' 'absolute uris'
+msgtest 'Check that requests to proxies are' 'absolute uris via config'
 testsuccess --nomsg aptget update
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  unrelated
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst unrelated (0.5~squeeze1 unstable [all])
+Conf unrelated (0.5~squeeze1 unstable [all])' aptget install unrelated -s
+
+rm -f rootdir/etc/apt/apt.conf.d/99proxy
+echo "Acquire::http::Proxy-Auto-Detect \"${TMPWORKINGDIRECTORY}/apt-proxy-detect\";" > rootdir/etc/apt/apt.conf.d/02proxy-detect
+cat > "${TMPWORKINGDIRECTORY}/apt-proxy-detect" <<EOF
+#!/bin/sh
+set -e
+echo "http://localhost:${APTHTTPPORT}"
+EOF
+chmod 755 "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
+
+msgtest 'Check that requests to proxies are' 'absolute uris via auto-detect'
+testsuccess aptget update -o Debug::Acquire::http=1
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...
