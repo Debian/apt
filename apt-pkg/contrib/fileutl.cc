@@ -178,6 +178,21 @@ bool CopyFile(FileFd &From,FileFd &To)
    return true;
 }
 									/*}}}*/
+bool RemoveFileAt(char const * const Function, int const dirfd, std::string const &FileName)/*{{{*/
+{
+   if (FileName == "/dev/null")
+      return true;
+   errno = 0;
+   if (unlinkat(dirfd, FileName.c_str(), 0) != 0)
+   {
+      if (errno == ENOENT)
+	 return true;
+
+      return _error->WarningE(Function,_("Problem unlinking the file %s"), FileName.c_str());
+   }
+   return true;
+}
+									/*}}}*/
 bool RemoveFile(char const * const Function, std::string const &FileName)/*{{{*/
 {
    if (FileName == "/dev/null")

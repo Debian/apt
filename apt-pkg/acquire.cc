@@ -770,42 +770,34 @@ bool pkgAcquire::Clean(string Dir)
    if(Dir == "/")
       return _error->Error(_("Clean of %s is not supported"), Dir.c_str());
 
-   DIR *D = opendir(Dir.c_str());   
-   if (D == 0)
+   int const dirfd = open(Dir.c_str(), O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+   if (dirfd == -1)
+      return _error->Errno("open",_("Unable to read %s"),Dir.c_str());
+   DIR * const D = fdopendir(dirfd);
+   if (D == nullptr)
       return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
-   
-   string StartDir = SafeGetCWD();
-   if (chdir(Dir.c_str()) != 0)
+
+   for (struct dirent *E = readdir(D); E != nullptr; E = readdir(D))
    {
-      closedir(D);
-      return _error->Errno("chdir",_("Unable to change to %s"),Dir.c_str());
-   }
-   
-   for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
-   {
-      // Skip some files..
-      if (strcmp(Dir->d_name,"lock") == 0 ||
-	  strcmp(Dir->d_name,"partial") == 0 ||
-	  strcmp(Dir->d_name,"lost+found") == 0 ||
-	  strcmp(Dir->d_name,".") == 0 ||
-	  strcmp(Dir->d_name,"..") == 0)
+      // Skip some entries
+      if (strcmp(E->d_name,"lock") == 0 ||
+	  strcmp(E->d_name,"partial") == 0 ||
+	  strcmp(E->d_name,"lost+found") == 0 ||
+	  strcmp(E->d_name,".") == 0 ||
+	  strcmp(E->d_name,"..") == 0)
 	 continue;
-      
-      // Look in the get list
-      ItemCIterator I = Items.begin();
-      for (; I != Items.end(); ++I)
-	 if (flNotDir((*I)->DestFile) == Dir->d_name)
-	    break;
-      
-      // Nothing found, nuke it
-      if (I == Items.end())
-	 RemoveFile("Clean", Dir->d_name);
-   };
-   
+
+      // Look in the get list and if not found nuke
+      if (std::any_of(Items.cbegin(), Items.cend(),
+	     [&E](pkgAcquire::Item const * const I) {
+		return flNotDir(I->DestFile) == E->d_name;
+	     }) == false)
+      {
+	 RemoveFileAt("pkgAcquire::Clean", dirfd, E->d_name);
+      }
+   }
    closedir(D);
-   if (chdir(StartDir.c_str()) != 0)
-      return _error->Errno("chdir",_("Unable to change to %s"),StartDir.c_str());
-   return true;   
+   return true;
 }
 									/*}}}*/
 // Acquire::TotalNeeded - Number of bytes to fetch			/*{{{*/
