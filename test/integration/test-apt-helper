@@ -94,6 +94,8 @@ test_apt_helper_detect_proxy() {
 W: ProxyAutoDetect command returned an empty line" apthelper auto-detect-proxy http://example.com/
     setupproxydetect 'http' 'echo DIRECT'
     testsuccessequal "Using proxy 'DIRECT' for URL 'http://example.com/'" apthelper auto-detect-proxy http://example.com/
+    chmod -x "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
+    testfailureequal "E: ProxyAutoDetect command '${TMPWORKINGDIRECTORY}/apt-proxy-detect' can not be executed! - access (13: Permission denied)" apthelper auto-detect-proxy http://example.com/
 
     msgmsg "apt-helper $CONFNAME" 'http proxy'
     setupproxydetect 'http' 'echo "http://some-proxy"'

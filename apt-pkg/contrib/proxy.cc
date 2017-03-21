@@ -13,7 +13,8 @@
 #include<apt-pkg/strutl.h>
 
 #include<iostream>
-#include <unistd.h>
+#include<fcntl.h>
+#include<unistd.h>
 
 #include "proxy.h"
 									/*}}}*/
@@ -40,6 +41,9 @@ bool AutoDetectProxy(URI &URL)
 
    if (Debug)
       std::clog << "Using auto proxy detect command: " << AutoDetectProxyCmd << std::endl;
+
+   if (faccessat(AT_FDCWD, AutoDetectProxyCmd.c_str(), R_OK | X_OK, AT_EACCESS) != 0)
+      return _error->Errno("access", "ProxyAutoDetect command '%s' can not be executed!", AutoDetectProxyCmd.c_str());
 
    std::string const urlstring = URL;
    std::vector<const char *> Args;

@@ -46,3 +46,8 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst unrelated (0.5~squeeze1 unstable [all])
 Conf unrelated (0.5~squeeze1 unstable [all])' aptget install unrelated -s
+
+chmod 444 "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
+msgtest 'Check that non-executable proxy commands result in' 'permission error'
+testfailure --nomsg aptget update
+testsuccess grep 'can not be executed' rootdir/tmp/testfailure.output
