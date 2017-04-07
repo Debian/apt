@@ -118,8 +118,20 @@ check_stamp()
 
     delta=$(($now-$stamp))
 
-    # interval is in days, convert to sec.
-    interval=$(($interval*60*60*24))
+    # Calculate the interval in seconds depending on the unit specified
+    if [ "${interval%s}" != "$interval" ] ; then
+        interval="${interval%s}"
+    elif [ "${interval%m}" != "$interval" ] ; then
+        interval="${interval%m}"
+        interval=$((interval*60))
+    elif [ "${interval%h}" != "$interval" ] ; then
+        interval="${interval%h}"
+        interval=$((interval*60*60))
+    else
+        interval="${interval%d}"
+        interval=$((interval*60*60*24))
+    fi
+
     debug_echo "check_stamp: interval=$interval, now=$now, stamp=$stamp, delta=$delta (sec)"
 
     # remove timestamps a day (or more) in the future and force re-check
