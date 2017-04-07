@@ -78,6 +78,12 @@ check_stamp()
     stamp="$1"
     interval="$2"
 
+    if [ $interval = always ]; then
+	debug_echo "check_stamp: ignoring time stamp file, interval set to always"
+	# treat as enough time has passed
+        return 0
+    fi
+
     if [ $interval -eq 0 ]; then
 	debug_echo "check_stamp: interval=0"
 	# treat as no time has passed
