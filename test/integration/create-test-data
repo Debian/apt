@@ -6,42 +6,55 @@ if [ -z "$1" -o -z "$2" ]; then
 	exit 1
 fi
 
+CHECK_ARGS='no'
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
-BUILDDIRECTORY="${TESTDIR}/../../build/bin"
+find_project_binary_dir
+BUILDDIRECTORY="${APT_INTEGRATION_TESTS_BUILD_DIR:-"${PROJECT_BINARY_DIR}/cmdline"}"
 
-GENERATE=$1
-CODENAME=$2
+GENERATE="$1"
+CODENAME="$2"
 shift 2
 
-WORKDIR=$(mktemp -d)
-trap "rm -rf $WORKDIR" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
-touch $WORKDIR/status
-TMPGEN=$WORKDIR/Packages
-export LANG=C
+WORKDIR="$(mktemp -d)"
+cleanupworkdir() {
+	if [ -z "$WORKDIR" ]; then return; fi
+	rm -rf "$WORKDIR"
+}
+trap "cleanupworkdir;" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+touch "$WORKDIR/status"
+TMPGEN="$WORKDIR/Packages"
+export LANG=C.UTF-8
 
-LISTOFPKGS=$(aptget install $* -t $CODENAME -so Dir::state::status=$WORKDIR/status -o Dir::Cache::archives=$WORKDIR -o pkgCacheGen::Essential=none -o APT::Immediate-Configure=0 2> /dev/null | awk '/^Inst/ {print $2}' | sed -e "s#\$#/$CODENAME#")
+aptgetinstall() {
+	aptget install "$@" --no-install-recommends -t "$CODENAME" -s \
+		-o Dir::state::status="$WORKDIR/status" \
+		-o Dir::Cache="$WORKDIR" \
+		-o pkgCacheGen::Essential=none \
+		-o APT::Immediate-Configure=0
+}
+LISTOFPKGS="$(aptgetinstall "$@" 2> /dev/null | awk '/^Inst/ {print $2}' | sed -e "s#\$#/$CODENAME#")"
 if [ -z "$LISTOFPKGS" ]; then
 	echo "List of packages is empty: run apt-get install command again for you now"
-	aptget install $* -t $CODENAME -so Dir::state::status=$WORKDIR/status -o Dir::Cache::archives=$WORKDIR -o pkgCacheGen::Essential=none -o APT::Immediate-Configure=0
+	aptgetinstall
 	exit 1
 fi
-aptcache show $LISTOFPKGS --no-all-versions 2> $WORKDIR/error.lst > $TMPGEN
-sed -i $TMPGEN \
-	-e '/^ / d' \
+aptcache show $LISTOFPKGS --no-all-versions 2> "$WORKDIR/error.lst" | sed -e '/^ / d' \
 	-e '/^SHA1: / d' -e '/^SHA256: / d' \
 	-e '/^Homepage: / d' -e '/^Tag: / d' \
 	-e '/^Xul-Appid: / d' \
-	-e '/^Status: / d'
+	-e '/^Status: / d' \
+	-e 's/^Description-en:/Description:/' \
+	> "$TMPGEN"
 
 if [ "$CODENAME" = "experimental" ]; then
-	aptcache show $(cat $WORKDIR/error.lst | cut -d"'" -f 4 | sed -e 's#$#/sid#') --no-all-versions 2> /dev/null >> $TMPGEN
+	aptcache show $(cut -d"'" -f 4 "$WORKDIR/error.lst" | sed -e 's#$#/sid#') --no-all-versions 2> /dev/null >> "$TMPGEN"
 fi
 
 if echo "$GENERATE" | grep '^status-' > /dev/null; then
-	sed -i $TMPGEN -e '/^Package: / a\
+	sed -i "$TMPGEN" -e '/^Package: / a\
 Status: install ok installed' \
 		-e '/^Filename: / d' -e '/^Size: / d' -e '/^MD5sum: / d'
 fi
 
-apt-sortpkgs $TMPGEN > $GENERATE
+apt-sortpkgs "$TMPGEN" > "$GENERATE"

@@ -2,7 +2,7 @@
 
 EXIT_CODE=0
 
-while [ -n "$1" ]; do
+while [ -n "$1" -a -z "$CHECK_ARGS" ]; do
 	if [ "$1" = "-q" ]; then
 		export MSGLEVEL=2
 	elif [ "$1" = "-qq" ]; then
