@@ -393,6 +393,9 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    // FIXME: find better tag name
    SupportsAcquireByHash = Section.FindB("Acquire-By-Hash", false);
 
+   SetOrigin(Section.FindS("Origin"));
+   SetLabel(Section.FindS("Label"));
+   SetVersion(Section.FindS("Version"));
    Suite = Section.FindS("Suite");
    Codename = Section.FindS("Codename");
    {
@@ -414,6 +417,20 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	 d->SupportedComponents.push_back(std::move(comp));
       else // e.g. security.debian.org uses this style
 	 d->SupportedComponents.push_back(comp.substr(pos + 1));
+   }
+   {
+      decltype(pkgCache::ReleaseFile::Flags) flags = 0;
+      Section.FindFlag("NotAutomatic", flags, pkgCache::Flag::NotAutomatic);
+      signed short defaultpin = 500;
+      if ((flags & pkgCache::Flag::NotAutomatic) == pkgCache::Flag::NotAutomatic)
+      {
+	 Section.FindFlag("ButAutomaticUpgrades", flags, pkgCache::Flag::ButAutomaticUpgrades);
+	 if ((flags & pkgCache::Flag::ButAutomaticUpgrades) == pkgCache::Flag::ButAutomaticUpgrades)
+	    defaultpin = 100;
+	 else
+	    defaultpin = 1;
+      }
+      SetDefaultPin(defaultpin);
    }
 
    bool FoundHashSum = false;
@@ -472,7 +489,6 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 
    if (CheckValidUntil == true)
    {
-      std::string const Label = Section.FindS("Label");
       std::string const StrValidUntil = Section.FindS("Valid-Until");
 
       // if we have a Valid-Until header in the Release file, use it as default
@@ -485,6 +501,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	    return false;
 	 }
       }
+      auto const Label = GetLabel();
       // get the user settings for this archive and use what expires earlier
       time_t MaxAge = d->ValidUntilMax;
       if (MaxAge == 0)

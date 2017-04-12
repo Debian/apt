@@ -29,10 +29,20 @@
    and the syntax of configuration files and commandline options!
 */
 
-quiet "<INT>";
-quiet::NoUpdate "<BOOL>"; // never update progress information - included in -q=1
-quiet::NoProgress "<BOOL>"; // disables the 0% → 100% progress on cache generation and stuff
-quiet::NoStatistic "<BOOL>"; // no "42 kB downloaded" stats in update
+quiet "<INT>" {
+  NoUpdate "<BOOL>"; // never update progress information - included in -q=1
+  NoProgress "<BOOL>"; // disables the 0% → 100% progress on cache generation and stuff
+  NoStatistic "<BOOL>"; // no "42 kB downloaded" stats in update
+  ReleaseInfoChange "<BOOL>" // don't even print the notices if the info change is allowed
+  {
+    Origin "<BOOL>";
+    Label "<BOOL>";
+    Version "<BOOL>";
+    Codename "<BOOL>";
+    Suite "<BOOL>";
+    DefaultPin "<BOOL>";
+  };
+};
 
 // Options for APT in general
 APT
@@ -220,6 +230,20 @@ Acquire
   Min-ValidTime::* "<INT>"; // repository label specific configuration
 
   SameMirrorForAllIndexes "<BOOL>"; // use the mirror serving the Release file for Packages & co
+
+  AllowInsecureRepositories "<BOOL>";
+  AllowWeakRepositories "<BOOL>";
+  AllowDowngradeToInsecureRepositories "<BOOL>";
+  // allow repositories to change information potentally breaking user config like pinning
+  AllowReleaseInfoChange "<BOOL>"
+  {
+    Origin "<BOOL>";
+    Label "<BOOL>";
+    Version "<BOOL>"; // allowed by default
+    Codename "<BOOL>";
+    Suite "<BOOL>";
+    DefaultPin "<BOOL>";
+  };
 
   // HTTP method configuration
   http
@@ -686,9 +710,6 @@ acquire::cdrom::mount "<DIR>";
 acquire::maxreleasefilesize "<INT>";
 acquire::queuehost::limit "<INT>";
 acquire::max-pipeline-depth "<INT>";
-acquire::allowinsecurerepositories "<BOOL>";
-acquire::allowweakrepositories "<BOOL>";
-acquire::allowdowngradetoinsecurerepositories "<BOOL>";
 acquire::progress::diffpercent "<BOOL>";
 acquire::gzipindexes "<BOOL>";
 acquire::indextargets::randomized "<BOOL>";

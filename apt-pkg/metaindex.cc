@@ -9,6 +9,16 @@
 #include <vector>
                                                                        /*}}}*/
 
+class metaIndexPrivate							/*{{{*/
+{
+   public:
+   std::string Origin;
+   std::string Label;
+   std::string Version;
+   signed short DefaultPin;
+};
+									/*}}}*/
+
 std::string metaIndex::Describe() const
 {
    return "Release";
@@ -26,7 +36,7 @@ bool metaIndex::Merge(pkgCacheGenerator &Gen,OpProgress *) const
 
 metaIndex::metaIndex(std::string const &URI, std::string const &Dist,
       char const * const Type)
-: d(NULL), Indexes(NULL), Type(Type), URI(URI), Dist(Dist), Trusted(TRI_UNSET),
+: d(new metaIndexPrivate()), Indexes(NULL), Type(Type), URI(URI), Dist(Dist), Trusted(TRI_UNSET),
    Date(0), ValidUntil(0), SupportsAcquireByHash(false), LoadedSuccessfully(TRI_UNSET)
 {
    /* nothing */
@@ -43,6 +53,7 @@ metaIndex::~metaIndex()
    }
    for (auto const &E: Entries)
       delete E.second;
+   delete d;
 }
 
 // one line Getters for public fields					/*{{{*/
@@ -51,8 +62,12 @@ APT_PURE std::string metaIndex::GetDist() const { return Dist; }
 APT_PURE const char* metaIndex::GetType() const { return Type; }
 APT_PURE metaIndex::TriState metaIndex::GetTrusted() const { return Trusted; }
 APT_PURE std::string metaIndex::GetSignedBy() const { return SignedBy; }
+APT_PURE std::string metaIndex::GetOrigin() const { return d->Origin; }
+APT_PURE std::string metaIndex::GetLabel() const { return d->Label; }
+APT_PURE std::string metaIndex::GetVersion() const { return d->Version; }
 APT_PURE std::string metaIndex::GetCodename() const { return Codename; }
 APT_PURE std::string metaIndex::GetSuite() const { return Suite; }
+APT_PURE signed short metaIndex::GetDefaultPin() const { return d->DefaultPin; }
 APT_PURE bool metaIndex::GetSupportsAcquireByHash() const { return SupportsAcquireByHash; }
 APT_PURE time_t metaIndex::GetValidUntil() const { return ValidUntil; }
 APT_PURE time_t metaIndex::GetDate() const { return this->Date; }
@@ -104,11 +119,19 @@ std::vector<std::string> metaIndex::MetaKeys() const			/*{{{*/
 									/*}}}*/
 void metaIndex::swapLoad(metaIndex * const OldMetaIndex)		/*{{{*/
 {
-   std::swap(Entries, OldMetaIndex->Entries);
+   std::swap(SignedBy, OldMetaIndex->SignedBy);
+   std::swap(Suite, OldMetaIndex->Suite);
+   std::swap(Codename, OldMetaIndex->Codename);
    std::swap(Date, OldMetaIndex->Date);
    std::swap(ValidUntil, OldMetaIndex->ValidUntil);
    std::swap(SupportsAcquireByHash, OldMetaIndex->SupportsAcquireByHash);
+   std::swap(Entries, OldMetaIndex->Entries);
    std::swap(LoadedSuccessfully, OldMetaIndex->LoadedSuccessfully);
+
+   OldMetaIndex->SetOrigin(d->Origin);
+   OldMetaIndex->SetLabel(d->Label);
+   OldMetaIndex->SetVersion(d->Version);
+   OldMetaIndex->SetDefaultPin(d->DefaultPin);
 }
 									/*}}}*/
 
@@ -136,3 +159,8 @@ bool metaIndex::HasSupportForComponent(std::string const &component) const/*{{{*
    return true;
 }
 									/*}}}*/
+
+void metaIndex::SetOrigin(std::string const &origin) { d->Origin = origin; }
+void metaIndex::SetLabel(std::string const &label) { d->Label = label; }
+void metaIndex::SetVersion(std::string const &version) { d->Version = version; }
+void metaIndex::SetDefaultPin(signed short const defaultpin) { d->DefaultPin = defaultpin; }

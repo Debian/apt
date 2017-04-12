@@ -203,6 +203,15 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    else if (CmdMatches("update"))
    {
       addArg(0, "list-cleanup", "APT::Get::List-Cleanup", 0);
+      addArg(0, "allow-insecure-repositories", "Acquire::AllowInsecureRepositories", 0);
+      addArg(0, "allow-weak-repositories", "Acquire::AllowWeakRepositories", 0);
+      addArg(0, "allow-releaseinfo-change", "Acquire::AllowReleaseInfoChange", 0);
+      addArg(0, "allow-releaseinfo-change-origin", "Acquire::AllowReleaseInfoChange::Origin", 0);
+      addArg(0, "allow-releaseinfo-change-label", "Acquire::AllowReleaseInfoChange::Label", 0);
+      addArg(0, "allow-releaseinfo-change-version", "Acquire::AllowReleaseInfoChange::Version", 0);
+      addArg(0, "allow-releaseinfo-change-codename", "Acquire::AllowReleaseInfoChange::Codename", 0);
+      addArg(0, "allow-releaseinfo-change-suite", "Acquire::AllowReleaseInfoChange::Suite", 0);
+      addArg(0, "allow-releaseinfo-change-defaultpin", "Acquire::AllowReleaseInfoChange::DefaultPin", 0);
    }
    else if (CmdMatches("source"))
    {
@@ -273,8 +282,6 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    addArg(0,"remove","APT::Get::Remove",0);
    addArg(0,"only-source","APT::Get::Only-Source",0);
    addArg(0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0);
-   addArg(0,"allow-insecure-repositories","Acquire::AllowInsecureRepositories",0);
-   addArg(0,"allow-weak-repositories","Acquire::AllowWeakRepositories",0);
    addArg(0,"install-recommends","APT::Install-Recommends",CommandLine::Boolean);
    addArg(0,"install-suggests","APT::Install-Suggests",CommandLine::Boolean);
    addArg(0,"fix-policy","APT::Get::Fix-Policy-Broken",0);
