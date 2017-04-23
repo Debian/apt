@@ -364,7 +364,7 @@ PackagesWriter::PackagesWriter(FileFd * const GivenOutput, TranslationWriter * c
       string const &Arch, bool const IncludeArchAll) :
    FTWScanner(GivenOutput, Arch, IncludeArchAll), Db(DB), Stats(Db.Stats), TransWriter(transWriter)
 {
-   SetExts(".deb .udeb");
+   SetExts(".deb .ddeb .udeb");
    DeLinkLimit = 0;
 
    // Process the command line options
