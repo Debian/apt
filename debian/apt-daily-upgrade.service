@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily apt upgrade and clean activities
+Documentation=man:apt(8)
+ConditionACPower=true
+After=apt-daily.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/apt/apt.systemd.daily install

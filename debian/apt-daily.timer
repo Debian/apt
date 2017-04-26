@@ -1,11 +1,11 @@
 [Unit]
-Description=Daily apt activities
+Description=Daily apt download activities
 After=network-online.target
 Wants=network-online.target
 
 [Timer]
-OnCalendar=*-*-* 6:00
-RandomizedDelaySec=60m
+OnCalendar=*-*-* 6,18:00
+RandomizedDelaySec=12h
 Persistent=true
 
 [Install]
