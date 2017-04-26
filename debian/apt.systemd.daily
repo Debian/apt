@@ -384,97 +384,101 @@ if [ $UpdateInterval -eq 0 ] &&
     exit 0
 fi
 
-# deal with BackupArchiveInterval
-do_cache_backup $BackupArchiveInterval
+if [ "$1" = "update" -o -z "$1" ] ; then
+    # deal with BackupArchiveInterval
+    do_cache_backup $BackupArchiveInterval
 
-# include default system language so that "apt-get update" will
-# fetch the right translated package descriptions
-if [ -r /etc/default/locale ]; then
-    . /etc/default/locale
-    export LANG LANGUAGE LC_MESSAGES LC_ALL
-fi
+    # include default system language so that "apt-get update" will
+    # fetch the right translated package descriptions
+    if [ -r /etc/default/locale ]; then
+	. /etc/default/locale
+	export LANG LANGUAGE LC_MESSAGES LC_ALL
+    fi
 
-# update package lists
-UPDATED=0
-UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
-if check_stamp $UPDATE_STAMP $UpdateInterval; then
-    if eval apt-get $XAPTOPT -y update $XSTDERR; then
-	debug_echo "download updated metadata (success)."
-	if which dbus-send >/dev/null 2>&1 && pidof dbus-daemon >/dev/null 2>&1; then
-	    if dbus-send --system / app.apt.dbus.updated boolean:true ; then
-		debug_echo "send dbus signal (success)"
+    # update package lists
+    UPDATED=0
+    UPDATE_STAMP=/var/lib/apt/periodic/update-stamp
+    if check_stamp $UPDATE_STAMP $UpdateInterval; then
+	if eval apt-get $XAPTOPT -y update $XSTDERR; then
+	    debug_echo "download updated metadata (success)."
+	    if which dbus-send >/dev/null 2>&1 && pidof dbus-daemon >/dev/null 2>&1; then
+		if dbus-send --system / app.apt.dbus.updated boolean:true ; then
+		    debug_echo "send dbus signal (success)"
+		else
+		    debug_echo "send dbus signal (error)"
+		fi
 	    else
-		debug_echo "send dbus signal (error)"
+		debug_echo "dbus signal not send (command not available)"
 	    fi
+	    update_stamp $UPDATE_STAMP
+	    UPDATED=1
 	else
-	    debug_echo "dbus signal not send (command not available)"
+	    debug_echo "download updated metadata (error)"
 	fi
-	update_stamp $UPDATE_STAMP
-	UPDATED=1
     else
-	debug_echo "download updated metadata (error)"
+	debug_echo "download updated metadata (not run)."
     fi
-else
-    debug_echo "download updated metadata (not run)."
-fi
-	
-# download all upgradeable packages (if it is requested)
-DOWNLOAD_UPGRADEABLE_STAMP=/var/lib/apt/periodic/download-upgradeable-stamp
-if [ $UPDATED -eq 1 ] && check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $DownloadUpgradeableInterval; then
-    if [ $Debdelta -eq 1 ]; then
-        debdelta-upgrade >/dev/null 2>&1 || true
-    fi
-    if  eval apt-get $XAPTOPT -y -d dist-upgrade $XSTDERR; then
-	update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
-	debug_echo "download upgradable (success)"
+	    
+    # download all upgradeable packages (if it is requested)
+    DOWNLOAD_UPGRADEABLE_STAMP=/var/lib/apt/periodic/download-upgradeable-stamp
+    if [ $UPDATED -eq 1 ] && check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $DownloadUpgradeableInterval; then
+	if [ $Debdelta -eq 1 ]; then
+	    debdelta-upgrade >/dev/null 2>&1 || true
+	fi
+	if  eval apt-get $XAPTOPT -y -d dist-upgrade $XSTDERR; then
+	    update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
+	    debug_echo "download upgradable (success)"
+	else
+	    debug_echo "download upgradable (error)"
+	fi
     else
-	debug_echo "download upgradable (error)"
+	debug_echo "download upgradable (not run)"
     fi
-else
-    debug_echo "download upgradable (not run)"
 fi
 
-# auto upgrade all upgradeable packages
-UPGRADE_STAMP=/var/lib/apt/periodic/upgrade-stamp
-if which unattended-upgrade >/dev/null 2>&1 && check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
-    if unattended-upgrade $XUUPOPT; then
-	update_stamp $UPGRADE_STAMP
-	debug_echo "unattended-upgrade (success)"
+if [ "$1" = "install" -o -z "$1" ] ; then
+    # auto upgrade all upgradeable packages
+    UPGRADE_STAMP=/var/lib/apt/periodic/upgrade-stamp
+    if which unattended-upgrade >/dev/null 2>&1 && check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
+	if unattended-upgrade $XUUPOPT; then
+	    update_stamp $UPGRADE_STAMP
+	    debug_echo "unattended-upgrade (success)"
+	else
+	    debug_echo "unattended-upgrade (error)"
+	fi
     else
-	debug_echo "unattended-upgrade (error)"
+	debug_echo "unattended-upgrade (not run)"
     fi
-else
-    debug_echo "unattended-upgrade (not run)"
-fi
 
-# clean package archive
-CLEAN_STAMP=/var/lib/apt/periodic/clean-stamp
-if check_stamp $CLEAN_STAMP $CleanInterval; then
-    if  eval apt-get $XAPTOPT -y clean $XSTDERR; then
-	debug_echo "clean (success)."
-	update_stamp $CLEAN_STAMP
+    # clean package archive
+    CLEAN_STAMP=/var/lib/apt/periodic/clean-stamp
+    if check_stamp $CLEAN_STAMP $CleanInterval; then
+	if  eval apt-get $XAPTOPT -y clean $XSTDERR; then
+	    debug_echo "clean (success)."
+	    update_stamp $CLEAN_STAMP
+	else
+	    debug_echo "clean (error)"
+	fi
     else
-	debug_echo "clean (error)"
+	debug_echo "clean (not run)"
     fi
-else
-    debug_echo "clean (not run)"
-fi
 
-# autoclean package archive
-AUTOCLEAN_STAMP=/var/lib/apt/periodic/autoclean-stamp
-if check_stamp $AUTOCLEAN_STAMP $AutocleanInterval; then
-    if  eval apt-get $XAPTOPT -y autoclean $XSTDERR; then
-	debug_echo "autoclean (success)."
-	update_stamp $AUTOCLEAN_STAMP
+    # autoclean package archive
+    AUTOCLEAN_STAMP=/var/lib/apt/periodic/autoclean-stamp
+    if check_stamp $AUTOCLEAN_STAMP $AutocleanInterval; then
+	if  eval apt-get $XAPTOPT -y autoclean $XSTDERR; then
+	    debug_echo "autoclean (success)."
+	    update_stamp $AUTOCLEAN_STAMP
+	else
+	    debug_echo "autoclean (error)"
+	fi
     else
-	debug_echo "autoclean (error)"
+	debug_echo "autoclean (not run)"
     fi
-else
-    debug_echo "autoclean (not run)"
-fi
 
-# check cache size 
-check_size_constraints
+    # check cache size 
+    check_size_constraints
+fi
 
 #
 #     vim: set sts=4 ai :
