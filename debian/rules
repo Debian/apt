@@ -231,8 +231,8 @@ apt: build-binary build-manpages debian/apt.install
 	dh_installexamples -p$@ $(BLD)/docs/examples/*
 	dh_installman -p$@ $(wildcard $(patsubst %,doc/en/%.[158],$(apt_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt_MANPAGES)))
 	dh_installcron -p$@ --name=apt-compat
-	dh_systemd_enable -p$@ apt-daily.timer
-	dh_systemd_start -p$@ apt-daily.timer
+	dh_systemd_enable -p$@ apt-daily.timer apt-daily-upgrade.timer
+	dh_systemd_start -p$@ apt-daily.timer apt-daily-upgrade.timer
 	dh_installdocs -p$@
 	dh_installchangelogs -p$@
 	dh_installlogrotate -p$@
