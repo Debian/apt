@@ -20,15 +20,18 @@
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/strutl.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/utsname.h>
 #include <dirent.h>
+#include <fcntl.h>
 
 using namespace std;
 
@@ -89,16 +92,12 @@ bool MirrorMethod::Clean(string Dir)
    pkgSourceList list;
    list.ReadMainList();
 
-   DIR *D = opendir(Dir.c_str());
-   if (D == 0)
-      return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
-
-   string StartDir = SafeGetCWD();
-   if (chdir(Dir.c_str()) != 0)
-   {
-      closedir(D);
-      return _error->Errno("chdir",_("Unable to change to %s"),Dir.c_str());
-   }
+   int const dirfd = open(Dir.c_str(), O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+   if (dirfd == -1)
+      return _error->Errno("open",_("Unable to read %s"), Dir.c_str());
+   DIR * const D = fdopendir(dirfd);
+   if (D == nullptr)
+      return _error->Errno("fdopendir",_("Unable to read %s"),Dir.c_str());
 
    for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
    {
@@ -122,12 +121,9 @@ bool MirrorMethod::Clean(string Dir)
       }
       // nothing found, nuke it
       if (I == list.end())
-	 RemoveFile("mirror", Dir->d_name);
+	 RemoveFileAt("mirror", dirfd, Dir->d_name);
    }
-
    closedir(D);
-   if (chdir(StartDir.c_str()) != 0)
-      return _error->Errno("chdir",_("Unable to change to %s"),StartDir.c_str());
    return true;
 }
 
