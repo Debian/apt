@@ -339,15 +339,15 @@ bool DoClean(CommandLine &)
 // ---------------------------------------------------------------------
 /* This is similar to clean but it only purges things that cannot be 
    downloaded, that is old versions of cached packages. */
- class LogCleaner : public pkgArchiveCleaner
+ class LogCleaner : public pkgArchiveCleaner2
 {
    protected:
-      virtual void Erase(const char *File, std::string Pkg, std::string Ver,struct stat &St) APT_OVERRIDE
+      virtual void Erase(int const dirfd, char const * const File, std::string const &Pkg, std::string const &Ver,struct stat const &St) APT_OVERRIDE
       {
 	 c1out << "Del " << Pkg << " " << Ver << " [" << SizeToStr(St.st_size) << "B]" << std::endl;
 
 	 if (_config->FindB("APT::Get::Simulate") == false)
-	    RemoveFile("Cleaner::Erase", File);
+	    RemoveFileAt("Cleaner::Erase", dirfd, File);
       };
 };
 bool DoAutoClean(CommandLine &)
