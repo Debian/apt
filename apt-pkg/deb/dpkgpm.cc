@@ -43,6 +43,7 @@
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
+#include <clocale>
 
 #include <algorithm>
 #include <array>
@@ -996,7 +997,9 @@ bool pkgDPkgPM::OpenLog()
    time_t const t = time(NULL);
    struct tm tm_buf;
    struct tm const * const tmp = localtime_r(&t, &tm_buf);
+   char *old_locale = std::setlocale (LC_TIME, "C");
    strftime(timestr, sizeof(timestr), "%F  %T", tmp);
+   std::setlocale (LC_TIME, old_locale);
 
    // open terminal log
    if (!logfile_name.empty())
