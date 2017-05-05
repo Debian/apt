@@ -1,10 +1,22 @@
+apt (1.2.22) xenial; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Run unattended-upgrade -d in download part
+  * apt.systemd.daily: Add locking
+  * Split apt-daily timer into two (LP: #1686470)
+
+  [ Matt Kraai ]
+  * bash-completion: Fix spelling of autoclean (Closes: #861846)
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Fri, 05 May 2017 14:51:57 +0200
+
 apt (1.2.21) xenial; urgency=medium
 
   * Microrelease covering fixes of 1.4 and 1.4.1
 
   [ Julian Andres Klode ]
   * Ignore \.ucf-[a-z]+$ like we do for \.dpkg-[a-z]+$
-  * systemd: Rework timing and add After=network-online (LP: #1615482)
+  * systemd: Rework timing and add After=network-online (was LP #1615482)
 
   [ David Kalnischkies ]
   * Fix and avoid quoting in CommandLine::AsString (LP: #1672710)
