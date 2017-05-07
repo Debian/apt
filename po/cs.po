@@ -1,14 +1,14 @@
 # Czech translation of APT
 # This file is put in the public domain.
-# Miroslav Kure <kurem@debian.cz>, 2004-2015.
+# Miroslav Kure <kurem@debian.cz>, 2004-2017.
 #
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.0.5\n"
+"Project-Id-Version: apt 1.4.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2017-02-06 14:41+0100\n"
-"PO-Revision-Date: 2015-08-29 15:24+0200\n"
+"PO-Revision-Date: 2017-05-06 11:08+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
 "Language: cs\n"
@@ -192,28 +192,34 @@ msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
 "disabled by default."
 msgstr ""
+"Aktualizaci z takového repositáře nelze provést zabezpečeně a je proto "
+"implicitně zakázána."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Data from such a repository can't be authenticated and is therefore "
 "potentially dangerous to use."
 msgstr ""
+"Data z takového repositáře nelze ověřit a proto je jejich použití "
+"potenciálně nebezpečné."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
+"Podrobnosti o vytváření a nastavení repositářů naleznete v manuálové "
+"stránce apt-secure(8)."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "The repository '%s' is no longer signed."
-msgstr "Repositář „%s“ není podepsán."
+msgstr "Repositář „%s“ již není podepsán."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' does no longer have a Release file."
-msgstr "Repositář „%s“ není podepsán."
+msgstr "Repositář „%s“ již neobsahuje soubor Release."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -224,19 +230,19 @@ msgstr ""
 "AllowDowngradeToInsecureRepositories."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is not signed."
 msgstr "Repositář „%s“ není podepsán."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' does not have a Release file."
-msgstr "Repositář „%s“ není podepsán."
+msgstr "Repositář „%s“ neobsahuje soubor Release."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' provides only weak security information."
-msgstr "Repositář „%s“ není podepsán."
+msgstr "Repositář „%s“ nabízí pouze slabé zabezpečení."
 
 #: apt-pkg/acquire-item.cc ftparchive/writer.cc
 #, c-format
@@ -249,7 +255,7 @@ msgstr "Neshoda kontrolních součtů"
 
 #: apt-pkg/acquire-item.cc
 msgid "Insufficient information available to perform this download securely"
-msgstr ""
+msgstr "Neexisuje dostatek informací pro bezpečné stažení"
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -299,6 +305,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
 msgstr ""
+"Přeskakuje se stažení souboru „%s“, protože repositář „%s“ nepodporuje "
+"architekturu „%s“"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -315,6 +323,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
+"Přeskakuje se stažení souboru „%s“, protože repositář „%s“ o něm poskytuje "
+"pouze slabé bezpečnostní informace"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -363,12 +373,12 @@ msgstr "Seznam změn pro %s=%s není dostupný"
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "The method '%s' is explicitly disabled via configuration."
-msgstr ""
+msgstr "Metoda „%s“ je v nastavení explicitně zakázána."
 
 #: apt-pkg/acquire-worker.cc methods/connect.cc
 #, c-format
 msgid "If you meant to use Tor remember to use %s instead of %s."
-msgstr ""
+msgstr "Jestliže jste chtěli použít Tor, použijte %s namísto %s."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -409,19 +419,16 @@ msgstr "Nelze uzamknout adresář %s"
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
+msgstr "V systému neexistuje omezený uživatel „%s“, nelze se zbavit oprávnění"
 
 #: apt-pkg/acquire.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Can't drop privileges for downloading as file '%s' couldn't be accessed "
-#| "by user '%s'."
+#, c-format
 msgid ""
 "Download is performed unsandboxed as root as file '%s' couldn't be accessed "
 "by user '%s'."
 msgstr ""
-"Pro stažení nelze zahodit oprávnění, jelikož soubor „%s“ by nebyl přístupný "
-"uživateli „%s“."
+"Stažení probíhá nechráněně pod uživatelem root, jelikož soubor „%s“ nebyl "
+"přístupný uživateli „%s“."
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
 #, c-format
@@ -835,7 +842,7 @@ msgstr "Problém při zavírání gzip souboru %s"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Unexpected end of file"
-msgstr ""
+msgstr "Neočekávaný konec souboru"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"
@@ -998,7 +1005,7 @@ msgstr "Výběr %s nenalezen"
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s wants to acquire the same file (%s) as %s from source %s"
-msgstr ""
+msgstr "Cíl %s chce stáhnout stejný soubor (%s) jako %s ze zdroje %s"
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; filename and linenumber of
@@ -1006,7 +1013,7 @@ msgstr ""
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s (%s) is configured multiple times in %s and %s"
-msgstr ""
+msgstr "Cíl %s (%s) je nastaven vícekrát v %s a %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -1029,6 +1036,9 @@ msgid ""
 "No Hash entry in Release file %s which is considered strong enough for "
 "security purposes"
 msgstr ""
+"Release soubor %s neobsahuje Hash záznam, který by byl pro bezpečnost "
+"považován za dostatečně silný"
+
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -1047,9 +1057,9 @@ msgid "Invalid value set for option %s regarding source %s %s (%s)"
 msgstr "Pro volbu %s byla nastavena kolidující hodnota zdroje %s %s (%s)"
 
 #: apt-pkg/deb/debmetaindex.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
-msgstr "Pro volbu %s byly nastaveny kolidující hodnoty zdroje %s %s"
+msgstr "Pro volbu %s byly nastaveny kolidující hodnoty zdroje %s %s: %s != %s"
 
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
@@ -1271,24 +1281,20 @@ msgid "Execute external solver"
 msgstr "Spuštění externího řešitele"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Execute external planner"
-msgstr "Spuštění externího řešitele"
+msgstr "Spuštění externího plánovače"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send request to planner"
-msgstr "Požadavek odeslán řešiteli"
+msgstr "Požadavek odeslán plánovači"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send scenario to planner"
-msgstr "Scénář odeslán řešiteli"
+msgstr "Scénář odeslán plánovači"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "External planner failed without a proper error message"
-msgstr "Externí řešitel selhal, aniž by zanechal rozumnou chybovou hlášku"
+msgstr "Externí plánovač selhal, aniž by zanechal rozumnou chybovou hlášku"
 
 #: apt-pkg/indexcopy.cc
 #, c-format
@@ -1387,9 +1393,8 @@ msgid "The package cache was built for different architectures: %s vs %s"
 msgstr "Cache balíků byla vytvořena pro jinou architekturu: %s vs %s"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy
 msgid "The package cache file is corrupted, it has the wrong hash"
-msgstr "Cache soubor balíků je poškozen, je příliš malý"
+msgstr "Cache soubor balíků je poškozen, kontrolní součet nesouhlasí"
 
 #: apt-pkg/pkgcache.cc
 msgid "Depends"
@@ -1549,16 +1554,16 @@ msgstr "Typ „%s“ v části %u v seznamu zdrojů %s není známý"
 #: apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
-msgstr ""
+msgstr "Zadán nepodporovaný soubor %s"
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"
 msgstr "Do sources.list musíte zadat „zdrojové“ URI"
 
 #: apt-pkg/tagfile.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot convert %s to integer: out of range"
-msgstr "Nelze převést %s na celé číslo (integer)"
+msgstr "Nelze převést %s na celé číslo: mimo rozsah"
 
 #: apt-pkg/update.cc apt-private/private-download.cc
 #, c-format
@@ -1736,12 +1741,12 @@ msgstr "Pozn: Vybírám „%s“ místo „%s“\n"
 
 #: apt-private/private-cmndline.cc
 msgid "Most used commands:"
-msgstr ""
+msgstr "Nejpoužívanější příkazy:"
 
 #: apt-private/private-cmndline.cc
 #, c-format
 msgid "See %s for more information about the available commands."
-msgstr ""
+msgstr "Více informací o dostupných příkazech naleznete v %s."
 
 #: apt-private/private-cmndline.cc
 msgid ""
@@ -1750,6 +1755,10 @@ msgid ""
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
 msgstr ""
+"Konfigurační volby a syntaxe jsou popsány v apt.conf(5).\n"
+"Informace o nastavení zdrojů se nachází v sources.list(5).\n"
+"Výběr balíků a verzí je možno vyjádřit pomocí apt_preferences(5).\n"
+"Podrobnosti o zabezpečení jsou dostupné v apt-secure(8).\n"
 
 #: apt-private/private-cmndline.cc
 msgid "This APT has Super Cow Powers."
@@ -1781,7 +1790,6 @@ msgid "Install these packages without verification?"
 msgstr "Instalovat tyto balíky bez ověření?"
 
 #: apt-private/private-download.cc apt-private/private-install.cc
-#, fuzzy
 msgid ""
 "--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
@@ -2580,6 +2588,15 @@ msgid ""
 "too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
 msgstr ""
+"Použití: apt-cache [volby] příkaz\n"
+"         apt-cache [volby] show balík1 [balík2 …]\n"
+"\n"
+"apt-cache dotazuje a zobrazuje dostupné informace o instalovaných\n"
+"a instalovatelných balících. Pracuje pouze s lokálními daty získanými\n"
+"příkazem „update“ např. programu apt-get. Zobrazené informace tedy\n"
+"mohou být zastaralé (pokud poslední aktualizace proběhla dávněji),\n"
+"ale zato apt-cache pracuje nezávisle na dostupnosti nastavených\n"
+"zdrojů (např. offline).\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -2645,13 +2662,17 @@ msgid ""
 "media types as package sources to APT. The mount point and device\n"
 "information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
+"Použití: apt-cdrom [volby] příkaz\n"
+"\n"
+"apt-cdrom se používá pro přidání CD, USB klíčenek a jiných\n"
+"vyjímatelných médií jako zdrojů pro APT. Přípojný bod a informace\n"
+"o zařízení se získává z apt.conf(5), udev(7) a fstab(5).\n"
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Argumenty nejsou v párech"
 
 #: cmdline/apt-config.cc
-#, fuzzy
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
@@ -2660,15 +2681,16 @@ msgid ""
 msgstr ""
 "Použití: apt-config [volby] příkaz\n"
 "\n"
-"apt-config je jednoduchý nástroj pro čtení konfiguračního souboru APT\n"
+"apt-config je jednoduchý nástroj pro nastavení voleb používaných všemi\n"
+"nástroji rodiny APT. Převážně je zamýšlen pro ladění a skriptování.\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
-msgstr ""
+msgstr "získá nastavení přes shellové vyhodnocování"
 
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
-msgstr ""
+msgstr "zobrazí aktuálně platné nastavení"
 
 #: cmdline/apt-dump-solver.cc
 msgid ""
@@ -2677,9 +2699,12 @@ msgid ""
 "apt-dump-solver is an interface to store an EDSP scenario in\n"
 "a file and optionally forwards it to another solver.\n"
 msgstr ""
+"Použití: apt-dump-solver\n"
+"\n"
+"apt-dump-solver slouží pro uložení EDSP scénáře do\n"
+"souboru a případnému přeposlání jinému řešiteli.\n"
 
 #: cmdline/apt-extracttemplates.cc
-#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -2689,13 +2714,9 @@ msgid ""
 msgstr ""
 "Použití: apt-extracttemplates soubor1 [soubor2 …]\n"
 "\n"
-"apt-extracttemplates umí z balíků vytáhnout konfigurační skripty a šablony\n"
-"\n"
-"Volby:\n"
-"  -h   Tato nápověda.\n"
-"  -t   Nastaví dočasný adresář\n"
-"  -c=? Načte tento konfigurační soubor\n"
-"  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
+"apt-extracttemplates umí z balíků vytáhnout konfigurační skripty\n"
+"a šablony. Využívá ho hlavně debconf(1) pro zobrazení některých\n"
+"otázek ještě před samotnou instalací balíků.\n"
 
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
@@ -2728,7 +2749,6 @@ msgid "Supported modules:"
 msgstr "Podporované moduly:"
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -2743,8 +2763,9 @@ msgstr ""
 "         apt-get [volby] install|remove balík1 [balík2 …]\n"
 "         apt-get [volby] source balík1 [balík2 …]\n"
 "\n"
-"apt-get je jednoduché řádkové rozhraní pro stahování a instalování\n"
-"balíků. Nejpoužívanější příkazy jsou update a install.\n"
+"apt-get je řádkové rozhraní pro stahování balíků a informací o nich\n"
+"z ověřených zdrojů a pro instalaci, aktualizaci a odstranění balíků\n"
+"včetně jejich závislostí.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -2824,7 +2845,6 @@ msgid "GetSrvRec failed for %s"
 msgstr "GetSrvRec %s selhalo"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] cat-file file ...\n"
@@ -2834,9 +2854,12 @@ msgid ""
 "e.g. the same proxy configuration or acquire system as APT would.\n"
 msgstr ""
 "Použití: apt-helper [volby] příkaz\n"
+"         apt-helper [volby] cat-file soubor\n"
 "         apt-helper [volby] download-file uri cílová_cesta\n"
 "\n"
-"apt-helper je interní pomocník pro apt\n"
+"apt-helper zaobaluje nejrůznější příkazy pro shellové skripty,\n"
+"např. aby použily stejné nastavení proxy nebo způsob stahování,\n"
+"jako by použila APT.\n"
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -2848,14 +2871,13 @@ msgstr "vyhledá SRV záznam (např. _http._tcp.ftp.debian.org)"
 
 #: cmdline/apt-helper.cc
 msgid "concatenate files, with automatic decompression"
-msgstr ""
+msgstr "spojí soubory, automaticky je rozbalí"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
 msgstr "detekuje proxy pomocí apt.conf"
 
 #: cmdline/apt-internal-planner.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-planner\n"
 "\n"
@@ -2863,19 +2885,12 @@ msgid ""
 "installation planner for the APT family like an external one,\n"
 "for debugging or the like.\n"
 msgstr ""
-"Použití: apt-internal-solver\n"
+"Použití: apt-internal-planner\n"
 "\n"
-"apt-internal-solver je rozhraní k aktuálnímu internímu řešiteli\n"
-"závislostí, jako by šlo o externí nástroj - vhodné pro ladění\n"
-"\n"
-"Volby:\n"
-"  -h   Tato nápověda.\n"
-"  -q   Nezobrazí indikátor postupu - vhodné pro záznam\n"
-"  -c=? Načte daný konfigurační soubor\n"
-"  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
+"apt-internal-planner je rozhraní k aktuálnímu internímu plánovači\n"
+"instalací, aby se dal použít jako externí nástroj, např. pro ladění.\n"
 
 #: cmdline/apt-internal-solver.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -2886,13 +2901,7 @@ msgstr ""
 "Použití: apt-internal-solver\n"
 "\n"
 "apt-internal-solver je rozhraní k aktuálnímu internímu řešiteli\n"
-"závislostí, jako by šlo o externí nástroj - vhodné pro ladění\n"
-"\n"
-"Volby:\n"
-"  -h   Tato nápověda.\n"
-"  -q   Nezobrazí indikátor postupu - vhodné pro záznam\n"
-"  -c=? Načte daný konfigurační soubor\n"
-"  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
+"závislostí, aby se dal použít jako externí nástroj, např. pro ladění.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -2936,20 +2945,19 @@ msgstr "Podržení balíku %s v aktuální verzi bylo zrušeno.\n"
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for purge.\n"
-msgstr ""
+msgstr "%s byl vybrán pro odstranění včetně konfguračních souborů.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for removal.\n"
-msgstr ""
+msgstr "%s byl vybrán pro odstranění.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for installation.\n"
-msgstr ""
+msgstr "%s byl vybrán pro instalaci.\n"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -2961,7 +2969,8 @@ msgstr ""
 "Použití: apt-mark [volby] {auto|manual} balík1 [balík2 …]\n"
 "\n"
 "apt-mark je jednoduché řádkové rozhraní pro označování balíků jako\n"
-"instalovaných ručně nebo automaticky. Také umí tyto značky vypsat.\n"
+"instalovaných ručně nebo automaticky. Také umí manipulovat s dpkg(1)\n"
+"stavem balíků a vypsat všechny balíky s/bez konkrétního označení.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -3003,6 +3012,11 @@ msgid ""
 "By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
+"Použtí: apt-sortpkgs [volby] soubor1 [soubor2 …]\n"
+"\n"
+"apt-sortpkgs je jednoduchý nástroj pro setřídění souborů Packages.\n"
+"Standardně řadí dle binárních balíků, ale volbou -s je možno\n"
+"přepnout na řazení dle zdrojových balíků.\n"
 
 #: cmdline/apt.cc
 msgid ""
@@ -3014,6 +3028,12 @@ msgid ""
 "like apt-get and apt-cache, but enables options more suitable for\n"
 "interactive use by default.\n"
 msgstr ""
+"Použití: apt [volby] příkaz\n"
+"\n"
+"apt je řádkový správce balíků a poskytuje příkazy pro jejich hledání,\n"
+"správu a také pro zjišťování informací o balících.\n"
+"Poskytuje stejnou funkcionalitu jako specializované APT nástroje typu\n"
+"apt-get a apt-cache, ale je lépe nastaven pro interaktivní použití.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -3463,7 +3483,7 @@ msgstr "Soubor nebyl nalezen"
 #: methods/connect.cc
 #, c-format
 msgid "Direct connection to %s domains is blocked by default."
-msgstr ""
+msgstr "Přímé spojení k doménám %s je implicitně blokováno."
 
 #: methods/connect.cc methods/http.cc
 #, c-format
@@ -3680,7 +3700,7 @@ msgstr "Nelze vyvolat "
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Signed file isn't valid, got '%s' (does the network require authentication?)"
 msgstr ""
@@ -3708,7 +3728,7 @@ msgstr "Neznámá chyba při spouštění apt-key"
 #: methods/gpgv.cc
 #, c-format
 msgid "Signature by key %s uses weak digest algorithm (%s)"
-msgstr ""
+msgstr "Podpis klíčem %s používá slabý algoritmus (%s)"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
@@ -3801,10 +3821,6 @@ msgstr "Prázdné soubory nejsou platnými archivy"
 
 #~ msgid "There is no public key available for the following key IDs:\n"
 #~ msgstr "K následujícím ID klíčů není dostupný veřejný klíč:\n"
-
-#, fuzzy
-#~ msgid "The repository is insufficiently signed by key %s (%s)"
-#~ msgstr "Repositář „%s“ není podepsán."
 
 #~ msgid ""
 #~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
