@@ -37,7 +37,8 @@ override_dh_systemd_start:
 	# Do not restart "apt-daily.service" because this script runs
 	# unattended-upgrades. So if apt itself is upgraded as part of
 	# an unattended-upgrades run it would kill itself
-	dh_systemd_start apt-daily.timer apt-daily-upgrade.timer
+	dh_systemd_start -papt apt-daily.timer apt-daily-upgrade.timer
+	dh_systemd_start --remaining-packages
 
 override_dh_auto_configure-arch: flags=-DWITH_DOC=OFF
 override_dh_auto_configure-indep: flags=-DWITH_DOC=ON
