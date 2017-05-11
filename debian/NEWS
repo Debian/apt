@@ -1,11 +1,10 @@
 apt (1.4.2) unstable; urgency=medium
 
-  This release uncouples the the downloading of new package
-  information and the upgrades from the installation of the
-  upgrades. The downloading now takes place randomly throughout
-  the day (thus spreading the load on mirrors), while the upgrade
-  only starts between 6 and 7 (am) (so it is predictable when this
-  runs and administrators can react quickly if anything breaks).
+  If periodic updates and unattended upgrades are enabled, the start of
+  periodic updates are now distributed over 24 hour intervals (as in 1.2
+  to 1.4), whereas starting unattended-upgrade has been restricted to a
+  time between 6 and 7 am. This only affects systems using systemd, other
+  systems still use the classical hourly cron job.
 
  -- Julian Andres Klode <jak@debian.org>  Thu, 04 May 2017 22:54:02 +0200
 
