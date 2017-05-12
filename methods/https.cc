@@ -240,6 +240,24 @@ bool HttpsMethod::SetupProxy()						/*{{{*/
          curl_easy_setopt(curl, CURLOPT_PROXYUSERNAME, Proxy.User.c_str());
          curl_easy_setopt(curl, CURLOPT_PROXYPASSWORD, Proxy.Password.c_str());
       }
+#if LIBCURL_VERSION_NUM >= 0x071800
+      if (Proxy.Access == "socks")
+      {
+         curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4);
+      }
+      else if (Proxy.Access == "socks4a")
+      {
+         curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4A);
+      }
+      else if (Proxy.Access == "socks5")
+      {
+         curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+      }
+      else if (Proxy.Access == "socks5h")
+      {
+         curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5_HOSTNAME);
+      }
+#endif
    }
    return true;
 }									/*}}}*/
