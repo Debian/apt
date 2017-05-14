@@ -294,12 +294,22 @@ debug_echo()
 
 # Maintain a lock on fd 3, so we can't run the script twice at the same
 # time.
-LOCKFD=3
-eval $(apt-config shell StateDir Dir::State/d)
-exec 3>${StateDir}/daily_lock
-if ! flock -w 3600 $LOCKFD; then
-    echo "E: Could not acquire lock" >&2
-    exit 1
+
+if [ "$1" = "lock_is_held" ]; then
+    shift
+else
+    LOCKFD=3
+    eval $(apt-config shell StateDir Dir::State/d)
+    exec 3>${StateDir}/daily_lock
+    if ! flock -w 3600 $LOCKFD; then
+        echo "E: Could not acquire lock" >&2
+        exit 1
+    fi
+
+    # We hold the lock.  Rerun this script as a child process, which
+    # can run without propagating an extra fd to all of its children.
+    "$0" lock_is_held "$@" 3>&-
+    exit $?
 fi
 
 if test -r /var/lib/apt/extended_states; then
@@ -433,9 +443,9 @@ if [ "$1" = "update" -o -z "$1" ] ; then
     DOWNLOAD_UPGRADEABLE_STAMP=/var/lib/apt/periodic/download-upgradeable-stamp
     if [ $UPDATED -eq 1 ] && check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $DownloadUpgradeableInterval; then
 	if [ $Debdelta -eq 1 ]; then
-	    debdelta-upgrade >/dev/null 2>&1 $LOCKFD>&- || true
+	    debdelta-upgrade >/dev/null 2>&1 || true
 	fi
-	if  eval apt-get $XAPTOPT -y -d dist-upgrade $XSTDERR $LOCKFD>&-; then
+	if  eval apt-get $XAPTOPT -y -d dist-upgrade $XSTDERR; then
 	    update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
 	    debug_echo "download upgradable (success)"
 	else
@@ -446,7 +456,7 @@ if [ "$1" = "update" -o -z "$1" ] ; then
     fi
 
     if which unattended-upgrade >/dev/null 2>&1 && check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $UnattendedUpgradeInterval; then
-	if unattended-upgrade -d $XUUPOPT $LOCKFD>&-; then
+	if unattended-upgrade -d $XUUPOPT; then
 	    update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
 	    debug_echo "unattended-upgrade -d (success)"
 	else
@@ -461,7 +471,7 @@ if [ "$1" = "install" -o -z "$1" ] ; then
     # auto upgrade all upgradeable packages
     UPGRADE_STAMP=/var/lib/apt/periodic/upgrade-stamp
     if which unattended-upgrade >/dev/null 2>&1 && check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
-	if unattended-upgrade $XUUPOPT $LOCKFD>&-; then
+	if unattended-upgrade $XUUPOPT; then
 	    update_stamp $UPGRADE_STAMP
 	    debug_echo "unattended-upgrade (success)"
 	else
