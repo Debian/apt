@@ -291,17 +291,14 @@ debug_echo()
 }
 
 # ------------------------ main ----------------------------
-
-# Maintain a lock on fd 3, so we can't run the script twice at the same
-# time.
-
 if [ "$1" = "lock_is_held" ]; then
     shift
 else
-    LOCKFD=3
+    # Maintain a lock on fd 3, so we can't run the script twice at the same
+    # time.
     eval $(apt-config shell StateDir Dir::State/d)
     exec 3>${StateDir}/daily_lock
-    if ! flock -w 3600 $LOCKFD; then
+    if ! flock -w 3600 3; then
         echo "E: Could not acquire lock" >&2
         exit 1
     fi
