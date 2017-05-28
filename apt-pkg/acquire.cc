@@ -1406,10 +1406,39 @@ void pkgAcquireStatus::Stop()
 // ---------------------------------------------------------------------
 /* This is used to get accurate final transfer rate reporting. */
 void pkgAcquireStatus::Fetched(unsigned long long Size,unsigned long long Resume)
-{   
+{
    FetchedBytes += Size - Resume;
 }
 									/*}}}*/
+bool pkgAcquireStatus::ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes)/*{{{*/
+{
+   auto const virt = dynamic_cast<pkgAcquireStatus2*>(this);
+   if (virt != nullptr)
+      return virt->ReleaseInfoChanges(LastRelease, CurrentRelease, std::move(Changes));
+   return ReleaseInfoChangesAsGlobalErrors(std::move(Changes));
+}
+									/*}}}*/
+bool pkgAcquireStatus::ReleaseInfoChangesAsGlobalErrors(std::vector<ReleaseInfoChange> &&Changes)/*{{{*/
+{
+   bool AllOkay = true;
+   for (auto const &c: Changes)
+      if (c.DefaultAction)
+	 _error->Notice("%s", c.Message.c_str());
+      else
+      {
+	 _error->Error("%s", c.Message.c_str());
+	 AllOkay = false;
+      }
+   return AllOkay;
+}
+									/*}}}*/
+bool pkgAcquireStatus2::ReleaseInfoChanges(metaIndex const * const, metaIndex const * const, std::vector<ReleaseInfoChange> &&Changes)
+{
+   return ReleaseInfoChangesAsGlobalErrors(std::move(Changes));
+}
+pkgAcquireStatus2::pkgAcquireStatus2() : pkgAcquireStatus() {}
+pkgAcquireStatus2::~pkgAcquireStatus2() {}
+
 
 pkgAcquire::UriIterator::UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), CurItem(0)
 {

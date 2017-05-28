@@ -1609,6 +1609,7 @@ bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
    // changed info potentially breaks user config like pinning
    if (TransactionManager->LastMetaIndexParser != nullptr)
    {
+      std::vector<pkgAcquireStatus::ReleaseInfoChange> Changes;
       auto const AllowInfoChange = _config->FindB("Acquire::AllowReleaseInfoChange", false);
       auto const quietInfoChange = _config->FindB("quiet::ReleaseInfoChange", false);
       struct {
@@ -1623,24 +1624,21 @@ bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
 	 { "Codename", AllowInfoChange, &metaIndex::GetCodename },
 	 { nullptr, false, nullptr }
       };
-      _error->PushToStack();
       auto const CheckReleaseInfo = [&](char const * const Type, bool const AllowChange, decltype(checkers[0].Getter) const Getter) {
 	 std::string const Last = (TransactionManager->LastMetaIndexParser->*Getter)();
 	 std::string const Now = (TransactionManager->MetaIndexParser->*Getter)();
 	 if (Last == Now)
-	    return true;
-         auto const Allow = _config->FindB(std::string("Acquire::AllowReleaseInfoChange::").append(Type), AllowChange);
-	 auto const msg = _("Repository '%s' changed its '%s' value from '%s' to '%s'");
-	 if (Allow == false)
-	    _error->Error(msg, Desc.Description.c_str(), Type, Last.c_str(), Now.c_str());
-	 else if (_config->FindB(std::string("quiet::ReleaseInfoChange::").append(Type), quietInfoChange) == false)
-	    _error->Notice(msg, Desc.Description.c_str(), Type, Last.c_str(), Now.c_str());
-	 return Allow;
+	    return;
+	 auto const Allow = _config->FindB(std::string("Acquire::AllowReleaseInfoChange::").append(Type), AllowChange);
+	 if (Allow == true && _config->FindB(std::string("quiet::ReleaseInfoChange::").append(Type), quietInfoChange) == true)
+	    return;
+	 std::string msg;
+	 strprintf(msg, _("Repository '%s' changed its '%s' value from '%s' to '%s'"),
+	       Desc.Description.c_str(), Type, Last.c_str(), Now.c_str());
+	 Changes.push_back({Type, std::move(Last), std::move(Now), std::move(msg), Allow});
       };
-      bool CRI = true;
       for (short i = 0; checkers[i].Type != nullptr; ++i)
-	 if (CheckReleaseInfo(checkers[i].Type, checkers[i].Allowed, checkers[i].Getter) == false)
-	    CRI = false;
+	 CheckReleaseInfo(checkers[i].Type, checkers[i].Allowed, checkers[i].Getter);
 
       {
 	 auto const Last = TransactionManager->LastMetaIndexParser->GetDefaultPin();
@@ -1648,31 +1646,38 @@ bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
 	 if (Last != Now)
 	 {
 	    auto const Allow = _config->FindB("Acquire::AllowReleaseInfoChange::DefaultPin", AllowInfoChange);
-	    auto const msg = _("Repository '%s' changed its default priority for %s from %hi to %hi.");
-	    if (Allow == false)
-	       _error->Error(msg, Desc.Description.c_str(), "apt_preferences(5)", Last, Now);
-	    else if (_config->FindB("quiet::ReleaseInfoChange::DefaultPin", quietInfoChange) == false)
-	       _error->Notice(msg, Desc.Description.c_str(), "apt_preferences(5)", Last, Now);
-	    CRI &= Allow;
+	    if (Allow == false || _config->FindB("quiet::ReleaseInfoChange::DefaultPin", quietInfoChange) == false)
+	    {
+	       std::string msg;
+	       strprintf(msg, _("Repository '%s' changed its default priority for %s from %hi to %hi."),
+		     Desc.Description.c_str(), "apt_preferences(5)", Last, Now);
+	       Changes.push_back({"DefaultPin", std::to_string(Last), std::to_string(Now), std::move(msg), Allow});
+	    }
 	 }
       }
-      if (_error->empty(GlobalError::NOTICE) == false)
+      if (Changes.empty() == false)
       {
 	 auto const notes = TransactionManager->MetaIndexParser->GetReleaseNotes();
 	 if (notes.empty() == false)
 	 {
+	    std::string msg;
 	    // TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
-	    _error->Notice(_("More information about this can be found online in the Release notes at: %s"), notes.c_str());
+	    strprintf(msg, _("More information about this can be found online in the Release notes at: %s"), notes.c_str());
+	    Changes.push_back({"Release-Notes", "", std::move(notes), std::move(msg), true});
 	 }
+	 if (std::any_of(Changes.begin(),Changes.end(),[](pkgAcquireStatus::ReleaseInfoChange const &c) { return c.DefaultAction == false; }))
+	 {
+	    std::string msg;
+	    // TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
+	    strprintf(msg, _("This must be accepted explicitly before updates for "
+		     "this repository can be applied. See %s manpage for details."), "apt-secure(8)");
+	    Changes.push_back({"Confirmation", "", "", std::move(msg), true});
+	 }
+
       }
-      _error->MergeWithStack();
-      if (CRI == false)
-      {
-	 // TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
-	 _error->Notice(_("This must be accepted explicitly before updates for "
-		  "this repository can be applied. See %s manpage for details."), "apt-secure(8)");
-	 return false;
-      }
+      if (Owner->Log == nullptr)
+	 return pkgAcquireStatus::ReleaseInfoChangesAsGlobalErrors(std::move(Changes));
+      return Owner->Log->ReleaseInfoChanges(TransactionManager->LastMetaIndexParser, TransactionManager->MetaIndexParser, std::move(Changes));
    }
    return true;
 }

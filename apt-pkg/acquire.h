@@ -86,6 +86,7 @@ using std::string;
 #endif
 
 class pkgAcquireStatus;
+class metaIndex;
 
 /** \brief The core download scheduler.					{{{
  *
@@ -794,7 +795,39 @@ class pkgAcquireStatus
     *  with prejudice.
     */
    virtual bool MediaChange(std::string Media,std::string Drive) = 0;
-   
+
+   struct ReleaseInfoChange
+   {
+      std::string Type; /*!< Type of the change like "Origin", "Codename", "Version", … */
+      std::string From; /*!< old value */
+      std::string To; /*!< new value */
+      std::string Message; /*!< translated message describing the change */
+      bool DefaultAction; /*!< true if the change is informational, false if it must be explicitly confirmed */
+   };
+   /** \brief ask the user for confirmation of changes to infos about a repository
+    *
+    *  This method should present the user with a choice of accepting the change
+    *  or not and indicate the user opinion via the return value. If DefaultAction is true
+    *  it is acceptable to only notify the user about the change, but to accept the change
+    *  automatically on behalf of the user.
+    *
+    *  The default implementation will fail if any Change has DefaultAction == false. Regardless of
+    *  success it will print for each change the message attached to it via GlobalError either as an
+    *  error (if DefaultAction == false) or as a notice otherwise.
+    *
+    *  \b Note: To keep ABI compatibility for now this method isn't marked as
+    *  virtual, but you can derive your class from #pkgAcquireStatus2 which has it
+    *  marked as virtual. TODO on next ABI break: merge both classes.
+    *
+    *  @param LastRelease can be used to extract further information from the previous Release file
+    *  @param CurrentRelease can be used to extract further information from the current Release file
+    *  @param Changes is an array of changes alongside explanatory messages
+    *                 which should be presented in some way to the user.
+    *  @return \b true if all changes are accepted by user, otherwise or if user can't be asked \b false
+    */
+   bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes);
+   APT_HIDDEN static bool ReleaseInfoChangesAsGlobalErrors(std::vector<ReleaseInfoChange> &&Changes);
+
    /** \brief Invoked when an item is confirmed to be up-to-date.
 
     * For instance, when an HTTP download is informed that the file on
@@ -834,6 +867,14 @@ class pkgAcquireStatus
    /** \brief Initialize all counters to 0 and the time to the current time. */
    pkgAcquireStatus();
    virtual ~pkgAcquireStatus();
+};
+class pkgAcquireStatus2: public pkgAcquireStatus
+{
+public:
+   virtual bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes);
+
+   pkgAcquireStatus2();
+   virtual ~pkgAcquireStatus2();
 };
 									/*}}}*/
 /** @} */
