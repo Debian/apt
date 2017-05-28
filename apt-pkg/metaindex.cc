@@ -16,6 +16,7 @@ class metaIndexPrivate							/*{{{*/
    std::string Label;
    std::string Version;
    signed short DefaultPin;
+   std::string ReleaseNotes;
 };
 									/*}}}*/
 
@@ -67,6 +68,7 @@ APT_PURE std::string metaIndex::GetLabel() const { return d->Label; }
 APT_PURE std::string metaIndex::GetVersion() const { return d->Version; }
 APT_PURE std::string metaIndex::GetCodename() const { return Codename; }
 APT_PURE std::string metaIndex::GetSuite() const { return Suite; }
+APT_PURE std::string metaIndex::GetReleaseNotes() const { return d->ReleaseNotes; }
 APT_PURE signed short metaIndex::GetDefaultPin() const { return d->DefaultPin; }
 APT_PURE bool metaIndex::GetSupportsAcquireByHash() const { return SupportsAcquireByHash; }
 APT_PURE time_t metaIndex::GetValidUntil() const { return ValidUntil; }
@@ -164,3 +166,4 @@ void metaIndex::SetOrigin(std::string const &origin) { d->Origin = origin; }
 void metaIndex::SetLabel(std::string const &label) { d->Label = label; }
 void metaIndex::SetVersion(std::string const &version) { d->Version = version; }
 void metaIndex::SetDefaultPin(signed short const defaultpin) { d->DefaultPin = defaultpin; }
+void metaIndex::SetReleaseNotes(std::string const &notes) { d->ReleaseNotes = notes; }

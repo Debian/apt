@@ -398,6 +398,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    SetVersion(Section.FindS("Version"));
    Suite = Section.FindS("Suite");
    Codename = Section.FindS("Codename");
+   SetReleaseNotes(Section.FindS("Release-Notes"));
    {
       std::string const archs = Section.FindS("Architectures");
       if (archs.empty() == false)

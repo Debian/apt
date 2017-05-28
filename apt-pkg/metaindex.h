@@ -77,6 +77,7 @@ public:
    std::string GetVersion() const;
    std::string GetCodename() const;
    std::string GetSuite() const;
+   std::string GetReleaseNotes() const;
    signed short GetDefaultPin() const;
    bool GetSupportsAcquireByHash() const;
    time_t GetValidUntil() const;
@@ -123,6 +124,7 @@ public:
    APT_HIDDEN void SetLabel(std::string const &label);
    APT_HIDDEN void SetVersion(std::string const &version);
    APT_HIDDEN void SetDefaultPin(signed short const defaultpin);
+   APT_HIDDEN void SetReleaseNotes(std::string const &notes);
 };
 
 #endif

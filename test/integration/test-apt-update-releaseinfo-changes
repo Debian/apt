@@ -68,10 +68,13 @@ testsuccesswithnotice apt update --allow-releaseinfo-change
 testequal "All packages are up to date.
 N: Repository 'file:$APTARCHIVE earth InRelease' changed its default priority for apt_preferences(5) from 100 to 1." tail -n 2 rootdir/tmp/testsuccesswithnotice.output
 
-sed -i -e '/^NotAutomatic: / d' $(find ./aptarchive -name 'Release')
+sed -i -e '/^NotAutomatic: / d' -e '/^Codename: / a\
+Release-Notes: https://example.org/mars/release-notes' $(find ./aptarchive -name 'Release')
 signreleasefiles
 testfailuremsg "E: Repository 'file:$APTARCHIVE earth InRelease' changed its default priority for apt_preferences(5) from 1 to 500.
+N: More information about this can be found online in the Release notes at: https://example.org/mars/release-notes
 N: This must be accepted explicitly before updates for this repository can be applied. See apt-secure(8) manpage for details." apt update
 testsuccesswithnotice apt update --allow-releaseinfo-change-defaultpin
 testequal "All packages are up to date.
-N: Repository 'file:$APTARCHIVE earth InRelease' changed its default priority for apt_preferences(5) from 1 to 500." tail -n 2 rootdir/tmp/testsuccesswithnotice.output
+N: Repository 'file:$APTARCHIVE earth InRelease' changed its default priority for apt_preferences(5) from 1 to 500.
+N: More information about this can be found online in the Release notes at: https://example.org/mars/release-notes" tail -n 3 rootdir/tmp/testsuccesswithnotice.output

@@ -1623,6 +1623,7 @@ bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
 	 { "Codename", AllowInfoChange, &metaIndex::GetCodename },
 	 { nullptr, false, nullptr }
       };
+      _error->PushToStack();
       auto const CheckReleaseInfo = [&](char const * const Type, bool const AllowChange, decltype(checkers[0].Getter) const Getter) {
 	 std::string const Last = (TransactionManager->LastMetaIndexParser->*Getter)();
 	 std::string const Now = (TransactionManager->MetaIndexParser->*Getter)();
@@ -1655,6 +1656,16 @@ bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
 	    CRI &= Allow;
 	 }
       }
+      if (_error->empty(GlobalError::NOTICE) == false)
+      {
+	 auto const notes = TransactionManager->MetaIndexParser->GetReleaseNotes();
+	 if (notes.empty() == false)
+	 {
+	    // TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
+	    _error->Notice(_("More information about this can be found online in the Release notes at: %s"), notes.c_str());
+	 }
+      }
+      _error->MergeWithStack();
       if (CRI == false)
       {
 	 // TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
