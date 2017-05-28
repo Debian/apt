@@ -114,9 +114,9 @@ testsuccess grep '^Get.* all Contents ' aptupdate.output
 testequal 'foo-1
 foo-2' aptcache pkgnames foo-
 
-# apt doesn't know supported archs, so missing a configured arch is a failure
+# apt doesn't know supported archs, so missing a configured arch is a problem
 configarchitecture 'amd64' 'i386'
-testfailure apt update
+testwarningmsg "W: Skipping acquire of configured file 'main/binary-i386/Packages' as repository 'file:$(readlink -f ./aptarchive) unstable InRelease' does not seem to provide it (sources.list entry misspelt?)" apt update
 testequal 'foo-1
 foo-2' aptcache pkgnames foo-
 

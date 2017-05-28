@@ -128,3 +128,11 @@ bool metaIndex::IsArchitectureAllSupportedFor(IndexTarget const &target) const/*
    return true;
 }
 									/*}}}*/
+bool metaIndex::HasSupportForComponent(std::string const &component) const/*{{{*/
+{
+   debReleaseIndex const * const deb = dynamic_cast<debReleaseIndex const *>(this);
+   if (deb != NULL)
+      return deb->HasSupportForComponent(component);
+   return true;
+}
+									/*}}}*/

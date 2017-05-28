@@ -1,0 +1,39 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'foobar' 'all' '1'
+
+APTARCHIVE="file:$(readlink -f ./aptarchive) unstable InRelease"
+setupaptarchive --no-update
+sed -i -e 's#main\s*$#main contrib non-free#' rootdir/etc/apt/sources.list.d/*
+
+# if no Component info is available we assume all are supported, which means
+# that non-existent Packages files are assumed to be missing because they are
+# empty (as the repository is declaring support for them via Architectures)
+testwarningmsg "W: Skipping acquire of configured file 'contrib/source/Sources' as repository '${APTARCHIVE}' does not seem to provide it (sources.list entry misspelt?)
+W: Skipping acquire of configured file 'non-free/source/Sources' as repository '${APTARCHIVE}' does not seem to provide it (sources.list entry misspelt?)" apt update
+
+sed -i -e '/^Codename: / a\
+Components: main contrib' $(find ./aptarchive -name 'Release')
+signreleasefiles
+
+testwarningmsg "W: Skipping acquire of configured file 'contrib/source/Sources' as repository '${APTARCHIVE}' does not seem to provide it (sources.list entry misspelt?)
+W: Skipping acquire of configured file 'non-free/source/Sources' as repository '${APTARCHIVE}' doesn't have the component 'non-free' (component misspelt in sources.list?)
+W: Skipping acquire of configured file 'non-free/binary-amd64/Packages' as repository '${APTARCHIVE}' doesn't have the component 'non-free' (component misspelt in sources.list?)
+W: Skipping acquire of configured file 'non-free/binary-all/Packages' as repository '${APTARCHIVE}' doesn't have the component 'non-free' (component misspelt in sources.list?)
+W: Skipping acquire of configured file 'non-free/i18n/Translation-en' as repository '${APTARCHIVE}' doesn't have the component 'non-free' (component misspelt in sources.list?)" apt update
+
+# the field looks like this e.g. for security.debian.org sources
+sed -i -e 's#^Components:.*$#Components: updates/main updates/contrib#' $(find ./aptarchive -name 'Release')
+signreleasefiles
+
+testwarningmsg "W: Skipping acquire of configured file 'contrib/source/Sources' as repository '${APTARCHIVE}' does not seem to provide it (sources.list entry misspelt?)
+W: Skipping acquire of configured file 'non-free/source/Sources' as repository '${APTARCHIVE}' doesn't have the component 'non-free' (component misspelt in sources.list?)
+W: Skipping acquire of configured file 'non-free/binary-amd64/Packages' as repository '${APTARCHIVE}' doesn't have the component 'non-free' (component misspelt in sources.list?)
+W: Skipping acquire of configured file 'non-free/binary-all/Packages' as repository '${APTARCHIVE}' doesn't have the component 'non-free' (component misspelt in sources.list?)
+W: Skipping acquire of configured file 'non-free/i18n/Translation-en' as repository '${APTARCHIVE}' doesn't have the component 'non-free' (component misspelt in sources.list?)" apt update

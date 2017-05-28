@@ -1411,6 +1411,16 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
       {
 	 if (TransactionManager->MetaIndexParser->Exists(Target.MetaKey) == false)
 	 {
+	    auto const component = Target.Option(IndexTarget::COMPONENT);
+	    if (component.empty() == false && TransactionManager->MetaIndexParser->HasSupportForComponent(component) == false)
+	    {
+	       new CleanupItem(Owner, TransactionManager, Target);
+	       _error->Warning(_("Skipping acquire of configured file '%s' as repository '%s' doesn't have the component '%s' (component misspelt in sources.list?)"),
+		     Target.MetaKey.c_str(), TransactionManager->Target.Description.c_str(), component.c_str());
+	       continue;
+
+	    }
+
 	    // optional targets that we do not have in the Release file are skipped
 	    if (hasHashes == true && Target.IsOptional)
 	    {
@@ -1440,9 +1450,10 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 
 	    if (hasHashes == true)
 	    {
-	       Status = StatAuthError;
-	       strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), Target.MetaKey.c_str());
-	       return;
+	       new CleanupItem(Owner, TransactionManager, Target);
+	       _error->Warning(_("Skipping acquire of configured file '%s' as repository '%s' does not seem to provide it (sources.list entry misspelt?)"),
+		     Target.MetaKey.c_str(), TransactionManager->Target.Description.c_str());
+	       continue;
 	    }
 	    else
 	    {

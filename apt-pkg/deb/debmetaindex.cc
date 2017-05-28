@@ -51,6 +51,7 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
 
    std::vector<std::string> Architectures;
    std::vector<std::string> NoSupportForAll;
+   std::vector<std::string> SupportedComponents;
    std::map<std::string, std::string> const ReleaseOptions;
 
    debReleaseIndexPrivate(std::map<std::string, std::string> const &Options) : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0), ReleaseOptions(Options) {}
@@ -404,6 +405,16 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
       if (targets.empty() == false)
 	 d->NoSupportForAll = VectorizeString(targets, ' ');
    }
+   for (auto const &comp: VectorizeString(Section.FindS("Components"), ' '))
+   {
+      if (comp.empty())
+	 continue;
+      auto const pos = comp.find_last_of('/');
+      if (pos == std::string::npos)
+	 d->SupportedComponents.push_back(std::move(comp));
+      else // e.g. security.debian.org uses this style
+	 d->SupportedComponents.push_back(comp.substr(pos + 1));
+   }
 
    bool FoundHashSum = false;
    bool FoundStrongHashSum = false;
@@ -731,6 +742,13 @@ bool debReleaseIndex::IsArchitectureAllSupportedFor(IndexTarget const &target) c
    if (d->NoSupportForAll.empty())
       return true;
    return std::find(d->NoSupportForAll.begin(), d->NoSupportForAll.end(), target.Option(IndexTarget::CREATED_BY)) == d->NoSupportForAll.end();
+}
+									/*}}}*/
+bool debReleaseIndex::HasSupportForComponent(std::string const &component) const/*{{{*/
+{
+   if (d->SupportedComponents.empty())
+      return true;
+   return std::find(d->SupportedComponents.begin(), d->SupportedComponents.end(), component) != d->SupportedComponents.end();
 }
 									/*}}}*/
 std::vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles()		/*{{{*/
