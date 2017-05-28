@@ -15,7 +15,7 @@
 #include <string>
 #include <iostream>
 
-class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus
+class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus2
 {
    std::ostream &out;
    unsigned int &ScreenWidth;
@@ -28,6 +28,7 @@ class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus
 
    public:
 
+   virtual bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes) APT_OVERRIDE;
    virtual bool MediaChange(std::string Media,std::string Drive) APT_OVERRIDE;
    virtual void IMSHit(pkgAcquire::ItemDesc &Itm) APT_OVERRIDE;
    virtual void Fetch(pkgAcquire::ItemDesc &Itm) APT_OVERRIDE;

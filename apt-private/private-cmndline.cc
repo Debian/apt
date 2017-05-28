@@ -469,6 +469,7 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
       _config->CndSet("Binary::apt::APT::Cmd::Show-Update-Stats", true);
       _config->CndSet("Binary::apt::DPkg::Progress-Fancy", true);
       _config->CndSet("Binary::apt::APT::Keep-Downloaded-Packages", false);
+      _config->CndSet("Binary::apt::APT::Get::Update::InteractiveReleaseInfoChanges", true);
    }
 
    _config->Set("Binary", binary);

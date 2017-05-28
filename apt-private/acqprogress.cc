@@ -17,6 +17,7 @@
 #include <apt-pkg/error.h>
 
 #include <apt-private/acqprogress.h>
+#include <apt-private/private-output.h>
 
 #include <string.h>
 #include <stdio.h>
@@ -32,7 +33,7 @@
 // ---------------------------------------------------------------------
 /* */
 AcqTextStatus::AcqTextStatus(std::ostream &out, unsigned int &ScreenWidth,unsigned int const Quiet) :
-    pkgAcquireStatus(), out(out), ScreenWidth(ScreenWidth), LastLineLength(0), ID(0), Quiet(Quiet)
+    pkgAcquireStatus2(), out(out), ScreenWidth(ScreenWidth), LastLineLength(0), ID(0), Quiet(Quiet)
 {
    // testcases use it to disable pulses without disabling other user messages
    if (Quiet == 0 && _config->FindB("quiet::NoUpdate", false) == true)
@@ -328,6 +329,25 @@ bool AcqTextStatus::MediaChange(std::string Media, std::string Drive)
    if(bStatus)
       Update = true;
    return bStatus;
+}
+									/*}}}*/
+bool AcqTextStatus::ReleaseInfoChanges(metaIndex const * const L, metaIndex const * const N, std::vector<ReleaseInfoChange> &&Changes)/*{{{*/
+{
+   if (Quiet >= 2 || isatty(STDOUT_FILENO) != 1 || isatty(STDIN_FILENO) != 1 ||
+	 _config->FindB("APT::Get::Update::InteractiveReleaseInfoChanges", false) == false)
+      return pkgAcquireStatus2::ReleaseInfoChanges(nullptr, nullptr, std::move(Changes));
+
+   _error->PushToStack();
+   auto const confirmed = pkgAcquireStatus2::ReleaseInfoChanges(L, N, std::move(Changes));
+   if (confirmed == true)
+   {
+      _error->MergeWithStack();
+      return true;
+   }
+   clearLastLine();
+   _error->DumpErrors(out, GlobalError::NOTICE, false);
+   _error->RevertToStack();
+   return YnPrompt(_("Do you want to accept these changes and continue updating from this repository?"), false, false, out, out);
 }
 									/*}}}*/
 void AcqTextStatus::clearLastLine() {					/*{{{*/
