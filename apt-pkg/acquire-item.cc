@@ -53,18 +53,6 @@
 
 using namespace std;
 
-static void printHashSumComparison(std::string const &URI, HashStringList const &Expected, HashStringList const &Actual) /*{{{*/
-{
-   if (_config->FindB("Debug::Acquire::HashSumMismatch", false) == false)
-      return;
-   std::cerr << std::endl << URI << ":" << std::endl << " Expected Hash: " << std::endl;
-   for (HashStringList::const_iterator hs = Expected.begin(); hs != Expected.end(); ++hs)
-      std::cerr <<  "\t- " << hs->toStr() << std::endl;
-   std::cerr << " Actual Hash: " << std::endl;
-   for (HashStringList::const_iterator hs = Actual.begin(); hs != Actual.end(); ++hs)
-      std::cerr <<  "\t- " << hs->toStr() << std::endl;
-}
-									/*}}}*/
 static std::string GetPartialFileName(std::string const &file)		/*{{{*/
 {
    std::string DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -1675,7 +1663,8 @@ void pkgAcqMetaClearSig::Finished()					/*{{{*/
 bool pkgAcqMetaClearSig::VerifyDone(std::string const &Message,		/*{{{*/
 	 pkgAcquire::MethodConfig const * const Cnf)
 {
-   Item::VerifyDone(Message, Cnf);
+   if (Item::VerifyDone(Message, Cnf) == false)
+      return false;
 
    if (FileExists(DestFile) && !StartsWithGPGClearTextSignature(DestFile))
       return RenameOnError(NotClearsigned);
@@ -2051,13 +2040,11 @@ void pkgAcqDiffIndex::QueueOnIMSHit() const				/*{{{*/
    new pkgAcqIndexDiffs(Owner, TransactionManager, Target, UsedMirror, Target.URI);
 }
 									/*}}}*/
-static bool RemoveFileForBootstrapLinking(bool const Debug, std::string const &For, std::string const &Boot)/*{{{*/
+static bool RemoveFileForBootstrapLinking(std::string &ErrorText, std::string const &For, std::string const &Boot)/*{{{*/
 {
    if (FileExists(Boot) && RemoveFile("Bootstrap-linking", Boot) == false)
    {
-      if (Debug)
-	 std::clog << "Bootstrap-linking for patching " << For
-	    << " by removing stale " << Boot << " failed!" << std::endl;
+      strprintf(ErrorText, "Bootstrap for patching %s by removing stale %s failed!", For.c_str(), Boot.c_str());
       return false;
    }
    return true;
@@ -2065,6 +2052,7 @@ static bool RemoveFileForBootstrapLinking(bool const Debug, std::string const &F
 									/*}}}*/
 bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 {
+   available_patches.clear();
    ExpectedAdditionalItems = 0;
    // failing here is fine: our caller will take care of trying to
    // get the complete file if patching fails
@@ -2108,8 +2096,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
    if (ServerHashes.usable() == false)
    {
-      if (Debug == true)
-	 std::clog << "pkgAcqDiffIndex: " << IndexDiffFile << ": Did not find a good hashsum in the index" << std::endl;
+      ErrorText = "Did not find a good hashsum in the index";
       return false;
    }
 
@@ -2117,11 +2104,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    HashStringList const TargetFileHashes = GetExpectedHashesFor(Target.MetaKey);
    if (TargetFileHashes.usable() == false || ServerHashes != TargetFileHashes)
    {
-      if (Debug == true)
-      {
-	 std::clog << "pkgAcqDiffIndex: " << IndexDiffFile << ": Index has different hashes than parser, probably older, so fail pdiffing" << std::endl;
-         printHashSumComparison(CurrentPackagesFile, ServerHashes, TargetFileHashes);
-      }
+      ErrorText = "Index has different hashes than parser (probably older)";
       return false;
    }
 
@@ -2139,10 +2122,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
    if (ServerHashes == LocalHashes)
    {
-      // we have the same sha1 as the server so we are done here
-      if(Debug)
-	 std::clog << "pkgAcqDiffIndex: Package file " << CurrentPackagesFile << " is up-to-date" << std::endl;
-      QueueOnIMSHit();
+      available_patches.clear();
       return true;
    }
 
@@ -2159,7 +2139,6 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       types.push_back(*type);
 
    // parse all of (provided) history
-   vector<DiffInfo> available_patches;
    bool firstAcceptedHashes = true;
    for (auto type = types.crbegin(); type != types.crend(); ++type)
    {
@@ -2214,9 +2193,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
    if (unlikely(available_patches.empty() == true))
    {
-      if (Debug)
-	 std::clog << "pkgAcqDiffIndex: " << IndexDiffFile << ": "
-	    << "Couldn't find any patches for the patch series." << std::endl;
+      ErrorText = "Couldn't find any patches for the patch series";
       return false;
    }
 
@@ -2318,9 +2295,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
    if (foundStart == false || unlikely(available_patches.empty() == true))
    {
-      if (Debug)
-	 std::clog << "pkgAcqDiffIndex: " << IndexDiffFile << ": "
-	    << "Couldn't find the start of the patch series." << std::endl;
+      ErrorText = "Couldn't find the start of the patch series";
       return false;
    }
 
@@ -2329,9 +2304,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 	    patch.patch_hashes.usable() == false ||
 	    patch.download_hashes.usable() == false)
       {
-	 if (Debug)
-	    std::clog << "pkgAcqDiffIndex: " << IndexDiffFile << ": provides no usable hashes for " << patch.file
-	       << " so fallback to complete download" << std::endl;
+	 strprintf(ErrorText, "Provides no usable hashes for %s", patch.file.c_str());
 	 return false;
       }
 
@@ -2339,9 +2312,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    unsigned long const fileLimit = _config->FindI("Acquire::PDiffs::FileLimit", 0);
    if (fileLimit != 0 && fileLimit < available_patches.size())
    {
-      if (Debug)
-	 std::clog << "Need " << available_patches.size() << " diffs (Limit is " << fileLimit
-	    << ") so fallback to complete download" << std::endl;
+      strprintf(ErrorText, "Need %lu diffs, but limit is %lu", available_patches.size(), fileLimit);
       return false;
    }
 
@@ -2371,25 +2342,18 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 	 unsigned long long const sizeLimit = downloadSizeIdx * sizeLimitPercent;
 	 if ((sizeLimit/100) < downloadSize)
 	 {
-	    if (Debug)
-	       std::clog << "Need " << downloadSize << " compressed bytes (Limit is " << (sizeLimit/100) << ", "
-		  << "original is " << downloadSizeIdx << ") so fallback to complete download" << std::endl;
+	    strprintf(ErrorText, "Need %llu compressed bytes, but limit is %llu and original is %llu", downloadSize, (sizeLimit/100), downloadSizeIdx);
 	    return false;
 	 }
       }
    }
-
-   // we have something, queue the diffs
-   string::size_type const last_space = Description.rfind(" ");
-   if(last_space != string::npos)
-      Description.erase(last_space, Description.size()-last_space);
 
    /* decide if we should download patches one by one or in one go:
       The first is good if the server merges patches, but many don't so client
       based merging can be attempt in which case the second is better.
       "bad things" will happen if patches are merged on the server,
       but client side merging is attempt as well */
-   bool pdiff_merge = _config->FindB("Acquire::PDiffs::Merge", true);
+   pdiff_merge = _config->FindB("Acquire::PDiffs::Merge", true);
    if (pdiff_merge == true)
    {
       // reprepro adds this flag if it has merged patches on the server
@@ -2404,53 +2368,24 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 	 return false;
       std::string const PartialFile = GetPartialFileNameFromURI(Target.URI);
       std::string const PatchedFile = GetKeepCompressedFileName(PartialFile + "-patched", Target);
-      if (RemoveFileForBootstrapLinking(Debug, CurrentPackagesFile, PartialFile) == false ||
-	    RemoveFileForBootstrapLinking(Debug, CurrentPackagesFile, PatchedFile) == false)
+      if (RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PartialFile) == false ||
+	    RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PatchedFile) == false)
 	 return false;
       for (auto const &ext : APT::Configuration::getCompressorExtensions())
       {
-	 if (RemoveFileForBootstrapLinking(Debug, CurrentPackagesFile, PartialFile + ext) == false ||
-	       RemoveFileForBootstrapLinking(Debug, CurrentPackagesFile, PatchedFile + ext) == false)
+	 if (RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PartialFile + ext) == false ||
+	       RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PatchedFile + ext) == false)
 	    return false;
       }
       std::string const Ext = Final.substr(CurrentPackagesFile.length());
       std::string const Partial = PartialFile + Ext;
       if (symlink(Final.c_str(), Partial.c_str()) != 0)
       {
-	 if (Debug)
-	    std::clog << "Bootstrap-linking for patching " << CurrentPackagesFile
-	       << " by linking " << Final << " to " << Partial << " failed!" << std::endl;
+	 strprintf(ErrorText, "Bootstrap for patching by linking %s to %s failed!", Final.c_str(), Partial.c_str());
 	 return false;
       }
    }
 
-   std::string indexURI = Desc.URI;
-   auto const byhashidx = indexURI.find("/by-hash/");
-   if (byhashidx != std::string::npos)
-      indexURI = indexURI.substr(0, byhashidx - strlen(".diff"));
-   else
-   {
-      auto end = indexURI.length() - strlen(".diff/Index");
-      if (CurrentCompressionExtension != "uncompressed")
-	 end -= (1 + CurrentCompressionExtension.length());
-      indexURI = indexURI.substr(0, end);
-   }
-
-   if (pdiff_merge == false)
-      new pkgAcqIndexDiffs(Owner, TransactionManager, Target, UsedMirror, indexURI, available_patches);
-   else
-   {
-      diffs = new std::vector<pkgAcqIndexMergeDiffs*>(available_patches.size());
-      for(size_t i = 0; i < available_patches.size(); ++i)
-	 (*diffs)[i] = new pkgAcqIndexMergeDiffs(Owner, TransactionManager,
-               Target, UsedMirror, indexURI,
-	       available_patches[i],
-	       diffs);
-   }
-
-   Complete = false;
-   Status = StatDone;
-   Dequeue();
    return true;
 }
 									/*}}}*/
@@ -2462,11 +2397,30 @@ void pkgAcqDiffIndex::Failed(string const &Message,pkgAcquire::MethodConfig cons
    Status = StatDone;
    ExpectedAdditionalItems = 0;
 
+   // queue for final move - this should happen even if we fail
+   // while parsing (e.g. on sizelimit) and download the complete file.
+   TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
+
    if(Debug)
       std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
 
    new pkgAcqIndex(Owner, TransactionManager, Target);
+}
+									/*}}}*/
+bool pkgAcqDiffIndex::VerifyDone(std::string const &Message, pkgAcquire::MethodConfig const * const)/*{{{*/
+{
+   string const FinalFile = GetFinalFilename();
+   if(StringToBool(LookupTag(Message,"IMS-Hit"),false))
+      DestFile = FinalFile;
+
+   if (ParseDiffIndex(DestFile))
+      return true;
+
+   Status = StatError;
+   if (ErrorText.empty())
+      ErrorText = "Couldn't parse pdiff index";
+   return false;
 }
 									/*}}}*/
 void pkgAcqDiffIndex::Done(string const &Message,HashStringList const &Hashes,	/*{{{*/
@@ -2477,20 +2431,46 @@ void pkgAcqDiffIndex::Done(string const &Message,HashStringList const &Hashes,	/
 
    Item::Done(Message, Hashes, Cnf);
 
-   string const FinalFile = GetFinalFilename();
-   if(StringToBool(LookupTag(Message,"IMS-Hit"),false))
-      DestFile = FinalFile;
-
-   if(ParseDiffIndex(DestFile) == false)
+   if (available_patches.empty())
    {
-      Failed("Message: Couldn't parse pdiff index", Cnf);
-      // queue for final move - this should happen even if we fail
-      // while parsing (e.g. on sizelimit) and download the complete file.
-      TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
-      return;
+      // we have the same sha1 as the server so we are done here
+      if(Debug)
+	 std::clog << "pkgAcqDiffIndex: Package file is up-to-date" << std::endl;
+      QueueOnIMSHit();
+   }
+   else
+   {
+      // we have something, queue the diffs
+      string::size_type const last_space = Description.rfind(" ");
+      if(last_space != string::npos)
+	 Description.erase(last_space, Description.size()-last_space);
+
+      std::string indexURI = Desc.URI;
+      auto const byhashidx = indexURI.find("/by-hash/");
+      if (byhashidx != std::string::npos)
+	 indexURI = indexURI.substr(0, byhashidx - strlen(".diff"));
+      else
+      {
+	 auto end = indexURI.length() - strlen(".diff/Index");
+	 if (CurrentCompressionExtension != "uncompressed")
+	    end -= (1 + CurrentCompressionExtension.length());
+	 indexURI = indexURI.substr(0, end);
+      }
+
+      if (pdiff_merge == false)
+	 new pkgAcqIndexDiffs(Owner, TransactionManager, Target, UsedMirror, indexURI, available_patches);
+      else
+      {
+	 diffs = new std::vector<pkgAcqIndexMergeDiffs*>(available_patches.size());
+	 for(size_t i = 0; i < available_patches.size(); ++i)
+	    (*diffs)[i] = new pkgAcqIndexMergeDiffs(Owner, TransactionManager,
+		  Target, UsedMirror, indexURI,
+		  available_patches[i],
+		  diffs);
+      }
    }
 
-   TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
+   TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
 
    Complete = true;
    Status = StatDone;

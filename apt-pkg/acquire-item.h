@@ -686,6 +686,20 @@ class APT_HIDDEN pkgAcqIndex : public pkgAcqBaseIndex
              std::string const &Message, pkgAcquire::MethodConfig const * const Cnf);
 };
 									/*}}}*/
+struct APT_HIDDEN DiffInfo {						/*{{{*/
+   /** The filename of the diff. */
+   std::string file;
+
+   /** The hashes of the file after the diff is applied */
+   HashStringList result_hashes;
+
+   /** The hashes of the diff */
+   HashStringList patch_hashes;
+
+   /** The hashes of the compressed diff */
+   HashStringList download_hashes;
+};
+									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{
  *  package list diffs and starting the package list's download.
  *
@@ -699,6 +713,8 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqIndex
 {
    void * const d;
    std::vector<pkgAcqIndexMergeDiffs*> * diffs;
+   std::vector<DiffInfo> available_patches;
+   bool pdiff_merge;
 
  protected:
    /** \brief If \b true, debugging information will be written to std::clog. */
@@ -718,6 +734,7 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqIndex
  public:
    // Specialized action members
    virtual void Failed(std::string const &Message, pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
+   virtual bool VerifyDone(std::string const &Message, pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual std::string DescURI() const APT_OVERRIDE {return Target.URI + "Index";};
@@ -750,20 +767,6 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqIndex
    virtual ~pkgAcqDiffIndex();
  private:
    APT_HIDDEN void QueueOnIMSHit() const;
-};
-									/*}}}*/
-struct APT_HIDDEN DiffInfo {						/*{{{*/
-   /** The filename of the diff. */
-   std::string file;
-
-   /** The hashes of the file after the diff is applied */
-   HashStringList result_hashes;
-
-   /** The hashes of the diff */
-   HashStringList patch_hashes;
-
-   /** The hashes of the compressed diff */
-   HashStringList download_hashes;
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching client-merge patches {{{

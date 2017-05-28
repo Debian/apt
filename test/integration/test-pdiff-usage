@@ -50,7 +50,7 @@ wasmergeused() {
 	if echo "$*" | grep -q -- '-o test::cannot-use-pdiff=1'; then
 		msgtest 'Check if pdiff was' 'not used'
 		cp -a rootdir/tmp/testsuccess.output rootdir/tmp/aptupdate.output
-		testsuccess --nomsg grep "diff/Index with Message: Couldn't parse pdiff index" rootdir/tmp/aptupdate.output
+		testsuccess --nomsg grep "^Ign:.*  Packages\.diff/Index" rootdir/tmp/aptupdate.output
 		return;
 	fi
 
@@ -336,7 +336,7 @@ SHA256-Download:
 	generatereleasefiles '+1hour'
 	signreleasefiles
 	wasmergeused "$@" -o test::cannot-use-pdiff=1
-	testsuccess grep 'bytes (Limit is' rootdir/tmp/aptupdate.output
+	testsuccess grep 'bytes, but limit is' rootdir/tmp/aptupdate.output
 	testnopackage oldstuff
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt newstuff
