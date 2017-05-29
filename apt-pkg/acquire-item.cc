@@ -1717,7 +1717,11 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 
    if (AuthPass == false)
    {
-      if (Status == StatAuthError || Status == StatTransientNetworkError)
+      auto const failreason = LookupTag(Message, "FailReason");
+      auto const httperror = "HttpError";
+      if (Status == StatAuthError || Status == StatTransientNetworkError ||
+	    (strncmp(failreason.c_str(), httperror, strlen(httperror)) == 0 &&
+	     failreason != "HttpError404"))
       {
 	 // if we expected a ClearTextSignature (InRelease) but got a network
 	 // error or got a file, but it wasn't valid, we end up here (see VerifyDone).

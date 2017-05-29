@@ -70,3 +70,12 @@ partial' ls "$LISTS"
 runtests '^E:.*Clearsigned file .*NOSPLIT.*'
 webserverconfig 'aptwebserver::overwrite::.*InRelease::filename' '/404'
 runtests '^E:.*Signed file .*NODATA.*'
+
+webserverconfig 'aptwebserver::overwrite::.*::filename' '/404'
+webserverconfig 'aptwebserver::httpcode::404' '511 Network Authentication Required'
+rm -rf rootdir/var/lib/apt/lists
+testfailureequal "Err:1 http://localhost:${APTHTTPPORT} unstable InRelease
+  511  Network Authentication Required
+Reading package lists...
+E: Failed to fetch http://localhost:${APTHTTPPORT}/dists/unstable/InRelease  511  Network Authentication Required
+E: Some index files failed to download. They have been ignored, or old ones used instead." apt update
