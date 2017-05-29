@@ -286,18 +286,18 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
       return IMS_HIT;
    }
 
-   /* Redirect
-    *
-    * Note that it is only OK for us to treat all redirection the same
-    * because we *always* use GET, not other HTTP methods.  There are
-    * three redirection codes for which it is not appropriate that we
-    * redirect.  Pass on those codes so the error handling kicks in.
-    */
-   if (AllowRedirect
-       && (Req.Result > 300 && Req.Result < 400)
-       && (Req.Result != 300       // Multiple Choices
-           && Req.Result != 304    // Not Modified
-           && Req.Result != 306))  // (Not part of HTTP/1.1, reserved)
+   /* Note that it is only OK for us to treat all redirection the same
+      because we *always* use GET, not other HTTP methods.
+      Codes not mentioned are handled as errors later as required by the
+      HTTP spec to handle unknown codes the same as the x00 code. */
+   constexpr unsigned int RedirectCodes[] = {
+      301, // Moved Permanently
+      302, // Found
+      303, // See Other
+      307, // Temporary Redirect
+      308, // Permanent Redirect
+   };
+   if (AllowRedirect && std::find(std::begin(RedirectCodes), std::end(RedirectCodes), Req.Result) != std::end(RedirectCodes))
    {
       if (Req.Location.empty() == true)
 	 ;

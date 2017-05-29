@@ -30,7 +30,7 @@ Reading package lists..." aptget update
 	testsuccess --nomsg aptget install unrelated --download-only -y
 }
 
-for CODE in 301 302 307; do
+for CODE in 301 302 307 308; do
 	webserverconfig 'aptwebserver::redirect::httpcode' "$CODE"
 	rm -f aptarchive/webserver.log.client*.log
 	testrun "$CODE" "http://localhost:${APTHTTPPORT}"
@@ -40,7 +40,7 @@ done
 
 changetohttpswebserver
 
-for CODE in 301 302 307; do
+for CODE in 301 302 307 308; do
 	webserverconfig 'aptwebserver::redirect::httpcode' "$CODE"
 	rm -f aptarchive/webserver.log.client*.log
 	testrun "$CODE" "https://localhost:${APTHTTPSPORT}"

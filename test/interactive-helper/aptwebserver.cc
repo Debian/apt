@@ -54,6 +54,7 @@ static std::string httpcodeToStr(int const httpcode)			/*{{{*/
       case 304: return _config->Find("aptwebserver::httpcode::304", "304 Not Modified");
       case 305: return _config->Find("aptwebserver::httpcode::305", "305 Use Proxy");
       case 307: return _config->Find("aptwebserver::httpcode::307", "307 Temporary Redirect");
+      case 308: return _config->Find("aptwebserver::httpcode::308", "308 Permanent Redirect");
       // Client errors 4xx
       case 400: return _config->Find("aptwebserver::httpcode::400", "400 Bad Request");
       case 401: return _config->Find("aptwebserver::httpcode::401", "401 Unauthorized");
