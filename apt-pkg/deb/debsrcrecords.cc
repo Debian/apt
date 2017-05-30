@@ -127,8 +127,18 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
             return _error->Error("Problem parsing dependency: %s", fields[I]);
 	 rec.Type = I;
 
-	 if (rec.Package != "")
+	 // We parsed a package that was ignored (wrong architecture restriction
+	 // or something).
+	 if (rec.Package == "") {
+	    // If we are in an OR group, we need to set the "Or" flag of the
+	    // previous entry to our value.
+	    if (BuildDeps.size() > 0 && (BuildDeps[BuildDeps.size() - 1].Op & pkgCache::Dep::Or) == pkgCache::Dep::Or) {
+	       BuildDeps[BuildDeps.size() - 1].Op &= ~pkgCache::Dep::Or;
+	       BuildDeps[BuildDeps.size() - 1].Op |= (rec.Op & pkgCache::Dep::Or);
+	    }
+	 } else {
    	    BuildDeps.push_back(rec);
+	 }
 	 
    	 if (Start == Stop) 
 	    break;
