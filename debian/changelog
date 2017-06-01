@@ -1,3 +1,12 @@
+apt (1.4.6) unstable; urgency=medium
+
+  * apt.systemd.daily: Do not pass -d to unattended-upgrade for the download
+  job. This actually enables debugging. Instead check if unattended-upgrade
+  supports an option --download-only (which is yet to be implemented) and use
+  that (Closes: #863859)
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 01 Jun 2017 10:50:26 +0200
+
 apt (1.4.5) unstable; urgency=medium
 
   * Fix parsing of or groups in build-deps with ignored packages (LP: #1694697)
