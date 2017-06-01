@@ -452,8 +452,8 @@ if [ "$1" = "update" -o -z "$1" ] ; then
 	debug_echo "download upgradable (not run)"
     fi
 
-    if which unattended-upgrade >/dev/null 2>&1 && check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $UnattendedUpgradeInterval; then
-	if unattended-upgrade -d $XUUPOPT; then
+    if which unattended-upgrade >/dev/null 2>&1 && unattended-upgrade --help | grep -q download-only && check_stamp $DOWNLOAD_UPGRADEABLE_STAMP $UnattendedUpgradeInterval; then
+	if unattended-upgrade --download-only $XUUPOPT; then
 	    update_stamp $DOWNLOAD_UPGRADEABLE_STAMP
 	    debug_echo "unattended-upgrade -d (success)"
 	else
