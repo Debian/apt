@@ -339,7 +339,7 @@ bool Hashes::AddFD(int const Fd,unsigned long long Size)
    bool const ToEOF = (Size == UntilEOF);
    while (Size != 0 || ToEOF)
    {
-      unsigned long long n = sizeof(Buf);
+      decltype(Size) n = sizeof(Buf);
       if (!ToEOF) n = std::min(Size, n);
       ssize_t const Res = read(Fd,Buf,n);
       if (Res < 0 || (!ToEOF && Res != (ssize_t) n)) // error, or short read
@@ -363,9 +363,9 @@ bool Hashes::AddFD(FileFd &Fd,unsigned long long Size)
    bool const ToEOF = (Size == 0);
    while (Size != 0 || ToEOF)
    {
-      unsigned long long n = sizeof(Buf);
+      decltype(Size) n = sizeof(Buf);
       if (!ToEOF) n = std::min(Size, n);
-      unsigned long long a = 0;
+      decltype(Size) a = 0;
       if (Fd.Read(Buf, n, &a) == false) // error
 	 return false;
       if (ToEOF == false)

@@ -396,7 +396,7 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress)
 {
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
-   unsigned long p = 0;
+   decltype(Cache.Head().VersionCount) p = 0;
    std::vector<std::string> archs = APT::Configuration::getArchitectures();
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
    {
@@ -420,7 +420,7 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress *Progres
 {
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
-   unsigned long p = 0;
+   decltype(Cache.Head().VersionCount) p = 0;
    bool Okay = output.Failed() == false;
    std::vector<std::string> archs = APT::Configuration::getArchitectures();
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false && likely(Okay); ++Pkg)
@@ -450,7 +450,7 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
 {
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
-   unsigned long p  = 0;
+   decltype(Cache.Head().PackageCount) p = 0;
    for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg, ++p)
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
       {
@@ -472,7 +472,7 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
 {
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
-   unsigned long p  = 0;
+   decltype(Cache.Head().PackageCount) p = 0;
    bool Okay = output.Failed() == false;
    for (auto Pkg = Cache.PkgBegin(); Pkg.end() == false && likely(Okay); ++Pkg, ++p)
    {
@@ -502,7 +502,7 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
 {
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().PackageCount, _("Send request to solver"));
-   unsigned long p = 0;
+   decltype(Cache.Head().PackageCount) p = 0;
    string del, inst;
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg, ++p)
    {
@@ -556,7 +556,7 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output,
 {
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().PackageCount, _("Send request to solver"));
-   unsigned long p = 0;
+   decltype(Cache.Head().PackageCount) p = 0;
    string del, inst;
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg, ++p)
    {
@@ -618,8 +618,8 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 	   In theory we could use the offset as ID, but then VersionCount
 	   couldn't be used to create other versionmappings anymore and it
 	   would be too easy for a (buggy) solver to segfault APT… */
-	unsigned long long const VersionCount = Cache.Head().VersionCount;
-	unsigned long VerIdx[VersionCount];
+	auto VersionCount = Cache.Head().VersionCount;
+	decltype(VersionCount) VerIdx[VersionCount];
 	for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; ++P) {
 		for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
 			VerIdx[V->ID] = V.Index();
@@ -675,11 +675,11 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 			continue;
 		}
 
-		size_t const id = section.FindULL(type.c_str(), VersionCount);
+		decltype(VersionCount) const id = section.FindULL(type.c_str(), VersionCount);
 		if (id == VersionCount) {
 			_error->Warning("Unable to parse %s request with id value '%s'!", type.c_str(), section.FindS(type.c_str()).c_str());
 			continue;
-		} else if (id > Cache.Head().VersionCount) {
+		} else if (id > VersionCount) {
 			_error->Warning("ID value '%s' in %s request stanza is to high to refer to a known version!", section.FindS(type.c_str()).c_str(), type.c_str());
 			continue;
 		}
@@ -1163,7 +1163,7 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
 {
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().PackageCount, _("Send request to planner"));
-   unsigned long p = 0;
+   decltype(Cache.Head().PackageCount) p = 0;
    string del, inst, reinst;
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg, ++p)
    {
@@ -1253,7 +1253,7 @@ bool EIPP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress * const 
 {
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().PackageCount, _("Send scenario to planner"));
-   unsigned long p = 0;
+   decltype(Cache.Head().PackageCount) p = 0;
    bool Okay = output.Failed() == false;
    std::vector<std::string> archs = APT::Configuration::getArchitectures();
    std::vector<bool> pkgset(Cache.Head().PackageCount, false);
@@ -1328,8 +1328,8 @@ bool EIPP::ReadResponse(int const input, pkgPackageManager * const PM, OpProgres
       In theory we could use the offset as ID, but then VersionCount
       couldn't be used to create other versionmappings anymore and it
       would be too easy for a (buggy) solver to segfault APT… */
-   unsigned long long const VersionCount = PM->Cache.Head().VersionCount;
-   unsigned long VerIdx[VersionCount];
+   auto VersionCount = PM->Cache.Head().VersionCount;
+   decltype(VersionCount) VerIdx[VersionCount];
    for (pkgCache::PkgIterator P = PM->Cache.PkgBegin(); P.end() == false; ++P) {
       for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
 	 VerIdx[V->ID] = V.Index();
@@ -1384,11 +1384,11 @@ bool EIPP::ReadResponse(int const input, pkgPackageManager * const PM, OpProgres
 
       if (type == nullptr)
 	 continue;
-      size_t const id = section.FindULL(type, VersionCount);
+      decltype(VersionCount) const id = section.FindULL(type, VersionCount);
       if (id == VersionCount) {
 	 _error->Warning("Unable to parse %s request with id value '%s'!", type, section.FindS(type).c_str());
 	 continue;
-      } else if (id > PM->Cache.Head().VersionCount) {
+      } else if (id > VersionCount) {
 	 _error->Warning("ID value '%s' in %s request stanza is to high to refer to a known version!", section.FindS(type).c_str(), type);
 	 continue;
       }

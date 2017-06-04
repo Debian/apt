@@ -404,7 +404,7 @@ static bool DumpAvail(CommandLine &)
    if (unlikely(Cache == NULL || CacheFile.BuildPolicy() == false))
       return false;
 
-   unsigned long Count = Cache->HeaderP->PackageCount+1;
+   auto const Count = Cache->HeaderP->PackageCount+1;
    pkgCache::VerFile **VFList = new pkgCache::VerFile *[Count];
    memset(VFList,0,sizeof(*VFList)*Count);
    
@@ -565,18 +565,19 @@ static bool XVcg(CommandLine &CmdL)
       0 = None */
    enum States {None=0, ToShow, ToShowNR, DoneNR, Done};
    enum TheFlags {ForceNR=(1<<0)};
-   unsigned char *Show = new unsigned char[Cache->Head().PackageCount];
-   unsigned char *Flags = new unsigned char[Cache->Head().PackageCount];
-   unsigned char *ShapeMap = new unsigned char[Cache->Head().PackageCount];
+   auto PackageCount = Cache->Head().PackageCount;
+   unsigned char *Show = new unsigned char[PackageCount];
+   unsigned char *Flags = new unsigned char[PackageCount];
+   unsigned char *ShapeMap = new unsigned char[PackageCount];
    
    // Show everything if no arguments given
    if (CmdL.FileList[1] == 0)
-      for (unsigned long I = 0; I != Cache->Head().PackageCount; I++)
+      for (decltype(PackageCount) I = 0; I != PackageCount; ++I)
 	 Show[I] = ToShow;
    else
-      for (unsigned long I = 0; I != Cache->Head().PackageCount; I++)
+      for (decltype(PackageCount) I = 0; I != PackageCount; ++I)
 	 Show[I] = None;
-   memset(Flags,0,sizeof(*Flags)*Cache->Head().PackageCount);
+   memset(Flags,0,sizeof(*Flags)*PackageCount);
    
    // Map the shapes
    for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)
@@ -777,18 +778,19 @@ static bool Dotty(CommandLine &CmdL)
       0 = None */
    enum States {None=0, ToShow, ToShowNR, DoneNR, Done};
    enum TheFlags {ForceNR=(1<<0)};
-   unsigned char *Show = new unsigned char[Cache->Head().PackageCount];
-   unsigned char *Flags = new unsigned char[Cache->Head().PackageCount];
-   unsigned char *ShapeMap = new unsigned char[Cache->Head().PackageCount];
+   auto PackageCount = Cache->Head().PackageCount;
+   unsigned char *Show = new unsigned char[PackageCount];
+   unsigned char *Flags = new unsigned char[PackageCount];
+   unsigned char *ShapeMap = new unsigned char[PackageCount];
    
    // Show everything if no arguments given
    if (CmdL.FileList[1] == 0)
-      for (unsigned long I = 0; I != Cache->Head().PackageCount; I++)
+      for (decltype(PackageCount) I = 0; I != PackageCount; ++I)
 	 Show[I] = ToShow;
    else
-      for (unsigned long I = 0; I != Cache->Head().PackageCount; I++)
+      for (decltype(PackageCount) I = 0; I != PackageCount; ++I)
 	 Show[I] = None;
-   memset(Flags,0,sizeof(*Flags)*Cache->Head().PackageCount);
+   memset(Flags,0,sizeof(*Flags)*PackageCount);
    
    // Map the shapes
    for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)

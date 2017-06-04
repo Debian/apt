@@ -50,12 +50,14 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(nullptr), VerPins(nullptr),
    if (Owner == 0)
       return;
    PFPriority = new signed short[Owner->Head().PackageFileCount];
-   Pins = new Pin[Owner->Head().PackageCount];
+   auto PackageCount = Owner->Head().PackageCount;
+   Pins = new Pin[PackageCount];
    VerPins = new Pin[Owner->Head().VersionCount];
 
-   for (unsigned long I = 0; I != Owner->Head().PackageCount; I++)
+   for (decltype(PackageCount) I = 0; I != PackageCount; ++I)
       Pins[I].Type = pkgVersionMatch::None;
-   for (unsigned long I = 0; I != Owner->Head().VersionCount; I++)
+   auto VersionCount = Owner->Head().VersionCount;
+   for (decltype(VersionCount) I = 0; I != VersionCount; ++I)
       VerPins[I].Type = pkgVersionMatch::None;
 
    // The config file has a master override.

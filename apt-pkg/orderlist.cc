@@ -93,7 +93,7 @@ pkgOrderList::pkgOrderList(pkgDepCache *pCache) : d(NULL), Cache(*pCache),
 
    /* Construct the arrays, egcs 1.0.1 bug requires the package count
       hack */
-   unsigned long Size = Cache.Head().PackageCount;
+   auto const Size = Cache.Head().PackageCount;
    Flags = new unsigned short[Size];
    End = List = new Package *[Size];
    memset(Flags,0,sizeof(*Flags)*Size);
@@ -1056,8 +1056,8 @@ bool pkgOrderList::AddLoop(DepIterator D)
 /* */
 void pkgOrderList::WipeFlags(unsigned long F)
 {
-   unsigned long Size = Cache.Head().PackageCount;
-   for (unsigned long I = 0; I != Size; I++)
+   auto Size = Cache.Head().PackageCount;
+   for (decltype(Size) I = 0; I != Size; ++I)
       Flags[I] &= ~F;
 }
 									/*}}}*/
