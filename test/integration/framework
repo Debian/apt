@@ -1161,7 +1161,7 @@ setupaptarchive() {
 killgpgagent() {
 	if [ -z "${TMPWORKINGDIRECTORY}" ]; then return; fi
 	local GPGHOME="${TMPWORKINGDIRECTORY}/signinghome"
-	if [ -e "${GPGHOME}" ]; then return; fi
+	if [ ! -e "${GPGHOME}" ]; then return; fi
 	# ensure the agent dies quickly as different versions have different suicide heuristics
 	GNUPGHOME="${GPGHOME}" gpgconf --kill gpg-agent >/dev/null 2>&1 || true
 	rm -rf "$GPGHOME"
