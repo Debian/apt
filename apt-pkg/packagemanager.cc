@@ -937,7 +937,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		  if (Debug)
 		     clog << OutputInDepth(Depth) << "Removing " << ConflictPkg.FullName() << " now to avoid " << APT::PrettyDep(&Cache, End) << endl;
 		  // no earlyremove() here as user has already agreed to the permanent removal
-		  if (SmartRemove(Pkg) == false)
+		  if (SmartRemove(ConflictPkg) == false)
 		     return _error->Error("Internal Error, Could not early remove %s (%d)",ConflictPkg.FullName().c_str(), 1);
 	       }
 	    }
