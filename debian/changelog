@@ -1,3 +1,14 @@
+apt (1.3.9) yakkety; urgency=medium
+
+  * Microrelease covering fixes of 1.4.6
+  * Fix parsing of or groups in build-deps with ignored packages (LP: #1694697)
+  * apt.systemd.daily: Use unattended-ugrade --download-only if available.
+    Instead of passing -d, which enables a debugging mode; check if
+    unattended-upgrade supports an option --download-only (which is yet
+    to be implemented) and use that. (Closes: #863859)
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Mon, 19 Jun 2017 13:53:57 +0200
+
 apt (1.3.8) yakkety; urgency=medium
 
   * Microrelease covering fixes of 1.4.4
