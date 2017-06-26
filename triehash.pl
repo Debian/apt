@@ -195,6 +195,15 @@ GetOptions ("code|C=s" => \$code_name,
     or die("Could not parse options!");
 
 
+# This implements a simple trie. Each node has three attributes:
+#
+# children - A hash of keys to other nodes
+# value    - The value to be stored here
+# label    - A named representation of the value.
+#
+# The key at each level of the trie can consist of one or more bytes, and the
+# trie can be normalized to a form where all keys at a level have the same
+# length using rebuild_tree().
 package Trie {
 
     sub new {
@@ -229,6 +238,8 @@ package Trie {
         return (substr($key, 0, $split), substr($key, $split));
     }
 
+    # Given a key, a label, and a value, insert that into the tree, possibly
+    # replacing an existing node.
     sub insert {
         my ($self, $key, $label, $value) = @_;
 
@@ -245,6 +256,10 @@ package Trie {
         $self->{children}{$child}->insert($tail, $label, $value);
     }
 
+    # Construct a new trie that only contains words of a given length. This
+    # is used to split up the common trie after knowing all words, so we can
+    # switch on the expected word length first, and have the per-trie function
+    # implement simple longest prefix matching.
     sub filter_depth {
         my ($self, $togo) = @_;
 
@@ -269,6 +284,7 @@ package Trie {
         return $new;
     }
 
+    # (helper for rebuild_tree)
     # Reinsert all value nodes into the specified $trie, prepending $prefix
     # to their $paths.
     sub reinsert_value_nodes_into {
@@ -281,7 +297,17 @@ package Trie {
         }
     }
 
-    # Find an earlier split due a an ambiguous character
+    # (helper for rebuild_tree)
+    # Find the earliest point to split a key. Normally, we split at the maximum
+    # power of 2 that is greater or equal than the length of the key. When we
+    # are building an ASCII-optimised case-insensitive trie that simply ORs
+    # each byte with 0x20, we need to split at the first ambiguous character:
+    #
+    # For example, the words a-bc and a\rbc are identical in such a situation:
+    #       '-' | 0x20 == '-' == '\r' | 0x20
+    # We cannot simply switch on all 4 bytes at once, but need to split before
+    # the ambigious character so we can process the ambiguous character on its
+    # own.
     sub find_ealier_split {
         my ($self, $key) = @_;
 
@@ -296,7 +322,10 @@ package Trie {
         return $self->alignpower2(length $key);
     }
 
-    # Rebuild the trie, splitting at ambigous chars, and unifying key lengths
+    # This rebuilds the trie, splitting each key before ambiguous characters
+    # as explained in find_earlier_split(), and then chooses the smallest
+    # such split at each level, so that all keys at all levels have the same
+    # length (so we can use a multi-byte switch).
     sub rebuild_tree {
         my $self = shift;
         # Determine if/where we need to split before an ambiguous character
@@ -387,54 +416,61 @@ package CCodeGen {
         return sprintf("*((triehash_uu%s*) &string[$offset])", $length * 8);
     }
 
+    # Render the trie so that it matches the longest prefix.
     sub print_table {
         my ($self, $trie, $fh, $indent, $index) = @_;
         $indent //= 0;
         $index //= 0;
 
+        # If we have children, try to match them.
+        if (%{$trie->{children}}) {
+            # The difference between lowercase and uppercase alphabetical characters
+            # is that they have one bit flipped. If we have alphabetical characters
+            # in the search space, and the entire search space works fine if we
+            # always turn on the flip, just OR the character we are switching over
+            # with the bit.
+            my $want_use_bit = 0;
+            my $can_use_bit = 1;
+            my $key_length = 0;
+            foreach my $key (sort keys %{$trie->{children}}) {
+                $can_use_bit &= not main::ambiguous($key);
+                $want_use_bit |= ($key =~ /^[a-zA-Z]+$/);
+                $key_length = length($key);
+            }
+
+            if ($ignore_case && $can_use_bit && $want_use_bit) {
+                printf $fh (("    " x $indent) . "switch(%s | 0x%s) {\n", $self->switch_key($index, $key_length), "20" x $key_length);
+            } else {
+                printf $fh (("    " x $indent) . "switch(%s) {\n", $self->switch_key($index, $key_length));
+            }
+
+            my $notfirst = 0;
+            foreach my $key (sort keys %{$trie->{children}}) {
+                if ($notfirst) {
+                    printf $fh ("    " x $indent . "    break;\n");
+                }
+                if ($ignore_case) {
+                    printf $fh ("    " x $indent . "case %s:\n", $self->case_label(lc($key)));
+                    printf $fh ("    " x $indent . "case %s:\n", $self->case_label(uc($key))) if lc($key) ne uc($key) && !($can_use_bit && $want_use_bit);
+                } else {
+                    printf $fh ("    " x $indent . "case %s:\n", $self->case_label($key));
+                }
+
+                $self->print_table($trie->{children}{$key}, $fh, $indent + 1, $index + length($key));
+
+                $notfirst=1;
+            }
+
+            printf $fh ("    " x $indent . "}\n");
+        }
+
+
+        # This node has a value, so it is a possible end point. If no children
+        # matched, we have found our longest prefix.
         if (defined $trie->{value}) {
             printf $fh ("    " x $indent . "return %s;\n", ($enum_class ? "${enum_name}::" : "").$trie->{label});
-            return;
         }
 
-        # The difference between lowercase and uppercase alphabetical characters
-        # is that they have one bit flipped. If we have alphabetical characters
-        # in the search space, and the entire search space works fine if we
-        # always turn on the flip, just OR the character we are switching over
-        # with the bit.
-        my $want_use_bit = 0;
-        my $can_use_bit = 1;
-        my $key_length = 0;
-        foreach my $key (sort keys %{$trie->{children}}) {
-            $can_use_bit &= not main::ambiguous($key);
-            $want_use_bit |= ($key =~ /^[a-zA-Z]+$/);
-            $key_length = length($key);
-        }
-
-        if ($ignore_case && $can_use_bit && $want_use_bit) {
-            printf $fh (("    " x $indent) . "switch(%s | 0x%s) {\n", $self->switch_key($index, $key_length), "20" x $key_length);
-        } else {
-            printf $fh (("    " x $indent) . "switch(%s) {\n", $self->switch_key($index, $key_length));
-        }
-
-        my $notfirst = 0;
-        foreach my $key (sort keys %{$trie->{children}}) {
-            if ($notfirst) {
-                printf $fh ("    " x $indent . "    break;\n");
-            }
-            if ($ignore_case) {
-                printf $fh ("    " x $indent . "case %s:\n", $self->case_label(lc($key)));
-                printf $fh ("    " x $indent . "case %s:\n", $self->case_label(uc($key))) if lc($key) ne uc($key) && !($can_use_bit && $want_use_bit);
-            } else {
-                printf $fh ("    " x $indent . "case %s:\n", $self->case_label($key));
-            }
-
-            $self->print_table($trie->{children}{$key}, $fh, $indent + 1, $index + length($key));
-
-            $notfirst=1;
-        }
-
-        printf $fh ("    " x $indent . "}\n");
     }
 
     sub print_words {
@@ -524,22 +560,17 @@ package CCodeGen {
     }
 }
 
-# Check if the word can be reached by exactly one word in (alphabet OR 0x20).
+# A character is ambiguous if the 1<<5 (0x20) bit does not correspond to the
+# lower case bit. A word is ambiguous if any character is. This definition is
+# used to check if we can perform the |0x20 optimization when building a case-
+# insensitive trie.
 sub ambiguous {
     my $word = shift;
 
     foreach my $char (split //, $word) {
-        # Setting the lowercase flag in the character produces a different
-        # character, the character would thus not be matched.
-        return 1 if ((ord($char) | 0x20) != ord(lc($char)));
-
-        # A word is also ambiguous if any character in lowercase can be reached
-        # by ORing 0x20 from another character in the charset that is not a
-        # lowercase character of the current character.
-        # Assume that we have UTF-8 and the most significant bit can be set
-        for my $i (0..255) {
-            return 1 if (($i | 0x20) == ord(lc($char)) && lc(chr($i)) ne lc($char));
-        }
+        # If 0x20 does not solely indicate lowercase, it is ambiguous
+        return 1 if ord(lc($char)) != (ord($char) | 0x20);
+        return 1 if ord(uc($char)) != (ord($char) & ~0x20);
     }
 
     return 0;
