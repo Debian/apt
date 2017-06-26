@@ -338,16 +338,10 @@ pkgCacheListParser * pkgDebianIndexFile::CreateListParser(FileFd &Pkg)
    if (Pkg.IsOpen() == false)
       return nullptr;
    _error->PushToStack();
-   pkgCacheListParser * const Parser = new debListParser(&Pkg);
+   std::unique_ptr<pkgCacheListParser> Parser(new debListParser(&Pkg));
    bool const newError = _error->PendingError();
    _error->MergeWithStack();
-   if (newError)
-   {
-      delete Parser;
-      return nullptr;
-   }
-   else
-      return Parser;
+   return newError ? nullptr : Parser.release();
 }
 bool pkgDebianIndexFile::Merge(pkgCacheGenerator &Gen,OpProgress * const Prog)
 {

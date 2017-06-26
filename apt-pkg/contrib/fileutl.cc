@@ -2847,7 +2847,7 @@ std::string GetTempDir(std::string const &User)
 FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * const TmpFd)	/*{{{*/
 {
    char fn[512];
-   FileFd * const Fd = TmpFd == NULL ? new FileFd() : TmpFd;
+   FileFd * const Fd = TmpFd == nullptr ? new FileFd() : TmpFd;
 
    std::string const tempdir = GetTempDir();
    snprintf(fn, sizeof(fn), "%s/%s.XXXXXX",
@@ -2858,12 +2858,16 @@ FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * co
    if (fd < 0)
    {
       _error->Errno("GetTempFile",_("Unable to mkstemp %s"), fn);
-      return NULL;
+      if (TmpFd == nullptr)
+	 delete Fd;
+      return nullptr;
    }
    if (!Fd->OpenDescriptor(fd, FileFd::ReadWrite, FileFd::None, true))
    {
       _error->Errno("GetTempFile",_("Unable to write to %s"),fn);
-      return NULL;
+      if (TmpFd == nullptr)
+	 delete Fd;
+      return nullptr;
    }
    return Fd;
 }

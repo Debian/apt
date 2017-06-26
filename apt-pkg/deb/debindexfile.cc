@@ -26,6 +26,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <sstream>
 
@@ -66,7 +67,7 @@ bool debSourcesIndex::OpenListFile(FileFd &, std::string const &)
 }
 pkgCacheListParser * debSourcesIndex::CreateListParser(FileFd &)
 {
-   return NULL;
+   return nullptr;
 }
 uint8_t debSourcesIndex::GetIndexFlags() const
 {
@@ -128,16 +129,10 @@ pkgCacheListParser * debTranslationsIndex::CreateListParser(FileFd &Pkg)
    if (Pkg.IsOpen() == false)
       return nullptr;
    _error->PushToStack();
-   pkgCacheListParser * const Parser = new debTranslationsParser(&Pkg);
+   std::unique_ptr<pkgCacheListParser> Parser(new debTranslationsParser(&Pkg));
    bool const newError = _error->PendingError();
    _error->MergeWithStack();
-   if (newError)
-   {
-      delete Parser;
-      return nullptr;
-   }
-   else
-      return Parser;
+   return newError ? nullptr : Parser.release();
 }
 									/*}}}*/
 // dpkg/status Index							/*{{{*/
@@ -162,16 +157,10 @@ pkgCacheListParser * debStatusIndex::CreateListParser(FileFd &Pkg)
    if (Pkg.IsOpen() == false)
       return nullptr;
    _error->PushToStack();
-   pkgCacheListParser * const Parser = new debStatusListParser(&Pkg);
+   std::unique_ptr<pkgCacheListParser> Parser(new debStatusListParser(&Pkg));
    bool const newError = _error->PendingError();
    _error->MergeWithStack();
-   if (newError)
-   {
-      delete Parser;
-      return nullptr;
-   }
-   else
-      return Parser;
+   return newError ? nullptr : Parser.release();
 }
 									/*}}}*/
 // DebPkgFile Index - a single .deb file as an index			/*{{{*/
@@ -244,16 +233,10 @@ pkgCacheListParser * debDebPkgFileIndex::CreateListParser(FileFd &Pkg)
    if (Pkg.IsOpen() == false)
       return nullptr;
    _error->PushToStack();
-   pkgCacheListParser * const Parser = new debDebFileParser(&Pkg, DebFile);
+   std::unique_ptr<pkgCacheListParser> Parser(new debDebFileParser(&Pkg, DebFile));
    bool const newError = _error->PendingError();
    _error->MergeWithStack();
-   if (newError)
-   {
-      delete Parser;
-      return nullptr;
-   }
-   else
-      return Parser;
+   return newError ? nullptr : Parser.release();
 }
 uint8_t debDebPkgFileIndex::GetIndexFlags() const
 {
