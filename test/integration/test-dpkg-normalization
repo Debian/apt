@@ -1,0 +1,44 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'spaces' 'i386' '1.0' 'Depends: spaces  (= 1.0)'
+insertpackage 'unstable' 'spaces' 'i386' '1.0' 'Depends: spaces (= 1.0)'
+insertpackage 'unstable' 'lessequal' 'i386' '1.0' 'Depends: spaces  (>= 1.0)'
+insertpackage 'unstable' 'lessequal' 'i386' '1.0' 'Depends: spaces  (> 1.0)'
+insertpackage 'unstable' 'zero-epoch' 'i386' '1.0' 'Depends: spaces (< 0:1.0.0)'
+insertpackage 'unstable' 'zero-epoch' 'i386' '1.0'  'Depends: spaces (< 1.0.0)'
+insertpackage 'unstable' 'zero-epoch' 'i386' '0:1.0'  'Depends: spaces (< 0:1.0.0)'
+
+setupaptarchive
+
+testsuccessequal "spaces:
+  Installed: (none)
+  Candidate: 1.0
+  Version table:
+     1.0 500
+        500 file:$TMPWORKINGDIRECTORY/aptarchive unstable/main i386 Packages
+        500 file:$TMPWORKINGDIRECTORY/aptarchive unstable/main i386 Packages" aptcache policy spaces
+
+testsuccessequal "lessequal:
+  Installed: (none)
+  Candidate: 1.0
+  Version table:
+     1.0 500
+        500 file:$TMPWORKINGDIRECTORY/aptarchive unstable/main i386 Packages
+        500 file:$TMPWORKINGDIRECTORY/aptarchive unstable/main i386 Packages" aptcache policy lessequal
+
+
+
+testsuccessequal "zero-epoch:
+  Installed: (none)
+  Candidate: 1.0
+  Version table:
+     1.0 500
+        500 file:$TMPWORKINGDIRECTORY/aptarchive unstable/main i386 Packages
+        500 file:$TMPWORKINGDIRECTORY/aptarchive unstable/main i386 Packages
+        500 file:$TMPWORKINGDIRECTORY/aptarchive unstable/main i386 Packages" aptcache policy zero-epoch

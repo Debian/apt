@@ -372,6 +372,11 @@ unsigned short debListParser::VersionHash()
 	 string to make that not matter. */
       for (; Start != End; ++Start)
       {
+	 // Strip away 0: epochs from input
+	 if (*Start == '0' && Start[1] == ':') {
+	    Start++;	// Skip the :
+	    continue;	// Skip the 0
+	 }
 	 if (isspace_ascii(*Start) != 0 || *Start == '=')
 	    continue;
 	 Result = AddCRC16Byte(Result, tolower_ascii_unsafe(*Start));
