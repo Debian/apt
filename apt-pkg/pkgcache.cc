@@ -58,7 +58,7 @@ pkgCache::Header::Header()
 
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
-   APT_HEADER_SET(MajorVersion, 11);
+   APT_HEADER_SET(MajorVersion, 12);
    APT_HEADER_SET(MinorVersion, 0);
    APT_HEADER_SET(Dirty, false);
 
