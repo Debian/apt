@@ -77,10 +77,16 @@ endif()
 
 
 # apt-transport-https dependencies
-find_package(CURL REQUIRED)
-if (CURL_FOUND)
-  set(HAVE_CURL 1)
+option(WITH_CURL "Build curl-based methods" ON)
+if (WITH_CURL)
+  find_package(CURL REQUIRED)
+  if (CURL_FOUND)
+    set(HAVE_CURL 1)
+  endif()
+else()
+  set(HAVE_CURL 0)
 endif()
+
 find_package(GnuTLS REQUIRED)
 if (GNUTLS_FOUND)
   set(HAVE_GNUTLS 1)
