@@ -55,7 +55,7 @@ class FTPConn
    bool WriteMsg(unsigned int &Ret,std::string &Text,const char *Fmt,...);
    
    // Connection control
-   bool Open(pkgAcqMethod *Owner);
+   bool Open(aptMethod *Owner);
    void Close();   
    bool GoPasv();
    bool ExtGoPasv();

@@ -112,7 +112,7 @@ void FTPConn::Close()
 // ---------------------------------------------------------------------
 /* Connect to the server using a non-blocking connection and perform a 
    login. */
-bool FTPConn::Open(pkgAcqMethod *Owner)
+bool FTPConn::Open(aptMethod *Owner)
 {
    // Use the already open connection if possible.
    if (ServerFd != -1)

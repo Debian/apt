@@ -34,6 +34,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+#include "aptmethod.h"
 #include "connect.h"
 #include "rfc2553emu.h"
 #include <apti18n.h>
@@ -79,8 +80,8 @@ static bool ConnectionAllowed(char const * const Service, std::string const &Hos
 // DoConnect - Attempt a connect operation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This helper function attempts a connection to a single address. */
-static bool DoConnect(struct addrinfo *Addr,std::string const &Host,
-		      unsigned long TimeOut,int &Fd,pkgAcqMethod *Owner)
+static bool DoConnect(struct addrinfo *Addr, std::string const &Host,
+		      unsigned long TimeOut, int &Fd, aptMethod *Owner)
 {
    // Show a status indicator
    char Name[NI_MAXHOST];
@@ -150,8 +151,8 @@ static bool DoConnect(struct addrinfo *Addr,std::string const &Host,
 									/*}}}*/
 // Connect to a given Hostname						/*{{{*/
 static bool ConnectToHostname(std::string const &Host, int const Port,
-      const char * const Service, int DefPort, int &Fd,
-      unsigned long const TimeOut, pkgAcqMethod * const Owner)
+			      const char *const Service, int DefPort, int &Fd,
+			      unsigned long const TimeOut, aptMethod *const Owner)
 {
    if (ConnectionAllowed(Service, Host) == false)
       return false;
@@ -286,9 +287,9 @@ static bool ConnectToHostname(std::string const &Host, int const Port,
 // Connect - Connect to a server					/*{{{*/
 // ---------------------------------------------------------------------
 /* Performs a connection to the server (including SRV record lookup) */
-bool Connect(std::string Host,int Port,const char *Service,
-                            int DefPort,int &Fd,
-                            unsigned long TimeOut,pkgAcqMethod *Owner)
+bool Connect(std::string Host, int Port, const char *Service,
+	     int DefPort, int &Fd,
+	     unsigned long TimeOut, aptMethod *Owner)
 {
    if (_error->PendingError() == true)
       return false;

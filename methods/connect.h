@@ -12,10 +12,11 @@
 
 #include <string>
 
-class pkgAcqMethod;
+class aptMethod;
 
-bool Connect(std::string To,int Port,const char *Service,int DefPort,
-	     int &Fd,unsigned long TimeOut,pkgAcqMethod *Owner);
+bool Connect(std::string To, int Port, const char *Service, int DefPort,
+	     int &Fd, unsigned long TimeOut, aptMethod *Owner);
+
 void RotateDNS();
 
 #endif
