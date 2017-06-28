@@ -621,7 +621,15 @@ bool HttpServerState::Go(bool ToFile, RequestState &Req)
    if (ServerFd->Fd() == -1 && (In.WriteSpace() == false ||
 				ToFile == false))
       return false;
-   
+
+   // Handle server IO
+   if (ServerFd->HasPending() && In.ReadSpace() == true)
+   {
+      errno = 0;
+      if (In.Read(ServerFd) == false)
+	 return Die(Req);
+   }
+
    fd_set rfds,wfds;
    FD_ZERO(&rfds);
    FD_ZERO(&wfds);

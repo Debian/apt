@@ -35,6 +35,8 @@ struct MethodFd
    virtual ~MethodFd(){};
    /// \brief Construct a MethodFd from a UNIX file descriptor
    static std::unique_ptr<MethodFd> FromFd(int iFd);
+   /// \brief If there is pending data.
+   virtual bool HasPending();
 };
 
 bool Connect(std::string To, int Port, const char *Service, int DefPort,

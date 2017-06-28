@@ -98,6 +98,10 @@ struct FdFd : public MethodFd
    }
 };
 
+bool MethodFd::HasPending()
+{
+   return false;
+}
 std::unique_ptr<MethodFd> MethodFd::FromFd(int iFd)
 {
    FdFd *fd = new FdFd();
@@ -625,6 +629,11 @@ struct TlsFd : public MethodFd
       if (HandleError(gnutls_bye(session, GNUTLS_SHUT_RDWR)) < 0)
 	 return -1;
       return UnderlyingFd->Close();
+   }
+
+   bool HasPending() APT_OVERRIDE
+   {
+      return gnutls_record_check_pending(session) > 0;
    }
 };
 
