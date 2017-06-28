@@ -73,8 +73,8 @@ time_t FtpMethod::FailTime = 0;
 // FTPConn::FTPConn - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-FTPConn::FTPConn(URI Srv) : Len(0), ServerFd(-1), DataFd(-1),
-                            DataListenFd(-1), ServerName(Srv),
+FTPConn::FTPConn(URI Srv) : Len(0), ServerFd(MethodFd::FromFd(-1)), DataFd(-1),
+			    DataListenFd(-1), ServerName(Srv),
 			    ForceExtended(false), TryPassive(true),
 			    PeerAddrLen(0), ServerAddrLen(0)
 {
@@ -96,8 +96,7 @@ FTPConn::~FTPConn()
 /* Just tear down the socket and data socket */
 void FTPConn::Close()
 {
-   close(ServerFd);
-   ServerFd = -1;
+   ServerFd->Close();
    close(DataFd);
    DataFd = -1;
    close(DataListenFd);
@@ -115,7 +114,7 @@ void FTPConn::Close()
 bool FTPConn::Open(aptMethod *Owner)
 {
    // Use the already open connection if possible.
-   if (ServerFd != -1)
+   if (ServerFd->Fd() != -1)
       return true;
    
    Close();
@@ -178,12 +177,12 @@ bool FTPConn::Open(aptMethod *Owner)
    
    // Get the remote server's address
    PeerAddrLen = sizeof(PeerAddr);
-   if (getpeername(ServerFd,(sockaddr *)&PeerAddr,&PeerAddrLen) != 0)
+   if (getpeername(ServerFd->Fd(), (sockaddr *)&PeerAddr, &PeerAddrLen) != 0)
       return _error->Errno("getpeername",_("Unable to determine the peer name"));
    
    // Get the local machine's address
    ServerAddrLen = sizeof(ServerAddr);
-   if (getsockname(ServerFd,(sockaddr *)&ServerAddr,&ServerAddrLen) != 0)
+   if (getsockname(ServerFd->Fd(), (sockaddr *)&ServerAddr, &ServerAddrLen) != 0)
       return _error->Errno("getsockname",_("Unable to determine the local name"));
    
    return Res;
@@ -314,7 +313,7 @@ bool FTPConn::Login()
 /* This performs a very simple buffered read. */
 bool FTPConn::ReadLine(string &Text)
 {
-   if (ServerFd == -1)
+   if (ServerFd->Fd() == -1)
       return false;
    
    // Suck in a line
@@ -339,14 +338,14 @@ bool FTPConn::ReadLine(string &Text)
       }
 
       // Wait for some data..
-      if (WaitFd(ServerFd,false,TimeOut) == false)
+      if (WaitFd(ServerFd->Fd(), false, TimeOut) == false)
       {
 	 Close();
 	 return _error->Error(_("Connection timeout"));
       }
       
       // Suck it back
-      int Res = read(ServerFd,Buffer + Len,sizeof(Buffer) - Len);
+      int Res = ServerFd->Read(Buffer + Len, sizeof(Buffer) - Len);
       if (Res == 0)
 	 _error->Error(_("Server closed the connection"));
       if (Res <= 0)
@@ -451,13 +450,13 @@ bool FTPConn::WriteMsg(unsigned int &Ret,string &Text,const char *Fmt,...)
    unsigned long Start = 0;
    while (Len != 0)
    {
-      if (WaitFd(ServerFd,true,TimeOut) == false)
+      if (WaitFd(ServerFd->Fd(), true, TimeOut) == false)
       {
 	 Close();
 	 return _error->Error(_("Connection timeout"));
       }
-      
-      int Res = write(ServerFd,S + Start,Len);
+
+      int Res = ServerFd->Write(S + Start, Len);
       if (Res <= 0)
       {
 	 _error->Errno("write",_("Write error"));

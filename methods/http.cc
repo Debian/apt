@@ -95,7 +95,7 @@ void CircleBuf::Reset()
 // ---------------------------------------------------------------------
 /* This fills up the buffer with as much data as is in the FD, assuming it
    is non-blocking.. */
-bool CircleBuf::Read(int Fd)
+bool CircleBuf::Read(std::unique_ptr<MethodFd> const &Fd)
 {
    while (1)
    {
@@ -126,11 +126,11 @@ bool CircleBuf::Read(int Fd)
       // Write the buffer segment
       ssize_t Res;
       if(CircleBuf::BwReadLimit) {
-	 Res = read(Fd,Buf + (InP%Size), 
-		    BwReadMax > LeftRead() ? LeftRead() : BwReadMax);
+	 Res = Fd->Read(Buf + (InP % Size),
+			BwReadMax > LeftRead() ? LeftRead() : BwReadMax);
       } else
-	 Res = read(Fd,Buf + (InP%Size),LeftRead());
-      
+	 Res = Fd->Read(Buf + (InP % Size), LeftRead());
+
       if(Res > 0 && BwReadLimit > 0) 
 	 CircleBuf::BwTickReadData += Res;
     
@@ -193,7 +193,7 @@ void CircleBuf::FillOut()
 // CircleBuf::Write - Write from the buffer into a FD			/*{{{*/
 // ---------------------------------------------------------------------
 /* This empties the buffer into the FD. */
-bool CircleBuf::Write(int Fd)
+bool CircleBuf::Write(std::unique_ptr<MethodFd> const &Fd)
 {
    while (1)
    {
@@ -208,7 +208,7 @@ bool CircleBuf::Write(int Fd)
       
       // Write the buffer segment
       ssize_t Res;
-      Res = write(Fd,Buf + (OutP%Size),LeftWrite());
+      Res = Fd->Write(Buf + (OutP % Size), LeftWrite());
 
       if (Res == 0)
 	 return false;
@@ -291,6 +291,7 @@ CircleBuf::~CircleBuf()
 HttpServerState::HttpServerState(URI Srv,HttpMethod *Owner) : ServerState(Srv, Owner), In(Owner, 64*1024), Out(Owner, 4*1024)
 {
    TimeOut = Owner->ConfigFindI("Timeout", TimeOut);
+   ServerFd = MethodFd::FromFd(-1);
    Reset();
 }
 									/*}}}*/
@@ -318,7 +319,7 @@ static bool TalkToSocksProxy(int const ServerFd, std::string const &Proxy,
 bool HttpServerState::Open()
 {
    // Use the already open connection if possible.
-   if (ServerFd != -1)
+   if (ServerFd->Fd() != -1)
       return true;
    
    Close();
@@ -371,8 +372,12 @@ bool HttpServerState::Open()
       std::string const ProxyInfo = URI::SiteOnly(Proxy);
       Owner->Status(_("Connecting to %s (%s)"),"SOCKS5h proxy",ProxyInfo.c_str());
       auto const Timeout = Owner->ConfigFindI("TimeOut", 120);
-      #define APT_WriteOrFail(TYPE, DATA, LENGTH) if (TalkToSocksProxy(ServerFd, ProxyInfo, TYPE, true, DATA, LENGTH, Timeout) == false) return false
-      #define APT_ReadOrFail(TYPE, DATA, LENGTH) if (TalkToSocksProxy(ServerFd, ProxyInfo, TYPE, false, DATA, LENGTH, Timeout) == false) return false
+#define APT_WriteOrFail(TYPE, DATA, LENGTH)                                                     \
+   if (TalkToSocksProxy(ServerFd->Fd(), ProxyInfo, TYPE, true, DATA, LENGTH, Timeout) == false) \
+   return false
+#define APT_ReadOrFail(TYPE, DATA, LENGTH)                                                       \
+   if (TalkToSocksProxy(ServerFd->Fd(), ProxyInfo, TYPE, false, DATA, LENGTH, Timeout) == false) \
+   return false
       if (ServerName.Host.length() > 255)
 	 return _error->Error("Can't use SOCKS5h as hostname %s is too long!", ServerName.Host.c_str());
       if (Proxy.User.length() > 255 || Proxy.Password.length() > 255)
@@ -514,7 +519,7 @@ bool HttpServerState::Open()
 	 ioprintf(std::clog, "http: SOCKS proxy %s connection established to %s (%s)\n",
 	       ProxyInfo.c_str(), ServerName.Host.c_str(), bindaddr.c_str());
 
-      if (WaitFd(ServerFd, true, Timeout) == false)
+      if (WaitFd(ServerFd->Fd(), true, Timeout) == false)
 	 return _error->Error("SOCKS proxy %s reported connection to %s (%s), but timed out",
 	       ProxyInfo.c_str(), ServerName.Host.c_str(), bindaddr.c_str());
       #undef APT_ReadOrFail
@@ -549,8 +554,7 @@ bool HttpServerState::Open()
 /* */
 bool HttpServerState::Close()
 {
-   close(ServerFd);
-   ServerFd = -1;
+   ServerFd->Close();
    return true;
 }
 									/*}}}*/
@@ -672,7 +676,7 @@ bool HttpServerState::WriteResponse(const std::string &Data)		/*{{{*/
 									/*}}}*/
 APT_PURE bool HttpServerState::IsOpen()					/*{{{*/
 {
-   return (ServerFd != -1);
+   return (ServerFd->Fd() != -1);
 }
 									/*}}}*/
 bool HttpServerState::InitHashes(HashStringList const &ExpectedHashes)	/*{{{*/
@@ -685,7 +689,7 @@ bool HttpServerState::InitHashes(HashStringList const &ExpectedHashes)	/*{{{*/
 void HttpServerState::Reset()						/*{{{*/
 {
    ServerState::Reset();
-   ServerFd = -1;
+   ServerFd->Close();
 }
 									/*}}}*/
 
@@ -710,7 +714,7 @@ bool HttpServerState::Die(RequestState &Req)
 	 SetNonBlock(Req.File.Fd(),false);
       while (In.WriteSpace() == true)
       {
-	 if (In.Write(Req.File.Fd()) == false)
+	 if (In.Write(MethodFd::FromFd(Req.File.Fd())) == false)
 	    return _error->Errno("write",_("Error writing to the file"));
 
 	 // Done
@@ -762,7 +766,7 @@ bool HttpServerState::Flush(FileFd * const File)
       
       while (In.WriteSpace() == true)
       {
-	 if (In.Write(File->Fd()) == false)
+	 if (In.Write(MethodFd::FromFd(File->Fd())) == false)
 	    return _error->Errno("write",_("Error writing to file"));
 	 if (In.IsLimit() == true)
 	    return true;
@@ -781,8 +785,8 @@ bool HttpServerState::Flush(FileFd * const File)
 bool HttpServerState::Go(bool ToFile, RequestState &Req)
 {
    // Server has closed the connection
-   if (ServerFd == -1 && (In.WriteSpace() == false || 
-			       ToFile == false))
+   if (ServerFd->Fd() == -1 && (In.WriteSpace() == false ||
+				ToFile == false))
       return false;
    
    fd_set rfds,wfds;
@@ -791,28 +795,27 @@ bool HttpServerState::Go(bool ToFile, RequestState &Req)
    
    /* Add the server. We only send more requests if the connection will 
       be persisting */
-   if (Out.WriteSpace() == true && ServerFd != -1 
-       && Persistent == true)
-      FD_SET(ServerFd,&wfds);
-   if (In.ReadSpace() == true && ServerFd != -1)
-      FD_SET(ServerFd,&rfds);
-   
+   if (Out.WriteSpace() == true && ServerFd->Fd() != -1 && Persistent == true)
+      FD_SET(ServerFd->Fd(), &wfds);
+   if (In.ReadSpace() == true && ServerFd->Fd() != -1)
+      FD_SET(ServerFd->Fd(), &rfds);
+
    // Add the file
-   int FileFD = -1;
+   auto FileFD = MethodFd::FromFd(-1);
    if (Req.File.IsOpen())
-      FileFD = Req.File.Fd();
-   
-   if (In.WriteSpace() == true && ToFile == true && FileFD != -1)
-      FD_SET(FileFD,&wfds);
+      FileFD = MethodFd::FromFd(Req.File.Fd());
+
+   if (In.WriteSpace() == true && ToFile == true && FileFD->Fd() != -1)
+      FD_SET(FileFD->Fd(), &wfds);
 
    // Add stdin
    if (Owner->ConfigFindB("DependOnSTDIN", true) == true)
       FD_SET(STDIN_FILENO,&rfds);
 	  
    // Figure out the max fd
-   int MaxFd = FileFD;
-   if (MaxFd < ServerFd)
-      MaxFd = ServerFd;
+   int MaxFd = FileFD->Fd();
+   if (MaxFd < ServerFd->Fd())
+      MaxFd = ServerFd->Fd();
 
    // Select
    struct timeval tv;
@@ -833,14 +836,14 @@ bool HttpServerState::Go(bool ToFile, RequestState &Req)
    }
    
    // Handle server IO
-   if (ServerFd != -1 && FD_ISSET(ServerFd,&rfds))
+   if (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &rfds))
    {
       errno = 0;
       if (In.Read(ServerFd) == false)
 	 return Die(Req);
    }
-	 
-   if (ServerFd != -1 && FD_ISSET(ServerFd,&wfds))
+
+   if (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &wfds))
    {
       errno = 0;
       if (Out.Write(ServerFd) == false)
@@ -848,7 +851,7 @@ bool HttpServerState::Go(bool ToFile, RequestState &Req)
    }
 
    // Send data to the file
-   if (FileFD != -1 && FD_ISSET(FileFD,&wfds))
+   if (FileFD->Fd() != -1 && FD_ISSET(FileFD->Fd(), &wfds))
    {
       if (In.Write(FileFD) == false)
 	 return _error->Errno("write",_("Error writing to output file"));

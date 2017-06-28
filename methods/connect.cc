@@ -77,16 +77,42 @@ static bool ConnectionAllowed(char const * const Service, std::string const &Hos
    return true;
 }
 									/*}}}*/
+
+// File Descriptor based Fd /*{{{*/
+struct FdFd : public MethodFd
+{
+   int fd = -1;
+   int Fd() APT_OVERRIDE { return fd; }
+   ssize_t Read(void *buf, size_t count) APT_OVERRIDE { return ::read(fd, buf, count); }
+   ssize_t Write(void *buf, size_t count) APT_OVERRIDE { return ::write(fd, buf, count); }
+   int Close() APT_OVERRIDE
+   {
+      int result = 0;
+      if (fd != -1)
+	 result = ::close(fd);
+      fd = -1;
+      return result;
+   }
+};
+
+std::unique_ptr<MethodFd> MethodFd::FromFd(int iFd)
+{
+   FdFd *fd = new FdFd();
+   fd->fd = iFd;
+   return std::unique_ptr<MethodFd>(fd);
+}
+									/*}}}*/
 // DoConnect - Attempt a connect operation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This helper function attempts a connection to a single address. */
 static bool DoConnect(struct addrinfo *Addr, std::string const &Host,
-		      unsigned long TimeOut, int &Fd, aptMethod *Owner)
+		      unsigned long TimeOut, std::unique_ptr<MethodFd> &Fd, aptMethod *Owner)
 {
    // Show a status indicator
    char Name[NI_MAXHOST];
    char Service[NI_MAXSERV];
-   
+   Fd.reset(new FdFd());
+
    Name[0] = 0;   
    Service[0] = 0;
    getnameinfo(Addr->ai_addr,Addr->ai_addrlen,
@@ -108,20 +134,21 @@ static bool DoConnect(struct addrinfo *Addr, std::string const &Host,
    }
       
    // Get a socket
-   if ((Fd = socket(Addr->ai_family,Addr->ai_socktype,
-		    Addr->ai_protocol)) < 0)
+   if ((static_cast<FdFd *>(Fd.get())->fd = socket(Addr->ai_family, Addr->ai_socktype,
+						   Addr->ai_protocol)) < 0)
       return _error->Errno("socket",_("Could not create a socket for %s (f=%u t=%u p=%u)"),
 			   Name,Addr->ai_family,Addr->ai_socktype,Addr->ai_protocol);
-   
-   SetNonBlock(Fd,true);
-   if (connect(Fd,Addr->ai_addr,Addr->ai_addrlen) < 0 &&
+
+   SetNonBlock(Fd->Fd(), true);
+   if (connect(Fd->Fd(), Addr->ai_addr, Addr->ai_addrlen) < 0 &&
        errno != EINPROGRESS)
       return _error->Errno("connect",_("Cannot initiate the connection "
 			   "to %s:%s (%s)."),Host.c_str(),Service,Name);
    
    /* This implements a timeout for connect by opening the connection
       nonblocking */
-   if (WaitFd(Fd,true,TimeOut) == false) {
+   if (WaitFd(Fd->Fd(), true, TimeOut) == false)
+   {
       bad_addr.insert(bad_addr.begin(), std::string(Name));
       Owner->SetFailReason("Timeout");
       return _error->Error(_("Could not connect to %s:%s (%s), "
@@ -131,7 +158,7 @@ static bool DoConnect(struct addrinfo *Addr, std::string const &Host,
    // Check the socket for an error condition
    unsigned int Err;
    unsigned int Len = sizeof(Err);
-   if (getsockopt(Fd,SOL_SOCKET,SO_ERROR,&Err,&Len) != 0)
+   if (getsockopt(Fd->Fd(), SOL_SOCKET, SO_ERROR, &Err, &Len) != 0)
       return _error->Errno("getsockopt",_("Failed"));
    
    if (Err != 0)
@@ -151,7 +178,7 @@ static bool DoConnect(struct addrinfo *Addr, std::string const &Host,
 									/*}}}*/
 // Connect to a given Hostname						/*{{{*/
 static bool ConnectToHostname(std::string const &Host, int const Port,
-			      const char *const Service, int DefPort, int &Fd,
+			      const char *const Service, int DefPort, std::unique_ptr<MethodFd> &Fd,
 			      unsigned long const TimeOut, aptMethod *const Owner)
 {
    if (ConnectionAllowed(Service, Host) == false)
@@ -255,10 +282,9 @@ static bool ConnectToHostname(std::string const &Host, int const Port,
       {
 	 LastUsed = CurHost;
 	 return true;
-      }      
-      close(Fd);
-      Fd = -1;
-      
+      }
+      Fd->Close();
+
       // Ignore UNIX domain sockets
       do
       {
@@ -288,7 +314,7 @@ static bool ConnectToHostname(std::string const &Host, int const Port,
 // ---------------------------------------------------------------------
 /* Performs a connection to the server (including SRV record lookup) */
 bool Connect(std::string Host, int Port, const char *Service,
-	     int DefPort, int &Fd,
+	     int DefPort, std::unique_ptr<MethodFd> &Fd,
 	     unsigned long TimeOut, aptMethod *Owner)
 {
    if (_error->PendingError() == true)

@@ -13,11 +13,13 @@
 
 #include <apt-pkg/strutl.h>
 
+#include <iostream>
+#include <memory>
 #include <string>
 #include <sys/time.h>
-#include <iostream>
 
 #include "basehttp.h"
+#include "connect.h"
 
 using std::cout;
 using std::endl;
@@ -66,11 +68,11 @@ class CircleBuf
    unsigned long long TotalWriten;
 
    // Read data in
-   bool Read(int Fd);
+   bool Read(std::unique_ptr<MethodFd> const &Fd);
    bool Read(std::string const &Data);
 
    // Write data out
-   bool Write(int Fd);
+   bool Write(std::unique_ptr<MethodFd> const &Fd);
    bool WriteTillEl(std::string &Data,bool Single = false);
 
    // Control the write limit
@@ -95,7 +97,7 @@ struct HttpServerState: public ServerState
    // This is the connection itself. Output is data FROM the server
    CircleBuf In;
    CircleBuf Out;
-   int ServerFd;
+   std::unique_ptr<MethodFd> ServerFd;
 
    protected:
    virtual bool ReadHeaderLines(std::string &Data) APT_OVERRIDE;
