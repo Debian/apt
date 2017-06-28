@@ -10,12 +10,18 @@ apt_add_translation_domain(
     EXCLUDE_LANGUAGES ${languages_excluded}
 )
 
+if (HAVE_CURL)
+    set(curl_methods https)
+else()
+    set(curl_methods)
+endif()
+
 apt_add_translation_domain(
     DOMAIN apt
     TARGETS apt apt-cache apt-get apt-config apt-cdrom apt-helper apt-mark
             apt-private
             # Methods
-            file copy store gpgv cdrom http https ftp rred rsh mirror
+            file copy store gpgv cdrom http ${curl_methods} ftp rred rsh mirror
     SCRIPTS ../dselect/install ../dselect/update
     EXCLUDE_LANGUAGES ${languages_excluded}
 )

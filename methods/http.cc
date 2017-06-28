@@ -95,7 +95,7 @@ void CircleBuf::Reset()
 // ---------------------------------------------------------------------
 /* This fills up the buffer with as much data as is in the FD, assuming it
    is non-blocking.. */
-bool CircleBuf::Read(int Fd)
+bool CircleBuf::Read(std::unique_ptr<MethodFd> const &Fd)
 {
    while (1)
    {
@@ -126,11 +126,11 @@ bool CircleBuf::Read(int Fd)
       // Write the buffer segment
       ssize_t Res;
       if(CircleBuf::BwReadLimit) {
-	 Res = read(Fd,Buf + (InP%Size), 
-		    BwReadMax > LeftRead() ? LeftRead() : BwReadMax);
+	 Res = Fd->Read(Buf + (InP % Size),
+			BwReadMax > LeftRead() ? LeftRead() : BwReadMax);
       } else
-	 Res = read(Fd,Buf + (InP%Size),LeftRead());
-      
+	 Res = Fd->Read(Buf + (InP % Size), LeftRead());
+
       if(Res > 0 && BwReadLimit > 0) 
 	 CircleBuf::BwTickReadData += Res;
     
@@ -193,7 +193,7 @@ void CircleBuf::FillOut()
 // CircleBuf::Write - Write from the buffer into a FD			/*{{{*/
 // ---------------------------------------------------------------------
 /* This empties the buffer into the FD. */
-bool CircleBuf::Write(int Fd)
+bool CircleBuf::Write(std::unique_ptr<MethodFd> const &Fd)
 {
    while (1)
    {
@@ -208,7 +208,7 @@ bool CircleBuf::Write(int Fd)
       
       // Write the buffer segment
       ssize_t Res;
-      Res = write(Fd,Buf + (OutP%Size),LeftWrite());
+      Res = Fd->Write(Buf + (OutP % Size), LeftWrite());
 
       if (Res == 0)
 	 return false;
@@ -291,34 +291,17 @@ CircleBuf::~CircleBuf()
 HttpServerState::HttpServerState(URI Srv,HttpMethod *Owner) : ServerState(Srv, Owner), In(Owner, 64*1024), Out(Owner, 4*1024)
 {
    TimeOut = Owner->ConfigFindI("Timeout", TimeOut);
+   ServerFd = MethodFd::FromFd(-1);
    Reset();
 }
 									/*}}}*/
 // HttpServerState::Open - Open a connection to the server		/*{{{*/
 // ---------------------------------------------------------------------
 /* This opens a connection to the server. */
-static bool TalkToSocksProxy(int const ServerFd, std::string const &Proxy,
-      char const * const type, bool const ReadWrite, uint8_t * const ToFrom,
-      unsigned int const Size, unsigned int const Timeout)
-{
-   if (WaitFd(ServerFd, ReadWrite, Timeout) == false)
-      return _error->Error("Waiting for the SOCKS proxy %s to %s timed out", URI::SiteOnly(Proxy).c_str(), type);
-   if (ReadWrite == false)
-   {
-      if (FileFd::Read(ServerFd, ToFrom, Size) == false)
-	 return _error->Error("Reading the %s from SOCKS proxy %s failed", type, URI::SiteOnly(Proxy).c_str());
-   }
-   else
-   {
-      if (FileFd::Write(ServerFd, ToFrom, Size) == false)
-	 return _error->Error("Writing the %s to SOCKS proxy %s failed", type, URI::SiteOnly(Proxy).c_str());
-   }
-   return true;
-}
 bool HttpServerState::Open()
 {
    // Use the already open connection if possible.
-   if (ServerFd != -1)
+   if (ServerFd->Fd() != -1)
       return true;
    
    Close();
@@ -360,165 +343,15 @@ bool HttpServerState::Open()
    if (Proxy.empty() == false)
       Owner->AddProxyAuth(Proxy, ServerName);
 
+   bool tls = ServerName.Access == "https";
    if (Proxy.Access == "socks5h")
    {
       if (Connect(Proxy.Host, Proxy.Port, "socks", 1080, ServerFd, TimeOut, Owner) == false)
 	 return false;
 
-      /* We implement a very basic SOCKS5 client here complying mostly to RFC1928 expect
-       * for not offering GSSAPI auth which is a must (we only do no or user/pass auth).
-       * We also expect the SOCKS5 server to do hostname lookup (aka socks5h) */
-      std::string const ProxyInfo = URI::SiteOnly(Proxy);
-      Owner->Status(_("Connecting to %s (%s)"),"SOCKS5h proxy",ProxyInfo.c_str());
-      auto const Timeout = Owner->ConfigFindI("TimeOut", 120);
-      #define APT_WriteOrFail(TYPE, DATA, LENGTH) if (TalkToSocksProxy(ServerFd, ProxyInfo, TYPE, true, DATA, LENGTH, Timeout) == false) return false
-      #define APT_ReadOrFail(TYPE, DATA, LENGTH) if (TalkToSocksProxy(ServerFd, ProxyInfo, TYPE, false, DATA, LENGTH, Timeout) == false) return false
-      if (ServerName.Host.length() > 255)
-	 return _error->Error("Can't use SOCKS5h as hostname %s is too long!", ServerName.Host.c_str());
-      if (Proxy.User.length() > 255 || Proxy.Password.length() > 255)
-	 return _error->Error("Can't use user&pass auth as they are too long (%lu and %lu) for the SOCKS5!", Proxy.User.length(), Proxy.Password.length());
-      if (Proxy.User.empty())
-      {
-	 uint8_t greeting[] = { 0x05, 0x01, 0x00 };
-	 APT_WriteOrFail("greet-1", greeting, sizeof(greeting));
-      }
-      else
-      {
-	 uint8_t greeting[] = { 0x05, 0x02, 0x00, 0x02 };
-	 APT_WriteOrFail("greet-2", greeting, sizeof(greeting));
-      }
-      uint8_t greeting[2];
-      APT_ReadOrFail("greet back", greeting, sizeof(greeting));
-      if (greeting[0] != 0x05)
-	 return _error->Error("SOCKS proxy %s greets back with wrong version: %d", ProxyInfo.c_str(), greeting[0]);
-      if (greeting[1] == 0x00)
-	 ; // no auth has no method-dependent sub-negotiations
-      else if (greeting[1] == 0x02)
-      {
-	 if (Proxy.User.empty())
-	    return _error->Error("SOCKS proxy %s negotiated user&pass auth, but we had not offered it!", ProxyInfo.c_str());
-	 // user&pass auth sub-negotiations are defined by RFC1929
-	 std::vector<uint8_t> auth = {{ 0x01, static_cast<uint8_t>(Proxy.User.length()) }};
-	 std::copy(Proxy.User.begin(), Proxy.User.end(), std::back_inserter(auth));
-	 auth.push_back(static_cast<uint8_t>(Proxy.Password.length()));
-	 std::copy(Proxy.Password.begin(), Proxy.Password.end(), std::back_inserter(auth));
-	 APT_WriteOrFail("user&pass auth", auth.data(), auth.size());
-	 uint8_t authstatus[2];
-	 APT_ReadOrFail("auth report", authstatus, sizeof(authstatus));
-	 if (authstatus[0] != 0x01)
-	    return _error->Error("SOCKS proxy %s auth status response with wrong version: %d", ProxyInfo.c_str(), authstatus[0]);
-	 if (authstatus[1] != 0x00)
-	    return _error->Error("SOCKS proxy %s reported authorization failure: username or password incorrect? (%d)", ProxyInfo.c_str(), authstatus[1]);
-      }
-      else
-	 return _error->Error("SOCKS proxy %s greets back having not found a common authorization method: %d", ProxyInfo.c_str(), greeting[1]);
-      union { uint16_t * i; uint8_t * b; } portu;
-      uint16_t port = htons(static_cast<uint16_t>(ServerName.Port == 0 ? 80 : ServerName.Port));
-      portu.i = &port;
-      std::vector<uint8_t> request = {{ 0x05, 0x01, 0x00, 0x03, static_cast<uint8_t>(ServerName.Host.length()) }};
-      std::copy(ServerName.Host.begin(), ServerName.Host.end(), std::back_inserter(request));
-      request.push_back(portu.b[0]);
-      request.push_back(portu.b[1]);
-      APT_WriteOrFail("request", request.data(), request.size());
-      uint8_t response[4];
-      APT_ReadOrFail("first part of response", response, sizeof(response));
-      if (response[0] != 0x05)
-	 return _error->Error("SOCKS proxy %s response with wrong version: %d", ProxyInfo.c_str(), response[0]);
-      if (response[2] != 0x00)
-	 return _error->Error("SOCKS proxy %s has unexpected non-zero reserved field value: %d", ProxyInfo.c_str(), response[2]);
-      std::string bindaddr;
-      if (response[3] == 0x01) // IPv4 address
-      {
-	 uint8_t ip4port[6];
-	 APT_ReadOrFail("IPv4+Port of response", ip4port, sizeof(ip4port));
-	 portu.b[0] = ip4port[4];
-	 portu.b[1] = ip4port[5];
-	 port = ntohs(*portu.i);
-	 strprintf(bindaddr, "%d.%d.%d.%d:%d", ip4port[0], ip4port[1], ip4port[2], ip4port[3], port);
-      }
-      else if (response[3] == 0x03) // hostname
-      {
-	 uint8_t namelength;
-	 APT_ReadOrFail("hostname length of response", &namelength, 1);
-	 uint8_t hostname[namelength + 2];
-	 APT_ReadOrFail("hostname of response", hostname, sizeof(hostname));
-	 portu.b[0] = hostname[namelength];
-	 portu.b[1] = hostname[namelength + 1];
-	 port = ntohs(*portu.i);
-	 hostname[namelength] = '\0';
-	 strprintf(bindaddr, "%s:%d", hostname, port);
-      }
-      else if (response[3] == 0x04) // IPv6 address
-      {
-	 uint8_t ip6port[18];
-	 APT_ReadOrFail("IPv6+port of response", ip6port, sizeof(ip6port));
-	 portu.b[0] = ip6port[16];
-	 portu.b[1] = ip6port[17];
-	 port = ntohs(*portu.i);
-	 strprintf(bindaddr, "[%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X]:%d",
-	       ip6port[0], ip6port[1], ip6port[2], ip6port[3], ip6port[4], ip6port[5], ip6port[6], ip6port[7],
-	       ip6port[8], ip6port[9], ip6port[10], ip6port[11], ip6port[12], ip6port[13], ip6port[14], ip6port[15],
-	       port);
-      }
-      else
-	 return _error->Error("SOCKS proxy %s destination address is of unknown type: %d",
-	       ProxyInfo.c_str(), response[3]);
-      if (response[1] != 0x00)
-      {
-	 char const * errstr = nullptr;
-	 auto errcode = response[1];
-	 // Tor error reporting can be a bit arcane, lets try to detect & fix it up
-	 if (bindaddr == "0.0.0.0:0")
-	 {
-	    auto const lastdot = ServerName.Host.rfind('.');
-	    if (lastdot == std::string::npos || ServerName.Host.substr(lastdot) != ".onion")
-	       ;
-	    else if (errcode == 0x01)
-	    {
-	       auto const prevdot = ServerName.Host.rfind('.', lastdot - 1);
-	       if (lastdot == 16 && prevdot == std::string::npos)
-		  ; // valid .onion address
-	       else if (prevdot != std::string::npos && (lastdot - prevdot) == 17)
-		  ; // valid .onion address with subdomain(s)
-	       else
-	       {
-		  errstr = "Invalid hostname: onion service name must be 16 characters long";
-		  Owner->SetFailReason("SOCKS");
-	       }
-	    }
-	    // in all likelihood the service is either down or the address has
-	    // a typo and so "Host unreachable" is the better understood error
-	    // compared to the technically correct "TLL expired".
-	    else if (errcode == 0x06)
-	       errcode = 0x04;
-	 }
-	 if (errstr == nullptr)
-	 {
-	    switch (errcode)
-	    {
-	       case 0x01: errstr = "general SOCKS server failure"; Owner->SetFailReason("SOCKS"); break;
-	       case 0x02: errstr = "connection not allowed by ruleset"; Owner->SetFailReason("SOCKS"); break;
-	       case 0x03: errstr = "Network unreachable"; Owner->SetFailReason("ConnectionTimedOut"); break;
-	       case 0x04: errstr = "Host unreachable"; Owner->SetFailReason("ConnectionTimedOut"); break;
-	       case 0x05: errstr = "Connection refused"; Owner->SetFailReason("ConnectionRefused"); break;
-	       case 0x06: errstr = "TTL expired"; Owner->SetFailReason("Timeout"); break;
-	       case 0x07: errstr = "Command not supported"; Owner->SetFailReason("SOCKS"); break;
-	       case 0x08: errstr = "Address type not supported"; Owner->SetFailReason("SOCKS"); break;
-	       default: errstr = "Unknown error"; Owner->SetFailReason("SOCKS"); break;
-	    }
-	 }
-	 return _error->Error("SOCKS proxy %s could not connect to %s (%s) due to: %s (%d)",
-	       ProxyInfo.c_str(), ServerName.Host.c_str(), bindaddr.c_str(), errstr, response[1]);
-      }
-      else if (Owner->DebugEnabled())
-	 ioprintf(std::clog, "http: SOCKS proxy %s connection established to %s (%s)\n",
-	       ProxyInfo.c_str(), ServerName.Host.c_str(), bindaddr.c_str());
-
-      if (WaitFd(ServerFd, true, Timeout) == false)
-	 return _error->Error("SOCKS proxy %s reported connection to %s (%s), but timed out",
-	       ProxyInfo.c_str(), ServerName.Host.c_str(), bindaddr.c_str());
-      #undef APT_ReadOrFail
-      #undef APT_WriteOrFail
+      if (UnwrapSocks(ServerName.Host, ServerName.Port == 0 ? 80 : ServerName.Port,
+		      Proxy, ServerFd, Owner->ConfigFindI("TimeOut", 120), Owner) == false)
+	 return false;
    }
    else
    {
@@ -539,8 +372,13 @@ bool HttpServerState::Open()
 	    Port = Proxy.Port;
 	 Host = Proxy.Host;
       }
-      return Connect(Host,Port,"http",80,ServerFd,TimeOut,Owner);
+      if (!Connect(Host, Port, tls ? "https" : "http", tls ? 443 : 80, ServerFd, TimeOut, Owner))
+	 return false;
    }
+
+   if (tls && UnwrapTLS(ServerName.Host, ServerFd, TimeOut, Owner) == false)
+      return false;
+
    return true;
 }
 									/*}}}*/
@@ -549,8 +387,7 @@ bool HttpServerState::Open()
 /* */
 bool HttpServerState::Close()
 {
-   close(ServerFd);
-   ServerFd = -1;
+   ServerFd->Close();
    return true;
 }
 									/*}}}*/
@@ -672,7 +509,7 @@ bool HttpServerState::WriteResponse(const std::string &Data)		/*{{{*/
 									/*}}}*/
 APT_PURE bool HttpServerState::IsOpen()					/*{{{*/
 {
-   return (ServerFd != -1);
+   return (ServerFd->Fd() != -1);
 }
 									/*}}}*/
 bool HttpServerState::InitHashes(HashStringList const &ExpectedHashes)	/*{{{*/
@@ -685,7 +522,7 @@ bool HttpServerState::InitHashes(HashStringList const &ExpectedHashes)	/*{{{*/
 void HttpServerState::Reset()						/*{{{*/
 {
    ServerState::Reset();
-   ServerFd = -1;
+   ServerFd->Close();
 }
 									/*}}}*/
 
@@ -710,7 +547,7 @@ bool HttpServerState::Die(RequestState &Req)
 	 SetNonBlock(Req.File.Fd(),false);
       while (In.WriteSpace() == true)
       {
-	 if (In.Write(Req.File.Fd()) == false)
+	 if (In.Write(MethodFd::FromFd(Req.File.Fd())) == false)
 	    return _error->Errno("write",_("Error writing to the file"));
 
 	 // Done
@@ -762,7 +599,7 @@ bool HttpServerState::Flush(FileFd * const File)
       
       while (In.WriteSpace() == true)
       {
-	 if (In.Write(File->Fd()) == false)
+	 if (In.Write(MethodFd::FromFd(File->Fd())) == false)
 	    return _error->Errno("write",_("Error writing to file"));
 	 if (In.IsLimit() == true)
 	    return true;
@@ -781,38 +618,45 @@ bool HttpServerState::Flush(FileFd * const File)
 bool HttpServerState::Go(bool ToFile, RequestState &Req)
 {
    // Server has closed the connection
-   if (ServerFd == -1 && (In.WriteSpace() == false || 
-			       ToFile == false))
+   if (ServerFd->Fd() == -1 && (In.WriteSpace() == false ||
+				ToFile == false))
       return false;
-   
+
+   // Handle server IO
+   if (ServerFd->HasPending() && In.ReadSpace() == true)
+   {
+      errno = 0;
+      if (In.Read(ServerFd) == false)
+	 return Die(Req);
+   }
+
    fd_set rfds,wfds;
    FD_ZERO(&rfds);
    FD_ZERO(&wfds);
    
    /* Add the server. We only send more requests if the connection will 
       be persisting */
-   if (Out.WriteSpace() == true && ServerFd != -1 
-       && Persistent == true)
-      FD_SET(ServerFd,&wfds);
-   if (In.ReadSpace() == true && ServerFd != -1)
-      FD_SET(ServerFd,&rfds);
-   
+   if (Out.WriteSpace() == true && ServerFd->Fd() != -1 && Persistent == true)
+      FD_SET(ServerFd->Fd(), &wfds);
+   if (In.ReadSpace() == true && ServerFd->Fd() != -1)
+      FD_SET(ServerFd->Fd(), &rfds);
+
    // Add the file
-   int FileFD = -1;
+   auto FileFD = MethodFd::FromFd(-1);
    if (Req.File.IsOpen())
-      FileFD = Req.File.Fd();
-   
-   if (In.WriteSpace() == true && ToFile == true && FileFD != -1)
-      FD_SET(FileFD,&wfds);
+      FileFD = MethodFd::FromFd(Req.File.Fd());
+
+   if (In.WriteSpace() == true && ToFile == true && FileFD->Fd() != -1)
+      FD_SET(FileFD->Fd(), &wfds);
 
    // Add stdin
    if (Owner->ConfigFindB("DependOnSTDIN", true) == true)
       FD_SET(STDIN_FILENO,&rfds);
 	  
    // Figure out the max fd
-   int MaxFd = FileFD;
-   if (MaxFd < ServerFd)
-      MaxFd = ServerFd;
+   int MaxFd = FileFD->Fd();
+   if (MaxFd < ServerFd->Fd())
+      MaxFd = ServerFd->Fd();
 
    // Select
    struct timeval tv;
@@ -833,14 +677,14 @@ bool HttpServerState::Go(bool ToFile, RequestState &Req)
    }
    
    // Handle server IO
-   if (ServerFd != -1 && FD_ISSET(ServerFd,&rfds))
+   if (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &rfds))
    {
       errno = 0;
       if (In.Read(ServerFd) == false)
 	 return Die(Req);
    }
-	 
-   if (ServerFd != -1 && FD_ISSET(ServerFd,&wfds))
+
+   if (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &wfds))
    {
       errno = 0;
       if (Out.Write(ServerFd) == false)
@@ -848,7 +692,7 @@ bool HttpServerState::Go(bool ToFile, RequestState &Req)
    }
 
    // Send data to the file
-   if (FileFD != -1 && FD_ISSET(FileFD,&wfds))
+   if (FileFD->Fd() != -1 && FD_ISSET(FileFD->Fd(), &wfds))
    {
       if (In.Write(FileFD) == false)
 	 return _error->Errno("write",_("Error writing to output file"));

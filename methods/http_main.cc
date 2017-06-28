@@ -11,7 +11,7 @@ int main(int, const char *argv[])
    // closes the connection (this is dealt with via ServerDie())
    signal(SIGPIPE, SIG_IGN);
    std::string Binary = flNotDir(argv[0]);
-   if (Binary.find('+') == std::string::npos && Binary != "http")
+   if (Binary.find('+') == std::string::npos && Binary != "https" && Binary != "http")
       Binary.append("+http");
    return HttpMethod(std::move(Binary)).Loop();
 }
