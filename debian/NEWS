@@ -1,5 +1,6 @@
-apt (1.5~) UNRELEASED; urgency=medium
+apt (1.5~alpha1) experimental; urgency=medium
 
+  [ Changes to unauthenticated repositories ]
   The security exception for apt-get to only raise warnings if it encounters
   unauthenticated repositories in the "update" command is gone now, so that it
   will raise errors just like apt and all other apt-based front-ends do since
@@ -10,7 +11,21 @@ apt (1.5~) UNRELEASED; urgency=medium
     Binary::apt-get::Acquire::AllowInsecureRepositories "true";
   See apt-secure(8) manpage for configuration details.
 
- -- David Kalnischkies <donkult@debian.org>  Wed, 28 Jun 2017 12:37:12 +0200
+  [ Experimental https support in http ]
+  The http method will eventually replace the curl-based https method, but for
+  now, this is an opt-in experiment that can be enabled by setting
+  Dir::Bin::Methods::https to "http". Known issues:
+    - We do not support HTTPS proxies yet
+    - We do not support proxying HTTPS connections yet (CONNECT)
+    - IssuerCert and SslForceVersion are unsupported
+  TLS code paths can be disabled by setting Acquire::AllowTLS to "false".
+
+  [ Release Info Changes ]
+  If values like Origin, Label, and Codename change in a Release file,
+  update fails, or asks a user (if interactive). Various
+  --allow-releaseinfo-change are provided for non-interactive use.
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 28 Jun 2017 19:49:30 +0200
 
 apt (1.4.2) unstable; urgency=medium
 

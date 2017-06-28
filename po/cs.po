@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-02-06 14:41+0100\n"
+"POT-Creation-Date: 2017-06-28 19:53+0200\n"
 "PO-Revision-Date: 2017-05-06 11:08+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -208,8 +208,8 @@ msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
-"Podrobnosti o vytváření a nastavení repositářů naleznete v manuálové "
-"stránce apt-secure(8)."
+"Podrobnosti o vytváření a nastavení repositářů naleznete v manuálové stránce "
+"apt-secure(8)."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -300,6 +300,18 @@ msgid "GPG error: %s: %s"
 msgstr "Chyba GPG: %s: %s"
 
 #: apt-pkg/acquire-item.cc
+#, fuzzy, c-format
+#| msgid ""
+#| "Skipping acquire of configured file '%s' as repository '%s' doesn't "
+#| "support architecture '%s'"
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
+"component '%s' (component misspelt in sources.list?)"
+msgstr ""
+"Přeskakuje se stažení souboru „%s“, protože repositář „%s“ nepodporuje "
+"architekturu „%s“"
+
+#: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
@@ -309,13 +321,16 @@ msgstr ""
 "architekturu „%s“"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "Skipping acquire of configured file '%s' as repository '%s' doesn't "
+#| "support architecture '%s'"
 msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
+"Skipping acquire of configured file '%s' as repository '%s' does not seem to "
+"provide it (sources.list entry misspelt?)"
 msgstr ""
-"V souboru Release nelze najít očekávanou položku „%s“ (chybný sources.list "
-"nebo porušený soubor)"
+"Přeskakuje se stažení souboru „%s“, protože repositář „%s“ nepodporuje "
+"architekturu „%s“"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -342,6 +357,31 @@ msgstr ""
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Konfliktní distribuce: %s (očekáváno %s, obdrženo %s)"
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
+msgstr ""
+
+#. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"More information about this can be found online in the Release notes at: %s"
+msgstr ""
+
+#. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"This must be accepted explicitly before updates for this repository can be "
+"applied. See %s manpage for details."
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -434,12 +474,6 @@ msgstr ""
 #, c-format
 msgid "Clean of %s is not supported"
 msgstr "Vyčištění %s není podporováno"
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
-#: methods/mirror.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "Nelze přejít do %s"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -629,6 +663,11 @@ msgstr "Zapisuje se nový seznam balíků\n"
 #: apt-pkg/cdrom.cc
 msgid "Source list entries for this disc are:\n"
 msgstr "Seznamy zdrojů na tomto disku jsou:\n"
+
+#: apt-pkg/clean.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Nelze přejít do %s"
 
 #: apt-pkg/clean.cc
 #, c-format
@@ -1038,7 +1077,6 @@ msgid ""
 msgstr ""
 "Release soubor %s neobsahuje Hash záznam, který by byl pro bezpečnost "
 "považován za dostatečně silný"
-
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -1628,6 +1666,12 @@ msgstr ""
 "Výměna média: vložte prosím disk nazvaný\n"
 " „%s“\n"
 "do mechaniky „%s“ a stiskněte [Enter]\n"
+
+#: apt-private/acqprogress.cc
+msgid ""
+"Do you want to accept these changes and continue updating from this "
+"repository?"
+msgstr ""
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -3485,7 +3529,7 @@ msgstr "Soubor nebyl nalezen"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr "Přímé spojení k doménám %s je implicitně blokováno."
 
-#: methods/connect.cc methods/http.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr "Připojování k %s (%s)"
@@ -3805,6 +3849,13 @@ msgstr "Spojení bylo předčasně ukončeno"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prázdné soubory nejsou platnými archivy"
+
+#~ msgid ""
+#~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "
+#~ "entry or malformed file)"
+#~ msgstr ""
+#~ "V souboru Release nelze najít očekávanou položku „%s“ (chybný sources."
+#~ "list nebo porušený soubor)"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "Nesplněné závislosti. Zkuste použít --fix-broken."

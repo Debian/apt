@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-01-27 21:41+0100\n"
+"POT-Creation-Date: 2017-06-28 19:53+0200\n"
 "PO-Revision-Date: 2017-01-06 04:50+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -305,6 +305,18 @@ msgid "GPG error: %s: %s"
 msgstr "GPG エラー: %s: %s"
 
 #: apt-pkg/acquire-item.cc
+#, fuzzy, c-format
+#| msgid ""
+#| "Skipping acquire of configured file '%s' as repository '%s' doesn't "
+#| "support architecture '%s'"
+msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
+"component '%s' (component misspelt in sources.list?)"
+msgstr ""
+"リポジトリ '%2$s' がアーキテクチャ '%3$s' をサポートしないため設定ファイル "
+"'%1$s' の取得をスキップ"
+
+#: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
@@ -314,13 +326,16 @@ msgstr ""
 "'%1$s' の取得をスキップ"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "Skipping acquire of configured file '%s' as repository '%s' doesn't "
+#| "support architecture '%s'"
 msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
+"Skipping acquire of configured file '%s' as repository '%s' does not seem to "
+"provide it (sources.list entry misspelt?)"
 msgstr ""
-"期待されるエントリ '%s' が Release ファイル内に見つかりません (誤った "
-"sources.list エントリか、壊れたファイル)"
+"リポジトリ '%2$s' がアーキテクチャ '%3$s' をサポートしないため設定ファイル "
+"'%1$s' の取得をスキップ"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -349,6 +364,31 @@ msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 "ディストリビューションが競合しています: %s (%s を期待していたのに %s を取得し"
 "ました)"
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
+msgstr ""
+
+#. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"More information about this can be found online in the Release notes at: %s"
+msgstr ""
+
+#. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"This must be accepted explicitly before updates for this repository can be "
+"applied. See %s manpage for details."
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -445,12 +485,6 @@ msgstr ""
 #, c-format
 msgid "Clean of %s is not supported"
 msgstr "%s の消去はサポートされていません"
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
-#: methods/mirror.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "%s へ変更することができません"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -648,6 +682,11 @@ msgstr "新しいソースリストを書き込んでいます\n"
 #: apt-pkg/cdrom.cc
 msgid "Source list entries for this disc are:\n"
 msgstr "このディスクのソースリストのエントリ:\n"
+
+#: apt-pkg/clean.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "%s へ変更することができません"
 
 #: apt-pkg/clean.cc
 #, c-format
@@ -1662,6 +1701,12 @@ msgstr ""
 " '%s'\n"
 "とラベルの付いたディスクをドライブ '%s' に入れて [Enter] キーを押してくださ"
 "い\n"
+
+#: apt-private/acqprogress.cc
+msgid ""
+"Do you want to accept these changes and continue updating from this "
+"repository?"
+msgstr ""
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -3529,7 +3574,7 @@ msgstr "ファイルが見つかりません"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr "%s ドメインへの直接の接続はデフォルトでブロックされています。"
 
-#: methods/connect.cc methods/http.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr "%s (%s) へ接続しています"
@@ -3848,3 +3893,10 @@ msgstr "途中で接続がクローズされました"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "空のファイルは有効なアーカイブと認められません"
+
+#~ msgid ""
+#~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "
+#~ "entry or malformed file)"
+#~ msgstr ""
+#~ "期待されるエントリ '%s' が Release ファイル内に見つかりません (誤った "
+#~ "sources.list エントリか、壊れたファイル)"

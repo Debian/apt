@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-02-06 14:41+0100\n"
+"POT-Creation-Date: 2017-06-28 19:53+0200\n"
 "PO-Revision-Date: 2013-12-15 16:45+0100\n"
 "Last-Translator: Julien Patriarca <leatherface@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -299,6 +299,13 @@ msgstr "Erreur de GPG : %s : %s"
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
+"component '%s' (component misspelt in sources.list?)"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
 msgstr ""
@@ -306,11 +313,9 @@ msgstr ""
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
+"Skipping acquire of configured file '%s' as repository '%s' does not seem to "
+"provide it (sources.list entry misspelt?)"
 msgstr ""
-"Impossible de trouver l'entrée « %s » attendue dans le fichier « Release » : "
-"ligne non valable dans sources.list ou fichier corrompu"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -335,6 +340,31 @@ msgstr ""
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Distribution en conflit : %s (%s attendu, mais %s obtenu)"
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
+msgstr ""
+
+#. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"More information about this can be found online in the Release notes at: %s"
+msgstr ""
+
+#. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"This must be accepted explicitly before updates for this repository can be "
+"applied. See %s manpage for details."
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -430,12 +460,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Clean of %s is not supported"
 msgstr "Le type de fichier d'index « %s » n'est pas accepté"
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
-#: methods/mirror.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "Impossible d'accéder à %s"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -643,6 +667,11 @@ msgstr "Écriture de la nouvelle liste de sources\n"
 #: apt-pkg/cdrom.cc
 msgid "Source list entries for this disc are:\n"
 msgstr "Les entrées de listes de sources pour ce disque sont :\n"
+
+#: apt-pkg/clean.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Impossible d'accéder à %s"
 
 #: apt-pkg/clean.cc
 #, c-format
@@ -1675,6 +1704,12 @@ msgstr ""
 "Changement de support : veuillez insérer le disque\n"
 "« %s »\n"
 "dans le lecteur « %s » et appuyez sur la touche Entrée\n"
+
+#: apt-private/acqprogress.cc
+msgid ""
+"Do you want to accept these changes and continue updating from this "
+"repository?"
+msgstr ""
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -3566,7 +3601,7 @@ msgstr "Fichier non trouvé"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr "Connexion à %s (%s)"
@@ -3894,6 +3929,13 @@ msgstr "Connexion fermée prématurément"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Les fichiers vides ne peuvent être des archives valables"
+
+#~ msgid ""
+#~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "
+#~ "entry or malformed file)"
+#~ msgstr ""
+#~ "Impossible de trouver l'entrée « %s » attendue dans le fichier "
+#~ "« Release » : ligne non valable dans sources.list ou fichier corrompu"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "Dépendances manquantes. Essayez d'utiliser l'option --fix-broken."

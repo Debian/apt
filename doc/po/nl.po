@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.4~beta4-nl\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-06-01 10:51+0200\n"
+"POT-Creation-Date: 2017-06-28 19:53+0200\n"
 "PO-Revision-Date: 2017-01-19 17:53+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -2047,6 +2047,28 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
 msgid ""
+"Allow the update command to continue downloading data from a repository "
+"which changed its information of the release contained in the repository "
+"indicating e.g a new major release.  APT will fail at the update command for "
+"such repositories until the change is confirmed to ensure the user is "
+"prepared for the change.  See also &apt-secure; for details on the concept "
+"and configuration."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"Specialist options (<literal>--allow-releaseinfo-changes-</"
+"literal><replaceable>field</replaceable>)  exist to allow changes only for "
+"certain fields like <literal>origin</literal>, <literal>label</literal>, "
+"<literal>codename</literal>, <literal>suite</literal>, <literal>version</"
+"literal> and <literal>defaultpin</literal>. See also &apt-preferences;.  "
+"Configuration Item: <literal>Acquire::AllowReleaseInfoChanges</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
 "Show user friendly progress information in the terminal window when packages "
 "are installed, upgraded or removed. For a machine parsable version of this "
 "data see README.progress-reporting in the apt doc directory.  Configuration "
@@ -3210,13 +3232,24 @@ msgstr "Ondersteuning in APT voor de authenticatie van archieven"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "Starting with version 0.6, <command>APT</command> contains code that does "
+#| "signature checking of the Release file for all repositories. This ensures "
+#| "that data like packages in the archive can't be modified by people who "
+#| "have no access to the Release file signing key. Starting with version 1.1 "
+#| "<command>APT</command> requires repositories to provide recent "
+#| "authentication information for unimpeded usage of the repository."
 msgid ""
 "Starting with version 0.6, <command>APT</command> contains code that does "
 "signature checking of the Release file for all repositories. This ensures "
 "that data like packages in the archive can't be modified by people who have "
 "no access to the Release file signing key. Starting with version 1.1 "
 "<command>APT</command> requires repositories to provide recent "
-"authentication information for unimpeded usage of the repository."
+"authentication information for unimpeded usage of the repository. Since "
+"version 1.5 changes in the information contained in the Release file about "
+"the repository need to be confirmed before APT continues to apply updates "
+"from this repository."
 msgstr ""
 "Met ingang van versie 0.6 bevat <command>APT</command> code die voor alle "
 "pakketbronnen de ondertekening controleert van het bestand Release. Dit "
@@ -3225,6 +3258,26 @@ msgstr ""
 "waarmee het bestand Release ondertekend wordt. Met ingang van versie 1.1 "
 "vereist <command>APT</command> dat pakketbronnen recente authenticatie-"
 "informatie verstrekken om die pakketbron ongehinderd te kunnen gebruiken."
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-secure.8.xml
+msgid ""
+"Note: All APT-based package management front-ends like &apt-get;, &aptitude; "
+"and &synaptic; support this authentication feature, so this manpage uses "
+"<literal>APT</literal> to refer to them all for simplicity only."
+msgstr ""
+"Opmerking: Alle op APT gebaseerde front-ends voor pakketbeheer, zoals &apt-"
+"get;, &aptitude; en &synaptic;, ondersteunen deze "
+"authenticatiefunctionaliteit. Het is enkel om het eenvoudig te houden dat "
+"deze man-pagina van <literal>APT</literal> gebruikt wordt om die "
+"functionaliteit aan ze allemaal toe te schrijven."
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-secure.8.xml
+#, fuzzy
+#| msgid "Trusted Repositories"
+msgid "Unsigned Repositories"
+msgstr "Betrouwbare pakketarchieven"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3242,27 +3295,6 @@ msgstr ""
 "zoals &apt-get;, om een expliciete bevestiging vragen als bij een "
 "installatieverzoek een pakket uit een dergelijk niet-geauthenticeerd archief "
 "betrokken is."
-
-#. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml
-msgid ""
-"As a temporary exception &apt-get; (not &apt;!) raises warnings only if it "
-"encounters unauthenticated archives to give a slightly longer grace period "
-"on this backward compatibility effecting change. This exception will be "
-"removed in future releases and you can opt-out of this grace period by "
-"setting the configuration option <option>Binary::apt-get::Acquire::"
-"AllowInsecureRepositories</option> to <literal>false</literal> or <option>--"
-"no-allow-insecure-repositories</option> on the command line."
-msgstr ""
-"Bij wijze van tijdelijke uitzondering geeft &apt-get; (niet &apt;!) enkel "
-"waarschuwingen als het niet-geauthenticeerde archieven tegenkomt om zo deze "
-"wijziging die de compatibiliteit aantast, enigszins langer uit te stellen. "
-"Deze uitzondering zal uit toekomstige uitgaven verwijderd worden en u kunt "
-"nu reeds kiezen om geen gebruik te maken van dit uitstel door de "
-"configuratie-optie <option>Binary::apt-get::Acquire::"
-"AllowInsecureRepositories</option> op <literal>false</literal> in te stellen "
-"of door aan de commandoregel de optie <option>--no-allow-insecure-"
-"repositories</option> te gebruiken."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3308,22 +3340,11 @@ msgstr ""
 "te stellen of voor individuele pakketbronnen door de optie <literal>allow-"
 "downgrade-to-insecure=yes</literal> te gebruiken in &sources-list;."
 
-#. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml
-msgid ""
-"Note: All APT-based package management front-ends like &apt-get;, &aptitude; "
-"and &synaptic; support this authentication feature, so this manpage uses "
-"<literal>APT</literal> to refer to them all for simplicity only."
-msgstr ""
-"Opmerking: Alle op APT gebaseerde front-ends voor pakketbeheer, zoals &apt-"
-"get;, &aptitude; en &synaptic;, ondersteunen deze "
-"authenticatiefunctionaliteit. Het is enkel om het eenvoudig te houden dat "
-"deze man-pagina van <literal>APT</literal> gebruikt wordt om die "
-"functionaliteit aan ze allemaal toe te schrijven."
-
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-msgid "Trusted Repositories"
+#, fuzzy
+#| msgid "Trusted Repositories"
+msgid "Signed Repositories"
 msgstr "Betrouwbare pakketarchieven"
 
 #. type: Content of: <refentry><refsect1><para>
@@ -3468,6 +3489,30 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
+msgid "Information changes"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-secure.8.xml
+msgid ""
+"A Release file contains beside the checksums for the files in the repository "
+"also general information about the repository like the origin, codename or "
+"version number of the release."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-secure.8.xml
+msgid ""
+"This information is shown in various places so a repository owner should "
+"always ensure correctness. Further more user configuration like &apt-"
+"preferences; can depend and make use of this information. Since version 1.5 "
+"the user must therefore explicitly confirm changes to signal that the user "
+"is sufficently prepared e.g. for the new major release of the distribution "
+"shipped in the repository (as e.g. indicated by the codename)."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-secure.8.xml
 msgid "User Configuration"
 msgstr "Configuratie op gebruikersniveau"
 
@@ -3519,8 +3564,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-msgid "Archive Configuration"
-msgstr "Configuratie op archiefniveau"
+#, fuzzy
+#| msgid "User Configuration"
+msgid "Repository Configuration"
+msgstr "Configuratie op gebruikersniveau"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -4634,6 +4681,14 @@ msgstr ""
 "archief toe te voegen aan de optienaam. Hetzelfde effect kan voor specifieke "
 "regels uit &sources-list; bereikt worden door daar de optie <option>Valid-"
 "Until-Min</option> te gebruiken, wat bij voorkeur gedaan zou moeten worden."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"Allow use of the internal TLS support in the http method. If set to false, "
+"this completely disables support for TLS in apt's own methods (excluding the "
+"curl-based https method). No TLS-related functions will be called anymore."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -11507,6 +11562,28 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 msgid "Which will use the already fetched archives on the disc."
 msgstr ""
 "En dit zal gebruik maken van de reeds opgehaalde archieven op de schijf."
+
+#~ msgid ""
+#~ "As a temporary exception &apt-get; (not &apt;!) raises warnings only if "
+#~ "it encounters unauthenticated archives to give a slightly longer grace "
+#~ "period on this backward compatibility effecting change. This exception "
+#~ "will be removed in future releases and you can opt-out of this grace "
+#~ "period by setting the configuration option <option>Binary::apt-get::"
+#~ "Acquire::AllowInsecureRepositories</option> to <literal>false</literal> "
+#~ "or <option>--no-allow-insecure-repositories</option> on the command line."
+#~ msgstr ""
+#~ "Bij wijze van tijdelijke uitzondering geeft &apt-get; (niet &apt;!) enkel "
+#~ "waarschuwingen als het niet-geauthenticeerde archieven tegenkomt om zo "
+#~ "deze wijziging die de compatibiliteit aantast, enigszins langer uit te "
+#~ "stellen. Deze uitzondering zal uit toekomstige uitgaven verwijderd worden "
+#~ "en u kunt nu reeds kiezen om geen gebruik te maken van dit uitstel door "
+#~ "de configuratie-optie <option>Binary::apt-get::Acquire::"
+#~ "AllowInsecureRepositories</option> op <literal>false</literal> in te "
+#~ "stellen of door aan de commandoregel de optie <option>--no-allow-insecure-"
+#~ "repositories</option> te gebruiken."
+
+#~ msgid "Archive Configuration"
+#~ msgstr "Configuratie op archiefniveau"
 
 #~ msgid "dpkg trigger usage (and related options)"
 #~ msgstr "het gebruik van triggers door dpkg (en gerelateerde opties)"

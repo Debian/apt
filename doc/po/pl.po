@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-06-01 10:51+0200\n"
+"POT-Creation-Date: 2017-06-28 19:53+0200\n"
 "PO-Revision-Date: 2014-07-04 02:13+0200\n"
 "Last-Translator: Robert Luberda <robert@debian.org>\n"
 "Language-Team: Polish <manpages-pl-list@lists.sourceforge.net>\n"
@@ -2062,6 +2062,28 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
 msgid ""
+"Allow the update command to continue downloading data from a repository "
+"which changed its information of the release contained in the repository "
+"indicating e.g a new major release.  APT will fail at the update command for "
+"such repositories until the change is confirmed to ensure the user is "
+"prepared for the change.  See also &apt-secure; for details on the concept "
+"and configuration."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"Specialist options (<literal>--allow-releaseinfo-changes-</"
+"literal><replaceable>field</replaceable>)  exist to allow changes only for "
+"certain fields like <literal>origin</literal>, <literal>label</literal>, "
+"<literal>codename</literal>, <literal>suite</literal>, <literal>version</"
+"literal> and <literal>defaultpin</literal>. See also &apt-preferences;.  "
+"Configuration Item: <literal>Acquire::AllowReleaseInfoChanges</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
 "Show user friendly progress information in the terminal window when packages "
 "are installed, upgraded or removed. For a machine parsable version of this "
 "data see README.progress-reporting in the apt doc directory.  Configuration "
@@ -3227,12 +3249,36 @@ msgid ""
 "that data like packages in the archive can't be modified by people who have "
 "no access to the Release file signing key. Starting with version 1.1 "
 "<command>APT</command> requires repositories to provide recent "
-"authentication information for unimpeded usage of the repository."
+"authentication information for unimpeded usage of the repository. Since "
+"version 1.5 changes in the information contained in the Release file about "
+"the repository need to be confirmed before APT continues to apply updates "
+"from this repository."
 msgstr ""
 "Począwszy od wersji 0.6 <command>apt</command> zawiera kod sprawdzający "
 "sygnatury plików \"Release\" wszystkich archiwów. Zapewnia to, że pakiety w "
 "archiwum nie mogą być zmieniane przez ludzi nie mających dostępu do klucza "
 "używanego do podpisywania plików \"Release\"."
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "The package front-ends &apt-get;, &aptitude; and &synaptic; support this "
+#| "new authentication feature."
+msgid ""
+"Note: All APT-based package management front-ends like &apt-get;, &aptitude; "
+"and &synaptic; support this authentication feature, so this manpage uses "
+"<literal>APT</literal> to refer to them all for simplicity only."
+msgstr ""
+"Nakładki na APT typu &apt-get;, &aptitude; i &synaptic; obsługują ten nowy "
+"sposób autoryzacji pakietów."
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-secure.8.xml
+#, fuzzy
+#| msgid "Trusted archives"
+msgid "Unsigned Repositories"
+msgstr "Zaufane archiwa"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3242,18 +3288,6 @@ msgid ""
 "<command>update</command> operations and even if forced to download front-"
 "ends like &apt-get; will require explicit confirmation if an installation "
 "request includes a package from such an unauthenticated archive."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml
-msgid ""
-"As a temporary exception &apt-get; (not &apt;!) raises warnings only if it "
-"encounters unauthenticated archives to give a slightly longer grace period "
-"on this backward compatibility effecting change. This exception will be "
-"removed in future releases and you can opt-out of this grace period by "
-"setting the configuration option <option>Binary::apt-get::Acquire::"
-"AllowInsecureRepositories</option> to <literal>false</literal> or <option>--"
-"no-allow-insecure-repositories</option> on the command line."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
@@ -3282,25 +3316,11 @@ msgid ""
 "list; option <literal>allow-downgrade-to-insecure=yes</literal>."
 msgstr ""
 
-#. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "The package front-ends &apt-get;, &aptitude; and &synaptic; support this "
-#| "new authentication feature."
-msgid ""
-"Note: All APT-based package management front-ends like &apt-get;, &aptitude; "
-"and &synaptic; support this authentication feature, so this manpage uses "
-"<literal>APT</literal> to refer to them all for simplicity only."
-msgstr ""
-"Nakładki na APT typu &apt-get;, &aptitude; i &synaptic; obsługują ten nowy "
-"sposób autoryzacji pakietów."
-
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
 #, fuzzy
 #| msgid "Trusted archives"
-msgid "Trusted Repositories"
+msgid "Signed Repositories"
 msgstr "Zaufane archiwa"
 
 #. type: Content of: <refentry><refsect1><para>
@@ -3461,6 +3481,30 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
+msgid "Information changes"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-secure.8.xml
+msgid ""
+"A Release file contains beside the checksums for the files in the repository "
+"also general information about the repository like the origin, codename or "
+"version number of the release."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-secure.8.xml
+msgid ""
+"This information is shown in various places so a repository owner should "
+"always ensure correctness. Further more user configuration like &apt-"
+"preferences; can depend and make use of this information. Since version 1.5 "
+"the user must therefore explicitly confirm changes to signal that the user "
+"is sufficently prepared e.g. for the new major release of the distribution "
+"shipped in the repository (as e.g. indicated by the codename)."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-secure.8.xml
 #, fuzzy
 #| msgid "User configuration"
 msgid "User Configuration"
@@ -3514,9 +3558,9 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
 #, fuzzy
-#| msgid "Archive configuration"
-msgid "Archive Configuration"
-msgstr "Konfiguracja archiwum"
+#| msgid "User configuration"
+msgid "Repository Configuration"
+msgstr "Konfiguracja użytkownika"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -4421,6 +4465,14 @@ msgid ""
 "label of the archive to the option name. Preferably, the same can be "
 "achieved for specific &sources-list; entries by using the <option>Valid-"
 "Until-Min</option> option there."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"Allow use of the internal TLS support in the http method. If set to false, "
+"this completely disables support for TLS in apt's own methods (excluding the "
+"curl-based https method). No TLS-related functions will be called anymore."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -10331,6 +10383,11 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 #: offline.dbk
 msgid "Which will use the already fetched archives on the disc."
 msgstr "Które użyje pobranych uprzednio archiwów z dysku."
+
+#, fuzzy
+#~| msgid "Archive configuration"
+#~ msgid "Archive Configuration"
+#~ msgstr "Konfiguracja archiwum"
 
 #~ msgid ""
 #~ "DPkg::NoTriggers \"true\";\n"

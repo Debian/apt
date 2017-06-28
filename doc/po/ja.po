@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-06-01 10:51+0200\n"
+"POT-Creation-Date: 2017-06-28 19:53+0200\n"
 "PO-Revision-Date: 2017-01-06 04:50+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -1948,6 +1948,28 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
 msgid ""
+"Allow the update command to continue downloading data from a repository "
+"which changed its information of the release contained in the repository "
+"indicating e.g a new major release.  APT will fail at the update command for "
+"such repositories until the change is confirmed to ensure the user is "
+"prepared for the change.  See also &apt-secure; for details on the concept "
+"and configuration."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"Specialist options (<literal>--allow-releaseinfo-changes-</"
+"literal><replaceable>field</replaceable>)  exist to allow changes only for "
+"certain fields like <literal>origin</literal>, <literal>label</literal>, "
+"<literal>codename</literal>, <literal>suite</literal>, <literal>version</"
+"literal> and <literal>defaultpin</literal>. See also &apt-preferences;.  "
+"Configuration Item: <literal>Acquire::AllowReleaseInfoChanges</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
 "Show user friendly progress information in the terminal window when packages "
 "are installed, upgraded or removed. For a machine parsable version of this "
 "data see README.progress-reporting in the apt doc directory.  Configuration "
@@ -3049,13 +3071,24 @@ msgstr "APT アーカイブ認証サポート"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "Starting with version 0.6, <command>APT</command> contains code that does "
+#| "signature checking of the Release file for all repositories. This ensures "
+#| "that data like packages in the archive can't be modified by people who "
+#| "have no access to the Release file signing key. Starting with version 1.1 "
+#| "<command>APT</command> requires repositories to provide recent "
+#| "authentication information for unimpeded usage of the repository."
 msgid ""
 "Starting with version 0.6, <command>APT</command> contains code that does "
 "signature checking of the Release file for all repositories. This ensures "
 "that data like packages in the archive can't be modified by people who have "
 "no access to the Release file signing key. Starting with version 1.1 "
 "<command>APT</command> requires repositories to provide recent "
-"authentication information for unimpeded usage of the repository."
+"authentication information for unimpeded usage of the repository. Since "
+"version 1.5 changes in the information contained in the Release file about "
+"the repository need to be confirmed before APT continues to apply updates "
+"from this repository."
 msgstr ""
 "バージョン 0.6 より、<command>APT</command> は全リポジトリに対する Release "
 "ファイルの署名チェックコードを収録しています。これにより、アーカイブのパッ"
@@ -3063,6 +3096,25 @@ msgstr ""
 "変更されていないことを保証します。バージョン 1.1 からは、<command>APT</"
 "command> はリポジトリに対し、そのリポジトリが最近遅滞なく使えていることを証明"
 "する情報の提供を要求します。"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-secure.8.xml
+msgid ""
+"Note: All APT-based package management front-ends like &apt-get;, &aptitude; "
+"and &synaptic; support this authentication feature, so this manpage uses "
+"<literal>APT</literal> to refer to them all for simplicity only."
+msgstr ""
+"注意: &apt-get;、&aptitude;、&synaptic; といった APT ベースのパッケージ管理フ"
+"ロントエンドは全てこの新しい証明機能をサポートしています。この man ページでは"
+"単純化するためだけに、その全てを参照するのに <literal>APT</literal> を使って"
+"います。"
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-secure.8.xml
+#, fuzzy
+#| msgid "Trusted Repositories"
+msgid "Unsigned Repositories"
+msgstr "信頼済リポジトリ"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3079,25 +3131,6 @@ msgstr ""
 "も、インストール要求に証明されていないアーカイブからのパッケージが含まれる場"
 "合には <command>apt-get</command> のようなフロントエンドは明示的な確認を要求"
 "します。"
-
-#. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml
-msgid ""
-"As a temporary exception &apt-get; (not &apt;!) raises warnings only if it "
-"encounters unauthenticated archives to give a slightly longer grace period "
-"on this backward compatibility effecting change. This exception will be "
-"removed in future releases and you can opt-out of this grace period by "
-"setting the configuration option <option>Binary::apt-get::Acquire::"
-"AllowInsecureRepositories</option> to <literal>false</literal> or <option>--"
-"no-allow-insecure-repositories</option> on the command line."
-msgstr ""
-"一時的な例外として &apt-get; (not &apt;!) はこの後方互換性に影響のある変更に"
-"対応するための少しばかり長い猶予期間として、証明されていないアーカイブについ"
-"てのみ警告します。この例外は将来のリリースでは削除され、設定オプション "
-"<option>Binary::apt-get::Acquire::AllowInsecureRepositories</option> に "
-"<literal>false</literal> を設定するかコマンドラインで <option>--no-allow-"
-"insecure-repositories</option> を指定することでこの猶予期間を無効化することも"
-"できます。"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3141,21 +3174,11 @@ msgstr ""
 "<literal>allow-downgrade-to-insecure=yes</literal> を個々のリポジトリに設定す"
 "ることでこのエラーを無視させることもできます。"
 
-#. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml
-msgid ""
-"Note: All APT-based package management front-ends like &apt-get;, &aptitude; "
-"and &synaptic; support this authentication feature, so this manpage uses "
-"<literal>APT</literal> to refer to them all for simplicity only."
-msgstr ""
-"注意: &apt-get;、&aptitude;、&synaptic; といった APT ベースのパッケージ管理フ"
-"ロントエンドは全てこの新しい証明機能をサポートしています。この man ページでは"
-"単純化するためだけに、その全てを参照するのに <literal>APT</literal> を使って"
-"います。"
-
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-msgid "Trusted Repositories"
+#, fuzzy
+#| msgid "Trusted Repositories"
+msgid "Signed Repositories"
 msgstr "信頼済リポジトリ"
 
 #. type: Content of: <refentry><refsect1><para>
@@ -3289,6 +3312,30 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
+msgid "Information changes"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-secure.8.xml
+msgid ""
+"A Release file contains beside the checksums for the files in the repository "
+"also general information about the repository like the origin, codename or "
+"version number of the release."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-secure.8.xml
+msgid ""
+"This information is shown in various places so a repository owner should "
+"always ensure correctness. Further more user configuration like &apt-"
+"preferences; can depend and make use of this information. Since version 1.5 "
+"the user must therefore explicitly confirm changes to signal that the user "
+"is sufficently prepared e.g. for the new major release of the distribution "
+"shipped in the repository (as e.g. indicated by the codename)."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-secure.8.xml
 msgid "User Configuration"
 msgstr "ユーザ設定"
 
@@ -3337,8 +3384,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-msgid "Archive Configuration"
-msgstr "アーカイブ設定"
+#, fuzzy
+#| msgid "User Configuration"
+msgid "Repository Configuration"
+msgstr "ユーザ設定"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -4375,6 +4424,14 @@ msgstr ""
 "ださい。オプション名にアーカイブのラベルを付与することで、アーカイブ固有の設"
 "定を作成できます。または、<option>Valid-Until-Min</option> オプションを使用し"
 "て特定の &sources-list; エントリで同じことを達成できます。"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"Allow use of the internal TLS support in the http method. If set to false, "
+"this completely disables support for TLS in apt's own methods (excluding the "
+"curl-based https method). No TLS-related functions will be called anymore."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -10824,3 +10881,23 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 #: offline.dbk
 msgid "Which will use the already fetched archives on the disc."
 msgstr "これで、ディスクにある取得済みのアーカイブを使用するようになります。"
+
+#~ msgid ""
+#~ "As a temporary exception &apt-get; (not &apt;!) raises warnings only if "
+#~ "it encounters unauthenticated archives to give a slightly longer grace "
+#~ "period on this backward compatibility effecting change. This exception "
+#~ "will be removed in future releases and you can opt-out of this grace "
+#~ "period by setting the configuration option <option>Binary::apt-get::"
+#~ "Acquire::AllowInsecureRepositories</option> to <literal>false</literal> "
+#~ "or <option>--no-allow-insecure-repositories</option> on the command line."
+#~ msgstr ""
+#~ "一時的な例外として &apt-get; (not &apt;!) はこの後方互換性に影響のある変更"
+#~ "に対応するための少しばかり長い猶予期間として、証明されていないアーカイブに"
+#~ "ついてのみ警告します。この例外は将来のリリースでは削除され、設定オプショ"
+#~ "ン <option>Binary::apt-get::Acquire::AllowInsecureRepositories</option> "
+#~ "に <literal>false</literal> を設定するかコマンドラインで <option>--no-"
+#~ "allow-insecure-repositories</option> を指定することでこの猶予期間を無効化"
+#~ "することもできます。"
+
+#~ msgid "Archive Configuration"
+#~ msgstr "アーカイブ設定"

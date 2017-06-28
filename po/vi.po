@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-02-06 14:41+0100\n"
+"POT-Creation-Date: 2017-06-28 19:53+0200\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -301,6 +301,13 @@ msgstr "Lỗi GPG: %s: %s"
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
+"component '%s' (component misspelt in sources.list?)"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
 msgstr ""
@@ -308,11 +315,9 @@ msgstr ""
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
+"Skipping acquire of configured file '%s' as repository '%s' does not seem to "
+"provide it (sources.list entry misspelt?)"
 msgstr ""
-"Không tìm thấy mục cần thiết “%s” trong tập tin Phát hành (Sai mục trong "
-"sources.list hoặc tập tin bị hỏng)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -337,6 +342,31 @@ msgstr ""
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Bản phát hành xung đột: %s (cần %s nhưng lại nhận được %s)"
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
+msgstr ""
+
+#. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"More information about this can be found online in the Release notes at: %s"
+msgstr ""
+
+#. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"This must be accepted explicitly before updates for this repository can be "
+"applied. See %s manpage for details."
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -428,12 +458,6 @@ msgstr ""
 #, c-format
 msgid "Clean of %s is not supported"
 msgstr "Không hỗ trợ việc xóa %s"
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
-#: methods/mirror.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "Không thể chuyển đổi sang %s"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -625,6 +649,11 @@ msgstr "Đang ghi danh sách nguồn mới\n"
 #: apt-pkg/cdrom.cc
 msgid "Source list entries for this disc are:\n"
 msgstr "Các mục tin danh sách nguồn cho đĩa này:\n"
+
+#: apt-pkg/clean.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Không thể chuyển đổi sang %s"
 
 #: apt-pkg/clean.cc
 #, c-format
@@ -1635,6 +1664,12 @@ msgstr ""
 "Chuyển đổi thiết bị lưu trữ: vui lòng đưa đĩa có nhãn\n"
 " “%s”\n"
 "vào ổ “%s” rồi bấm nút Enter\n"
+
+#: apt-private/acqprogress.cc
+msgid ""
+"Do you want to accept these changes and continue updating from this "
+"repository?"
+msgstr ""
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -3503,7 +3538,7 @@ msgstr "Không tìm thấy tập tin"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr "Đang kết nối đến %s (%s)"
@@ -3824,6 +3859,13 @@ msgstr "Kết nối bị đóng bất ngờ"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
+
+#~ msgid ""
+#~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "
+#~ "entry or malformed file)"
+#~ msgstr ""
+#~ "Không tìm thấy mục cần thiết “%s” trong tập tin Phát hành (Sai mục trong "
+#~ "sources.list hoặc tập tin bị hỏng)"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr ""

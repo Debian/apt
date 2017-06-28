@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-02-06 14:41+0100\n"
+"POT-Creation-Date: 2017-06-28 19:53+0200\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -301,6 +301,13 @@ msgstr "GPG-fel: %s: %s"
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
+"component '%s' (component misspelt in sources.list?)"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
 msgstr ""
@@ -308,11 +315,9 @@ msgstr ""
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
+"Skipping acquire of configured file '%s' as repository '%s' does not seem to "
+"provide it (sources.list entry misspelt?)"
 msgstr ""
-"Kunde inte hitta förväntad post ”%s” i Release-fil (Felaktig sources.list-"
-"post eller fel format på fil)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -337,6 +342,31 @@ msgstr ""
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Konflikt i distribution: %s (förväntade %s men fick %s)"
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
+msgstr ""
+
+#. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"More information about this can be found online in the Release notes at: %s"
+msgstr ""
+
+#. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"This must be accepted explicitly before updates for this repository can be "
+"applied. See %s manpage for details."
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -431,13 +461,6 @@ msgstr ""
 #, c-format
 msgid "Clean of %s is not supported"
 msgstr "Rensning av %s stöds inte"
-
-# Felmeddelande för misslyckad chdir
-#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
-#: methods/mirror.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "Kunde inte byta till %s"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -634,6 +657,12 @@ msgstr "Skriver ny källista\n"
 #: apt-pkg/cdrom.cc
 msgid "Source list entries for this disc are:\n"
 msgstr "Poster i källistan för denna skiva:\n"
+
+# Felmeddelande för misslyckad chdir
+#: apt-pkg/clean.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Kunde inte byta till %s"
 
 #: apt-pkg/clean.cc
 #, c-format
@@ -1643,6 +1672,12 @@ msgstr ""
 "Mediabyte: Mata in skivan med etiketten\n"
 " ”%s”\n"
 "i enheten ”%s” och tryck på [Retur]\n"
+
+#: apt-private/acqprogress.cc
+msgid ""
+"Do you want to accept these changes and continue updating from this "
+"repository?"
+msgstr ""
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -3506,7 +3541,7 @@ msgstr "Filen hittades inte"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr "Ansluter till %s (%s)"
@@ -3833,6 +3868,13 @@ msgstr "Anslutningen stängdes i förtid"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomma filer kan inte vara giltiga arkiv"
+
+#~ msgid ""
+#~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "
+#~ "entry or malformed file)"
+#~ msgstr ""
+#~ "Kunde inte hitta förväntad post ”%s” i Release-fil (Felaktig sources.list-"
+#~ "post eller fel format på fil)"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "Otillfredsställda beroenden. Prova med --fix-broken."

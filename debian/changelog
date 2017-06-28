@@ -1,3 +1,44 @@
+apt (1.5~alpha1) experimental; urgency=medium
+
+  [ Julian Andres Klode ]
+  * pkgcache: Bump major version to 12
+  * Squashed 'triehash/' changes from 565fde4e7..0ca66b761
+  * methods: Add HTTPS support to http method, using GnuTLS.
+    The http method will eventually replace the curl-based
+    https method, but for now, this is an opt-in experiment
+    that can be enabled by setting Dir::Bin::Methods::https
+    to "http".
+    Known issues:
+    - We do not support HTTPS proxies yet
+    - We do not support proxying HTTPS connections yet (CONNECT)
+    - IssuerCert and SslForceVersion are unsupported
+  * Allow building without curl
+  * Introduce Acquire::AllowTLS to turn off TLS support
+  * Skip test-apt-download-progress
+  * Strip 0: epochs from the version hash
+
+  [ David Kalnischkies ]
+  * schedule the correct side of the conflict for removal.
+    Thanks to Michael Biebl for helping find this with countless tests
+  * don't show incorrect 'How odd' errror in no-download mode (Closes: 863635)
+  * Show permission error if ProxyAutoDetect cmd can't be executed
+    (Closes: 857885)
+  * Avoid chdir in acquire clean with unlinkat (Closes: 860738)
+  * ident a CD without changing directory
+  * clean archives without changing directory
+  * avoid changing directory in mirror method
+  * warn if an expected file can't be acquired
+  * show .diff/Index properly as ignored if we fallback
+  * fail InRelease on non-404 HTTP errorcodes
+  * deal with 3xx httpcodes as required by HTTP/1.1 spec
+  * fail instead of warn on insecure repositories in apt-get
+  * error in update on Release information changes
+  * show a Release-Notes URI if infos were changed
+  * allow frontends to override releaseinfo change behaviour
+  * ask for releaseinfo change interactively in apt
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 28 Jun 2017 19:52:24 +0200
+
 apt (1.4.6) unstable; urgency=medium
 
   * apt.systemd.daily: Do not pass -d to unattended-upgrade for the download

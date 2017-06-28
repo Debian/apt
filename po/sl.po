@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-02-06 14:41+0100\n"
+"POT-Creation-Date: 2017-06-28 19:53+0200\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -297,6 +297,13 @@ msgstr "Napaka GPG: %s: %s"
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
+"Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
+"component '%s' (component misspelt in sources.list?)"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
 msgstr ""
@@ -304,11 +311,9 @@ msgstr ""
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
+"Skipping acquire of configured file '%s' as repository '%s' does not seem to "
+"provide it (sources.list entry misspelt?)"
 msgstr ""
-"Ni mogoče najti pričakovanega vnosa '%s' v datoteki Release (napačen vnos "
-"sources.list ali slabo oblikovana datoteka)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -333,6 +338,31 @@ msgstr ""
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Distribucija v sporu: %s (pričakovana %s, toda dobljena %s)"
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
+msgstr ""
+
+#. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"More information about this can be found online in the Release notes at: %s"
+msgstr ""
+
+#. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"This must be accepted explicitly before updates for this repository can be "
+"applied. See %s manpage for details."
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -424,12 +454,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Clean of %s is not supported"
 msgstr "Vrsta datoteke s kazalom '%s' ni podprta"
-
-#: apt-pkg/acquire.cc apt-pkg/clean.cc apt-pkg/contrib/cdromutl.cc
-#: methods/mirror.cc
-#, c-format
-msgid "Unable to change to %s"
-msgstr "Ni mogoče spremeniti v %s"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -620,6 +644,11 @@ msgstr "Pisanje novega seznama virov\n"
 #: apt-pkg/cdrom.cc
 msgid "Source list entries for this disc are:\n"
 msgstr "Izvorni vnosi za ta disk so:\n"
+
+#: apt-pkg/clean.cc
+#, c-format
+msgid "Unable to change to %s"
+msgstr "Ni mogoče spremeniti v %s"
 
 #: apt-pkg/clean.cc
 #, c-format
@@ -1621,6 +1650,12 @@ msgstr ""
 "Sprememba medija: vstavite disk z oznako\n"
 " '%s'\n"
 "v enoto '%s' in pritisnite vnosno tipko\n"
+
+#: apt-private/acqprogress.cc
+msgid ""
+"Do you want to accept these changes and continue updating from this "
+"repository?"
+msgstr ""
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -3481,7 +3516,7 @@ msgstr "Datoteke ni mogoče najti"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr "Povezovanje z %s (%s)"
@@ -3800,6 +3835,13 @@ msgstr "Povezava se je prezgodaj zaprla"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prazne datoteke ne morejo biti veljavni arhivi"
+
+#~ msgid ""
+#~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "
+#~ "entry or malformed file)"
+#~ msgstr ""
+#~ "Ni mogoče najti pričakovanega vnosa '%s' v datoteki Release (napačen vnos "
+#~ "sources.list ali slabo oblikovana datoteka)"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "Nerešene odvisnosti. Poskusite uporabiti --fix-broken."
