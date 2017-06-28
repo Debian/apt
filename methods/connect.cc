@@ -640,6 +640,9 @@ struct TlsFd : public MethodFd
 bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
 	       unsigned long Timeout, aptMethod *Owner)
 {
+   if (_config->FindB("Acquire::AllowTLS", true) == false)
+      return _error->Error("TLS support has been disabled: Acquire::AllowTLS is false.");
+
    int err;
    TlsFd *tlsFd = new TlsFd();
 

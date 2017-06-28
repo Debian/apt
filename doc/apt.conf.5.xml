@@ -357,6 +357,15 @@ APT::Compressor::rev {
 	 </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>AllowTLS</option></term>
+     <listitem><para>
+     Allow use of the internal TLS support in the http method. If set to false,
+     this completely disables support for TLS in apt's own methods (excluding
+     the curl-based https method). No TLS-related functions will be called
+     anymore.
+     </para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>PDiffs</option></term>
 	 <listitem><para>Try to download deltas called <literal>PDiffs</literal> for
 	 indexes (like <filename>Packages</filename> files) instead of
