@@ -238,7 +238,7 @@ testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 990 500 990 "" -o Test=ButAutomat
 
 rm incoming/backports.main.pkglist incoming/backports.main.srclist
 buildsimplenativepackage "coolstuff" "all" "2.0~bpo2" "backports"
-setupaptarchive
+setupaptarchive --no-update
 
 sed -i aptarchive/dists/backports/Release -e 1i"NotAutomatic: yes"
 signreleasefiles

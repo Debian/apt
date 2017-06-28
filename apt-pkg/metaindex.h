@@ -25,6 +25,8 @@ class IndexTarget;
 class pkgCacheGenerator;
 class OpProgress;
 
+class metaIndexPrivate;
+
 class metaIndex
 {
 public:
@@ -43,7 +45,7 @@ public:
       TRI_YES, TRI_DONTCARE, TRI_NO, TRI_UNSET
    };
 private:
-   void * const d;
+   metaIndexPrivate * const d;
 protected:
    std::vector <pkgIndexFile *> *Indexes;
    // parsed from the sources.list
@@ -70,8 +72,13 @@ public:
    TriState GetTrusted() const;
    std::string GetSignedBy() const;
 
+   std::string GetOrigin() const;
+   std::string GetLabel() const;
+   std::string GetVersion() const;
    std::string GetCodename() const;
    std::string GetSuite() const;
+   std::string GetReleaseNotes() const;
+   signed short GetDefaultPin() const;
    bool GetSupportsAcquireByHash() const;
    time_t GetValidUntil() const;
    time_t GetDate() const;
@@ -112,6 +119,12 @@ public:
    bool IsArchitectureSupported(std::string const &arch) const;
    bool IsArchitectureAllSupportedFor(IndexTarget const &target) const;
    bool HasSupportForComponent(std::string const &component) const;
+   // FIXME: should be members of the class on abi break
+   APT_HIDDEN void SetOrigin(std::string const &origin);
+   APT_HIDDEN void SetLabel(std::string const &label);
+   APT_HIDDEN void SetVersion(std::string const &version);
+   APT_HIDDEN void SetDefaultPin(signed short const defaultpin);
+   APT_HIDDEN void SetReleaseNotes(std::string const &notes);
 };
 
 #endif

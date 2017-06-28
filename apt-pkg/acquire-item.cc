@@ -1605,13 +1605,79 @@ bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
    if (TransactionManager->MetaIndexParser->CheckDist(ExpectedDist) == false)
       _error->Warning(_("Conflicting distribution: %s (expected %s but got %s)"),
 	    Desc.Description.c_str(), ExpectedDist.c_str(), NowCodename.c_str());
-   // might be okay, might be not
+
+   // changed info potentially breaks user config like pinning
    if (TransactionManager->LastMetaIndexParser != nullptr)
    {
-      auto const LastCodename = TransactionManager->LastMetaIndexParser->GetCodename();
-      if (LastCodename.empty() == false && NowCodename.empty() == false && LastCodename != NowCodename)
-	 _error->Warning(_("Conflicting distribution: %s (expected %s but got %s)"),
-	       Desc.Description.c_str(), LastCodename.c_str(), NowCodename.c_str());
+      std::vector<pkgAcquireStatus::ReleaseInfoChange> Changes;
+      auto const AllowInfoChange = _config->FindB("Acquire::AllowReleaseInfoChange", false);
+      auto const quietInfoChange = _config->FindB("quiet::ReleaseInfoChange", false);
+      struct {
+	 char const * const Type;
+	 bool const Allowed;
+	 decltype(&metaIndex::GetOrigin) const Getter;
+      } checkers[] = {
+	 { "Origin", AllowInfoChange, &metaIndex::GetOrigin },
+	 { "Label", AllowInfoChange, &metaIndex::GetLabel },
+	 { "Version", true, &metaIndex::GetVersion }, // numbers change all the time, that is okay
+	 { "Suite", AllowInfoChange, &metaIndex::GetSuite },
+	 { "Codename", AllowInfoChange, &metaIndex::GetCodename },
+	 { nullptr, false, nullptr }
+      };
+      auto const CheckReleaseInfo = [&](char const * const Type, bool const AllowChange, decltype(checkers[0].Getter) const Getter) {
+	 std::string const Last = (TransactionManager->LastMetaIndexParser->*Getter)();
+	 std::string const Now = (TransactionManager->MetaIndexParser->*Getter)();
+	 if (Last == Now)
+	    return;
+	 auto const Allow = _config->FindB(std::string("Acquire::AllowReleaseInfoChange::").append(Type), AllowChange);
+	 if (Allow == true && _config->FindB(std::string("quiet::ReleaseInfoChange::").append(Type), quietInfoChange) == true)
+	    return;
+	 std::string msg;
+	 strprintf(msg, _("Repository '%s' changed its '%s' value from '%s' to '%s'"),
+	       Desc.Description.c_str(), Type, Last.c_str(), Now.c_str());
+	 Changes.push_back({Type, std::move(Last), std::move(Now), std::move(msg), Allow});
+      };
+      for (short i = 0; checkers[i].Type != nullptr; ++i)
+	 CheckReleaseInfo(checkers[i].Type, checkers[i].Allowed, checkers[i].Getter);
+
+      {
+	 auto const Last = TransactionManager->LastMetaIndexParser->GetDefaultPin();
+	 auto const Now = TransactionManager->MetaIndexParser->GetDefaultPin();
+	 if (Last != Now)
+	 {
+	    auto const Allow = _config->FindB("Acquire::AllowReleaseInfoChange::DefaultPin", AllowInfoChange);
+	    if (Allow == false || _config->FindB("quiet::ReleaseInfoChange::DefaultPin", quietInfoChange) == false)
+	    {
+	       std::string msg;
+	       strprintf(msg, _("Repository '%s' changed its default priority for %s from %hi to %hi."),
+		     Desc.Description.c_str(), "apt_preferences(5)", Last, Now);
+	       Changes.push_back({"DefaultPin", std::to_string(Last), std::to_string(Now), std::move(msg), Allow});
+	    }
+	 }
+      }
+      if (Changes.empty() == false)
+      {
+	 auto const notes = TransactionManager->MetaIndexParser->GetReleaseNotes();
+	 if (notes.empty() == false)
+	 {
+	    std::string msg;
+	    // TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
+	    strprintf(msg, _("More information about this can be found online in the Release notes at: %s"), notes.c_str());
+	    Changes.push_back({"Release-Notes", "", std::move(notes), std::move(msg), true});
+	 }
+	 if (std::any_of(Changes.begin(),Changes.end(),[](pkgAcquireStatus::ReleaseInfoChange const &c) { return c.DefaultAction == false; }))
+	 {
+	    std::string msg;
+	    // TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
+	    strprintf(msg, _("This must be accepted explicitly before updates for "
+		     "this repository can be applied. See %s manpage for details."), "apt-secure(8)");
+	    Changes.push_back({"Confirmation", "", "", std::move(msg), true});
+	 }
+
+      }
+      if (Owner->Log == nullptr)
+	 return pkgAcquireStatus::ReleaseInfoChangesAsGlobalErrors(std::move(Changes));
+      return Owner->Log->ReleaseInfoChanges(TransactionManager->LastMetaIndexParser, TransactionManager->MetaIndexParser, std::move(Changes));
    }
    return true;
 }

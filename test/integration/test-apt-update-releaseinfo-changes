@@ -1,0 +1,80 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'earth' 'human' 'all' '1'
+
+getoriginfromsuite() { echo -n 'Earth'; }
+getlabelfromsuite() { echo -n 'Blue Planet'; }
+getcodenamefromsuite() { echo -n 'home'; }
+getreleaseversionfromsuite() { echo -n '1.0'; }
+getnotautomaticfromsuite() { echo -n 'yes'; }
+getbutautomaticupgradesfromsuite() { echo -n 'yes'; }
+setupaptarchive --no-update
+testsuccess aptget update
+
+cp -a aptarchive/dists aptarchive/dists.bak
+cp -a rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists.bak
+APTARCHIVE="$(readlink -f './aptarchive')"
+
+sed -i -e 's#^Origin: Earth#Origin: Mars#' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testfailuremsg "E: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Origin' value from 'Earth' to 'Mars'
+N: This must be accepted explicitly before updates for this repository can be applied. See apt-secure(8) manpage for details." apt update
+testfailure apt update --allow-releaseinfo-change-label
+testsuccesswithnotice apt update --allow-releaseinfo-change
+testequal "All packages are up to date.
+N: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Origin' value from 'Earth' to 'Mars'" tail -n 2 rootdir/tmp/testsuccesswithnotice.output
+
+rm -rf rootdir/var/lib/apt/lists
+cp -a rootdir/var/lib/apt/lists.bak rootdir/var/lib/apt/lists
+sed -i -e 's#^Label: Blue#Label: Red#' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testfailuremsg "E: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Origin' value from 'Earth' to 'Mars'
+E: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Label' value from 'Blue Planet' to 'Red Planet'
+N: This must be accepted explicitly before updates for this repository can be applied. See apt-secure(8) manpage for details." apt update
+testfailure apt update --allow-releaseinfo-change-label
+testfailuremsg "N: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Origin' value from 'Earth' to 'Mars'
+E: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Label' value from 'Blue Planet' to 'Red Planet'
+N: This must be accepted explicitly before updates for this repository can be applied. See apt-secure(8) manpage for details." apt update --allow-releaseinfo-change-origin
+testsuccess apt update --allow-releaseinfo-change-origin --allow-releaseinfo-change-label -o quiet::ReleaseInfoChange=true
+
+# version changes are allowed by default
+sed -i -e 's#^Version: 1#Version: 2#' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testfailuremsg "E: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Version' value from '1.0' to '2.0'
+N: This must be accepted explicitly before updates for this repository can be applied. See apt-secure(8) manpage for details." apt update --no-allow-releaseinfo-change-version
+testsuccesswithnotice apt update
+testequal "All packages are up to date.
+N: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Version' value from '1.0' to '2.0'" tail -n 2 rootdir/tmp/testsuccesswithnotice.output
+
+sed -i -e 's#^Codename: home#Codename: colony#' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testfailuremsg "E: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Codename' value from 'home' to 'colony'
+N: This must be accepted explicitly before updates for this repository can be applied. See apt-secure(8) manpage for details." apt update --no-allow-releaseinfo-change-codename
+testsuccesswithnotice apt update --allow-releaseinfo-change-codename
+testequal "All packages are up to date.
+N: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Codename' value from 'home' to 'colony'" tail -n 2 rootdir/tmp/testsuccesswithnotice.output
+
+sed -i -e '/^ButAutomaticUpgrades: / d' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testfailuremsg "E: Repository 'file:$APTARCHIVE earth InRelease' changed its default priority for apt_preferences(5) from 100 to 1.
+N: This must be accepted explicitly before updates for this repository can be applied. See apt-secure(8) manpage for details." apt update
+testsuccesswithnotice apt update --allow-releaseinfo-change
+testequal "All packages are up to date.
+N: Repository 'file:$APTARCHIVE earth InRelease' changed its default priority for apt_preferences(5) from 100 to 1." tail -n 2 rootdir/tmp/testsuccesswithnotice.output
+
+sed -i -e '/^NotAutomatic: / d' -e '/^Codename: / a\
+Release-Notes: https://example.org/mars/release-notes' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testfailuremsg "E: Repository 'file:$APTARCHIVE earth InRelease' changed its default priority for apt_preferences(5) from 1 to 500.
+N: More information about this can be found online in the Release notes at: https://example.org/mars/release-notes
+N: This must be accepted explicitly before updates for this repository can be applied. See apt-secure(8) manpage for details." apt update
+testsuccesswithnotice apt update --allow-releaseinfo-change-defaultpin
+testequal "All packages are up to date.
+N: Repository 'file:$APTARCHIVE earth InRelease' changed its default priority for apt_preferences(5) from 1 to 500.
+N: More information about this can be found online in the Release notes at: https://example.org/mars/release-notes" tail -n 3 rootdir/tmp/testsuccesswithnotice.output

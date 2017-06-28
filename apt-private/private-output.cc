@@ -650,20 +650,20 @@ void Stats(ostream &out,pkgDepCache &Dep)
 // YnPrompt - Yes No Prompt.						/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns true on a Yes.*/
-bool YnPrompt(char const * const Question, bool Default)
+bool YnPrompt(char const * const Question, bool const Default, bool const ShowGlobalErrors, std::ostream &c1o, std::ostream &c2o)
 {
    auto const AssumeYes = _config->FindB("APT::Get::Assume-Yes",false);
    auto const AssumeNo = _config->FindB("APT::Get::Assume-No",false);
    // if we ask interactively, show warnings/notices before the question
-   if (AssumeYes == false && AssumeNo == false)
+   if (ShowGlobalErrors == true && AssumeYes == false && AssumeNo == false)
    {
       if (_config->FindI("quiet",0) > 0)
-	 _error->DumpErrors(c2out);
+	 _error->DumpErrors(c2o);
       else
-	 _error->DumpErrors(c2out, GlobalError::DEBUG);
+	 _error->DumpErrors(c2o, GlobalError::DEBUG);
    }
 
-   c2out << Question << std::flush;
+   c2o << Question << std::flush;
 
    /* nl_langinfo does not support LANGUAGE setting, so we unset it here
       to have the help-message (hopefully) match the expected characters */
@@ -678,13 +678,13 @@ bool YnPrompt(char const * const Question, bool Default)
       //             e.g. "Do you want to continue? [Y/n] "
       //             The user has to answer with an input matching the
       //             YESEXPR/NOEXPR defined in your l10n.
-      c2out << " " << _("[Y/n]") << " " << std::flush;
+      c2o << " " << _("[Y/n]") << " " << std::flush;
    else
       // TRANSLATOR: Yes/No question help-text: defaulting to N[o]
       //             e.g. "Should this file be removed? [y/N] "
       //             The user has to answer with an input matching the
       //             YESEXPR/NOEXPR defined in your l10n.
-      c2out << " " << _("[y/N]") << " " << std::flush;
+      c2o << " " << _("[y/N]") << " " << std::flush;
 
    if (language != NULL)
    {
@@ -695,13 +695,13 @@ bool YnPrompt(char const * const Question, bool Default)
    if (AssumeYes)
    {
       // TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-      c1out << _("Y") << std::endl;
+      c1o << _("Y") << std::endl;
       return true;
    }
    else if (AssumeNo)
    {
       // TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-      c1out << _("N") << std::endl;
+      c1o << _("N") << std::endl;
       return false;
    }
 
@@ -721,15 +721,19 @@ bool YnPrompt(char const * const Question, bool Default)
                  REG_EXTENDED|REG_ICASE|REG_NOSUB);
 
    if (Res != 0) {
-      char Error[300];        
+      char Error[300];
       regerror(Res,&Pattern,Error,sizeof(Error));
       return _error->Error(_("Regex compilation error - %s"),Error);
    }
-   
+
    Res = regexec(&Pattern, response, 0, NULL, 0);
    if (Res == 0)
       return true;
    return false;
+}
+bool YnPrompt(char const * const Question, bool const Default)
+{
+   return YnPrompt(Question, Default, true, c1out, c2out);
 }
 									/*}}}*/
 // AnalPrompt - Annoying Yes No Prompt.					/*{{{*/

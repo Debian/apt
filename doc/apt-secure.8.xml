@@ -13,7 +13,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2016-08-06T00:00:00Z</date>
+   <date>2017-04-12T00:00:00Z</date>
  </refentryinfo>
 
  <refmeta>
@@ -50,9 +50,19 @@
    that data like packages in the archive can't be modified by people who
    have no access to the Release file signing key. Starting with version 1.1
    <command>APT</command> requires repositories to provide recent authentication
-   information for unimpeded usage of the repository.
+   information for unimpeded usage of the repository. Since version 1.5 changes
+   in the information contained in the Release file about the repository need to be
+   confirmed before APT continues to apply updates from this repository.
    </para>
 
+   <para>
+   Note: All APT-based package management front-ends like &apt-get;, &aptitude;
+   and &synaptic; support this authentication feature, so this manpage uses
+   <literal>APT</literal> to refer to them all for simplicity only.
+   </para>
+</refsect1>
+
+ <refsect1><title>Unsigned Repositories</title>
    <para>
    If an archive has an unsigned Release file or no Release file at all
    current APT versions will refuse to download data from them by default
@@ -83,16 +93,9 @@
    to <literal>true</literal> or for Individual repositories with the &sources-list;
    option <literal>allow-downgrade-to-insecure=yes</literal>.
    </para>
-
-   <para>
-   Note: All APT-based package management front-ends like &apt-get;, &aptitude;
-   and &synaptic; support this authentication feature, so this manpage uses
-   <literal>APT</literal> to refer to them all for simplicity only.
-   </para>
 </refsect1>
 
- <refsect1><title>Trusted Repositories</title>
-
+ <refsect1><title>Signed Repositories</title>
    <para>
    The chain of trust from an APT archive to the end user is made up of
    several steps. <command>apt-secure</command> is the last step in
@@ -162,7 +165,22 @@
    this mechanism can complement a per-package signature.</para>
 </refsect1>
 
- <refsect1><title>User Configuration</title>
+<refsect1><title>Information changes</title>
+   <para>
+   A Release file contains beside the checksums for the files in the repository
+   also general information about the repository like the origin, codename or
+   version number of the release.
+   </para><para>
+   This information is shown in various places so a repository owner should always
+   ensure correctness. Further more user configuration like &apt-preferences;
+   can depend and make use of this information. Since version 1.5 the user must
+   therefore explicitly confirm changes to signal that the user is sufficently
+   prepared e.g. for the new major release of the distribution shipped in the
+   repository (as e.g. indicated by the codename).
+   </para>
+</refsect1>
+
+<refsect1><title>User Configuration</title>
    <para>
    <command>apt-key</command> is the program that manages the list of keys used
    by APT to trust repositories. It can be used to add or remove keys as well
@@ -183,7 +201,7 @@
    </para>
 </refsect1>
 
-<refsect1><title>Archive Configuration</title>
+<refsect1><title>Repository Configuration</title>
    <para>
    If you want to provide archive signatures in an archive under your
    maintenance you have to:

@@ -102,6 +102,7 @@ void Stats(std::ostream &out, pkgDepCache &Dep);
 
 // prompting
 bool YnPrompt(char const * const Question, bool Default=true);
+bool YnPrompt(char const * const Question, bool const Default, bool const ShowGlobalErrors, std::ostream &c1o, std::ostream &c2o);
 bool AnalPrompt(std::string const &Question, const char *Text);
 
 std::string PrettyFullName(pkgCache::PkgIterator const &Pkg);

@@ -47,15 +47,3 @@ testfailure apt show foo
 ln -s "${APTARCHIVE}/dists/testing" "${APTARCHIVE}/dists/buster"
 testsuccess apt update
 testsuccess apt show foo
-
-# changing codenames gets a warning, too
-rm -rf rootdir/var/lib/apt/lists
-sed -i -e 's#buster#testing#g' rootdir/etc/apt/sources.list.d/*
-testsuccess apt update
-testsuccess apt show foo
-sed -i -e 's#^Codename: buster#Codename: zurg#g' $(find ./aptarchive -name 'Release')
-signreleasefiles
-testwarningmsg "W: Conflicting distribution: file:$APTARCHIVE testing/updates InRelease (expected buster/updates but got zurg/updates)" apt update
-testsuccess apt show foo
-testsuccess apt update
-testsuccess apt show foo
