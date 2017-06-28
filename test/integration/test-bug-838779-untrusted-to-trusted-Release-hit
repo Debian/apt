@@ -23,7 +23,8 @@ testdpkgnotinstalled 'foo'
 msgmsg 'Untrusted to trusted hit' 'InRelease'
 rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt/archives
 mv rootdir/etc/apt/trusted.gpg.d rootdir/etc/apt/trusted.gpg.d-bak
-testwarning aptget update
+testfailure aptget update
+testwarning aptget update --allow-insecure-repositories
 testfailure apt install foo -y
 testdpkgnotinstalled 'foo'
 mv rootdir/etc/apt/trusted.gpg.d-bak rootdir/etc/apt/trusted.gpg.d
@@ -37,7 +38,8 @@ msgmsg 'Untrusted to trusted hit' 'Release.gpg'
 find aptarchive -name 'InRelease' -delete
 rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt/archives
 mv rootdir/etc/apt/trusted.gpg.d rootdir/etc/apt/trusted.gpg.d-bak
-testwarning aptget update
+testfailure aptget update
+testwarning aptget update --allow-insecure-repositories
 testfailure apt install foo -y
 testdpkgnotinstalled 'foo'
 mv rootdir/etc/apt/trusted.gpg.d-bak rootdir/etc/apt/trusted.gpg.d

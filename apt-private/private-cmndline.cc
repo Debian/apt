@@ -463,8 +463,6 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
       _config->CndSet("Binary::apt::DPkg::Progress-Fancy", true);
       _config->CndSet("Binary::apt::APT::Keep-Downloaded-Packages", false);
    }
-   if (binary == "apt-config")
-      _config->CndSet("Binary::apt-get::Acquire::AllowInsecureRepositories", true);
 
    _config->Set("Binary", binary);
 }
@@ -472,8 +470,6 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
 static void BinaryCommandSpecificConfiguration(char const * const Binary, char const * const Cmd)/*{{{*/
 {
    std::string const binary = flNotDir(Binary);
-   if (binary == "apt-get" && CmdMatches("update"))
-      _config->CndSet("Binary::apt-get::Acquire::AllowInsecureRepositories", true);
    if ((binary == "apt" || binary == "apt-get") && CmdMatches("upgrade", "dist-upgrade", "full-upgrade"))
    {
       //FIXME: the option is documented to apply only for install/remove, so

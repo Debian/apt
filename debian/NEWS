@@ -1,3 +1,17 @@
+apt (1.5~) UNRELEASED; urgency=medium
+
+  The security exception for apt-get to only raise warnings if it encounters
+  unauthenticated repositories in the "update" command is gone now, so that it
+  will raise errors just like apt and all other apt-based front-ends do since
+  at least apt version 1.3.
+
+  It is possible (but STRONGLY ADVISED AGAINST) to revert to the previous
+  behaviour of apt-get by setting the option
+    Binary::apt-get::Acquire::AllowInsecureRepositories "true";
+  See apt-secure(8) manpage for configuration details.
+
+ -- David Kalnischkies <donkult@debian.org>  Wed, 28 Jun 2017 12:37:12 +0200
+
 apt (1.4.2) unstable; urgency=medium
 
   If periodic updates and unattended upgrades are enabled, the start of

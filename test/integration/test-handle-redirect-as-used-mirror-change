@@ -89,5 +89,6 @@ Reading package lists..." aptget update
 rm -rf rootdir/var/lib/apt/lists
 find aptarchive -name 'Release.gpg' -delete
 find aptarchive -name 'Release' -delete
-testwarning aptget update
+testfailure aptget update
+testwarning aptget update --allow-insecure-repositories
 testsuccess grep 'does not have a Release file' rootdir/tmp/testwarning.output
