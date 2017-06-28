@@ -81,6 +81,10 @@ find_package(CURL REQUIRED)
 if (CURL_FOUND)
   set(HAVE_CURL 1)
 endif()
+find_package(GnuTLS REQUIRED)
+if (GNUTLS_FOUND)
+  set(HAVE_GNUTLS 1)
+endif()
 
 # (De)Compressor libraries
 find_package(ZLIB REQUIRED)

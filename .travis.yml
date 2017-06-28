@@ -14,7 +14,7 @@ before_install:
  - sudo apt-get update -qq
 install:
  - sudo apt-get -qq -y -t wily install gettext liblz4-dev python3-apt
- - sudo apt-get -qq -y -t xenial install cmake ninja-build
+ - sudo apt-get -qq -y -t xenial install cmake ninja-build libgnutls28-dev libcurl4-gnutls-dev
  - sudo ./prepare-release travis-ci
 before_script:
  - ( mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Coverage -G Ninja $CMAKE_FLAGS .. )

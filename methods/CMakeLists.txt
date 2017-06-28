@@ -11,7 +11,8 @@ add_executable(ftp ftp.cc rfc2553emu.cc connect.cc)
 add_executable(rred rred.cc)
 add_executable(rsh rsh.cc)
 
-# Add target-specific header directories
+target_compile_definitions(http PRIVATE ${GNUTLS_DEFINITIONS})
+target_include_directories(http PRIVATE ${GNUTLS_INCLUDE_DIR})
 target_include_directories(https PRIVATE ${CURL_INCLUDE_DIRS})
 
 # Link the executables against the libraries
@@ -20,10 +21,10 @@ target_link_libraries(copy apt-pkg)
 target_link_libraries(store apt-pkg)
 target_link_libraries(gpgv apt-pkg)
 target_link_libraries(cdrom apt-pkg)
-target_link_libraries(http apt-pkg)
-target_link_libraries(mirror apt-pkg ${RESOLV_LIBRARIES})
+target_link_libraries(http apt-pkg ${GNUTLS_LIBRARIES})
+target_link_libraries(mirror apt-pkg ${RESOLV_LIBRARIES} ${GNUTLS_LIBRARIES})
 target_link_libraries(https apt-pkg ${CURL_LIBRARIES})
-target_link_libraries(ftp apt-pkg)
+target_link_libraries(ftp apt-pkg ${GNUTLS_LIBRARIES})
 target_link_libraries(rred apt-pkg)
 target_link_libraries(rsh apt-pkg)
 
