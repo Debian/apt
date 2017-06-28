@@ -312,12 +312,15 @@ bool Connect(std::string Host,int Port,const char *Service,
    size_t stackSize = 0;
    // try to connect in the priority order of the srv records
    std::string initialHost{std::move(Host)};
+   auto const initialPort = Port;
    while(SrvRecords.empty() == false)
    {
       _error->PushToStack();
       ++stackSize;
       // PopFromSrvRecs will also remove the server
-      Host = PopFromSrvRecs(SrvRecords).target;
+      auto Srv = PopFromSrvRecs(SrvRecords);
+      Host = Srv.target;
+      Port = Srv.port;
       auto const ret = ConnectToHostname(Host, Port, Service, DefPort, Fd, TimeOut, Owner);
       if (ret)
       {
@@ -327,6 +330,7 @@ bool Connect(std::string Host,int Port,const char *Service,
       }
    }
    Host = std::move(initialHost);
+   Port = initialPort;
 
    // we have no (good) SrvRecords for this host, connect right away
    _error->PushToStack();
