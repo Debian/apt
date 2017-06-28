@@ -15,6 +15,7 @@ changetohttpswebserver
 webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "http://localhost:${APTHTTPPORT}/"
 webserverconfig 'aptwebserver::redirect::replace::/redirectme2/' "https://localhost:${APTHTTPSPORT}/"
 echo 'Dir::Bin::Methods::https+http "http";' > rootdir/etc/apt/apt.conf.d/99add-https-http-method
+echo 'Dir::Bin::Methods::foo+https "http";' > rootdir/etc/apt/apt.conf.d/99add-foo-https-method
 
 msgtest 'download of a file works via' 'http'
 testsuccess --nomsg downloadfile "http://localhost:${APTHTTPPORT}/working" httpfile
@@ -32,10 +33,16 @@ rm -f httpfile
 
 msgtest 'download of a file does not work if' 'https redirected to http'
 testfailure --nomsg downloadfile "https://localhost:${APTHTTPSPORT}/redirectme/working" redirectfile
-
 msgtest 'libcurl has forbidden access in last request to' 'http resource'
 testsuccess --nomsg grep -q -E -- "Redirection from https to 'http://.*' is forbidden" rootdir/tmp/testfailure.output
+rm -f redirectfile
 
 msgtest 'download of a file does work if' 'https+http redirected to https'
 testsuccess --nomsg downloadfile "https+http://localhost:${APTHTTPPORT}/redirectme2/working" redirectfile
 testfileequal redirectfile 'alright'
+rm -f redirectfile
+
+msgtest 'download of a file does work if' 'foo+https redirected to https'
+testsuccess --nomsg downloadfile "foo+https://localhost:${APTHTTPSPORT}/redirectme2/working" redirectfile
+testfileequal redirectfile 'alright'
+rm -f redirectfile

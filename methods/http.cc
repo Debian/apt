@@ -343,13 +343,15 @@ bool HttpServerState::Open()
    if (Proxy.empty() == false)
       Owner->AddProxyAuth(Proxy, ServerName);
 
-   bool tls = ServerName.Access == "https";
+   bool tls = (ServerName.Access == "https" || APT::String::Endswith(ServerName.Access, "+https"));
+   auto const DefaultService = tls ? "https" : "http";
+   auto const DefaultPort = tls ? 443 : 80;
    if (Proxy.Access == "socks5h")
    {
       if (Connect(Proxy.Host, Proxy.Port, "socks", 1080, ServerFd, TimeOut, Owner) == false)
 	 return false;
 
-      if (UnwrapSocks(ServerName.Host, ServerName.Port == 0 ? 80 : ServerName.Port,
+      if (UnwrapSocks(ServerName.Host, ServerName.Port == 0 ? DefaultPort : ServerName.Port,
 		      Proxy, ServerFd, Owner->ConfigFindI("TimeOut", 120), Owner) == false)
 	 return false;
    }
@@ -372,7 +374,7 @@ bool HttpServerState::Open()
 	    Port = Proxy.Port;
 	 Host = Proxy.Host;
       }
-      if (!Connect(Host, Port, tls ? "https" : "http", tls ? 443 : 80, ServerFd, TimeOut, Owner))
+      if (!Connect(Host, Port, DefaultService, DefaultPort, ServerFd, TimeOut, Owner))
 	 return false;
    }
 
@@ -853,6 +855,11 @@ HttpMethod::HttpMethod(std::string &&pProg) : BaseHttpMethod(pProg.c_str(), "1.2
       addName = "http";
    auto const plus = Binary.find('+');
    if (plus != std::string::npos)
+   {
+      auto name2 = Binary.substr(plus + 1);
+      if (std::find(methodNames.begin(), methodNames.end(), name2) == methodNames.end())
+	 addName = std::move(name2);
       addName = Binary.substr(0, plus);
+   }
 }
 									/*}}}*/
