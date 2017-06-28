@@ -4,6 +4,7 @@ sudo: required
 dist: trusty
 env:
  - TEST_SUITE=user CMAKE_FLAGS=
+ - TEST_SUITE=user CMAKE_FLAGS="-DWITH_DOC=OFF -DWITH_CURL=OFF"
  - TEST_SUITE=root CMAKE_FLAGS=-DWITH_DOC=OFF
 before_install:
  - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ wily main universe' -y
