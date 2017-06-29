@@ -1,3 +1,22 @@
+apt (1.5~alpha2) experimental; urgency=medium
+
+  [ David Kalnischkies ]
+  * support tor+https being handled by http
+  * use port from SRV record instead of initial port
+
+  [ Robert Luberda ]
+  * fix a "critical" typo in old changelog entry (Closes: 866358)
+
+  [ Julian Andres Klode ]
+  * Improve error message if system CA store is empty (Closes: #866377)
+  * Have apt Recommend ca-certificates
+  * Demote gnupg to Suggests
+  * http: Only use system CA store if CaInfo is not set
+  * Bump Standards-Version (and wrap-and-sort a bit)
+  * Build-Depend on debhelper (>= 10) to shut up lintian
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 29 Jun 2017 17:52:19 +0200
+
 apt (1.5~alpha1) experimental; urgency=medium
 
   [ Julian Andres Klode ]
