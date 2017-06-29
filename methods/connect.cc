@@ -658,15 +658,18 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
    gnutls_certificate_allocate_credentials(&tlsFd->credentials);
 
    // Credential setup
-   if ((err = gnutls_certificate_set_x509_system_trust(tlsFd->credentials)) <= 0)
-      return _error->Error("Could not load TLS certificates: %s",
-			   err == 0
-			       ? "No certificates available. Try installing ca-certificates."
-			       : gnutls_strerror(err));
-
    std::string fileinfo = Owner->ConfigFind("CaInfo", "");
-   if (!fileinfo.empty())
+   if (fileinfo.empty())
    {
+      // No CaInfo specified, use system trust store.
+      if ((err = gnutls_certificate_set_x509_system_trust(tlsFd->credentials)) <= 0)
+	 return _error->Error("Could not load TLS certificates: %s",
+			      err == 0
+				  ? "No certificates available. Try installing ca-certificates."
+				  : gnutls_strerror(err));
+   }
+   {
+      // CA location has been set, use the specified one instead
       gnutls_certificate_set_verify_flags(tlsFd->credentials, GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT);
       err = gnutls_certificate_set_x509_trust_file(tlsFd->credentials, fileinfo.c_str(), GNUTLS_X509_FMT_PEM);
       if (err < 0)
