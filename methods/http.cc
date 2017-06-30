@@ -266,6 +266,15 @@ bool CircleBuf::WriteTillEl(string &Data,bool Single)
    return false;
 }
 									/*}}}*/
+// CircleBuf::Write - Write from the buffer to a string			/*{{{*/
+// ---------------------------------------------------------------------
+/* This copies everything */
+bool CircleBuf::Write(string &Data)
+{
+   Data = std::string((char *)Buf + (OutP % Size), LeftWrite());
+   OutP += LeftWrite();
+   return true;
+}
 // CircleBuf::Stats - Print out stats information			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -286,6 +295,122 @@ CircleBuf::~CircleBuf()
    delete [] Buf;
    delete Hash;
 }
+
+// UnwrapHTTPConnect - Does the HTTP CONNECT handshake			/*{{{*/
+// ---------------------------------------------------------------------
+/* Performs a TLS handshake on the socket */
+struct HttpConnectFd : public MethodFd
+{
+   std::unique_ptr<MethodFd> UnderlyingFd;
+   std::string Buffer;
+
+   int Fd() APT_OVERRIDE { return UnderlyingFd->Fd(); }
+
+   ssize_t Read(void *buf, size_t count) APT_OVERRIDE
+   {
+      if (!Buffer.empty())
+      {
+	 auto read = count < Buffer.size() ? count : Buffer.size();
+
+	 memcpy(buf, Buffer.data(), read);
+	 Buffer.erase(Buffer.begin(), Buffer.begin() + read);
+	 return read;
+      }
+
+      return UnderlyingFd->Read(buf, count);
+   }
+   ssize_t Write(void *buf, size_t count) APT_OVERRIDE
+   {
+      return UnderlyingFd->Write(buf, count);
+   }
+
+   int Close() APT_OVERRIDE
+   {
+      return UnderlyingFd->Close();
+   }
+
+   bool HasPending() APT_OVERRIDE
+   {
+      return !Buffer.empty();
+   }
+};
+
+bool UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd,
+		       unsigned long Timeout, aptMethod *Owner)
+{
+   Owner->Status(_("Connecting to %s (%s)"), "HTTP proxy", URI::SiteOnly(Proxy).c_str());
+   // The HTTP server expects a hostname with a trailing :port
+   std::stringstream Req;
+   std::string ProperHost;
+
+   if (Host.find(':') != std::string::npos)
+      ProperHost = '[' + Proxy.Host + ']';
+   else
+      ProperHost = Proxy.Host;
+
+   // Build the connect
+   Req << "CONNECT " << Host << ":" << std::to_string(Port) << " HTTP/1.1\r\n";
+   if (Proxy.Port != 0)
+      Req << "Host: " << ProperHost << ":" << std::to_string(Proxy.Port) << "\r\n";
+   else
+      Req << "Host: " << ProperHost << "\r\n";
+   ;
+
+   maybe_add_auth(Proxy, _config->FindFile("Dir::Etc::netrc"));
+   if (Proxy.User.empty() == false || Proxy.Password.empty() == false)
+      Req << "Proxy-Authorization: Basic "
+	  << Base64Encode(Proxy.User + ":" + Proxy.Password) << "\r\n";
+
+   Req << "User-Agent: " << Owner->ConfigFind("User-Agent", "Debian APT-HTTP/1.3 (" PACKAGE_VERSION ")") << "\r\n";
+
+   Req << "\r\n";
+
+   CircleBuf In(dynamic_cast<HttpMethod *>(Owner), 4096);
+   CircleBuf Out(dynamic_cast<HttpMethod *>(Owner), 4096);
+   std::string Headers;
+
+   if (Owner->DebugEnabled() == true)
+      cerr << Req.str() << endl;
+   Out.Read(Req.str());
+
+   // Writing from proxy
+   while (Out.WriteSpace() > 0)
+   {
+      if (WaitFd(Fd->Fd(), true, Timeout) == false)
+	 return _error->Errno("select", "Writing to proxy failed");
+      if (Out.Write(Fd) == false)
+	 return _error->Errno("write", "Writing to proxy failed");
+   }
+
+   while (In.ReadSpace() > 0)
+   {
+      if (WaitFd(Fd->Fd(), false, Timeout) == false)
+	 return _error->Errno("select", "Reading from proxy failed");
+      if (In.Read(Fd) == false)
+	 return _error->Errno("read", "Reading from proxy failed");
+
+      if (In.WriteTillEl(Headers))
+	 break;
+   }
+
+   if (Owner->DebugEnabled() == true)
+      cerr << Headers << endl;
+
+   if (!(APT::String::Startswith(Headers, "HTTP/1.0 200") || APT::String::Startswith(Headers, "HTTP/1.1 200")))
+      return _error->Error("Invalid response from proxy: %s", Headers.c_str());
+
+   if (In.WriteSpace() > 0)
+   {
+      // Maybe there is actual data already read, if so we need to buffer it
+      std::unique_ptr<HttpConnectFd> NewFd(new HttpConnectFd());
+      In.Write(NewFd->Buffer);
+      NewFd->UnderlyingFd = std::move(Fd);
+      Fd = std::move(NewFd);
+   }
+
+   return true;
+}
+									/*}}}*/
 
 // HttpServerState::HttpServerState - Constructor			/*{{{*/
 HttpServerState::HttpServerState(URI Srv,HttpMethod *Owner) : ServerState(Srv, Owner), In(Owner, 64*1024), Out(Owner, 4*1024)
@@ -375,6 +500,8 @@ bool HttpServerState::Open()
 	 Host = Proxy.Host;
       }
       if (!Connect(Host, Port, DefaultService, DefaultPort, ServerFd, TimeOut, Owner))
+	 return false;
+      if (Host == Proxy.Host && tls && UnwrapHTTPConnect(ServerName.Host, ServerName.Port == 0 ? DefaultPort : ServerName.Port, Proxy, ServerFd, Owner->ConfigFindI("TimeOut", 120), Owner) == false)
 	 return false;
    }
 
@@ -743,7 +870,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
       but while its a must for all servers to accept absolute URIs,
       it is assumed clients will sent an absolute path for non-proxies */
    std::string requesturi;
-   if (Server->Proxy.Access != "http" || Server->Proxy.empty() == true || Server->Proxy.Host.empty())
+   if ((Server->Proxy.Access != "http" && Server->Proxy.Access != "https") || APT::String::Endswith(Uri.Access, "https") || Server->Proxy.empty() == true || Server->Proxy.Host.empty())
       requesturi = Uri.Path;
    else
       requesturi = Uri;

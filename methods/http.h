@@ -73,6 +73,7 @@ class CircleBuf
 
    // Write data out
    bool Write(std::unique_ptr<MethodFd> const &Fd);
+   bool Write(std::string &Data);
    bool WriteTillEl(std::string &Data,bool Single = false);
 
    // Control the write limit
@@ -91,6 +92,8 @@ class CircleBuf
    CircleBuf(HttpMethod const * const Owner, unsigned long long Size);
    ~CircleBuf();
 };
+
+bool UnwrapHTTPConnect(std::string To, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd, unsigned long Timeout, aptMethod *Owner);
 
 struct HttpServerState: public ServerState
 {
