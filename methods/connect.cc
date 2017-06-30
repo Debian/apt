@@ -697,8 +697,10 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
 	 return _error->Error("Could not load CaInfo certificate: %s", gnutls_strerror(err));
    }
 
-   // TODO: IssuerCert AKA CURLOPT_ISSUERCERT
-   // TODO: Emulate SslForceVersion AKA CURLOPT_SSLVERSION?
+   if (!Owner->ConfigFind("IssuerCert", "").empty())
+      return _error->Error("The option '%s' is not supported anymore", "IssuerCert");
+   if (!Owner->ConfigFind("SslForceVersion", "").empty())
+      return _error->Error("The option '%s' is not supported anymore", "SslForceVersion");
 
    // For client authentication, certificate file ...
    std::string const cert = Owner->ConfigFind("SslCert", "");
