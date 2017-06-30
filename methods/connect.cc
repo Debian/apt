@@ -668,6 +668,7 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
 				  ? "No certificates available. Try installing ca-certificates."
 				  : gnutls_strerror(err));
    }
+   else
    {
       // CA location has been set, use the specified one instead
       gnutls_certificate_set_verify_flags(tlsFd->credentials, GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT);
