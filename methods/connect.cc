@@ -179,7 +179,9 @@ static bool DoConnect(struct addrinfo *Addr, std::string const &Host,
       return _error->Errno("connect",_("Could not connect to %s:%s (%s)."),Host.c_str(),
 			   Service,Name);
    }
-   
+
+   Owner->SetFailReason("");
+
    return true;
 }
 									/*}}}*/

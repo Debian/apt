@@ -47,4 +47,4 @@ cd - >/dev/null
 # check that downgrades from https to http are not allowed
 webserverconfig 'aptwebserver::support::http' 'true'
 sed -i -e "s#:${APTHTTPPORT}/redirectme#:${APTHTTPSPORT}/downgrademe#" -e 's# http:# https:#' rootdir/etc/apt/sources.list.d/*
-testfailure aptget update --allow-insecure-repositories -o Acquire::https::Timeout=1
+testfailure aptget update --allow-insecure-repositories -o Acquire::https::Timeout=1 -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::https=1
