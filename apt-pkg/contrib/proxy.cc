@@ -12,6 +12,7 @@
 #include<apt-pkg/fileutl.h>
 #include<apt-pkg/strutl.h>
 
+#include <algorithm>
 #include<iostream>
 #include<fcntl.h>
 #include<unistd.h>
@@ -22,6 +23,13 @@
 // AutoDetectProxy - auto detect proxy					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+static std::vector<std::string> CompatibleProxies(URI const &URL)
+{
+   if (URL.Access == "http" || URL.Access == "https")
+      return {"http", "https", "socks5h"};
+   return {URL.Access};
+}
+
 bool AutoDetectProxy(URI &URL)
 {
    // we support both http/https debug options
@@ -74,7 +82,14 @@ bool AutoDetectProxy(URI &URL)
    if (Debug)
       std::clog << "auto detect command returned: '" << cleanedbuf << "'" << std::endl;
 
-   if (strstr(cleanedbuf, URL.Access.c_str()) == cleanedbuf || strcmp(cleanedbuf, "DIRECT") == 0)
+   auto compatibleTypes = CompatibleProxies(URL);
+   bool compatible = strcmp(cleanedbuf, "DIRECT") == 0 ||
+		     compatibleTypes.end() != std::find_if(compatibleTypes.begin(),
+							   compatibleTypes.end(), [cleanedbuf](std::string &compat) {
+							      return strstr(cleanedbuf, compat.c_str()) == cleanedbuf;
+							   });
+
+   if (compatible)
       _config->Set("Acquire::"+URL.Access+"::proxy::"+URL.Host, cleanedbuf);
 
    return true;
