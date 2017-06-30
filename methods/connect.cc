@@ -632,9 +632,9 @@ struct TlsFd : public MethodFd
 
    int Close() APT_OVERRIDE
    {
-      if (HandleError(gnutls_bye(session, GNUTLS_SHUT_RDWR)) < 0)
-	 return -1;
-      return UnderlyingFd->Close();
+      auto err = HandleError(gnutls_bye(session, GNUTLS_SHUT_RDWR));
+      auto lower = UnderlyingFd->Close();
+      return err < 0 ? HandleError(err) : lower;
    }
 
    bool HasPending() APT_OVERRIDE
