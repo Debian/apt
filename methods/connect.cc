@@ -739,8 +739,18 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
    {
       gnutls_session_set_verify_cert(tlsFd->session, Owner->ConfigFindB("Verify-Host", true) ? tlsFd->hostname.c_str() : nullptr, 0);
    }
-   if ((err = gnutls_server_name_set(tlsFd->session, GNUTLS_NAME_DNS, tlsFd->hostname.c_str(), tlsFd->hostname.length())) < 0)
-      return _error->Error("Could not set host name %s to indicate to server: %s", tlsFd->hostname.c_str(), gnutls_strerror(err));
+
+   // set SNI only if the hostname is really a name and not an address
+   {
+      struct in_addr addr4;
+      struct in6_addr addr6;
+
+      if (inet_pton(AF_INET, tlsFd->hostname.c_str(), &addr4) == 1 ||
+	  inet_pton(AF_INET6, tlsFd->hostname.c_str(), &addr6) == 1)
+	 /* not a host name */;
+      else if ((err = gnutls_server_name_set(tlsFd->session, GNUTLS_NAME_DNS, tlsFd->hostname.c_str(), tlsFd->hostname.length())) < 0)
+	 return _error->Error("Could not set host name %s to indicate to server: %s", tlsFd->hostname.c_str(), gnutls_strerror(err));
+   }
 
    // Set the FD now, so closing it works reliably.
    tlsFd->UnderlyingFd = std::move(Fd);
