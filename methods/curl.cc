@@ -33,7 +33,7 @@
 #include <sstream>
 
 
-#include "https.h"
+#include "curl.h"
 
 #include <apti18n.h>
 									/*}}}*/

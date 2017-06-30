@@ -22,7 +22,7 @@ override_dh_install-indep:
 
 override_dh_install-arch:
 	dh_install -papt-utils -X/dump
-	dh_install -papt -Xmethods/https
+	dh_install -papt -Xmethods/curl -Xmethods/curl+https -Xmethods/curl+http
 	dh_install --remaining --list-missing
 	install -m 644 debian/apt.conf.autoremove debian/apt/etc/apt/apt.conf.d/01autoremove
 	install -m 755 debian/apt.auto-removal.sh debian/apt/etc/kernel/postinst.d/apt-auto-removal

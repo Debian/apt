@@ -11,7 +11,7 @@ apt_add_translation_domain(
 )
 
 if (HAVE_CURL)
-    set(curl_methods https)
+    set(curl_methods curl)
 else()
     set(curl_methods)
 endif()

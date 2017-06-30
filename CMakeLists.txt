@@ -79,6 +79,7 @@ endif()
 # apt-transport-https dependencies
 option(WITH_CURL "Build curl-based methods" ON)
 if (WITH_CURL)
+  option(FORCE_CURL "Use curl-based methods" OFF)
   find_package(CURL REQUIRED)
   if (CURL_FOUND)
     set(HAVE_CURL 1)

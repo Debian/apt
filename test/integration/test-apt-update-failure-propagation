@@ -100,7 +100,7 @@ for FILE in rootdir/etc/apt/sources.list.d/*-stable-* ; do
 	sed -i -e "s#:${APTHTTPSPORT}/#:666/#" "$FILE"
 done
 testwarning aptget update -o Dir::Bin::Methods::https="${OLDMETHODS}/https"
-if grep -q WITH_CURL:BOOL=OFF    $PROJECT_BINARY_DIR/CMakeCache.txt; then
+if grep -q FORCE_CURL:BOOL=OFF    $PROJECT_BINARY_DIR/CMakeCache.txt; then
 testequalor2 "W: Failed to fetch https://localhost:666/dists/stable/InRelease  Failed to connect to localhost port 666: Connection refused
 W: Some index files failed to download. They have been ignored, or old ones used instead." "W: Failed to fetch https://localhost:666/dists/stable/InRelease  Could not connect to localhost:666 (127.0.0.1). - connect (111: Connection refused)
 W: Some index files failed to download. They have been ignored, or old ones used instead." tail -n 2 rootdir/tmp/testwarning.output

@@ -5,8 +5,8 @@ services:
   - docker
 env:
  - USER=travis CMAKE_FLAGS=
- - USER=travis CMAKE_FLAGS="-DWITH_DOC=OFF -DWITH_CURL=OFF"
  - USER=root CMAKE_FLAGS=-DWITH_DOC=OFF
+ - USER=travis CMAKE_FLAGS="-DWITH_DOC=OFF -DFORCE_CURL=ON"
 install:
  - sed -i -e "s#1000#$(id -u)#g" Dockerfile
  - docker build --tag=apt-ci .
