@@ -491,15 +491,20 @@ bool HttpServerState::Open()
 	    Port = ServerName.Port;
 	 Host = ServerName.Host;
       }
-      else if (Proxy.Access != "http")
+      else if (Proxy.Access != "http" && Proxy.Access != "https")
 	 return _error->Error("Unsupported proxy configured: %s", URI::SiteOnly(Proxy).c_str());
       else
       {
 	 if (Proxy.Port != 0)
 	    Port = Proxy.Port;
 	 Host = Proxy.Host;
+
+	 if (Proxy.Access == "https" && Port == 0)
+	    Port = 443;
       }
       if (!Connect(Host, Port, DefaultService, DefaultPort, ServerFd, TimeOut, Owner))
+	 return false;
+      if (Host == Proxy.Host && Proxy.Access == "https" && UnwrapTLS(Proxy.Host, ServerFd, TimeOut, Owner) == false)
 	 return false;
       if (Host == Proxy.Host && tls && UnwrapHTTPConnect(ServerName.Host, ServerName.Port == 0 ? DefaultPort : ServerName.Port, Proxy, ServerFd, Owner->ConfigFindI("TimeOut", 120), Owner) == false)
 	 return false;
@@ -919,8 +924,8 @@ void HttpMethod::SendReq(FetchItem *Itm)
    else if (Itm->LastModified != 0)
       Req << "If-Modified-Since: " << TimeRFC1123(Itm->LastModified, false).c_str() << "\r\n";
 
-   if (Server->Proxy.Access == "http" &&
-	 (Server->Proxy.User.empty() == false || Server->Proxy.Password.empty() == false))
+   if ((Server->Proxy.Access == "http" || Server->Proxy.Access == "https") &&
+       (Server->Proxy.User.empty() == false || Server->Proxy.Password.empty() == false))
       Req << "Proxy-Authorization: Basic "
 	 << Base64Encode(Server->Proxy.User + ":" + Server->Proxy.Password) << "\r\n";
 
