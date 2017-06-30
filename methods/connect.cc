@@ -656,7 +656,25 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
    tlsFd->UnderlyingFd = MethodFd::FromFd(-1); // For now
 
    gnutls_init(&tlsFd->session, GNUTLS_CLIENT | GNUTLS_NONBLOCK);
-   gnutls_transport_set_int(tlsFd->session, dynamic_cast<FdFd *>(Fd.get())->fd);
+
+   FdFd *fdfd = dynamic_cast<FdFd *>(Fd.get());
+   if (fdfd != nullptr)
+   {
+      gnutls_transport_set_int(tlsFd->session, fdfd->fd);
+   }
+   else
+   {
+      gnutls_transport_set_ptr(tlsFd->session, Fd.get());
+      gnutls_transport_set_pull_function(tlsFd->session,
+					 [](gnutls_transport_ptr_t p, void *buf, size_t size) -> ssize_t {
+					    return reinterpret_cast<MethodFd *>(p)->Read(buf, size);
+					 });
+      gnutls_transport_set_push_function(tlsFd->session,
+					 [](gnutls_transport_ptr_t p, const void *buf, size_t size) -> ssize_t {
+					    return reinterpret_cast<MethodFd *>(p)->Write((void *)buf, size);
+					 });
+   }
+
    gnutls_certificate_allocate_credentials(&tlsFd->credentials);
 
    // Credential setup
