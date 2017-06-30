@@ -1,34 +1,21 @@
 language: cpp
 cache: ccache
 sudo: required
-dist: trusty
+services:
+  - docker
 env:
- - TEST_SUITE=user CMAKE_FLAGS=
- - TEST_SUITE=user CMAKE_FLAGS="-DWITH_DOC=OFF -DWITH_CURL=OFF"
- - TEST_SUITE=root CMAKE_FLAGS=-DWITH_DOC=OFF
-before_install:
- - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ wily main universe' -y
- - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial main' -y
- - |
-   sudo sh -c '/bin/echo -e "Package: *\nPin: release n=wily\nPin-Priority: 1" > /etc/apt/preferences.d/wily'
-   sudo sh -c '/bin/echo -e "Package: *\nPin: release n=xenial\nPin-Priority: 1" > /etc/apt/preferences.d/xenial'
- - sudo apt-get update -qq
+ - USER=travis CMAKE_FLAGS=
+ - USER=travis CMAKE_FLAGS="-DWITH_DOC=OFF -DWITH_CURL=OFF"
+ - USER=root CMAKE_FLAGS=-DWITH_DOC=OFF
 install:
- - sudo apt-get -qq -y -t wily install gettext liblz4-dev python3-apt
- - sudo apt-get -qq -y -t xenial install cmake ninja-build libgnutls28-dev libcurl4-gnutls-dev
- - sudo ./prepare-release travis-ci
+ - sed -i -e "s#1000#$(id -u)#g" Dockerfile
+ - docker build --tag=apt-ci .
 before_script:
- - ( mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Coverage -G Ninja $CMAKE_FLAGS .. )
- - ninja -C build
+ - docker run --rm -w $PWD -v $HOME/.ccache:$HOME/.ccache -v $PWD:$PWD --user=travis apt-ci sh -e -c "mkdir build && cd build && env PATH=/usr/lib/ccache:\$PATH cmake -DCMAKE_BUILD_TYPE=Coverage -G Ninja $CMAKE_FLAGS .."
+ - docker run --rm -w $PWD -v $HOME/.ccache:$HOME/.ccache -v $PWD:$PWD --user=travis apt-ci ninja -C build
 script:
- - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
- - DESTDIR=$PWD/rootdir chronic ninja -C build install
- - test "$TEST_SUITE" != "user"  || ./test/integration/run-tests -qq
- - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
- - sudo chmod  go+x /home/travis
- - sudo chmod -R go+rwX /home/travis/build
- - test "$TEST_SUITE" != "root" || sudo ./test/integration/run-tests -qq
+ - docker run --rm -w $PWD -v $PWD:$PWD --user=travis apt-ci env CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
+ - docker run --rm -w $PWD -v $PWD:$PWD --user=travis apt-ci env DESTDIR=$PWD/rootdir chronic ninja -C build install
+ - docker run --rm -w $PWD -v $PWD:$PWD --user=$USER apt-ci unbuffer ./test/integration/run-tests -qq -j 4
 after_script:
- - cd build
- - gcov -r $(find -name '*.gcno')
- - bash <(curl -s https://codecov.io/bash)
+ - docker run --rm -w $PWD/build -v $PWD:$PWD --user=$USER `bash <(curl -s https://codecov.io/env)` apt-ci bash -c 'bash <(curl -s https://codecov.io/bash)'
