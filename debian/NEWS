@@ -1,7 +1,10 @@
-apt (1.5~alpha4) UNRELEASED; urgency=medium
+apt (1.5~alpha4) experimental; urgency=medium
 
-  The apt package now installs the http method for https access, the
-  apt-transport-https package is deprecated, and installs a curl method
+  All known issues in the new https method have been fixed, including
+  support for https:// proxies and the CONNECT method. Therefore, the
+  the http method is now the default for https access.
+
+  The apt-transport-https package is deprecated, and installs a 'curl' method
   now that can be used as a fallback with curl+https URLs, or by setting
   Dir::Bin::Methods::https to "curl".
 
