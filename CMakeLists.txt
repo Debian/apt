@@ -78,8 +78,11 @@ endif()
 
 # apt-transport-https dependencies
 option(WITH_CURL "Build curl-based methods" ON)
+option(FORCE_CURL "Use curl-based methods" OFF)
+if (FORCE_CURL AND NOT WITH_CURL)
+  message(FATAL_ERROR "Cannot set FORCE_CURL=ON with WITH_CURL=OFF")
+endif()
 if (WITH_CURL)
-  option(FORCE_CURL "Use curl-based methods" OFF)
   find_package(CURL REQUIRED)
   if (CURL_FOUND)
     set(HAVE_CURL 1)
