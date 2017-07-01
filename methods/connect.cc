@@ -733,9 +733,9 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
    if ((err = gnutls_set_default_priority(tlsFd->session)) < 0)
       return _error->Error("Could not set algorithm preferences: %s", gnutls_strerror(err));
 
-   if (Owner->ConfigFindB("Verify-Peer", true) || Owner->ConfigFindB("Verify-Host", true))
+   if (Owner->ConfigFindB("Verify-Peer", true))
    {
-      gnutls_session_set_verify_cert(tlsFd->session, tlsFd->hostname.c_str(), 0);
+      gnutls_session_set_verify_cert(tlsFd->session, Owner->ConfigFindB("Verify-Host", true) ? tlsFd->hostname.c_str() : nullptr, 0);
    }
    if ((err = gnutls_server_name_set(tlsFd->session, GNUTLS_NAME_DNS, tlsFd->hostname.c_str(), tlsFd->hostname.length())) < 0)
       return _error->Error("Could not set SNI name: %s", gnutls_strerror(err));
