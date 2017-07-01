@@ -146,6 +146,9 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 
    if (stringcasecmp(Tag,"Content-Length:") == 0)
    {
+      auto ContentLength = strtoull(Val.c_str(), NULL, 10);
+      if (ContentLength == 0)
+	 return true;
       if (Encoding == Closes)
 	 Encoding = Stream;
       HaveContent = true;
@@ -154,7 +157,7 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
       if (Result == 416 || (Result >= 300 && Result < 400))
 	 DownloadSizePtr = &JunkSize;
 
-      *DownloadSizePtr = strtoull(Val.c_str(), NULL, 10);
+      *DownloadSizePtr = ContentLength;
       if (*DownloadSizePtr >= std::numeric_limits<unsigned long long>::max())
 	 return _error->Errno("HeaderLine", _("The HTTP server sent an invalid Content-Length header"));
       else if (*DownloadSizePtr == 0)
