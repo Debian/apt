@@ -16,6 +16,6 @@ before_script:
 script:
  - docker run --rm -w $PWD -v $PWD:$PWD --user=travis apt-ci env CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
  - docker run --rm -w $PWD -v $PWD:$PWD --user=travis apt-ci env DESTDIR=$PWD/rootdir chronic ninja -C build install
- - docker run --rm -w $PWD -v $PWD:$PWD --user=$USER apt-ci unbuffer ./test/integration/run-tests -qq -j 4
+ - docker run --rm -w $PWD -v $PWD:$PWD --user=$USER --tmpfs /tmp:suid,exec apt-ci unbuffer ./test/integration/run-tests -qq -j 4
 after_script:
  - docker run --rm -w $PWD/build -v $PWD:$PWD --user=$USER `bash <(curl -s https://codecov.io/env)` apt-ci bash -c 'bash <(curl -s https://codecov.io/bash)'
