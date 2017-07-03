@@ -655,7 +655,8 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
    tlsFd->hostname = Host;
    tlsFd->UnderlyingFd = MethodFd::FromFd(-1); // For now
 
-   gnutls_init(&tlsFd->session, GNUTLS_CLIENT | GNUTLS_NONBLOCK);
+   if ((err = gnutls_init(&tlsFd->session, GNUTLS_CLIENT | GNUTLS_NONBLOCK)) < 0)
+      return _error->Error("Internal error: could not allocate credentials: %s", gnutls_strerror(err));
 
    FdFd *fdfd = dynamic_cast<FdFd *>(Fd.get());
    if (fdfd != nullptr)
@@ -675,7 +676,8 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
 					 });
    }
 
-   gnutls_certificate_allocate_credentials(&tlsFd->credentials);
+   if ((err = gnutls_certificate_allocate_credentials(&tlsFd->credentials)) < 0)
+      return _error->Error("Internal error: could not allocate credentials: %s", gnutls_strerror(err));
 
    // Credential setup
    std::string fileinfo = Owner->ConfigFind("CaInfo", "");
@@ -683,7 +685,7 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
    {
       // No CaInfo specified, use system trust store.
       if ((err = gnutls_certificate_set_x509_system_trust(tlsFd->credentials)) <= 0)
-	 return _error->Error("Could not load TLS certificates: %s",
+	 return _error->Error("Could not load system TLS certificates: %s",
 			      err == 0
 				  ? "No certificates available. Try installing ca-certificates."
 				  : gnutls_strerror(err));
@@ -694,7 +696,7 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
       gnutls_certificate_set_verify_flags(tlsFd->credentials, GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT);
       err = gnutls_certificate_set_x509_trust_file(tlsFd->credentials, fileinfo.c_str(), GNUTLS_X509_FMT_PEM);
       if (err < 0)
-	 return _error->Error("Could not load CaInfo certificate: %s", gnutls_strerror(err));
+	 return _error->Error("Could not load certificates from %s (CaInfo option): %s", fileinfo.c_str(), gnutls_strerror(err));
    }
 
    if (!Owner->ConfigFind("IssuerCert", "").empty())
@@ -713,7 +715,7 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
 	       key.empty() ? cert.c_str() : key.c_str(),
 	       GNUTLS_X509_FMT_PEM)) < 0)
       {
-	 return _error->Error("Could not load client certificate or key: %s", gnutls_strerror(err));
+	 return _error->Error("Could not load client certificate (%s, SslCert option) or key (%s, SslKey option): %s", cert.c_str(), key.c_str(), gnutls_strerror(err));
       }
    }
 
@@ -724,21 +726,21 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
       if ((err = gnutls_certificate_set_x509_crl_file(tlsFd->credentials,
 						      crlfile.c_str(),
 						      GNUTLS_X509_FMT_PEM)) < 0)
-	 return _error->Error("Could not load CrlFile: %s", gnutls_strerror(err));
+	 return _error->Error("Could not load custom certificate revocation list %s (CrlFile option): %s", crlfile.c_str(), gnutls_strerror(err));
    }
 
    if ((err = gnutls_credentials_set(tlsFd->session, GNUTLS_CRD_CERTIFICATE, tlsFd->credentials)) < 0)
-      return _error->Error("Could not set CaInfo certificate: %s", gnutls_strerror(err));
+      return _error->Error("Internal error: Could not add certificates to session: %s", gnutls_strerror(err));
 
    if ((err = gnutls_set_default_priority(tlsFd->session)) < 0)
-      return _error->Error("Could not set algorithm preferences: %s", gnutls_strerror(err));
+      return _error->Error("Internal error: Could not set algorithm preferences: %s", gnutls_strerror(err));
 
    if (Owner->ConfigFindB("Verify-Peer", true))
    {
       gnutls_session_set_verify_cert(tlsFd->session, Owner->ConfigFindB("Verify-Host", true) ? tlsFd->hostname.c_str() : nullptr, 0);
    }
    if ((err = gnutls_server_name_set(tlsFd->session, GNUTLS_NAME_DNS, tlsFd->hostname.c_str(), tlsFd->hostname.length())) < 0)
-      return _error->Error("Could not set SNI name: %s", gnutls_strerror(err));
+      return _error->Error("Could not set host name %s to indicate to server: %s", tlsFd->hostname.c_str(), gnutls_strerror(err));
 
    // Do the handshake. Our socket is non-blocking, so we need to call WaitFd()
    // accordingly.
