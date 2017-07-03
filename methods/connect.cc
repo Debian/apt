@@ -742,6 +742,10 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
    if ((err = gnutls_server_name_set(tlsFd->session, GNUTLS_NAME_DNS, tlsFd->hostname.c_str(), tlsFd->hostname.length())) < 0)
       return _error->Error("Could not set host name %s to indicate to server: %s", tlsFd->hostname.c_str(), gnutls_strerror(err));
 
+   // Set the FD now, so closing it works reliably.
+   tlsFd->UnderlyingFd = std::move(Fd);
+   Fd.reset(tlsFd);
+
    // Do the handshake. Our socket is non-blocking, so we need to call WaitFd()
    // accordingly.
    do
@@ -770,8 +774,6 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
       return _error->Error("Could not handshake: %s", gnutls_strerror(err));
    }
 
-   tlsFd->UnderlyingFd = std::move(Fd);
-   Fd.reset(tlsFd);
    return true;
 }
 									/*}}}*/
