@@ -13,14 +13,6 @@
    socket. This provides ideal pipelining as in many cases all of the
    requests will fit into a single packet. The input socket is buffered 
    the same way and fed into the fd for the file (may be a pipe in future).
-   
-   This double buffering provides fairly substantial transfer rates,
-   compared to wget the http method is about 4% faster. Most importantly,
-   when HTTP is compared with FTP as a protocol the speed difference is
-   huge. In tests over the internet from two sites to llug (via ATM) this
-   program got 230k/s sustained http transfer rates. FTP on the other 
-   hand topped out at 170k/s. That combined with the time to setup the
-   FTP connection makes HTTP a vastly superior protocol.
       
    ##################################################################### */
 									/*}}}*/
