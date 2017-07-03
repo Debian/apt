@@ -8,19 +8,20 @@
 # Dmitry Astapov <adept@despammed.com>, 2004.
 # Yuri Kozlov <kozlov.y@gmail.com>, 2004, 2005, 2006, 2007, 2008.
 # Yuri Kozlov <yuray@komyakino.ru>, 2009, 2010, 2012, 2015, 2016.
+# Aleksej Shilin <rootlexx@mail.ru>, 2017.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.12\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-06-28 19:53+0200\n"
-"PO-Revision-Date: 2016-05-19 20:50+0300\n"
-"Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
+"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"PO-Revision-Date: 2017-07-01 16:05+0300\n"
+"Last-Translator: Aleksej Shilin <rootlexx@mail.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Lokalize 2.0\n"
 "Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
@@ -492,12 +493,12 @@ msgstr "Очистка «%s» не поддерживается"
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Скачивается файл %li из %li (осталось %s)"
+msgstr "Получение файла %li из %li (осталось %s)"
 
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li"
-msgstr "Скачивается файл %li из %li"
+msgstr "Получение файла %li из %li"
 
 #: apt-pkg/algorithms.cc
 #, c-format
@@ -1700,7 +1701,7 @@ msgstr "Ошк:%lu %s"
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "Получено %sБ за %s (%sБ/c)\n"
+msgstr "Получено %sB за %s (%sB/s)\n"
 
 #: apt-private/acqprogress.cc
 msgid " [Working]"
@@ -2005,7 +2006,7 @@ msgstr "Необходимо скачать %sB/%sB архивов.\n"
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB of archives.\n"
-msgstr "Необходимо скачать %sБ архивов.\n"
+msgstr "Необходимо скачать %sB архивов.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2050,7 +2051,7 @@ msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Abort."
-msgstr "Аварийное завершение."
+msgstr "Прервано."
 
 #: apt-private/private-install.cc
 msgid "Do you want to continue?"
@@ -2304,7 +2305,7 @@ msgstr "Пакеты, которые будут обновлены:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
-msgstr "Пакеты, будут заменены на более СТАРЫЕ версии:"
+msgstr "Пакеты, которые будут заменены на более СТАРЫЕ версии:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2327,12 +2328,12 @@ msgstr ""
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "обновлено %lu, установлено %lu новых пакетов, "
+msgstr "Обновлено %lu пакетов, установлено %lu новых пакетов, "
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu reinstalled, "
-msgstr "переустановлено %lu переустановлено, "
+msgstr "переустановлено %lu пакетов, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2347,7 +2348,7 @@ msgstr "для удаления отмечено %lu пакетов, и %lu па
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu not fully installed or removed.\n"
-msgstr "не установлено до конца или удалено %lu пакетов.\n"
+msgstr "Установлено или удалено не до конца %lu пакетов.\n"
 
 #. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
 #. e.g. "Do you want to continue? [Y/n] "
@@ -2502,14 +2503,14 @@ msgstr "Пропускаем уже скачанный файл «%s»\n"
 #: apt-private/private-source.cc
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Необходимо получить %sб/%sб архивов исходного кода.\n"
+msgstr "Необходимо скачать %sB/%sB архивов исходного кода.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-source.cc
 #, c-format
 msgid "Need to get %sB of source archives.\n"
-msgstr "Необходимо получить %sб архивов исходного кода.\n"
+msgstr "Необходимо скачать %sB архивов исходного кода.\n"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3615,7 +3616,7 @@ msgstr "Файл не найден"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc
+#: methods/connect.cc methods/http.cc
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr "Соединение с %s (%s)"
