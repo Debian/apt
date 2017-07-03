@@ -1,16 +1,15 @@
-apt (1.5~alpha4) experimental; urgency=medium
+apt (1.5~beta1) unstable; urgency=medium
 
-  All known issues in the new https method have been fixed, including
-  support for https:// proxies and the CONNECT method. Therefore, the
-  the http method is now the default for https access.
+  [ New HTTPS method ]
+  The default http method now supports HTTPS itself, including encrypted proxies
+  and connecting to HTTPS sites via HTTPS proxies; and the apt-transport-https
+  package only provides a "curl+https" method now as a fallback, but will be
+  removed shortly. If TLS support is unwanted, it can be disabled overall by
+  setting the option Acquire::AllowTLS to "false".
 
-  The apt-transport-https package is deprecated, and installs a 'curl' method
-  now that can be used as a fallback with curl+https URLs, or by setting
-  Dir::Bin::Methods::https to "curl".
-
- -- Julian Andres Klode <jak@debian.org>  Fri, 30 Jun 2017 15:26:44 +0200
-
-apt (1.5~alpha1) experimental; urgency=medium
+  As for backwards compatibility, the options IssuerCert and SslForceVersion
+  are not supported anymore, and any specified certificate files must in the
+  PEM format (curl might have allowed DER files as well).
 
   [ Changes to unauthenticated repositories ]
   The security exception for apt-get to only raise warnings if it encounters
@@ -23,21 +22,12 @@ apt (1.5~alpha1) experimental; urgency=medium
     Binary::apt-get::Acquire::AllowInsecureRepositories "true";
   See apt-secure(8) manpage for configuration details.
 
-  [ Experimental https support in http ]
-  The http method will eventually replace the curl-based https method, but for
-  now, this is an opt-in experiment that can be enabled by setting
-  Dir::Bin::Methods::https to "http". Known issues:
-    - We do not support HTTPS proxies yet
-    - We do not support proxying HTTPS connections yet (CONNECT)
-    - IssuerCert and SslForceVersion are unsupported
-  TLS code paths can be disabled by setting Acquire::AllowTLS to "false".
-
   [ Release Info Changes ]
   If values like Origin, Label, and Codename change in a Release file,
   update fails, or asks a user (if interactive). Various
   --allow-releaseinfo-change are provided for non-interactive use.
 
- -- Julian Andres Klode <jak@debian.org>  Wed, 28 Jun 2017 19:49:30 +0200
+ -- Julian Andres Klode <jak@debian.org>  Mon, 03 Jul 2017 15:09:23 +0200
 
 apt (1.4.2) unstable; urgency=medium
 
@@ -162,4 +152,3 @@ apt (0.5.25) unstable; urgency=low
     recreated the next time.
 
  -- Matt Zimmerman <mdz@debian.org>  Sat,  8 May 2004 12:38:07 -0700
-
