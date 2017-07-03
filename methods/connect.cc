@@ -684,11 +684,11 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
    if (fileinfo.empty())
    {
       // No CaInfo specified, use system trust store.
-      if ((err = gnutls_certificate_set_x509_system_trust(tlsFd->credentials)) <= 0)
-	 return _error->Error("Could not load system TLS certificates: %s",
-			      err == 0
-				  ? "No certificates available. Try installing ca-certificates."
-				  : gnutls_strerror(err));
+      err = gnutls_certificate_set_x509_system_trust(tlsFd->credentials);
+      if (err == 0)
+	 Owner->Warning("No system certificates available. Try installing ca-certificates.");
+      else if (err < 0)
+	 return _error->Error("Could not load system TLS certificates: %s", gnutls_strerror(err));
    }
    else
    {
