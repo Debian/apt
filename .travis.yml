@@ -1,21 +1,15 @@
 language: cpp
 sudo: required
-dist: trusty
+services:
+  - docker
 env:
- - TEST_SUITE=user
- - TEST_SUITE=root
-before_install:
- - sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu/ wily main universe' -y
- - |
-   sudo sh -c '/bin/echo -e "Package: *\nPin: release n=wily\nPin-Priority: 1" > /etc/apt/preferences.d/wily'
- - sudo apt-get update -qq
+ - USER=travis
+ - USER=root
 install:
- - sudo apt-get -qq -y -t wily install libstdc++-5-dev g++
- - sudo ./prepare-release travis-ci
- - sudo apt-get -qq -y -t wily install gettext liblz4-dev python3-apt
- - make
+ - sed -i -e "s#1000#$(id -u)#g" Dockerfile
+ - docker build --tag=apt-ci .
+before_script:
+ - docker run --rm -w $PWD -v $HOME/.ccache:$HOME/.ccache -v $PWD:$PWD --user=travis apt-ci make
 script:
- - make test
- - test "$TEST_SUITE" != "user"  || ./test/integration/run-tests -q
- - sudo adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
- - test "$TEST_SUITE" != "root"  || sudo ./test/integration/run-tests -q
+ - docker run --rm -w $PWD -v $PWD:$PWD --user=travis apt-ci env make test
+ - docker run --rm -w $PWD -v $PWD:$PWD --user=$USER --tmpfs /tmp:suid,exec apt-ci unbuffer ./test/integration/run-tests -q -j 4
