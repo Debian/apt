@@ -8,10 +8,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.4.x\n"
+"Project-Id-Version: apt 1.5.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2017-07-03 16:55+0200\n"
-"PO-Revision-Date: 2017-01-26 12:00+0000\n"
+"PO-Revision-Date: 2017-07-04 03:00+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -295,38 +295,34 @@ msgid "GPG error: %s: %s"
 msgstr "GPG 错误：%s: %s"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Skipping acquire of configured file '%s' as repository '%s' doesn't "
-#| "support architecture '%s'"
+#, c-format
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
 "component '%s' (component misspelt in sources.list?)"
-msgstr "鉴于仓库 '%2$s' 不支持 '%3$s' 体系结构，跳过配置文件 '%1$s' 的捕获。"
+msgstr "鉴于仓库 '%2$s' 不含有 '%3$s' 组件，跳过配置文件 '%1$s' 的获取。"
+"(sources.list 中的组件名称是否拼写错误？)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
-msgstr "鉴于仓库 '%2$s' 不支持 '%3$s' 体系结构，跳过配置文件 '%1$s' 的捕获。"
+msgstr "鉴于仓库 '%2$s' 不支持 '%3$s' 体系结构，跳过配置文件 '%1$s' 的获取。"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Skipping acquire of configured file '%s' as repository '%s' doesn't "
-#| "support architecture '%s'"
+#, c-format
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' does not seem to "
 "provide it (sources.list entry misspelt?)"
-msgstr "鉴于仓库 '%2$s' 不支持 '%3$s' 体系结构，跳过配置文件 '%1$s' 的捕获。"
+msgstr "鉴于仓库 '%2$s' 不提供配置文件 '%1$s' ，跳过其获取过程。"
+"(sources.list 中是否有拼写错误？)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
-msgstr "鉴于仓库 '%2$s' 提供的安全信息强度太低，跳过配置文件 '%1$s' 的acquire."
+msgstr "鉴于仓库 '%2$s' 提供的安全信息强度太低，跳过配置文件 '%1$s' 的获取。"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -347,19 +343,19 @@ msgstr "冲突的发行版：%s (期望 %s 但得到 %s)"
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
-msgstr ""
+msgstr "仓库'%s'将其'%s'值从'%s'修改到了'%s'"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
-msgstr ""
+msgstr "仓库'%s'将其'%s'的默认优先级从'%hi'修改到了'%hi'。"
 
 #. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
 "More information about this can be found online in the Release notes at: %s"
-msgstr ""
+msgstr "更多有关细节可以阅览在线发行注记：%s"
 
 #. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
 #: apt-pkg/acquire-item.cc
@@ -367,7 +363,8 @@ msgstr ""
 msgid ""
 "This must be accepted explicitly before updates for this repository can be "
 "applied. See %s manpage for details."
-msgstr ""
+msgstr "为了让这个仓库能够应用，这必须在更新之前显式接受。更多细节请参阅"
+" %s 手册。"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1629,7 +1626,7 @@ msgstr ""
 msgid ""
 "Do you want to accept these changes and continue updating from this "
 "repository?"
-msgstr ""
+msgstr "您是否愿意接受这些更改，并且继续从此仓库更新？"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
