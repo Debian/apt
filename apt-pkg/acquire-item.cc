@@ -1102,11 +1102,13 @@ void pkgAcqMetaBase::AbortTransaction()
       case TransactionCommit: _error->Fatal("Transaction %s was already aborted and is now committed", TransactionManager->Target.URI.c_str()); return;
    }
    TransactionManager->State = TransactionAbort;
+   TransactionManager->ExpectedAdditionalItems = 0;
 
    // ensure the toplevel is in error state too
    for (std::vector<pkgAcqTransactionItem*>::iterator I = Transaction.begin();
         I != Transaction.end(); ++I)
    {
+      (*I)->ExpectedAdditionalItems = 0;
       if ((*I)->Status != pkgAcquire::Item::StatFetching)
 	 Owner->Dequeue(*I);
       (*I)->TransactionState(TransactionAbort);
