@@ -5,6 +5,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/netrc.h>
 
 #include <algorithm>
 #include <locale>
@@ -40,6 +41,24 @@ public:
       DropPrivsOrDie();
 
       return true;
+   }
+
+   bool MaybeAddAuthTo(URI &uri)
+   {
+      if (uri.User.empty() == false || uri.Password.empty() == false)
+	 return true;
+      auto const netrc = _config->FindFile("Dir::Etc::netrc");
+      if (netrc.empty() == true)
+	 return true;
+      // ignore errors with opening the auth file as it doesn't need to exist
+      _error->PushToStack();
+      FileFd authconf(netrc, FileFd::ReadOnly);
+      _error->RevertToStack();
+      if (authconf.IsOpen() == false)
+	 return true;
+      if (authconf.Seek(0) == false)
+	 return false;
+      return MaybeAddAuth(authconf, uri);
    }
 
    bool CalculateHashes(FetchItem const * const Itm, FetchResult &Res) const APT_NONNULL(2)

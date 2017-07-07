@@ -21,7 +21,6 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
-#include <apt-pkg/netrc.h>
 #include <apt-pkg/strutl.h>
 
 #include <iostream>
@@ -1015,7 +1014,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    Res.Filename = Itm->DestFile;
    Res.IMSHit = false;
 
-   maybe_add_auth (Get, _config->FindFile("Dir::Etc::netrc"));
+   MaybeAddAuthTo(Get);
 
    // Connect to the server
    if (Server == 0 || Server->Comp(Get) == false)

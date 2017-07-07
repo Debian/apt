@@ -14,205 +14,129 @@
 #include <config.h>
 
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
 #include <iostream>
-#include <pwd.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 
 #include "netrc.h"
 
-using std::string;
-
 /* Get user and password from .netrc when given a machine name */
-
-enum {
-  NOTHING,
-  HOSTFOUND,    /* the 'machine' keyword was found */
-  HOSTCOMPLETE, /* the machine name following the keyword was found too */
-  HOSTVALID,    /* this is "our" machine! */
-  HOSTEND /* LAST enum */
-};
-
-/* make sure we have room for at least this size: */
-#define LOGINSIZE 256
-#define PASSWORDSIZE 256
-#define NETRC DOT_CHAR "netrc"
-
-/* returns -1 on failure, 0 if the host is found, 1 is the host isn't found */
-static int parsenetrc_string (char *host, std::string &login, std::string &password, char *netrcfile = NULL)
+bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
 {
-  FILE *file;
-  int retcode = 1;
-  int specific_login = (login.empty() == false);
-  bool netrc_alloc = false;
+   if (Uri.User.empty() == false || Uri.Password.empty() == false)
+      return true;
+   if (NetRCFile.IsOpen() == false || NetRCFile.Failed())
+      return false;
+   auto const Debug = _config->FindB("Debug::Acquire::netrc", false);
 
-  if (!netrcfile) {
-    char const * home = getenv ("HOME"); /* portable environment reader */
+   std::string lookfor;
+   if (Uri.Port != 0)
+      strprintf(lookfor, "%s:%i%s", Uri.Host.c_str(), Uri.Port, Uri.Path.c_str());
+   else
+      lookfor.append(Uri.Host).append(Uri.Path);
 
-    if (!home) {
-      struct passwd *pw;
-      pw = getpwuid (geteuid ());
-      if(pw)
-        home = pw->pw_dir;
-    }
-
-    if (!home)
-      return -1;
-
-    if (asprintf (&netrcfile, "%s%s%s", home, DIR_CHAR, NETRC) == -1 || netrcfile == NULL)
-      return -1;
-    else
-      netrc_alloc = true;
-  }
-
-  file = fopen (netrcfile, "r");
-  if(file) {
-    char *tok;
-    char *tok_buf;
-    bool done = false;
-    char *netrcbuffer = NULL;
-    size_t netrcbuffer_size = 0;
-
-    int state = NOTHING;
-    char state_login = 0;        /* Found a login keyword */
-    char state_password = 0;     /* Found a password keyword */
-    int state_our_login = false;  /* With specific_login,
-				     found *our* login name */
-
-    while (!done && getline(&netrcbuffer, &netrcbuffer_size, file) != -1) {
-      tok = strtok_r (netrcbuffer, " \t\n", &tok_buf);
-      while (!done && tok) {
-        if(login.empty() == false && password.empty() == false) {
-          done = true;
-          break;
-        }
-
-        switch(state) {
-        case NOTHING:
-          if (!strcasecmp ("machine", tok)) {
-            /* the next tok is the machine name, this is in itself the
-               delimiter that starts the stuff entered for this machine,
-               after this we need to search for 'login' and
-               'password'. */
-            state = HOSTFOUND;
-          }
-          break;
-        case HOSTFOUND:
-	   /* extended definition of a "machine" if we have a "/"
-	      we match the start of the string (host.startswith(token) */
-	  if ((strchr(host, '/') && strstr(host, tok) == host) ||
-	      (!strcasecmp (host, tok))) {
-            /* and yes, this is our host! */
-            state = HOSTVALID;
-            retcode = 0; /* we did find our host */
-          }
-          else
-            /* not our host */
-            state = NOTHING;
-          break;
-        case HOSTVALID:
-          /* we are now parsing sub-keywords regarding "our" host */
-          if (state_login) {
-            if (specific_login)
-              state_our_login = !strcasecmp (login.c_str(), tok);
-            else
-              login = tok;
-            state_login = 0;
-          } else if (state_password) {
-            if (state_our_login || !specific_login)
-              password = tok;
-            state_password = 0;
-          } else if (!strcasecmp ("login", tok))
-            state_login = 1;
-          else if (!strcasecmp ("password", tok))
-            state_password = 1;
-          else if(!strcasecmp ("machine", tok)) {
-            /* ok, there's machine here go => */
-            state = HOSTFOUND;
-            state_our_login = false;
-          }
-          break;
-        } /* switch (state) */
-
-        tok = strtok_r (NULL, " \t\n", &tok_buf);
-      } /* while(tok) */
-    } /* while getline() */
-
-    free(netrcbuffer);
-    fclose(file);
-  }
-
-  if (netrc_alloc)
-    free(netrcfile);
-
-  return retcode;
-}
-
-void maybe_add_auth (URI &Uri, string NetRCFile)
-{
-  if (_config->FindB("Debug::Acquire::netrc", false) == true)
-     std::clog << "maybe_add_auth: " << (string)Uri 
-	       << " " << NetRCFile << std::endl;
-  if (Uri.Password.empty () == true || Uri.User.empty () == true)
-  {
-    if (NetRCFile.empty () == false)
-    {
-       std::string login, password;
-      char *netrcfile = strdup(NetRCFile.c_str());
-
-      // first check for a generic host based netrc entry
-      char *host = strdup(Uri.Host.c_str());
-      if (host && parsenetrc_string(host, login, password, netrcfile) == 0)
+   enum
+   {
+      NO,
+      MACHINE,
+      GOOD_MACHINE,
+      LOGIN,
+      PASSWORD
+   } active_token = NO;
+   std::string line;
+   while (NetRCFile.Eof() == false || line.empty() == false)
+   {
+      if (line.empty())
       {
-	 if (_config->FindB("Debug::Acquire::netrc", false) == true)
-	    std::clog << "host: " << host 
-		      << " user: " << login
-		      << " pass-size: " << password.size()
-		      << std::endl;
-        Uri.User = login;
-        Uri.Password = password;
-	free(netrcfile);
-	free(host);
-	return;
+	 if (NetRCFile.ReadLine(line) == false)
+	    break;
+	 else if (line.empty())
+	    continue;
       }
-      free(host);
-
-      // if host did not work, try Host+Path next, this will trigger
-      // a lookup uri.startswith(host) in the netrc file parser (because
-      // of the "/"
-      char *hostpath = strdup((Uri.Host + Uri.Path).c_str());
-      if (hostpath && parsenetrc_string(hostpath, login, password, netrcfile) == 0)
+      auto tokenend = line.find_first_of("\t ");
+      std::string token;
+      if (tokenend != std::string::npos)
       {
-	 if (_config->FindB("Debug::Acquire::netrc", false) == true)
-	    std::clog << "hostpath: " << hostpath
-		      << " user: " << login
-		      << " pass-size: " << password.size()
-		      << std::endl;
-	 Uri.User = login;
-	 Uri.Password = password;
+	 token = line.substr(0, tokenend);
+	 line.erase(0, tokenend + 1);
       }
-      free(netrcfile);
-      free(hostpath);
-    }
-  }
+      else
+	 std::swap(line, token);
+      if (token.empty())
+	 continue;
+      switch (active_token)
+      {
+      case NO:
+	 if (token == "machine")
+	    active_token = MACHINE;
+	 break;
+      case MACHINE:
+	 if (token.find('/') == std::string::npos)
+	 {
+	    if (Uri.Port != 0 && Uri.Host == token)
+	       active_token = GOOD_MACHINE;
+	    else if (lookfor.compare(0, lookfor.length() - Uri.Path.length(), token) == 0)
+	       active_token = GOOD_MACHINE;
+	    else
+	       active_token = NO;
+	 }
+	 else
+	 {
+	    if (APT::String::Startswith(lookfor, token))
+	       active_token = GOOD_MACHINE;
+	    else
+	       active_token = NO;
+	 }
+	 break;
+      case GOOD_MACHINE:
+	 if (token == "login")
+	    active_token = LOGIN;
+	 else if (token == "password")
+	    active_token = PASSWORD;
+	 else if (token == "machine")
+	 {
+	    if (Debug)
+	       std::clog << "MaybeAddAuth: Found matching host adding '" << Uri.User << "' and '" << Uri.Password << "' for "
+			 << (std::string)Uri << " from " << NetRCFile.Name() << std::endl;
+	    return true;
+	 }
+	 break;
+      case LOGIN:
+	 std::swap(Uri.User, token);
+	 active_token = GOOD_MACHINE;
+	 break;
+      case PASSWORD:
+	 std::swap(Uri.Password, token);
+	 active_token = GOOD_MACHINE;
+	 break;
+      }
+   }
+   if (active_token == GOOD_MACHINE)
+   {
+      if (Debug)
+	 std::clog << "MaybeAddAuth: Found matching host adding '" << Uri.User << "' and '" << Uri.Password << "' for "
+		   << (std::string)Uri << " from " << NetRCFile.Name() << std::endl;
+      return true;
+   }
+   else if (active_token == NO)
+   {
+      if (Debug)
+	 std::clog << "MaybeAddAuth: Found no matching host for "
+		   << (std::string)Uri << " from " << NetRCFile.Name() << std::endl;
+      return true;
+   }
+   else if (Debug)
+      std::clog << "MaybeAddAuth: Found no matching host (syntax error: " << active_token << ") for "
+		<< (std::string)Uri << " from " << NetRCFile.Name() << std::endl;
+   return false;
 }
 
-#ifdef DEBUG
-int main(int argc, char* argv[])
+void maybe_add_auth(URI &Uri, std::string NetRCFile)
 {
-  char login[64] = "";
-  char password[64] = "";
-
-  if(argc < 2)
-    return -1;
-
-  if(0 == parsenetrc (argv[1], login, password, argv[2])) {
-    printf("HOST: %s LOGIN: %s PASSWORD: %s\n", argv[1], login, password);
-  }
+   if (FileExists(NetRCFile) == false)
+      return;
+   FileFd fd;
+   if (fd.Open(NetRCFile, FileFd::ReadOnly))
+      MaybeAddAuth(fd, Uri);
 }
-#endif

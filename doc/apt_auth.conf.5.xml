@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % aptent SYSTEM "apt.ent"> %aptent;
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent"> %aptverbatiment;
+<!ENTITY % aptvendor SYSTEM "apt-vendor.ent"> %aptvendor;
+]>
+
+<refentry>
+
+ <refentryinfo>
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>2017-07-07T00:00:00Z</date>
+ </refentryinfo>
+
+ <refmeta>
+   <refentrytitle>apt_auth.conf</refentrytitle>
+   <manvolnum>5</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
+ </refmeta>
+
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt_auth.conf</refname>
+    <refpurpose>Login configuration file for APT sources and proxies</refpurpose>
+ </refnamediv>
+
+<refsect1><title>Description</title>
+<para>APT configuration files like &sources-list; or &apt-conf; need to be accessible
+for everyone using apt tools on the system to have access to all package-related
+information like the available packages in a repository. Login information
+needed to connect to a proxy or to download data from a repository on the other
+hand shouldn't always be accessible by everyone and can hence not be placed in a
+file with world-readable file permissions.</para>
+
+<para>The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be used to store
+login information in a netrc-like format with restrictive file permissions.</para>
+</refsect1>
+
+<refsect1><title>netrc-like format</title>
+<para>The format defined here is similar to the format of the <filename>~/.netrc</filename>
+file used by <citerefentry><refentrytitle><command>ftp</command></refentrytitle><manvolnum>1</manvolnum></citerefentry>
+and similar programs interacting with servers.
+It is a simple token-based format with the following tokens being recognized;
+Unknown tokens will be ignored. Tokens may be separated by spaces, tabs or newlines.</para>
+
+<variablelist>
+<varlistentry>
+<term><literal>machine</literal> <replaceable>hostname</replaceable>[:<replaceable>port</replaceable>][/<replaceable>path</replaceable>]</term>
+<listitem><para>Entries are looked up by searching for the
+<emphasis><literal>machine</literal></emphasis> token matching the
+hostname of the URI apt needs login information for. Extending the netrc-format
+a portnumber can be specified. If no port is given the token matches for all ports.
+Similar the path is optional and only needed and useful if multiple repositories with
+different login information reside on the same server. A machine token with a path
+matches if the path in the URI starts with the path given in the token.
+Once a match is made, the subsequent tokens are processed, stopping when the
+end of file is reached or another <emphasis><literal>machine</literal></emphasis>
+token is encountered.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><literal>login</literal> <replaceable>name</replaceable></term>
+<listitem><para>The username to be used.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><literal>password</literal> <replaceable>string</replaceable></term>
+<listitem><para>The password to be used.</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</refsect1>
+
+<refsect1><title>Example</title>
+<para>Supplying login information for a user named <literal>apt</literal>
+with the password <literal>debian</literal> for the &sources-list; entry
+<literallayout>deb http://example.org/debian &debian-stable-codename; main</literallayout>
+could be done in the entry directly:
+<literallayout>deb http://apt:debian@example.org/debian &debian-stable-codename; main</literallayout>
+Alternatively an entry like the following in the auth.conf file could be used:
+<literallayout>machine example.org
+login apt
+password debian</literallayout>
+Or alternatively within a single line:
+<literallayout>machine example.org login apt password debian</literallayout>
+If you need to be more specific all of these lines will also apply to the example entry:</para>
+<literallayout>machine example.org/deb login apt password debian
+machine example.org/debian login apt password debian
+machine example.org/debian/ login apt password debian
+</literallayout>
+On the other hand neither of the following lines apply:
+<literallayout>machine example.org:80 login apt password debian
+machine example.org/deb/ login apt password debian
+machine example.org/ubuntu login apt password debian
+machine example.orga login apt password debian
+machine example.net login apt password debian
+</literallayout>
+</refsect1>
+
+<refsect1><title>Notes</title>
+<para>Basic support for this feature is present since version 0.7.25, but was
+undocumented for years. The documentation was added in version 1.5 changing
+also the implementation slightly. For maximum backward compatibility you should
+avoid multiple <literal>machine</literal> tokens with the same hostname, but if
+you need multiple they should all have a path specified in the
+<literal>machine</literal> token.</para>
+</refsect1>
+
+<refsect1>
+<title>Files</title>
+  <variablelist>
+     <varlistentry><term><filename>/etc/apt/auth.conf</filename></term>
+	<listitem><para>Login information for APT sources and proxies in a netrc-like format.
+	Configuration Item: <literal>Dir::Etc::netrc</literal>.</para></listitem>
+     </varlistentry>
+  </variablelist>
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+<para>&apt-conf; &sources-list;
+</para>
+</refsect1>
+
+ &manbugs;
+
+</refentry>

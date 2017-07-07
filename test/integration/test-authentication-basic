@@ -13,6 +13,7 @@ setupaptarchive --no-update
 changetohttpswebserver --authorization="$(printf '%s' 'star@irc:hunter2' | base64 )"
 
 echo 'See, when YOU type hunter2, it shows to us as *******' > aptarchive/bash
+echo 'Debug::Acquire::netrc "true";' > rootdir/etc/apt/apt.conf.d/netrcdebug.conf
 
 testauthfailure() {
 	testfailure apthelper download-file "${1}/bash" ./downloaded/bash

@@ -845,7 +845,7 @@ bool BaseHttpMethod::Configuration(std::string Message)			/*{{{*/
    return true;
 }
 									/*}}}*/
-bool BaseHttpMethod::AddProxyAuth(URI &Proxy, URI const &Server) const	/*{{{*/
+bool BaseHttpMethod::AddProxyAuth(URI &Proxy, URI const &Server) /*{{{*/
 {
    if (std::find(methodNames.begin(), methodNames.end(), "tor") != methodNames.end() &&
 	 Proxy.User == "apt-transport-tor" && Proxy.Password.empty())

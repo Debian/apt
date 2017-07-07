@@ -164,7 +164,7 @@ class BaseHttpMethod : public aptMethod
    virtual void RotateDNS() = 0;
    virtual bool Configuration(std::string Message) APT_OVERRIDE;
 
-   bool AddProxyAuth(URI &Proxy, URI const &Server) const;
+   bool AddProxyAuth(URI &Proxy, URI const &Server);
 
    BaseHttpMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags);
    virtual ~BaseHttpMethod() {};

@@ -66,6 +66,7 @@ endif()
 add_docbook(apt-man MANPAGE ALL
     DOCUMENTS
         apt.8.xml
+        apt_auth.conf.5.xml
         apt-cache.8.xml
         apt-cdrom.8.xml
         apt.conf.5.xml
