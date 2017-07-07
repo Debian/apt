@@ -95,7 +95,9 @@ rewritesourceslist "http://localhost:${APTHTTPPORT}"
 
 msgmsg 'proxy to server basic auth'
 webserverconfig 'aptwebserver::request::absolute' 'uri'
-export http_proxy="http://localhost:${APTHTTPPORT}"
+# using ip instead of localhost avoids picking up the auth for the repo
+# for the proxy as well as we serve them both over the same server…
+export http_proxy="http://127.0.0.1:${APTHTTPPORT}"
 runtest "http://localhost:${APTHTTPPORT}"
 unset http_proxy
 

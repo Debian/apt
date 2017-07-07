@@ -847,6 +847,7 @@ bool BaseHttpMethod::Configuration(std::string Message)			/*{{{*/
 									/*}}}*/
 bool BaseHttpMethod::AddProxyAuth(URI &Proxy, URI const &Server) /*{{{*/
 {
+   MaybeAddAuthTo(Proxy);
    if (std::find(methodNames.begin(), methodNames.end(), "tor") != methodNames.end() &&
 	 Proxy.User == "apt-transport-tor" && Proxy.Password.empty())
    {
@@ -857,7 +858,6 @@ bool BaseHttpMethod::AddProxyAuth(URI &Proxy, URI const &Server) /*{{{*/
       else
 	 Proxy.Password = std::move(pass);
    }
-   // FIXME: should we support auth.conf for proxies?
    return true;
 }
 									/*}}}*/
