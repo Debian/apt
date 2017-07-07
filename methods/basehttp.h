@@ -115,7 +115,7 @@ struct ServerState
    virtual ~ServerState() {};
 };
 
-class BaseHttpMethod : public aptMethod
+class BaseHttpMethod : public aptAuthConfMethod
 {
    protected:
    virtual bool Fetch(FetchItem *) APT_OVERRIDE;

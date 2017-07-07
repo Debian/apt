@@ -830,14 +830,14 @@ unsigned long long BaseHttpMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
 }
 									/*}}}*/
 BaseHttpMethod::BaseHttpMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
-   aptMethod(std::move(Binary), Ver, Flags), Server(nullptr), PipelineDepth(10),
+   aptAuthConfMethod(std::move(Binary), Ver, Flags), Server(nullptr), PipelineDepth(10),
    AllowRedirect(false), Debug(false)
 {
 }
 									/*}}}*/
 bool BaseHttpMethod::Configuration(std::string Message)			/*{{{*/
 {
-   if (aptMethod::Configuration(Message) == false)
+   if (aptAuthConfMethod::Configuration(Message) == false)
       return false;
 
    _config->CndSet("Acquire::tor::Proxy",

@@ -93,7 +93,7 @@ class CircleBuf
    ~CircleBuf();
 };
 
-bool UnwrapHTTPConnect(std::string To, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd, unsigned long Timeout, aptMethod *Owner);
+bool UnwrapHTTPConnect(std::string To, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd, unsigned long Timeout, aptAuthConfMethod *Owner);
 
 struct HttpServerState: public ServerState
 {

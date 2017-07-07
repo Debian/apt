@@ -72,7 +72,7 @@ class FTPConn
    ~FTPConn();
 };
 
-class FtpMethod : public aptMethod
+class FtpMethod : public aptAuthConfMethod
 {
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
    virtual bool Configuration(std::string Message) APT_OVERRIDE;
