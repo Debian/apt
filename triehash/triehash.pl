@@ -306,7 +306,7 @@ package Trie {
     # For example, the words a-bc and a\rbc are identical in such a situation:
     #       '-' | 0x20 == '-' == '\r' | 0x20
     # We cannot simply switch on all 4 bytes at once, but need to split before
-    # the ambigious character so we can process the ambiguous character on its
+    # the ambiguous character so we can process the ambiguous character on its
     # own.
     sub find_ealier_split {
         my ($self, $key) = @_;

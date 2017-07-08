@@ -417,7 +417,7 @@ bool PackagesWriter::DoPackage(string FileName)
    string Architecture;
    // if we generate a Packages file for a given arch, we use it to
    // look for overrides. if we run in "simple" mode without the 
-   // "Architecures" variable in the config we use the architecure value
+   // "Architecures" variable in the config we use the architecture value
    // from the deb file
    if(Arch != "")
       Architecture = Arch;

@@ -1783,7 +1783,7 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep) const
 	 return true;
       // we support a special mode to only install-recommends for certain
       // sections
-      // FIXME: this is a meant as a temporarly solution until the
+      // FIXME: this is a meant as a temporary solution until the
       //        recommends are cleaned up
       const char *sec = Dep.ParentVer().Section();
       if (sec && ConfigValueInSubTree("APT::Install-Recommends-Sections", sec))
