@@ -39,7 +39,6 @@
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
 
 #include <stddef.h>

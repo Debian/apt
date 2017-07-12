@@ -16,7 +16,6 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>

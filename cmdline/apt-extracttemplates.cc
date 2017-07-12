@@ -18,7 +18,6 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/pkgcachegen.h>

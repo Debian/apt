@@ -20,7 +20,6 @@
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/debindexfile.h>
 #include <apt-pkg/debsrcrecords.h>
 

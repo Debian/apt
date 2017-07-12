@@ -16,7 +16,6 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/statechanges.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/macros.h>

@@ -23,7 +23,6 @@
 #include <apt-pkg/prettyprinters.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <apt-private/private-output.h>
 #include <apt-private/private-cmndline.h>

@@ -54,7 +54,6 @@
 #include <apt-pkg/filelist.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <string.h>
 #include <string>

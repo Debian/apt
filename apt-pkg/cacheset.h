@@ -28,7 +28,6 @@
 
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
 
 #ifndef APT_8_CLEANER_HEADERS

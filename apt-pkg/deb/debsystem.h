@@ -12,7 +12,6 @@
 
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <vector>
 class Configuration;

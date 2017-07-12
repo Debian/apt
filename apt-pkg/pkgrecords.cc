@@ -15,7 +15,6 @@
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <stddef.h>
 #include <vector>

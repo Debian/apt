@@ -22,7 +22,6 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/versionmatch.h>
 #include <apt-pkg/version.h>

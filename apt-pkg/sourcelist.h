@@ -23,7 +23,6 @@
 #define PKGLIB_SOURCELIST_H
 
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
 
 #include <time.h>

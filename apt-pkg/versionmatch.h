@@ -36,7 +36,6 @@
 #define PKGLIB_VERSIONMATCH_H
 
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <string>
 

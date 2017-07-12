@@ -26,7 +26,6 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/install-progress.h>
 #include <apt-pkg/prettyprinters.h>

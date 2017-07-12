@@ -17,7 +17,6 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgcachegen.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/progress.h>

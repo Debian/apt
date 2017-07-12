@@ -33,7 +33,6 @@
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <iostream>
 #include <string>

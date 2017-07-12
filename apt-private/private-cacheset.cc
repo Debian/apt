@@ -3,7 +3,6 @@
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/depcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>

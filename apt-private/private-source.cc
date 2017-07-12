@@ -6,7 +6,6 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>

@@ -16,7 +16,6 @@
 #include <apt-pkg/edspindexfile.h>
 #include <apt-pkg/edspsystem.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/fileutl.h>
 
 #include <stddef.h>

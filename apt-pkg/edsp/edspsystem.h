@@ -11,7 +11,6 @@
 #define PKGLIB_EDSPSYSTEM_H
 
 #include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgcache.h>
 
 #include <memory>

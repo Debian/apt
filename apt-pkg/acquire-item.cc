@@ -28,7 +28,6 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/gpgv.h>
 

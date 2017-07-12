@@ -22,7 +22,6 @@
 #include <apt-pkg/progress.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/prettyprinters.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/macros.h>

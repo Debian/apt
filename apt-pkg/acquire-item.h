@@ -24,7 +24,6 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/weakptr.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <string>
 #include <vector>

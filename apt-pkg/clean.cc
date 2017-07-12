@@ -17,7 +17,6 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <string>
 #include <string.h>

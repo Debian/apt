@@ -20,7 +20,6 @@
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/statechanges.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/version.h>

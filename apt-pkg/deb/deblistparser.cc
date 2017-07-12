@@ -21,7 +21,6 @@
 #include <apt-pkg/crc-16.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/macros.h>
