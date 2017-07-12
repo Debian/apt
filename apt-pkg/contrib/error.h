@@ -46,8 +46,8 @@
 #include <list>
 #include <string>
 
-#include <stddef.h>
 #include <stdarg.h>
+#include <stddef.h>
 
 class GlobalError							/*{{{*/
 {

@@ -20,18 +20,18 @@
 #define PKGLIB_ACQUIRE_ITEM_H
 
 #include <apt-pkg/acquire.h>
-#include <apt-pkg/indexfile.h>
 #include <apt-pkg/hashes.h>
-#include <apt-pkg/weakptr.h>
+#include <apt-pkg/indexfile.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/weakptr.h>
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/sourcelist.h>
 #endif
 
 /** \addtogroup acquire

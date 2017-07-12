@@ -10,14 +10,14 @@
 #ifndef PKGLIB_DPKGPM_H
 #define PKGLIB_DPKGPM_H
 
+#include <apt-pkg/macros.h>
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/macros.h>
 
-#include <vector>
 #include <map>
-#include <stdio.h>
 #include <string>
+#include <vector>
+#include <stdio.h>
 
 #ifndef APT_10_CLEANER_HEADERS
 #include <apt-pkg/init.h>

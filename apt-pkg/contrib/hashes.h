@@ -13,11 +13,10 @@
 #ifndef APTPKG_HASHES_H
 #define APTPKG_HASHES_H
 
-
+#include <apt-pkg/macros.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/sha2.h>
-#include <apt-pkg/macros.h>
 
 #include <cstring>
 #include <string>

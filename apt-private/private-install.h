@@ -2,10 +2,10 @@
 #define APT_PRIVATE_INSTALL_H
 
 #include <apt-pkg/cachefile.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheset.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
 #include <list>
 #include <string>

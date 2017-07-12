@@ -15,25 +15,25 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/packagemanager.h>
-#include <apt-pkg/orderlist.h>
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/edsp.h>
-#include <apt-pkg/version.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/macros.h>
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/strutl.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/edsp.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/install-progress.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/orderlist.h>
+#include <apt-pkg/packagemanager.h>
+#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/prettyprinters.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/version.h>
 
-#include <stddef.h>
+#include <iostream>
 #include <list>
 #include <string>
-#include <iostream>
+#include <stddef.h>
 
 #include <apti18n.h>
 									/*}}}*/

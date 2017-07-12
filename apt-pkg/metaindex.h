@@ -15,8 +15,8 @@ class pkgCacheGenerator;
 class OpProgress;
 #endif
 #ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/srcrecords.h>
 #include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/srcrecords.h>
 using std::string;
 #endif
 

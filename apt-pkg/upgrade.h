@@ -10,8 +10,8 @@
 #ifndef PKGLIB_UPGRADE_H
 #define PKGLIB_UPGRADE_H
 
-#include <stddef.h>
 #include <apt-pkg/macros.h>
+#include <stddef.h>
 
 class pkgDepCache;
 class OpProgress;

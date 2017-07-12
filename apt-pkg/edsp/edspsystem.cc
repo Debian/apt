@@ -15,8 +15,8 @@
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/edspindexfile.h>
 #include <apt-pkg/edspsystem.h>
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/pkgcache.h>
 
 #include <stddef.h>
 #include <stdlib.h>

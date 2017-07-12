@@ -13,7 +13,7 @@
    ##################################################################### */
 									/*}}}*/
 
-#include<config.h>
+#include <config.h>
 #define APT_COMPILING_TAGFILE_COMPAT_CC
 #include <apt-pkg/tagfile.h>
 

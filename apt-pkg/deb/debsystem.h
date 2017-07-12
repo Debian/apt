@@ -10,8 +10,8 @@
 #ifndef PKGLIB_DEBSYSTEM_H
 #define PKGLIB_DEBSYSTEM_H
 
-#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <vector>
 class Configuration;

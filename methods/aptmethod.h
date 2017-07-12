@@ -11,9 +11,9 @@
 #include <string>
 #include <vector>
 
+#include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 #include <apti18n.h>

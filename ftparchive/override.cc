@@ -12,13 +12,13 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/strutl.h>
 
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
 #include <utility>
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "override.h"
 

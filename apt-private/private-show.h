@@ -1,8 +1,8 @@
 #ifndef APT_PRIVATE_SHOW_H
 #define APT_PRIVATE_SHOW_H
 
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
 #include <iostream>
 

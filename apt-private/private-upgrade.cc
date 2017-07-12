@@ -1,14 +1,14 @@
 // Includes								/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/upgrade.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/upgrade.h>
 
-#include <apt-private/private-install.h>
 #include <apt-private/private-cachefile.h>
-#include <apt-private/private-upgrade.h>
+#include <apt-private/private-install.h>
 #include <apt-private/private-output.h>
+#include <apt-private/private-upgrade.h>
 
 #include <iostream>
 

@@ -22,14 +22,14 @@
 #ifndef PKGLIB_SOURCELIST_H
 #define PKGLIB_SOURCELIST_H
 
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
 #include <time.h>
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/tagfile.h>

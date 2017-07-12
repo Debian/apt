@@ -1,11 +1,11 @@
 #include <config.h>
 
-#include <apt-pkg/deblistparser.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/deblistparser.h>
 #include <apt-pkg/pkgcache.h>
 
-#include <string.h>
 #include <string>
+#include <string.h>
 
 #include <gtest/gtest.h>
 

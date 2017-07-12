@@ -5,20 +5,20 @@
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/strutl.h>
 
 #include <apt-private/private-cacheset.h>
 #include <apt-private/private-list.h>
 #include <apt-private/private-output.h>
 
 #include <iostream>
-#include <sstream>
 #include <map>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>

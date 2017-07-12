@@ -11,11 +11,11 @@
 #ifndef APT_HTTPS_H
 #define APT_HTTPS_H
 
-#include <curl/curl.h>
 #include <iostream>
-#include <stddef.h>
-#include <string>
 #include <memory>
+#include <string>
+#include <curl/curl.h>
+#include <stddef.h>
 
 #include "basehttp.h"
 

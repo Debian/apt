@@ -1,13 +1,13 @@
 // Include Files                                                       /*{{{*/
-#include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/pkgcachegen.h>
 
 #include <apt-pkg/debmetaindex.h>
 
 #include <string>
 #include <vector>
-                                                                       /*}}}*/
+									/*}}}*/
 
 class metaIndexPrivate							/*{{{*/
 {

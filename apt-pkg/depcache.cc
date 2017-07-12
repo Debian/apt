@@ -8,33 +8,33 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
+#include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/cachefile.h>
+#include <apt-pkg/cacheset.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
-#include <apt-pkg/versionmatch.h>
-#include <apt-pkg/version.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/cacheset.h>
+#include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/prettyprinters.h>
-#include <apt-pkg/cachefile.h>
-#include <apt-pkg/macros.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile.h>
+#include <apt-pkg/version.h>
+#include <apt-pkg/versionmatch.h>
 
-#include <stdio.h>
-#include <string.h>
+#include <algorithm>
+#include <iostream>
 #include <list>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
-#include <algorithm>
-#include <iostream>
-#include <set>
+#include <stdio.h>
+#include <string.h>
 
 #include <sys/stat.h>
 

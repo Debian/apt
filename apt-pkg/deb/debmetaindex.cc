@@ -1,30 +1,30 @@
 #include <config.h>
 
-#include <apt-pkg/error.h>
-#include <apt-pkg/debmetaindex.h>
-#include <apt-pkg/debindexfile.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-item.h>
-#include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/debindexfile.h>
+#include <apt-pkg/debmetaindex.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/gpgv.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/macros.h>
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/pkgcachegen.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>
-#include <apt-pkg/gpgv.h>
-#include <apt-pkg/macros.h>
 
+#include <algorithm>
 #include <map>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
-#include <algorithm>
-#include <sstream>
 
-#include <sys/stat.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include <apti18n.h>
 

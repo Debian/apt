@@ -38,19 +38,19 @@
 #define PKGLIB_DEPCACHE_H
 
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
 #include <stddef.h>
 
-#include <memory>
 #include <list>
+#include <memory>
 #include <string>
 #include <utility>
 
 #ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/progress.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/progress.h>
 #endif
 #ifndef APT_10_CLEANER_HEADERS
 #include <set>

@@ -14,19 +14,26 @@
 #include <config.h>
 
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/debfile.h>
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/gpgv.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/md5.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/debfile.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/sha2.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>
 
+#include <algorithm>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+#include <memory>
+#include <sstream>
+#include <utility>
 #include <ctype.h>
 #include <fnmatch.h>
 #include <ftw.h>
@@ -35,19 +42,12 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <ctime>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <memory>
-#include <utility>
-#include <algorithm>
 
 #include "apt-ftparchive.h"
-#include "writer.h"
+#include "byhash.h"
 #include "cachedb.h"
 #include "multicompress.h"
-#include "byhash.h"
+#include "writer.h"
 
 #include <apti18n.h>
 									/*}}}*/

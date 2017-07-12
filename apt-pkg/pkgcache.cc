@@ -20,26 +20,26 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
+#include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/mmap.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
-#include <apt-pkg/version.h>
-#include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/mmap.h>
-#include <apt-pkg/macros.h>
+#include <apt-pkg/version.h>
 
+#include <zlib.h>
+#include <algorithm>
+#include <sstream>
+#include <string>
+#include <vector>
 #include <stddef.h>
 #include <string.h>
-#include <sstream>
-#include <algorithm>
-#include <vector>
-#include <string>
 #include <sys/stat.h>
-#include <zlib.h>
 
 #include <apti18n.h>
 									/*}}}*/

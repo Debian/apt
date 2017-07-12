@@ -13,17 +13,22 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/init.h>
+#include <apt-pkg/macros.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/policy.h>
@@ -34,25 +39,15 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/version.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/macros.h>
-#include <apt-pkg/mmap.h>
-#include <apt-pkg/pkgcache.h>
 
 #include <apt-private/private-cacheset.h>
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-depends.h>
-#include <apt-private/private-show.h>
-#include <apt-private/private-search.h>
-#include <apt-private/private-unmet.h>
 #include <apt-private/private-main.h>
+#include <apt-private/private-search.h>
+#include <apt-private/private-show.h>
+#include <apt-private/private-unmet.h>
 
-#include <regex.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <algorithm>
 #include <cstring>
 #include <iomanip>
@@ -62,6 +57,11 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <regex.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include <apti18n.h>
 									/*}}}*/

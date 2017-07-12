@@ -36,8 +36,8 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/versionmatch.h>
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::vector;

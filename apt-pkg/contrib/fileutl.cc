@@ -19,52 +19,52 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/sptr.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/sptr.h>
+#include <apt-pkg/strutl.h>
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <string>
+#include <vector>
 #include <ctype.h>
+#include <dirent.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <glob.h>
+#include <grp.h>
+#include <pwd.h>
+#include <signal.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <sys/select.h>
-#include <time.h>
-#include <string>
-#include <vector>
-#include <cstdlib>
-#include <cstring>
-#include <cstdio>
-#include <iostream>
-#include <unistd.h>
-#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/wait.h>
-#include <dirent.h>
-#include <signal.h>
-#include <errno.h>
-#include <glob.h>
-#include <pwd.h>
-#include <grp.h>
+#include <time.h>
+#include <unistd.h>
 
-#include <set>
 #include <algorithm>
 #include <memory>
+#include <set>
 
 #ifdef HAVE_ZLIB
-	#include <zlib.h>
+#include <zlib.h>
 #endif
 #ifdef HAVE_BZ2
-	#include <bzlib.h>
+#include <bzlib.h>
 #endif
 #ifdef HAVE_LZMA
-	#include <lzma.h>
+#include <lzma.h>
 #endif
 #ifdef HAVE_LZ4
-	#include <lz4frame.h>
+#include <lz4frame.h>
 #endif
 #include <endian.h>
 #include <stdint.h>

@@ -8,8 +8,8 @@
    a logfile easily, so don't expect that to be a bulletproof
    implementation. */
 
-#include <iostream>
 #include <apt-pkg/macros.h>
+#include <iostream>
 
 template <typename CharT, typename Traits = std::char_traits<CharT>
 > class basic_teebuf: public std::basic_streambuf<CharT, Traits>

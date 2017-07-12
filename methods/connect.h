@@ -11,8 +11,8 @@
 #define CONNECT_H
 
 #include <memory>
-#include <stddef.h>
 #include <string>
+#include <stddef.h>
 
 class aptMethod;
 

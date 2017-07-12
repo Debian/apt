@@ -3,9 +3,9 @@
 
 #include <apt-pkg/fileutl.h>
 
+#include "hashsum_template.h"
 #include <algorithm>
 #include <unistd.h>
-#include "hashsum_template.h"
 
 // Summation::AddFD - Add content of file into the checksum		/*{{{*/
 // ---------------------------------------------------------------------

@@ -1,21 +1,21 @@
 // -*- mode: cpp; mode: fold -*-
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
-#include<apt-pkg/configuration.h>
-#include<apt-pkg/error.h>
-#include<apt-pkg/strutl.h>
-#include<apt-pkg/fileutl.h>
-#include<apt-pkg/gpgv.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/gpgv.h>
+#include <apt-pkg/strutl.h>
 
 #include <errno.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <fcntl.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <stddef.h>
 
 #include <algorithm>
 #include <fstream>

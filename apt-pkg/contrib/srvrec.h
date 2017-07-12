@@ -9,9 +9,9 @@
 #ifndef SRVREC_H
 #define SRVREC_H
 
-#include <arpa/nameser.h>
-#include <vector>
 #include <string>
+#include <vector>
+#include <arpa/nameser.h>
 
 class SrvRec
 {

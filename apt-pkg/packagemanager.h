@@ -22,13 +22,13 @@
 #ifndef PKGLIB_PACKAGEMANAGER_H
 #define PKGLIB_PACKAGEMANAGER_H
 
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/init.h>
 #include <apt-pkg/edsp.h>
+#include <apt-pkg/init.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
-#include <string>
 #include <set>
+#include <string>
 
 #ifndef APT_10_CLEANER_HEADERS
 #include <apt-pkg/install-progress.h>

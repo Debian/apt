@@ -23,8 +23,8 @@
 #define RFC2553EMU_H
 
 #include <netdb.h>
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 
 // Autosense getaddrinfo
 #if defined(AI_PASSIVE) && defined(EAI_NONAME)

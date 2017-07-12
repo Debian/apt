@@ -7,4 +7,18 @@ IndentWidth:       3
 ColumnLimit:       0
 BreakBeforeBraces: Allman
 AccessModifierOffset: 0
-SortIncludes: false
+IncludeCategories:
+  - Regex:           'apti18n.h'
+    Priority:        9999
+  - Regex:           'apt-[^/]*/'
+    Priority:        20
+  - Regex:           '^"'
+    Priority:        10
+  - Regex:           'config.h'
+    Priority:        0
+  - Regex:           '(zlib|bzlib|lzma|lz4frame|gtest/gtest|db|gnutls/.*)\.h'
+    Priority:        30
+  - Regex:           '\.h'
+    Priority:        100
+  - Regex:           '.*'
+    Priority:        99

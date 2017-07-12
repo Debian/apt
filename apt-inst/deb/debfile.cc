@@ -16,20 +16,20 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
-#include <apt-pkg/debfile.h>
-#include <apt-pkg/extracttar.h>
-#include <apt-pkg/error.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/arfile.h>
+#include <apt-pkg/debfile.h>
 #include <apt-pkg/dirstream.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/extracttar.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/tagfile.h>
 
-#include <string.h>
 #include <string>
 #include <vector>
+#include <string.h>
 #include <sys/stat.h>
 
 #include <apti18n.h>

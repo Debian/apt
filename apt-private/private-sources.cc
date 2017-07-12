@@ -1,24 +1,24 @@
 #include <config.h>
 
-#include <apt-pkg/hashes.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/cachefile.h>
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/cachefile.h>
+#include <apt-pkg/hashes.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/strutl.h>
 
 #include <apt-private/private-output.h>
 #include <apt-private/private-sources.h>
 #include <apt-private/private-utils.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stddef.h>
-#include <unistd.h>
 #include <iostream>
 #include <string>
+#include <stddef.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include <apti18n.h>
 

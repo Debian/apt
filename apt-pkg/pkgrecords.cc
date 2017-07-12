@@ -9,15 +9,15 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/indexfile.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/pkgrecords.h>
 
-#include <stddef.h>
 #include <vector>
+#include <stddef.h>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -14,25 +14,25 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/strutl.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/init.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile.h>
 
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-main.h>
 
-#include <vector>
 #include <algorithm>
+#include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
 #include <stdio.h>
 #include <unistd.h>
-#include <iostream>
-#include <string>
-#include <memory>
 
 #include <apti18n.h>
 									/*}}}*/

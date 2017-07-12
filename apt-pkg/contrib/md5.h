@@ -28,9 +28,9 @@
 #include "hashsum_template.h"
 
 #ifndef APT_10_CLEANER_HEADERS
-#include <string>
-#include <cstring>
 #include <algorithm>
+#include <cstring>
+#include <string>
 #endif
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;

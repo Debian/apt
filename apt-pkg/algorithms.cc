@@ -17,20 +17,20 @@
 #include <config.h>
 
 #include <apt-pkg/algorithms.h>
-#include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/edsp.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/dpkgpm.h>
+#include <apt-pkg/edsp.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/prettyprinters.h>
-#include <apt-pkg/dpkgpm.h>
 
-#include <string.h>
-#include <string>
 #include <cstdlib>
 #include <iostream>
+#include <string>
 #include <utility>
+#include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -19,9 +19,9 @@
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/strutl.h>
 
 #include <ctype.h>
 #include <regex.h>
@@ -31,13 +31,13 @@
 #include <string.h>
 
 #include <algorithm>
-#include <iterator>
-#include <string>
-#include <stack>
-#include <vector>
 #include <fstream>
+#include <iterator>
 #include <sstream>
+#include <stack>
+#include <string>
 #include <unordered_map>
+#include <vector>
 
 #include <apti18n.h>
 

@@ -12,8 +12,8 @@
 #ifndef PKGLIB_SRCRECORDS_H
 #define PKGLIB_SRCRECORDS_H
 
-#include <apt-pkg/macros.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/macros.h>
 
 #include <string>
 #include <vector>

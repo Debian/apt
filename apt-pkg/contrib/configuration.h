@@ -30,9 +30,9 @@
 
 #include <regex.h>
 
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 #include <apt-pkg/macros.h>
 

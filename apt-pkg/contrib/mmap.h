@@ -25,7 +25,6 @@
 #ifndef PKGLIB_MMAP_H
 #define PKGLIB_MMAP_H
 
-
 #include <string>
 
 #ifndef APT_8_CLEANER_HEADERS

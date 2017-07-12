@@ -15,24 +15,24 @@
 #include <config.h>
 
 #include <apt-pkg/cachefile.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/sourcelist.h>
-#include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/policy.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/progress.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/indexfile.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/indexfile.h>
+#include <apt-pkg/pkgcachegen.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/policy.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/sourcelist.h>
 
-#include <string.h>
-#include <unistd.h>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
+#include <string.h>
+#include <unistd.h>
 
 #include <apti18n.h>
 									/*}}}*/

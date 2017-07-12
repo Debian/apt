@@ -19,17 +19,17 @@
 #define _DEFAULT_SOURCE
 #include <config.h>
 
-#include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/mmap.h>
 
+#include <cstring>
 #include <string>
+#include <errno.h>
+#include <stdlib.h>
 #include <sys/mman.h>
 #include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <cstring>
 
 #include <apti18n.h>
 									/*}}}*/

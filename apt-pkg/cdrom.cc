@@ -2,31 +2,30 @@
  */
 #include <config.h>
 
-#include <apt-pkg/error.h>
-#include <apt-pkg/cdromutl.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/cdrom.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/cdrom.h>
+#include <apt-pkg/cdromutl.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/indexcopy.h>
+#include <apt-pkg/strutl.h>
 
-
-#include <string.h>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <unistd.h>
-#include <stdio.h>
 #include <algorithm>
-#include <dlfcn.h>
+#include <fstream>
+#include <iostream>
 #include <iostream>
 #include <sstream>
-#include <fstream>
+#include <string>
+#include <vector>
+#include <dirent.h>
+#include <dlfcn.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
-#include<apti18n.h>
+#include <apti18n.h>
 
 using namespace std;
 

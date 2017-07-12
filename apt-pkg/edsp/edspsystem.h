@@ -10,8 +10,8 @@
 #ifndef PKGLIB_EDSPSYSTEM_H
 #define PKGLIB_EDSPSYSTEM_H
 
-#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <memory>
 #include <vector>

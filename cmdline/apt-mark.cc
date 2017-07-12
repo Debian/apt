@@ -10,21 +10,26 @@
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/init.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/statechanges.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/depcache.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/statechanges.h>
+#include <apt-pkg/strutl.h>
 
 #include <apt-private/private-cmndline.h>
-#include <apt-private/private-output.h>
 #include <apt-private/private-main.h>
+#include <apt-private/private-output.h>
 
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 #include <errno.h>
 #include <fcntl.h>
 #include <stddef.h>
@@ -33,11 +38,6 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/

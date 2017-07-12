@@ -8,23 +8,23 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
-#include<config.h>
+#include <config.h>
 
-#include <apt-pkg/clean.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/clean.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/strutl.h>
 
 #include <string>
-#include <string.h>
 #include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include <apti18n.h>
 									/*}}}*/

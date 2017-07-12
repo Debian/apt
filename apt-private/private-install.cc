@@ -1,40 +1,40 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-item.h>
+#include <apt-pkg/acquire.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/sptr.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/configuration.h>
+#include <apt-pkg/install-progress.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/upgrade.h>
-#include <apt-pkg/install-progress.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/prettyprinters.h>
+#include <apt-pkg/sptr.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/upgrade.h>
 
-#include <stdlib.h>
-#include <string.h>
 #include <algorithm>
 #include <iostream>
+#include <map>
 #include <set>
 #include <vector>
-#include <map>
+#include <stdlib.h>
+#include <string.h>
 
 #include <apt-private/acqprogress.h>
-#include <apt-private/private-install.h>
 #include <apt-private/private-cachefile.h>
 #include <apt-private/private-cacheset.h>
 #include <apt-private/private-download.h>
+#include <apt-private/private-install.h>
 #include <apt-private/private-output.h>
 
 #include <apti18n.h>

@@ -21,10 +21,9 @@
 #ifndef PKGLIB_PROGRESS_H
 #define PKGLIB_PROGRESS_H
 
-
+#include <apt-pkg/macros.h>
 #include <string>
 #include <sys/time.h>
-#include <apt-pkg/macros.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;

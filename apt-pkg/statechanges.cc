@@ -1,9 +1,9 @@
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/debsystem.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/statechanges.h>
+#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/prettyprinters.h>
+#include <apt-pkg/statechanges.h>
 
 #include <algorithm>
 #include <memory>

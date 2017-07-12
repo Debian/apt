@@ -3,8 +3,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/tagfile.h>
 
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <gtest/gtest.h>
 

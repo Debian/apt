@@ -11,9 +11,9 @@
 #ifndef APT_CONFIGURATION_H
 #define APT_CONFIGURATION_H
 // Include Files							/*{{{*/
+#include <limits>
 #include <string>
 #include <vector>
-#include <limits>
 									/*}}}*/
 namespace APT {
 namespace Configuration {							/*{{{*/

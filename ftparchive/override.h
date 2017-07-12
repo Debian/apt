@@ -12,8 +12,6 @@
 #ifndef OVERRIDE_H
 #define OVERRIDE_H
 
-
-
 #include <map>
 #include <string>
 

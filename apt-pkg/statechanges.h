@@ -1,6 +1,6 @@
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
 #include <memory>
 

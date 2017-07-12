@@ -16,36 +16,36 @@
 #include <config.h>
 
 #include <apt-pkg/acquire-item.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/sourcelist.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/metaindex.h>
 #include <apt-pkg/acquire.h>
+#include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/gpgv.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/metaindex.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/gpgv.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile.h>
 
 #include <algorithm>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-#include <iostream>
-#include <vector>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string>
-#include <stdio.h>
 #include <ctime>
-#include <sstream>
+#include <iostream>
 #include <numeric>
 #include <random>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <errno.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <apti18n.h>
 									/*}}}*/

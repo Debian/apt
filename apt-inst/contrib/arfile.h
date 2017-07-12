@@ -15,9 +15,8 @@
 #ifndef PKGLIB_ARFILE_H
 #define PKGLIB_ARFILE_H
 
-
-#include <string>
 #include <apt-pkg/macros.h>
+#include <string>
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/fileutl.h>
 #endif

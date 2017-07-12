@@ -32,15 +32,15 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
+#include <apt-pkg/error.h>
 #include <apt-pkg/filelist.h>
 #include <apt-pkg/mmap.h>
-#include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
-#include <string.h>
 #include <iostream>
+#include <string.h>
 #include <apti18n.h>
 									/*}}}*/
 

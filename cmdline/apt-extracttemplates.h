@@ -10,8 +10,8 @@
 #ifndef _APTEXTRACTTEMPLATE_H_
 #define _APTEXTRACTTEMPLATE_H_
 
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/dirstream.h>
+#include <apt-pkg/fileutl.h>
 
 #include <string>
 

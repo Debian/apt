@@ -16,11 +16,11 @@
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/policy.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/version.h>
-#include <apt-pkg/policy.h>
 
 #include <apt-private/private-cachefile.h>
 #include <apt-private/private-cacheset.h>
@@ -38,8 +38,8 @@
 #include <unistd.h>
 
 #include <iostream>
-#include <sstream>
 #include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 

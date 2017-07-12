@@ -1,28 +1,28 @@
 // Include files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/error.h>
 #include <apt-pkg/cachefile.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/policy.h>
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/strutl.h>
 
-#include <apt-private/private-output.h>
 #include <apt-private/private-cachefile.h>
+#include <apt-private/private-output.h>
 
-#include <regex.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <iomanip>
 #include <iostream>
 #include <langinfo.h>
-#include <unistd.h>
+#include <regex.h>
 #include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 
 #include <sstream>
 
