@@ -414,10 +414,9 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
       if (comp.empty())
 	 continue;
       auto const pos = comp.find_last_of('/');
-      if (pos == std::string::npos)
-	 d->SupportedComponents.push_back(std::move(comp));
-      else // e.g. security.debian.org uses this style
+      if (pos != std::string::npos) // e.g. security.debian.org uses this style
 	 d->SupportedComponents.push_back(comp.substr(pos + 1));
+      d->SupportedComponents.push_back(std::move(comp));
    }
    {
       decltype(pkgCache::ReleaseFile::Flags) flags = 0;
