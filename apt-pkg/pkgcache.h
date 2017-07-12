@@ -73,7 +73,7 @@
 									/*}}}*/
 #ifndef PKGLIB_PKGCACHE_H
 #define PKGLIB_PKGCACHE_H
-
+#define __PKGLIB_IN_PKGCACHE_H
 #include <apt-pkg/macros.h>
 #include <apt-pkg/mmap.h>
 
@@ -825,4 +825,5 @@ class pkgCache::Namespace						/*{{{*/
    typedef pkgCache::Flag Flag;
 };
 									/*}}}*/
+#undef __PKGLIB_IN_PKGCACHE_H
 #endif

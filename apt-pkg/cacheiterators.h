@@ -29,8 +29,10 @@
 									/*}}}*/
 #ifndef PKGLIB_CACHEITERATORS_H
 #define PKGLIB_CACHEITERATORS_H
+#ifndef __PKGLIB_IN_PKGCACHE_H
+#warning apt-pkg/cacheiterators.h should not be included directly, include apt-pkg/pkgcache.h instead
+#endif
 #include <apt-pkg/macros.h>
-#include <apt-pkg/pkgcache.h>
 
 #include <iosfwd>
 #include <iterator>
