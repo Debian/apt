@@ -235,7 +235,9 @@ check_size_constraints()
 do_cache_backup()
 {
     BackupArchiveInterval="$1"
-    if [ $BackupArchiveInterval -eq 0 ]; then
+    if [ $BackupArchiveInterval = always ]; then
+        :
+    elif [ $BackupArchiveInterval -eq 0 ]; then
 	return
     fi
 
@@ -406,12 +408,19 @@ Debdelta=1
 eval $(apt-config shell Debdelta APT::Periodic::Download-Upgradeable-Packages-Debdelta)
 
 # check if we actually have to do anything that requires locking the cache
-if [ $UpdateInterval -eq 0 ] &&
-   [ $DownloadUpgradeableInterval -eq 0 ] &&
-   [ $UnattendedUpgradeInterval -eq 0 ] &&
-   [ $BackupArchiveInterval -eq 0 ] &&
-   [ $AutocleanInterval -eq 0 ] &&
-   [ $CleanInterval -eq 0 ]; then
+if [ $UpdateInterval = always ] ||
+   [ $DownloadUpgradeableInterval = always ] ||
+   [ $UnattendedUpgradeInterval = always ] ||
+   [ $BackupArchiveInterval = always ] ||
+   [ $AutocleanInterval = always ] ||
+   [ $CleanInterval = always ] ; then
+    :
+elif [ $UpdateInterval -eq 0 ] &&
+     [ $DownloadUpgradeableInterval -eq 0 ] &&
+     [ $UnattendedUpgradeInterval -eq 0 ] &&
+     [ $BackupArchiveInterval -eq 0 ] &&
+     [ $AutocleanInterval -eq 0 ] &&
+     [ $CleanInterval -eq 0 ] ; then
 
     # check cache size
     check_size_constraints
