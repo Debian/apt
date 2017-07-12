@@ -12,30 +12,29 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/pkgcachegen.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/version.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/macros.h>
-#include <apt-pkg/metaindex.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashsum_template.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/macros.h>
 #include <apt-pkg/md5.h>
+#include <apt-pkg/metaindex.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/pkgcachegen.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/version.h>
 
-#include <stddef.h>
-#include <string.h>
+#include <algorithm>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-#include <algorithm>
+#include <stddef.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 

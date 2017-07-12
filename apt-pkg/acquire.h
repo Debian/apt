@@ -65,16 +65,16 @@
 #ifndef PKGLIB_ACQUIRE_H
 #define PKGLIB_ACQUIRE_H
 
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/weakptr.h>
-#include <apt-pkg/hashes.h>
 
 #include <string>
 #include <vector>
 
 #include <stddef.h>
-#include <sys/time.h>
 #include <sys/select.h>
+#include <sys/time.h>
 
 #ifndef APT_10_CLEANER_HEADERS
 #include <unistd.h>

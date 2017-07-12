@@ -2,9 +2,9 @@
 
 #include <apt-pkg/error.h>
 
-#include <stddef.h>
 #include <string>
 #include <errno.h>
+#include <stddef.h>
 #include <string.h>
 
 #include <gtest/gtest.h>

@@ -18,15 +18,15 @@
 									/*}}}*/
 #include <config.h>
 
-#include <apt-pkg/error.h>
 #include <apt-pkg/debversion.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 
 #include <fstream>
 #include <string>
 #include <stdlib.h>
-#include <unistd.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 #include <gtest/gtest.h>
 

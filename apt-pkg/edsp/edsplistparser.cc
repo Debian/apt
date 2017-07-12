@@ -12,15 +12,14 @@
 #include <config.h>
 
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/edsplistparser.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/deblistparser.h>
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
-#include <apt-pkg/tagfile.h>
+#include <apt-pkg/edsplistparser.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/md5.h>
+#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/string_view.h>
+#include <apt-pkg/tagfile.h>
 
 #include <array>
 

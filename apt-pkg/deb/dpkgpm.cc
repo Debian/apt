@@ -11,20 +11,20 @@
 
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/debsystem.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/dpkgpm.h>
-#include <apt-pkg/debsystem.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/install-progress.h>
-#include <apt-pkg/packagemanager.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/statechanges.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/statechanges.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/version.h>
 
+#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <grp.h>
@@ -37,9 +37,8 @@
 #include <sys/select.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <sys/wait.h>
 #include <sys/types.h>
-#include <dirent.h>
+#include <sys/wait.h>
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
@@ -49,14 +48,14 @@
 #include <cstring>
 #include <iostream>
 #include <map>
+#include <numeric>
 #include <set>
+#include <sstream>
 #include <string>
 #include <type_traits>
-#include <utility>
 #include <unordered_set>
+#include <utility>
 #include <vector>
-#include <sstream>
-#include <numeric>
 
 #include <apti18n.h>
 									/*}}}*/

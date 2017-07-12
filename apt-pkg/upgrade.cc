@@ -3,13 +3,12 @@
 
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
 #include <apt-pkg/edsp.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/upgrade.h>
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <string>
 

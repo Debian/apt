@@ -6,10 +6,10 @@
 
 #include <apt-private/private-output.h>
 
-#include <vector>
 #include <list>
 #include <set>
 #include <string>
+#include <vector>
 
 class OpProgress;
 

@@ -10,15 +10,15 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/progress.h>
-#include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/progress.h>
 
-#include <sys/time.h>
-#include <string>
-#include <iostream>
-#include <stdio.h>
 #include <cstring>
+#include <iostream>
+#include <string>
+#include <stdio.h>
+#include <sys/time.h>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -9,34 +9,33 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/error.h>
-#include <apt-pkg/cmndline.h>
-#include <apt-pkg/init.h>
+#include <apt-pkg/algorithms.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/edsp.h>
-#include <apt-pkg/algorithms.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/upgrade.h>
+#include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/edsp.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/init.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/upgrade.h>
 
-#include <apt-private/private-output.h>
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-main.h>
+#include <apt-private/private-output.h>
 
-#include <string.h>
-#include <iostream>
-#include <sstream>
-#include <list>
-#include <string>
-#include <unistd.h>
 #include <cstdio>
+#include <iostream>
+#include <list>
+#include <sstream>
+#include <string>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include <apti18n.h>
 									/*}}}*/

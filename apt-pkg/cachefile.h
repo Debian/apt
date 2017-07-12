@@ -21,7 +21,6 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/acquire.h>

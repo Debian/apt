@@ -17,30 +17,30 @@
 // Includes								/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/strutl.h>
 
-#include <array>
 #include <algorithm>
+#include <array>
 #include <iomanip>
 #include <locale>
 #include <sstream>
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
 
-#include <stddef.h>
-#include <stdlib.h>
-#include <time.h>
 #include <ctype.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <regex.h>
 #include <errno.h>
-#include <stdarg.h>
 #include <iconv.h>
+#include <regex.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
 
 #include <apti18n.h>
 									/*}}}*/

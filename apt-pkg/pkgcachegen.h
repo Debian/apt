@@ -18,14 +18,13 @@
 #ifndef PKGLIB_PKGCACHEGEN_H
 #define PKGLIB_PKGCACHEGEN_H
 
+#include <apt-pkg/macros.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
-#include <apt-pkg/macros.h>
 
-#include <vector>
 #include <string>
+#include <vector>
 #if __cplusplus >= 201103L
 #include <unordered_set>
 #endif

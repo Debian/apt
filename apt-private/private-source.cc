@@ -6,7 +6,6 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
@@ -17,11 +16,11 @@
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/policy.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/version.h>
-#include <apt-pkg/policy.h>
 
 #include <apt-private/private-cachefile.h>
 #include <apt-private/private-cacheset.h>
@@ -39,8 +38,8 @@
 #include <unistd.h>
 
 #include <iostream>
-#include <sstream>
 #include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 

@@ -11,24 +11,23 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/debindexfile.h>
-#include <apt-pkg/debsrcrecords.h>
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/debrecords.h>
-#include <apt-pkg/configuration.h>
+#include <apt-pkg/debsrcrecords.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/srcrecords.h>
 
-#include <stdio.h>
 #include <iostream>
 #include <memory>
-#include <string>
 #include <sstream>
+#include <string>
+#include <stdio.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

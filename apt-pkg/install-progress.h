@@ -4,9 +4,9 @@
 #include <apt-pkg/macros.h>
 
 #include <string>
-#include <unistd.h>
-#include <signal.h>
 #include <vector>
+#include <signal.h>
+#include <unistd.h>
 
 namespace APT {
 namespace Progress {

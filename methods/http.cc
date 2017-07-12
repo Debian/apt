@@ -19,26 +19,26 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/proxy.h>
+#include <apt-pkg/strutl.h>
 
+#include <cstring>
+#include <iostream>
+#include <sstream>
+#include <arpa/inet.h>
+#include <errno.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/select.h>
-#include <cstring>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
-#include <arpa/inet.h>
-#include <iostream>
-#include <sstream>
 
 #include "config.h"
 #include "connect.h"

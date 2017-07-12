@@ -11,22 +11,21 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
-#include <apt-pkg/versionmatch.h>
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/versionmatch.h>
 
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
 #include <string>
-#include <stdio.h>
 #include <ctype.h>
 #include <fnmatch.h>
 #include <regex.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 									/*}}}*/
 
 using std::string;

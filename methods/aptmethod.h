@@ -4,15 +4,16 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 
 #include <algorithm>
 #include <locale>
 #include <string>
 #include <vector>
 
+#include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 #include <apti18n.h>

@@ -17,33 +17,33 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/fileutl.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
-#include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 
+#include <iostream>
 #include <ctype.h>
+#include <errno.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <signal.h>
-#include <stdio.h>
-#include <errno.h>
-#include <stdarg.h>
-#include <iostream>
 
 // Internet stuff
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <netdb.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
 
-#include "rfc2553emu.h"
 #include "connect.h"
 #include "ftp.h"
+#include "rfc2553emu.h"
 
 #include <apti18n.h>
 									/*}}}*/

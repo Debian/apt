@@ -10,15 +10,15 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
 #include <apt-pkg/debsystem.h>
-#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgsystem.h>
 
-#include <map>
 #include <cassert>
 #include <cstring>
+#include <map>
 									/*}}}*/
 
 pkgSystem *_system = 0;

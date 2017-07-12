@@ -15,20 +15,20 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/strutl.h>
 
-#include <dirent.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <ctype.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <ctype.h>
+#include <dirent.h>
+#include <fcntl.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 									/*}}}*/
 namespace APT {

@@ -11,11 +11,11 @@
 #ifndef PKGLIB_DEBLISTPARSER_H
 #define PKGLIB_DEBLISTPARSER_H
 
-#include <apt-pkg/pkgcachegen.h>
-#include <apt-pkg/tagfile.h>
+#include <apt-pkg/macros.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcachegen.h>
+#include <apt-pkg/tagfile.h>
 
 #include <string>
 #include <vector>

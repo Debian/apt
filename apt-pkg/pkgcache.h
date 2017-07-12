@@ -73,13 +73,13 @@
 									/*}}}*/
 #ifndef PKGLIB_PKGCACHE_H
 #define PKGLIB_PKGCACHE_H
-
-#include <apt-pkg/mmap.h>
+#define __PKGLIB_IN_PKGCACHE_H
 #include <apt-pkg/macros.h>
+#include <apt-pkg/mmap.h>
 
 #include <string>
-#include <time.h>
 #include <stdint.h>
+#include <time.h>
 
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
 #include <apt-pkg/string_view.h>
@@ -783,10 +783,13 @@ inline char const * pkgCache::NativeArch()
 
 #include <apt-pkg/cacheiterators.h>
 
-inline pkgCache::GrpIterator pkgCache::GrpBegin()
-       {return GrpIterator(*this);}
-inline pkgCache::GrpIterator pkgCache::GrpEnd()
-       {return GrpIterator(*this,GrpP);}
+	inline pkgCache::GrpIterator pkgCache::GrpBegin()
+	{
+	   return GrpIterator(*this);
+	}
+	inline pkgCache::GrpIterator pkgCache::GrpEnd()
+	{
+	   return GrpIterator(*this, GrpP);}
 inline pkgCache::PkgIterator pkgCache::PkgBegin()
        {return PkgIterator(*this);}
 inline pkgCache::PkgIterator pkgCache::PkgEnd()
@@ -822,4 +825,5 @@ class pkgCache::Namespace						/*{{{*/
    typedef pkgCache::Flag Flag;
 };
 									/*}}}*/
+#undef __PKGLIB_IN_PKGCACHE_H
 #endif

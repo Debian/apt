@@ -15,12 +15,12 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include "aptmethod.h"
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/hashes.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/strutl.h>
-#include "aptmethod.h"
 
 #include <string>
 #include <sys/stat.h>

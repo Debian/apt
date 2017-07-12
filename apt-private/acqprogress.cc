@@ -7,23 +7,23 @@
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
-#include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire-worker.h>
+#include <apt-pkg/acquire.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/strutl.h>
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-output.h>
 
-#include <string.h>
-#include <stdio.h>
-#include <signal.h>
 #include <iostream>
 #include <sstream>
+#include <signal.h>
+#include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <apti18n.h>

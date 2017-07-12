@@ -3,8 +3,8 @@
 
 #include <apt-pkg/macros.h>
 
-#include<string>
-#include<vector>
+#include <string>
+#include <vector>
 
 #include <stddef.h>
 

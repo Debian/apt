@@ -21,12 +21,12 @@
 #ifndef PKGLIB_FILEUTL_H
 #define PKGLIB_FILEUTL_H
 
-#include <apt-pkg/macros.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/macros.h>
 
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
 #include <time.h>
 
 #include <zlib.h>

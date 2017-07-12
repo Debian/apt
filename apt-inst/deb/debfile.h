@@ -23,11 +23,10 @@
 #ifndef PKGLIB_DEBFILE_H
 #define PKGLIB_DEBFILE_H
 
-
 #include <apt-pkg/arfile.h>
 #include <apt-pkg/dirstream.h>
-#include <apt-pkg/tagfile.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/tagfile.h>
 
 #include <string>
 

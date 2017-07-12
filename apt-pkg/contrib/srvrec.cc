@@ -10,8 +10,8 @@
 
 #include <netdb.h>
 
-#include <netinet/in.h>
 #include <arpa/nameser.h>
+#include <netinet/in.h>
 #include <resolv.h>
 #include <time.h>
 
@@ -22,9 +22,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
-
 #include "srvrec.h"
-
 
 bool SrvRec::operator==(SrvRec const &other) const
 {

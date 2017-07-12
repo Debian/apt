@@ -8,31 +8,30 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/indexfile.h>
+#include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgcachegen.h>
-#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/progress.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/deblistparser.h>
-#include <apt-pkg/macros.h>
 
 #include <apt-pkg/debindexfile.h>
 
 #include <sys/stat.h>
 
-#include <string>
-#include <vector>
 #include <clocale>
 #include <cstring>
 #include <memory>
+#include <string>
+#include <vector>
 									/*}}}*/
 
 // Global list of Item supported

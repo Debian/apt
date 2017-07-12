@@ -2,19 +2,19 @@
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/install-progress.h>
+#include <apt-pkg/strutl.h>
 
-#include <signal.h>
-#include <unistd.h>
-#include <iostream>
-#include <vector>
-#include <sys/ioctl.h>
-#include <fcntl.h>
 #include <algorithm>
-#include <stdio.h>
-#include <sstream>
 #include <cmath>
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <fcntl.h>
+#include <signal.h>
+#include <stdio.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 #include <apti18n.h>
 

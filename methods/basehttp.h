@@ -11,14 +11,14 @@
 #ifndef APT_SERVER_H
 #define APT_SERVER_H
 
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
 #include "aptmethod.h"
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/strutl.h>
 
-#include <time.h>
 #include <iostream>
-#include <string>
 #include <memory>
+#include <string>
+#include <time.h>
 
 using std::cout;
 using std::endl;

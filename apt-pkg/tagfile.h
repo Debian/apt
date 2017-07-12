@@ -21,12 +21,12 @@
 
 #include <apt-pkg/macros.h>
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 
+#include <list>
 #include <string>
 #include <vector>
-#include <list>
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
 #include <apt-pkg/string_view.h>
 #endif

@@ -1,7 +1,7 @@
 #ifndef APT_PRETTYPRINTERS_H
 #define APT_PRETTYPRINTERS_H
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
 class pkgDepCache;
 

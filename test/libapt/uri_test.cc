@@ -2,8 +2,8 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/proxy.h>
 #include <apt-pkg/strutl.h>
-#include <string>
 #include <gtest/gtest.h>
+#include <string>
 
 TEST(URITest, BasicHTTP)
 {

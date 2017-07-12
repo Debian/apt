@@ -7,7 +7,6 @@
 #define APT_CACHEFILTER_H
 // Include Files							/*{{{*/
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <string>
 #include <vector>

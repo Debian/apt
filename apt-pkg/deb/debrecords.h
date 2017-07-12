@@ -14,10 +14,10 @@
 #ifndef PKGLIB_DEBRECORDS_H
 #define PKGLIB_DEBRECORDS_H
 
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/tagfile.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/tagfile.h>
 
 #include <string>
 

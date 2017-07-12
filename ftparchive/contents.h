@@ -12,9 +12,9 @@
 
 #include <apt-pkg/dirstream.h>
 
+#include <string>
 #include <stddef.h>
 #include <stdio.h>
-#include <string>
 
 class debDebFile;
 class FileFd;

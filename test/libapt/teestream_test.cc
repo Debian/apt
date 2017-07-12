@@ -1,9 +1,9 @@
 #include <config.h>
 
-#include <string>
-#include <sstream>
-#include <fstream>
 #include "../interactive-helper/teestream.h"
+#include <fstream>
+#include <sstream>
+#include <string>
 
 #include <gtest/gtest.h>
 

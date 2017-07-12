@@ -15,6 +15,11 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
+#include <iostream>
+#include <limits>
+#include <map>
+#include <string>
+#include <vector>
 #include <ctype.h>
 #include <signal.h>
 #include <stdio.h>
@@ -23,11 +28,6 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
-#include <iostream>
-#include <limits>
-#include <map>
-#include <string>
-#include <vector>
 
 #include "basehttp.h"
 

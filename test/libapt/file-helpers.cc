@@ -2,10 +2,10 @@
 
 #include <string>
 
-#include <unistd.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <fcntl.h>
+#include <unistd.h>
 
 #include <gtest/gtest.h>
 

@@ -1,11 +1,11 @@
 #include <config.h>
 
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 #include <gtest/gtest.h>
 

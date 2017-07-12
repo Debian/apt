@@ -8,27 +8,26 @@
 #include <config.h>
 
 #include <apt-pkg/algorithms.h>
-#include <apt-pkg/error.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/depcache.h>
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
-#include <apt-pkg/prettyprinters.h>
-#include <apt-pkg/packagemanager.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/edsp.h>
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/string_view.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/packagemanager.h>
+#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/prettyprinters.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/string_view.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile.h>
 
-#include <sys/stat.h>
 #include <ctype.h>
 #include <stddef.h>
-#include <string.h>
-#include <unistd.h>
 #include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <array>
 #include <limits>

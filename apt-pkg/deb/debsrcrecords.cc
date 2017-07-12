@@ -11,22 +11,22 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/debsrcrecords.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/hashes.h>
 #include <apt-pkg/gpgv.h>
+#include <apt-pkg/hashes.h>
+#include <apt-pkg/srcrecords.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile.h>
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 									/*}}}*/
 
 using std::max;

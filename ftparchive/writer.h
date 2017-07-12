@@ -15,19 +15,19 @@
 
 #include <apt-pkg/hashes.h>
 
-#include <string>
-#include <stdio.h>
 #include <iostream>
-#include <vector>
 #include <map>
 #include <set>
+#include <string>
+#include <vector>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 
-#include "contents.h"
-#include "cachedb.h"
-#include "override.h"
 #include "apt-ftparchive.h"
+#include "cachedb.h"
+#include "contents.h"
+#include "override.h"
 
 using std::string;
 using std::cout;

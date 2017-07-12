@@ -10,9 +10,8 @@
 #ifndef APTPKG_HASHSUM_TEMPLATE_H
 #define APTPKG_HASHSUM_TEMPLATE_H
 
-
-#include <string>
 #include <cstring>
+#include <string>
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
 #include <apt-pkg/string_view.h>
 #endif

@@ -9,17 +9,16 @@
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/strutl.h>
 
 #include <algorithm>
 #include <string>
 #include <unordered_map>
-#include <string.h>
-#include <regex.h>
 #include <fnmatch.h>
+#include <regex.h>
+#include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -16,7 +16,6 @@
 #define PKGLIB_DEBINDEXFILE_H
 
 #include <apt-pkg/indexfile.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/srcrecords.h>
 

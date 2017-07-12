@@ -1,6 +1,6 @@
 // -*- mode: cpp; mode: fold -*-
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cmndline.h>

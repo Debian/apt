@@ -11,17 +11,17 @@
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
-#include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
+#include <string>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <string>
 
 #include <apti18n.h>
 									/*}}}*/

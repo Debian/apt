@@ -16,17 +16,16 @@
 #ifndef STRUTL_H
 #define STRUTL_H
 
-
+#include <cstring>
+#include <iostream>
 #include <limits>
 #include <string>
-#include <cstring>
 #include <vector>
-#include <iostream>
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
 #include <apt-pkg/string_view.h>
 #endif
-#include <time.h>
 #include <stddef.h>
+#include <time.h>
 
 #include "macros.h"
 

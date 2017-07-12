@@ -1,11 +1,11 @@
 #include <config.h>
 
+#include "aptmethod.h"
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/gpgv.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
-#include "aptmethod.h"
 
 #include <ctype.h>
 #include <errno.h>
@@ -16,11 +16,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include <array>
 #include <algorithm>
-#include <sstream>
-#include <iterator>
+#include <array>
 #include <iostream>
+#include <iterator>
+#include <sstream>
 #include <string>
 #include <vector>
 

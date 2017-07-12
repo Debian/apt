@@ -11,15 +11,15 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/error.h>
 
+#include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <errno.h>
 #include <unistd.h>
 #include <apti18n.h>
 									/*}}}*/

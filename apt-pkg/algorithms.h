@@ -29,11 +29,9 @@
 #ifndef PKGLIB_ALGORITHMS_H
 #define PKGLIB_ALGORITHMS_H
 
-
-#include <apt-pkg/packagemanager.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <iostream>
 #include <string>
@@ -47,8 +45,8 @@ using std::ostream;
 
 #ifndef APT_9_CLEANER_HEADERS
 // include pkg{DistUpgrade,AllUpgrade,MiniizeUpgrade} here for compatibility
-#include <apt-pkg/upgrade.h>
 #include <apt-pkg/update.h>
+#include <apt-pkg/upgrade.h>
 #endif
 
 

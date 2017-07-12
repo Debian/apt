@@ -7,22 +7,22 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
-#include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 
 #include <apt-private/private-moo.h>
 #include <apt-private/private-output.h>
 #include <apt-private/private-utils.h>
 
-#include <stddef.h>
-#include <string.h>
-#include <time.h>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <stddef.h>
+#include <string.h>
+#include <time.h>
 
 #include <apti18n.h>
 									/*}}}*/

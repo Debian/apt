@@ -1,14 +1,13 @@
 #include <config.h>
 
-#include <apt-pkg/cachefile.h>
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/cacheiterators.h>
-#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/cachefile.h>
+#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/progress.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
+#include <apt-pkg/progress.h>
 #include <apt-pkg/strutl.h>
 
 #include <apt-private/private-cacheset.h>

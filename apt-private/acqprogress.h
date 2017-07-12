@@ -12,8 +12,8 @@
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/macros.h>
 
-#include <string>
 #include <iostream>
+#include <string>
 
 class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus2
 {

@@ -3,21 +3,21 @@
 
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/init.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/init.h>
+#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/strutl.h>
 
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-main.h>
 
 #include <stdarg.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include <vector>
 #include <iomanip>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/

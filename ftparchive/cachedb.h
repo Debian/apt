@@ -12,15 +12,15 @@
 #ifndef CACHEDB_H
 #define CACHEDB_H
 
-#include <apt-pkg/hashes.h>
 #include <apt-pkg/debfile.h>
+#include <apt-pkg/hashes.h>
 
 #include <db.h>
-#include <errno.h>
 #include <string>
-#include <string.h>
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "contents.h"
 #include "sources.h"

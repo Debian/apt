@@ -12,22 +12,22 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/debfile.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/gpgv.h>
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/sha2.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/debfile.h>
-#include <apt-pkg/gpgv.h>
-#include <apt-pkg/hashes.h>
 
-#include <netinet/in.h>       // htonl, etc
 #include <ctype.h>
+#include <netinet/in.h> // htonl, etc
 #include <stddef.h>
-#include <sys/stat.h>
 #include <strings.h>
+#include <sys/stat.h>
 
 #include "cachedb.h"
 

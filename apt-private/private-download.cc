@@ -1,30 +1,30 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-item.h>
+#include <apt-pkg/acquire.h>
 #include <apt-pkg/cacheset.h>
-#include <apt-pkg/cmndline.h>
 #include <apt-pkg/clean.h>
+#include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
+#include <apt-private/acqprogress.h>
 #include <apt-private/private-cachefile.h>
 #include <apt-private/private-download.h>
 #include <apt-private/private-output.h>
 #include <apt-private/private-utils.h>
-#include <apt-private/acqprogress.h>
 
 #include <fstream>
 #include <string>
 #include <vector>
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <pwd.h>
 #include <fcntl.h>
+#include <pwd.h>
+#include <sys/types.h>
+#include <unistd.h>
 #ifdef HAVE_VFS_H
 #include <sys/vfs.h>
 #else
@@ -33,9 +33,9 @@
 #endif
 #include <sys/mount.h>
 #endif
-#include <sys/statvfs.h>
-#include <sys/stat.h>
 #include <errno.h>
+#include <sys/stat.h>
+#include <sys/statvfs.h>
 
 #include <apti18n.h>
 									/*}}}*/

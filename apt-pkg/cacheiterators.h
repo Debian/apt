@@ -29,17 +29,19 @@
 									/*}}}*/
 #ifndef PKGLIB_CACHEITERATORS_H
 #define PKGLIB_CACHEITERATORS_H
-#include<apt-pkg/pkgcache.h>
-#include<apt-pkg/macros.h>
+#ifndef __PKGLIB_IN_PKGCACHE_H
+#warning apt-pkg/cacheiterators.h should not be included directly, include apt-pkg/pkgcache.h instead
+#endif
+#include <apt-pkg/macros.h>
 
-#include<iterator>
 #include <iosfwd>
+#include <iterator>
 #include <string>
 #ifdef APT_PKG_EXPOSE_STRING_VIEW
 #include <apt-pkg/string_view.h>
 #endif
 
-#include<string.h>
+#include <string.h>
 
 // abstract Iterator template						/*{{{*/
 /* This template provides the very basic iterator methods we

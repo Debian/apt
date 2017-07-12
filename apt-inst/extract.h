@@ -20,7 +20,6 @@
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/filelist.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 
 #include <string>
 

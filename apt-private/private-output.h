@@ -2,13 +2,13 @@
 #define APT_PRIVATE_OUTPUT_H
 
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
-#include <functional>
 #include <fstream>
-#include <string>
+#include <functional>
 #include <iostream>
+#include <string>
 
 // forward declaration
 class pkgCacheFile;

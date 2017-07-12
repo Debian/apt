@@ -21,11 +21,10 @@
 #ifndef PKGLIB_INDEXFILE_H
 #define PKGLIB_INDEXFILE_H
 
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/srcrecords.h>
 
 #include <map>
 #include <string>

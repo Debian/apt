@@ -1,7 +1,7 @@
 #include <config.h>
 #include <apt-pkg/pkgcache.h>
-#include <string>
 #include <gtest/gtest.h>
+#include <string>
 
 using std::string;
 

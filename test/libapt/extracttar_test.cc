@@ -3,8 +3,8 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include <gtest/gtest.h>
 #include "assert.h"
+#include <gtest/gtest.h>
 
 class Stream : public pkgDirStream
 {

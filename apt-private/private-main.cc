@@ -10,12 +10,11 @@
 #include <iostream>
 #include <locale>
 
+#include <signal.h>
 #include <string.h>
 #include <unistd.h>
-#include <signal.h>
 
 #include <apti18n.h>
-
 
 void InitLocale(APT_CMD const binary)				/*{{{*/
 {

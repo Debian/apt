@@ -16,10 +16,10 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
 
-#include <stddef.h>
-#include <unistd.h>
 #include <memory>
 #include <string>
+#include <stddef.h>
+#include <unistd.h>
 									/*}}}*/
 
 // EDSP-like Index							/*{{{*/

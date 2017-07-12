@@ -11,9 +11,9 @@
 
 #if !defined(APT_STRINGVIEW_H) && defined(APT_PKG_EXPOSE_STRING_VIEW)
 #define APT_STRINGVIEW_H
-#include <string.h>
-#include <string>
 #include <apt-pkg/macros.h>
+#include <string>
+#include <string.h>
 
 namespace APT {
 

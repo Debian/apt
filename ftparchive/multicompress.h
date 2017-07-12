@@ -16,8 +16,8 @@
 #ifndef MULTICOMPRESS_H
 #define MULTICOMPRESS_H
 
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/fileutl.h>
 
 #include <string>
 #include <stdio.h>

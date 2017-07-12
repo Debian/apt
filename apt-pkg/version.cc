@@ -8,12 +8,12 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
 #include <apt-pkg/version.h>
 
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 									/*}}}*/
     
 static pkgVersioningSystem *VSList[10];

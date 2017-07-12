@@ -10,35 +10,35 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/strutl.h>
 
 #include <algorithm>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
+#include <dirent.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
-#include <dirent.h>
-#include <fcntl.h>
+#include <unistd.h>
 
 using namespace std;
 
-#include<sstream>
+#include <sstream>
 
-#include "mirror.h"
 #include "http.h"
+#include "mirror.h"
 #include <apti18n.h>
 									/*}}}*/
 
