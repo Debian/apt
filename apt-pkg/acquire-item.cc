@@ -219,7 +219,7 @@ static bool APT_NONNULL(3, 4, 5) AllowInsecureRepositories(InsecureType const ms
 	 switch (msg)
 	 {
 	    case InsecureType::UNSIGNED: msgstr = _("The repository '%s' is no longer signed."); break;
-	    case InsecureType::NORELEASE: msgstr = _("The repository '%s' does no longer have a Release file."); break;
+	    case InsecureType::NORELEASE: msgstr = _("The repository '%s' no longer has a Release file."); break;
 	    case InsecureType::WEAK: /* unreachable */ break;
 	 }
 	 if (_config->FindB("Acquire::AllowDowngradeToInsecureRepositories") ||
