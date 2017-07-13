@@ -1,19 +1,23 @@
 apt (1.4.7) stretch; urgency=medium
 
-  * New microrelease fixing issues in http method (LP: #1702326)
+  * New release with important fixes up to 1.5~beta1; also see LP: #1702326
 
   [ Robert Luberda ]
   * fix a "critical" typo in old changelog entry (Closes: 866358)
 
   [ David Kalnischkies ]
+  * test suite/travis CI: ignore profiling warning in progress lines
   * use port from SRV record instead of initial port
 
   [ Julian Andres Klode ]
-  * Reset failure reason when connection was successful
+  * Reset failure reason when connection was successful, so later errors are
+    reported as such and not as "connection failure" warnings.
   * debian/gbp.conf: Set debian-branch to 1.4.y
-  * http: A response with Content-Length: 0 has no content
+  * http: A response with Content-Length: 0 has no content, so don't try to
+    read it - it will either timeout or the server closes the connection.
+  * travis CI: Migrate to Docker
 
- -- Julian Andres Klode <jak@debian.org>  Tue, 04 Jul 2017 17:11:59 +0200
+ -- Julian Andres Klode <jak@debian.org>  Thu, 13 Jul 2017 23:45:39 +0200
 
 apt (1.4.6) unstable; urgency=medium
 
