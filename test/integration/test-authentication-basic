@@ -38,7 +38,11 @@ testauthsuccess() {
 	fi
 
 	rm -rf rootdir/var/lib/apt/lists
-	testsuccess aptget update
+	if expr index "$1" '@' >/dev/null; then
+		testsuccesswithnotice aptget update
+	else
+		testsuccess aptget update
+	fi
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:

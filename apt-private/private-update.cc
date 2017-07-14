@@ -103,6 +103,19 @@ bool DoUpdate(CommandLine &CmdL)
 			    "See press release %s for details.",
 			    (*S)->GetURI().c_str(), "https://debian.org/News/2017/20170425");
       }
+      for (pkgSourceList::const_iterator S = List->begin(); S != List->end(); ++S)
+      {
+	 URI uri((*S)->GetURI());
+	 if (uri.User.empty() && uri.Password.empty())
+	    continue;
+	 // we can't really predict if a +http method supports everything http does,
+	 // so we play it safe and use a whitelist here.
+	 char const *const affected[] = {"http", "https", "tor+http", "tor+https", "ftp"};
+	 if (std::find(std::begin(affected), std::end(affected), uri.Access) != std::end(affected))
+	    // TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+	    _error->Notice(_("Usage of %s should be preferred over embedding login information directly in the %s entry for '%s'"),
+			   "apt_auth.conf(5)", "sources.list(5)", URI::ArchiveOnly(uri).c_str());
+      }
    }
 
    // show basic stats (if the user whishes)

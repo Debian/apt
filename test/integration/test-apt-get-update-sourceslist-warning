@@ -29,3 +29,17 @@ Building dependency tree...
 All packages are up to date.
 W: Debian shuts down public FTP services currently still used in your sources.list(5) as 'ftp://ftp.tlh.debian.org/debian/'.
    See press release https://debian.org/News/2017/20170425 for details." apt update --no-download
+
+
+echo 'deb http://apt:debian@ftp.tlh.debian.org/debian zurg main' > rootdir/etc/apt/sources.list.d/ftpshutdown.list
+testsuccessequal "Reading package lists...
+Building dependency tree...
+All packages are up to date.
+N: Usage of apt_auth.conf(5) should be preferred over embedding login information directly in the sources.list(5) entry for 'http://ftp.tlh.debian.org/debian'" apt update --no-download
+
+
+echo 'deb tor+https://apt:debian@ftp.tlh.debian.org/debian zurg main' > rootdir/etc/apt/sources.list.d/ftpshutdown.list
+testsuccessequal "Reading package lists...
+Building dependency tree...
+All packages are up to date.
+N: Usage of apt_auth.conf(5) should be preferred over embedding login information directly in the sources.list(5) entry for 'tor+https://ftp.tlh.debian.org/debian'" apt update --no-download
