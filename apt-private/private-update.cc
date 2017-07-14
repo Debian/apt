@@ -8,6 +8,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/metaindex.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/update.h>
 
@@ -78,6 +79,31 @@ bool DoUpdate(CommandLine &CmdL)
    pkgCacheFile::RemoveCaches();
    if (Cache.BuildCaches(false) == false)
       return false;
+
+   if (_config->FindB("APT::Get::Update::SourceListWarnings", true))
+   {
+      List = Cache.GetSourceList();
+      for (pkgSourceList::const_iterator S = List->begin(); S != List->end(); ++S)
+      {
+	 if (APT::String::Startswith((*S)->GetURI(), "ftp://") == false)
+	    continue;
+	 pkgCache::RlsFileIterator const RlsFile = (*S)->FindInCache(Cache, false);
+	 if (RlsFile.end() || RlsFile->Origin == 0 || RlsFile->Label == 0)
+	    continue;
+	 char const *const affected[][2] = {
+	     {"Debian", "Debian"},
+	     {"Debian", "Debian-Security"},
+	     {"Debian Backports", "Debian Backports"},
+	 };
+	 auto const matchRelease = [&](decltype(affected[0]) a) {
+	    return strcmp(RlsFile.Origin(), a[0]) == 0 && strcmp(RlsFile.Label(), a[1]) == 0;
+	 };
+	 if (std::find_if(std::begin(affected), std::end(affected), matchRelease) != std::end(affected))
+	    _error->Warning("Debian shuts down public FTP services currently still used in your sources.list(5) as '%s'.\n"
+			    "See press release %s for details.",
+			    (*S)->GetURI().c_str(), "https://debian.org/News/2017/20170425");
+      }
+   }
 
    // show basic stats (if the user whishes)
    if (_config->FindB("APT::Cmd::Show-Update-Stats", false) == true)
