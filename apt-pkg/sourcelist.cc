@@ -368,13 +368,12 @@ bool pkgSourceList::ReadAppend(string const &File)
 /* */
 bool pkgSourceList::ParseFileOldStyle(std::string const &File)
 {
-   // Open the stream for reading
-   ifstream F(File.c_str(),ios::in /*| ios::nocreate*/);
-   if (F.fail() == true)
-      return _error->Errno("ifstream::ifstream",_("Opening %s"),File.c_str());
+   FileFd Fd;
+   if (OpenConfigurationFileFd(File, Fd) == false)
+      return false;
 
    std::string Buffer;
-   for (unsigned int CurLine = 1; std::getline(F, Buffer); ++CurLine)
+   for (unsigned int CurLine = 1; Fd.ReadLine(Buffer); ++CurLine)
    {
       // remove comments
       size_t curpos = 0;
@@ -423,7 +422,9 @@ bool pkgSourceList::ParseFileOldStyle(std::string const &File)
 bool pkgSourceList::ParseFileDeb822(string const &File)
 {
    // see if we can read the file
-   FileFd Fd(File, FileFd::ReadOnly);
+   FileFd Fd;
+   if (OpenConfigurationFileFd(File, Fd) == false)
+      return false;
    pkgTagFile Sources(&Fd, pkgTagFile::SUPPORT_COMMENTS);
    if (Fd.IsOpen() == false || Fd.Failed())
       return _error->Error(_("Malformed stanza %u in source list %s (type)"),0,File.c_str());

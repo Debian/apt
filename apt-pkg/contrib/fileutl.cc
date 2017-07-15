@@ -2493,15 +2493,35 @@ bool FileFd::Read(int const Fd, void *To, unsigned long long Size, unsigned long
 }
 									/*}}}*/
 // FileFd::ReadLine - Read a complete line from the file		/*{{{*/
-// ---------------------------------------------------------------------
-/* Beware: This method can be quite slow for big buffers on UNcompressed
-   files because of the naive implementation! */
 char* FileFd::ReadLine(char *To, unsigned long long const Size)
 {
    *To = '\0';
    if (d == nullptr || Failed())
       return nullptr;
    return d->InternalReadLine(To, Size);
+}
+bool FileFd::ReadLine(std::string &To)
+{
+   To.clear();
+   if (d == nullptr || Failed())
+      return false;
+   constexpr size_t buflen = 4096;
+   char buffer[buflen];
+   size_t len;
+   do
+   {
+      if (d->InternalReadLine(buffer, buflen) == nullptr)
+	 return false;
+      len = strlen(buffer);
+      To.append(buffer, len);
+   } while (len == buflen - 1 && buffer[len - 2] != '\n');
+   // remove the newline at the end
+   auto const i = To.find_last_not_of("\r\n");
+   if (i == std::string::npos)
+      To.clear();
+   else
+      To.erase(i + 1);
+   return true;
 }
 									/*}}}*/
 // FileFd::Flush - Flush the file  					/*{{{*/
@@ -3102,5 +3122,11 @@ bool DropPrivileges()							/*{{{*/
    }
 
    return true;
+}
+									/*}}}*/
+bool OpenConfigurationFileFd(std::string const &File, FileFd &Fd) /*{{{*/
+{
+   APT::Configuration::Compressor none(".", "", "", nullptr, nullptr, 0);
+   return Fd.Open(File, FileFd::ReadOnly, none);
 }
 									/*}}}*/

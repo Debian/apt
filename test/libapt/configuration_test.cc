@@ -1,14 +1,14 @@
 #include <config.h>
 
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
 
 #include <string>
 #include <vector>
 
 #include <gtest/gtest.h>
 
-//FIXME: Test for configuration file parsing;
-// currently only integration/ tests test them implicitly
+#include "file-helpers.h"
 
 TEST(ConfigurationTest,Lists)
 {
@@ -194,4 +194,41 @@ TEST(ConfigurationTest,Merge)
 	EXPECT_TRUE(Cnf.Exists("option"));
 	EXPECT_EQ("bar", Cnf.Find("option::foo"));
 	EXPECT_EQ("", Cnf.Find("option::empty"));
+}
+TEST(ConfigurationTest, Parsing)
+{
+   Configuration Cnf;
+   std::string tempfile;
+   FileFd fd;
+   createTemporaryFile("doublesignedfile", fd, &tempfile, R"apt(
+SimpleOption "true";
+/* SimpleOption "false"; */
+Answer::Simple "42";
+# This is a comment
+List::Option { "In"; "One"; "Line"; };
+// this a comment as well
+List::Option2 { "Multi";
+"Line"; # inline comment
+	 "Options";
+}; Trailing "true";
+/* Commented::Out "true"; */
+)apt");
+   EXPECT_TRUE(ReadConfigFile(Cnf, tempfile));
+   if (tempfile.empty() == false)
+      unlink(tempfile.c_str());
+   EXPECT_TRUE(Cnf.FindB("SimpleOption"));
+   EXPECT_EQ(42, Cnf.FindI("Answer::Simple"));
+   EXPECT_TRUE(Cnf.Exists("List::Option"));
+   auto const singleline = Cnf.FindVector("List::Option");
+   EXPECT_EQ(3, singleline.size());
+   EXPECT_EQ("In", singleline[0]);
+   EXPECT_EQ("One", singleline[1]);
+   EXPECT_EQ("Line", singleline[2]);
+   auto const multiline = Cnf.FindVector("List::Option2");
+   EXPECT_EQ(3, multiline.size());
+   EXPECT_EQ("Multi", multiline[0]);
+   EXPECT_EQ("Line", multiline[1]);
+   EXPECT_EQ("Options", multiline[2]);
+   EXPECT_TRUE(Cnf.FindB("Trailing"));
+   EXPECT_FALSE(Cnf.Exists("Commented::Out"));
 }

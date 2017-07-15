@@ -54,13 +54,13 @@ echo 'Apt::Cmd::Disable-Script-Warning "true";' >> aptconfig.conf
 
 msgmsg 'Unreadable sources file'
 chmod -r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list
-runthemall "E: Opening $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list - ifstream::ifstream (13: Permission denied)
+runthemall "E: Could not open file $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list - open (13: Permission denied)
 E: The list of sources could not be read."
 chmod +r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list
 
 msgmsg 'Unreadable config file'
 chmod -r rootdir/etc/apt/apt.conf.d/unreadable.conf
-runthemall "E: Opening configuration file ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/unreadable.conf - ifstream::ifstream (13: Permission denied)"
+runthemall "E: Could not open file ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/unreadable.conf - open (13: Permission denied)"
 chmod +r rootdir/etc/apt/apt.conf.d/unreadable.conf
 
 msgmsg 'Unreadable preferences file'

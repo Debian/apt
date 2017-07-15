@@ -343,8 +343,11 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
 
    if (RealFileExists(File) == false)
       return true;
-   
-   FileFd Fd(File,FileFd::ReadOnly);
+
+   FileFd Fd;
+   if (OpenConfigurationFileFd(File, Fd) == false)
+      return false;
+
    pkgTagFile TF(&Fd, pkgTagFile::SUPPORT_COMMENTS);
    if (Fd.IsOpen() == false || Fd.Failed())
       return false;

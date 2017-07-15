@@ -87,7 +87,28 @@ class FileFd
    }   
    bool Read(void *To,unsigned long long Size,unsigned long long *Actual = 0);
    bool static Read(int const Fd, void *To, unsigned long long Size, unsigned long long * const Actual = 0);
+   /** read a complete line or until buffer is full
+    *
+    * The buffer will always be \\0 terminated, so at most Size-1 characters are read.
+    * If the buffer holds a complete line the last character (before \\0) will be
+    * the newline character \\n otherwise the line was longer than the buffer.
+    *
+    * @param To buffer which will hold the line
+    * @param Size of the buffer to fill
+    * @param \b nullptr is returned in error cases, otherwise
+    * the parameter \b To now filled with the line.
+    */
    char* ReadLine(char *To, unsigned long long const Size);
+   /** read a complete line from the file
+    *
+    *  Similar to std::getline() the string does \b not include
+    *  the newline, but just the content of the line as the newline
+    *  is not needed to distinguish cases as for the other #ReadLine method.
+    *
+    *  @param To string which will hold the line
+    *  @return \b true if successful, otherwise \b false
+    */
+   bool ReadLine(std::string &To);
    bool Flush();
    bool Write(const void *From,unsigned long long Size);
    bool static Write(int Fd, const void *From, unsigned long long Size);
@@ -256,5 +277,6 @@ std::vector<std::string> Glob(std::string const &pattern, int flags=0);
 bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr);
 bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode);
 
+APT_HIDDEN bool OpenConfigurationFileFd(std::string const &File, FileFd &Fd);
 
 #endif
