@@ -300,37 +300,32 @@ pkgSourceList::~pkgSourceList()
 /* */
 bool pkgSourceList::ReadMainList()
 {
-   // CNC:2003-03-03 - Multiple sources list support.
-   bool Res = true;
-#if 0
-   Res = ReadVendors();
-   if (Res == false)
-      return false;
-#endif
-
    Reset();
    // CNC:2003-11-28 - Entries in sources.list have priority over
    //                  entries in sources.list.d.
    string Main = _config->FindFile("Dir::Etc::sourcelist", "/dev/null");
    string Parts = _config->FindDir("Dir::Etc::sourceparts", "/dev/null");
-   
+
+   _error->PushToStack();
    if (RealFileExists(Main) == true)
-      Res &= ReadAppend(Main);
+      ReadAppend(Main);
    else if (DirectoryExists(Parts) == false && APT::String::Endswith(Parts, "/dev/null") == false)
       // Only warn if there are no sources.list.d.
       _error->WarningE("DirectoryExists", _("Unable to read %s"), Parts.c_str());
 
    if (DirectoryExists(Parts) == true)
-      Res &= ReadSourceDir(Parts);
+      ReadSourceDir(Parts);
    else if (Main.empty() == false && RealFileExists(Main) == false &&
 	 APT::String::Endswith(Parts, "/dev/null") == false)
       // Only warn if there is no sources.list file.
       _error->WarningE("RealFileExists", _("Unable to read %s"), Main.c_str());
 
    for (auto && file: _config->FindVector("APT::Sources::With"))
-      Res &= AddVolatileFile(file, nullptr);
+      AddVolatileFile(file, nullptr);
 
-   return Res;
+   auto good = _error->PendingError() == false;
+   _error->MergeWithStack();
+   return good;
 }
 									/*}}}*/
 // SourceList::Reset - Clear the sourcelist contents			/*{{{*/
@@ -498,17 +493,12 @@ bool pkgSourceList::GetIndexes(pkgAcquire *Owner, bool GetAll) const
 /* */
 bool pkgSourceList::ReadSourceDir(string const &Dir)
 {
-   std::vector<std::string> ext;
-   ext.push_back("list");
-   ext.push_back("sources");
-   std::vector<std::string> const List = GetListOfFilesInDir(Dir, ext, true);
-
+   std::vector<std::string> const ext = {"list", "sources"};
    // Read the files
-   for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
-      if (ReadAppend(*I) == false)
-	 return false;
-   return true;
-
+   bool good = true;
+   for (auto const &I : GetListOfFilesInDir(Dir, ext, true))
+      good = ReadAppend(I) && good;
+   return good;
 }
 									/*}}}*/
 // GetLastModified()						/*{{{*/

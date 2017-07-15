@@ -1150,13 +1150,10 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 bool ReadConfigDir(Configuration &Conf,const string &Dir,
 		   bool const &AsSectional, unsigned const &Depth)
 {
-   vector<string> const List = GetListOfFilesInDir(Dir, "conf", true, true);
-
-   // Read the files
-   for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
-      if (ReadConfigFile(Conf,*I,AsSectional,Depth) == false)
-	 return false;
-   return true;
+   bool good = true;
+   for (auto const &I : GetListOfFilesInDir(Dir, "conf", true, true))
+      good = ReadConfigFile(Conf, I, AsSectional, Depth) && good;
+   return good;
 }
 									/*}}}*/
 // MatchAgainstConfig Constructor					/*{{{*/

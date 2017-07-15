@@ -161,11 +161,11 @@ bool pkgCacheFile::BuildPolicy(OpProgress * /*Progress*/)
    if (_error->PendingError() == true)
       return false;
 
-   if (ReadPinFile(*Policy) == false || ReadPinDir(*Policy) == false)
-      return false;
+   ReadPinFile(*Policy);
+   ReadPinDir(*Policy);
 
    this->Policy = Policy.release();
-   return true;
+   return _error->PendingError() == false;
 }
 									/*}}}*/
 // CacheFile::BuildDepCache - Open and build the dependency cache	/*{{{*/

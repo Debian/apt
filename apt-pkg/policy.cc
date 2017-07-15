@@ -324,10 +324,10 @@ bool ReadPinDir(pkgPolicy &Plcy,string Dir)
       return false;
 
    // Read the files
+   bool good = true;
    for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
-      if (ReadPinFile(Plcy, *I) == false)
-	 return false;
-   return true;
+      good = ReadPinFile(Plcy, *I) && good;
+   return good;
 }
 									/*}}}*/
 // ReadPinFile - Load the pin file into a Policy			/*{{{*/

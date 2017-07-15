@@ -402,7 +402,10 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
    DIR *D = opendir(Dir.c_str());
    if (D == 0) 
    {
-      _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
+      if (errno == EACCES)
+	 _error->WarningE("opendir", _("Unable to read %s"), Dir.c_str());
+      else
+	 _error->Errno("opendir", _("Unable to read %s"), Dir.c_str());
       return List;
    }
 
@@ -3126,7 +3129,13 @@ bool DropPrivileges()							/*{{{*/
 									/*}}}*/
 bool OpenConfigurationFileFd(std::string const &File, FileFd &Fd) /*{{{*/
 {
+   int const fd = open(File.c_str(), O_RDONLY | O_CLOEXEC | O_NOCTTY);
+   if (fd == -1)
+      return _error->WarningE("open", _("Unable to read %s"), File.c_str());
    APT::Configuration::Compressor none(".", "", "", nullptr, nullptr, 0);
-   return Fd.Open(File, FileFd::ReadOnly, none);
+   if (Fd.OpenDescriptor(fd, FileFd::ReadOnly, none) == false)
+      return false;
+   Fd.SetFileName(File);
+   return true;
 }
 									/*}}}*/

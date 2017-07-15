@@ -161,6 +161,7 @@ class FileFd
    inline bool Eof() {return (Flags & HitEof) == HitEof;};
    inline bool IsCompressed() {return (Flags & Compressed) == Compressed;};
    inline std::string &Name() {return FileName;};
+   inline void SetFileName(std::string const &name) { FileName = name; };
 
    FileFd(std::string FileName,unsigned int const Mode,unsigned long AccessMode = 0666);
    FileFd(std::string FileName,unsigned int const Mode, CompressMode Compress, unsigned long AccessMode = 0666);

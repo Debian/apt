@@ -16,6 +16,8 @@ insertpackage 'unstable' 'foo' 'amd64' '2'
 
 setupaptarchive --no-update
 
+touch rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list
+touch rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.sources
 touch rootdir/etc/apt/apt.conf.d/unreadable.conf
 touch rootdir/etc/apt/preferences.d/unreadable.pref
 
@@ -31,56 +33,61 @@ foo/unstable 2 amd64 [upgradable from: 1]
 N: There is 1 additional version. Please use the '-a' switch to see it" apt list --upgradable
 
 runthemall() {
-	local ERR1="$1"
-	local ERR2="$1$2"
-	testfailureequal "$ERR1" aptcache policy
-	testfailureequal "$ERR1" aptcache policy foo
-	testfailureequal "$ERR2" aptcache depends foo
-	testfailureequal "$ERR2" aptcache rdepends foo
-	testfailureequal "$ERR2" aptcache search foo
-	testfailureequal "$ERR1" apt policy
-	testfailureequal "$ERR1" apt policy foo
-	testfailureequal "$ERR2" apt depends foo
-	testfailureequal "$ERR2" apt rdepends foo
-	testfailureequal "$ERR2" apt search foo
-	testfailureequal "$ERR2" apt list --upgradable
-	testfailureequal "$ERR2" apt show foo
-	testfailureequal "$ERR2" aptcache show foo --no-all-versions
-	testfailureequal "$ERR2" aptmark auto foo
-	testfailureequal "$ERR2" aptmark manual foo
-	testfailureequal "$ERR2" aptmark auto foo
+	local ERR="$1"
+	local ERRNOTICEVER="$1${2-
+N: There is 1 additional version. Please use the '-a' switch to see it}"
+	local ERRNOTICEREC="$1${2-
+N: There is 1 additional record. Please use the '-a' switch to see it}"
+	testwarningmsg "$ERR" aptcache policy
+	testwarningmsg "$ERR" aptcache policy foo
+	testwarningmsg "$ERR" aptcache depends foo
+	testwarningmsg "$ERR" aptcache rdepends foo
+	testwarningmsg "$ERR" aptcache search foo
+	testwarningmsg "$ERR" apt policy
+	testwarningmsg "$ERR" apt policy foo
+	testwarningmsg "$ERR" apt depends foo
+	testwarningmsg "$ERR" apt rdepends foo
+	testwarningmsg "$ERR" apt search foo
+	testwarningmsg "$ERRNOTICEVER" apt list --upgradable
+	testwarningmsg "$ERRNOTICEREC" apt show foo
+	testwarningmsg "$ERRNOTICEREC" aptcache show foo --no-all-versions
+	testwarningmsg "$ERR" aptmark auto foo
+	testwarningmsg "$ERR" aptmark manual foo
+	testwarningmsg "$ERR" aptmark auto foo
 }
 echo 'Apt::Cmd::Disable-Script-Warning "true";' >> aptconfig.conf
 
-msgmsg 'Unreadable sources file'
+msgmsg 'Unreadable one-line-style sources file'
 chmod -r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list
-runthemall "E: Could not open file $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list - open (13: Permission denied)
-E: The list of sources could not be read."
+runthemall "W: Unable to read $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list - open (13: Permission denied)"
 chmod +r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.list
+
+msgmsg 'Unreadable deb822-style sources file'
+chmod -r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.sources
+runthemall "W: Unable to read $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.sources - open (13: Permission denied)"
+chmod +r rootdir/etc/apt/sources.list.d/apt-test-unstable-deb-src.sources
 
 msgmsg 'Unreadable config file'
 chmod -r rootdir/etc/apt/apt.conf.d/unreadable.conf
-runthemall "E: Could not open file ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/unreadable.conf - open (13: Permission denied)"
+runthemall "W: Unable to read ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/unreadable.conf - open (13: Permission denied)"
 chmod +r rootdir/etc/apt/apt.conf.d/unreadable.conf
 
 msgmsg 'Unreadable preferences file'
 chmod -r rootdir/etc/apt/preferences.d/unreadable.pref
-runthemall "E: Could not open file ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/preferences.d/unreadable.pref - open (13: Permission denied)"
+runthemall "W: Unable to read ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/preferences.d/unreadable.pref - open (13: Permission denied)"
 chmod +r rootdir/etc/apt/preferences.d/unreadable.pref
 
 msgmsg 'Unreadable sources directory'
 chmod -r rootdir/etc/apt/sources.list.d
-runthemall "E: Unable to read $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/ - opendir (13: Permission denied)" "
-W: You may want to run apt-get update to correct these problems
-E: The package cache file is corrupted"
+runthemall "W: Unable to read $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list.d/ - opendir (13: Permission denied)" ""
 chmod +r rootdir/etc/apt/sources.list.d
 
 msgmsg 'Unreadable config directory'
 chmod -r rootdir/etc/apt/apt.conf.d
-runthemall "E: Unable to read ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/ - opendir (13: Permission denied)"
+runthemall "W: Unable to read ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/ - opendir (13: Permission denied)"
 chmod +r rootdir/etc/apt/apt.conf.d
 
 msgmsg 'Unreadable preferences directory'
 chmod -r rootdir/etc/apt/preferences.d
-runthemall "E: Unable to read ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/preferences.d/ - opendir (13: Permission denied)"
+runthemall "W: Unable to read ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/preferences.d/ - opendir (13: Permission denied)"
 chmod +r rootdir/etc/apt/preferences.d
