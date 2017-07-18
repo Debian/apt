@@ -195,19 +195,6 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
                 CommandLine::Boolean);
       }
    }
-   else if (CmdMatches("update"))
-   {
-      addArg(0, "list-cleanup", "APT::Get::List-Cleanup", 0);
-      addArg(0, "allow-insecure-repositories", "Acquire::AllowInsecureRepositories", 0);
-      addArg(0, "allow-weak-repositories", "Acquire::AllowWeakRepositories", 0);
-      addArg(0, "allow-releaseinfo-change", "Acquire::AllowReleaseInfoChange", 0);
-      addArg(0, "allow-releaseinfo-change-origin", "Acquire::AllowReleaseInfoChange::Origin", 0);
-      addArg(0, "allow-releaseinfo-change-label", "Acquire::AllowReleaseInfoChange::Label", 0);
-      addArg(0, "allow-releaseinfo-change-version", "Acquire::AllowReleaseInfoChange::Version", 0);
-      addArg(0, "allow-releaseinfo-change-codename", "Acquire::AllowReleaseInfoChange::Codename", 0);
-      addArg(0, "allow-releaseinfo-change-suite", "Acquire::AllowReleaseInfoChange::Suite", 0);
-      addArg(0, "allow-releaseinfo-change-defaultpin", "Acquire::AllowReleaseInfoChange::DefaultPin", 0);
-   }
    else if (CmdMatches("source"))
    {
       addArg('b', "compile", "APT::Get::Compile", 0);
@@ -240,6 +227,20 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       ;
    else if (CmdMatches("moo"))
       addArg(0, "color", "APT::Moo::Color", 0);
+
+  if (CmdMatches("update", "upgrade"))
+   {
+      addArg(0, "list-cleanup", "APT::Get::List-Cleanup", 0);
+      addArg(0, "allow-insecure-repositories", "Acquire::AllowInsecureRepositories", 0);
+      addArg(0, "allow-weak-repositories", "Acquire::AllowWeakRepositories", 0);
+      addArg(0, "allow-releaseinfo-change", "Acquire::AllowReleaseInfoChange", 0);
+      addArg(0, "allow-releaseinfo-change-origin", "Acquire::AllowReleaseInfoChange::Origin", 0);
+      addArg(0, "allow-releaseinfo-change-label", "Acquire::AllowReleaseInfoChange::Label", 0);
+      addArg(0, "allow-releaseinfo-change-version", "Acquire::AllowReleaseInfoChange::Version", 0);
+      addArg(0, "allow-releaseinfo-change-codename", "Acquire::AllowReleaseInfoChange::Codename", 0);
+      addArg(0, "allow-releaseinfo-change-suite", "Acquire::AllowReleaseInfoChange::Suite", 0);
+      addArg(0, "allow-releaseinfo-change-defaultpin", "Acquire::AllowReleaseInfoChange::DefaultPin", 0);
+   }
 
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
 	    "dselect-upgrade", "autoremove", "auto-remove", "clean", "autoclean", "auto-clean", "check",
