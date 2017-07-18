@@ -45,8 +45,8 @@ bool DoUpgrade(CommandLine &CmdL)					/*{{{*/
 {
     if (_config->FindB("APT::Get::Upgrade-Update", false) == true)
     {
-      CommandLine UpdateCmdL();
-      if (DoUpdate(&UpdateCmdL) == false)
+      CommandLine &UpdateCmdL();
+      if (DoUpdate(UpdateCmdL) == false)
          return false;
 
       int upgradable = 0;
