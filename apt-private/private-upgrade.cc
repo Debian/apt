@@ -61,7 +61,7 @@ bool DoUpgrade(CommandLine &CmdL)					/*{{{*/
       }
       // avoid the upgrade call if there is nothing to upgrade
       if (upgradable == 0)
-        return
+        return;
    }
 
    if (_config->FindB("APT::Get::Upgrade-Allow-New", false) == true)
