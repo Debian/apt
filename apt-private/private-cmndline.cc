@@ -228,7 +228,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    else if (CmdMatches("moo"))
       addArg(0, "color", "APT::Moo::Color", 0);
 
-  if (CmdMatches("update", "upgrade"))
+   if (CmdMatches("update", "upgrade"))
    {
       addArg(0, "list-cleanup", "APT::Get::List-Cleanup", 0);
       addArg(0, "allow-insecure-repositories", "Acquire::AllowInsecureRepositories", 0);

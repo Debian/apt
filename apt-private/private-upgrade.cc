@@ -43,11 +43,11 @@ bool DoDistUpgrade(CommandLine &CmdL)
 									/*}}}*/
 bool DoUpgrade(CommandLine &CmdL)					/*{{{*/
 {
-   if (_config->FindB("APT::Get::Upgrade-Update", false) == true)
-   {
+    if (_config->FindB("APT::Get::Upgrade-Update", false) == true)
+    {
       UpdateCmdL = CommandLine();
       if (DoUpdate(UpdateCmdL) == false)
-        return false;
+         return false;
     }
 
    if (_config->FindB("APT::Get::Upgrade-Allow-New", false) == true)
