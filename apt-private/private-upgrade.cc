@@ -48,7 +48,21 @@ bool DoUpgrade(CommandLine &CmdL)					/*{{{*/
       CommandLine UpdateCmdL();
       if (DoUpdate(UpdateCmdL) == false)
          return false;
-    }
+
+      int upgradable = 0;
+      CacheFile Cache;
+      if (Cache.Open(false) == false)
+         return false;
+      for (pkgCache::PkgIterator I = Cache->PkgBegin(); I.end() != true; ++I)
+      {
+         pkgDepCache::StateCache &state = Cache[I];
+         if (I->CurrentVer != 0 && state.Upgradable() && state.CandidateVer != NULL)
+            upgradable++;
+      }
+      // avoid the upgrade call if there is nothing to upgrade
+      if (upgradable == 0)
+        return
+   }
 
    if (_config->FindB("APT::Get::Upgrade-Allow-New", false) == true)
       return DoUpgradeWithAllowNewPackages(CmdL);
