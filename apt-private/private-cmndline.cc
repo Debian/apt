@@ -191,6 +191,8 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       {
          addArg(0, "new-pkgs", "APT::Get::Upgrade-Allow-New", 
                 CommandLine::Boolean);
+         addArg(0, "update", "APT::Get::Upgrade-Update", 
+                CommandLine::Boolean);
       }
    }
    else if (CmdMatches("update"))

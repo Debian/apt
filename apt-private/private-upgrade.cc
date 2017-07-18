@@ -1,6 +1,7 @@
 // Includes								/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/upgrade.h>
@@ -8,6 +9,7 @@
 #include <apt-private/private-cachefile.h>
 #include <apt-private/private-install.h>
 #include <apt-private/private-output.h>
+#include <apt-private/private-update.h>
 #include <apt-private/private-upgrade.h>
 
 #include <iostream>
@@ -41,6 +43,13 @@ bool DoDistUpgrade(CommandLine &CmdL)
 									/*}}}*/
 bool DoUpgrade(CommandLine &CmdL)					/*{{{*/
 {
+   if (_config->FindB("APT::Get::Upgrade-Update", false) == true)
+   {
+      UpdateCmdL = CommandLine()
+      if (DoUpdate(UpdateCmdL) == false)
+        return false
+    }
+
    if (_config->FindB("APT::Get::Upgrade-Allow-New", false) == true)
       return DoUpgradeWithAllowNewPackages(CmdL);
    else
