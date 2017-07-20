@@ -34,8 +34,8 @@
 // Global Error Object							/*{{{*/
 GlobalError *_GetErrorObj()
 {
-   static thread_local GlobalError *Obj = new GlobalError;
-   return Obj;
+   static thread_local GlobalError Obj;
+   return &Obj;
 }
 									/*}}}*/
 // GlobalError::GlobalError - Constructor				/*{{{*/
