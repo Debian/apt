@@ -32,7 +32,7 @@ include(CheckFunctionExists)
 include(CheckStructHasMember)
 include(GNUInstallDirs)
 include(TestBigEndian)
-find_package(Threads)
+find_package(Threads REQUIRED)
 find_package(LFS REQUIRED)
 find_package(Iconv REQUIRED)
 
@@ -145,10 +145,6 @@ test_big_endian(WORDS_BIGENDIAN)
 
 # FreeBSD
 add_definitions(-D_WITH_GETLINE=1)
-
-if (CMAKE_USE_PTHREADS_INIT)
-  set(HAVE_PTHREAD 1)
-endif()
 
 CHECK_INCLUDE_FILES(machine/endian.h HAVE_MACHINE_ENDIAN_H)
 CHECK_INCLUDE_FILES(sys/endian.h HAVE_SYS_ENDIAN_H)
