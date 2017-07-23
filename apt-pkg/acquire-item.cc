@@ -2829,8 +2829,6 @@ void pkgAcqIndexMergeDiffs::Failed(string const &Message,pkgAcquire::MethodConfi
    if (Debug)
       std::clog << "Falling back to normal index file acquire" << std::endl;
    RenameOnError(PDiffError);
-   if (RealFileExists(DestFile))
-      Rename(DestFile, DestFile + ".FAILED");
    std::string const UnpatchedFile = GetExistingFilename(GetPartialFileNameFromURI(Target.URI));
    if (UnpatchedFile.empty() == false && FileExists(UnpatchedFile))
       Rename(UnpatchedFile, UnpatchedFile + ".FAILED");
