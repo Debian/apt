@@ -2465,12 +2465,9 @@ void pkgAcqDiffIndex::Failed(string const &Message,pkgAcquire::MethodConfig cons
    if (CommonFailed(GetDiffIndexURI(Target), GetDiffIndexFileName(Target.Description), Message, Cnf))
       return;
 
+   RenameOnError(PDiffError);
    Status = StatDone;
    ExpectedAdditionalItems = 0;
-
-   // queue for final move - this should happen even if we fail
-   // while parsing (e.g. on sizelimit) and download the complete file.
-   TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
 
    if(Debug)
       std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << " with " << Message << std::endl
