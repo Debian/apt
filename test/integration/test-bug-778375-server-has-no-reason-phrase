@@ -12,6 +12,8 @@ changetohttpswebserver  -o 'aptwebserver::redirect::replace::/redirectme/=/' \
 	-o 'aptwebserver::httpcode::200=200' -o 'aptwebserver::httpcode::404=404' \
 	-o 'aptwebserver::httpcode::301=301'
 webserverconfig 'aptwebserver::empty-response-header::' 'foobar'
+webserverconfig 'aptwebserver::response-header::HTTP-Trigger-Field' 'bug'
+webserverconfig 'aptwebserver::response-header::Httputter-Trigger-Field' 'bug'
 
 testdownload() {
 	rm -f downfile

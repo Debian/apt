@@ -85,7 +85,7 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
    if (Line.empty() == true)
       return true;
 
-   if (Line.size() > 4 && stringcasecmp(Line.data(), Line.data()+4, "HTTP") == 0)
+   if (Result == 0 && Line.size() > 4 && stringcasecmp(Line.data(), Line.data() + 4, "HTTP") == 0)
    {
       // Evil servers return no version
       if (Line[4] == '/')
