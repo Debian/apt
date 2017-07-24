@@ -1133,22 +1133,15 @@ HashStringList pkgAcquire::Queue::QItem::GetExpectedHashes() const	/*{{{*/
    for (pkgAcquire::Queue::QItem::owner_iterator O = Owners.begin(); O != Owners.end(); ++O)
    {
       HashStringList const hsl = (*O)->GetExpectedHashes();
-      if (hsl.usable() == false)
-	 continue;
-      if (superhsl.usable() == false)
-	 superhsl = hsl;
-      else
-      {
-	 // we merge both lists - if we find disagreement send no hashes
-	 HashStringList::const_iterator hs = hsl.begin();
-	 for (; hs != hsl.end(); ++hs)
-	    if (superhsl.push_back(*hs) == false)
-	       break;
-	 if (hs != hsl.end())
-	 {
-	    superhsl.clear();
+      // we merge both lists - if we find disagreement send no hashes
+      HashStringList::const_iterator hs = hsl.begin();
+      for (; hs != hsl.end(); ++hs)
+	 if (superhsl.push_back(*hs) == false)
 	    break;
-	 }
+      if (hs != hsl.end())
+      {
+	 superhsl.clear();
+	 break;
       }
    }
    return superhsl;
