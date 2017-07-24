@@ -267,6 +267,7 @@ bool CircleBuf::Write(string &Data)
    OutP += LeftWrite();
    return true;
 }
+									/*}}}*/
 // CircleBuf::Stats - Print out stats information			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -282,11 +283,12 @@ void CircleBuf::Stats()
    clog << "Got " << InP << " in " << Diff << " at " << InP/Diff << endl;*/
 }
 									/*}}}*/
-CircleBuf::~CircleBuf()
+CircleBuf::~CircleBuf()							/*{{{*/
 {
    delete [] Buf;
    delete Hash;
 }
+									/*}}}*/
 
 // UnwrapHTTPConnect - Does the HTTP CONNECT handshake			/*{{{*/
 // ---------------------------------------------------------------------
@@ -590,7 +592,15 @@ bool HttpServerState::RunData(RequestState &Req)
       if (Req.JunkSize != 0)
 	 In.Limit(Req.JunkSize);
       else if (Req.DownloadSize != 0)
+      {
+	 if (Req.MaximumSize != 0 && Req.DownloadSize > Req.MaximumSize)
+	 {
+	    Owner->SetFailReason("MaximumSizeExceeded");
+	    return _error->Error(_("File is larger than expected (%llu > %llu). Mirror sync in progress?"),
+				 Req.DownloadSize, Req.MaximumSize);
+	 }
 	 In.Limit(Req.DownloadSize);
+      }
       else if (Persistent == false)
 	 In.Limit(-1);
       
@@ -827,8 +837,8 @@ bool HttpServerState::Go(bool ToFile, RequestState &Req)
    if (Req.MaximumSize > 0 && Req.File.IsOpen() && Req.File.Failed() == false && Req.File.Tell() > Req.MaximumSize)
    {
       Owner->SetFailReason("MaximumSizeExceeded");
-      return _error->Error("Writing more data than expected (%llu > %llu)",
-                           Req.File.Tell(), Req.MaximumSize);
+      return _error->Error(_("File is larger than expected (%llu > %llu). Mirror sync in progress?"),
+			   Req.File.Tell(), Req.MaximumSize);
    }
 
    // Handle commands from APT

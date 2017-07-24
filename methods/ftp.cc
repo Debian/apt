@@ -940,8 +940,8 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
       if (MaximumSize > 0 && To.Tell() > MaximumSize)
       {
          Owner->SetFailReason("MaximumSizeExceeded");
-         return _error->Error("Writing more data than expected (%llu > %llu)",
-                              To.Tell(), MaximumSize);
+	 return _error->Error(_("File is larger than expected (%llu > %llu). Mirror sync in progress?"),
+			      To.Tell(), MaximumSize);
       }
    }
 
