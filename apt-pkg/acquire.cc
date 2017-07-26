@@ -74,21 +74,6 @@ void pkgAcquire::Initialize()
       QueueMode = QueueHost;
    if (strcasecmp(Mode.c_str(),"access") == 0)
       QueueMode = QueueAccess;
-
-   // chown the auth.conf file as it will be accessed by our methods
-   std::string const SandboxUser = _config->Find("APT::Sandbox::User");
-   if (getuid() == 0 && SandboxUser.empty() == false && SandboxUser != "root") // if we aren't root, we can't chown, so don't try it
-   {
-      struct passwd const * const pw = getpwnam(SandboxUser.c_str());
-      struct group const * const gr = getgrnam(ROOT_GROUP);
-      if (pw != NULL && gr != NULL)
-      {
-	 std::string const AuthConf = _config->FindFile("Dir::Etc::netrc");
-	 if(AuthConf.empty() == false && RealFileExists(AuthConf) &&
-	       chown(AuthConf.c_str(), pw->pw_uid, gr->gr_gid) != 0)
-	    _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of file %s failed", SandboxUser.c_str(), AuthConf.c_str());
-      }
-   }
 }
 									/*}}}*/
 // Acquire::GetLock - lock directory and prepare for action		/*{{{*/

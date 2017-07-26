@@ -830,14 +830,14 @@ unsigned long long BaseHttpMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
 }
 									/*}}}*/
 BaseHttpMethod::BaseHttpMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
-   aptMethod(std::move(Binary), Ver, Flags), Server(nullptr), PipelineDepth(10),
+   aptAuthConfMethod(std::move(Binary), Ver, Flags), Server(nullptr), PipelineDepth(10),
    AllowRedirect(false), Debug(false)
 {
 }
 									/*}}}*/
 bool BaseHttpMethod::Configuration(std::string Message)			/*{{{*/
 {
-   if (aptMethod::Configuration(Message) == false)
+   if (aptAuthConfMethod::Configuration(Message) == false)
       return false;
 
    _config->CndSet("Acquire::tor::Proxy",
@@ -845,8 +845,9 @@ bool BaseHttpMethod::Configuration(std::string Message)			/*{{{*/
    return true;
 }
 									/*}}}*/
-bool BaseHttpMethod::AddProxyAuth(URI &Proxy, URI const &Server) const	/*{{{*/
+bool BaseHttpMethod::AddProxyAuth(URI &Proxy, URI const &Server) /*{{{*/
 {
+   MaybeAddAuthTo(Proxy);
    if (std::find(methodNames.begin(), methodNames.end(), "tor") != methodNames.end() &&
 	 Proxy.User == "apt-transport-tor" && Proxy.Password.empty())
    {
@@ -857,7 +858,6 @@ bool BaseHttpMethod::AddProxyAuth(URI &Proxy, URI const &Server) const	/*{{{*/
       else
 	 Proxy.Password = std::move(pass);
    }
-   // FIXME: should we support auth.conf for proxies?
    return true;
 }
 									/*}}}*/

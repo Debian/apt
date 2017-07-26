@@ -152,6 +152,19 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
       EXPECT_EQ(strlen(expect), f.Tell());
    }
 #undef APT_INIT_READBACK
+   {
+      test.erase(test.length() - 1);
+      EXPECT_TRUE(f.Seek(0));
+      EXPECT_FALSE(f.Eof());
+      std::string line;
+      EXPECT_TRUE(f.ReadLine(line));
+      EXPECT_FALSE(f.Failed());
+      EXPECT_FALSE(f.Eof());
+      EXPECT_EQ(line.length(), test.length());
+      EXPECT_EQ(line.length() + 1, f.Tell());
+      EXPECT_EQ(f.Size(), f.Tell());
+      EXPECT_EQ(line, test);
+   }
 
    f.Close();
    EXPECT_FALSE(f.IsOpen());

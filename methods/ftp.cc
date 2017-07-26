@@ -21,7 +21,6 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
-#include <apt-pkg/netrc.h>
 #include <apt-pkg/strutl.h>
 
 #include <iostream>
@@ -961,7 +960,7 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
 // FtpMethod::FtpMethod - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-FtpMethod::FtpMethod() : aptMethod("ftp","1.0",SendConfig)
+FtpMethod::FtpMethod() : aptAuthConfMethod("ftp", "1.0", SendConfig)
 {
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
@@ -996,7 +995,7 @@ void FtpMethod::SigTerm(int)
 /* We stash the desired pipeline depth */
 bool FtpMethod::Configuration(string Message)
 {
-   if (aptMethod::Configuration(Message) == false)
+   if (aptAuthConfMethod::Configuration(Message) == false)
       return false;
 
    TimeOut = _config->FindI("Acquire::Ftp::Timeout",TimeOut);
@@ -1015,7 +1014,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    Res.Filename = Itm->DestFile;
    Res.IMSHit = false;
 
-   maybe_add_auth (Get, _config->FindFile("Dir::Etc::netrc"));
+   MaybeAddAuthTo(Get);
 
    // Connect to the server
    if (Server == 0 || Server->Comp(Get) == false)

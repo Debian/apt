@@ -1,0 +1,45 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+setupaptarchive --no-update
+
+testsuccess apt update
+testsuccess apt update --no-download
+
+echo 'deb ftp://ftp.tlh.debian.org/debian zurg main' > rootdir/etc/apt/sources.list.d/ftpshutdown.list
+cat > rootdir/var/lib/apt/lists/ftp.tlh.debian.org_debian_dists_zurg_Release <<EOF
+Origin: Debian
+Label: Debian
+Suite: unreleased
+Codename: zurg
+Date: Fri, 14 Jul 2017 11:34:35 +0000
+Architectures: amd64
+Components: main
+Description: Debian x.y Zurg - Not Released
+EOF
+chmod 644 rootdir/var/lib/apt/lists/ftp.tlh.debian.org_debian_dists_zurg_Release
+
+testwarningequal "Reading package lists...
+Building dependency tree...
+All packages are up to date.
+W: Debian shuts down public FTP services currently still used in your sources.list(5) as 'ftp://ftp.tlh.debian.org/debian/'.
+   See press release https://debian.org/News/2017/20170425 for details." apt update --no-download
+
+
+echo 'deb http://apt:debian@ftp.tlh.debian.org/debian zurg main' > rootdir/etc/apt/sources.list.d/ftpshutdown.list
+testsuccessequal "Reading package lists...
+Building dependency tree...
+All packages are up to date.
+N: Usage of apt_auth.conf(5) should be preferred over embedding login information directly in the sources.list(5) entry for 'http://ftp.tlh.debian.org/debian'" apt update --no-download
+
+
+echo 'deb tor+https://apt:debian@ftp.tlh.debian.org/debian zurg main' > rootdir/etc/apt/sources.list.d/ftpshutdown.list
+testsuccessequal "Reading package lists...
+Building dependency tree...
+All packages are up to date.
+N: Usage of apt_auth.conf(5) should be preferred over embedding login information directly in the sources.list(5) entry for 'tor+https://ftp.tlh.debian.org/debian'" apt update --no-download

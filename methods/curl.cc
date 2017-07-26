@@ -270,7 +270,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    if (SetupProxy() == false)
       return _error->Error("Unsupported proxy configured: %s", URI::SiteOnly(Proxy).c_str());
 
-   maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
+   MaybeAddAuthTo(Uri);
    if (Server == nullptr || Server->Comp(Itm->Uri) == false)
       Server = CreateServerState(Itm->Uri);
 

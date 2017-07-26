@@ -22,10 +22,15 @@
 #include <apt-pkg/strutl.h>
 #endif
 
+#ifndef APT_15_CLEANER_HEADERS
 #define DOT_CHAR "."
 #define DIR_CHAR "/"
+#endif
 
 class URI;
+class FileFd;
 
-void maybe_add_auth (URI &Uri, std::string NetRCFile);
+APT_DEPRECATED_MSG("Use FileFd-based MaybeAddAuth instead")
+void maybe_add_auth(URI &Uri, std::string NetRCFile);
+bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri);
 #endif

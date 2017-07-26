@@ -324,10 +324,10 @@ bool ReadPinDir(pkgPolicy &Plcy,string Dir)
       return false;
 
    // Read the files
+   bool good = true;
    for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
-      if (ReadPinFile(Plcy, *I) == false)
-	 return false;
-   return true;
+      good = ReadPinFile(Plcy, *I) && good;
+   return good;
 }
 									/*}}}*/
 // ReadPinFile - Load the pin file into a Policy			/*{{{*/
@@ -343,8 +343,11 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
 
    if (RealFileExists(File) == false)
       return true;
-   
-   FileFd Fd(File,FileFd::ReadOnly);
+
+   FileFd Fd;
+   if (OpenConfigurationFileFd(File, Fd) == false)
+      return false;
+
    pkgTagFile TF(&Fd, pkgTagFile::SUPPORT_COMMENTS);
    if (Fd.IsOpen() == false || Fd.Failed())
       return false;

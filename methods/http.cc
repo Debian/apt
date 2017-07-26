@@ -23,7 +23,6 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
-#include <apt-pkg/netrc.h>
 #include <apt-pkg/proxy.h>
 #include <apt-pkg/strutl.h>
 
@@ -330,7 +329,7 @@ struct HttpConnectFd : public MethodFd
 };
 
 bool UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd,
-		       unsigned long Timeout, aptMethod *Owner)
+		       unsigned long Timeout, aptAuthConfMethod *Owner)
 {
    Owner->Status(_("Connecting to %s (%s)"), "HTTP proxy", URI::SiteOnly(Proxy).c_str());
    // The HTTP server expects a hostname with a trailing :port
@@ -348,9 +347,8 @@ bool UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std::unique_ptr<Me
       Req << "Host: " << ProperHost << ":" << std::to_string(Proxy.Port) << "\r\n";
    else
       Req << "Host: " << ProperHost << "\r\n";
-   ;
 
-   maybe_add_auth(Proxy, _config->FindFile("Dir::Etc::netrc"));
+   Owner->MaybeAddAuthTo(Proxy);
    if (Proxy.User.empty() == false || Proxy.Password.empty() == false)
       Req << "Proxy-Authorization: Basic "
 	  << Base64Encode(Proxy.User + ":" + Proxy.Password) << "\r\n";
@@ -931,7 +929,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
       Req << "Proxy-Authorization: Basic "
 	 << Base64Encode(Server->Proxy.User + ":" + Server->Proxy.Password) << "\r\n";
 
-   maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
+   MaybeAddAuthTo(Uri);
    if (Uri.User.empty() == false || Uri.Password.empty() == false)
       Req << "Authorization: Basic "
 	 << Base64Encode(Uri.User + ":" + Uri.Password) << "\r\n";

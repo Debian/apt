@@ -8,6 +8,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/metaindex.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/update.h>
 
@@ -78,6 +79,44 @@ bool DoUpdate(CommandLine &CmdL)
    pkgCacheFile::RemoveCaches();
    if (Cache.BuildCaches(false) == false)
       return false;
+
+   if (_config->FindB("APT::Get::Update::SourceListWarnings", true))
+   {
+      List = Cache.GetSourceList();
+      for (pkgSourceList::const_iterator S = List->begin(); S != List->end(); ++S)
+      {
+	 if (APT::String::Startswith((*S)->GetURI(), "ftp://") == false)
+	    continue;
+	 pkgCache::RlsFileIterator const RlsFile = (*S)->FindInCache(Cache, false);
+	 if (RlsFile.end() || RlsFile->Origin == 0 || RlsFile->Label == 0)
+	    continue;
+	 char const *const affected[][2] = {
+	     {"Debian", "Debian"},
+	     {"Debian", "Debian-Security"},
+	     {"Debian Backports", "Debian Backports"},
+	 };
+	 auto const matchRelease = [&](decltype(affected[0]) a) {
+	    return strcmp(RlsFile.Origin(), a[0]) == 0 && strcmp(RlsFile.Label(), a[1]) == 0;
+	 };
+	 if (std::find_if(std::begin(affected), std::end(affected), matchRelease) != std::end(affected))
+	    _error->Warning("Debian shuts down public FTP services currently still used in your sources.list(5) as '%s'.\n"
+			    "See press release %s for details.",
+			    (*S)->GetURI().c_str(), "https://debian.org/News/2017/20170425");
+      }
+      for (pkgSourceList::const_iterator S = List->begin(); S != List->end(); ++S)
+      {
+	 URI uri((*S)->GetURI());
+	 if (uri.User.empty() && uri.Password.empty())
+	    continue;
+	 // we can't really predict if a +http method supports everything http does,
+	 // so we play it safe and use a whitelist here.
+	 char const *const affected[] = {"http", "https", "tor+http", "tor+https", "ftp"};
+	 if (std::find(std::begin(affected), std::end(affected), uri.Access) != std::end(affected))
+	    // TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+	    _error->Notice(_("Usage of %s should be preferred over embedding login information directly in the %s entry for '%s'"),
+			   "apt_auth.conf(5)", "sources.list(5)", URI::ArchiveOnly(uri).c_str());
+      }
+   }
 
    // show basic stats (if the user whishes)
    if (_config->FindB("APT::Cmd::Show-Update-Stats", false) == true)

@@ -840,9 +840,9 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 		    unsigned const &Depth)
 {
    // Open the stream for reading
-   ifstream F(FName.c_str(),ios::in);
-   if (F.fail() == true)
-      return _error->Errno("ifstream::ifstream",_("Opening configuration file %s"),FName.c_str());
+   FileFd F;
+   if (OpenConfigurationFileFd(FName, F) == false)
+      return false;
 
    string LineBuffer;
    std::stack<std::string> Stack;
@@ -852,25 +852,14 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 
    int CurLine = 0;
    bool InComment = false;
-   while (F.eof() == false)
+   while (F.Eof() == false)
    {
       // The raw input line.
       std::string Input;
+      if (F.ReadLine(Input) == false)
+	 Input.clear();
       // The input line with comments stripped.
       std::string Fragment;
-
-      // Grab the next line of F and place it in Input.
-      do
-	{
-	  char *Buffer = new char[1024];
-
-	  F.clear();
-	  F.getline(Buffer,sizeof(Buffer) / 2);
-
-	  Input += Buffer;
-	  delete[] Buffer;
-	}
-      while (F.fail() && !F.eof());
 
       // Expand tabs in the input line and remove leading and trailing
       // whitespace.
@@ -1161,13 +1150,10 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 bool ReadConfigDir(Configuration &Conf,const string &Dir,
 		   bool const &AsSectional, unsigned const &Depth)
 {
-   vector<string> const List = GetListOfFilesInDir(Dir, "conf", true, true);
-
-   // Read the files
-   for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
-      if (ReadConfigFile(Conf,*I,AsSectional,Depth) == false)
-	 return false;
-   return true;
+   bool good = true;
+   for (auto const &I : GetListOfFilesInDir(Dir, "conf", true, true))
+      good = ReadConfigFile(Conf, I, AsSectional, Depth) && good;
+   return good;
 }
 									/*}}}*/
 // MatchAgainstConfig Constructor					/*{{{*/

@@ -5,6 +5,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/netrc.h>
 
 #include <algorithm>
 #include <locale>
@@ -148,5 +149,44 @@ public:
       }
    }
 };
+class aptAuthConfMethod : public aptMethod
+{
+   FileFd authconf;
+public:
+   virtual bool Configuration(std::string Message) APT_OVERRIDE
+   {
+      if (pkgAcqMethod::Configuration(Message) == false)
+	 return false;
 
+      std::string const conf = std::string("Binary::") + Binary;
+      _config->MoveSubTree(conf.c_str(), NULL);
+
+      auto const netrc = _config->FindFile("Dir::Etc::netrc");
+      if (netrc.empty() == false)
+      {
+	 // ignore errors with opening the auth file as it doesn't need to exist
+	 _error->PushToStack();
+	 authconf.Open(netrc, FileFd::ReadOnly);
+	 _error->RevertToStack();
+      }
+
+      DropPrivsOrDie();
+
+      return true;
+   }
+
+   bool MaybeAddAuthTo(URI &uri)
+   {
+      if (uri.User.empty() == false || uri.Password.empty() == false)
+	 return true;
+      if (authconf.IsOpen() == false)
+	 return true;
+      if (authconf.Seek(0) == false)
+	 return false;
+      return MaybeAddAuth(authconf, uri);
+   }
+
+   aptAuthConfMethod(std::string &&Binary, char const * const Ver, unsigned long const Flags) APT_NONNULL(3) :
+      aptMethod(std::move(Binary), Ver, Flags) {}
+};
 #endif

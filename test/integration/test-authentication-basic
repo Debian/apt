@@ -13,6 +13,7 @@ setupaptarchive --no-update
 changetohttpswebserver --authorization="$(printf '%s' 'star@irc:hunter2' | base64 )"
 
 echo 'See, when YOU type hunter2, it shows to us as *******' > aptarchive/bash
+echo 'Debug::Acquire::netrc "true";' > rootdir/etc/apt/apt.conf.d/netrcdebug.conf
 
 testauthfailure() {
 	testfailure apthelper download-file "${1}/bash" ./downloaded/bash
@@ -37,7 +38,11 @@ testauthsuccess() {
 	fi
 
 	rm -rf rootdir/var/lib/apt/lists
-	testsuccess aptget update
+	if expr index "$1" '@' >/dev/null; then
+		testsuccesswithnotice aptget update
+	else
+		testsuccess aptget update
+	fi
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
@@ -94,7 +99,9 @@ rewritesourceslist "http://localhost:${APTHTTPPORT}"
 
 msgmsg 'proxy to server basic auth'
 webserverconfig 'aptwebserver::request::absolute' 'uri'
-export http_proxy="http://localhost:${APTHTTPPORT}"
+# using ip instead of localhost avoids picking up the auth for the repo
+# for the proxy as well as we serve them both over the same server…
+export http_proxy="http://127.0.0.1:${APTHTTPPORT}"
 runtest "http://localhost:${APTHTTPPORT}"
 unset http_proxy
 
