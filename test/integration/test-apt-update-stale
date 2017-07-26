@@ -39,6 +39,6 @@ cp -p aptarchive/dists/unstable/main/binary-i386/saved/Packages* \
      aptarchive/dists/unstable/main/binary-i386/
 
 # ensure this raises an error
-testfailuremsg "E: Failed to fetch http://localhost:${APTHTTPPORT}/dists/unstable/main/binary-i386/Packages.gz  Hash Sum mismatch
-E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
+testfailure aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::http=1
+testsuccess grep 'File has unexpected size' rootdir/tmp/testfailure.output
 testfileequal lists.before "$(listcurrentlistsdirectory)"

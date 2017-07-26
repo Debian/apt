@@ -21,7 +21,7 @@ test_inreleasetoobig() {
 	testsuccess aptget update -o Apt::Get::List-Cleanup=0  -o acquire::MaxReleaseFileSize=$((1*1000*1000)) -o Debug::pkgAcquire::worker=0
 	msgtest 'Check that the max write warning is triggered'
 	cp rootdir/tmp/testsuccess.output update.output
-	testsuccess --nomsg grep -q 'File is larger than expected' update.output
+	testsuccess --nomsg grep -q 'File has unexpected size' update.output
 	rm -f update.output
 	# ensure the failed InRelease file got renamed
 	testsuccess ls rootdir/var/lib/apt/lists/partial/*InRelease.FAILED
@@ -39,11 +39,29 @@ test_packagestoobig() {
 		touch -d '+1hour' "$pkg"
 	done
 	NEW_SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages.gz)"
-	testfailuremsg "E: Failed to fetch ${1}/dists/unstable/main/binary-i386/Packages.gz  File is larger than expected ($NEW_SIZE > $SIZE). Mirror sync in progress?
+	testfailuremsg "E: Failed to fetch ${1}/dists/unstable/main/binary-i386/Packages.gz  File has unexpected size ($NEW_SIZE != $SIZE). Mirror sync in progress?
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::Transaction=0
 	testsuccess ls rootdir/var/lib/apt/lists/partial/*Packages*.FAILED
 	testfailure test -e rootdir/var/lib/apt/lists/partial/Old.FAILED
 }
+
+test_packagestoosmall() {
+	insertpackage 'unstable' 'foo' 'i386' '1.0'
+	buildaptarchivefromfiles '+1 hour'
+	signreleasefiles
+	# replace Packages.gz/Packages with short junk
+	SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages.gz)"
+	find aptarchive/dists -name 'Packages*' | while read pkg; do
+		echo "1234567890" > "$pkg"
+		touch -d '+1hour' "$pkg"
+	done
+	NEW_SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages.gz)"
+	testfailuremsg "E: Failed to fetch ${1}/dists/unstable/main/binary-i386/Packages.gz  File is smaller than expected ($NEW_SIZE < $SIZE). Mirror sync in progress?
+E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::Transaction=0
+	testsuccess ls rootdir/var/lib/apt/lists/partial/*Packages*.FAILED
+	testfailure test -e rootdir/var/lib/apt/lists/partial/Old.FAILED
+}
+
 
 methodtest() {
 	# less complicated test setup this way

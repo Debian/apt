@@ -660,8 +660,39 @@ int BaseHttpMethod::Loop()
             // so instead we use the size of the biggest item in the queue
             Req.MaximumSize = FindMaximumObjectSizeInQueue();
 
-            if (Req.HaveContent)
-	       Result = Server->RunData(Req);
+	    if (Req.HaveContent)
+	    {
+	       /* If the server provides Content-Length we can figure out with it if
+		  this satisfies any request we have made so far (in the pipeline).
+		  If not we can kill the connection as whatever file the server is trying
+		  to send to us would be rejected with a hashsum mismatch later or triggers
+		  a maximum size error. We don't run the data to /dev/null as this can be MBs
+		  of junk data we would waste bandwidth on and instead just close the connection
+		  to reopen a fresh one which should be more cost/time efficient */
+	       if (Req.DownloadSize > 0)
+	       {
+		  decltype(Queue->ExpectedHashes.FileSize()) const filesize = Req.StartPos + Req.DownloadSize;
+		  bool found = false;
+		  for (FetchItem const *I = Queue; I != 0 && I != QueueBack; I = I->Next)
+		  {
+		     auto const fs = I->ExpectedHashes.FileSize();
+		     if (fs == 0 || fs == filesize)
+		     {
+			found = true;
+			break;
+		     }
+		  }
+		  if (found == false)
+		  {
+		     SetFailReason("MaximumSizeExceeded");
+		     _error->Error(_("File has unexpected size (%llu != %llu). Mirror sync in progress?"),
+				   filesize, Queue->ExpectedHashes.FileSize());
+		     Result = false;
+		  }
+	       }
+	       if (Result)
+		  Result = Server->RunData(Req);
+	    }
 
 	    /* If the server is sending back sizeless responses then fill in
 	       the size now */

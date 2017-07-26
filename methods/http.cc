@@ -596,7 +596,7 @@ bool HttpServerState::RunData(RequestState &Req)
 	 if (Req.MaximumSize != 0 && Req.DownloadSize > Req.MaximumSize)
 	 {
 	    Owner->SetFailReason("MaximumSizeExceeded");
-	    return _error->Error(_("File is larger than expected (%llu > %llu). Mirror sync in progress?"),
+	    return _error->Error(_("File has unexpected size (%llu != %llu). Mirror sync in progress?"),
 				 Req.DownloadSize, Req.MaximumSize);
 	 }
 	 In.Limit(Req.DownloadSize);
@@ -837,7 +837,7 @@ bool HttpServerState::Go(bool ToFile, RequestState &Req)
    if (Req.MaximumSize > 0 && Req.File.IsOpen() && Req.File.Failed() == false && Req.File.Tell() > Req.MaximumSize)
    {
       Owner->SetFailReason("MaximumSizeExceeded");
-      return _error->Error(_("File is larger than expected (%llu > %llu). Mirror sync in progress?"),
+      return _error->Error(_("File has unexpected size (%llu != %llu). Mirror sync in progress?"),
 			   Req.File.Tell(), Req.MaximumSize);
    }
 

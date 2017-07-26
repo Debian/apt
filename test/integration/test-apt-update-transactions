@@ -16,16 +16,10 @@ insertsource 'unstable' 'foo' 'i386' '1.0'
 setupaptarchive --no-update
 
 breakfile() {
-	mv "${1}" "${1}.bak"
-	mv "${1}.gz" "${1}.gz.bak"
-	cat > "$1" <<EOF
-Package: bar
-EOF
-	compressfile "$1"
+	breakfiles "$1" "${1}.gz"
 }
 restorefile() {
-	mv "${1}.bak" "$1"
-	mv "${1}.gz.bak" "${1}.gz"
+	unbreakfiles "$1" "${1}.gz"
 }
 
 testrun() {

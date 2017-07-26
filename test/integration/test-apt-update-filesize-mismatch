@@ -40,7 +40,11 @@ for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.
 
 		testfailure aptget update -o Debug::pkgAcquire::Worker=1
 		cp rootdir/tmp/testfailure.output rootdir/tmp/update.output
-		testsuccess grep -E "$(basename "$COMPRESSFILE" '.gz').*Hash Sum mismatch" rootdir/tmp/update.output
+		if [ -z "$ext" ]; then
+			testsuccess grep -E "$(basename "$COMPRESSFILE" '.gz').*Hash Sum mismatch" rootdir/tmp/update.output
+		else
+			testsuccess grep -E "$(basename "$COMPRESSFILE" '.gz').*File has unexpected size" rootdir/tmp/update.output
+		fi
 		testfailure aptcache show foo
 		testfailure aptget install foo -s
 

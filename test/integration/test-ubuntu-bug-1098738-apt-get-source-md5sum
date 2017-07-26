@@ -216,32 +216,24 @@ testmismatch() {
 Need to get 6 B of source archives.
 Get:1 http://localhost:${APTHTTPPORT}  $1 1.0 (dsc) [2 B]
 Err:1 http://localhost:${APTHTTPPORT}  $1 1.0 (dsc)
-  File is larger than expected (3 > 2). Mirror sync in progress?
+  File has unexpected size (3 != 2). Mirror sync in progress?
   Hashes of expected file:
    - SHA256:943d3bf22ac661fb0f59bc4ff68cc12b04ff17a838dfcc2537008eb9c7f3770a
    - Filesize:2 [weak]
 Get:2 http://localhost:${APTHTTPPORT}  $1 1.0 (tar) [4 B]
 Err:2 http://localhost:${APTHTTPPORT}  $1 1.0 (tar)
-  Hash Sum mismatch
+  File has unexpected size (3 != 4). Mirror sync in progress?
   Hashes of expected file:
    - SHA256:90aebae315675cbf04612de4f7d5874850f48e0b8dd82becbeaa47ca93f5ebfb
    - Filesize:4 [weak]
-  Hashes of received file:
-   - SHA256:90aebae315675cbf04612de4f7d5874850f48e0b8dd82becbeaa47ca93f5ebfb
-   - Filesize:3 [weak]
-  Last modification reported: $(lastmodification "aptarchive/${1}_1.0.dsc")
-E: Failed to fetch http://localhost:${APTHTTPPORT}/${1}_1.0.dsc  File is larger than expected (3 > 2). Mirror sync in progress?
+E: Failed to fetch http://localhost:${APTHTTPPORT}/${1}_1.0.dsc  File has unexpected size (3 != 2). Mirror sync in progress?
    Hashes of expected file:
     - SHA256:943d3bf22ac661fb0f59bc4ff68cc12b04ff17a838dfcc2537008eb9c7f3770a
     - Filesize:2 [weak]
-E: Failed to fetch http://localhost:${APTHTTPPORT}/${1}_1.0.tar.gz  Hash Sum mismatch
+E: Failed to fetch http://localhost:${APTHTTPPORT}/${1}_1.0.tar.gz  File has unexpected size (3 != 4). Mirror sync in progress?
    Hashes of expected file:
     - SHA256:90aebae315675cbf04612de4f7d5874850f48e0b8dd82becbeaa47ca93f5ebfb
     - Filesize:4 [weak]
-   Hashes of received file:
-    - SHA256:90aebae315675cbf04612de4f7d5874850f48e0b8dd82becbeaa47ca93f5ebfb
-    - Filesize:3 [weak]
-   Last modification reported: $(lastmodification "aptarchive/${1}_1.0.dsc")
 E: Failed to fetch some archives."
 	elif [ "$1" = 'pkg-md5-bad' ]; then
 		FAILURE="Reading package lists...

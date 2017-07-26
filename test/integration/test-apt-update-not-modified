@@ -37,20 +37,14 @@ Reading package lists..." aptget update
 	configarchitecture 'amd64' 'i386'
 	# … but oh noes, hashsum mismatch!
 	SIZE=$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
-	mv aptarchive/dists/unstable/main/binary-amd64/Packages.gz aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig
-	cat > aptarchive/dists/unstable/main/binary-amd64/Packages <<EOF
-Package: thisisbad
-Architecture: amd64
-Version: 1
-EOF
-	compressfile aptarchive/dists/unstable/main/binary-amd64/Packages
+	breakfiles aptarchive/dists/unstable/main/binary-amd64/Packages.gz
 	testfailureequal "Hit:1 $1 unstable InRelease
 Get:2 $1 unstable/main amd64 Packages [$SIZE B]
 Err:2 $1 unstable/main amd64 Packages
   Hash Sum mismatch
   Hashes of expected file:
-   - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig') [weak]
-   - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig' | cut -d' ' -f 1)
+   - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.bak') [weak]
+   - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.bak' | cut -d' ' -f 1)
   Hashes of received file:
    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz' | cut -d' ' -f 1)
    - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') [weak]
@@ -59,8 +53,8 @@ Err:2 $1 unstable/main amd64 Packages
 Reading package lists...
 E: Failed to fetch $1/dists/unstable/main/binary-amd64/Packages.gz  Hash Sum mismatch
    Hashes of expected file:
-    - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig') [weak]
-    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig' | cut -d' ' -f 1)
+    - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.bak') [weak]
+    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.bak' | cut -d' ' -f 1)
    Hashes of received file:
     - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz' | cut -d' ' -f 1)
     - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') [weak]
@@ -111,13 +105,7 @@ Reading package lists..." aptget update
 	configarchitecture 'amd64' 'i386'
 	# … but oh noes, hashsum mismatch!
 	SIZE=$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz')
-	mv aptarchive/dists/unstable/main/binary-amd64/Packages.gz aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig
-	cat > aptarchive/dists/unstable/main/binary-amd64/Packages <<EOF
-Package: thisisbad
-Architecture: amd64
-Version: 1
-EOF
-	compressfile aptarchive/dists/unstable/main/binary-amd64/Packages
+	breakfiles 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz'
 	testfailureequal "Ign:1 $1 unstable InRelease
   404  Not Found
 Hit:2 $1 unstable Release
@@ -125,8 +113,8 @@ Get:4 $1 unstable/main amd64 Packages [$SIZE B]
 Err:4 $1 unstable/main amd64 Packages
   Hash Sum mismatch
   Hashes of expected file:
-   - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig') [weak]
-   - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig' | cut -d' ' -f 1)
+   - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.bak') [weak]
+   - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.bak' | cut -d' ' -f 1)
   Hashes of received file:
    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz' | cut -d' ' -f 1)
    - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') [weak]
@@ -135,8 +123,8 @@ Err:4 $1 unstable/main amd64 Packages
 Reading package lists...
 E: Failed to fetch $1/dists/unstable/main/binary-amd64/Packages.gz  Hash Sum mismatch
    Hashes of expected file:
-    - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig') [weak]
-    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.orig' | cut -d' ' -f 1)
+    - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.bak') [weak]
+    - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz.bak' | cut -d' ' -f 1)
    Hashes of received file:
     - SHA256:$(sha256sum 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz' | cut -d' ' -f 1)
     - Filesize:$(stat -c '%s' 'aptarchive/dists/unstable/main/binary-amd64/Packages.gz') [weak]

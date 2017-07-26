@@ -139,7 +139,7 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
       if (TotalWritten > me->https->Queue->MaximumSize)
       {
 	 me->https->SetFailReason("MaximumSizeExceeded");
-	 _error->Error(_("File is larger than expected (%llu > %llu). Mirror sync in progress?"),
+	 _error->Error(_("File has unexpected size (%llu != %llu). Mirror sync in progress?"),
 		       TotalWritten, me->https->Queue->MaximumSize);
 	 return 0;
       }

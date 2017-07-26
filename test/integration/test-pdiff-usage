@@ -298,9 +298,7 @@ SHA256-Patches:
 SHA256-Download:
  d2a1b33187ed2d248eeae3b1223ea71791ea35f2138a713ed371332a6421f467 197 2010-08-18-2013.28.gz
  $(sha256sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz") $(basename "${PATCHFILE}.gz")" > "$PATCHINDEX"
-	# needs to look like a valid command, otherwise the parser will fail before hashes are checked
-	echo '1d' > "$PATCHFILE"
-	cat "$PATCHFILE" | gzip > "${PATCHFILE}.gz"
+	breakfiles "$PATCHFILE" "${PATCHFILE}.gz"
 	generatereleasefiles '+1hour'
 	signreleasefiles
 	testsuccess apt update "$@"

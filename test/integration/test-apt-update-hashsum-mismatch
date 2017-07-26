@@ -15,12 +15,6 @@ insertsource 'testing' 'foo2' 'all' '1'
 setupaptarchive --no-update
 changetowebserver
 
-echo 'Package: bar
-Maintainer: Doctor Evil <evil@example.com>
-Description: come to the dark side
-' > aptarchive/DoctorEvil
-compressfile aptarchive/DoctorEvil
-
 find aptarchive \( -name 'Packages' -o -name 'Sources' -o -name 'Translation-en' \) -delete
 
 testsuccess aptget update
@@ -29,9 +23,8 @@ testsuccess aptget install foo -s
 
 for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.log.client*.log); do
 	msgmsg 'Test hashsum mismatch with file' "$get"
+	breakfiles "aptarchive/${get}"
 	rm -rf rootdir/var/lib/apt/lists
-	webserverconfig 'aptwebserver::overwrite' ''
-	webserverconfig "aptwebserver::overwrite::$(printf '%s' "${get}" | sed 's#/#%2F#g' )::filename" '%2FDoctorEvil.gz'
 
 	testfailure aptget update
 	cp rootdir/tmp/testfailure.output rootdir/tmp/update.output
@@ -41,4 +34,6 @@ for get in $(sed -n 's#^GET /\([^ ]\+\.gz\) HTTP.\+$#\1#p' aptarchive/webserver.
 
 	testfailure aptcache show bar
 	testfailure aptget install bar -s
+
+	unbreakfiles "aptarchive/${get}"
 done

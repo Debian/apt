@@ -2002,6 +2002,20 @@ forallsupportedcompressors() {
 	done
 }
 
+breakfiles() {
+	while [ -n "$1" ]; do
+		mv -f "${1}" "${1}.bak"
+		testsuccess dd if=/dev/zero of="${1}" bs="$(stat -c %s "${1}.bak")" count=1
+		shift
+	done
+}
+unbreakfiles() {
+	while [ -n "$1" ]; do
+		mv -f "${1}.bak" "${1}"
+		shift
+	done
+}
+
 ### convenience hacks ###
 mkdir() {
 	# creating some directories by hand is a tedious task, so make it look simple
