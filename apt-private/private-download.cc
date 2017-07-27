@@ -79,7 +79,6 @@ bool AuthPrompt(std::vector<std::string> const &UntrustedList, bool const Prompt
       return true;
    }
    else if (_config->FindB("APT::Get::Force-Yes",false) == true) {
-      _error->Warning(_("--force-yes is deprecated, use one of the options starting with --allow instead."));
       return true;
    }
 

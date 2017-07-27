@@ -188,10 +188,6 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    if (_config->FindI("quiet",0) >= 2 ||
        _config->FindB("APT::Get::Assume-Yes",false) == true)
    {
-      if (_config->FindB("APT::Get::Force-Yes",false) == true) {
-	 _error->Warning(_("--force-yes is deprecated, use one of the options starting with --allow instead."));
-      }
-
       if (Fail == true && _config->FindB("APT::Get::Force-Yes",false) == false) {
 	 if (Essential == true && _config->FindB("APT::Get::allow-remove-essential", false) == false)
 	    return _error->Error(_("Essential packages were removed and -y was used without --allow-remove-essential."));

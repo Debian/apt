@@ -539,6 +539,11 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
       exit(100);
    }
 
+   if (_config->FindB("APT::Get::Force-Yes", false) == true)
+   {
+      _error->Warning(_("--force-yes is deprecated, use one of the options starting with --allow instead."));
+   }
+
    // See if the help should be shown
    if (_config->FindB("help") == true || _config->FindB("version") == true ||
 	 (CmdL.FileSize() > 0 && strcmp(CmdL.FileList[0], "help") == 0))
