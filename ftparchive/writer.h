@@ -19,6 +19,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,6 +40,7 @@ class FTWScanner
 {
    protected:
    vector<string> Patterns;
+   vector<std::pair<string, bool>> FilesToProcess;
    string Arch;
    bool IncludeArchAll;
    const char *OriginalPath;
@@ -49,7 +51,8 @@ class FTWScanner
 
    static FTWScanner *Owner;
    static int ScannerFTW(const char *File,const struct stat *sb,int Flag);
-   static int ScannerFile(const char *File, bool const &ReadLink);
+   static int ScannerFile(const char *const File, bool const ReadLink);
+   static int ProcessFile(const char *const File, bool const ReadLink);
 
    bool Delink(string &FileName,const char *OriginalPath,
 	       unsigned long long &Bytes,unsigned long long const &FileSize);

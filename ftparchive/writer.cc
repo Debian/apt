@@ -118,32 +118,35 @@ int FTWScanner::ScannerFTW(const char *File,const struct stat * /*sb*/,int Flag)
    return ScannerFile(File, true);
 }
 									/*}}}*/
-// FTWScanner::ScannerFile - File Scanner				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-int FTWScanner::ScannerFile(const char *File, bool const &ReadLink)
+static bool FileMatchesPatterns(char const *const File, std::vector<std::string> const &Patterns) /*{{{*/
 {
    const char *LastComponent = strrchr(File, '/');
-   char *RealPath = NULL;
-
-   if (LastComponent == NULL)
+   if (LastComponent == nullptr)
       LastComponent = File;
    else
-      LastComponent++;
+      ++LastComponent;
 
-   vector<string>::const_iterator I;
-   for(I = Owner->Patterns.begin(); I != Owner->Patterns.end(); ++I)
-   {
-      if (fnmatch((*I).c_str(), LastComponent, 0) == 0)
-         break;
-   }
-   if (I == Owner->Patterns.end())
+   return std::any_of(Patterns.cbegin(), Patterns.cend(), [&](std::string const &pattern) {
+      return fnmatch(pattern.c_str(), LastComponent, 0) == 0;
+   });
+}
+									/*}}}*/
+int FTWScanner::ScannerFile(const char *const File, bool const ReadLink) /*{{{*/
+{
+   if (FileMatchesPatterns(File, Owner->Patterns) == false)
       return 0;
 
+   Owner->FilesToProcess.emplace_back(File, ReadLink);
+   return 0;
+}
+									/*}}}*/
+int FTWScanner::ProcessFile(const char *const File, bool const ReadLink) /*{{{*/
+{
    /* Process it. If the file is a link then resolve it into an absolute
       name.. This works best if the directory components the scanner are
       given are not links themselves. */
    char Jnk[2];
+   char *RealPath = NULL;
    Owner->OriginalPath = File;
    if (ReadLink &&
        readlink(File,Jnk,sizeof(Jnk)) != -1 &&
@@ -187,12 +190,12 @@ int FTWScanner::ScannerFile(const char *File, bool const &ReadLink)
 /* */
 bool FTWScanner::RecursiveScan(string const &Dir)
 {
-   char *RealPath = NULL;
    /* If noprefix is set then jam the scan root in, so we don't generate
       link followed paths out of control */
    if (InternalPrefix.empty() == true)
    {
-      if ((RealPath = realpath(Dir.c_str(),NULL)) == 0)
+      char *RealPath = nullptr;
+      if ((RealPath = realpath(Dir.c_str(), nullptr)) == 0)
 	 return _error->Errno("realpath",_("Failed to resolve %s"),Dir.c_str());
       InternalPrefix = RealPath;
       free(RealPath);
@@ -209,7 +212,15 @@ bool FTWScanner::RecursiveScan(string const &Dir)
 	 _error->Errno("ftw",_("Tree walking failed"));
       return false;
    }
-   
+
+   using PairType = decltype(*FilesToProcess.cbegin());
+   std::sort(FilesToProcess.begin(), FilesToProcess.end(), [](PairType a, PairType b) {
+      return a.first < b.first;
+   });
+   for (PairType it : FilesToProcess)
+      if (ProcessFile(it.first.c_str(), it.second) != 0)
+	 return false;
+   FilesToProcess.clear();
    return true;
 }
 									/*}}}*/
@@ -219,14 +230,14 @@ bool FTWScanner::RecursiveScan(string const &Dir)
    of files from another file. */
 bool FTWScanner::LoadFileList(string const &Dir, string const &File)
 {
-   char *RealPath = NULL;
    /* If noprefix is set then jam the scan root in, so we don't generate
       link followed paths out of control */
    if (InternalPrefix.empty() == true)
    {
-      if ((RealPath = realpath(Dir.c_str(),NULL)) == 0)
+      char *RealPath = nullptr;
+      if ((RealPath = realpath(Dir.c_str(), nullptr)) == 0)
 	 return _error->Errno("realpath",_("Failed to resolve %s"),Dir.c_str());
-      InternalPrefix = RealPath;      
+      InternalPrefix = RealPath;
       free(RealPath);
    }
    
@@ -263,8 +274,10 @@ bool FTWScanner::LoadFileList(string const &Dir, string const &File)
       if (stat(FileName,&St) != 0)
 	 Flag = FTW_NS;
 #endif
+      if (FileMatchesPatterns(FileName, Patterns) == false)
+	 continue;
 
-      if (ScannerFile(FileName, false) != 0)
+      if (ProcessFile(FileName, false) != 0)
 	 break;
    }
   

@@ -1,0 +1,64 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+
+buildsimplenativepackage 'baz' 'all' '1'
+buildsimplenativepackage 'foo' 'all' '1'
+buildsimplenativepackage 'bar' 'all' '2'
+buildsimplenativepackage 'bar' 'all' '1'
+
+EXPECT_PKG='Package: bar
+Version: 1
+Package: bar
+Version: 2
+Package: baz
+Version: 1
+Package: foo
+Version: 1'
+EXPECT_SRC="$EXPECT_PKG"
+
+linkfiles() {
+	ln -s "../incoming/${2}.dsc" "${1}/${2}.dsc"
+	ln -s "../incoming/${2}.tar.xz" "${1}/${2}.tar.xz"
+	ln -s "../incoming/${2}_all.deb" "${1}/${2}_all.deb"
+}
+genoptions() {
+	echo 'baz_1'
+	echo 'foo_1'
+	echo 'bar_2'
+	echo 'bar_1'
+}
+gencombos() {
+	for a in $(genoptions); do
+		for b in $(genoptions); do
+			if [ "$a" = "$b" ]; then continue; fi
+			for c in $(genoptions); do
+				if [ "$a" = "$c" -o "$b" = "$c" ]; then continue; fi
+				for d in $(genoptions); do
+					if [ "$a" = "$d" -o "$b" = "$d" -o "$c" = "$d" ]; then continue; fi
+					echo "${a};${b};${c};${d}"
+				done
+			done
+		done
+	done
+}
+for combo in $(gencombos); do
+	msgmsg 'Running apt-ftparchive in configuration' "$combo"
+	incomedir="incoming${combo}"
+	mkdir "$incomedir"
+	for i in $(echo "$combo" | tr ';' '\n'); do
+		linkfiles "$incomedir" "$i"
+	done
+
+	testsuccess aptftparchive packages "$incomedir"
+	cp rootdir/tmp/testsuccess.output aptarchive/Packages
+	testsuccessequal "$EXPECT_PKG" grep -e '^Package: ' -e '^Version: ' aptarchive/Packages
+
+	testsuccess aptftparchive -qq sources "$incomedir"
+	cp rootdir/tmp/testsuccess.output aptarchive/Sources
+	testsuccessequal "$EXPECT_SRC" grep -e '^Package: ' -e '^Version: ' aptarchive/Sources
+done
