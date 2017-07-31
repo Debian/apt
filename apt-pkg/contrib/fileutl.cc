@@ -3133,7 +3133,7 @@ bool OpenConfigurationFileFd(std::string const &File, FileFd &Fd) /*{{{*/
    if (fd == -1)
       return _error->WarningE("open", _("Unable to read %s"), File.c_str());
    APT::Configuration::Compressor none(".", "", "", nullptr, nullptr, 0);
-   if (Fd.OpenDescriptor(fd, FileFd::ReadOnly, none) == false)
+   if (Fd.OpenDescriptor(fd, FileFd::ReadOnly, none, true) == false)
       return false;
    Fd.SetFileName(File);
    return true;
