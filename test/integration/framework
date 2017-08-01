@@ -1497,6 +1497,10 @@ testempty() {
 	aptautotest 'testempty' "$@"
 	msggroup
 }
+testwarningempty() {
+	testwarning "$@"
+	testfailure grep -v '^W:' "${ROOTDIR}/tmp/testwarning.output"
+}
 testnotempty() {
 	msggroup 'testnotempty'
 	msgtest "Test for some output of" "$*"
@@ -1967,7 +1971,7 @@ mapkeynametokeyid() {
 }
 testaptkeys() {
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/aptkeylist.output"
-	if ! aptkey list --with-colon | grep '^pub' | cut -d':' -f 5 > "$OUTPUT"; then
+	if ! aptkey list --with-colon 2>/dev/null | grep '^pub' | cut -d':' -f 5 > "$OUTPUT"; then
 		echo -n > "$OUTPUT"
 	fi
 	testfileequal "$OUTPUT" "$(mapkeynametokeyid "$@")"
