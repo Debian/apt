@@ -417,13 +417,16 @@ pkgAcquire::MethodConfig *pkgAcquire::GetConfig(string Access)
    // Create the new config class
    Conf = new MethodConfig;
    Conf->Access = Access;
-   Conf->Next = Configs;
-   Configs = Conf;
 
    // Create the worker to fetch the configuration
    Worker Work(Conf);
    if (Work.Start() == false)
-      return 0;
+   {
+      delete Conf;
+      return nullptr;
+   }
+   Conf->Next = Configs;
+   Configs = Conf;
 
    /* if a method uses DownloadLimit, we switch to SingleInstance mode */
    if(_config->FindI("Acquire::"+Access+"::Dl-Limit",0) > 0)
