@@ -79,11 +79,11 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 
       // for compat with muscle memory
       {"dist-upgrade", &DoDistUpgrade, nullptr},
-      {"showsrc",&ShowSrcPackage, nullptr},
-      {"depends",&Depends, nullptr},
-      {"rdepends",&RDepends, nullptr},
-      {"policy",&Policy, nullptr},
-      {"build-dep", &DoBuildDep,nullptr},
+      {"showsrc", &ShowSrcPackage, nullptr},
+      {"depends", &Depends, nullptr},
+      {"rdepends", &RDepends, nullptr},
+      {"policy", &Policy, nullptr},
+      {"build-dep", &DoBuildDep, nullptr},
       {"clean", &DoClean, nullptr},
       {"autoclean", &DoAutoClean, nullptr},
       {"auto-clean", &DoAutoClean, nullptr},
