@@ -984,7 +984,7 @@ void pkgDPkgPM::WriteHistoryTag(string const &tag, string value)
 // DPkgPM::OpenLog							/*{{{*/
 bool pkgDPkgPM::OpenLog()
 {
-   string const logfile_name =  _config->FindFile("Dir::Log::Terminal");
+   string const logfile_name =  _config->FindFile("Dir::Log::Terminal", "/dev/null");
    string logdir = flNotFile(logfile_name);
    if(CreateAPTDirectoryIfNeeded(logdir, logdir) == false)
       // FIXME: use a better string after freeze
@@ -998,7 +998,7 @@ bool pkgDPkgPM::OpenLog()
    strftime(timestr, sizeof(timestr), "%F  %T", tmp);
 
    // open terminal log
-   if (!logfile_name.empty())
+   if (logfile_name != "/dev/null")
    {
       d->term_out = fopen(logfile_name.c_str(),"a");
       if (d->term_out == NULL)
@@ -1018,11 +1018,11 @@ bool pkgDPkgPM::OpenLog()
    }
 
    // write your history
-   string const history_name = _config->FindFile("Dir::Log::History");
+   string const history_name = _config->FindFile("Dir::Log::History", "/dev/null");
    string logdir2 = flNotFile(logfile_name);
    if(logdir != logdir2 && CreateAPTDirectoryIfNeeded(logdir2, logdir2) == false)
       return _error->Error(_("Directory '%s' missing"), logdir.c_str());
-   if (!history_name.empty())
+   if (history_name != "/dev/null")
    {
       d->history_out = fopen(history_name.c_str(),"a");
       if (d->history_out == NULL)
@@ -2350,8 +2350,8 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       fflush(d->term_out);
 
    // attach terminal log it if we have it
-   string logfile_name = _config->FindFile("Dir::Log::Terminal");
-   if (!logfile_name.empty())
+   string logfile_name = _config->FindFile("Dir::Log::Terminal", "/dev/null");
+   if (logfile_name != "/dev/null")
    {
       FILE *log = NULL;
 
@@ -2368,8 +2368,8 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    }
 
    // attach history log it if we have it
-   string histfile_name = _config->FindFile("Dir::Log::History");
-   if (!histfile_name.empty())
+   string histfile_name = _config->FindFile("Dir::Log::History", "/dev/null");
+   if (histfile_name != "/dev/null")
    {
       fprintf(report, "DpkgHistoryLog:\n");
       FILE* log = fopen(histfile_name.c_str(),"r");
