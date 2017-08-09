@@ -26,6 +26,7 @@
 #include <time.h>
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #ifndef APT_8_CLEANER_HEADERS
@@ -99,6 +100,7 @@ class pkgAcqMethod
    virtual void Fail(std::string Why, bool Transient = false);
    virtual void URIStart(FetchResult &Res);
    virtual void URIDone(FetchResult &Res,FetchResult *Alt = 0);
+   void SendMessage(std::string const &header, std::unordered_map<std::string, std::string> &&fields);
 
    bool MediaFail(std::string Required,std::string Drive);
    virtual void Exit() {};

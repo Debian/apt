@@ -27,7 +27,10 @@
 #include <apt-pkg/sha2.h>
 #include <apt-pkg/strutl.h>
 
+#include <algorithm>
 #include <iostream>
+#include <iterator>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <stdarg.h>
@@ -39,38 +42,66 @@
 
 using namespace std;
 
+// poor mans unordered_map::try_emplace for C++11 as it is a C++17 feature /*{{{*/
+template <typename Arg>
+static void try_emplace(std::unordered_map<std::string, std::string> &fields, std::string &&name, Arg &&value)
+{
+   if (fields.find(name) == fields.end())
+      fields.emplace(std::move(name), std::forward<Arg>(value));
+}
+									/*}}}*/
+
 // AcqMethod::pkgAcqMethod - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* This constructs the initialization text */
 pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
 {
-   std::cout << "100 Capabilities\n"
-	     << "Version: " << Ver << "\n";
-
+   std::unordered_map<std::string, std::string> fields;
+   try_emplace(fields, "Version", Ver);
    if ((Flags & SingleInstance) == SingleInstance)
-      std::cout << "Single-Instance: true\n";
+      try_emplace(fields, "Single-Instance", "true");
 
    if ((Flags & Pipeline) == Pipeline)
-      std::cout << "Pipeline: true\n";
+      try_emplace(fields, "Pipeline", "true");
 
    if ((Flags & SendConfig) == SendConfig)
-      std::cout << "Send-Config: true\n";
+      try_emplace(fields, "Send-Config", "true");
 
    if ((Flags & LocalOnly) == LocalOnly)
-      std::cout <<"Local-Only: true\n";
+      try_emplace(fields, "Local-Only", "true");
 
    if ((Flags & NeedsCleanup) == NeedsCleanup)
-      std::cout << "Needs-Cleanup: true\n";
+      try_emplace(fields, "Needs-Cleanup", "true");
 
    if ((Flags & Removable) == Removable)
-      std::cout << "Removable: true\n";
+      try_emplace(fields, "Removable", "true");
 
-   std::cout << "\n" << std::flush;
+   SendMessage("100 Capabilities", std::move(fields));
 
    SetNonBlock(STDIN_FILENO,true);
 
    Queue = 0;
    QueueBack = 0;
+}
+									/*}}}*/
+void pkgAcqMethod::SendMessage(std::string const &header, std::unordered_map<std::string, std::string> &&fields) /*{{{*/
+{
+   std::cout << header << '\n';
+   for (auto const &f : fields)
+   {
+      if (f.second.empty())
+	 continue;
+      std::cout << f.first << ": ";
+      auto const lines = VectorizeString(f.second, '\n');
+      if (likely(lines.empty() == false))
+      {
+	 std::copy(lines.begin(), std::prev(lines.end()), std::ostream_iterator<std::string>(std::cout, "\n "));
+	 std::cout << *lines.rbegin();
+      }
+      std::cout << '\n';
+   }
+   std::cout << '\n'
+	     << std::flush;
 }
 									/*}}}*/
 // AcqMethod::Fail - A fetch has failed					/*{{{*/
@@ -97,40 +128,35 @@ void pkgAcqMethod::Fail(bool Transient)
 }
 									/*}}}*/
 // AcqMethod::Fail - A fetch has failed					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void pkgAcqMethod::Fail(string Err,bool Transient)
 {
    // Strip out junk from the error messages
-   for (string::iterator I = Err.begin(); I != Err.end(); ++I)
-   {
-      if (*I == '\r') 
-	 *I = ' ';
-      if (*I == '\n') 
-	 *I = ' ';
-   }
+   std::transform(Err.begin(), Err.end(), Err.begin(), [](char const c) {
+      if (c == '\r' || c == '\n')
+	 return ' ';
+      return c;
+   });
+   if (IP.empty() == false && _config->FindB("Acquire::Failure::ShowIP", true) == true)
+      Err.append(" ").append(IP);
 
-   if (Queue != 0)
-   {
-      std::cout << "400 URI Failure\nURI: " << Queue->Uri << "\n"
-		<< "Message: " << Err;
-      if (IP.empty() == false && _config->FindB("Acquire::Failure::ShowIP", true) == true)
-	 std::cout << " " << IP;
-      std::cout << "\n";
-      Dequeue();
-   }
+   std::unordered_map<std::string, std::string> fields;
+   if (Queue != nullptr)
+      try_emplace(fields, "URI", Queue->Uri);
    else
-      std::cout << "400 URI Failure\nURI: <UNKNOWN>\nMessage: " << Err << "\n";
+      try_emplace(fields, "URI", "<UNKNOWN>");
+   try_emplace(fields, "Message", Err);
 
    if(FailReason.empty() == false)
-      std::cout << "FailReason: " << FailReason << "\n";
+      try_emplace(fields, "FailReason", FailReason);
    if (UsedMirror.empty() == false)
-      std::cout << "UsedMirror: " << UsedMirror << "\n";
-   // Set the transient flag
+      try_emplace(fields, "UsedMirror", UsedMirror);
    if (Transient == true)
-      std::cout << "Transient-Failure: true\n";
+      try_emplace(fields, "Transient-Failure", "true");
 
-   std::cout << "\n" << std::flush;
+   SendMessage("400 URI Failure", std::move(fields));
+
+   if (Queue != nullptr)
+      Dequeue();
 }
 									/*}}}*/
 // AcqMethod::DropPrivsOrDie - Drop privileges or die		/*{{{*/
@@ -146,96 +172,79 @@ void pkgAcqMethod::DropPrivsOrDie()
 
 									/*}}}*/
 // AcqMethod::URIStart - Indicate a download is starting		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void pkgAcqMethod::URIStart(FetchResult &Res)
 {
    if (Queue == 0)
       abort();
 
-   std::cout << "200 URI Start\n"
-	     << "URI: " << Queue->Uri << "\n";
+   std::unordered_map<std::string, std::string> fields;
+   try_emplace(fields, "URI", Queue->Uri);
    if (Res.Size != 0)
-      std::cout << "Size: " << std::to_string(Res.Size) << "\n";
-
+      try_emplace(fields, "Size", std::to_string(Res.Size));
    if (Res.LastModified != 0)
-      std::cout << "Last-Modified: " << TimeRFC1123(Res.LastModified, true) << "\n";
-
+      try_emplace(fields, "Last-Modified", TimeRFC1123(Res.LastModified, true));
    if (Res.ResumePoint != 0)
-      std::cout << "Resume-Point: " << std::to_string(Res.ResumePoint) << "\n";
-
+      try_emplace(fields, "Resume-Point", std::to_string(Res.ResumePoint));
    if (UsedMirror.empty() == false)
-      std::cout << "UsedMirror: " << UsedMirror << "\n";
+      try_emplace(fields, "UsedMirror", UsedMirror);
 
-   std::cout << "\n" << std::flush;
+   SendMessage("200 URI Start", std::move(fields));
 }
 									/*}}}*/
 // AcqMethod::URIDone - A URI is finished				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static void printHashStringList(char const *const Prefix, HashStringList const *const list)
+static void printHashStringList(std::unordered_map<std::string, std::string> &fields, std::string const &Prefix, HashStringList const &list)
 {
-      for (HashStringList::const_iterator hash = list->begin(); hash != list->end(); ++hash)
-      {
-	 // very old compatibility name for MD5Sum
-	 if (hash->HashType() == "MD5Sum")
-	    std::cout << Prefix << "MD5-Hash: " << hash->HashValue() << "\n";
-	 std::cout << hash->HashType() << "-Hash: " << hash->HashValue() << "\n";
-      }
+   for (auto const &hash : list)
+   {
+      // very old compatibility name for MD5Sum
+      if (hash.HashType() == "MD5Sum")
+	 try_emplace(fields, Prefix + "MD5-Hash", hash.HashValue());
+      try_emplace(fields, Prefix + hash.HashType() + "-Hash", hash.HashValue());
+   }
 }
 void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 {
    if (Queue == 0)
       abort();
 
-   std::cout << "201 URI Done\n"
-	     << "URI: " << Queue->Uri << "\n";
-
+   std::unordered_map<std::string, std::string> fields;
+   try_emplace(fields, "URI", Queue->Uri);
    if (Res.Filename.empty() == false)
-      std::cout << "Filename: " << Res.Filename << "\n";
-
+      try_emplace(fields, "Filename", Res.Filename);
    if (Res.Size != 0)
-      std::cout << "Size: " << std::to_string(Res.Size) << "\n";
-
+      try_emplace(fields, "Size", std::to_string(Res.Size));
    if (Res.LastModified != 0)
-      std::cout << "Last-Modified: " << TimeRFC1123(Res.LastModified, true) << "\n";
-
-   printHashStringList("", &Res.Hashes);
+      try_emplace(fields, "Last-Modified", TimeRFC1123(Res.LastModified, true));
+   printHashStringList(fields, "", Res.Hashes);
 
    if (UsedMirror.empty() == false)
-      std::cout << "UsedMirror: " << UsedMirror << "\n";
+      try_emplace(fields, "UsedMirror", UsedMirror);
    if (Res.GPGVOutput.empty() == false)
    {
-      std::cout << "GPGVOutput:\n";
-      for (vector<string>::const_iterator I = Res.GPGVOutput.begin();
-	   I != Res.GPGVOutput.end(); ++I)
-	 std::cout << " " << *I << "\n";
+      std::ostringstream os;
+      std::copy(Res.GPGVOutput.begin(), Res.GPGVOutput.end() - 1, std::ostream_iterator<std::string>(os, "\n"));
+      os << *Res.GPGVOutput.rbegin();
+      try_emplace(fields, "GPGVOutput", os.str());
    }
-
    if (Res.ResumePoint != 0)
-      std::cout << "Resume-Point: " << std::to_string(Res.ResumePoint) << "\n";
-
+      try_emplace(fields, "Resume-Point", std::to_string(Res.ResumePoint));
    if (Res.IMSHit == true)
-      std::cout << "IMS-Hit: true\n";
+      try_emplace(fields, "IMS-Hit", "true");
 
-   if (Alt != 0)
+   if (Alt != nullptr)
    {
       if (Alt->Filename.empty() == false)
-	 std::cout << "Alt-Filename: " << Alt->Filename << "\n";
-
+	 try_emplace(fields, "Alt-Filename", Alt->Filename);
       if (Alt->Size != 0)
-	 std::cout << "Alt-Size: " << std::to_string(Alt->Size) << "\n";
-
+	 try_emplace(fields, "Alt-Size", std::to_string(Alt->Size));
       if (Alt->LastModified != 0)
-	 std::cout << "Alt-Last-Modified: " << TimeRFC1123(Alt->LastModified, true) << "\n";
-
-      printHashStringList("Alt-", &Alt->Hashes);
-
+	 try_emplace(fields, "Alt-Last-Modified", TimeRFC1123(Alt->LastModified, true));
       if (Alt->IMSHit == true)
-	 std::cout << "Alt-IMS-Hit: true\n";
+	 try_emplace(fields, "Alt-IMS-Hit", "true");
+      printHashStringList(fields, "Alt-", Alt->Hashes);
    }
 
-   std::cout << "\n" << std::flush;
+   SendMessage("201 URI Done", std::move(fields));
    Dequeue();
 }
 									/*}}}*/
@@ -459,9 +468,10 @@ void pkgAcqMethod::Status(const char *Format,...)
  * the worker will enqueue again later on to the right queue */
 void pkgAcqMethod::Redirect(const string &NewURI)
 {
-   std::cout << "103 Redirect\nURI: " << Queue->Uri << "\n"
-	     << "New-URI: " << NewURI << "\n"
-	     << "\n" << std::flush;
+   std::unordered_map<std::string, std::string> fields;
+   try_emplace(fields, "URI", Queue->Uri);
+   try_emplace(fields, "New-URI", NewURI);
+   SendMessage("103 Redirect", std::move(fields));
    Dequeue();
 }
                                                                         /*}}}*/
