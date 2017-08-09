@@ -173,13 +173,13 @@ void pkgAcqMethod::URIStart(FetchResult &Res)
 // AcqMethod::URIDone - A URI is finished				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static void printHashStringList(HashStringList const * const list)
+static void printHashStringList(char const *const Prefix, HashStringList const *const list)
 {
       for (HashStringList::const_iterator hash = list->begin(); hash != list->end(); ++hash)
       {
 	 // very old compatibility name for MD5Sum
 	 if (hash->HashType() == "MD5Sum")
-	    std::cout << "MD5-Hash: " << hash->HashValue() << "\n";
+	    std::cout << Prefix << "MD5-Hash: " << hash->HashValue() << "\n";
 	 std::cout << hash->HashType() << "-Hash: " << hash->HashValue() << "\n";
       }
 }
@@ -200,7 +200,7 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    if (Res.LastModified != 0)
       std::cout << "Last-Modified: " << TimeRFC1123(Res.LastModified, true) << "\n";
 
-   printHashStringList(&Res.Hashes);
+   printHashStringList("", &Res.Hashes);
 
    if (UsedMirror.empty() == false)
       std::cout << "UsedMirror: " << UsedMirror << "\n";
@@ -229,7 +229,7 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
       if (Alt->LastModified != 0)
 	 std::cout << "Alt-Last-Modified: " << TimeRFC1123(Alt->LastModified, true) << "\n";
 
-      printHashStringList(&Alt->Hashes);
+      printHashStringList("Alt-", &Alt->Hashes);
 
       if (Alt->IMSHit == true)
 	 std::cout << "Alt-IMS-Hit: true\n";
