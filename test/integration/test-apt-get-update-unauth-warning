@@ -40,7 +40,8 @@ N: See apt-secure(8) manpage for repository creation and user configuration deta
 
 # no package foo
 testsuccessequal 'Listing...' apt list foo
-testequal 'lock
+testequal 'auxfiles
+lock
 partial' ls rootdir/var/lib/apt/lists
 
 filesize() {

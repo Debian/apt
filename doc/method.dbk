@@ -267,6 +267,11 @@ an informational string provided for visual debugging.
 </listitem>
 <listitem>
 <para>
+351 Aux Request - Method requests an auxiliary file
+</para>
+</listitem>
+<listitem>
+<para>
 400 URI Failure - URI has failed to acquire
 </para>
 </listitem>
@@ -309,9 +314,9 @@ Authorization is User/Pass
 </itemizedlist>
 <para>
 Only the 6xx series of status codes is sent TO the method. Furthermore the
-method may not emit status codes in the 6xx range. The Codes 402 and 403
+method may not emit status codes in the 6xx range. The Codes 351, 402 and 403
 require that the method continue reading all other 6xx codes until the proper
-602/603 code is received. This means the method must be capable of handling an
+600/602/603 code is received. This means the method must be capable of handling an
 unlimited number of 600 messages.
 </para>
 <para>
@@ -563,6 +568,20 @@ into another location. It is possible to return Alt-* fields to indicate that
 another possibility for the URI has been found in the local pathname space.
 This is done if a decompressed version of a .gz file is found. Fields: URI,
 Size, Last-Modified, Filename, MD5-Hash
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>351 Aux Request</term>
+<listitem>
+<para>
+Indicates a request for an auxiliary file to be downloaded by the acquire system
+(via another method) and made available for the requesting method. The requestor
+will get a <emphasis>600 URI Acquire</emphasis> with the URI it requested and the
+filename will either be an existing file if the request was success or if the
+acquire failed for some reason the file will not exist.
+Fields: URI (of the file causing the need for the auxiliary file), MaximumSize,
+Aux-ShortDesc, Aux-Description, Aux-URI
 </para>
 </listitem>
 </varlistentry>

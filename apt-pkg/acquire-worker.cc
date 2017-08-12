@@ -192,7 +192,8 @@ bool pkgAcquire::Worker::ReadMessages()
 // ---------------------------------------------------------------------
 /* This takes the messages from the message queue and runs them through
    the parsers in order. */
-enum class APT_HIDDEN MessageType {
+enum class APT_HIDDEN MessageType
+{
    CAPABILITIES = 100,
    LOG = 101,
    STATUS = 102,
@@ -200,6 +201,7 @@ enum class APT_HIDDEN MessageType {
    WARNING = 104,
    URI_START = 200,
    URI_DONE = 201,
+   AUX_REQUEST = 351,
    URI_FAILURE = 400,
    GENERAL_FAILURE = 401,
    MEDIA_CHANGE = 403
@@ -512,6 +514,22 @@ bool pkgAcquire::Worker::RunMessages()
 	    break;
 	 }
 
+	 case MessageType::AUX_REQUEST:
+	 {
+	    if (Itm == nullptr)
+	    {
+	       _error->Error("Method gave invalid Aux Request message");
+	       break;
+	    }
+
+	    auto maxsizestr = LookupTag(Message, "MaximumSize", "");
+	    unsigned long long const MaxSize = maxsizestr.empty() ? 0 : strtoull(maxsizestr.c_str(), nullptr, 10);
+	    new pkgAcqAuxFile(Itm->Owner, this, LookupTag(Message, "Aux-ShortDesc", ""),
+			      LookupTag(Message, "Aux-Description", ""), LookupTag(Message, "Aux-URI", ""),
+			      GetHashesFromMessage("Aux-", Message), MaxSize);
+	    break;
+	 }
+
 	 case MessageType::URI_FAILURE:
 	 {
 	    if (Itm == nullptr)
@@ -766,6 +784,46 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
 
    if (Debug == true)
       clog << " -> " << Access << ':' << QuoteString(Message,"\n") << endl;
+   OutQueue += Message;
+   OutReady = true;
+
+   return true;
+}
+									/*}}}*/
+// Worker::ReplyAux - reply to an aux request from this worker		/*{{{*/
+bool pkgAcquire::Worker::ReplyAux(pkgAcquire::ItemDesc const &Item)
+{
+   if (OutFd == -1)
+      return false;
+
+   if (isDoomedItem(Item.Owner))
+      return true;
+
+   string Message = "600 URI Acquire\n";
+   Message.reserve(200);
+   Message += "URI: " + Item.URI;
+   if (RealFileExists(Item.Owner->DestFile))
+   {
+      if (Item.Owner->Status == pkgAcquire::Item::StatDone)
+      {
+	 std::string const SandboxUser = _config->Find("APT::Sandbox::User");
+	 ChangeOwnerAndPermissionOfFile("Worker::ReplyAux", Item.Owner->DestFile.c_str(),
+					SandboxUser.c_str(), ROOT_GROUP, 0600);
+	 Message += "\nFilename: " + Item.Owner->DestFile;
+      }
+      else
+      {
+	 // we end up here in case we would need root-rights to delete a file,
+	 // but we run the command as non-root… (yes, it is unlikely)
+	 Message += "\nFilename: " + flCombine("/nonexistent", Item.Owner->DestFile);
+      }
+   }
+   else
+      Message += "\nFilename: " + Item.Owner->DestFile;
+   Message += "\n\n";
+
+   if (Debug == true)
+      clog << " -> " << Access << ':' << QuoteString(Message, "\n") << endl;
    OutQueue += Message;
    OutReady = true;
 

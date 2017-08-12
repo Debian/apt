@@ -276,6 +276,7 @@ class pkgAcquire::Worker : public WeakPointable
     *  queue.
     */
    bool QueueItem(pkgAcquire::Queue::QItem *Item);
+   APT_HIDDEN bool ReplyAux(pkgAcquire::ItemDesc const &Item);
 
    /** \brief Start up the worker and fill in #Config.
     *

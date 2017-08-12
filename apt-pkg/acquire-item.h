@@ -1238,6 +1238,25 @@ class pkgAcqFile : public pkgAcquire::Item
    virtual ~pkgAcqFile();
 };
 									/*}}}*/
+class APT_HIDDEN pkgAcqAuxFile : public pkgAcqFile /*{{{*/
+{
+   pkgAcquire::Item *const Owner;
+   pkgAcquire::Worker *const Worker;
+   unsigned long long MaximumSize;
+
+   public:
+   virtual void Failed(std::string const &Message, pkgAcquire::MethodConfig const *const Cnf) APT_OVERRIDE;
+   virtual void Done(std::string const &Message, HashStringList const &CalcHashes,
+		     pkgAcquire::MethodConfig const *const Cnf) APT_OVERRIDE;
+   virtual std::string Custom600Headers() const APT_OVERRIDE;
+   virtual void Finished() APT_OVERRIDE;
+
+   pkgAcqAuxFile(pkgAcquire::Item *const Owner, pkgAcquire::Worker *const Worker,
+		 std::string const &ShortDesc, std::string const &Desc, std::string const &URI,
+		 HashStringList const &Hashes, unsigned long long const MaximumSize);
+   virtual ~pkgAcqAuxFile();
+};
+									/*}}}*/
 /** @} */
 
 #endif

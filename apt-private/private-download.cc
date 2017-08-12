@@ -225,7 +225,8 @@ bool DoDownload(CommandLine &CmdL)
       std::string const filename = cwd + flNotDir((*I)->DestFile);
       if ((*I)->Local == true &&
           filename != (*I)->DestFile &&
-          (*I)->Status == pkgAcquire::Item::StatDone)
+          (*I)->Status == pkgAcquire::Item::StatDone &&
+	  dynamic_cast<pkgAcqArchive*>(*I) != nullptr)
       {
 	 std::ifstream src((*I)->DestFile.c_str(), std::ios::binary);
 	 std::ofstream dst(filename.c_str(), std::ios::binary);

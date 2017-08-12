@@ -2031,9 +2031,11 @@ mkdir() {
 		command mkdir -m 755 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt"
 		command mkdir -m 755 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists"
 		command mkdir -m 700 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
+		command mkdir -m 755 -p "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/auxfiles"
 		touch "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/lock"
 		if [ "$(id -u)" = '0' ]; then
 			chown _apt:$(id -gn) "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/partial"
+			chown _apt:$(id -gn) "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/auxfiles"
 		fi
 	else
 		command mkdir "$@"
