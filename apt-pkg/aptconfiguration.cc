@@ -323,7 +323,7 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 	string const arch = _config->Find("APT::Architecture");
 	archs = _config->FindVector("APT::Architectures");
 
-	if (archs.empty() == true)
+	if (archs.empty() == true && _system != nullptr)
 	   archs = _system->ArchitecturesSupported();
 
 	if (archs.empty() == true ||
