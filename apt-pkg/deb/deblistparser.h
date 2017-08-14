@@ -87,9 +87,6 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 
    virtual bool Step() APT_OVERRIDE;
 
-   bool LoadReleaseInfo(pkgCache::RlsFileIterator &FileI,FileFd &File,
-			std::string const &section);
-
    APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
 	 std::string &Package,std::string &Ver,unsigned int &Op);
    APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,

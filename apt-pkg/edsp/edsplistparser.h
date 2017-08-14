@@ -35,9 +35,6 @@ class APT_HIDDEN edspLikeListParser : public debListParser
    virtual APT::StringView Description_md5() APT_OVERRIDE;
    virtual unsigned short VersionHash() APT_OVERRIDE;
 
-   bool LoadReleaseInfo(pkgCache::RlsFileIterator &FileI,FileFd &File,
-			std::string const &section);
-
    edspLikeListParser(FileFd *File);
    virtual ~edspLikeListParser();
 };

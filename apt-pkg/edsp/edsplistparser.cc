@@ -68,13 +68,6 @@ unsigned short edspLikeListParser::VersionHash()
    return 0;
 }
 									/*}}}*/
-// ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
-APT_PURE bool edspLikeListParser::LoadReleaseInfo(pkgCache::RlsFileIterator & /*FileI*/,
-				    FileFd & /*File*/, std::string const &/*component*/)
-{
-   return true;
-}
-									/*}}}*/
 // ListParser::ParseStatus - Parse the status field			/*{{{*/
 // ---------------------------------------------------------------------
 /* The Status: line here is not a normal dpkg one but just one which tells
