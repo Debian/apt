@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2008-11-15 02:21+0200\n"
 "Last-Translator: Eddy Petrișor <eddy.petrisor@gmail.com>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -716,11 +716,6 @@ msgstr "Operațiune invalidă %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Abreviere de tip nerecunoscut: „%c”"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Se deschide fișierul de configurare %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1531,11 +1526,6 @@ msgstr "Înlocuire greșită %s linia %lu #1"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Deschidere %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Linie greșită %u în lista sursă %s (tip)"
 
@@ -1776,6 +1766,12 @@ msgstr "Acest APT are puterile unei Super Vaci."
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1796,12 +1792,6 @@ msgstr "Unele pachete n-au putut fi autentificate"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Instalați aceste pachete fără verificare?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2489,6 +2479,14 @@ msgstr "Pachetul %s versiunea %s are o dependență neîndeplinită:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Comanda de actualizare nu are argumente"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3442,6 +3440,11 @@ msgstr "Antet de date necorespunzător"
 msgid "Connection failed"
 msgstr "Conectare eșuată"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3816,6 +3819,12 @@ msgstr "Conexiune închisă prematur"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Se deschide fișierul de configurare %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Deschidere %s"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "Dependențe neîndeplinite. Încercați să folosiți --fix-broken."

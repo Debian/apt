@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -727,11 +727,6 @@ msgstr "Невалидна операция %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Неизвестен тип на абревиатура: „%c“"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Отваряне на конфигурационен файл %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1579,11 +1574,6 @@ msgstr "Неправилно форматиран override %s, ред %llu #1"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Отваряне на %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Лошо форматиран ред %u в списъка с източници %s (тип)"
 
@@ -1825,6 +1815,12 @@ msgstr "Това APT има Върховни Сили."
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1845,12 +1841,6 @@ msgstr "Някои пакети не можаха да бъдат удостов
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Инсталиране на тези пакети без проверка?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2544,6 +2534,14 @@ msgstr "Пакетът %s версия %s има неудовлетворена 
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Командата „update“ не възприема аргументи"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3491,6 +3489,11 @@ msgstr "Невалидни данни на заглавната част"
 msgid "Connection failed"
 msgstr "Неуспех при свързването"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3862,6 +3865,12 @@ msgstr "Връзката прекъсна преждевременно"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Празни файлове не могат да бъдат валидни архиви"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Отваряне на конфигурационен файл %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Отваряне на %s"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

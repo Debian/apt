@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2016-12-05 21:09+0100\n"
 "Last-Translator: Oriol Debian <oriol.debian@gmail.com>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -764,11 +764,6 @@ msgstr "Operació no vàlida %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Abreujament de tipus no reconegut: «%c»"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "S'està obrint el fitxer de configuració %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1618,11 +1613,6 @@ msgstr "L'entrada %u està mal formada en %s en el fitxer %s (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "S'està obrint %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "La línia %u és malformada en la llista de fonts %s (tipus)"
 
@@ -1868,6 +1858,14 @@ msgstr "Aquest APT té superpoders bovins."
 msgid "This APT helper has Super Meep Powers."
 msgstr "Aquest Ajudant d'APT té poders de Super Plor."
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+"--force-yes està en desús, en el seu lloc utilitzi una de les opcions que "
+"comencen per --allow."
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1888,14 +1886,6 @@ msgstr "No s'ha pogut autenticar alguns paquets"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Voleu instal·lar aquests paquets sense verificar-los?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-"--force-yes està en desús, en el seu lloc utilitzi una de les opcions que "
-"comencen per --allow."
 
 #: apt-private/private-download.cc
 msgid ""
@@ -2602,6 +2592,14 @@ msgstr "El paquet %s versió %s té una dependència sense satisfer:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "L'ordre update no pren arguments"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3576,6 +3574,11 @@ msgstr "Capçalera de dades no vàlida"
 msgid "Connection failed"
 msgstr "Ha fallat la connexió"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3951,6 +3954,12 @@ msgstr "La connexió s'ha tancat prematurament"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Els fitxers buits no poden ser arxius vàlids"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "S'està obrint el fitxer de configuració %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "S'està obrint %s"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

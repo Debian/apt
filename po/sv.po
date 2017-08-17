@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -732,11 +732,6 @@ msgstr "Felaktig åtgärd %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Okänd typförkortning: ”%c”"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Öppnar konfigurationsfilen %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1572,11 +1567,6 @@ msgstr "Felaktig åsidosättning %s rad %llu (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Öppnar %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Rad %u i källistan %s har fel format (typ)"
 
@@ -1815,6 +1805,12 @@ msgstr "Denna APT har Speciella Ko-Krafter."
 msgid "This APT helper has Super Meep Powers."
 msgstr "Denna APT-hjälpare har speciella Meep-krafter."
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1835,12 +1831,6 @@ msgstr "Några av paketen kunde inte autentiseras"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Installera dessa paket utan verifiering?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2537,6 +2527,14 @@ msgstr ""
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Uppdateringskommandot tar inga argument"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3492,6 +3490,11 @@ msgstr "Felaktiga data i huvud"
 msgid "Connection failed"
 msgstr "Anslutningen misslyckades"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3868,6 +3871,12 @@ msgstr "Anslutningen stängdes i förtid"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomma filer kan inte vara giltiga arkiv"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Öppnar konfigurationsfilen %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Öppnar %s"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

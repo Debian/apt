@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2005-06-06 13:46+0100\n"
 "Last-Translator: Dafydd Harries <daf@muse.19inch.net>\n"
 "Language-Team: Welsh <cy@pengwyn.linux.org.uk>\n"
@@ -717,11 +717,6 @@ msgstr "Gweithred annilys %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Talgryniad math anhysbys: '%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Yn agor y ffeil cyfluniad %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1544,11 +1539,6 @@ msgstr "Gwrthwneud camffurfiol %s llinell %lu #1"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Yn agor %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Llinell camffurfiol %u yn y rhestr ffynhonell %s (math)"
 
@@ -1794,6 +1784,12 @@ msgstr "Mae gan yr APT hwn bŵerau buwch hudol."
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1815,12 +1811,6 @@ msgstr "RHYBUDD: Ni ellir dilysu'r pecynnau canlynol yn ddiogel!"
 
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
-msgstr ""
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
 msgstr ""
 
 #: apt-private/private-download.cc
@@ -2501,6 +2491,14 @@ msgstr "Mae gan y pecyn %s fersiwn %s ddibyniaeth heb ei gwrdd:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Nid yw'r gorchymyn diweddaru yn derbyn ymresymiadau"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3473,6 +3471,11 @@ msgstr "Data pennawd gwael"
 msgid "Connection failed"
 msgstr "Methodd y cysylltiad"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3846,6 +3849,12 @@ msgstr "Caewyd y cysylltiad yn gynnar"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Yn agor y ffeil cyfluniad %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Yn agor %s"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "Dibyniaethau heb eu bodloni. Ceisiwch ddefnyddio --fix-broken."

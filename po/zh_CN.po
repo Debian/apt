@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.5.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2017-07-04 03:00+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -299,8 +299,9 @@ msgstr "GPG 错误：%s: %s"
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
 "component '%s' (component misspelt in sources.list?)"
-msgstr "鉴于仓库 '%2$s' 不含有 '%3$s' 组件，跳过配置文件 '%1$s' 的获取。"
-"(sources.list 中的组件名称是否拼写错误？)"
+msgstr ""
+"鉴于仓库 '%2$s' 不含有 '%3$s' 组件，跳过配置文件 '%1$s' 的获取。(sources."
+"list 中的组件名称是否拼写错误？)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -314,8 +315,9 @@ msgstr "鉴于仓库 '%2$s' 不支持 '%3$s' 体系结构，跳过配置文件 '
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' does not seem to "
 "provide it (sources.list entry misspelt?)"
-msgstr "鉴于仓库 '%2$s' 不提供配置文件 '%1$s' ，跳过其获取过程。"
-"(sources.list 中是否有拼写错误？)"
+msgstr ""
+"鉴于仓库 '%2$s' 不提供配置文件 '%1$s' ，跳过其获取过程。(sources.list 中是否"
+"有拼写错误？)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -363,8 +365,8 @@ msgstr "更多有关细节可以阅览在线发行注记：%s"
 msgid ""
 "This must be accepted explicitly before updates for this repository can be "
 "applied. See %s manpage for details."
-msgstr "为了让这个仓库能够应用，这必须在更新之前显式接受。更多细节请参阅"
-" %s 手册。"
+msgstr ""
+"为了让这个仓库能够应用，这必须在更新之前显式接受。更多细节请参阅 %s 手册。"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -715,11 +717,6 @@ msgstr "无效的操作 %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "无法识别的类型缩写：“%c”"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "正在打开配置文件 %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1523,11 +1520,6 @@ msgstr "文件 %2$s 第 %1$u 行的记录格式有误 %3$s (%4$s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "正在打开 %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "在源列表 %2$s 中第 %1$u 行有误 (类型)"
 
@@ -1766,6 +1758,12 @@ msgstr "本 APT 具有超级牛力。"
 msgid "This APT helper has Super Meep Powers."
 msgstr "本 APT 助手具有超级喵力。"
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr "--force-yes 已经被废弃，请使用以 --allow 开头的选项来代替。"
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1786,12 +1784,6 @@ msgstr "有些软件包不能通过验证"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "没有验证的情况下就安装这些软件包吗？"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr "--force-yes 已经被废弃，请使用以 --allow 开头的选项来代替。"
 
 #: apt-private/private-download.cc
 msgid ""
@@ -2455,6 +2447,14 @@ msgstr "版本为 %2$s 的软件包 %1$s 有未满足的依赖关系：\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr " update 命令不需要参数"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3388,6 +3388,11 @@ msgstr "错误的报头数据"
 msgid "Connection failed"
 msgstr "连接失败"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3750,6 +3755,12 @@ msgstr "连接被永久关闭"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "空文件不是有效归档"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "正在打开配置文件 %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "正在打开 %s"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

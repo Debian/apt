@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~rc2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2017-03-02 23:51+0200\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <debian-l10n-danish@lists.debian.org>\n"
@@ -748,11 +748,6 @@ msgstr "Ugyldig handling %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Ukendt type-forkortelse: »%c«"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Åbner konfigurationsfilen %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1580,11 +1575,6 @@ msgstr "Forkert udformet punkt %u i %s-linjen %s (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Åbner %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Ugyldig linje %u i kildelisten %s (type)"
 
@@ -1826,6 +1816,14 @@ msgstr "Denne APT har »Super Cow Powers«."
 msgid "This APT helper has Super Meep Powers."
 msgstr "Dette APT-hjælpeprogram har Super Meep Powers."
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+"--force-yes er forældet, brug i stedet for et af tilvalgene startende med --"
+"allow"
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1846,14 +1844,6 @@ msgstr "Nogle pakker kunne ikke autentificeres"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Installér disse pakker uden verifikation?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-"--force-yes er forældet, brug i stedet for et af tilvalgene startende med --"
-"allow"
 
 #: apt-private/private-download.cc
 msgid ""
@@ -2549,6 +2539,14 @@ msgstr "Pakken %s version %s har en uopfyldt afhængighed:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "»update«-kommandoen benytter ingen parametre"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3515,6 +3513,11 @@ msgstr "Ugyldige hoved-data"
 msgid "Connection failed"
 msgstr "Forbindelsen mislykkedes"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3886,6 +3889,12 @@ msgstr "Forbindelsen lukkedes for hurtigt"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomme filer kan ikke være gyldige arkiver"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Åbner konfigurationsfilen %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Åbner %s"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

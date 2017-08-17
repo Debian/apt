@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.18\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2010-10-02 23:35+0100\n"
 "Last-Translator: Iñigo Varela <ivarela@softastur.org>\n"
 "Language-Team: Asturian (ast)\n"
@@ -716,11 +716,6 @@ msgstr "Operación incorreuta: %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Triba d'abreviatura que nun se reconoz: «%c»"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Abriendo ficheros de configuración %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1549,11 +1544,6 @@ msgstr "Saltu mal formáu %s llinia %lu #1"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Abriendo %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Llinia %u mal formada na llista d'oríxenes %s (triba)"
 
@@ -1792,6 +1782,12 @@ msgstr "Esti APT tien Poderes de Super Vaca."
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1812,12 +1808,6 @@ msgstr "Dellos paquetes nun pudieron autenticase"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "¿Instalar esos paquetes ensin verificación?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2505,6 +2495,14 @@ msgstr "El paquete %s versión %s nun cumple una dependencia:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "La orde update nun lleva argumentos"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3448,6 +3446,11 @@ msgstr "Datos de testera incorreutos"
 msgid "Connection failed"
 msgstr "Fallo la conexón"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3815,6 +3818,12 @@ msgstr "Conexón encaboxada prematuramente"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Abriendo ficheros de configuración %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Abriendo %s"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "Dependencies incumplíes. Téntalo usando --fix-broken."

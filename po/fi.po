@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -706,11 +706,6 @@ msgstr "Virheellinen toiminto %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Tuntematon tyypin lyhenne: \"%c\""
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Avataan asetustiedosto %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1515,11 +1510,6 @@ msgstr "Väärän muotoinen poikkeus %s rivi %lu n:ro 1"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Avataan %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Rivi %u on väärän muotoinen lähdeluettelossa %s (tyyppi)"
 
@@ -1759,6 +1749,12 @@ msgstr ""
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1779,12 +1775,6 @@ msgstr "Joidenkin pakettien alkuperästä ei voitu varmistua"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Asennetaanko nämä paketit ilman todennusta?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2463,6 +2453,14 @@ msgstr "Paketin %s versiossa %s on tyydyttämätön riippuvuus:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Komento update ei käytä parametreja"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3408,6 +3406,11 @@ msgstr "Virheellinen otsikkotieto"
 msgid "Connection failed"
 msgstr "Yhteys ei toiminut"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3776,6 +3779,12 @@ msgstr "Yhteys katkesi ennenaikaisesti"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Avataan asetustiedosto %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Avataan %s"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "Tyydyttämättömiä riippuvuuksia. Koita käyttää --fix-broken."

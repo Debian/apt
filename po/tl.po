@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2007-03-29 21:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -717,11 +717,6 @@ msgstr "Di tanggap na operasyon %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Hindi kilalang katagang uri: '%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Binubuksan ang talaksang pagsasaayos %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1535,11 +1530,6 @@ msgstr "Maling anyo ng override %s linya %lu #1"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Binubuksan %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Maling anyo ng linyang %u sa talaksang pagkukunan %s (uri)"
 
@@ -1780,6 +1770,12 @@ msgstr "Ang APT na ito ay may Kapangyarihan Super Kalabaw."
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1802,12 +1798,6 @@ msgstr "May mga paketeng hindi matiyak ang pagka-awtentiko"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Iluklok ang mga paketeng ito na walang beripikasyon?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2481,6 +2471,14 @@ msgstr "Paketeng %s bersyon %s ay may kulang na dep:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Ang utos na update ay hindi tumatanggap ng mga argumento"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3427,6 +3425,11 @@ msgstr "Maling datos sa panimula"
 msgid "Connection failed"
 msgstr "Bigo ang koneksyon"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3796,6 +3799,12 @@ msgstr "Nagsara ng maaga ang koneksyon"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Binubuksan ang talaksang pagsasaayos %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Binubuksan %s"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr ""

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2006-10-10 09:48+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -706,11 +706,6 @@ msgstr "ប្រតិបត្តិការ​មិន​ត្រឹមត
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "មិន​បាន​​ទទួល​ស្គាល់​ប្រភេទ​អក្សរ​សង្ខេប ៖ '%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "កំពុង​បើ​ឯកសារ​កំណត់រចនាសម្ព័ន្ធ​ %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1515,11 +1510,6 @@ msgstr "Malformed បដិសេធ %s បន្ទាត់ %lu #1"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "កំពុង​បើក​ %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "បន្ទាត់​ Malformed  %u ក្នុង​បញ្ជី​ប្រភព​ %s (ប្រភេទ​)"
 
@@ -1758,6 +1748,12 @@ msgstr ""
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1779,12 +1775,6 @@ msgstr "មិនអាច​ផ្ទៀងផ្ទាត់ភាពត្រ
 #, fuzzy
 msgid "Install these packages without verification?"
 msgstr "ដំឡើង​កញ្ចប់​ទាំងនេះ ​ដោយគ្មានការពិនិត្យ​បញ្ជាក់ [y/N] ? "
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2452,6 +2442,14 @@ msgstr "កញ្ចប់ %s កំណែ %s មាន​ភាព​អាស�
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "ពាក្យ​បញ្ជា​ដែលធ្វើ​ឲ្យ​ទាន់​សម័យ​គ្មាន​អាគុយម៉ង់​ទេ"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3395,6 +3393,11 @@ msgstr "ទិន្នន័យ​បឋមកថា​ខូច"
 msgid "Connection failed"
 msgstr "ការតភ្ជាប់​បាន​បរាជ័យ​"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3758,6 +3761,12 @@ msgstr "បាន​បិទ​ការ​តភ្ជាប់​មុន​
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "កំពុង​បើ​ឯកសារ​កំណត់រចនាសម្ព័ន្ធ​ %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "កំពុង​បើក​ %s"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "ភាព​អាស្រ័យ​ដែល​ខុស​គ្នា ។ ព្យាយាម​ការ​ប្រើ --fix-broken ។"

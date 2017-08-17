@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2006-10-20 21:28+0300\n"
 "Last-Translator: Ossama M. Khayat <okhayat@yahoo.com>\n"
 "Language-Team: Arabic <support@arabeyes.org>\n"
@@ -699,11 +699,6 @@ msgstr "عمليّة غير صالحة %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "اختصار نوع مجهول: '%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "فتح ملف التهيئة %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1503,11 +1498,6 @@ msgstr ""
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "فتح %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr ""
 
@@ -1740,6 +1730,12 @@ msgstr ""
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1760,12 +1756,6 @@ msgstr "تعذرت المصادقة على بعض الحزم"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "تثبيت هذه الحزم دون التحقق منها؟"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2428,6 +2418,14 @@ msgstr "الحزمة %s النسخة %s لها معتمد غير مستوفى:\n
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "لا يقبل الأمر update أية مُعطيات"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3287,6 +3285,11 @@ msgstr "بيانات ترويسة سيئة"
 msgid "Connection failed"
 msgstr "فشل الاتصال"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3650,6 +3653,12 @@ msgstr ""
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "فتح ملف التهيئة %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "فتح %s"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "مُعتمدات غير مستوفاة. حاول استخدام --fix-broken."

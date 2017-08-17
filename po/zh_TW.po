@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.X\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -703,11 +703,6 @@ msgstr "無效的操作 %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "無法辨識的縮寫類型：'%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "開啟設定檔 %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1510,11 +1505,6 @@ msgstr "重新定義檔 %s 第 %lu 行的格式錯誤 #1"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "正在開啟 %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "來源列表 %2$s 中的第 %1$u 行的格式錯誤（類型）"
 
@@ -1749,6 +1739,12 @@ msgstr "該 APT 有著超級牛力。"
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1769,12 +1765,6 @@ msgstr "有部份套件無法驗證"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "是否不經驗證就安裝這些套件？"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2439,6 +2429,14 @@ msgstr "套件 %s 版本 %s 未能滿足相依性：\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "update 指令不需任何參數"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3374,6 +3372,11 @@ msgstr "錯誤的標頭資料"
 msgid "Connection failed"
 msgstr "連線失敗"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3736,6 +3739,12 @@ msgstr "連線突然終止"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "開啟設定檔 %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "正在開啟 %s"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "未能滿足相依關係。試試 --fix-broken 選項。"

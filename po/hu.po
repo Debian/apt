@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -756,11 +756,6 @@ msgstr "%s érvénytelen művelet"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Ismeretlen típusrövidítés: „%c”"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "%s konfigurációs fájl megnyitása"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1606,11 +1601,6 @@ msgstr "%u. bejegyzés rosszul formált a(z) %s %s fájlban (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "%s megnyitása"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "A(z) %u. sor hibás a(z) %s forráslistában (típus)"
 
@@ -1855,6 +1845,12 @@ msgstr "Ez az APT a SzuperTehén Hatalmával rendelkezik."
 msgid "This APT helper has Super Meep Powers."
 msgstr "Ez az APT segéd a Szuper Meep Hatalmával rendelkezik."
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr "a --force-yes elavult, használja a --allow kezdetű kapcsolók egyikét."
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1875,12 +1871,6 @@ msgstr "Néhány csomag nem hitelesíthető"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Valóban ellenőrzés nélkül telepíti a csomagokat?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr "a --force-yes elavult, használja a --allow kezdetű kapcsolók egyikét."
 
 #: apt-private/private-download.cc
 msgid ""
@@ -2576,6 +2566,14 @@ msgstr "%s csomag %s verziójának teljesítetlen függősége van:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Az update parancsnak nincsenek argumentumai"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3534,6 +3532,11 @@ msgstr "Rossz fejlécadatok"
 msgid "Connection failed"
 msgstr "Sikertelen kapcsolódás"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3909,6 +3912,12 @@ msgstr "A kapcsolat idő előtt lezárult"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Az üres fájlok biztosan nem érvényes csomagok"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "%s konfigurációs fájl megnyitása"
+
+#~ msgid "Opening %s"
+#~ msgstr "%s megnyitása"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

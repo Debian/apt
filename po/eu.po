@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2009-05-17 00:41+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
@@ -707,11 +707,6 @@ msgstr "Eragiketa baliogabea: %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Mota ezezaguneko laburtzapena: '%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "%s konfigurazio fitxategia irekitzen"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1520,11 +1515,6 @@ msgstr "Gaizki osatutako override %s, lerroa: %lu #1"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "%s irekitzen"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Gaizki osatutako %u lerroa %s Iturburu zerrendan (type)"
 
@@ -1764,6 +1754,12 @@ msgstr "APT honek Super Behiaren Ahalmenak ditu."
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1784,12 +1780,6 @@ msgstr "Zenbait pakete ezin dira egiaztatu"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Paketeak egiaztapen gabe instalatu?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2471,6 +2461,14 @@ msgstr "%s paketeak (%s bertsioa) mendekotasun arazo bat du:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Eguneratzeko komandoak ez du argumenturik hartzen"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3412,6 +3410,11 @@ msgstr "Goiburu data gaizki dago"
 msgid "Connection failed"
 msgstr "Konexioak huts egin du"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3784,6 +3787,12 @@ msgstr "Konexioa behar baino lehenago itxi da"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "%s konfigurazio fitxategia irekitzen"
+
+#~ msgid "Opening %s"
+#~ msgstr "%s irekitzen"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "Bete gabeko mendekotasunak. Probatu --fix-broken erabiliz."

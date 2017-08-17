@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2008-11-20 23:27+0530\n"
 "Last-Translator: Sampada <sampadanakhare@gmail.com>\n"
 "Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -705,11 +705,6 @@ msgstr "%s अवैध क्रिया"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "संक्षिप्तरुपाचा माहित नसलेला प्रकार: '%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "%s संरचना फाईल उघडत आहे"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1516,11 +1511,6 @@ msgstr "व्यंगीत/हिडीस दुर्लक्षित क
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "%s उघडत आहे"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "स्त्रोत सुची %2$s (प्रकार) मध्ये %1$u वाईट/व्यंग रेषा"
 
@@ -1760,6 +1750,12 @@ msgstr "ह्या APT ला सुपर काऊ पॉवर्स आह
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1781,12 +1777,6 @@ msgstr "काही पॅकेजेसचे प्रमाणिकरण 
 #, fuzzy
 msgid "Install these packages without verification?"
 msgstr "पडताळून पाहिल्याशिवाय ही पॅकेजेस संस्थापित करायची का [हो/नाही]?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2456,6 +2446,14 @@ msgstr "पॅकेज %s आवृती %s मध्ये एक अनो�
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "सुधारित आवृत्तीचा विधान आर्ग्युमेंटस घेऊ    शकत नाही."
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3393,6 +3391,11 @@ msgstr "चुकीचा शीर्षक डाटा"
 msgid "Connection failed"
 msgstr "जोडणी अयशस्वी"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3758,6 +3761,12 @@ msgstr "जोडणी अकाली बंद झाली"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "%s संरचना फाईल उघडत आहे"
+
+#~ msgid "Opening %s"
+#~ msgstr "%s उघडत आहे"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "अनमेट डिपेंडन्सीज.--fix-broken.वापरून प्रयत्न करा "

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -729,11 +729,6 @@ msgstr "Невірна дія %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Нерозпізнаваний тип абревіатури: '%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Відкривається конфігураційний файл %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1581,11 +1576,6 @@ msgstr "Спотворений запис про перепризначення 
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Відкриття %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Спотворений рядок %u у переліку джерел %s (тип)"
 
@@ -1828,6 +1818,12 @@ msgstr "Цей APT має Супер-Коров'ячу Силу."
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1848,12 +1844,6 @@ msgstr "Деякі пакунки неможливо автентифікува�
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Встановити ці пакунки без перевірки?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2556,6 +2546,14 @@ msgstr "Пакунок %s версії %s має незадоволену зал
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Команді update не потрібні аргументи"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3520,6 +3518,11 @@ msgstr "Погана заголовкова інформація"
 msgid "Connection failed"
 msgstr "З'єднання не вдалося"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3890,6 +3893,12 @@ msgstr "З'єднання завершено передчасно"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Пусті файли не можуть бути правильними архівами"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Відкривається конфігураційний файл %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Відкриття %s"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

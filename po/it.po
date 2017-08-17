@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2015-04-07 16:51+0100\n"
 "Last-Translator: Milo Casagrande <milo@milo.name>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -736,11 +736,6 @@ msgstr "Operazione %s non valida"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Tipo di abbreviazione non riconosciuto: \"%c\""
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Apertura file di configurazione %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1591,11 +1586,6 @@ msgstr "Override %s riga %llu malformato (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Apertura di %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "La riga %u nel file %s non è corretta (type)"
 
@@ -1837,6 +1827,12 @@ msgstr "Questo APT ha i poteri della Super Mucca."
 msgid "This APT helper has Super Meep Powers."
 msgstr "Questo APT ha super poteri."
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1857,12 +1853,6 @@ msgstr "Alcuni pacchetti non possono essere autenticati"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Installare questi pacchetti senza verificarli?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2565,6 +2555,14 @@ msgstr "Il pacchetto %s versione %s ha una dipendenza non soddisfatta:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Il comando update non accetta argomenti"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3527,6 +3525,11 @@ msgstr "Header dati non corretto"
 msgid "Connection failed"
 msgstr "Connessione non riuscita"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3901,6 +3904,12 @@ msgstr "Connessione chiusa prematuramente"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "File vuoti non possono essere archivi validi"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Apertura file di configurazione %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Apertura di %s"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

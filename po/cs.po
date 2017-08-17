@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2017-05-06 11:08+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -739,11 +739,6 @@ msgstr "Neplatná operace %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Nerozpoznaná zkratka typu: „%c“"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Otevírá se konfigurační soubor %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1566,11 +1561,6 @@ msgstr "Zkomolený řádek %u v %s souboru %s (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Otevírá se %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Zkomolený řádek %u v seznamu zdrojů %s (typ)"
 
@@ -1812,6 +1802,13 @@ msgstr "Tato APT má schopnosti svaté krávy."
 msgid "This APT helper has Super Meep Powers."
 msgstr "Tento APT pomocník má schopnosti svatého čehokoliv."
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+"--force-yes je zastaralé, použijte některou z voleb začínajících --allow."
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1832,13 +1829,6 @@ msgstr "Některé balíky nemohly být autentizovány"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Instalovat tyto balíky bez ověření?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-"--force-yes je zastaralé, použijte některou z voleb začínajících --allow."
 
 #: apt-private/private-download.cc
 msgid ""
@@ -2531,6 +2521,14 @@ msgstr "Balík %s verze %s má nesplněné závislosti:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Příkaz update neakceptuje žádné argumenty"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3480,6 +3478,11 @@ msgstr "Špatné datové záhlaví"
 msgid "Connection failed"
 msgstr "Spojení selhalo"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3849,6 +3852,12 @@ msgstr "Spojení bylo předčasně ukončeno"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prázdné soubory nejsou platnými archivy"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Otevírá se konfigurační soubor %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Otevírá se %s"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

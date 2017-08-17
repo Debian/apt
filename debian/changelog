@@ -1,3 +1,66 @@
+apt (1.5~beta2) unstable; urgency=medium
+
+  [ M. Willis Monroe ]
+  * Minor grammar fix
+
+  [ Zhou Mo ]
+  * zh_CN.po: update Simplified Chinese programs translation
+
+  [ David Kalnischkies ]
+  * don't expect more downloads from failed transactions
+  * remove reference to a-t-debtorrent in description
+  * ignore SIGPIPE in dump solver if forwarding
+  * support compressed extended_states file for bug triage
+  * don't move failed pdiff indexes out of partial (Closes: 869425)
+  * don't try to parse all fields starting with HTTP as status-line
+  * send weak-only hashes to methods
+  * fail earlier if server answers with too much data
+  * fail early in http if server answer is too small as well
+  * use FileFd to parse all apt configuration files
+  * show warnings instead of errors if files are unreadable (LP: #1701852)
+  * reimplement and document auth.conf (Closes: #811181)
+  * lookup login info for proxies in auth.conf
+  * allow the auth.conf to be root:root owned
+  * update URI scheme descriptions in sources.list(5)
+  * show a warning for Debian shutting down FTP services
+  * suggest using auth.conf for sources with passwords
+  * ftparchive: sort discovered filenames before writing indexes.
+    Thanks to Chris Lamb for initial patch & Stefan Lippers-Hollmann for testing
+    (Closes: 869557)
+  * don't keep configuration files open needlessly
+  * don't hang if multiple sources use unavailable method (Closes: 870675)
+
+  [ Beatrice Torracca ]
+  * Italian manpage translation update (Closes: 858877)
+
+  [ Apollon Oikonomopoulos ]
+  * Handle supported components with slashes in sources.list (Closes: #868127)
+
+  [ Julian Andres Klode ]
+  * Drop cacheiterators.h include
+  * methods/aptmethod.h: Add missing fileutl.h include
+  * Reformat and sort all includes with clang-format
+  * cacheiterators: Warn about direct include and don't include pkgcache.h
+  * Update gitignore with new files
+  * Use C++11 threading support instead of pthread
+  * Always warn if --force-yes is validly specified, not just if used
+  * Work around float rounding change in gcc 7 on i386
+  * Handle GCC 7 std::string operator ABI break (Closes: #871275)
+  * debian: Update symbols for libapt-pkg5.0
+
+  [ Paul Wise ]
+  * Support zero delay for the various APT::Periodic activities
+  * Support seconds, minutes, hours and days for APT::Periodic intervals
+  * Switch from /org to /srv in example apt-ftparchive configuration
+
+  [ Balint Reczey ]
+  * Gracefully terminate process when stopping apt-daily-upgrade (LP: #1690980)
+
+  [ Dominik ]
+  * doc: Add '--allow-unauthenticated' to '--force-yes'
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 17 Aug 2017 19:28:00 +0200
+
 apt (1.5~beta1) unstable; urgency=medium
 
   [ Julian Andres Klode ]

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -717,11 +717,6 @@ msgstr "Neveljavno opravilo %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Neprepoznana vrsta okrajšave: '%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Odpiranje nastavitvene datoteke %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1550,11 +1545,6 @@ msgstr "Slabo oblikovan prepis %s v vrstici %llu št. 1"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Odpiranje %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Slabo oblikovana vrstica %u v seznamu virov %s (vrsta)"
 
@@ -1794,6 +1784,12 @@ msgstr "Ta APT ima moči super krav."
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1814,12 +1810,6 @@ msgstr "Nekaterih paketkov bi bilo mogoče overiti"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Ali želite te pakete namestiti brez preverjanja?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2525,6 +2515,14 @@ msgstr "Paket %s različica %s ima nerešene odvisnosti:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Ukaz update ne sprejema argumentov"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3469,6 +3467,11 @@ msgstr "Napačni podatki glave"
 msgid "Connection failed"
 msgstr "Povezava ni uspela"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3835,6 +3838,12 @@ msgstr "Povezava se je prezgodaj zaprla"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prazne datoteke ne morejo biti veljavni arhivi"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Odpiranje nastavitvene datoteke %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Odpiranje %s"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

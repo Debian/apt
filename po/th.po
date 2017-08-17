@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -707,11 +707,6 @@ msgstr "ไม่รู้จักคำสั่ง %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "พบตัวย่อของชนิดที่ข้อมูลไม่รู้จัก: '%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "ขณะเปิดแฟ้มค่าตั้ง %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1523,11 +1518,6 @@ msgstr "แฟ้ม override %s ผิดรูปแบบที่บรร�
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "กำลังเปิด %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "บรรทัด %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (ชนิด)"
 
@@ -1762,6 +1752,12 @@ msgstr "APT นี้มีพลังของ Super Cow"
 msgid "This APT helper has Super Meep Powers."
 msgstr "โปรแกรมช่วยเหลือของ APT นี้มีพลัง Super Meep"
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1782,12 +1778,6 @@ msgstr "มีบางแพกเกจไม่สามารถยืนย
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "จะติดตั้งแพกเกจเหล่านี้โดยไม่ตรวจสอบหรือไม่?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2455,6 +2445,14 @@ msgstr "แพกเกจ %s รุ่น %s ขาดแพกเกจที�
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "คำสั่ง update ไม่รับอาร์กิวเมนต์เพิ่ม"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3387,6 +3385,11 @@ msgstr "ข้อมูลส่วนหัวผิดพลาด"
 msgid "Connection failed"
 msgstr "เชื่อมต่อไม่สำเร็จ"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3749,6 +3752,12 @@ msgstr "การเชื่อมต่อถูกปิดก่อนเว
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "แฟ้มว่างเปล่าไม่สามารถเป็นแฟ้มจัดเก็บที่ใช้การได้"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "ขณะเปิดแฟ้มค่าตั้ง %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "กำลังเปิด %s"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

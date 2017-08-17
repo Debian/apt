@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2016-06-11 22:38+0200\n"
 "Last-Translator: Petter Reinholdtsen <pere@hungry.com>\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
@@ -721,11 +721,6 @@ msgstr "Ugyldig operasjon %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Ukjent typeforkortelse: «%c»"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Åpner oppsettsfila %s"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1543,11 +1538,6 @@ msgstr "Ugyldig overstyring %s linje %lu #1"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Åpner %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Feil på %u i kildelista %s (type)"
 
@@ -1791,6 +1781,13 @@ msgstr "Denne APT har kraften til en Superku."
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+"--force-yes er utdatert, bruk en av valgene som starter med --allow istedet."
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1811,13 +1808,6 @@ msgstr "Noen pakker ble ikke autentisert"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Installer disse pakkene uten verifikasjon?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-"--force-yes er utdatert, bruk en av valgene som starter med --allow istedet."
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2513,6 +2503,14 @@ msgstr "Pakken %s versjon %s har et uinnfridd avhengighetsforhold:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Oppdaterings-kommandoen tar ingen argumenter"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3461,6 +3459,11 @@ msgstr "Ødelagte hodedata"
 msgid "Connection failed"
 msgstr "Forbindelsen mislykkes"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3830,6 +3833,12 @@ msgstr "Forbindelsen ble uventet stengt"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomme filer kan ikke være gyldige arkiver"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Åpner oppsettsfila %s"
+
+#~ msgid "Opening %s"
+#~ msgstr "Åpner %s"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "Uinnfridde avhengighetsforhold - Prøv «--fix-broken»."

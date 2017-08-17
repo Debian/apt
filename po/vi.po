@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -722,11 +722,6 @@ msgstr "Thao tác “%s” không hợp lệ"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Không chấp nhận kiểu viết tắt: “%c”"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Đang mở tập tin cấu hình %s..."
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1563,11 +1558,6 @@ msgstr "Sai “override” %s dòng %llu (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "Đang mở %s"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Gặp dòng sai dạng %u trong danh sách nguồn %s (kiểu)."
 
@@ -1806,6 +1796,12 @@ msgstr "Trình APT này có năng lực của siêu bò."
 msgid "This APT helper has Super Meep Powers."
 msgstr "Lệnh trợ giúp APT này có Sức Mạnh của Siêu “Meep”."
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1826,12 +1822,6 @@ msgstr "Một số gói không thể được xác thực"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Cài đặt những gói này mà không cần thẩm tra?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2512,6 +2502,14 @@ msgstr "Gói %s phiên bản %s có phần phụ thuộc chưa thỏa mãn:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "Lệnh cập nhật không chấp nhận đối số"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3491,6 +3489,11 @@ msgstr "Dữ liệu phần đầu sai"
 msgid "Connection failed"
 msgstr "Kết nối bị lỗi"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3859,6 +3862,12 @@ msgstr "Kết nối bị đóng bất ngờ"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Đang mở tập tin cấu hình %s..."
+
+#~ msgid "Opening %s"
+#~ msgstr "Đang mở %s"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "

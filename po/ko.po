@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -707,11 +707,6 @@ msgstr "잘못된 작업 %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "이 타입 줄임말을 알 수 없습니다: '%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "설정 파일 %s 파일을 여는 중입니다"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1525,11 +1520,6 @@ msgstr "override %s의 %lu번 줄 #1이 잘못되었습니다"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "%s 파일을 여는 중입니다"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "소스 리스트 %2$s의 %1$u번 줄이 잘못되었습니다 (타입)"
 
@@ -1771,6 +1761,12 @@ msgstr "이 APT는 Super Cow Powers로 무장했습니다."
 msgid "This APT helper has Super Meep Powers."
 msgstr ""
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1791,12 +1787,6 @@ msgstr "인증할 수 없는 패키지가 있습니다"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "확인하지 않고 패키지를 설치하시겠습니까?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
 
 #: apt-private/private-download.cc
 #, fuzzy
@@ -2472,6 +2462,14 @@ msgstr "%s 패키지의 %s 버전의 의존성이 맞지 않습니다:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "update 명령은 인수를 받지 않습니다"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3408,6 +3406,11 @@ msgstr "헤더 데이터가 잘못되었습니다"
 msgid "Connection failed"
 msgstr "연결이 실패했습니다"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3773,6 +3776,12 @@ msgstr "연결이 너무 빨리 끊어졌습니다"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "설정 파일 %s 파일을 여는 중입니다"
+
+#~ msgid "Opening %s"
+#~ msgstr "%s 파일을 여는 중입니다"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "의존성이 맞지 않습니다. --fix-broken 옵션을 사용해 보십시오."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-07-03 16:55+0200\n"
+"POT-Creation-Date: 2017-08-17 19:28+0200\n"
 "PO-Revision-Date: 2016-09-24 03:24+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -754,11 +754,6 @@ msgstr "Geçersiz işlem: %s"
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Tanınamayan tür kısaltması: '%c'"
-
-#: apt-pkg/contrib/configuration.cc
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Yapılandırma dosyası (%s) açılıyor"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1589,11 +1584,6 @@ msgstr "Hatalı girdi satır %u %s dosya %s (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
-msgid "Opening %s"
-msgstr "%s Açılıyor"
-
-#: apt-pkg/sourcelist.cc
-#, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Kaynak listesinin (%2$s) %1$u numaralı satırı hatalı (tür)"
 
@@ -1841,6 +1831,14 @@ msgstr "Bu APT'nin Süper İnek Güçleri vardır."
 msgid "This APT helper has Super Meep Powers."
 msgstr "Bu APT yardımcısının Süper Meep Güçleri var."
 
+#: apt-private/private-cmndline.cc
+msgid ""
+"--force-yes is deprecated, use one of the options starting with --allow "
+"instead."
+msgstr ""
+"--force-yes seçeneği kullanımdan kaldırılmıştır, bunun yerine --allow ile "
+"başlayan seçeneklerden birini kullanabilirsiniz."
+
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
 msgid "No packages found"
@@ -1861,14 +1859,6 @@ msgstr "Bazı paketlerin aslına uygunluğu doğrulanamadı"
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
 msgstr "Paketler doğrulanmadan kurulsun mu?"
-
-#: apt-private/private-download.cc apt-private/private-install.cc
-msgid ""
-"--force-yes is deprecated, use one of the options starting with --allow "
-"instead."
-msgstr ""
-"--force-yes seçeneği kullanımdan kaldırılmıştır, bunun yerine --allow ile "
-"başlayan seçeneklerden birini kullanabilirsiniz."
 
 #: apt-private/private-download.cc
 msgid ""
@@ -2566,6 +2556,14 @@ msgstr "%s paketinin (sürüm %s) karşılanamayan bir bağımlılığı var:\n"
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
 msgstr "'update' komutu argüman almaz"
+
+#. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid ""
+"Usage of %s should be preferred over embedding login information directly in "
+"the %s entry for '%s'"
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3529,6 +3527,11 @@ msgstr "Kötü başlık verisi"
 msgid "Connection failed"
 msgstr "Bağlantı başarısız"
 
+#: methods/basehttp.cc methods/curl.cc methods/ftp.cc methods/http.cc
+#, c-format
+msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
+msgstr ""
+
 #: methods/basehttp.cc
 #, c-format
 msgid ""
@@ -3896,6 +3899,12 @@ msgstr "Bağlantı vaktinden önce kapandı"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Boş dosyalar geçerli birer arşiv dosyası olamazlar"
+
+#~ msgid "Opening configuration file %s"
+#~ msgstr "Yapılandırma dosyası (%s) açılıyor"
+
+#~ msgid "Opening %s"
+#~ msgstr "%s Açılıyor"
 
 #~ msgid ""
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "
