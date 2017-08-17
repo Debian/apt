@@ -41,6 +41,7 @@ test_deb_control() {
 	           -e 's#@[^,<>()@]*@##g' \
 	           -e 's#dpkg-dev \([^)]*\)#dpkg-dev#g' \
 	           -e 's#debhelper \([^)]*\)#debhelper#g' \
+	           -e 's#g\+\+ \([^)]*\)#g++#g' \
 	           -e 's#@##g' \
 	           -e 's#,(\s+,)+#, #g' \
 	           -e 's#\s+# #g'
