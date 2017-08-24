@@ -130,7 +130,7 @@ std::vector<std::string> VectorizeString(std::string const &haystack, char const
  */
 std::vector<std::string> StringSplit(std::string const &input, 
                                      std::string const &sep, 
-                                     unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) APT_CONST;
+                                     unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) APT_PURE;
 
 void ioprintf(std::ostream &out,const char *format,...) APT_PRINTF(2);
 void strprintf(std::string &out,const char *format,...) APT_PRINTF(2);
@@ -141,17 +141,17 @@ bool CheckDomainList(const std::string &Host, const std::string &List);
 #define tolower_ascii  tolower_ascii_inline
 #define isspace_ascii  isspace_ascii_inline
 
-APT_CONST APT_HOT
+APT_PURE APT_HOT
 static inline int tolower_ascii_unsafe(int const c)
 {
    return c | 0x20;
 }
-APT_CONST APT_HOT
+APT_PURE APT_HOT
 static inline int tolower_ascii_inline(int const c)
 {
    return (c >= 'A' && c <= 'Z') ? c + 32 : c;
 }
-APT_CONST APT_HOT
+APT_PURE APT_HOT
 static inline int isspace_ascii_inline(int const c)
 {
    // 9='\t',10='\n',11='\v',12='\f',13='\r',32=' '

@@ -69,7 +69,7 @@ unsigned short edspLikeListParser::VersionHash()
 }
 									/*}}}*/
 // ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
-APT_CONST bool edspLikeListParser::LoadReleaseInfo(pkgCache::RlsFileIterator & /*FileI*/,
+APT_PURE bool edspLikeListParser::LoadReleaseInfo(pkgCache::RlsFileIterator & /*FileI*/,
 				    FileFd & /*File*/, std::string const &/*component*/)
 {
    return true;

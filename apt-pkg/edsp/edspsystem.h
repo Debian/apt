@@ -29,11 +29,11 @@ protected:
    std::unique_ptr<pkgIndexFile> StatusFile;
 
 public:
-   virtual bool Lock() APT_OVERRIDE APT_CONST;
-   virtual bool UnLock(bool NoErrors = false) APT_OVERRIDE APT_CONST;
-   virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const APT_OVERRIDE APT_CONST;
+   virtual bool Lock() APT_OVERRIDE APT_PURE;
+   virtual bool UnLock(bool NoErrors = false) APT_OVERRIDE APT_PURE;
+   virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const APT_OVERRIDE APT_PURE;
    virtual bool Initialize(Configuration &Cnf) APT_OVERRIDE;
-   virtual bool ArchiveSupported(const char *Type) APT_OVERRIDE APT_CONST;
+   virtual bool ArchiveSupported(const char *Type) APT_OVERRIDE APT_PURE;
    virtual signed Score(Configuration const &Cnf) APT_OVERRIDE;
    virtual bool FindIndex(pkgCache::PkgFileIterator File,
 			  pkgIndexFile *&Found) const APT_OVERRIDE;

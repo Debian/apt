@@ -403,6 +403,6 @@ pkgCache::PkgFileIterator pkgDebianIndexFile::FindInCache(pkgCache &Cache) const
    return File;
 }
 
-APT_CONST pkgIndexFile::~pkgIndexFile() {}
-APT_CONST pkgDebianIndexTargetFile::~pkgDebianIndexTargetFile() {}
-APT_CONST pkgDebianIndexRealFile::~pkgDebianIndexRealFile() {}
+APT_PURE pkgIndexFile::~pkgIndexFile() {}
+APT_PURE pkgDebianIndexTargetFile::~pkgDebianIndexTargetFile() {}
+APT_PURE pkgDebianIndexRealFile::~pkgDebianIndexRealFile() {}

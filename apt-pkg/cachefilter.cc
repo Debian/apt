@@ -27,8 +27,8 @@ namespace APT {
 APT_HIDDEN std::unordered_map<std::string, std::vector<std::string>> ArchToTupleMap;
 
 namespace CacheFilter {
-APT_CONST Matcher::~Matcher() {}
-APT_CONST PackageMatcher::~PackageMatcher() {}
+APT_PURE Matcher::~Matcher() {}
+APT_PURE PackageMatcher::~PackageMatcher() {}
 
 // Name matches RegEx							/*{{{*/
 PackageNameMatchesRegEx::PackageNameMatchesRegEx(std::string const &Pattern) {
@@ -165,13 +165,13 @@ APT_PURE bool PackageIsNewInstall::operator() (pkgCache::PkgIterator const &Pkg)
 PackageIsNewInstall::~PackageIsNewInstall() {}
 									/*}}}*/
 // Generica like True, False, NOT, AND, OR				/*{{{*/
-APT_CONST bool TrueMatcher::operator() (pkgCache::PkgIterator const &) { return true; }
-APT_CONST bool TrueMatcher::operator() (pkgCache::GrpIterator const &) { return true; }
-APT_CONST bool TrueMatcher::operator() (pkgCache::VerIterator const &) { return true; }
+APT_PURE bool TrueMatcher::operator() (pkgCache::PkgIterator const &) { return true; }
+APT_PURE bool TrueMatcher::operator() (pkgCache::GrpIterator const &) { return true; }
+APT_PURE bool TrueMatcher::operator() (pkgCache::VerIterator const &) { return true; }
 
-APT_CONST bool FalseMatcher::operator() (pkgCache::PkgIterator const &) { return false; }
-APT_CONST bool FalseMatcher::operator() (pkgCache::GrpIterator const &) { return false; }
-APT_CONST bool FalseMatcher::operator() (pkgCache::VerIterator const &) { return false; }
+APT_PURE bool FalseMatcher::operator() (pkgCache::PkgIterator const &) { return false; }
+APT_PURE bool FalseMatcher::operator() (pkgCache::GrpIterator const &) { return false; }
+APT_PURE bool FalseMatcher::operator() (pkgCache::VerIterator const &) { return false; }
 
 NOTMatcher::NOTMatcher(Matcher * const matcher) : matcher(matcher) {}
 bool NOTMatcher::operator() (pkgCache::PkgIterator const &Pkg) { return ! (*matcher)(Pkg); }

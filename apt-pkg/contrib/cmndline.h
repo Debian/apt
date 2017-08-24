@@ -92,7 +92,7 @@ class CommandLine
 	 unsigned int const argc, char const * const * const argv) APT_PURE;
 
    static CommandLine::Args MakeArgs(char ShortOpt, char const *LongOpt,
-	 char const *ConfName, unsigned long Flags) APT_CONST;
+	 char const *ConfName, unsigned long Flags) APT_PURE;
 
    CommandLine();
    CommandLine(Args *AList,Configuration *Conf);

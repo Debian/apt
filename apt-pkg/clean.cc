@@ -148,4 +148,4 @@ bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
 									/*}}}*/
 
 pkgArchiveCleaner::pkgArchiveCleaner() : d(NULL) {}
-APT_CONST pkgArchiveCleaner::~pkgArchiveCleaner() {}
+APT_PURE pkgArchiveCleaner::~pkgArchiveCleaner() {}

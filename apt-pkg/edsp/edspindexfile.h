@@ -40,7 +40,7 @@ protected:
    virtual std::string GetComponent() const APT_OVERRIDE;
 
 public:
-   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 
    edspIndex(std::string const &File);
    virtual ~edspIndex();
@@ -53,7 +53,7 @@ protected:
    virtual std::string GetComponent() const APT_OVERRIDE;
 
 public:
-   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 
    eippIndex(std::string const &File);
    virtual ~eippIndex();

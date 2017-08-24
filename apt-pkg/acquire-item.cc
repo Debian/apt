@@ -280,7 +280,7 @@ static HashStringList GetExpectedHashesFromFor(metaIndex * const Parser, std::st
    to true and should be as restrictive as possible for false cases. Note that if
    a hash is returned by ::GetExpectedHashes it must match. Only if it doesn't
    ::HashesRequired is called to evaluate if its okay to have no hashes. */
-APT_CONST bool pkgAcqTransactionItem::HashesRequired() const
+APT_PURE bool pkgAcqTransactionItem::HashesRequired() const
 {
    /* signed repositories obviously have a parser and good hashes.
       unsigned repositories, too, as even if we can't trust them for security,
@@ -307,7 +307,7 @@ HashStringList pkgAcqTransactionItem::GetExpectedHashes() const
    return GetExpectedHashesFor(GetMetaKey());
 }
 
-APT_CONST bool pkgAcqMetaBase::HashesRequired() const
+APT_PURE bool pkgAcqMetaBase::HashesRequired() const
 {
    // Release and co have no hashes 'by design'.
    return false;
@@ -317,7 +317,7 @@ HashStringList pkgAcqMetaBase::GetExpectedHashes() const
    return HashStringList();
 }
 
-APT_CONST bool pkgAcqIndexDiffs::HashesRequired() const
+APT_PURE bool pkgAcqIndexDiffs::HashesRequired() const
 {
    /* We can't check hashes of rred result as we don't know what the
       hash of the file will be. We just know the hash of the patch(es),
@@ -334,7 +334,7 @@ HashStringList pkgAcqIndexDiffs::GetExpectedHashes() const
    return HashStringList();
 }
 
-APT_CONST bool pkgAcqIndexMergeDiffs::HashesRequired() const
+APT_PURE bool pkgAcqIndexMergeDiffs::HashesRequired() const
 {
    /* @see #pkgAcqIndexDiffs::HashesRequired, with the difference that
       we can check the rred result after all patches are applied as
@@ -352,7 +352,7 @@ HashStringList pkgAcqIndexMergeDiffs::GetExpectedHashes() const
    return HashStringList();
 }
 
-APT_CONST bool pkgAcqArchive::HashesRequired() const
+APT_PURE bool pkgAcqArchive::HashesRequired() const
 {
    return LocalSource == false;
 }
@@ -362,7 +362,7 @@ HashStringList pkgAcqArchive::GetExpectedHashes() const
    return ExpectedHashes;
 }
 
-APT_CONST bool pkgAcqFile::HashesRequired() const
+APT_PURE bool pkgAcqFile::HashesRequired() const
 {
    // supplied as parameter at creation time, so the caller decides
    return ExpectedHashes.usable();
@@ -712,7 +712,7 @@ std::string pkgAcquire::Item::ShortDesc() const				/*{{{*/
    return DescURI();
 }
 									/*}}}*/
-APT_CONST void pkgAcquire::Item::Finished()				/*{{{*/
+APT_PURE void pkgAcquire::Item::Finished()				/*{{{*/
 {
 }
 									/*}}}*/
@@ -721,12 +721,12 @@ APT_PURE pkgAcquire * pkgAcquire::Item::GetOwner() const		/*{{{*/
    return Owner;
 }
 									/*}}}*/
-APT_CONST pkgAcquire::ItemDesc &pkgAcquire::Item::GetItemDesc()		/*{{{*/
+APT_PURE pkgAcquire::ItemDesc &pkgAcquire::Item::GetItemDesc()		/*{{{*/
 {
    return Desc;
 }
 									/*}}}*/
-APT_CONST bool pkgAcquire::Item::IsTrusted() const			/*{{{*/
+APT_PURE bool pkgAcquire::Item::IsTrusted() const			/*{{{*/
 {
    return false;
 }

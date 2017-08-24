@@ -35,7 +35,7 @@ protected:
 
 public:
 
-   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 
    // Interface for the Cache Generator
    virtual bool HasPackages() const APT_OVERRIDE {return true;};
@@ -55,7 +55,7 @@ protected:
    virtual uint8_t GetIndexFlags() const APT_OVERRIDE;
 
 public:
-   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 
    // Stuff for accessing files on remote items
    virtual std::string ArchiveInfo(pkgCache::VerIterator const &Ver) const APT_OVERRIDE;
@@ -78,7 +78,7 @@ protected:
 
 public:
 
-   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 
    // Interface for the Cache Generator
    virtual bool HasPackages() const APT_OVERRIDE;
@@ -96,7 +96,7 @@ class debSourcesIndex : public pkgDebianIndexTargetFile
 
    public:
 
-   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 
    // Stuff for accessing files on remote items
    virtual std::string SourceInfo(pkgSrcRecords::Parser const &Record,
@@ -125,7 +125,7 @@ protected:
    APT_HIDDEN virtual pkgCacheListParser * CreateListParser(FileFd &Pkg) APT_OVERRIDE;
 
 public:
-   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 
    /** get the control (file) content of the deb file
     *
@@ -158,7 +158,7 @@ protected:
    virtual uint8_t GetIndexFlags() const APT_OVERRIDE;
 
 public:
-   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
    virtual pkgSrcRecords::Parser *CreateSrcParser() const APT_OVERRIDE;
    virtual bool HasPackages() const APT_OVERRIDE {return false;};
 
@@ -172,7 +172,7 @@ protected:
    virtual std::string GetComponent() const APT_OVERRIDE;
 
 public:
-   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 };
 
 class debStringPackageIndex : public pkgDebianIndexRealFile
@@ -184,7 +184,7 @@ protected:
    virtual uint8_t GetIndexFlags() const APT_OVERRIDE;
 
 public:
-   virtual const Type *GetType() const APT_OVERRIDE APT_CONST;
+   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 
    // Interface for the Cache Generator
    virtual bool HasPackages() const APT_OVERRIDE {return true;};

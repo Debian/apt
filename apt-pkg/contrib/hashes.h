@@ -72,7 +72,7 @@ class HashString
    bool operator!=(HashString const &other) const;
 
    // return the list of hashes we support
-   static APT_CONST const char** SupportedHashes();
+   static APT_PURE const char** SupportedHashes();
 };
 
 class HashStringList
@@ -225,7 +225,7 @@ APT_IGNORE_DEPRECATED_PUSH
 APT_IGNORE_DEPRECATED_POP
 
    private:
-   APT_HIDDEN APT_CONST inline unsigned int boolsToFlag(bool const addMD5, bool const addSHA1, bool const addSHA256, bool const addSHA512)
+   APT_HIDDEN APT_PURE inline unsigned int boolsToFlag(bool const addMD5, bool const addSHA1, bool const addSHA256, bool const addSHA512)
    {
       unsigned int Hashes = ~0;
       if (addMD5 == false) Hashes &= ~MD5SUM;

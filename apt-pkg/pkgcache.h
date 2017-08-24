@@ -276,8 +276,8 @@ class pkgCache								/*{{{*/
    pkgVersioningSystem *VS;
    
    // Converters
-   static const char *CompTypeDeb(unsigned char Comp) APT_CONST;
-   static const char *CompType(unsigned char Comp) APT_CONST;
+   static const char *CompTypeDeb(unsigned char Comp) APT_PURE;
+   static const char *CompType(unsigned char Comp) APT_PURE;
    static const char *DepType(unsigned char Dep);
 
    pkgCache(MMap *Map,bool DoMap = true);

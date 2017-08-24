@@ -259,7 +259,7 @@ bool pkgExtract::DoItem(Item &Itm, int &/*Fd*/)
 // Extract::Finished - Sequence finished, erase the temp files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-APT_CONST bool pkgExtract::Finished()
+APT_PURE bool pkgExtract::Finished()
 {
    return true;
 }

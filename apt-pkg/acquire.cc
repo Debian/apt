@@ -1430,6 +1430,6 @@ pkgAcquire::UriIterator::UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), C
    }
 }
 
-APT_CONST pkgAcquire::UriIterator::~UriIterator() {}
-APT_CONST pkgAcquire::MethodConfig::~MethodConfig() {}
-APT_CONST pkgAcquireStatus::~pkgAcquireStatus() {}
+APT_PURE pkgAcquire::UriIterator::~UriIterator() {}
+APT_PURE pkgAcquire::MethodConfig::~MethodConfig() {}
+APT_PURE pkgAcquireStatus::~pkgAcquireStatus() {}
