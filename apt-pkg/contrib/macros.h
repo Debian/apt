@@ -73,7 +73,8 @@
 #if APT_GCC_VERSION >= 0x0300
 	#define APT_DEPRECATED	__attribute__ ((deprecated))
 	#define APT_DEPRECATED_MSG(X)	__attribute__ ((deprecated(X)))
-	#define APT_CONST	__attribute__((const))
+	// __attribute__((const)) is too dangerous for us, we end up using it wrongly
+	#define APT_CONST	__attribute__((pure))
 	#define APT_PURE	__attribute__((pure))
 	#define APT_NORETURN	__attribute__((noreturn))
 	#define APT_PRINTF(n)	__attribute__((format(printf, n, n + 1)))
