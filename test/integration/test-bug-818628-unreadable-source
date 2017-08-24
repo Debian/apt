@@ -5,6 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
 configarchitecture 'amd64'
+cat rootdir/etc/apt/apt.conf.d/01multiarch.conf >> $(getaptconfig)
 
 if [ "$(id -u)" = '0' ]; then
     msgskip 'Tests for unreadable files do not work as root'
