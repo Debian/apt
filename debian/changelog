@@ -1,3 +1,16 @@
+apt (1.5~rc1) unstable; urgency=medium
+
+  * Redefine APT_CONST to mean APT_PURE (APT_CONST is deprecated)
+    APT_CONST was used on functions where it should not have, causing
+    the compiler to optimize code it should not have, like turning
+    the "::" content in StringSplit(name, "::") into garbage because it
+    figured out that the value is not going to be read anyway, causing
+    stuff to go horribly wrong (mostly on -O3, really).
+  * Replace APT_CONST with APT_PURE everywhere
+  * Make test-bug-818628-unreadable-source work on !amd64
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 24 Aug 2017 23:13:52 +0200
+
 apt (1.5~beta2) unstable; urgency=medium
 
   [ M. Willis Monroe ]
