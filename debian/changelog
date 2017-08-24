@@ -440,6 +440,15 @@ apt (1.3) unstable; urgency=medium
 
  -- Julian Andres Klode <jak@debian.org>  Tue, 20 Sep 2016 23:53:51 +0200
 
+apt (1.3~rc4ubuntu1) yakkety; urgency=medium
+
+  * Merge with Debian, remaining changes:
+    - Hack around Ubuntu rejecting symlink copyright
+    - Revert "test: Assert multi-arch in the chroot"
+    - Revert "test: Make sure we always find a dpkg in status file"
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Fri, 02 Sep 2016 20:39:36 +0000
+
 apt (1.3~rc4) unstable; urgency=medium
 
   [ Julian Andres Klode ]
@@ -460,6 +469,23 @@ apt (1.3~rc4) unstable; urgency=medium
   * support long keyid and fingerprint in gpgv's GOODSIG
 
  -- Julian Andres Klode <jak@debian.org>  Fri, 02 Sep 2016 20:26:36 +0200
+
+apt (1.3~rc3ubuntu2) yakkety; urgency=medium
+
+  * test-apt-cdrom: Fix for gnupg 2.1.15
+  * Revert "test: Assert multi-arch in the chroot"
+  * Revert "test: Make sure we always find a dpkg in status file"
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Thu, 01 Sep 2016 13:06:14 +0000
+
+apt (1.3~rc3ubuntu1) yakkety; urgency=medium
+
+  * Merge with Debian, remaining changes:
+    - Hack around Ubuntu rejecting symlink copyright
+  * Cherry pick commit from master to fix random build failures:
+    - TagFile: Fix off-by-one errors in comment stripping
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Wed, 31 Aug 2016 22:55:32 +0000
 
 apt (1.3~rc3) unstable; urgency=medium
 
@@ -515,6 +541,32 @@ apt (1.3~rc3) unstable; urgency=medium
 
  -- Julian Andres Klode <jak@debian.org>  Tue, 30 Aug 2016 22:20:28 +0200
 
+apt (1.3~rc2ubuntu3) yakkety; urgency=medium
+
+  [ David Kalnischkies ]
+  * do dpkg --configure before --remove/--purge --pending (Closes: 835094)
+  * prevent C++ locale number formatting in text APIs (try 3) (LP: #1611010)
+
+  [ Julian Andres Klode ]
+  * CMake: Add Large File Support (Closes: #834767)
+  * prepare-release: Use equivs and gdebi-core for travis deps
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Wed, 24 Aug 2016 08:39:04 +0000
+
+apt (1.3~rc2ubuntu2) yakkety; urgency=medium
+
+  * tests/control: Handle the gpg1/gpg2 mess a bit better
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Thu, 18 Aug 2016 12:24:10 +0000
+
+apt (1.3~rc2ubuntu1) yakkety; urgency=medium
+
+  * Merge with Debian, remaining changes (forgotten to merge upstream):
+   - debian: Install etc/apt if present (e.g., on Ubuntu)
+   - Hack around Ubuntu rejecting symlink copyright
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Thu, 18 Aug 2016 08:05:39 +0000
+
 apt (1.3~rc2) unstable; urgency=medium
 
   [ Julian Andres Klode ]
@@ -543,6 +595,22 @@ apt (1.3~rc2) unstable; urgency=medium
   * methods: read config in most to least specific order (Closes: 834642)
 
  -- Julian Andres Klode <jak@debian.org>  Wed, 17 Aug 2016 23:31:07 +0200
+
+apt (1.3~rc1ubuntu2) yakkety; urgency=medium
+
+  * Don't build with -O3. See LP: #1473674.
+
+ -- Matthias Klose <doko@ubuntu.com>  Fri, 12 Aug 2016 09:44:56 +0200
+
+apt (1.3~rc1ubuntu1) yakkety; urgency=medium
+
+  * debian/NEWS: Get rid of 1.3~pre3+cmake1 entry.
+    Thanks to Axel Beckert for reporting
+  * CMake: Use COPYONLY instead of @ONLY
+  * debian: Install etc/apt if present (e.g., on Ubuntu)
+  * Hack around Ubuntu rejecting symlink copyright
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Fri, 12 Aug 2016 00:20:40 +0000
 
 apt (1.3~rc1) unstable; urgency=medium
 
