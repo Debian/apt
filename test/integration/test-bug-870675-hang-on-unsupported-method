@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+changetowebserver
+
+echo 'foo' > aptarchive/foobar
+echo 'bar' > aptarchive/foobar2
+
+testsuccess apthelper download-file "http://localhost:${APTHTTPPORT}/foobar" ./downloaded/foobar 'SHA1:f1d2d2f924e986ac86fdf7b36c94bcdf32beec15'
+rm -f ./downloaded/foobar
+testsuccess apthelper download-file "http://localhost:${APTHTTPPORT}/foobar" ./downloaded/foobar 'SHA1:f1d2d2f924e986ac86fdf7b36c94bcdf32beec15' \
+	"http://localhost:${APTHTTPPORT}/foobar2" ./downloaded/foobar2 'SHA1:e242ed3bffccdf271b7fbaf34ed72d089537b42f'
+rm -f ./downloaded/foobar ./downloaded/foobar2
+
+testfailure apthelper download-file "foo://localhost:${APTHTTPPORT}/foobar" ./downloaded/foobar 'SHA1:f1d2d2f924e986ac86fdf7b36c94bcdf32beec15'
+testsuccess grep 'The method driver .*/foo could not be found' rootdir/tmp/testfailure.output
+rm -f ./downloaded/foobar
+testfailure apthelper download-file "foo://localhost:${APTHTTPPORT}/foobar" ./downloaded/foobar 'SHA1:f1d2d2f924e986ac86fdf7b36c94bcdf32beec15' \
+	"foo://localhost:${APTHTTPPORT}/foobar2" ./downloaded/foobar2 'SHA1:e242ed3bffccdf271b7fbaf34ed72d089537b42f'
+testsuccess grep 'The method driver .*/foo could not be found' rootdir/tmp/testfailure.output
+rm -f ./downloaded/foobar ./downloaded/foobar2
