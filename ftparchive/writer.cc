@@ -849,12 +849,20 @@ bool SourcesWriter::DoPackage(string FileName)
    Changes.push_back(pkgTagSection::Tag::Rewrite("Package", Package));
    if (Files.empty() == false)
       Changes.push_back(pkgTagSection::Tag::Rewrite("Files", Files));
+   else
+      Changes.push_back(pkgTagSection::Tag::Remove("Files"));
    if (ChecksumsSha1.empty() == false)
       Changes.push_back(pkgTagSection::Tag::Rewrite("Checksums-Sha1", ChecksumsSha1));
+   else
+      Changes.push_back(pkgTagSection::Tag::Remove("Checksums-Sha1"));
    if (ChecksumsSha256.empty() == false)
       Changes.push_back(pkgTagSection::Tag::Rewrite("Checksums-Sha256", ChecksumsSha256));
+   else
+      Changes.push_back(pkgTagSection::Tag::Remove("Checksums-Sha256"));
    if (ChecksumsSha512.empty() == false)
       Changes.push_back(pkgTagSection::Tag::Rewrite("Checksums-Sha512", ChecksumsSha512));
+   else
+      Changes.push_back(pkgTagSection::Tag::Remove("Checksums-Sha512"));
    if (Directory != "./")
       Changes.push_back(pkgTagSection::Tag::Rewrite("Directory", Directory));
    Changes.push_back(pkgTagSection::Tag::Rewrite("Priority", BestPrio));

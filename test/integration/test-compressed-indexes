@@ -140,7 +140,7 @@ test $(echo "$GOODSHOW" | grep -e '^Package: testpkg' -e '^Version: 1.0' -e '^Ar
 testsuccessequal "$GOODSHOW" aptcache show testpkg
 GOODSHOWSRC="$(aptcache showsrc testpkg)
 "
-test $(echo "$GOODSHOWSRC" | grep -e '^Package: testpkg' -e '^Format: 3.0 (native)' -e '^Files:' -e '^Checksums-Sha256:' | wc -l) -eq 4 || msgdie 'showsrc is broken'
+test $(echo "$GOODSHOWSRC" | grep -e '^Package: testpkg' -e '^Format: 3.0 (native)' -e '^Checksums-Sha256:' | wc -l) -eq 3 || msgdie 'showsrc is broken'
 testsuccessequal "$GOODSHOWSRC" aptcache showsrc testpkg
 GOODPOLICY="$(aptcache policy testpkg)"
 test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 file:/' | wc -l) -eq 4 || msgdie 'file policy is broken'

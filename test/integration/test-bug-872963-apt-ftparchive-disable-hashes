@@ -1,0 +1,40 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+
+touch aptarchive/apt_1.5~rc1.tar.xz
+cat >> aptarchive/apt_1.5~rc1.dsc << EOF
+Format: 3.0 (native)
+Source: apt
+Binary: apt
+Architecture: any all
+Version: 1.5~rc1
+Build-Depends: foo
+Package-List:
+ apt deb admin important arch=any
+Checksums-Sha1:
+ 332b354b0c7cbd936a4a95f3ce149aa03677cabf 2095076 apt_1.5~rc1.tar.xz
+Checksums-Sha256:
+ 14d09b2c1e13f9a70aac3322987ff26f36c53010639763573c9aa4987e52e47a 2095076 apt_1.5~rc1.tar.xz
+Checksums-Sha512:
+ 4f570c10c3fd549b2e27db4481fbc1ebebed52bd06a8ba7c0716b3917a8452bb3d3cd4fbb02561e02af09b1973a65a4cc69a42c21e858b1d5c3caa970aea4fd4 2095076 apt_1.5~rc1.tar.xz
+Files:
+ 7ea24e77b6203e08ca4158831df26825 2095076 apt_1.5~rc1.tar.xz
+EOF
+
+
+rm rootdir/etc/apt/apt.conf.d/*
+
+for HASH in MD5 SHA1 SHA256 SHA512; do
+    testsuccess aptftparchive -qq sources  -o APT::FTPArchive::$HASH=false "aptarchive/"
+    cp rootdir/tmp/testsuccess.output aptarchive/Sources
+    if [ "$HASH" = "MD5" ]; then
+        testfailure grep "Files:" aptarchive/Sources
+    else
+        testfailure grep -i "$HASH:" aptarchive/Sources
+    fi
+done
