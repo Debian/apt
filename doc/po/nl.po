@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 1.4~beta4-nl\n"
+"Project-Id-Version: apt-doc 1.5~beta1-nl\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-08-24 23:21+0200\n"
-"PO-Revision-Date: 2017-01-19 17:53+0100\n"
+"POT-Creation-Date: 2017-09-04 22:35+0200\n"
+"PO-Revision-Date: 2017-08-17 21:29+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.6\n"
+"X-Generator: Gtranslator 2.91.7\n"
 
 #. type: Plain text
 #: apt.ent
@@ -2064,9 +2064,25 @@ msgid ""
 "prepared for the change.  See also &apt-secure; for details on the concept "
 "and configuration."
 msgstr ""
+"Sta het commando update toe om gegevens te blijven downloaden van een "
+"pakketbron waarvan de informatie over welke release die pakketbron bevat, "
+"gewijzigd is en bijvoorbeeld een nieuwe hoofdrelease aangeeft. Voor "
+"dergelijke pakketbronnen zal APT er niet in slagen het update-commando uit "
+"te voeren, totdat de verandering bevestigd is, om er zeker van te zijn dat "
+"de gebruiker voorbereid is op die verandering. Zie ook &apt-secure; voor "
+"informatie over concept en configuratie."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
+#, fuzzy
+#| msgid ""
+#| "Specialist options (<literal>--allow-releaseinfo-changes-</"
+#| "literal><replaceable>field</replaceable>)  exist to allow changes only "
+#| "for certain fields like <literal>origin</literal>, <literal>label</"
+#| "literal>, <literal>codename</literal>, <literal>suite</literal>, "
+#| "<literal>version</literal> and <literal>defaultpin</literal>. See also "
+#| "&apt-preferences;.  Configuration Item: <literal>Acquire::"
+#| "AllowReleaseInfoChanges</literal>."
 msgid ""
 "Specialist options (<literal>--allow-releaseinfo-change-</"
 "literal><replaceable>field</replaceable>)  exist to allow changes only for "
@@ -2075,6 +2091,13 @@ msgid ""
 "literal> and <literal>defaultpin</literal>. See also &apt-preferences;.  "
 "Configuration Item: <literal>Acquire::AllowReleaseInfoChanges</literal>."
 msgstr ""
+"Er bestaan specialistische opties (<literal>--allow-releaseinfo-changes-</"
+"literal><replaceable>veld</replaceable>) om enkel veranderingen toe te staan "
+"voor bepaalde velden, zoals <literal>origin</literal>, <literal>label</"
+"literal>, <literal>codename</literal>, <literal>suite</literal>, "
+"<literal>version</literal> en <literal>defaultpin</literal>. Zie ook &apt-"
+"preferences;. Configuratie-item: <literal>Acquire::AllowReleaseInfoChanges</"
+"literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -3242,14 +3265,6 @@ msgstr "Ondersteuning in APT voor de authenticatie van archieven"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "Starting with version 0.6, <command>APT</command> contains code that does "
-#| "signature checking of the Release file for all repositories. This ensures "
-#| "that data like packages in the archive can't be modified by people who "
-#| "have no access to the Release file signing key. Starting with version 1.1 "
-#| "<command>APT</command> requires repositories to provide recent "
-#| "authentication information for unimpeded usage of the repository."
 msgid ""
 "Starting with version 0.6, <command>APT</command> contains code that does "
 "signature checking of the Release file for all repositories. This ensures "
@@ -3263,11 +3278,14 @@ msgid ""
 msgstr ""
 "Met ingang van versie 0.6 bevat <command>APT</command> code die voor alle "
 "pakketbronnen de ondertekening controleert van het bestand Release. Dit "
-"geeft de garantie dat gegevens, zoals pakketten, uit het archief niet "
+"geeft de garantie dat gegevens uit het archief, zoals pakketten, niet "
 "gewijzigd kunnen worden door mensen die geen toegang hebben tot de sleutel "
 "waarmee het bestand Release ondertekend wordt. Met ingang van versie 1.1 "
 "vereist <command>APT</command> dat pakketbronnen recente authenticatie-"
-"informatie verstrekken om die pakketbron ongehinderd te kunnen gebruiken."
+"informatie verstrekken om die pakketbron ongehinderd te kunnen gebruiken. "
+"Met ingang van versie 1.5 moet gewijzigde informatie over de pakketbron in "
+"het bestand Release bevestigd worden, vooraleer APT voortgaat met het "
+"toepassen van updates die uit die pakketbron afkomstig zijn."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3284,10 +3302,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid "Trusted Repositories"
 msgid "Unsigned Repositories"
-msgstr "Betrouwbare pakketarchieven"
+msgstr "Niet-ondertekende pakketbronnen"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3352,10 +3368,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid "Trusted Repositories"
 msgid "Signed Repositories"
-msgstr "Betrouwbare pakketarchieven"
+msgstr "Ondertekende pakketbronnen"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3500,7 +3514,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
 msgid "Information changes"
-msgstr ""
+msgstr "Informatiewijzigingen"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3509,9 +3523,21 @@ msgid ""
 "also general information about the repository like the origin, codename or "
 "version number of the release."
 msgstr ""
+"Het bestand Release bevat behalve de checksums voor de bestanden uit de "
+"pakketbron, ook algemene informatie over de pakketbron, zoals origine, "
+"codenaam en versienummer van de release."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
+#, fuzzy
+#| msgid ""
+#| "This information is shown in various places so a repository owner should "
+#| "always ensure correctness. Further more user configuration like &apt-"
+#| "preferences; can depend and make use of this information. Since version "
+#| "1.5 the user must therefore explicitly confirm changes to signal that the "
+#| "user is sufficently prepared e.g. for the new major release of the "
+#| "distribution shipped in the repository (as e.g. indicated by the "
+#| "codename)."
 msgid ""
 "This information is shown in various places so a repository owner should "
 "always ensure correctness. Further more user configuration like &apt-"
@@ -3520,6 +3546,14 @@ msgid ""
 "is sufficiently prepared e.g. for the new major release of the distribution "
 "shipped in the repository (as e.g. indicated by the codename)."
 msgstr ""
+"Deze informatie wordt op verschillende plaatsen weergegeven en dus zou de "
+"eigenaar van een pakketbron altijd de juistheid ervan moeten garanderen. "
+"Daarenboven kan gebruikersconfiguratie, zoals &apt-preferences;, van deze "
+"informatie gebruik maken en er afhankelijk van zijn. Daarom moet de "
+"gebruiker met ingang van versie 1.5 wijzigingen expliciet bevestigen, om te "
+"signaleren dat deze voldoende voorbereid is op bijvoorbeeld de nieuwe "
+"hoofdrelease van de distributie (bijvoorbeeld aangeduid met de codenaam) die "
+"door de pakketbron verdeeld wordt."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
@@ -3574,10 +3608,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid "User Configuration"
 msgid "Repository Configuration"
-msgstr "Configuratie op gebruikersniveau"
+msgstr "Configuratie van de pakketbron"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -4699,6 +4731,11 @@ msgid ""
 "this completely disables support for TLS in apt's own methods (excluding the "
 "curl-based https method). No TLS-related functions will be called anymore."
 msgstr ""
+"Sta toe dat de interne TLS-ondersteuning uit de http-methode gebruikt wordt. "
+"Indien deze waarde ingesteld wordt op false, wordt ondersteuning voor TLS in "
+"de eigen methodes van apt volledig uitgeschakeld (met uitzondering van de op "
+"curl gebaseerde https-methode). TLS-gerelateerde functies zullen niet langer "
+"aangeroepen worden."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
