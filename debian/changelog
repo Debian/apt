@@ -1,3 +1,35 @@
+apt (1.5~rc2) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Actually install apt_auth.conf manual page (Closes: #873934)
+  * test: Workaround gpgv warning
+  * apt-daily: Wait for network before daily updates.
+    Introduce a new helper, apt-helper wait-online that uses
+    NetworkManager and/or systemd-networkd to wait for them
+    reporting online, with a time out of 30 seconds; and run
+    that helper before running the daily update script. (LP: #1699850)
+  * apt-daily: Pull in network-online.target in service, not timer
+  * Do not warn about duplicate "legacy" targets (Closes: #839259)
+    (LP: #1697120)
+  * cdrom: Don't hardcode "Files" field for copying source files
+  * ftparchive: Do not pass through disabled hashes in Sources (Closes: #872963)
+  * Directly link against libudev on Linux systems - this does not affect
+    public API and ABI, but protected pkgUdevCdromDevices function pointers
+    were renamed and are now always NULL, even if Dlopen returns true.
+
+  [ Christos Trochalakis ]
+  * doc: correct '--allow-releaseinfo-change-*' typos (Closes: #873914)
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #874285)
+  * Dutch manpage translation update (Closes: #874293)
+
+  [ David Kalnischkies ]
+  * don't write & chmod /dev/null log files
+  * don't ask an uninit _system for supported archs (LP: #1613184)
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 09 Sep 2017 21:47:14 +0200
+
 apt (1.5~rc1) unstable; urgency=medium
 
   * Redefine APT_CONST to mean APT_PURE (APT_CONST is deprecated)
