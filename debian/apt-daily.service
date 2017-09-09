@@ -5,5 +5,6 @@ ConditionACPower=true
 
 [Service]
 Type=oneshot
+ExecStartPre=-/usr/lib/apt/apt-helper wait-online
 ExecStart=/usr/lib/apt/apt.systemd.daily update
 

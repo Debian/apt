@@ -30,6 +30,8 @@
 #include <vector>
 
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include <apti18n.h>
@@ -176,6 +178,44 @@ static bool DoCatFile(CommandLine &CmdL)				/*{{{*/
    return true;
 }
 									/*}}}*/
+
+static pid_t ExecuteProcess(const char *Args[])				/*{{{*/
+{
+   pid_t pid = ExecFork();
+   if (pid == 0)
+   {
+      execvp(Args[0], (char **)Args);
+      _exit(100);
+   }
+   return pid;
+}
+
+static bool ServiceIsActive(const char *service)
+{
+   const char *argv[] = {"systemctl", "is-active", "-q", service, nullptr};
+   pid_t pid = ExecuteProcess(argv);
+   return ExecWait(pid, "systemctl is-active", true);
+}
+
+static bool DoWaitOnline(CommandLine &CmdL)
+{
+   static const char *WaitingTasks[][6] = {
+       {"systemd-networkd.service", "/lib/systemd/systemd-networkd-wait-online", "-q", "--timeout=30", nullptr},
+       {"NetworkManager.service", "nm-online", "-q", "--timeout", "30", nullptr}};
+
+   for (const char **task : WaitingTasks)
+   {
+      if (ServiceIsActive(task[0]))
+      {
+	 pid_t pid = ExecuteProcess(task + 1);
+
+	 ExecWait(pid, task[1]);
+      }
+   }
+
+   return _error->PendingError() == false;
+}
+									/*}}}*/
 static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
@@ -191,12 +231,12 @@ static bool ShowHelp(CommandLine &)					/*{{{*/
 static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    return {
-      {"download-file", &DoDownloadFile, _("download the given uri to the target-path")},
-      {"srv-lookup", &DoSrvLookup, _("lookup a SRV record (e.g. _http._tcp.ftp.debian.org)")},
-      {"cat-file", &DoCatFile, _("concatenate files, with automatic decompression")},
-      {"auto-detect-proxy", &DoAutoDetectProxy, _("detect proxy using apt.conf")},
-      {nullptr, nullptr, nullptr}
-   };
+       {"download-file", &DoDownloadFile, _("download the given uri to the target-path")},
+       {"srv-lookup", &DoSrvLookup, _("lookup a SRV record (e.g. _http._tcp.ftp.debian.org)")},
+       {"cat-file", &DoCatFile, _("concatenate files, with automatic decompression")},
+       {"auto-detect-proxy", &DoAutoDetectProxy, _("detect proxy using apt.conf")},
+       {"wait-online", &DoWaitOnline, _("wait for system to be online")},
+       {nullptr, nullptr, nullptr}};
 }
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
