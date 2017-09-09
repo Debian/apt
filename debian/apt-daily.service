@@ -2,6 +2,8 @@
 Description=Daily apt download activities
 Documentation=man:apt(8)
 ConditionACPower=true
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
