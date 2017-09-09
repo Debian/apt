@@ -27,6 +27,10 @@
 
 #include <apti18n.h>
 
+#ifdef HAVE_UDEV
+#include <libudev.h>
+#endif
+
 using namespace std;
 
 // FindPackages - Find the package files on the CDROM			/*{{{*/
@@ -913,43 +917,15 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    return true;
 }
 									/*}}}*/
-pkgUdevCdromDevices::pkgUdevCdromDevices()				/*{{{*/
-: d(NULL), libudev_handle(NULL), udev_new(NULL), udev_enumerate_add_match_property(NULL),
-   udev_enumerate_scan_devices(NULL), udev_enumerate_get_list_entry(NULL),
-   udev_device_new_from_syspath(NULL), udev_enumerate_get_udev(NULL),
-   udev_list_entry_get_name(NULL), udev_device_get_devnode(NULL),
-   udev_enumerate_new(NULL), udev_list_entry_get_next(NULL),
-   udev_device_get_property_value(NULL), udev_enumerate_add_match_sysattr(NULL)
+
+pkgUdevCdromDevices::pkgUdevCdromDevices() /*{{{*/
+    : d(NULL)
 {
 }
 									/*}}}*/
 
 bool pkgUdevCdromDevices::Dlopen()					/*{{{*/
 {
-   // alread open
-   if(libudev_handle != NULL)
-      return true;
-
-   // see if we can get libudev
-   void *h = ::dlopen("libudev.so.0", RTLD_LAZY);
-   if(h == NULL)
-      return false;
-
-   // get the pointers to the udev structs
-   libudev_handle = h;
-   udev_new = (udev* (*)(void)) dlsym(h, "udev_new");
-   udev_enumerate_add_match_property = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_property");
-   udev_enumerate_add_match_sysattr = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_sysattr");
-   udev_enumerate_scan_devices = (int (*)(udev_enumerate*))dlsym(h, "udev_enumerate_scan_devices");
-   udev_enumerate_get_list_entry = (udev_list_entry* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_list_entry");
-   udev_device_new_from_syspath = (udev_device* (*)(udev*, const char*))dlsym(h, "udev_device_new_from_syspath");
-   udev_enumerate_get_udev = (udev* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_udev");
-   udev_list_entry_get_name = (const char* (*)(udev_list_entry*))dlsym(h, "udev_list_entry_get_name");
-   udev_device_get_devnode = (const char* (*)(udev_device*))dlsym(h, "udev_device_get_devnode");
-   udev_enumerate_new = (udev_enumerate* (*)(udev*))dlsym(h, "udev_enumerate_new");
-   udev_list_entry_get_next = (udev_list_entry* (*)(udev_list_entry*))dlsym(h, "udev_list_entry_get_next");
-   udev_device_get_property_value = (const char* (*)(udev_device *, const char *))dlsym(h, "udev_device_get_property_value");
-
    return true;
 }
 									/*}}}*/
@@ -963,12 +939,10 @@ vector<CdromDevice> pkgUdevCdromDevices::Scan()
 vector<CdromDevice> pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)/*{{{*/
 {
    vector<CdromDevice> cdrom_devices;
+#ifdef HAVE_UDEV
    struct udev_enumerate *enumerate;
    struct udev_list_entry *l, *devices;
    struct udev *udev_ctx;
-
-   if(libudev_handle == NULL)
-      return cdrom_devices;
 
    udev_ctx = udev_new();
    enumerate = udev_enumerate_new (udev_ctx);
@@ -1008,15 +982,14 @@ vector<CdromDevice> pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)/*{{{*/
 	 cdrom.MountPath = "";
       }
       cdrom_devices.push_back(cdrom);
-   } 
+   }
+#endif
    return cdrom_devices;
 }
 									/*}}}*/
 
 pkgUdevCdromDevices::~pkgUdevCdromDevices()                             /*{{{*/
 { 
-   if (libudev_handle != NULL)
-      dlclose(libudev_handle);
 }
 									/*}}}*/
 

@@ -99,22 +99,23 @@ struct CdromDevice							/*{{{*/
 class pkgUdevCdromDevices						/*{{{*/
 {
    void * const d;
+
  protected:
-   // libudev dlopen structure
-   void *libudev_handle;
-   struct udev* (*udev_new)(void);
-   int (*udev_enumerate_add_match_property)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);
-   int (*udev_enumerate_scan_devices)(struct udev_enumerate *udev_enumerate);
-   struct udev_list_entry* (*udev_enumerate_get_list_entry)(struct udev_enumerate *udev_enumerate);
-   struct udev_device* (*udev_device_new_from_syspath)(struct udev *udev, const char *syspath);
-   struct udev* (*udev_enumerate_get_udev)(struct udev_enumerate *udev_enumerate);
-   const char* (*udev_list_entry_get_name)(struct udev_list_entry *list_entry);
-   const char* (*udev_device_get_devnode)(struct udev_device *udev_device);
-   struct udev_enumerate *(*udev_enumerate_new) (struct udev *udev);
-   struct udev_list_entry *(*udev_list_entry_get_next)(struct udev_list_entry *list_entry);
-   const char* (*udev_device_get_property_value)(struct udev_device *udev_device, const char *key);
-   int (*udev_enumerate_add_match_sysattr)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);
-   // end libudev dlopen
+   // old libudev dlopen structure, not used anymore, but can't break ABI
+   void *_padding;
+   struct _padding *(*_padding__new)(void);
+   int (*_padding__enumerate_add_match_property)(struct _padding_enumerate *_padding_enumerate, const char *property, const char *value);
+   int (*_padding__enumerate_scan_devices)(struct _padding_enumerate *_padding_enumerate);
+   struct _padding_list_entry *(*_padding__enumerate_get_list_entry)(struct _padding_enumerate *_padding_enumerate);
+   struct _padding_device *(*_padding__device_new_from_syspath)(struct _padding *_padding, const char *syspath);
+   struct _padding *(*_padding__enumerate_get__padding)(struct _padding_enumerate *_padding_enumerate);
+   const char *(*_padding__list_entry_get_name)(struct _padding_list_entry *list_entry);
+   const char *(*_padding__device_get_devnode)(struct _padding_device *_padding_device);
+   struct _padding_enumerate *(*_padding__enumerate_new)(struct _padding *_padding);
+   struct _padding_list_entry *(*_padding__list_entry_get_next)(struct _padding_list_entry *list_entry);
+   const char *(*_padding__device_get_property_value)(struct _padding_device *_padding_device, const char *key);
+   int (*_padding__enumerate_add_match_sysattr)(struct _padding_enumerate *_padding_enumerate, const char *property, const char *value);
+   // end lib_padding dlopen
    
  public:
    pkgUdevCdromDevices();
