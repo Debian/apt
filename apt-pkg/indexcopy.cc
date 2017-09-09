@@ -438,7 +438,21 @@ bool PackageCopy::RewriteEntry(FileFd &Target,string const &File)
 /* */
 bool SourceCopy::GetFile(string &File,unsigned long long &Size)
 {
-   string Files = Section->FindS("Files");
+   string Files;
+
+   for (char const *const *type = HashString::SupportedHashes(); *type != NULL; ++type)
+   {
+      // derive field from checksum type
+      std::string checksumField("Checksums-");
+      if (strcmp(*type, "MD5Sum") == 0)
+	 checksumField = "Files"; // historic name for MD5 checksums
+      else
+	 checksumField.append(*type);
+
+      Files = Section->FindS(checksumField.c_str());
+      if (Files.empty() == false)
+	 break;
+   }
    if (Files.empty() == true)
       return false;
 
