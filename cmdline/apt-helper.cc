@@ -201,7 +201,9 @@ static bool DoWaitOnline(CommandLine &CmdL)
 {
    static const char *WaitingTasks[][6] = {
        {"systemd-networkd.service", "/lib/systemd/systemd-networkd-wait-online", "-q", "--timeout=30", nullptr},
-       {"NetworkManager.service", "nm-online", "-q", "--timeout", "30", nullptr}};
+       {"NetworkManager.service", "nm-online", "-q", "--timeout", "30", nullptr},
+       {"connman.service", "connmand-wait-online", "--timeout=30", nullptr},
+   };
 
    for (const char **task : WaitingTasks)
    {
