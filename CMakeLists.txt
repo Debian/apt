@@ -103,18 +103,18 @@ if (ZLIB_FOUND)
 endif()
 
 
-find_package(BZip2)
+find_package(BZip2 REQUIRED)
 if (BZIP2_FOUND)
   set(HAVE_BZ2 1)
 endif()
 
-find_package(LZMA)
+find_package(LZMA REQUIRED)
 if (LZMA_FOUND)
   set(HAVE_LZMA 1)
 endif()
 
 
-find_package(LZ4)
+find_package(LZ4 REQUIRED)
 if (LZ4_FOUND)
   set(HAVE_LZ4 1)
 endif()
