@@ -199,6 +199,7 @@ static bool ServiceIsActive(const char *service)
 
 static bool DoWaitOnline(CommandLine &CmdL)
 {
+   // Also add services to After= in .service
    static const char *WaitingTasks[][6] = {
        {"systemd-networkd.service", "/lib/systemd/systemd-networkd-wait-online", "-q", "--timeout=30", nullptr},
        {"NetworkManager.service", "nm-online", "-q", "--timeout", "30", nullptr},
