@@ -1,3 +1,21 @@
+apt (1.4.8) stretch; urgency=medium
+
+  [ Balint Reczey ]
+  * Gracefully terminate process when stopping apt-daily-upgrade (LP: #1690980)
+
+  [ David Kalnischkies ]
+  * don't ask an uninit _system for supported archs, this
+    crashes the mirror method (LP: #1613184)
+
+  [ Julian Andres Klode ]
+  * Do not warn about duplicate "legacy" targets (Closes: #839259)
+    (LP: #1697120)
+  * apt-daily: Pull in network-online.target in service, not timer
+    - this can cause a severe boot performance regression / hang
+    (LP: #1716973)
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 13 Sep 2017 18:47:33 +0200
+
 apt (1.4.7) stretch; urgency=medium
 
   * New release with important fixes up to 1.5~beta1; also see LP: #1702326
