@@ -1,3 +1,13 @@
+apt (1.5~rc4) unstable; urgency=medium
+
+  * apt-daily: Do not Wants=network-online, and add some more After=
+    We now wait for being online ourselves, so all we need to wait
+    on is for services we are using to be online first. This avoids
+    severe boot slowdowns by other services having specified an
+    After=network-online.target without a Wants=.
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 13 Sep 2017 16:02:30 +0200
+
 apt (1.5~rc3) unstable; urgency=medium
 
   * CMake: Properly handle Udev missing
