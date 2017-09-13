@@ -274,12 +274,14 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		     if (dup != IndexTargets.end())
 		     {
 			std::string const dupEntry = dup->Option(IndexTarget::SOURCESENTRY);
-			//TRANSLATOR: an identifier like Packages; Releasefile key indicating
-			// a file like main/binary-amd64/Packages; filename and linenumber of
-			// two sources.list entries
 			if (T->find("legacy") == std::string::npos)
+			{
+			   //TRANSLATOR: an identifier like Packages; Releasefile key indicating
+			   // a file like main/binary-amd64/Packages; filename and linenumber of
+			   // two sources.list entries
 			   _error->Warning(_("Target %s (%s) is configured multiple times in %s and %s"),
 					   T->c_str(), MetaKey.c_str(), dupEntry.c_str(), E->sourcesEntry.c_str());
+			}
 			if (tplMetaKey.find(BreakPoint) == std::string::npos)
 			   break;
 			continue;
