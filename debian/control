@@ -37,7 +37,7 @@ Depends: adduser,
          ${misc:Depends},
          ${shlibs:Depends}
 Replaces: apt-utils (<< 1.3~exp2~), apt-transport-https (<< 1.5~alpha4~)
-Breaks: apt-utils (<< 1.3~exp2~), apt-transport-https (<< 1.5~alpha4~)
+Breaks: apt-utils (<< 1.3~exp2~), apt-transport-https
 Provides: apt-transport-https (= ${binary:Version})
 Recommends: ca-certificates
 Suggests: apt-doc,
@@ -146,21 +146,3 @@ Description: package management related utility programs
   * apt-ftparchive is used to create Packages and other index files
     needed to publish an archive of Debian packages
   * apt-sortpkgs is a Packages/Sources file normalizer.
-
-Package: apt-transport-https
-Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, apt (>= 1.5~alpha4~)
-Recommends: ca-certificates
-Priority: optional
-Description: Transitional package: curl-https download transport for APT
- This package enables the usage of 'deb https://foo distro main' lines
- in the /etc/apt/sources.list so that all package managers using the
- libapt-pkg library can access metadata and packages available in sources
- accessible over https (Hypertext Transfer Protocol Secure).
- .
- This transport supports server as well as client authentication
- with certificates.
- .
- This package is no longer needed, https support was integrated into apt,
- and is only provided as a fallback if some bugs are found in apt's native
- https support.
