@@ -119,7 +119,10 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
 
       if (Sect.Find(fields[I], Start, Stop) == false)
          continue;
-      
+
+      if (Start == Stop)
+	 continue;
+
       while (1)
       {
          Start = debListParser::ParseDepends(Start, Stop, 
