@@ -143,19 +143,39 @@ testsuccess grep 'could not connect to ftp.vwakviie2ienjx6t.onion (0.0.0.0:0) du
 msgmsg 'tor: SOCKS user:pass request not granted too short'
 runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
 runclient 'user:pass@' 'wakviie2ienjx6t.onion'
-testsuccess grep 'could not connect to wakviie2ienjx6t.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be 16 characters long (1)' client.output
+testsuccess grep 'could not connect to wakviie2ienjx6t.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be either 16 or 56 characters long (1)' client.output
 
 msgmsg 'tor: SOCKS user:pass request not granted too long'
 runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
 runclient 'user:pass@' 'vwakviie2ienjx6t2.onion'
-testsuccess grep 'could not connect to vwakviie2ienjx6t2.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be 16 characters long (1)' client.output
+testsuccess grep 'could not connect to vwakviie2ienjx6t2.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be either 16 or 56 characters long (1)' client.output
 
 msgmsg 'tor: SOCKS user:pass request not granted too short subdomain'
 runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
 runclient 'user:pass@' 'a.akviie2ienjx6t.onion'
-testsuccess grep 'could not connect to a.akviie2ienjx6t.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be 16 characters long (1)' client.output
+testsuccess grep 'could not connect to a.akviie2ienjx6t.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be either 16 or 56 characters long (1)' client.output
 
 msgmsg 'tor: SOCKS user:pass request not granted too short subdomains'
 runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
 runclient 'user:pass@' 'a.a.viie2ienjx6t.onion'
-testsuccess grep 'could not connect to a.a.viie2ienjx6t.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be 16 characters long (1)' client.output
+testsuccess grep 'could not connect to a.a.viie2ienjx6t.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be either 16 or 56 characters long (1)' client.output
+
+msgmsg 'tor: SOCKS user:pass request not granted too short'
+runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
+runclient 'user:pass@' 'l5satjgud6gucryazcyvyvhuxhr74u6ygigiuyixe3a6ysis67oro.onion'
+testsuccess grep 'could not connect to l5satjgud6gucryazcyvyvhuxhr74u6ygigiuyixe3a6ysis67oro.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be either 16 or 56 characters long (1)' client.output
+
+msgmsg 'tor: SOCKS user:pass request not granted too long'
+runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
+runclient 'user:pass@' 'l5satjgud6gucryazcyvyvhuxhr74u6ygigiuyixe3a6ysis67ororad2.onion'
+testsuccess grep 'could not connect to l5satjgud6gucryazcyvyvhuxhr74u6ygigiuyixe3a6ysis67ororad2.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be either 16 or 56 characters long (1)' client.output
+
+msgmsg 'tor: SOCKS user:pass request not granted too short subdomain'
+runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
+runclient 'user:pass@' 'a.satjgud6gucryazcyvyvhuxhr74u6ygigiuyixe3a6ysis67ororad.onion'
+testsuccess grep 'could not connect to a.satjgud6gucryazcyvyvhuxhr74u6ygigiuyixe3a6ysis67ororad.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be either 16 or 56 characters long (1)' client.output
+
+msgmsg 'tor: SOCKS user:pass request not granted too short subdomains'
+runserver '05 02' '01 00' '05 01 00 01 00 00 00 00 00 00'
+runclient 'user:pass@' 'a.a.tjgud6gucryazcyvyvhuxhr74u6ygigiuyixe3a6ysis67ororad.onion'
+testsuccess grep 'could not connect to a.a.tjgud6gucryazcyvyvhuxhr74u6ygigiuyixe3a6ysis67ororad.onion (0.0.0.0:0) due to: Invalid hostname: onion service name must be either 16 or 56 characters long (1)' client.output
