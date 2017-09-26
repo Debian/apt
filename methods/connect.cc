@@ -523,13 +523,13 @@ bool UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd
 	 else if (errcode == 0x01)
 	 {
 	    auto const prevdot = Host.rfind('.', lastdot - 1);
-	    if (lastdot == 16 && prevdot == std::string::npos)
+	    if (prevdot == std::string::npos && (lastdot == 16 || lastdot == 56))
 	       ; // valid .onion address
-	    else if (prevdot != std::string::npos && (lastdot - prevdot) == 17)
+	    else if (prevdot != std::string::npos && ((lastdot - prevdot) == 17 || (lastdot - prevdot) == 57))
 	       ; // valid .onion address with subdomain(s)
 	    else
 	    {
-	       errstr = "Invalid hostname: onion service name must be 16 characters long";
+	       errstr = "Invalid hostname: onion service name must be either 16 or 56 characters long";
 	       Owner->SetFailReason("SOCKS");
 	    }
 	 }
