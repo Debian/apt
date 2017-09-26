@@ -1,3 +1,25 @@
+apt (1.2.25) xenial; urgency=medium
+
+  * Microrelease covering 1.4.7 (LP: #1702326) and 1.4.8
+
+  [ Robert Luberda ]
+  * fix a "critical" typo in old changelog entry (Closes: 866358)
+
+  [ David Kalnischkies ]
+  * use port from SRV record instead of initial port
+  * don't ask an uninit _system for supported archs (LP: #1613184)
+
+  [ Julian Andres Klode ]
+  * Reset failure reason when connection was successful
+  * http: A response with Content-Length: 0 has no content
+  * apt-daily: Pull in network-online.target in service, not timer
+    (LP: #1716973)
+
+  [ Balint Reczey ]
+  * Gracefully terminate process when stopping apt-daily-upgrade (LP: #1690980)
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Tue, 26 Sep 2017 16:14:54 +0200
+
 apt (1.2.24) xenial; urgency=medium
 
   * Microrelease covering fixes of 1.4.6
