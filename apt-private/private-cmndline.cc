@@ -22,27 +22,20 @@
 #include <apti18n.h>
 									/*}}}*/
 
-APT_SENTINEL static bool strcmp_match_in_list(char const * const Cmd, ...)		/*{{{*/
+APT_NONNULL(1, 2)
+static bool CmdMatches_fn(char const *const Cmd, char const *const Match)
 {
-   if (Cmd == nullptr)
-      return false;
-   va_list args;
-   bool found = false;
-   va_start(args, Cmd);
-   char const * Match = NULL;
-   while ((Match = va_arg(args, char const *)) != NULL)
-   {
-      if (strcmp(Cmd, Match) != 0)
-	 continue;
-      found = true;
-      break;
-   }
-   va_end(args);
-   return found;
+   return strcmp(Cmd, Match) == 0;
 }
-									/*}}}*/
-#define addArg(w,x,y,z) Args.push_back(CommandLine::MakeArgs(w,x,y,z))
-#define CmdMatches(...) strcmp_match_in_list(Cmd, __VA_ARGS__, NULL)
+template <typename... Tail>
+APT_NONNULL(1, 2)
+static bool CmdMatches_fn(char const *const Cmd, char const *const Match, Tail... MoreMatches)
+{
+   return CmdMatches_fn(Cmd, Match) || CmdMatches_fn(Cmd, MoreMatches...);
+}
+#define addArg(w, x, y, z) Args.emplace_back(CommandLine::MakeArgs(w, x, y, z))
+#define CmdMatches(...) (Cmd != nullptr && CmdMatches_fn(Cmd, __VA_ARGS__))
+
 static bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("depends", "rdepends", "xvcg", "dotty"))
@@ -310,7 +303,7 @@ static bool addArgumentsAPTMark(std::vector<CommandLine::Args> &Args, char const
       addArg('v',"verbose","APT::MarkAuto::Verbose",0);
    }
 
-   if (strncmp(Cmd, "show", strlen("show")) != 0)
+   if (Cmd != nullptr && strncmp(Cmd, "show", strlen("show")) != 0)
    {
       addArg('s',"simulate","APT::Mark::Simulate",0);
       addArg('s',"just-print","APT::Mark::Simulate",0);
