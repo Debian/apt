@@ -1,6 +1,10 @@
 #!/bin/sh
 set -e
 
+art() {
+    ar t "$@" | grep -v control.tar
+}
+
 test_process_package_with_compression() {
     COMPRESSOR="$1"
     DATA_TAR="$2"
@@ -9,8 +13,7 @@ test_process_package_with_compression() {
 
     buildsimplenativepackage 'pkg' 'all' '1.0' '' '' 'some descr' '' '' '' "$COMPRESSOR"
     testsuccessequal "debian-binary
-control.tar.gz
-$DATA_TAR" ar t incoming/pkg_1.0_all.deb
+$DATA_TAR" art incoming/pkg_1.0_all.deb
 
     testequal "Package: pkg" echo "$(aptftparchive packages incoming/|grep ^Package)"
 
