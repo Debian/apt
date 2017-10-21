@@ -573,6 +573,13 @@ int BaseHttpMethod::Loop()
       // Connect to the server
       if (Server == 0 || Server->Comp(Queue->Uri) == false)
       {
+	 if (!Queue->Proxy().empty())
+	 {
+	    URI uri = Queue->Uri;
+	    std::cerr << "Setting "
+		      << "Acquire::" + uri.Access + "::proxy::" + uri.Host << " to " << Queue->Proxy() << std::endl;
+	    _config->Set("Acquire::" + uri.Access + "::proxy::" + uri.Host, Queue->Proxy());
+	 }
 	 Server = CreateServerState(Queue->Uri);
 	 setPostfixForMethodNames(::URI(Queue->Uri).Host.c_str());
 	 AllowRedirect = ConfigFindB("AllowRedirect", true);

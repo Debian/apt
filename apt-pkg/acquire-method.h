@@ -55,10 +55,14 @@ class pkgAcqMethod
 
       FetchItem();
       virtual ~FetchItem();
+      std::string Proxy(); // For internal use only.
+      void Proxy(std::string const &Proxy) APT_HIDDEN;
+
       private:
-      void * const d;
+      struct Private;
+      Private *const d;
    };
-   
+
    struct FetchResult
    {
       HashStringList Hashes;

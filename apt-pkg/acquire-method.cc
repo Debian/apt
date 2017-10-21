@@ -372,6 +372,7 @@ int pkgAcqMethod::Run(bool Single)
 	    FetchItem *Tmp = new FetchItem;
 	    
 	    Tmp->Uri = LookupTag(Message,"URI");
+	    Tmp->Proxy(LookupTag(Message, "Proxy"));
 	    Tmp->DestFile = LookupTag(Message,"FileName");
 	    if (RFC1123StrToTime(LookupTag(Message,"Last-Modified").c_str(),Tmp->LastModified) == false)
 	       Tmp->LastModified = 0;
@@ -491,10 +492,25 @@ void pkgAcqMethod::Dequeue() {						/*{{{*/
 									/*}}}*/
 pkgAcqMethod::~pkgAcqMethod() {}
 
-pkgAcqMethod::FetchItem::FetchItem() :
-   Next(nullptr), DestFileFd(-1), LastModified(0), IndexFile(false),
-   FailIgnore(false), MaximumSize(0), d(nullptr)
+struct pkgAcqMethod::FetchItem::Private
+{
+   std::string Proxy;
+};
+
+pkgAcqMethod::FetchItem::FetchItem() : Next(nullptr), DestFileFd(-1), LastModified(0), IndexFile(false),
+				       FailIgnore(false), MaximumSize(0), d(new Private)
 {}
-pkgAcqMethod::FetchItem::~FetchItem() {}
+
+std::string pkgAcqMethod::FetchItem::Proxy()
+{
+   return d->Proxy;
+}
+
+void pkgAcqMethod::FetchItem::Proxy(std::string const &Proxy)
+{
+   d->Proxy = Proxy;
+}
+
+pkgAcqMethod::FetchItem::~FetchItem() { delete d; }
 
 pkgAcqMethod::FetchResult::~FetchResult() {}

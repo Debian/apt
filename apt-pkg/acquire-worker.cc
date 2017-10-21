@@ -21,6 +21,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/proxy.h>
 #include <apt-pkg/strutl.h>
 
 #include <algorithm>
@@ -670,6 +671,17 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    Message.reserve(300);
    Message += "URI: " + Item->URI;
    Message += "\nFilename: " + Item->Owner->DestFile;
+
+   URI URL = Item->URI;
+   // FIXME: We should not hard code proxy protocols here.
+   if (URL.Access == "http" || URL.Access == "https")
+   {
+      AutoDetectProxy(URL);
+      if (_config->Exists("Acquire::" + URL.Access + "::proxy::" + URL.Host))
+      {
+	 Message += "\nProxy: " + _config->Find("Acquire::" + URL.Access + "::proxy::" + URL.Host);
+      }
+   }
 
    HashStringList const hsl = Item->GetExpectedHashes();
    for (HashStringList::const_iterator hs = hsl.begin(); hs != hsl.end(); ++hs)

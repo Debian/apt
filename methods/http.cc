@@ -427,7 +427,9 @@ bool HttpServerState::Open()
    Persistent = true;
    
    // Determine the proxy setting
-   AutoDetectProxy(ServerName);
+   // Used to run AutoDetectProxy(ServerName) here, but we now send a Proxy
+   // header in the URI Acquire request and set "Acquire::"+uri.Access+"::proxy::"+uri.Host
+   // to it in BaseHttpMethod::Loop()
    string SpecificProxy = Owner->ConfigFind("Proxy::" + ServerName.Host, "");
    if (!SpecificProxy.empty())
    {
