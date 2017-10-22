@@ -576,8 +576,6 @@ int BaseHttpMethod::Loop()
 	 if (!Queue->Proxy().empty())
 	 {
 	    URI uri = Queue->Uri;
-	    std::cerr << "Setting "
-		      << "Acquire::" + uri.Access + "::proxy::" + uri.Host << " to " << Queue->Proxy() << std::endl;
 	    _config->Set("Acquire::" + uri.Access + "::proxy::" + uri.Host, Queue->Proxy());
 	 }
 	 Server = CreateServerState(Queue->Uri);
