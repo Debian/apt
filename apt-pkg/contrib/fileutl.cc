@@ -2913,6 +2913,11 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)/
 									/*}}}*/
 bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr)/*{{{*/
 {
+   return Popen(Args, Fd, Child, Mode, CaptureStderr, false);
+}
+									/*}}}*/
+bool Popen(const char *Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr, bool Sandbox) /*{{{*/
+{
    int fd;
    if (Mode != FileFd::ReadOnly && Mode != FileFd::WriteOnly)
       return _error->Error("Popen supports ReadOnly (x)or WriteOnly mode only");
@@ -2929,6 +2934,11 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, 
       return _error->Errno("fork", "Failed to fork");
    if(Child == 0)
    {
+      if (Sandbox && (getuid() == 0 || geteuid() == 0) && !DropPrivileges())
+      {
+	 _error->DumpErrors();
+	 _exit(1);
+      }
       if(Mode == FileFd::ReadOnly)
       {
          close(Pipe[0]);
