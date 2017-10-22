@@ -1,6 +1,8 @@
 #ifndef APT_APTMETHOD_H
 #define APT_APTMETHOD_H
 
+#include "config.h"
+
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
@@ -19,6 +21,10 @@
 
 #include <apti18n.h>
 
+#ifdef HAVE_SECCOMP
+#include <seccomp.h>
+#endif
+
 static bool hasDoubleColon(std::string const &n)
 {
    return n.find("::") != std::string::npos;
@@ -28,8 +34,15 @@ class aptMethod : public pkgAcqMethod
 {
 protected:
    std::string const Binary;
+   unsigned long SeccompFlags;
+   enum Seccomp
+   {
+      BASE = (1 << 1),
+      NETWORK = (1 << 2),
+      DIRECTORY = (1 << 3),
+   };
 
-public:
+   public:
    virtual bool Configuration(std::string Message) APT_OVERRIDE
    {
       if (pkgAcqMethod::Configuration(Message) == false)
@@ -39,7 +52,198 @@ public:
       _config->MoveSubTree(conf.c_str(), NULL);
 
       DropPrivsOrDie();
+      if (LoadSeccomp() == false)
+	 return false;
 
+      return true;
+   }
+
+   bool LoadSeccomp()
+   {
+#ifdef HAVE_SECCOMP
+      int rc;
+      scmp_filter_ctx ctx = NULL;
+
+      if (SeccompFlags == 0)
+	 return true;
+
+      if (_config->FindB("APT::Sandbox::Seccomp", true) == false)
+	 return true;
+
+      ctx = seccomp_init(SCMP_ACT_TRAP);
+      if (ctx == NULL)
+	 return _error->FatalE("HttpMethod::Configuration", "Cannot init seccomp");
+
+#define ALLOW(what)                                                     \
+   if ((rc = seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(what), 0))) \
+      return _error->FatalE("HttpMethod::Configuration", "Cannot allow %s: %s", #what, strerror(-rc));
+
+      for (auto &custom : _config->FindVector("APT::Sandbox::Seccomp::Trap"))
+      {
+	 if ((rc = seccomp_rule_add(ctx, SCMP_ACT_TRAP, seccomp_syscall_resolve_name(custom.c_str()), 0)))
+	    return _error->FatalE("HttpMethod::Configuration", "Cannot trap %s: %s", custom.c_str(), strerror(-rc));
+      }
+
+      ALLOW(access);
+      ALLOW(arch_prctl);
+      ALLOW(brk);
+      ALLOW(chmod);
+      ALLOW(chown);
+      ALLOW(chown32);
+      ALLOW(clock_getres);
+      ALLOW(clock_gettime);
+      ALLOW(close);
+      ALLOW(creat);
+      ALLOW(dup);
+      ALLOW(dup2);
+      ALLOW(dup3);
+      ALLOW(exit);
+      ALLOW(exit_group);
+      ALLOW(faccessat);
+      ALLOW(fchmod);
+      ALLOW(fchmodat);
+      ALLOW(fchown);
+      ALLOW(fchown32);
+      ALLOW(fchownat);
+      ALLOW(fcntl);
+      ALLOW(fcntl64);
+      ALLOW(fdatasync);
+      ALLOW(flock);
+      ALLOW(fstat);
+      ALLOW(fstat64);
+      ALLOW(fstatat64);
+      ALLOW(fstatfs);
+      ALLOW(fstatfs64);
+      ALLOW(fsync);
+      ALLOW(ftime);
+      ALLOW(ftruncate);
+      ALLOW(ftruncate64);
+      ALLOW(futex);
+      ALLOW(futimesat);
+      ALLOW(getegid);
+      ALLOW(getegid32);
+      ALLOW(geteuid);
+      ALLOW(geteuid32);
+      ALLOW(getgid);
+      ALLOW(getgid32);
+      ALLOW(getgroups);
+      ALLOW(getgroups32);
+      ALLOW(getpeername);
+      ALLOW(getpgid);
+      ALLOW(getpgrp);
+      ALLOW(getpid);
+      ALLOW(getppid);
+      ALLOW(getrandom);
+      ALLOW(getresgid);
+      ALLOW(getresgid32);
+      ALLOW(getresuid);
+      ALLOW(getresuid32);
+      ALLOW(getrlimit);
+      ALLOW(get_robust_list);
+      ALLOW(getrusage);
+      ALLOW(gettid);
+      ALLOW(gettimeofday);
+      ALLOW(getuid);
+      ALLOW(getuid32);
+      ALLOW(ioctl);
+      ALLOW(lchown);
+      ALLOW(lchown32);
+      ALLOW(_llseek);
+      ALLOW(lseek);
+      ALLOW(lstat);
+      ALLOW(lstat64);
+      ALLOW(madvise);
+      ALLOW(mmap);
+      ALLOW(mmap2);
+      ALLOW(mprotect);
+      ALLOW(mremap);
+      ALLOW(msync);
+      ALLOW(munmap);
+      ALLOW(newfstatat);
+      ALLOW(oldfstat);
+      ALLOW(oldlstat);
+      ALLOW(oldolduname);
+      ALLOW(oldstat);
+      ALLOW(olduname);
+      ALLOW(open);
+      ALLOW(openat);
+      ALLOW(pipe);
+      ALLOW(pipe2);
+      ALLOW(poll);
+      ALLOW(ppoll);
+      ALLOW(prctl);
+      ALLOW(prlimit64);
+      ALLOW(pselect6);
+      ALLOW(read);
+      ALLOW(rename);
+      ALLOW(renameat);
+      ALLOW(rt_sigaction);
+      ALLOW(rt_sigpending);
+      ALLOW(rt_sigprocmask);
+      ALLOW(rt_sigqueueinfo);
+      ALLOW(rt_sigreturn);
+      ALLOW(rt_sigsuspend);
+      ALLOW(rt_sigtimedwait);
+      ALLOW(sched_yield);
+      ALLOW(select);
+      ALLOW(set_robust_list);
+      ALLOW(sigaction);
+      ALLOW(sigpending);
+      ALLOW(sigprocmask);
+      ALLOW(sigreturn);
+      ALLOW(sigsuspend);
+      ALLOW(stat);
+      ALLOW(statfs);
+      ALLOW(sync);
+      ALLOW(syscall);
+      ALLOW(time);
+      ALLOW(truncate);
+      ALLOW(truncate64);
+      ALLOW(ugetrlimit);
+      ALLOW(umask);
+      ALLOW(uname);
+      ALLOW(unlink);
+      ALLOW(unlinkat);
+      ALLOW(utime);
+      ALLOW(utimensat);
+      ALLOW(utimes);
+      ALLOW(write);
+
+      if ((SeccompFlags & Seccomp::NETWORK) != 0)
+      {
+	 ALLOW(bind);
+	 ALLOW(connect);
+	 ALLOW(getsockname);
+	 ALLOW(getsockopt);
+	 ALLOW(recv);
+	 ALLOW(recvfrom);
+	 ALLOW(recvmsg);
+	 ALLOW(send);
+	 ALLOW(sendmsg);
+	 ALLOW(sendto);
+	 ALLOW(setsockopt);
+	 ALLOW(socket);
+      }
+
+      if ((SeccompFlags & Seccomp::DIRECTORY) != 0)
+      {
+	 ALLOW(readdir);
+	 ALLOW(getdents);
+	 ALLOW(getdents64);
+      }
+
+      for (auto &custom : _config->FindVector("APT::Sandbox::Seccomp::Allow"))
+      {
+	 if ((rc = seccomp_rule_add(ctx, SCMP_ACT_ALLOW, seccomp_syscall_resolve_name(custom.c_str()), 0)))
+	    return _error->FatalE("HttpMethod::Configuration", "Cannot allow %s: %s", custom.c_str(), strerror(-rc));
+      }
+
+#undef ALLOW
+
+      rc = seccomp_load(ctx);
+      if (rc != 0)
+	 return _error->FatalE("HttpMethod::Configuration", "could not load seccomp policy: %s", strerror(-rc));
+#endif
       return true;
    }
 
@@ -139,8 +343,8 @@ public:
       return true;
    }
 
-   aptMethod(std::string &&Binary, char const * const Ver, unsigned long const Flags) APT_NONNULL(3) :
-      pkgAcqMethod(Ver, Flags), Binary(Binary), methodNames({Binary})
+   aptMethod(std::string &&Binary, char const *const Ver, unsigned long const Flags) APT_NONNULL(3)
+       : pkgAcqMethod(Ver, Flags), Binary(Binary), SeccompFlags(0), methodNames({Binary})
    {
       try {
 	 std::locale::global(std::locale(""));
@@ -172,6 +376,9 @@ public:
 
       DropPrivsOrDie();
 
+      if (LoadSeccomp() == false)
+	 return false;
+
       return true;
    }
 
@@ -186,7 +393,7 @@ public:
       return MaybeAddAuth(authconf, uri);
    }
 
-   aptAuthConfMethod(std::string &&Binary, char const * const Ver, unsigned long const Flags) APT_NONNULL(3) :
-      aptMethod(std::move(Binary), Ver, Flags) {}
+   aptAuthConfMethod(std::string &&Binary, char const *const Ver, unsigned long const Flags) APT_NONNULL(3)
+       : aptMethod(std::move(Binary), Ver, Flags) {}
 };
 #endif

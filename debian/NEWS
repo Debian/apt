@@ -1,3 +1,16 @@
+apt (1.6~alpha1) UNRELEASED; urgency=medium
+
+  All methods provided by apt except for cdrom, gpgv, and rsh now
+  use seccomp-BPF sandboxing to restrict the list of allowed system
+  calls, and trap all others with a SIGSYS signal. Three options
+  can be used to configure this further:
+
+    APT::Sandbox::Seccomp is a boolean to turn it on/off
+    APT::Sandbox::Seccomp::Trap is a list of names of more syscalls to trap
+    APT::Sandbox::Seccomp::Allow is a list of names of more syscalls to allow
+
+ -- Julian Andres Klode <jak@debian.org>  Sun, 22 Oct 2017 22:29:58 +0200
+
 apt (1.5~beta1) unstable; urgency=medium
 
   [ New HTTPS method ]

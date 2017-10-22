@@ -40,6 +40,7 @@ test_deb_control() {
 	  | sed -r -e 's#<[^,<>()@]*>##g' \
 	           -e 's#@[^,<>()@]*@##g' \
 	           -e 's#\[linux-any\]*##g' \
+	           -e 's#\[[^][]*\]*##g' \
 	           -e 's#dpkg-dev \([^)]*\)#dpkg-dev#g' \
 	           -e 's#debhelper \([^)]*\)#debhelper#g' \
 	           -e 's#g\+\+ \([^)]*\)#g++#g' \

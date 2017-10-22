@@ -38,6 +38,7 @@ class StoreMethod : public aptMethod
 
    explicit StoreMethod(std::string &&pProg) : aptMethod(std::move(pProg),"1.2",SingleInstance | SendConfig)
    {
+      SeccompFlags = aptMethod::BASE;
       if (Binary != "store")
 	 methodNames.insert(methodNames.begin(), "store");
    }

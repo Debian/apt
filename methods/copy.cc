@@ -30,8 +30,10 @@ class CopyMethod : public aptMethod
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
 
    public:
-
-   CopyMethod() : aptMethod("copy", "1.0",SingleInstance | SendConfig) {};
+   CopyMethod() : aptMethod("copy", "1.0", SingleInstance | SendConfig)
+   {
+      SeccompFlags = aptMethod::BASE;
+   }
 };
 
 // CopyMethod::Fetch - Fetch a file					/*{{{*/

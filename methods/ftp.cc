@@ -962,6 +962,7 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
 /* */
 FtpMethod::FtpMethod() : aptAuthConfMethod("ftp", "1.0", SendConfig)
 {
+   SeccompFlags = aptMethod::BASE | aptMethod::NETWORK;
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
    

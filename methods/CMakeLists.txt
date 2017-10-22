@@ -1,4 +1,6 @@
 # Create the executable targets
+include_directories($<$<BOOL:${SECCOMP_FOUND}>:${SECCOMP_INCLUDE_DIR}>)
+
 add_executable(file file.cc)
 add_executable(copy copy.cc)
 add_executable(store store.cc)
@@ -14,16 +16,16 @@ target_compile_definitions(http PRIVATE ${GNUTLS_DEFINITIONS})
 target_include_directories(http PRIVATE ${GNUTLS_INCLUDE_DIR})
 
 # Link the executables against the libraries
-target_link_libraries(file apt-pkg)
-target_link_libraries(copy apt-pkg)
-target_link_libraries(store apt-pkg)
-target_link_libraries(gpgv apt-pkg)
-target_link_libraries(cdrom apt-pkg)
-target_link_libraries(http apt-pkg ${GNUTLS_LIBRARIES})
-target_link_libraries(mirror apt-pkg ${RESOLV_LIBRARIES} ${GNUTLS_LIBRARIES})
-target_link_libraries(ftp apt-pkg ${GNUTLS_LIBRARIES})
-target_link_libraries(rred apt-pkg)
-target_link_libraries(rsh apt-pkg)
+target_link_libraries(file apt-pkg $<$<BOOL:${SECCOMP_FOUND}>:${SECCOMP_LIBRARIES}>)
+target_link_libraries(copy apt-pkg $<$<BOOL:${SECCOMP_FOUND}>:${SECCOMP_LIBRARIES}>)
+target_link_libraries(store apt-pkg $<$<BOOL:${SECCOMP_FOUND}>:${SECCOMP_LIBRARIES}>)
+target_link_libraries(gpgv apt-pkg $<$<BOOL:${SECCOMP_FOUND}>:${SECCOMP_LIBRARIES}>)
+target_link_libraries(cdrom apt-pkg $<$<BOOL:${SECCOMP_FOUND}>:${SECCOMP_LIBRARIES}>)
+target_link_libraries(http apt-pkg ${GNUTLS_LIBRARIES} $<$<BOOL:${SECCOMP_FOUND}>:${SECCOMP_LIBRARIES}>)
+target_link_libraries(mirror apt-pkg ${RESOLV_LIBRARIES} ${GNUTLS_LIBRARIES} $<$<BOOL:${SECCOMP_FOUND}>:${SECCOMP_LIBRARIES}>)
+target_link_libraries(ftp apt-pkg ${GNUTLS_LIBRARIES} $<$<BOOL:${SECCOMP_FOUND}>:${SECCOMP_LIBRARIES}>)
+target_link_libraries(rred apt-pkg $<$<BOOL:${SECCOMP_FOUND}>:${SECCOMP_LIBRARIES}>)
+target_link_libraries(rsh apt-pkg $<$<BOOL:${SECCOMP_FOUND}>:${SECCOMP_LIBRARIES}>)
 
 # Install the library
 install(TARGETS file copy store gpgv cdrom http ftp rred rsh mirror

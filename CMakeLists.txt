@@ -108,6 +108,11 @@ if (UDEV_FOUND)
   set(HAVE_UDEV 1)
 endif()
 
+find_package(Seccomp)
+if (SECCOMP_FOUND)
+  set(HAVE_SECCOMP 1)
+endif()
+
 # Mount()ing and stat()ing and friends
 check_symbol_exists(statfs sys/vfs.h HAVE_VFS_H)
 check_include_files(sys/params.h HAVE_PARAMS_H)

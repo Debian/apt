@@ -33,7 +33,10 @@ class FileMethod : public aptMethod
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
 
    public:
-   FileMethod() : aptMethod("file", "1.0", SingleInstance | SendConfig | LocalOnly) {};
+   FileMethod() : aptMethod("file", "1.0", SingleInstance | SendConfig | LocalOnly)
+   {
+      SeccompFlags = aptMethod::BASE;
+   }
 };
 
 // FileMethod::Fetch - Fetch a file					/*{{{*/
