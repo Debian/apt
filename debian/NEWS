@@ -1,4 +1,4 @@
-apt (1.6~alpha1) UNRELEASED; urgency=medium
+apt (1.6~alpha1) unstable; urgency=medium
 
   All methods provided by apt except for cdrom, gpgv, and rsh now
   use seccomp-BPF sandboxing to restrict the list of allowed system
@@ -9,7 +9,9 @@ apt (1.6~alpha1) UNRELEASED; urgency=medium
     APT::Sandbox::Seccomp::Trap is a list of names of more syscalls to trap
     APT::Sandbox::Seccomp::Allow is a list of names of more syscalls to allow
 
- -- Julian Andres Klode <jak@debian.org>  Sun, 22 Oct 2017 22:29:58 +0200
+  Also, sandboxing is now enabled for the mirror method.
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 23 Oct 2017 01:58:18 +0200
 
 apt (1.5~beta1) unstable; urgency=medium
 
