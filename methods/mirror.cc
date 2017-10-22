@@ -69,7 +69,7 @@ MirrorMethod::MirrorMethod()
 /* We stash the desired pipeline depth */
 bool MirrorMethod::Configuration(string Message)
 {
-   if (pkgAcqMethod::Configuration(Message) == false)
+   if (HttpMethod::Configuration(Message) == false)
       return false;
    Debug = DebugEnabled();
    
