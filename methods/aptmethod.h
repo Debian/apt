@@ -160,6 +160,7 @@ protected:
       ALLOW(msync);
       ALLOW(munmap);
       ALLOW(newfstatat);
+      ALLOW(_newselect);
       ALLOW(oldfstat);
       ALLOW(oldlstat);
       ALLOW(oldolduname);
@@ -175,8 +176,10 @@ protected:
       ALLOW(prlimit64);
       ALLOW(pselect6);
       ALLOW(read);
+      ALLOW(readv);
       ALLOW(rename);
       ALLOW(renameat);
+      ALLOW(renameat2);
       ALLOW(rt_sigaction);
       ALLOW(rt_sigpending);
       ALLOW(rt_sigprocmask);
@@ -193,7 +196,10 @@ protected:
       ALLOW(sigreturn);
       ALLOW(sigsuspend);
       ALLOW(stat);
+      ALLOW(stat64);
       ALLOW(statfs);
+      ALLOW(statfs64);
+      ALLOW(statx);
       ALLOW(sync);
       ALLOW(syscall);
       ALLOW(time);
@@ -208,6 +214,7 @@ protected:
       ALLOW(utimensat);
       ALLOW(utimes);
       ALLOW(write);
+      ALLOW(writev);
 
       if ((SeccompFlags & Seccomp::NETWORK) != 0)
       {
@@ -217,12 +224,16 @@ protected:
 	 ALLOW(getsockopt);
 	 ALLOW(recv);
 	 ALLOW(recvfrom);
+	 ALLOW(recvmmsg);
 	 ALLOW(recvmsg);
 	 ALLOW(send);
+	 ALLOW(sendmmsg);
 	 ALLOW(sendmsg);
 	 ALLOW(sendto);
 	 ALLOW(setsockopt);
+	 ALLOW(shutdown);
 	 ALLOW(socket);
+	 ALLOW(socketcall);
       }
 
       if ((SeccompFlags & Seccomp::DIRECTORY) != 0)
