@@ -199,7 +199,9 @@ protected:
       ALLOW(stat64);
       ALLOW(statfs);
       ALLOW(statfs64);
+#ifdef __NR_statx
       ALLOW(statx);
+#endif
       ALLOW(sync);
       ALLOW(syscall);
       ALLOW(time);
