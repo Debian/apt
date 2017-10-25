@@ -1,3 +1,14 @@
+apt (1.6~alpha2) unstable; urgency=medium
+
+  * seccomp: Conditionalize statx() whitelisting
+  * CMake: methods: Cleanup link libraries, use OBJECT libraries
+  * methods: Enable additional syscalls (SYSV IPC) in fakeroot (Closes: #879662)
+  * Don't segfault if receiving a method warning on empty queue
+  * Only warn about seccomp() EINVAL (normal) and EFAULT (qemu) errors
+  * Print syscall number and arch to stderr when trapped by seccomp
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 26 Oct 2017 00:32:20 +0200
+
 apt (1.6~alpha1) unstable; urgency=medium
 
   [ Julian Andres Klode ]
