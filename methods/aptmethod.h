@@ -258,14 +258,16 @@ protected:
       for (auto &custom : _config->FindVector("APT::Sandbox::Seccomp::Allow"))
       {
 	 if ((rc = seccomp_rule_add(ctx, SCMP_ACT_ALLOW, seccomp_syscall_resolve_name(custom.c_str()), 0)))
-	    return _error->FatalE("HttpMethod::Configuration", "Cannot allow %s: %s", custom.c_str(), strerror(-rc));
+	    return _error->FatalE("aptMethod::Configuration", "Cannot allow %s: %s", custom.c_str(), strerror(-rc));
       }
 
 #undef ALLOW
 
       rc = seccomp_load(ctx);
-      if (rc != 0)
-	 return _error->FatalE("HttpMethod::Configuration", "could not load seccomp policy: %s", strerror(-rc));
+      if (rc == -EINVAL || rc == -EFAULT) // Qemu faults...
+	 Warning("aptMethod::Configuration: could not load seccomp policy: %s", strerror(-rc));
+      else if (rc != 0)
+	 return _error->FatalE("aptMethod::Configuration", "could not load seccomp policy: %s", strerror(-rc));
 #endif
       return true;
    }
