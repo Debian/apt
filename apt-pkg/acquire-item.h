@@ -174,6 +174,7 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     *  \sa pkgAcqMethod
     */
    virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
+   APT_HIDDEN void FailMessage(std::string const &Message);
 
    /** \brief Invoked by the acquire worker to check if the successfully
     * fetched object is also the objected we wanted to have.
@@ -238,6 +239,8 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     *  no trailing newline.
     */
    virtual std::string Custom600Headers() const;
+   // Retries should really be a member of the Item, but can't be for ABI reasons
+   APT_HIDDEN unsigned int &ModifyRetries();
 
    /** \brief A "descriptive" URI-like string.
     *
@@ -994,6 +997,7 @@ class pkgAcqArchive : public pkgAcquire::Item
     *
     *  Set from Acquire::Retries.
     */
+   APT_DEPRECATED_MSG("Unused member. See pkgAcqItem::Retries.")
    unsigned int Retries;
 
    /** \brief \b true if this version file is being downloaded from a
@@ -1171,6 +1175,7 @@ class pkgAcqFile : public pkgAcquire::Item
    /** \brief How many times to retry the download, set from
     *  Acquire::Retries.
     */
+   APT_DEPRECATED_MSG("Unused member. See pkgAcqItem::Retries.")
    unsigned int Retries;
 
    /** \brief Should this file be considered a index file */

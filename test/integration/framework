@@ -1273,8 +1273,8 @@ webserverconfig() {
 		NOCHECK=true
 		shift
 	fi
-	local DOWNLOG='rootdir/tmp/download-testfile.log'
-	local STATUS='downloaded/webserverconfig.status'
+	local DOWNLOG="${TMPWORKINGDIRECTORY}/rootdir/tmp/download-testfile.log"
+	local STATUS="${TMPWORKINGDIRECTORY}/downloaded/webserverconfig.status"
 	rm -f "$STATUS" "$DOWNLOG"
 	# very very basic URI encoding
 	local URI
@@ -1937,8 +1937,8 @@ testaccessrights() {
 
 testwebserverlaststatuscode() {
 	msggroup 'testwebserverlaststatuscode'
-	local DOWNLOG='rootdir/tmp/webserverstatus-testfile.log'
-	local STATUS='downloaded/webserverstatus-statusfile.log'
+	local DOWNLOG="${TMPWORKINGDIRECTORY}/rootdir/tmp/webserverstatus-testfile.log"
+	local STATUS="${TMPWORKINGDIRECTORY}/downloaded/webserverstatus-statusfile.log"
 	rm -f "$DOWNLOG" "$STATUS"
 	msgtest 'Test last status code from the webserver was' "$1"
 	if downloadfile "http://localhost:${APTHTTPPORT}/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG" && [ "$(cat "$STATUS")" = "$1" ]; then

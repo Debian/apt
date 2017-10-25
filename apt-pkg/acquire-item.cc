@@ -684,6 +684,11 @@ class pkgAcquire::Item::Private
 {
 public:
    std::vector<std::string> PastRedirections;
+   unsigned int Retries;
+
+   Private() : Retries(_config->FindI("Acquire::Retries", 0))
+   {
+   }
 };
 APT_IGNORE_DEPRECATED_PUSH
 pkgAcquire::Item::Item(pkgAcquire * const owner) :
@@ -705,6 +710,11 @@ pkgAcquire::Item::~Item()
 std::string pkgAcquire::Item::Custom600Headers() const			/*{{{*/
 {
    return std::string();
+}
+									/*}}}*/
+unsigned int &pkgAcquire::Item::ModifyRetries() /*{{{*/
+{
+   return d->Retries;
 }
 									/*}}}*/
 std::string pkgAcquire::Item::ShortDesc() const				/*{{{*/
@@ -778,6 +788,13 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
       Dequeue();
    }
 
+   FailMessage(Message);
+
+   if (QueueCounter > 1)
+      Status = StatIdle;
+}
+void pkgAcquire::Item::FailMessage(string const &Message)
+{
    string const FailReason = LookupTag(Message, "FailReason");
    enum { MAXIMUM_SIZE_EXCEEDED, HASHSUM_MISMATCH, WEAK_HASHSUMS, REDIRECTION_LOOP, OTHER } failreason = OTHER;
    if ( FailReason == "MaximumSizeExceeded")
@@ -851,9 +868,6 @@ void pkgAcquire::Item::Failed(string const &Message,pkgAcquire::MethodConfig con
       ReportMirrorFailureToCentral(*this, FailReason, ErrorText);
    else
       ReportMirrorFailureToCentral(*this, ErrorText, ErrorText);
-
-   if (QueueCounter > 1)
-      Status = StatIdle;
 }
 									/*}}}*/
 // Acquire::Item::Start - Item has begun to download			/*{{{*/
@@ -899,7 +913,7 @@ void pkgAcquire::Item::Done(string const &/*Message*/, HashStringList const &Has
       }
    }
    Status = StatDone;
-   ErrorText = string();
+   ErrorText.clear();
    Owner->Dequeue(this);
 }
 									/*}}}*/
@@ -3217,8 +3231,6 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire * const Owner,pkgSourceList * const Sour
                StoreFilename(StoreFilename), Vf(Version.FileList()),
 	       Trusted(false)
 {
-   Retries = _config->FindI("Acquire::Retries",0);
-
    if (Version.Arch() == 0)
    {
       _error->Error(_("I wasn't able to locate a file for the %s package. "
@@ -3453,17 +3465,6 @@ void pkgAcqArchive::Failed(string const &Message,pkgAcquire::MethodConfig const 
    Status = StatIdle;
    if (QueueNext() == false)
    {
-      // This is the retry counter
-      if (Retries != 0 &&
-	  Cnf->LocalOnly == false &&
-	  StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
-      {
-	 Retries--;
-	 Vf = Version.FileList();
-	 if (QueueNext() == true)
-	    return;
-      }
-
       StoreFilename = string();
       Status = StatError;
    }
@@ -3754,14 +3755,12 @@ pkgAcqChangelog::~pkgAcqChangelog()					/*{{{*/
 									/*}}}*/
 
 // AcqFile::pkgAcqFile - Constructor					/*{{{*/
-pkgAcqFile::pkgAcqFile(pkgAcquire * const Owner,string const &URI, HashStringList const &Hashes,
-		       unsigned long long const Size,string const &Dsc,string const &ShortDesc,
+APT_IGNORE_DEPRECATED_PUSH
+pkgAcqFile::pkgAcqFile(pkgAcquire *const Owner, string const &URI, HashStringList const &Hashes,
+		       unsigned long long const Size, string const &Dsc, string const &ShortDesc,
 		       const string &DestDir, const string &DestFilename,
-                       bool const IsIndexFile) :
-                       Item(Owner), d(NULL), IsIndexFile(IsIndexFile), ExpectedHashes(Hashes)
+		       bool const IsIndexFile) : Item(Owner), d(NULL), Retries(0), IsIndexFile(IsIndexFile), ExpectedHashes(Hashes)
 {
-   Retries = _config->FindI("Acquire::Retries",0);
-
    if(!DestFilename.empty())
       DestFile = DestFilename;
    else if(!DestDir.empty())
@@ -3791,6 +3790,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire * const Owner,string const &URI, HashStringLis
 
    QueueURI(Desc);
 }
+APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // AcqFile::Done - Item downloaded OK					/*{{{*/
 void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
@@ -3840,24 +3840,10 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
    }
 }
 									/*}}}*/
-// AcqFile::Failed - Failure handler					/*{{{*/
-// ---------------------------------------------------------------------
-/* Here we try other sources */
-void pkgAcqFile::Failed(string const &Message, pkgAcquire::MethodConfig const * const Cnf)
+void pkgAcqFile::Failed(string const &Message, pkgAcquire::MethodConfig const *const Cnf) /*{{{*/
 {
-   Item::Failed(Message,Cnf);
-
-   // This is the retry counter
-   if (Retries != 0 &&
-       Cnf->LocalOnly == false &&
-       StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
-   {
-      --Retries;
-      QueueURI(Desc);
-      Status = StatIdle;
-      return;
-   }
-
+   // FIXME: Remove this pointless overload on next ABI break
+   Item::Failed(Message, Cnf);
 }
 									/*}}}*/
 string pkgAcqFile::Custom600Headers() const				/*{{{*/

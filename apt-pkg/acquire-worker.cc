@@ -506,6 +506,9 @@ bool pkgAcquire::Worker::RunMessages()
 	    Itm = nullptr;
 
 	    bool errTransient = false, errAuthErr = false;
+	    if (StringToBool(LookupTag(Message, "Transient-Failure"), false) == true)
+	       errTransient = true;
+	    else
 	    {
 	       std::string const failReason = LookupTag(Message, "FailReason");
 	       {
@@ -522,15 +525,28 @@ bool pkgAcquire::Worker::RunMessages()
 
 	    for (auto const Owner: ItmOwners)
 	    {
-	       if (errAuthErr && Owner->GetExpectedHashes().empty() == false)
-		  Owner->Status = pkgAcquire::Item::StatAuthError;
-	       else if (errTransient)
-		  Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
-	       auto SavedDesc = Owner->GetItemDesc();
-	       if (isDoomedItem(Owner) == false)
-		  Owner->Failed(Message,Config);
-	       if (Log != nullptr)
-		  Log->Fail(SavedDesc);
+	       if (errTransient == true && Config->LocalOnly == false && Owner->ModifyRetries() != 0)
+	       {
+		  --Owner->ModifyRetries();
+		  Owner->FailMessage(Message);
+		  auto SavedDesc = Owner->GetItemDesc();
+		  if (Log != nullptr)
+		     Log->Fail(SavedDesc);
+		  if (isDoomedItem(Owner) == false)
+		     OwnerQ->Owner->Enqueue(SavedDesc);
+	       }
+	       else
+	       {
+		  if (errAuthErr && Owner->GetExpectedHashes().empty() == false)
+		     Owner->Status = pkgAcquire::Item::StatAuthError;
+		  else if (errTransient)
+		     Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
+		  auto SavedDesc = Owner->GetItemDesc();
+		  if (isDoomedItem(Owner) == false)
+		     Owner->Failed(Message, Config);
+		  if (Log != nullptr)
+		     Log->Fail(SavedDesc);
+	       }
 	    }
 	    ItemDone();
 
