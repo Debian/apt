@@ -22,6 +22,8 @@
 #include <apti18n.h>
 
 #ifdef HAVE_SECCOMP
+#include <signal.h>
+
 #include <seccomp.h>
 #endif
 
@@ -268,6 +270,37 @@ protected:
 	 Warning("aptMethod::Configuration: could not load seccomp policy: %s", strerror(-rc));
       else if (rc != 0)
 	 return _error->FatalE("aptMethod::Configuration", "could not load seccomp policy: %s", strerror(-rc));
+
+      if (_config->FindB("APT::Sandbox::Seccomp::Print", true))
+      {
+	 struct sigaction action;
+	 memset(&action, 0, sizeof(action));
+	 sigemptyset(&action.sa_mask);
+	 action.sa_sigaction = [](int, siginfo_t *info, void *) {
+	    // Formats a number into a 10 digit ASCII string
+	    char buffer[10];
+	    int number = info->si_syscall;
+
+	    for (int i = sizeof(buffer) - 1; i >= 0; i--)
+	    {
+	       buffer[i] = (number % 10) + '0';
+	       number /= 10;
+	    }
+
+	    constexpr const char *str1 = "\n **** Seccomp prevented execution of syscall ";
+	    constexpr const char *str2 = " on architecture ";
+	    constexpr const char *str3 = " ****\n";
+	    write(2, str1, strlen(str1));
+	    write(2, buffer, sizeof(buffer));
+	    write(2, str2, strlen(str2));
+	    write(2, COMMON_ARCH, strlen(COMMON_ARCH));
+	    write(2, str3, strlen(str3));
+	    _exit(31);
+	 };
+	 action.sa_flags = SA_SIGINFO;
+
+	 sigaction(SIGSYS, &action, nullptr);
+      }
 #endif
       return true;
    }
