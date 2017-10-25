@@ -112,8 +112,8 @@ std::unique_ptr<MethodFd> MethodFd::FromFd(int iFd)
 // DoConnect - Attempt a connect operation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This helper function attempts a connection to a single address. */
-static bool DoConnect(struct addrinfo *Addr, std::string const &Host,
-		      unsigned long TimeOut, std::unique_ptr<MethodFd> &Fd, aptMethod *Owner)
+static ResultState DoConnect(struct addrinfo *Addr, std::string const &Host,
+			     unsigned long TimeOut, std::unique_ptr<MethodFd> &Fd, aptMethod *Owner)
 {
    // Show a status indicator
    char Name[NI_MAXHOST];
@@ -129,7 +129,7 @@ static bool DoConnect(struct addrinfo *Addr, std::string const &Host,
 
    // if that addr did timeout before, we do not try it again
    if(bad_addr.find(std::string(Name)) != bad_addr.end())
-      return false;
+      return ResultState::TRANSIENT_ERROR;
 
    /* If this is an IP rotation store the IP we are using.. If something goes
       wrong this will get tacked onto the end of the error message */
@@ -143,31 +143,43 @@ static bool DoConnect(struct addrinfo *Addr, std::string const &Host,
    // Get a socket
    if ((static_cast<FdFd *>(Fd.get())->fd = socket(Addr->ai_family, Addr->ai_socktype,
 						   Addr->ai_protocol)) < 0)
-      return _error->Errno("socket",_("Could not create a socket for %s (f=%u t=%u p=%u)"),
-			   Name,Addr->ai_family,Addr->ai_socktype,Addr->ai_protocol);
+   {
+      _error->Errno("socket", _("Could not create a socket for %s (f=%u t=%u p=%u)"),
+		    Name, Addr->ai_family, Addr->ai_socktype, Addr->ai_protocol);
+      return ResultState::FATAL_ERROR;
+   }
 
    SetNonBlock(Fd->Fd(), true);
    if (connect(Fd->Fd(), Addr->ai_addr, Addr->ai_addrlen) < 0 &&
        errno != EINPROGRESS)
-      return _error->Errno("connect",_("Cannot initiate the connection "
-			   "to %s:%s (%s)."),Host.c_str(),Service,Name);
-   
+   {
+      _error->Errno("connect", _("Cannot initiate the connection "
+				 "to %s:%s (%s)."),
+		    Host.c_str(), Service, Name);
+      return ResultState::TRANSIENT_ERROR;
+   }
+
    /* This implements a timeout for connect by opening the connection
       nonblocking */
    if (WaitFd(Fd->Fd(), true, TimeOut) == false)
    {
       bad_addr.insert(bad_addr.begin(), std::string(Name));
       Owner->SetFailReason("Timeout");
-      return _error->Error(_("Could not connect to %s:%s (%s), "
-			   "connection timed out"),Host.c_str(),Service,Name);
+      _error->Error(_("Could not connect to %s:%s (%s), "
+		      "connection timed out"),
+		    Host.c_str(), Service, Name);
+      return ResultState::TRANSIENT_ERROR;
    }
 
    // Check the socket for an error condition
    unsigned int Err;
    unsigned int Len = sizeof(Err);
    if (getsockopt(Fd->Fd(), SOL_SOCKET, SO_ERROR, &Err, &Len) != 0)
-      return _error->Errno("getsockopt",_("Failed"));
-   
+   {
+      _error->Errno("getsockopt", _("Failed"));
+      return ResultState::FATAL_ERROR;
+   }
+
    if (Err != 0)
    {
       errno = Err;
@@ -176,22 +188,23 @@ static bool DoConnect(struct addrinfo *Addr, std::string const &Host,
       else if (errno == ETIMEDOUT)
 	 Owner->SetFailReason("ConnectionTimedOut");
       bad_addr.insert(bad_addr.begin(), std::string(Name));
-      return _error->Errno("connect",_("Could not connect to %s:%s (%s)."),Host.c_str(),
-			   Service,Name);
+      _error->Errno("connect", _("Could not connect to %s:%s (%s)."), Host.c_str(),
+		    Service, Name);
+      return ResultState::TRANSIENT_ERROR;
    }
 
    Owner->SetFailReason("");
 
-   return true;
+   return ResultState::SUCCESSFUL;
 }
 									/*}}}*/
 // Connect to a given Hostname						/*{{{*/
-static bool ConnectToHostname(std::string const &Host, int const Port,
-			      const char *const Service, int DefPort, std::unique_ptr<MethodFd> &Fd,
-			      unsigned long const TimeOut, aptMethod *const Owner)
+static ResultState ConnectToHostname(std::string const &Host, int const Port,
+				     const char *const Service, int DefPort, std::unique_ptr<MethodFd> &Fd,
+				     unsigned long const TimeOut, aptMethod *const Owner)
 {
    if (ConnectionAllowed(Service, Host) == false)
-      return false;
+      return ResultState::FATAL_ERROR;
    // Convert the port name/number
    char ServStr[300];
    if (Port != 0)
@@ -238,8 +251,11 @@ static bool ConnectToHostname(std::string const &Host, int const Port,
          Hints.ai_family = AF_UNSPEC;
 
       // if we couldn't resolve the host before, we don't try now
-      if(bad_addr.find(Host) != bad_addr.end()) 
-	 return _error->Error(_("Could not resolve '%s'"),Host.c_str());
+      if (bad_addr.find(Host) != bad_addr.end())
+      {
+	 _error->Error(_("Could not resolve '%s'"), Host.c_str());
+	 return ResultState::TRANSIENT_ERROR;
+      }
 
       // Resolve both the host and service simultaneously
       while (1)
@@ -258,20 +274,24 @@ static bool ConnectToHostname(std::string const &Host, int const Port,
 	       }
 	       bad_addr.insert(bad_addr.begin(), Host);
 	       Owner->SetFailReason("ResolveFailure");
-	       return _error->Error(_("Could not resolve '%s'"),Host.c_str());
+	       _error->Error(_("Could not resolve '%s'"), Host.c_str());
+	       return ResultState::TRANSIENT_ERROR;
 	    }
 	    
 	    if (Res == EAI_AGAIN)
 	    {
 	       Owner->SetFailReason("TmpResolveFailure");
-	       return _error->Error(_("Temporary failure resolving '%s'"),
-				    Host.c_str());
+	       _error->Error(_("Temporary failure resolving '%s'"),
+			     Host.c_str());
+	       return ResultState::TRANSIENT_ERROR;
 	    }
 	    if (Res == EAI_SYSTEM)
-	       return _error->Errno("getaddrinfo", _("System error resolving '%s:%s'"),
-                                      Host.c_str(),ServStr);
-	    return _error->Error(_("Something wicked happened resolving '%s:%s' (%i - %s)"),
-				 Host.c_str(),ServStr,Res,gai_strerror(Res));
+	       _error->Errno("getaddrinfo", _("System error resolving '%s:%s'"),
+			     Host.c_str(), ServStr);
+	    else
+	       _error->Error(_("Something wicked happened resolving '%s:%s' (%i - %s)"),
+			     Host.c_str(), ServStr, Res, gai_strerror(Res));
+	    return ResultState::TRANSIENT_ERROR;
 	 }
 	 break;
       }
@@ -287,10 +307,11 @@ static bool ConnectToHostname(std::string const &Host, int const Port,
    
    while (CurHost != 0)
    {
-      if (DoConnect(CurHost,Host,TimeOut,Fd,Owner) == true)
+      auto const result = DoConnect(CurHost, Host, TimeOut, Fd, Owner);
+      if (result == ResultState::SUCCESSFUL)
       {
 	 LastUsed = CurHost;
-	 return true;
+	 return result;
       }
       Fd->Close();
 
@@ -315,22 +336,23 @@ static bool ConnectToHostname(std::string const &Host, int const Port,
    }   
 
    if (_error->PendingError() == true)
-      return false;   
-   return _error->Error(_("Unable to connect to %s:%s:"),Host.c_str(),ServStr);
+      return ResultState::FATAL_ERROR;
+   _error->Error(_("Unable to connect to %s:%s:"), Host.c_str(), ServStr);
+   return ResultState::TRANSIENT_ERROR;
 }
 									/*}}}*/
 // Connect - Connect to a server					/*{{{*/
 // ---------------------------------------------------------------------
 /* Performs a connection to the server (including SRV record lookup) */
-bool Connect(std::string Host, int Port, const char *Service,
-	     int DefPort, std::unique_ptr<MethodFd> &Fd,
-	     unsigned long TimeOut, aptMethod *Owner)
+ResultState Connect(std::string Host, int Port, const char *Service,
+		    int DefPort, std::unique_ptr<MethodFd> &Fd,
+		    unsigned long TimeOut, aptMethod *Owner)
 {
    if (_error->PendingError() == true)
-      return false;
+      return ResultState::FATAL_ERROR;
 
    if (ConnectionAllowed(Service, Host) == false)
-      return false;
+      return ResultState::FATAL_ERROR;
 
    if(LastHost != Host || LastPort != Port)
    {
@@ -340,8 +362,12 @@ bool Connect(std::string Host, int Port, const char *Service,
          GetSrvRecords(Host, DefPort, SrvRecords);
 	 // RFC2782 defines that a lonely '.' target is an abort reason
 	 if (SrvRecords.size() == 1 && SrvRecords[0].target.empty())
-	    return _error->Error("SRV records for %s indicate that "
-		  "%s service is not available at this domain", Host.c_str(), Service);
+	 {
+	    _error->Error("SRV records for %s indicate that "
+			  "%s service is not available at this domain",
+			  Host.c_str(), Service);
+	    return ResultState::FATAL_ERROR;
+	 }
       }
    }
 
@@ -358,11 +384,11 @@ bool Connect(std::string Host, int Port, const char *Service,
       Host = Srv.target;
       Port = Srv.port;
       auto const ret = ConnectToHostname(Host, Port, Service, DefPort, Fd, TimeOut, Owner);
-      if (ret)
+      if (ret == ResultState::SUCCESSFUL)
       {
 	 while(stackSize--)
 	    _error->RevertToStack();
-         return true;
+	 return ret;
       }
    }
    Host = std::move(initialHost);
@@ -374,7 +400,7 @@ bool Connect(std::string Host, int Port, const char *Service,
    auto const ret = ConnectToHostname(Host, Port, Service, DefPort, Fd,
 	 TimeOut, Owner);
    while(stackSize--)
-      if (ret)
+      if (ret == ResultState::SUCCESSFUL)
 	 _error->RevertToStack();
       else
 	 _error->MergeWithStack();
@@ -403,8 +429,8 @@ static bool TalkToSocksProxy(int const ServerFd, std::string const &Proxy,
    return true;
 }
 
-bool UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd,
-		 unsigned long Timeout, aptMethod *Owner)
+ResultState UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd,
+			unsigned long Timeout, aptMethod *Owner)
 {
    /* We implement a very basic SOCKS5 client here complying mostly to RFC1928 expect
     * for not offering GSSAPI auth which is a must (we only do no or user/pass auth).
@@ -413,14 +439,20 @@ bool UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd
    Owner->Status(_("Connecting to %s (%s)"), "SOCKS5h proxy", ProxyInfo.c_str());
 #define APT_WriteOrFail(TYPE, DATA, LENGTH)                                               \
    if (TalkToSocksProxy(Fd->Fd(), ProxyInfo, TYPE, true, DATA, LENGTH, Timeout) == false) \
-   return false
+   return ResultState::TRANSIENT_ERROR
 #define APT_ReadOrFail(TYPE, DATA, LENGTH)                                                 \
    if (TalkToSocksProxy(Fd->Fd(), ProxyInfo, TYPE, false, DATA, LENGTH, Timeout) == false) \
-   return false
+   return ResultState::TRANSIENT_ERROR
    if (Host.length() > 255)
-      return _error->Error("Can't use SOCKS5h as hostname %s is too long!", Host.c_str());
+   {
+      _error->Error("Can't use SOCKS5h as hostname %s is too long!", Host.c_str());
+      return ResultState::FATAL_ERROR;
+   }
    if (Proxy.User.length() > 255 || Proxy.Password.length() > 255)
-      return _error->Error("Can't use user&pass auth as they are too long (%lu and %lu) for the SOCKS5!", Proxy.User.length(), Proxy.Password.length());
+   {
+      _error->Error("Can't use user&pass auth as they are too long (%lu and %lu) for the SOCKS5!", Proxy.User.length(), Proxy.Password.length());
+      return ResultState::FATAL_ERROR;
+   }
    if (Proxy.User.empty())
    {
       uint8_t greeting[] = {0x05, 0x01, 0x00};
@@ -434,13 +466,19 @@ bool UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd
    uint8_t greeting[2];
    APT_ReadOrFail("greet back", greeting, sizeof(greeting));
    if (greeting[0] != 0x05)
-      return _error->Error("SOCKS proxy %s greets back with wrong version: %d", ProxyInfo.c_str(), greeting[0]);
+   {
+      _error->Error("SOCKS proxy %s greets back with wrong version: %d", ProxyInfo.c_str(), greeting[0]);
+      return ResultState::FATAL_ERROR;
+   }
    if (greeting[1] == 0x00)
       ; // no auth has no method-dependent sub-negotiations
    else if (greeting[1] == 0x02)
    {
       if (Proxy.User.empty())
-	 return _error->Error("SOCKS proxy %s negotiated user&pass auth, but we had not offered it!", ProxyInfo.c_str());
+      {
+	 _error->Error("SOCKS proxy %s negotiated user&pass auth, but we had not offered it!", ProxyInfo.c_str());
+	 return ResultState::FATAL_ERROR;
+      }
       // user&pass auth sub-negotiations are defined by RFC1929
       std::vector<uint8_t> auth = {{0x01, static_cast<uint8_t>(Proxy.User.length())}};
       std::copy(Proxy.User.begin(), Proxy.User.end(), std::back_inserter(auth));
@@ -450,12 +488,21 @@ bool UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd
       uint8_t authstatus[2];
       APT_ReadOrFail("auth report", authstatus, sizeof(authstatus));
       if (authstatus[0] != 0x01)
-	 return _error->Error("SOCKS proxy %s auth status response with wrong version: %d", ProxyInfo.c_str(), authstatus[0]);
+      {
+	 _error->Error("SOCKS proxy %s auth status response with wrong version: %d", ProxyInfo.c_str(), authstatus[0]);
+	 return ResultState::FATAL_ERROR;
+      }
       if (authstatus[1] != 0x00)
-	 return _error->Error("SOCKS proxy %s reported authorization failure: username or password incorrect? (%d)", ProxyInfo.c_str(), authstatus[1]);
+      {
+	 _error->Error("SOCKS proxy %s reported authorization failure: username or password incorrect? (%d)", ProxyInfo.c_str(), authstatus[1]);
+	 return ResultState::FATAL_ERROR;
+      }
    }
    else
-      return _error->Error("SOCKS proxy %s greets back having not found a common authorization method: %d", ProxyInfo.c_str(), greeting[1]);
+   {
+      _error->Error("SOCKS proxy %s greets back having not found a common authorization method: %d", ProxyInfo.c_str(), greeting[1]);
+      return ResultState::FATAL_ERROR;
+   }
    union {
       uint16_t *i;
       uint8_t *b;
@@ -470,9 +517,15 @@ bool UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd
    uint8_t response[4];
    APT_ReadOrFail("first part of response", response, sizeof(response));
    if (response[0] != 0x05)
-      return _error->Error("SOCKS proxy %s response with wrong version: %d", ProxyInfo.c_str(), response[0]);
+   {
+      _error->Error("SOCKS proxy %s response with wrong version: %d", ProxyInfo.c_str(), response[0]);
+      return ResultState::FATAL_ERROR;
+   }
    if (response[2] != 0x00)
-      return _error->Error("SOCKS proxy %s has unexpected non-zero reserved field value: %d", ProxyInfo.c_str(), response[2]);
+   {
+      _error->Error("SOCKS proxy %s has unexpected non-zero reserved field value: %d", ProxyInfo.c_str(), response[2]);
+      return ResultState::FATAL_ERROR;
+   }
    std::string bindaddr;
    if (response[3] == 0x01) // IPv4 address
    {
@@ -508,12 +561,16 @@ bool UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd
 		port);
    }
    else
-      return _error->Error("SOCKS proxy %s destination address is of unknown type: %d",
-			   ProxyInfo.c_str(), response[3]);
+   {
+      _error->Error("SOCKS proxy %s destination address is of unknown type: %d",
+		    ProxyInfo.c_str(), response[3]);
+      return ResultState::FATAL_ERROR;
+   }
    if (response[1] != 0x00)
    {
       char const *errstr = nullptr;
       auto errcode = response[1];
+      bool Transient = false;
       // Tor error reporting can be a bit arcane, lets try to detect & fix it up
       if (bindaddr == "0.0.0.0:0")
       {
@@ -554,18 +611,22 @@ bool UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd
 	 case 0x03:
 	    errstr = "Network unreachable";
 	    Owner->SetFailReason("ConnectionTimedOut");
+	    Transient = true;
 	    break;
 	 case 0x04:
 	    errstr = "Host unreachable";
 	    Owner->SetFailReason("ConnectionTimedOut");
+	    Transient = true;
 	    break;
 	 case 0x05:
 	    errstr = "Connection refused";
 	    Owner->SetFailReason("ConnectionRefused");
+	    Transient = true;
 	    break;
 	 case 0x06:
 	    errstr = "TTL expired";
 	    Owner->SetFailReason("Timeout");
+	    Transient = true;
 	    break;
 	 case 0x07:
 	    errstr = "Command not supported";
@@ -581,20 +642,24 @@ bool UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd
 	    break;
 	 }
       }
-      return _error->Error("SOCKS proxy %s could not connect to %s (%s) due to: %s (%d)",
-			   ProxyInfo.c_str(), Host.c_str(), bindaddr.c_str(), errstr, response[1]);
+      _error->Error("SOCKS proxy %s could not connect to %s (%s) due to: %s (%d)",
+		    ProxyInfo.c_str(), Host.c_str(), bindaddr.c_str(), errstr, response[1]);
+      return Transient ? ResultState::TRANSIENT_ERROR : ResultState::FATAL_ERROR;
    }
    else if (Owner->DebugEnabled())
       ioprintf(std::clog, "http: SOCKS proxy %s connection established to %s (%s)\n",
 	       ProxyInfo.c_str(), Host.c_str(), bindaddr.c_str());
 
    if (WaitFd(Fd->Fd(), true, Timeout) == false)
-      return _error->Error("SOCKS proxy %s reported connection to %s (%s), but timed out",
-			   ProxyInfo.c_str(), Host.c_str(), bindaddr.c_str());
+   {
+      _error->Error("SOCKS proxy %s reported connection to %s (%s), but timed out",
+		    ProxyInfo.c_str(), Host.c_str(), bindaddr.c_str());
+      return ResultState::TRANSIENT_ERROR;
+   }
 #undef APT_ReadOrFail
 #undef APT_WriteOrFail
 
-   return true;
+   return ResultState::SUCCESSFUL;
 }
 									/*}}}*/
 // UnwrapTLS - Handle TLS connections 					/*{{{*/
@@ -643,11 +708,14 @@ struct TlsFd : public MethodFd
    }
 };
 
-bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
-	       unsigned long Timeout, aptMethod *Owner)
+ResultState UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
+		      unsigned long Timeout, aptMethod *Owner)
 {
    if (_config->FindB("Acquire::AllowTLS", true) == false)
-      return _error->Error("TLS support has been disabled: Acquire::AllowTLS is false.");
+   {
+      _error->Error("TLS support has been disabled: Acquire::AllowTLS is false.");
+      return ResultState::FATAL_ERROR;
+   }
 
    int err;
    TlsFd *tlsFd = new TlsFd();
@@ -656,7 +724,10 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
    tlsFd->UnderlyingFd = MethodFd::FromFd(-1); // For now
 
    if ((err = gnutls_init(&tlsFd->session, GNUTLS_CLIENT | GNUTLS_NONBLOCK)) < 0)
-      return _error->Error("Internal error: could not allocate credentials: %s", gnutls_strerror(err));
+   {
+      _error->Error("Internal error: could not allocate credentials: %s", gnutls_strerror(err));
+      return ResultState::FATAL_ERROR;
+   }
 
    FdFd *fdfd = dynamic_cast<FdFd *>(Fd.get());
    if (fdfd != nullptr)
@@ -677,7 +748,10 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
    }
 
    if ((err = gnutls_certificate_allocate_credentials(&tlsFd->credentials)) < 0)
-      return _error->Error("Internal error: could not allocate credentials: %s", gnutls_strerror(err));
+   {
+      _error->Error("Internal error: could not allocate credentials: %s", gnutls_strerror(err));
+      return ResultState::FATAL_ERROR;
+   }
 
    // Credential setup
    std::string fileinfo = Owner->ConfigFind("CaInfo", "");
@@ -688,7 +762,10 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
       if (err == 0)
 	 Owner->Warning("No system certificates available. Try installing ca-certificates.");
       else if (err < 0)
-	 return _error->Error("Could not load system TLS certificates: %s", gnutls_strerror(err));
+      {
+	 _error->Error("Could not load system TLS certificates: %s", gnutls_strerror(err));
+	 return ResultState::FATAL_ERROR;
+      }
    }
    else
    {
@@ -696,13 +773,22 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
       gnutls_certificate_set_verify_flags(tlsFd->credentials, GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT);
       err = gnutls_certificate_set_x509_trust_file(tlsFd->credentials, fileinfo.c_str(), GNUTLS_X509_FMT_PEM);
       if (err < 0)
-	 return _error->Error("Could not load certificates from %s (CaInfo option): %s", fileinfo.c_str(), gnutls_strerror(err));
+      {
+	 _error->Error("Could not load certificates from %s (CaInfo option): %s", fileinfo.c_str(), gnutls_strerror(err));
+	 return ResultState::FATAL_ERROR;
+      }
    }
 
    if (!Owner->ConfigFind("IssuerCert", "").empty())
-      return _error->Error("The option '%s' is not supported anymore", "IssuerCert");
+   {
+      _error->Error("The option '%s' is not supported anymore", "IssuerCert");
+      return ResultState::FATAL_ERROR;
+   }
    if (!Owner->ConfigFind("SslForceVersion", "").empty())
-      return _error->Error("The option '%s' is not supported anymore", "SslForceVersion");
+   {
+      _error->Error("The option '%s' is not supported anymore", "SslForceVersion");
+      return ResultState::FATAL_ERROR;
+   }
 
    // For client authentication, certificate file ...
    std::string const cert = Owner->ConfigFind("SslCert", "");
@@ -715,7 +801,8 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
 	       key.empty() ? cert.c_str() : key.c_str(),
 	       GNUTLS_X509_FMT_PEM)) < 0)
       {
-	 return _error->Error("Could not load client certificate (%s, SslCert option) or key (%s, SslKey option): %s", cert.c_str(), key.c_str(), gnutls_strerror(err));
+	 _error->Error("Could not load client certificate (%s, SslCert option) or key (%s, SslKey option): %s", cert.c_str(), key.c_str(), gnutls_strerror(err));
+	 return ResultState::FATAL_ERROR;
       }
    }
 
@@ -726,14 +813,23 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
       if ((err = gnutls_certificate_set_x509_crl_file(tlsFd->credentials,
 						      crlfile.c_str(),
 						      GNUTLS_X509_FMT_PEM)) < 0)
-	 return _error->Error("Could not load custom certificate revocation list %s (CrlFile option): %s", crlfile.c_str(), gnutls_strerror(err));
+      {
+	 _error->Error("Could not load custom certificate revocation list %s (CrlFile option): %s", crlfile.c_str(), gnutls_strerror(err));
+	 return ResultState::FATAL_ERROR;
+      }
    }
 
    if ((err = gnutls_credentials_set(tlsFd->session, GNUTLS_CRD_CERTIFICATE, tlsFd->credentials)) < 0)
-      return _error->Error("Internal error: Could not add certificates to session: %s", gnutls_strerror(err));
+   {
+      _error->Error("Internal error: Could not add certificates to session: %s", gnutls_strerror(err));
+      return ResultState::FATAL_ERROR;
+   }
 
    if ((err = gnutls_set_default_priority(tlsFd->session)) < 0)
-      return _error->Error("Internal error: Could not set algorithm preferences: %s", gnutls_strerror(err));
+   {
+      _error->Error("Internal error: Could not set algorithm preferences: %s", gnutls_strerror(err));
+      return ResultState::FATAL_ERROR;
+   }
 
    if (Owner->ConfigFindB("Verify-Peer", true))
    {
@@ -749,7 +845,10 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
 	  inet_pton(AF_INET6, tlsFd->hostname.c_str(), &addr6) == 1)
 	 /* not a host name */;
       else if ((err = gnutls_server_name_set(tlsFd->session, GNUTLS_NAME_DNS, tlsFd->hostname.c_str(), tlsFd->hostname.length())) < 0)
-	 return _error->Error("Could not set host name %s to indicate to server: %s", tlsFd->hostname.c_str(), gnutls_strerror(err));
+      {
+	 _error->Error("Could not set host name %s to indicate to server: %s", tlsFd->hostname.c_str(), gnutls_strerror(err));
+	 return ResultState::FATAL_ERROR;
+      }
    }
 
    // Set the FD now, so closing it works reliably.
@@ -763,7 +862,10 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
       err = gnutls_handshake(tlsFd->session);
       if ((err == GNUTLS_E_INTERRUPTED || err == GNUTLS_E_AGAIN) &&
 	  WaitFd(Fd->Fd(), gnutls_record_get_direction(tlsFd->session) == 1, Timeout) == false)
-	 return _error->Errno("select", "Could not wait for server fd");
+      {
+	 _error->Errno("select", "Could not wait for server fd");
+	 return ResultState::TRANSIENT_ERROR;
+      }
    } while (err < 0 && gnutls_error_is_fatal(err) == 0);
 
    if (err < 0)
@@ -781,9 +883,10 @@ bool UnwrapTLS(std::string Host, std::unique_ptr<MethodFd> &Fd,
 	 }
 	 gnutls_free(txt.data);
       }
-      return _error->Error("Could not handshake: %s", gnutls_strerror(err));
+      _error->Error("Could not handshake: %s", gnutls_strerror(err));
+      return ResultState::FATAL_ERROR;
    }
 
-   return true;
+   return ResultState::SUCCESSFUL;
 }
 									/*}}}*/

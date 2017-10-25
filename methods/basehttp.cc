@@ -74,9 +74,8 @@ ServerState::RunHeadersResult ServerState::RunHeaders(RequestState &Req,
 	 Persistent = false;
       
       return RUN_HEADERS_OK;
-   }
-   while (LoadNextResponse(false, Req) == true);
-   
+   } while (LoadNextResponse(false, Req) == ResultState::SUCCESSFUL);
+
    return RUN_HEADERS_IO_ERROR;
 }
 									/*}}}*/
@@ -598,11 +597,18 @@ int BaseHttpMethod::Loop()
 	 QueueBack = Queue;
 
       // Connect to the host
-      if (Server->Open() == false)
+      switch (Server->Open())
       {
+      case ResultState::FATAL_ERROR:
+	 Fail(false);
+	 Server = nullptr;
+	 continue;
+      case ResultState::TRANSIENT_ERROR:
 	 Fail(true);
 	 Server = nullptr;
 	 continue;
+      case ResultState::SUCCESSFUL:
+	 break;
       }
 
       // Fill the pipeline.
@@ -657,13 +663,13 @@ int BaseHttpMethod::Loop()
 	    URIStart(Res);
 
 	    // Run the data
-	    bool Result = true;
+	    ResultState Result = ResultState::SUCCESSFUL;
 
-            // ensure we don't fetch too much
-            // we could do "Server->MaximumSize = Queue->MaximumSize" here
-            // but that would break the clever pipeline messup detection
-            // so instead we use the size of the biggest item in the queue
-            Req.MaximumSize = FindMaximumObjectSizeInQueue();
+	    // ensure we don't fetch too much
+	    // we could do "Server->MaximumSize = Queue->MaximumSize" here
+	    // but that would break the clever pipeline messup detection
+	    // so instead we use the size of the biggest item in the queue
+	    Req.MaximumSize = FindMaximumObjectSizeInQueue();
 
 	    if (Req.HaveContent)
 	    {
@@ -692,10 +698,10 @@ int BaseHttpMethod::Loop()
 		     SetFailReason("MaximumSizeExceeded");
 		     _error->Error(_("File has unexpected size (%llu != %llu). Mirror sync in progress?"),
 				   filesize, Queue->ExpectedHashes.FileSize());
-		     Result = false;
+		     Result = ResultState::FATAL_ERROR;
 		  }
 	       }
-	       if (Result)
+	       if (Result == ResultState::SUCCESSFUL)
 		  Result = Server->RunData(Req);
 	    }
 
@@ -715,7 +721,7 @@ int BaseHttpMethod::Loop()
 	    utimes(Queue->DestFile.c_str(), times);
 
 	    // Send status to APT
-	    if (Result == true)
+	    if (Result == ResultState::SUCCESSFUL)
 	    {
 	       Hashes * const resultHashes = Server->GetHashes();
 	       HashStringList const hashList = resultHashes->GetHashStringList();
@@ -768,8 +774,17 @@ int BaseHttpMethod::Loop()
 	       else
                {
                   Server->Close();
-		  Fail(true);
-               }
+		  switch (Result)
+		  {
+		  case ResultState::TRANSIENT_ERROR:
+		     Fail(true);
+		     break;
+		  case ResultState::FATAL_ERROR:
+		  case ResultState::SUCCESSFUL:
+		     Fail(false);
+		     break;
+		  }
+	       }
 	    }
 	    break;
 	 }

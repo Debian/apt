@@ -43,7 +43,7 @@ class FTPConn
    
    // Private helper functions
    bool ReadLine(std::string &Text);
-   bool Login();
+   ResultState Login();
    bool CreateDataFd();
    bool Finalize();
    
@@ -56,7 +56,7 @@ class FTPConn
    bool WriteMsg(unsigned int &Ret,std::string &Text,const char *Fmt,...);
    
    // Connection control
-   bool Open(aptMethod *Owner);
+   ResultState Open(aptMethod *Owner);
    void Close();   
    bool GoPasv();
    bool ExtGoPasv();
