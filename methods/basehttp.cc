@@ -801,7 +801,19 @@ int BaseHttpMethod::Loop()
 	 case ERROR_WITH_CONTENT_PAGE:
 	 {
 	    Server->RunDataToDevNull(Req);
-	    Fail();
+	    constexpr unsigned int TransientCodes[] = {
+	       408, // Request Timeout
+	       429, // Too Many Requests
+	       500, // Internal Server Error
+	       502, // Bad Gateway
+	       503, // Service Unavailable
+	       504, // Gateway Timeout
+	       599, // Network Connect Timeout Error
+	    };
+	    if (std::find(std::begin(TransientCodes), std::end(TransientCodes), Req.Result) != std::end(TransientCodes))
+	       Fail(true);
+	    else
+	       Fail();
 	    break;
 	 }
 
