@@ -327,7 +327,7 @@ bool pkgAcquire::Worker::RunMessages()
          }
 
 	 case MessageType::WARNING:
-	    _error->Warning("%s: %s", Itm->Owner->DescURI().c_str(), LookupTag(Message,"Message").c_str());
+	    _error->Warning("%s: %s", Itm ? Itm->Owner ? Itm->Owner->DescURI().c_str() : Access.c_str() : Access.c_str(), LookupTag(Message, "Message").c_str());
 	    break;
 
 	 case MessageType::URI_START:
