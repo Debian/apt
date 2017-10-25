@@ -245,6 +245,16 @@ protected:
 	 ALLOW(getdents64);
       }
 
+      if (getenv("FAKED_MODE"))
+      {
+	 ALLOW(semop);
+	 ALLOW(semget);
+	 ALLOW(msgsnd);
+	 ALLOW(msgrcv);
+	 ALLOW(msgget);
+	 ALLOW(msgctl);
+      }
+
       for (auto &custom : _config->FindVector("APT::Sandbox::Seccomp::Allow"))
       {
 	 if ((rc = seccomp_rule_add(ctx, SCMP_ACT_ALLOW, seccomp_syscall_resolve_name(custom.c_str()), 0)))
