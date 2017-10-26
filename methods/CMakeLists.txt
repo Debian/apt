@@ -28,7 +28,7 @@ target_link_libraries(ftp ${GNUTLS_LIBRARIES})
 install(TARGETS file copy store gpgv cdrom http ftp rred rsh mirror
         RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/apt/methods)
 
-add_slaves(${CMAKE_INSTALL_LIBEXECDIR}/apt/methods store gzip lzma bzip2 xz)
+add_slaves(${CMAKE_INSTALL_LIBEXECDIR}/apt/methods store)
 add_slaves(${CMAKE_INSTALL_LIBEXECDIR}/apt/methods rsh ssh)
 
 
