@@ -206,6 +206,7 @@ protected:
 #endif
       ALLOW(sync);
       ALLOW(syscall);
+      ALLOW(sysinfo);
       ALLOW(time);
       ALLOW(truncate);
       ALLOW(truncate64);
@@ -255,6 +256,7 @@ protected:
 	 ALLOW(msgrcv);
 	 ALLOW(msgget);
 	 ALLOW(msgctl);
+	 ALLOW(ipc);
       }
 
       for (auto &custom : _config->FindVector("APT::Sandbox::Seccomp::Allow"))
