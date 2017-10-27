@@ -76,6 +76,9 @@ pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
    if ((Flags & Removable) == Removable)
       try_emplace(fields, "Removable", "true");
 
+   if ((Flags & AuxRequests) == AuxRequests)
+      try_emplace(fields, "AuxRequests", "true");
+
    SendMessage("100 Capabilities", std::move(fields));
 
    SetNonBlock(STDIN_FILENO,true);

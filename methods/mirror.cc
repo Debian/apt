@@ -64,7 +64,7 @@ class MirrorMethod : public aptMethod /*{{{*/
    void DealWithPendingItems(std::vector<std::string> const &baseuris, MirrorInfo const &info, FetchItem *const Itm, std::function<void()> handler);
 
    public:
-   MirrorMethod(std::string &&pProg) : aptMethod(std::move(pProg), "2.0", SingleInstance | Pipeline | SendConfig)
+   MirrorMethod(std::string &&pProg) : aptMethod(std::move(pProg), "2.0", SingleInstance | Pipeline | SendConfig | AuxRequests)
    {
       SeccompFlags = aptMethod::BASE | aptMethod::DIRECTORY;
 

@@ -855,12 +855,25 @@ pkgAcquire::UriIterator pkgAcquire::UriEnd()
 }
 									/*}}}*/
 // Acquire::MethodConfig::MethodConfig - Constructor			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgAcquire::MethodConfig::MethodConfig() : d(NULL), Next(0), SingleInstance(false),
-   Pipeline(false), SendConfig(false), LocalOnly(false), NeedsCleanup(false),
-   Removable(false)
+class pkgAcquire::MethodConfig::Private
 {
+   public:
+   bool AuxRequests = false;
+};
+pkgAcquire::MethodConfig::MethodConfig() : d(new Private()), Next(0), SingleInstance(false),
+					   Pipeline(false), SendConfig(false), LocalOnly(false), NeedsCleanup(false),
+					   Removable(false)
+{
+}
+									/*}}}*/
+bool pkgAcquire::MethodConfig::GetAuxRequests() const /*{{{*/
+{
+   return d->AuxRequests;
+}
+									/*}}}*/
+void pkgAcquire::MethodConfig::SetAuxRequests(bool const value) /*{{{*/
+{
+   d->AuxRequests = value;
 }
 									/*}}}*/
 // Queue::Queue - Constructor						/*{{{*/

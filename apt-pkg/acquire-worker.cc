@@ -508,6 +508,26 @@ bool pkgAcquire::Worker::RunMessages()
 	       _error->Error("Method gave invalid Aux Request message");
 	       break;
 	    }
+	    else if (Config->GetAuxRequests() == false)
+	    {
+	       std::vector<Item *> const ItmOwners = Itm->Owners;
+	       Message.append("\nMessage: Method tried to make an Aux Request while not being allowed to do them");
+	       OwnerQ->ItemDone(Itm);
+	       Itm = nullptr;
+	       HandleFailure(ItmOwners, Config, Log, Message, false, false);
+	       ItemDone();
+
+	       std::string Msg = "600 URI Acquire\n";
+	       Msg.reserve(200);
+	       Msg += "URI: " + LookupTag(Message, "Aux-URI", "");
+	       Msg += "\nFilename: /nonexistent/auxrequest.blocked";
+	       Msg += "\n\n";
+	       if (Debug == true)
+		  clog << " -> " << Access << ':' << QuoteString(Msg, "\n") << endl;
+	       OutQueue += Msg;
+	       OutReady = true;
+	       break;
+	    }
 
 	    auto maxsizestr = LookupTag(Message, "MaximumSize", "");
 	    unsigned long long const MaxSize = maxsizestr.empty() ? 0 : strtoull(maxsizestr.c_str(), nullptr, 10);
@@ -554,44 +574,7 @@ bool pkgAcquire::Worker::RunMessages()
 		  errAuthErr = std::find(std::begin(reasons), std::end(reasons), failReason) != std::end(reasons);
 	       }
 	    }
-
-	    for (auto const Owner: ItmOwners)
-	    {
-	       std::string NewURI;
-	       if (errTransient == true && Config->LocalOnly == false && Owner->ModifyRetries() != 0)
-	       {
-		  --Owner->ModifyRetries();
-		  Owner->FailMessage(Message);
-		  auto SavedDesc = Owner->GetItemDesc();
-		  if (Log != nullptr)
-		     Log->Fail(SavedDesc);
-		  if (isDoomedItem(Owner) == false)
-		     OwnerQ->Owner->Enqueue(SavedDesc);
-	       }
-	       else if (Owner->PopAlternativeURI(NewURI))
-	       {
-		  Owner->FailMessage(Message);
-		  auto &desc = Owner->GetItemDesc();
-		  if (Log != nullptr)
-		     Log->Fail(desc);
-		  ChangeSiteIsMirrorChange(NewURI, desc, Owner);
-		  desc.URI = NewURI;
-		  if (isDoomedItem(Owner) == false)
-		     OwnerQ->Owner->Enqueue(desc);
-	       }
-	       else
-	       {
-		  if (errAuthErr && Owner->GetExpectedHashes().empty() == false)
-		     Owner->Status = pkgAcquire::Item::StatAuthError;
-		  else if (errTransient)
-		     Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
-		  auto SavedDesc = Owner->GetItemDesc();
-		  if (isDoomedItem(Owner) == false)
-		     Owner->Failed(Message, Config);
-		  if (Log != nullptr)
-		     Log->Fail(SavedDesc);
-	       }
-	    }
+	    HandleFailure(ItmOwners, Config, Log, Message, errTransient, errAuthErr);
 	    ItemDone();
 
 	    break;
@@ -607,6 +590,49 @@ bool pkgAcquire::Worker::RunMessages()
       }
    }
    return true;
+}
+									/*}}}*/
+void pkgAcquire::Worker::HandleFailure(std::vector<pkgAcquire::Item *> const &ItmOwners, /*{{{*/
+				       pkgAcquire::MethodConfig *const Config, pkgAcquireStatus *const Log,
+				       std::string const &Message, bool const errTransient, bool const errAuthErr)
+{
+   for (auto const Owner : ItmOwners)
+   {
+      std::string NewURI;
+      if (errTransient == true && Config->LocalOnly == false && Owner->ModifyRetries() != 0)
+      {
+	 --Owner->ModifyRetries();
+	 Owner->FailMessage(Message);
+	 auto SavedDesc = Owner->GetItemDesc();
+	 if (Log != nullptr)
+	    Log->Fail(SavedDesc);
+	 if (isDoomedItem(Owner) == false)
+	    OwnerQ->Owner->Enqueue(SavedDesc);
+      }
+      else if (Owner->PopAlternativeURI(NewURI))
+      {
+	 Owner->FailMessage(Message);
+	 auto &desc = Owner->GetItemDesc();
+	 if (Log != nullptr)
+	    Log->Fail(desc);
+	 ChangeSiteIsMirrorChange(NewURI, desc, Owner);
+	 desc.URI = NewURI;
+	 if (isDoomedItem(Owner) == false)
+	    OwnerQ->Owner->Enqueue(desc);
+      }
+      else
+      {
+	 if (errAuthErr && Owner->GetExpectedHashes().empty() == false)
+	    Owner->Status = pkgAcquire::Item::StatAuthError;
+	 else if (errTransient)
+	    Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
+	 auto SavedDesc = Owner->GetItemDesc();
+	 if (isDoomedItem(Owner) == false)
+	    Owner->Failed(Message, Config);
+	 if (Log != nullptr)
+	    Log->Fail(SavedDesc);
+      }
+   }
 }
 									/*}}}*/
 // Worker::Capabilities - 100 Capabilities handler			/*{{{*/
@@ -625,18 +651,13 @@ bool pkgAcquire::Worker::Capabilities(string Message)
    Config->LocalOnly = StringToBool(LookupTag(Message,"Local-Only"),false);
    Config->NeedsCleanup = StringToBool(LookupTag(Message,"Needs-Cleanup"),false);
    Config->Removable = StringToBool(LookupTag(Message,"Removable"),false);
+   Config->SetAuxRequests(StringToBool(LookupTag(Message, "AuxRequests"), false));
 
    // Some debug text
    if (Debug == true)
    {
       clog << "Configured access method " << Config->Access << endl;
-      clog << "Version:" << Config->Version <<
-	      " SingleInstance:" << Config->SingleInstance <<
-	      " Pipeline:" << Config->Pipeline <<
-	      " SendConfig:" << Config->SendConfig <<
-	      " LocalOnly: " << Config->LocalOnly <<
-	      " NeedsCleanup: " << Config->NeedsCleanup <<
-	      " Removable: " << Config->Removable << endl;
+      clog << "Version:" << Config->Version << " SingleInstance:" << Config->SingleInstance << " Pipeline:" << Config->Pipeline << " SendConfig:" << Config->SendConfig << " LocalOnly: " << Config->LocalOnly << " NeedsCleanup: " << Config->NeedsCleanup << " Removable: " << Config->Removable << " AuxRequests: " << Config->GetAuxRequests() << endl;
    }
 
    return true;

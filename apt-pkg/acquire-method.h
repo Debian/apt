@@ -108,10 +108,16 @@ class pkgAcqMethod
    void PrintStatus(char const * const header, const char* Format, va_list &args) const;
 
    public:
-   enum CnfFlags {SingleInstance = (1<<0),
-                  Pipeline = (1<<1), SendConfig = (1<<2),
-                  LocalOnly = (1<<3), NeedsCleanup = (1<<4), 
-                  Removable = (1<<5)};
+   enum CnfFlags
+   {
+      SingleInstance = (1 << 0),
+      Pipeline = (1 << 1),
+      SendConfig = (1 << 2),
+      LocalOnly = (1 << 3),
+      NeedsCleanup = (1 << 4),
+      Removable = (1 << 5),
+      AuxRequests = (1 << 6)
+   };
 
    void Log(const char *Format,...);
    void Status(const char *Format,...);
