@@ -118,8 +118,6 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 {
    bool const flatArchive = (Dist[Dist.length() - 1] == '/');
    std::string const baseURI = constructMetaIndexURI(URI, Dist, "");
-   std::string const Release = (Dist == "/") ? "" : Dist;
-   std::string const Site = ::URI::ArchiveOnly(URI);
 
    std::string DefCompressionTypes;
    {
@@ -208,8 +206,7 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  constexpr static auto BreakPoint = "$(NATIVE_ARCHITECTURE)";
 		  // available in templates
 		  std::map<std::string, std::string> Options;
-		  Options.insert(std::make_pair("SITE", Site));
-		  Options.insert(std::make_pair("RELEASE", Release));
+		  Options.insert(ReleaseOptions.begin(), ReleaseOptions.end());
 		  if (tplMetaKey.find("$(COMPONENT)") != std::string::npos)
 		     Options.emplace("COMPONENT", E->Name);
 		  if (tplMetaKey.find("$(LANGUAGE)") != std::string::npos)
@@ -290,7 +287,6 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  }
 
 		  // not available in templates, but in the indextarget
-		  Options.insert(ReleaseOptions.begin(), ReleaseOptions.end());
 		  Options.insert(std::make_pair("IDENTIFIER", Identifier));
 		  Options.insert(std::make_pair("TARGET_OF", Type));
 		  Options.insert(std::make_pair("CREATED_BY", *T));
@@ -1070,7 +1066,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
       }
       for (auto&& key: KeysA)
       {
-	 if (key == "BASE_URI" || key == "REPO_URI")
+	 if (key == "BASE_URI" || key == "REPO_URI" || key == "SITE" || key == "RELEASE")
 	    continue;
 	 auto const a = OptionsA.find(key);
 	 auto const b = OptionsB.find(key);
@@ -1083,9 +1079,11 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
    static debReleaseIndex * GetDebReleaseIndexBy(std::vector<metaIndex *> &List, std::string const &URI,
 			   std::string const &Dist, std::map<std::string, std::string> const &Options)
    {
-      std::map<std::string,std::string> ReleaseOptions = {{
-	 { "BASE_URI", constructMetaIndexURI(URI, Dist, "") },
-	 { "REPO_URI", URI },
+      std::map<std::string, std::string> ReleaseOptions{{
+	 {"BASE_URI", constructMetaIndexURI(URI, Dist, "")},
+	 {"REPO_URI", URI},
+	 {"SITE", ::URI::ArchiveOnly(URI)},
+	 {"RELEASE", (Dist == "/") ? "" : Dist},
       }};
       if (GetBoolOption(Options, "allow-insecure", _config->FindB("Acquire::AllowInsecureRepositories")))
 	 ReleaseOptions.emplace("ALLOW_INSECURE", "true");
@@ -1134,6 +1132,8 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 			   bool const &IsSrc, std::map<std::string, std::string> const &Options) const
    {
       auto const Deb = GetDebReleaseIndexBy(List, URI, Dist, Options);
+      if (Deb == nullptr)
+	 return false;
 
       bool const UsePDiffs = GetBoolOption(Options, "pdiffs", _config->FindB("Acquire::PDiffs", true));
 

@@ -684,6 +684,7 @@ class pkgAcquire::Item::Private
 {
 public:
    std::vector<std::string> PastRedirections;
+   std::unordered_map<std::string, std::string> CustomFields;
    unsigned int Retries;
 
    Private() : Retries(_config->FindI("Acquire::Retries", 0))
@@ -709,7 +710,17 @@ pkgAcquire::Item::~Item()
 									/*}}}*/
 std::string pkgAcquire::Item::Custom600Headers() const			/*{{{*/
 {
-   return std::string();
+   std::ostringstream header;
+   for (auto const &f : d->CustomFields)
+      if (f.second.empty() == false)
+	 header << '\n'
+		<< f.first << ": " << f.second;
+   return header.str();
+}
+									/*}}}*/
+std::unordered_map<std::string, std::string> &pkgAcquire::Item::ModifyCustomFields() /*{{{*/
+{
+   return d->CustomFields;
 }
 									/*}}}*/
 unsigned int &pkgAcquire::Item::ModifyRetries() /*{{{*/
@@ -1051,6 +1062,15 @@ pkgAcqTransactionItem::pkgAcqTransactionItem(pkgAcquire * const Owner,	/*{{{*/
 {
    if (TransactionManager != this)
       TransactionManager->Add(this);
+   ModifyCustomFields() = {
+      {"Target-Site", Target.Option(IndexTarget::SITE)},
+      {"Target-Repo-URI", Target.Option(IndexTarget::REPO_URI)},
+      {"Target-Base-URI", Target.Option(IndexTarget::BASE_URI)},
+      {"Target-Component", Target.Option(IndexTarget::COMPONENT)},
+      {"Target-Release", Target.Option(IndexTarget::RELEASE)},
+      {"Target-Architecture", Target.Option(IndexTarget::ARCHITECTURE)},
+      {"Target-Language", Target.Option(IndexTarget::LANGUAGE)},
+   };
 }
 									/*}}}*/
 pkgAcqTransactionItem::~pkgAcqTransactionItem()				/*{{{*/
@@ -1228,7 +1248,8 @@ bool pkgAcqMetaBase::CheckStopAuthentication(pkgAcquire::Item * const I, const s
 // ---------------------------------------------------------------------
 string pkgAcqMetaBase::Custom600Headers() const
 {
-   std::string Header = "\nIndex-File: true";
+   std::string Header = pkgAcqTransactionItem::Custom600Headers();
+   Header.append("\nIndex-File: true");
    std::string MaximumSize;
    strprintf(MaximumSize, "\nMaximum-Size: %i",
              _config->FindI("Acquire::MaxReleaseFileSize", 10*1000*1000));
@@ -3219,7 +3240,6 @@ void pkgAcqIndex::StageDecompressDone()
 									/*}}}*/
 pkgAcqIndex::~pkgAcqIndex() {}
 
-
 // AcqArchive::AcqArchive - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* This just sets up the initial fetch environment and queues the first
@@ -3345,6 +3365,20 @@ bool pkgAcqArchive::QueueNext()
       Desc.Description = Index->ArchiveInfo(Version);
       Desc.Owner = this;
       Desc.ShortDesc = Version.ParentPkg().FullName(true);
+
+      auto fields = ModifyCustomFields();
+      if (PkgF->Architecture != 0)
+	 fields.emplace("Target-Architecture", PkgF.Architecture());
+      if (PkgF->Component != 0)
+	 fields.emplace("Target-Component", PkgF.Component());
+      auto const RelF = PkgF.ReleaseFile();
+      if (RelF.end() == false)
+      {
+	 if (RelF->Codename != 0)
+	    fields.emplace("Target-Codename", RelF.Codename());
+	 if (RelF->Archive != 0)
+	    fields.emplace("Target-Suite", RelF.Archive());
+      }
 
       // See if we already have the file. (Legacy filenames)
       FileSize = Version->Size;

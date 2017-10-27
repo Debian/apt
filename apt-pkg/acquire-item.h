@@ -27,6 +27,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #ifndef APT_8_CLEANER_HEADERS
@@ -241,6 +242,8 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
    virtual std::string Custom600Headers() const;
    // Retries should really be a member of the Item, but can't be for ABI reasons
    APT_HIDDEN unsigned int &ModifyRetries();
+   // this is more a hack than a proper external interface, hence hidden
+   APT_HIDDEN std::unordered_map<std::string, std::string> &ModifyCustomFields();
 
    /** \brief A "descriptive" URI-like string.
     *
