@@ -448,6 +448,16 @@ protected:
       return true;
    }
 
+   // This is a copy of #pkgAcqMethod::Dequeue which is private & hidden
+   void Dequeue()
+   {
+      FetchItem const *const Tmp = Queue;
+      Queue = Queue->Next;
+      if (Tmp == QueueBack)
+	 QueueBack = Queue;
+      delete Tmp;
+   }
+
    aptMethod(std::string &&Binary, char const *const Ver, unsigned long const Flags) APT_NONNULL(3)
        : pkgAcqMethod(Ver, Flags), Binary(Binary), SeccompFlags(0), methodNames({Binary})
    {

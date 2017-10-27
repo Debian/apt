@@ -1,18 +1,17 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: mirror.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
-   Mirror Acquire Method - This is the Mirror acquire method for APT.
-   
+   Mirror URI – This method helps avoiding hardcoding of mirrors in the
+   sources.lists by looking up a list of mirrors first to which the
+   following requests are redirected.
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/acquire-item.h>
-#include <apt-pkg/acquire.h>
-#include <apt-pkg/aptconfiguration.h>
+#include "aptmethod.h"
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
@@ -20,447 +19,275 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/strutl.h>
 
-#include <algorithm>
-#include <fstream>
-#include <iostream>
+#include <functional>
+#include <random>
+#include <string>
+#include <unordered_map>
 
-#include <dirent.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <sys/utsname.h>
-#include <unistd.h>
 
-using namespace std;
-
-#include <sstream>
-
-#include "http.h"
-#include "mirror.h"
 #include <apti18n.h>
 									/*}}}*/
 
-/* Done:
- * - works with http (only!)
- * - always picks the first mirror from the list
- * - call out to problem reporting script
- * - supports "deb mirror://host/path/to/mirror-list/// dist component"
- * - uses pkgAcqMethod::FailReason() to have a string representation
- *   of the failure that is also send to LP
- * 
- * TODO: 
- * - deal with running as non-root because we can't write to the lists
-     dir then -> use the cached mirror file
- * - better method to download than having a pkgAcquire interface here
- *   and better error handling there!
- * - support more than http
- * - testing :)
- */
-
-MirrorMethod::MirrorMethod()
-   : HttpMethod("mirror"), DownloadedMirrorFile(false), Debug(false)
+static void sortByLength(std::vector<std::string> &vec)			/*{{{*/
 {
+   // this ensures having mirror://foo/ and mirror://foo/bar/ works as expected
+   // by checking for the longest matches first
+   std::sort(vec.begin(), vec.end(), [](std::string const &a, std::string const &b) {
+      return a.length() > b.length();
+   });
 }
-
-// HttpMethod::Configuration - Handle a configuration message		/*{{{*/
-// ---------------------------------------------------------------------
-/* We stash the desired pipeline depth */
-bool MirrorMethod::Configuration(string Message)
+									/*}}}*/
+class MirrorMethod : public aptMethod /*{{{*/
 {
-   if (HttpMethod::Configuration(Message) == false)
-      return false;
-   Debug = DebugEnabled();
-   
+   std::vector<std::string> sourceslist;
+   enum MirrorFileState
+   {
+      REQUESTED,
+      FAILED,
+      AVAILABLE
+   };
+   struct MirrorInfo
+   {
+      MirrorFileState state;
+      std::string baseuri;
+      std::vector<std::string> list;
+   };
+   std::unordered_map<std::string, MirrorInfo> mirrorfilestate;
+   unsigned int seedvalue;
+
+   virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
+
+   void RedirectItem(MirrorInfo const &info, FetchItem *const Itm);
+   bool MirrorListFileRecieved(MirrorInfo &info, FetchItem *const Itm);
+   std::string GetMirrorFileURI(std::string const &Message, FetchItem *const Itm);
+   void DealWithPendingItems(std::vector<std::string> const &baseuris, MirrorInfo const &info, FetchItem *const Itm, std::function<void()> handler);
+
+   public:
+   MirrorMethod(std::string &&pProg) : aptMethod(std::move(pProg), "2.0", SingleInstance | Pipeline | SendConfig)
+   {
+      SeccompFlags = aptMethod::BASE | aptMethod::DIRECTORY;
+
+      // we want the file to be random for each different machine, but also
+      // "stable" on the same machine to avoid issues like picking different
+      // mirrors in different states for indexes and deb downloads
+      struct utsname buf;
+      seedvalue = 1;
+      if (uname(&buf) == 0)
+      {
+	 for (size_t i = 0; buf.nodename[i] != '\0'; ++i)
+	    seedvalue = seedvalue * 31 + buf.nodename[i];
+      }
+   }
+};
+									/*}}}*/
+void MirrorMethod::RedirectItem(MirrorInfo const &info, FetchItem *const Itm) /*{{{*/
+{
+   std::string const path = Itm->Uri.substr(info.baseuri.length());
+   std::string altMirrors;
+   std::unordered_map<std::string, std::string> fields;
+   fields.emplace("URI", Queue->Uri);
+   for (auto curMirror = info.list.cbegin(); curMirror != info.list.cend(); ++curMirror)
+   {
+      std::string mirror = *curMirror;
+      if (APT::String::Endswith(mirror, "/") == false)
+	 mirror.append("/");
+      mirror.append(path);
+      if (curMirror == info.list.cbegin())
+	 fields.emplace("New-URI", mirror);
+      else if (altMirrors.empty())
+	 altMirrors.append(mirror);
+      else
+	 altMirrors.append("\n").append(mirror);
+   }
+   fields.emplace("Alternate-URIs", altMirrors);
+   SendMessage("103 Redirect", std::move(fields));
+   Dequeue();
+}
+									/*}}}*/
+void MirrorMethod::DealWithPendingItems(std::vector<std::string> const &baseuris, /*{{{*/
+					MirrorInfo const &info, FetchItem *const Itm,
+					std::function<void()> handler)
+{
+   FetchItem **LastItm = &Itm->Next;
+   while (*LastItm != nullptr)
+      LastItm = &((*LastItm)->Next);
+   while (Queue != Itm)
+   {
+      if (APT::String::Startswith(Queue->Uri, info.baseuri) == false ||
+	  std::any_of(baseuris.cbegin(), baseuris.cend(), [&](std::string const &b) { return APT::String::Startswith(Queue->Uri, b); }))
+      {
+	 // move the item behind the aux file not related to it
+	 *LastItm = Queue;
+	 Queue = QueueBack = Queue->Next;
+	 (*LastItm)->Next = nullptr;
+	 LastItm = &((*LastItm)->Next);
+      }
+      else
+      {
+	 handler();
+      }
+   }
+   // now remove out trigger
+   QueueBack = Queue = Queue->Next;
+   delete Itm;
+}
+									/*}}}*/
+bool MirrorMethod::MirrorListFileRecieved(MirrorInfo &info, FetchItem *const Itm) /*{{{*/
+{
+   std::vector<std::string> baseuris;
+   for (auto const &i : mirrorfilestate)
+      if (info.baseuri.length() < i.second.baseuri.length() &&
+	  i.second.state == REQUESTED &&
+	  APT::String::Startswith(i.second.baseuri, info.baseuri))
+	 baseuris.push_back(i.second.baseuri);
+   sortByLength(baseuris);
+
+   FileFd mirrorlist;
+   if (FileExists(Itm->DestFile) && mirrorlist.Open(Itm->DestFile, FileFd::ReadOnly, FileFd::Extension))
+   {
+      std::string mirror;
+      while (mirrorlist.ReadLine(mirror))
+      {
+	 if (mirror.empty() || mirror[0] == '#')
+	    continue;
+	 info.list.push_back(mirror);
+      }
+      mirrorlist.Close();
+      // we reseed each time to avoid "races" with multiple mirror://s
+      std::mt19937 g(seedvalue);
+      std::shuffle(info.list.begin(), info.list.end(), g);
+
+      if (info.list.empty())
+      {
+	 info.state = FAILED;
+	 DealWithPendingItems(baseuris, info, Itm, [&]() {
+	    std::string msg;
+	    strprintf(msg, "Mirror list %s is empty for %s", Itm->DestFile.c_str(), Queue->Uri.c_str());
+	    Fail(msg, false);
+	 });
+      }
+      else
+      {
+	 info.state = AVAILABLE;
+	 DealWithPendingItems(baseuris, info, Itm, [&]() {
+	    RedirectItem(info, Queue);
+	 });
+      }
+   }
+   else
+   {
+      info.state = FAILED;
+      DealWithPendingItems(baseuris, info, Itm, [&]() {
+	 std::string msg;
+	 strprintf(msg, "Downloading mirror file %s failed for %s", Itm->DestFile.c_str(), Queue->Uri.c_str());
+	 Fail(msg, false);
+      });
+   }
    return true;
 }
 									/*}}}*/
-
-// clean the mirrors dir based on ttl information
-bool MirrorMethod::Clean(string Dir)
+std::string MirrorMethod::GetMirrorFileURI(std::string const &Message, FetchItem *const Itm) /*{{{*/
 {
-   vector<metaIndex *>::const_iterator I;
-
-   if(Debug)
-      clog << "MirrorMethod::Clean(): " << Dir << endl;
-
-   if(Dir == "/")
-      return _error->Error("will not clean: '/'");
-
-   // read sources.list
-   pkgSourceList list;
-   list.ReadMainList();
-
-   int const dirfd = open(Dir.c_str(), O_RDONLY | O_DIRECTORY | O_CLOEXEC);
-   if (dirfd == -1)
-      return _error->Errno("open",_("Unable to read %s"), Dir.c_str());
-   DIR * const D = fdopendir(dirfd);
-   if (D == nullptr)
-      return _error->Errno("fdopendir",_("Unable to read %s"),Dir.c_str());
-
-   for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
+   if (APT::String::Startswith(Itm->Uri, Binary))
    {
-      // Skip some files..
-      if (strcmp(Dir->d_name,"lock") == 0 ||
-	  strcmp(Dir->d_name,"partial") == 0 ||
-	  strcmp(Dir->d_name,"lost+found") == 0 ||
-	  strcmp(Dir->d_name,".") == 0 ||
-	  strcmp(Dir->d_name,"..") == 0)
-	 continue;
-
-      // see if we have that uri
-      for(I=list.begin(); I != list.end(); ++I)
+      std::string const repouri = LookupTag(Message, "Target-Repo-Uri");
+      if (repouri.empty() == false && std::find(sourceslist.cbegin(), sourceslist.cend(), repouri) == sourceslist.cend())
+	 sourceslist.push_back(repouri);
+   }
+   if (sourceslist.empty())
+   {
+      // read sources.list and find the matching base uri
+      pkgSourceList sl;
+      if (sl.ReadMainList() == false)
       {
-	 string uri = (*I)->GetURI();
-	 if(uri.compare(0, strlen("mirror://"), "mirror://") != 0)
+	 _error->Error(_("The list of sources could not be read."));
+	 return "";
+      }
+      std::string const needle = Binary + ":";
+      for (auto const &SL : sl)
+      {
+	 std::string uristr = SL->GetURI();
+	 if (APT::String::Startswith(uristr, needle))
+	    sourceslist.push_back(uristr);
+      }
+      sortByLength(sourceslist);
+   }
+   for (auto uristr : sourceslist)
+   {
+      if (APT::String::Startswith(Itm->Uri, uristr))
+      {
+	 uristr.erase(uristr.length() - 1); // remove the ending '/'
+	 auto const colon = uristr.find(':');
+	 if (unlikely(colon == std::string::npos))
 	    continue;
-	 string BaseUri = uri.substr(0,uri.size()-1);
-	 if (URItoFileName(BaseUri) == Dir->d_name)
-	    break;
+	 auto const plus = uristr.find("+");
+	 if (plus < colon)
+	    return uristr.substr(plus + 1);
+	 else
+	 {
+	    uristr.replace(0, strlen("mirror"), "http");
+	    return uristr;
+	 }
       }
-      // nothing found, nuke it
-      if (I == list.end())
-	 RemoveFileAt("mirror", dirfd, Dir->d_name);
    }
-   closedir(D);
-   return true;
+   return "";
 }
-
-
-bool MirrorMethod::DownloadMirrorFile(string /*mirror_uri_str*/)
+									/*}}}*/
+bool MirrorMethod::URIAcquire(std::string const &Message, FetchItem *Itm) /*{{{*/
 {
-   // not that great to use pkgAcquire here, but we do not have
-   // any other way right now
-   string fetch = BaseUri;
-   fetch.replace(0,strlen("mirror://"),"http://");
+   auto mirrorinfo = mirrorfilestate.find(Itm->Uri);
+   if (mirrorinfo != mirrorfilestate.end())
+      return MirrorListFileRecieved(mirrorinfo->second, Itm);
 
-#if 0 // no need for this, the getArchitectures() will also include the main
-      // arch
-   // append main architecture
-   fetch += "?arch=" + _config->Find("Apt::Architecture");
-#endif
-
-   // append all architectures
-   std::vector<std::string> vec = APT::Configuration::getArchitectures();
-   for (std::vector<std::string>::const_iterator I = vec.begin();
-        I != vec.end(); ++I)
-      if (I == vec.begin())
-         fetch += "?arch=" + (*I);
-      else
-         fetch += "&arch=" + (*I);
-
-   // append the dist as a query string
-   if (Dist != "")
-      fetch += "&dist=" + Dist;
-
-   if(Debug)
-      clog << "MirrorMethod::DownloadMirrorFile(): '" << fetch << "'"
-           << " to " << MirrorFile << endl;
-
-   pkgAcquire Fetcher;
-   new pkgAcqFile(&Fetcher, fetch, "", 0, "", "", "", MirrorFile);
-   bool res = (Fetcher.Run() == pkgAcquire::Continue);
-   if(res) {
-      DownloadedMirrorFile = true;
-      chmod(MirrorFile.c_str(), 0644);
-   }
-   Fetcher.Shutdown();
-
-   if(Debug)
-      clog << "MirrorMethod::DownloadMirrorFile() success: " << res << endl;
-
-   return res;
-}
-
-// Randomizes the lines in the mirror file, this is used so that
-// we spread the load on the mirrors evenly
-bool MirrorMethod::RandomizeMirrorFile(string mirror_file)
-{
-   vector<string> content;
-   string line;
-
-   if (!FileExists(mirror_file))
+   std::string const mirrorfileuri = GetMirrorFileURI(Message, Itm);
+   if (mirrorfileuri.empty())
+   {
+      _error->Error("Couldn't determine mirror list to query for %s", Itm->Uri.c_str());
       return false;
-
-   // read
-   ifstream in(mirror_file.c_str());
-   while ( !in.eof() ) {
-      getline(in, line);
-      content.push_back(line);
    }
+   if (DebugEnabled())
+      std::clog << "Mirror-URI: " << mirrorfileuri << " for " << Itm->Uri << std::endl;
 
-   // we want the file to be random for each different machine, but also
-   // "stable" on the same machine. this is to avoid running into out-of-sync
-   // issues (i.e. Release/Release.gpg different on each mirror)
-   struct utsname buf;
-   int seed=1;
-   if(uname(&buf) == 0) {
-      for(int i=0,seed=1; buf.nodename[i] != 0; ++i) {
-         seed = seed * 31 + buf.nodename[i];
-      }
-   }
-   srand( seed );
-   random_shuffle(content.begin(), content.end());
-
-   // write
-   ofstream out(mirror_file.c_str());
-   while ( !content.empty()) {
-      line = content.back();
-      content.pop_back();
-      out << line << "\n";
-   }
-
-   return true;
-}
-
-/* convert a the Queue->Uri back to the mirror base uri and look
- * at all mirrors we have for this, this is needed as queue->uri
- * may point to different mirrors (if TryNextMirror() was run)
- */
-void MirrorMethod::CurrentQueueUriToMirror()
-{
-   // already in mirror:// style so nothing to do
-   if(Queue->Uri.find("mirror://") == 0)
-      return;
-
-   // find current mirror and select next one
-   for (vector<string>::const_iterator mirror = AllMirrors.begin();
-	mirror != AllMirrors.end(); ++mirror)
+   // have we requested this mirror file already?
+   auto const state = mirrorfilestate.find(mirrorfileuri);
+   if (state == mirrorfilestate.end())
    {
-      if (Queue->Uri.find(*mirror) == 0)
-      {
-	 Queue->Uri.replace(0, mirror->length(), BaseUri);
-	 return;
-      }
-   }
-   _error->Error("Internal error: Failed to convert %s back to %s",
-		 Queue->Uri.c_str(), BaseUri.c_str());
-}
-
-bool MirrorMethod::TryNextMirror()
-{
-   // find current mirror and select next one
-   for (vector<string>::const_iterator mirror = AllMirrors.begin();
-	mirror != AllMirrors.end(); ++mirror)
-   {
-      if (Queue->Uri.find(*mirror) != 0)
-	 continue;
-
-      vector<string>::const_iterator nextmirror = mirror + 1;
-      if (nextmirror == AllMirrors.end())
-	 break;
-      Queue->Uri.replace(0, mirror->length(), *nextmirror);
-      if (Debug)
-	 clog << "TryNextMirror: " << Queue->Uri << endl;
-
-      // inform parent
-      UsedMirror = *nextmirror;
-      Log("Switching mirror");
+      MirrorInfo info;
+      info.state = REQUESTED;
+      info.baseuri = mirrorfileuri + '/';
+      auto const colon = info.baseuri.find(':');
+      if (unlikely(colon == std::string::npos))
+	 return false;
+      info.baseuri.replace(0, colon, Binary);
+      mirrorfilestate[mirrorfileuri] = info;
+      std::unordered_map<std::string, std::string> fields;
+      fields.emplace("URI", Itm->Uri);
+      fields.emplace("MaximumSize", std::to_string(1 * 1024 * 1024)); //FIXME: 1 MB is enough for everyone
+      fields.emplace("Aux-ShortDesc", "Mirrorlist");
+      fields.emplace("Aux-Description", mirrorfileuri + " Mirrorlist");
+      fields.emplace("Aux-Uri", mirrorfileuri);
+      SendMessage("351 Aux Request", std::move(fields));
       return true;
    }
 
-   if (Debug)
-      clog << "TryNextMirror could not find another mirror to try" << endl;
-
+   switch (state->second.state)
+   {
+   case REQUESTED:
+      // lets wait for the requested mirror file
+      return true;
+   case FAILED:
+      Fail("Downloading mirror file failed", false);
+      return true;
+   case AVAILABLE:
+      RedirectItem(state->second, Itm);
+      return true;
+   }
    return false;
 }
+									/*}}}*/
 
-bool MirrorMethod::InitMirrors()
+int main(int, const char *argv[])
 {
-   // if we do not have a MirrorFile, fallback
-   if(!FileExists(MirrorFile))
-   {
-      // FIXME: fallback to a default mirror here instead 
-      //        and provide a config option to define that default
-      return _error->Error(_("No mirror file '%s' found "), MirrorFile.c_str());
-   }
-
-   if (access(MirrorFile.c_str(), R_OK) != 0)
-   {
-      // FIXME: fallback to a default mirror here instead 
-      //        and provide a config option to define that default
-      return _error->Error(_("Can not read mirror file '%s'"), MirrorFile.c_str());
-   }  
-
-   // FIXME: make the mirror selection more clever, do not 
-   //        just use the first one!
-   // BUT: we can not make this random, the mirror has to be
-   //      stable across session, because otherwise we can
-   //      get into sync issues (got indexfiles from mirror A,
-   //      but packages from mirror B - one might be out of date etc)
-   ifstream in(MirrorFile.c_str());
-   string s;
-   while (!in.eof()) 
-   {
-      getline(in, s);
-
-      // ignore lines that start with #
-      if (s.find("#") == 0)
-         continue;
-      // ignore empty lines
-      if (s.size() == 0)
-         continue;
-      // ignore non http lines
-      if (s.compare(0, strlen("http://"), "http://") != 0)
-         continue;
-
-      AllMirrors.push_back(s);
-   }
-   if (AllMirrors.empty()) {
-	return _error->Error(_("No entry found in mirror file '%s'"), MirrorFile.c_str());
-   }
-   Mirror = AllMirrors[0];
-   UsedMirror = Mirror;
-   return true;
+   return MirrorMethod(flNotDir(argv[0])).Run();
 }
-
-string MirrorMethod::GetMirrorFileName(string mirror_uri_str)
-{
-   /* 
-    - a mirror_uri_str looks like this:
-    mirror://people.ubuntu.com/~mvo/apt/mirror/mirrors/dists/feisty/Release.gpg
-   
-    - the matching source.list entry
-    deb mirror://people.ubuntu.com/~mvo/apt/mirror/mirrors feisty main
-   
-    - we actually want to go after:
-    http://people.ubuntu.com/~mvo/apt/mirror/mirrors
-
-    And we need to save the BaseUri for later:
-    - mirror://people.ubuntu.com/~mvo/apt/mirror/mirrors
-
-   FIXME: what if we have two similar prefixes?
-     mirror://people.ubuntu.com/~mvo/mirror
-     mirror://people.ubuntu.com/~mvo/mirror2
-   then mirror_uri_str looks like:
-     mirror://people.ubuntu.com/~mvo/apt/mirror/dists/feisty/Release.gpg
-     mirror://people.ubuntu.com/~mvo/apt/mirror2/dists/feisty/Release.gpg
-   we search sources.list and find:
-     mirror://people.ubuntu.com/~mvo/apt/mirror
-   in both cases! So we need to apply some domain knowledge here :( and
-   check for /dists/ or /Release.gpg as suffixes
-   */
-   string name;
-   if(Debug)
-      std::cerr << "GetMirrorFileName: " << mirror_uri_str << std::endl;
-
-   // read sources.list and find match
-   vector<metaIndex *>::const_iterator I;
-   pkgSourceList list;
-   list.ReadMainList();
-   for(I=list.begin(); I != list.end(); ++I)
-   {
-      string uristr = (*I)->GetURI();
-      if(Debug)
-	 std::cerr << "Checking: " << uristr << std::endl;
-      if(uristr.substr(0,strlen("mirror://")) != string("mirror://"))
-	 continue;
-      // find matching uri in sources.list
-      if(mirror_uri_str.substr(0,uristr.size()) == uristr)
-      {
-	 if(Debug)
-	    std::cerr << "found BaseURI: " << uristr << std::endl;
-	 BaseUri = uristr.substr(0,uristr.size()-1);
-         Dist = (*I)->GetDist();
-      }
-   }
-   // get new file
-   name = _config->FindDir("Dir::State::mirrors") + URItoFileName(BaseUri);
-
-   if(Debug) 
-   {
-      cerr << "base-uri: " << BaseUri << endl;
-      cerr << "mirror-file: " << name << endl;
-   }
-   return name;
-}
-
-// MirrorMethod::Fetch - Fetch an item					/*{{{*/
-// ---------------------------------------------------------------------
-/* This adds an item to the pipeline. We keep the pipeline at a fixed
-   depth. */
-bool MirrorMethod::Fetch(FetchItem *Itm)
-{
-   if(Debug)
-      clog << "MirrorMethod::Fetch()" << endl;
-
-   // the http method uses Fetch(0) as a way to update the pipeline,
-   // just let it do its work in this case - Fetch() with a valid
-   // Itm will always run before the first Fetch(0)
-   if(Itm == NULL) 
-      return HttpMethod::Fetch(Itm);
-
-   // if we don't have the name of the mirror file on disk yet,
-   // calculate it now (can be derived from the uri)
-   if(MirrorFile.empty())
-      MirrorFile = GetMirrorFileName(Itm->Uri);
-
-  // download mirror file once (if we are after index files)
-   if(Itm->IndexFile && !DownloadedMirrorFile)
-   {
-      Clean(_config->FindDir("Dir::State::mirrors"));
-      if (DownloadMirrorFile(Itm->Uri))
-         RandomizeMirrorFile(MirrorFile);
-   }
-
-   if(AllMirrors.empty()) {
-      if(!InitMirrors()) {
-	 // no valid mirror selected, something went wrong downloading
-	 // from the master mirror site most likely and there is
-	 // no old mirror file availalbe
-	 return false;
-      }
-   }
-
-   if(Itm->Uri.find("mirror://") != string::npos)
-      Itm->Uri.replace(0,BaseUri.size(), Mirror);
-
-   if(Debug)
-      clog << "Fetch: " << Itm->Uri << endl << endl;
-
-   // now run the real fetcher
-   return HttpMethod::Fetch(Itm);
-}
-
-void MirrorMethod::Fail(string Err,bool Transient)
-{
-   // FIXME: TryNextMirror is not ideal for indexfile as we may
-   //        run into auth issues
-
-   if (Debug)
-      clog << "Failure to get " << Queue->Uri << endl;
-
-   // try the next mirror on fail (if its not a expected failure,
-   // e.g. translations are ok to ignore)
-   if (!Queue->FailIgnore && TryNextMirror())
-      return;
-
-   // all mirrors failed, so bail out
-   string s;
-   strprintf(s, _("[Mirror: %s]"), Mirror.c_str());
-   SetIP(s);
-
-   CurrentQueueUriToMirror();
-   pkgAcqMethod::Fail(Err, Transient);
-}
-
-void MirrorMethod::URIStart(FetchResult &Res)
-{
-   CurrentQueueUriToMirror();
-   pkgAcqMethod::URIStart(Res);
-}
-
-void MirrorMethod::URIDone(FetchResult &Res,FetchResult *Alt)
-{
-   CurrentQueueUriToMirror();
-   pkgAcqMethod::URIDone(Res, Alt);
-}
-
-
-int main()
-{
-   return MirrorMethod().Loop();
-}
-
-

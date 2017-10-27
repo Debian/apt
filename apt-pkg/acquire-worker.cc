@@ -308,6 +308,7 @@ bool pkgAcquire::Worker::RunMessages()
 
 	    std::string const NewURI = LookupTag(Message,"New-URI",URI.c_str());
             Itm->URI = NewURI;
+	    auto const AltUris = VectorizeString(LookupTag(Message, "Alternate-URIs"), '\n');
 
 	    ItemDone();
 
@@ -335,28 +336,14 @@ bool pkgAcquire::Worker::RunMessages()
 	       if (Log != nullptr)
 		  Log->Done(desc);
 
-	       // if we change site, treat it as a mirror change
-	       if (URI::SiteOnly(NewURI) != URI::SiteOnly(desc.URI))
-	       {
-		  auto const firstSpace = desc.Description.find(" ");
-		  if (firstSpace != std::string::npos)
-		  {
-		     std::string const OldSite = desc.Description.substr(0, firstSpace);
-		     if (likely(APT::String::Startswith(desc.URI, OldSite)))
-		     {
-			std::string const OldExtra = desc.URI.substr(OldSite.length() + 1);
-			if (likely(APT::String::Endswith(NewURI, OldExtra)))
-			{
-			   std::string const NewSite = NewURI.substr(0, NewURI.length() - OldExtra.length());
-			   Owner->UsedMirror = URI::ArchiveOnly(NewSite);
-			   desc.Description.replace(0, firstSpace, Owner->UsedMirror);
-			}
-		     }
-		  }
-	       }
+	       ChangeSiteIsMirrorChange(NewURI, desc, Owner);
 	       desc.URI = NewURI;
 	       if (isDoomedItem(Owner) == false)
+	       {
+		  for (auto alt = AltUris.crbegin(); alt != AltUris.crend(); ++alt)
+		     Owner->PushAlternativeURI(std::string(*alt), {}, false);
 		  OwnerQ->Owner->Enqueue(desc);
+	       }
 	    }
             break;
          }
