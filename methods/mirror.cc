@@ -40,7 +40,9 @@ static void sortByLength(std::vector<std::string> &vec)			/*{{{*/
 									/*}}}*/
 class MirrorMethod : public aptMethod /*{{{*/
 {
+   std::mt19937 genrng;
    std::vector<std::string> sourceslist;
+   std::unordered_map<std::string, std::string> msgCache;
    enum MirrorFileState
    {
       REQUESTED,
@@ -49,51 +51,107 @@ class MirrorMethod : public aptMethod /*{{{*/
    };
    struct MirrorInfo
    {
+      std::string uri;
+      unsigned long priority = std::numeric_limits<decltype(priority)>::max();
+      decltype(genrng)::result_type seed = 0;
+      std::unordered_map<std::string, std::vector<std::string>> tags;
+      MirrorInfo(std::string const &u, std::vector<std::string> &&ptags = {}) : uri(u)
+      {
+	 for (auto &&tag : ptags)
+	 {
+	    auto const colonfound = tag.find(':');
+	    if (unlikely(colonfound == std::string::npos))
+	       continue;
+	    auto name = tag.substr(0, colonfound);
+	    auto value = tag.substr(colonfound + 1);
+	    if (name == "arch")
+	       tags["Architecture"].emplace_back(std::move(value));
+	    else if (name == "lang")
+	       tags["Language"].emplace_back(std::move(value));
+	    else if (name == "priority")
+	       priority = std::strtoul(value.c_str(), nullptr, 10);
+	    else if (likely(name.empty() == false))
+	    {
+	       if (name == "codename" || name == "suite")
+		  tags["Release"].push_back(value);
+	       name[0] = std::toupper(name[0]);
+	       tags[std::move(name)].emplace_back(std::move(value));
+	    }
+	 }
+      }
+   };
+   struct MirrorListInfo
+   {
       MirrorFileState state;
       std::string baseuri;
-      std::vector<std::string> list;
+      std::vector<MirrorInfo> list;
    };
-   std::unordered_map<std::string, MirrorInfo> mirrorfilestate;
-   unsigned int seedvalue;
+   std::unordered_map<std::string, MirrorListInfo> mirrorfilestate;
 
    virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
 
-   void RedirectItem(MirrorInfo const &info, FetchItem *const Itm);
-   bool MirrorListFileRecieved(MirrorInfo &info, FetchItem *const Itm);
+   void RedirectItem(MirrorListInfo const &info, FetchItem *const Itm, std::string const &Message);
+   bool MirrorListFileRecieved(MirrorListInfo &info, FetchItem *const Itm);
    std::string GetMirrorFileURI(std::string const &Message, FetchItem *const Itm);
-   void DealWithPendingItems(std::vector<std::string> const &baseuris, MirrorInfo const &info, FetchItem *const Itm, std::function<void()> handler);
+   void DealWithPendingItems(std::vector<std::string> const &baseuris, MirrorListInfo const &info, FetchItem *const Itm, std::function<void()> handler);
 
    public:
-   MirrorMethod(std::string &&pProg) : aptMethod(std::move(pProg), "2.0", SingleInstance | Pipeline | SendConfig | AuxRequests)
+   MirrorMethod(std::string &&pProg) : aptMethod(std::move(pProg), "2.0", SingleInstance | Pipeline | SendConfig | AuxRequests), genrng(clock())
    {
       SeccompFlags = aptMethod::BASE | aptMethod::DIRECTORY;
-
-      // we want the file to be random for each different machine, but also
-      // "stable" on the same machine to avoid issues like picking different
-      // mirrors in different states for indexes and deb downloads
-      struct utsname buf;
-      seedvalue = 1;
-      if (uname(&buf) == 0)
-      {
-	 for (size_t i = 0; buf.nodename[i] != '\0'; ++i)
-	    seedvalue = seedvalue * 31 + buf.nodename[i];
-      }
    }
 };
 									/*}}}*/
-void MirrorMethod::RedirectItem(MirrorInfo const &info, FetchItem *const Itm) /*{{{*/
+void MirrorMethod::RedirectItem(MirrorListInfo const &info, FetchItem *const Itm, std::string const &Message) /*{{{*/
 {
+   std::unordered_map<std::string, std::string> matchers;
+   matchers.emplace("Architecture", LookupTag(Message, "Target-Architecture"));
+   matchers.emplace("Codename", LookupTag(Message, "Target-Codename"));
+   matchers.emplace("Component", LookupTag(Message, "Target-Component"));
+   matchers.emplace("Language", LookupTag(Message, "Target-Language"));
+   matchers.emplace("Release", LookupTag(Message, "Target-Release"));
+   matchers.emplace("Suite", LookupTag(Message, "Target-Suite"));
+   matchers.emplace("Type", LookupTag(Message, "Target-Type"));
+   decltype(info.list) possMirrors;
+   for (auto const &mirror : info.list)
+   {
+      bool failedMatch = false;
+      for (auto const &m : matchers)
+      {
+	 if (m.second.empty())
+	    continue;
+	 auto const tagsetiter = mirror.tags.find(m.first);
+	 if (tagsetiter == mirror.tags.end())
+	    continue;
+	 auto const tagset = tagsetiter->second;
+	 if (tagset.empty() == false && std::find(tagset.begin(), tagset.end(), m.second) == tagset.end())
+	 {
+	    failedMatch = true;
+	    break;
+	 }
+      }
+      if (failedMatch)
+	 continue;
+      possMirrors.push_back(mirror);
+   }
+   for (auto &&mirror : possMirrors)
+      mirror.seed = genrng();
+   std::sort(possMirrors.begin(), possMirrors.end(), [](MirrorInfo const &a, MirrorInfo const &b) {
+      if (a.priority != b.priority)
+	 return a.priority < b.priority;
+      return a.seed < b.seed;
+   });
    std::string const path = Itm->Uri.substr(info.baseuri.length());
    std::string altMirrors;
    std::unordered_map<std::string, std::string> fields;
    fields.emplace("URI", Queue->Uri);
-   for (auto curMirror = info.list.cbegin(); curMirror != info.list.cend(); ++curMirror)
+   for (auto curMirror = possMirrors.cbegin(); curMirror != possMirrors.cend(); ++curMirror)
    {
-      std::string mirror = *curMirror;
+      std::string mirror = curMirror->uri;
       if (APT::String::Endswith(mirror, "/") == false)
 	 mirror.append("/");
       mirror.append(path);
-      if (curMirror == info.list.cbegin())
+      if (curMirror == possMirrors.cbegin())
 	 fields.emplace("New-URI", mirror);
       else if (altMirrors.empty())
 	 altMirrors.append(mirror);
@@ -106,7 +164,7 @@ void MirrorMethod::RedirectItem(MirrorInfo const &info, FetchItem *const Itm) /*
 }
 									/*}}}*/
 void MirrorMethod::DealWithPendingItems(std::vector<std::string> const &baseuris, /*{{{*/
-					MirrorInfo const &info, FetchItem *const Itm,
+					MirrorListInfo const &info, FetchItem *const Itm,
 					std::function<void()> handler)
 {
    FetchItem **LastItm = &Itm->Next;
@@ -133,7 +191,7 @@ void MirrorMethod::DealWithPendingItems(std::vector<std::string> const &baseuris
    delete Itm;
 }
 									/*}}}*/
-bool MirrorMethod::MirrorListFileRecieved(MirrorInfo &info, FetchItem *const Itm) /*{{{*/
+bool MirrorMethod::MirrorListFileRecieved(MirrorListInfo &info, FetchItem *const Itm) /*{{{*/
 {
    std::vector<std::string> baseuris;
    for (auto const &i : mirrorfilestate)
@@ -146,17 +204,25 @@ bool MirrorMethod::MirrorListFileRecieved(MirrorInfo &info, FetchItem *const Itm
    FileFd mirrorlist;
    if (FileExists(Itm->DestFile) && mirrorlist.Open(Itm->DestFile, FileFd::ReadOnly, FileFd::Extension))
    {
-      std::string mirror;
-      while (mirrorlist.ReadLine(mirror))
+      std::string line;
+      while (mirrorlist.ReadLine(line))
       {
-	 if (mirror.empty() || mirror[0] == '#')
+	 if (line.empty() || line[0] == '#')
 	    continue;
-	 info.list.push_back(mirror);
+	 auto const tab = line.find('\t');
+	 if (tab == std::string::npos)
+	    info.list.emplace_back(std::move(line));
+	 else
+	 {
+	    auto uri = line.substr(0, tab);
+	    auto tagline = line.substr(tab + 1);
+	    std::replace_if(tagline.begin(), tagline.end(), isspace_ascii, ' ');
+	    auto tags = VectorizeString(tagline, ' ');
+	    tags.erase(std::remove_if(tags.begin(), tags.end(), [](std::string const &a) { return a.empty(); }), tags.end());
+	    info.list.emplace_back(std::move(uri), std::move(tags));
+	 }
       }
       mirrorlist.Close();
-      // we reseed each time to avoid "races" with multiple mirror://s
-      std::mt19937 g(seedvalue);
-      std::shuffle(info.list.begin(), info.list.end(), g);
 
       if (info.list.empty())
       {
@@ -171,8 +237,9 @@ bool MirrorMethod::MirrorListFileRecieved(MirrorInfo &info, FetchItem *const Itm
       {
 	 info.state = AVAILABLE;
 	 DealWithPendingItems(baseuris, info, Itm, [&]() {
-	    RedirectItem(info, Queue);
+	    RedirectItem(info, Queue, msgCache[Queue->Uri]);
 	 });
+	 msgCache.clear();
       }
    }
    else
@@ -253,7 +320,8 @@ bool MirrorMethod::URIAcquire(std::string const &Message, FetchItem *Itm) /*{{{*
    auto const state = mirrorfilestate.find(mirrorfileuri);
    if (state == mirrorfilestate.end())
    {
-      MirrorInfo info;
+      msgCache[Itm->Uri] = Message;
+      MirrorListInfo info;
       info.state = REQUESTED;
       info.baseuri = mirrorfileuri + '/';
       auto const colon = info.baseuri.find(':');
@@ -275,12 +343,13 @@ bool MirrorMethod::URIAcquire(std::string const &Message, FetchItem *Itm) /*{{{*
    {
    case REQUESTED:
       // lets wait for the requested mirror file
+      msgCache[Itm->Uri] = Message;
       return true;
    case FAILED:
       Fail("Downloading mirror file failed", false);
       return true;
    case AVAILABLE:
-      RedirectItem(state->second, Itm);
+      RedirectItem(state->second, Itm, Message);
       return true;
    }
    return false;
