@@ -94,6 +94,7 @@ protected:
       ALLOW(chown32);
       ALLOW(clock_getres);
       ALLOW(clock_gettime);
+      ALLOW(clock_nanosleep);
       ALLOW(close);
       ALLOW(creat);
       ALLOW(dup);
@@ -161,6 +162,7 @@ protected:
       ALLOW(mremap);
       ALLOW(msync);
       ALLOW(munmap);
+      ALLOW(nanosleep);
       ALLOW(newfstatat);
       ALLOW(_newselect);
       ALLOW(oldfstat);
