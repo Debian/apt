@@ -683,6 +683,13 @@ class APT_HIDDEN CleanupItem : public pkgAcqTransactionItem		/*{{{*/
 class pkgAcquire::Item::Private
 {
 public:
+   struct AlternateURI
+   {
+      std::string const URI;
+      std::unordered_map<std::string, std::string> changefields;
+      AlternateURI(std::string &&u, decltype(changefields) &&cf) : URI(u), changefields(cf) {}
+   };
+   std::list<AlternateURI> AlternativeURIs;
    std::vector<std::string> PastRedirections;
    std::unordered_map<std::string, std::string> CustomFields;
    unsigned int Retries;
@@ -721,6 +728,32 @@ std::string pkgAcquire::Item::Custom600Headers() const			/*{{{*/
 std::unordered_map<std::string, std::string> &pkgAcquire::Item::ModifyCustomFields() /*{{{*/
 {
    return d->CustomFields;
+}
+									/*}}}*/
+bool pkgAcquire::Item::PopAlternativeURI(std::string &NewURI) /*{{{*/
+{
+   if (d->AlternativeURIs.empty())
+      return false;
+   auto const AltUri = d->AlternativeURIs.front();
+   d->AlternativeURIs.pop_front();
+   NewURI = AltUri.URI;
+   auto &CustomFields = ModifyCustomFields();
+   for (auto const &f : AltUri.changefields)
+   {
+      if (f.second.empty())
+	 CustomFields.erase(f.first);
+      else
+	 CustomFields[f.first] = f.second;
+   }
+   return true;
+}
+									/*}}}*/
+void pkgAcquire::Item::PushAlternativeURI(std::string &&NewURI, std::unordered_map<std::string, std::string> &&fields, bool const at_the_back) /*{{{*/
+{
+   if (at_the_back)
+      d->AlternativeURIs.emplace_back(std::move(NewURI), std::move(fields));
+   else
+      d->AlternativeURIs.emplace_front(std::move(NewURI), std::move(fields));
 }
 									/*}}}*/
 unsigned int &pkgAcquire::Item::ModifyRetries() /*{{{*/
@@ -1070,6 +1103,7 @@ pkgAcqTransactionItem::pkgAcqTransactionItem(pkgAcquire * const Owner,	/*{{{*/
       {"Target-Release", Target.Option(IndexTarget::RELEASE)},
       {"Target-Architecture", Target.Option(IndexTarget::ARCHITECTURE)},
       {"Target-Language", Target.Option(IndexTarget::LANGUAGE)},
+      {"Target-Type", "index"},
    };
 }
 									/*}}}*/
@@ -3244,12 +3278,12 @@ pkgAcqIndex::~pkgAcqIndex() {}
 // ---------------------------------------------------------------------
 /* This just sets up the initial fetch environment and queues the first
    possibilitiy */
-pkgAcqArchive::pkgAcqArchive(pkgAcquire * const Owner,pkgSourceList * const Sources,
-			     pkgRecords * const Recs,pkgCache::VerIterator const &Version,
-			     string &StoreFilename) :
-               Item(Owner), d(NULL), LocalSource(false), Version(Version), Sources(Sources), Recs(Recs),
-               StoreFilename(StoreFilename), Vf(Version.FileList()),
-	       Trusted(false)
+APT_IGNORE_DEPRECATED_PUSH
+pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sources,
+			     pkgRecords *const Recs, pkgCache::VerIterator const &Version,
+			     string &StoreFilename) : Item(Owner), d(NULL), LocalSource(false), Version(Version), Sources(Sources), Recs(Recs),
+						      StoreFilename(StoreFilename), Vf(),
+						      Trusted(false)
 {
    if (Version.Arch() == 0)
    {
@@ -3258,32 +3292,6 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire * const Owner,pkgSourceList * const Sour
 		      "(due to missing arch)"),
 		    Version.ParentPkg().FullName().c_str());
       return;
-   }
-   
-   /* We need to find a filename to determine the extension. We make the
-      assumption here that all the available sources for this version share
-      the same extension.. */
-   // Skip not source sources, they do not have file fields.
-   for (; Vf.end() == false; ++Vf)
-   {
-      if (Vf.File().Flagged(pkgCache::Flag::NotSource))
-	 continue;
-      break;
-   }
-   
-   // Does not really matter here.. we are going to fail out below
-   if (Vf.end() != true)
-   {     
-      // If this fails to get a file name we will bomb out below.
-      pkgRecords::Parser &Parse = Recs->Lookup(Vf);
-      if (_error->PendingError() == true)
-	 return;
-            
-      // Generate the final file name as: package_version_arch.foo
-      StoreFilename = QuoteString(Version.ParentPkg().Name(),"_:") + '_' +
-	              QuoteString(Version.VerStr(),"_:") + '_' +
-     	              QuoteString(Version.Arch(),"_:.") + 
-	              "." + flExtension(Parse.FileName());
    }
 
    // check if we have one trusted source for the package. if so, switch
@@ -3317,58 +3325,60 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire * const Owner,pkgSourceList * const Sour
    if (allowUnauth == true && seenUntrusted == true)
       Trusted = false;
 
-   // Select a source
-   if (QueueNext() == false && _error->PendingError() == false)
-      _error->Error(_("Can't find a source to download version '%s' of '%s'"),
-		    Version.VerStr(), Version.ParentPkg().FullName(false).c_str());
-}
-									/*}}}*/
-// AcqArchive::QueueNext - Queue the next file source			/*{{{*/
-// ---------------------------------------------------------------------
-/* This queues the next available file version for download. It checks if
-   the archive is already available in the cache and stashs the MD5 for
-   checking later. */
-bool pkgAcqArchive::QueueNext()
-{
-   for (; Vf.end() == false; ++Vf)
+   StoreFilename.clear();
+   std::set<string> targetComponents, targetCodenames, targetSuites;
+   for (auto Vf = Version.FileList(); Vf.end() == false; ++Vf)
    {
-      pkgCache::PkgFileIterator const PkgF = Vf.File();
-      // Ignore not source sources
+      auto const PkgF = Vf.File();
+      if (unlikely(PkgF.end()))
+	 continue;
       if (PkgF.Flagged(pkgCache::Flag::NotSource))
 	 continue;
-
-      // Try to cross match against the source list
       pkgIndexFile *Index;
       if (Sources->FindIndex(PkgF, Index) == false)
-	    continue;
-      LocalSource = PkgF.Flagged(pkgCache::Flag::LocalSource);
-
-      // only try to get a trusted package from another source if that source
-      // is also trusted
-      if(Trusted && !Index->IsTrusted()) 
+	 continue;
+      if (Trusted && Index->IsTrusted() == false)
 	 continue;
 
-      // Grab the text package record
       pkgRecords::Parser &Parse = Recs->Lookup(Vf);
-      if (_error->PendingError() == true)
-	 return false;
+      // collect the hashes from the indexes
+      auto hsl = Parse.Hashes();
+      if (ExpectedHashes.empty())
+	 ExpectedHashes = hsl;
+      else
+      {
+	 // bad things will likely happen, but the user might be "lucky" still
+	 // if the sources provide the same hashtypes (so that they aren't mixed)
+	 for (auto const &hs : hsl)
+	    if (ExpectedHashes.push_back(hs) == false)
+	    {
+	       _error->Warning("Sources disagree on hashes for supposely identical version '%s' of '%s'.",
+			       Version.VerStr(), Version.ParentPkg().FullName(false).c_str());
+	       break;
+	    }
+      }
+      // only allow local volatile sources to have no hashes
+      if (PkgF.Flagged(pkgCache::Flag::LocalSource))
+	 LocalSource = true;
+      else if (hsl.empty())
+	 continue;
 
-      string PkgFile = Parse.FileName();
-      ExpectedHashes = Parse.Hashes();
+      std::string poolfilename = Parse.FileName();
+      if (poolfilename.empty())
+	 continue;
 
-      if (PkgFile.empty() == true)
-	 return _error->Error(_("The package index files are corrupted. No Filename: "
-			      "field for package %s."),
-			      Version.ParentPkg().Name());
-
-      Desc.URI = Index->ArchiveURI(PkgFile);
-      Desc.Description = Index->ArchiveInfo(Version);
-      Desc.Owner = this;
-      Desc.ShortDesc = Version.ParentPkg().FullName(true);
-
-      auto fields = ModifyCustomFields();
-      if (PkgF->Architecture != 0)
-	 fields.emplace("Target-Architecture", PkgF.Architecture());
+      std::remove_reference<decltype(ModifyCustomFields())>::type fields;
+      {
+	 auto const debIndex = dynamic_cast<pkgDebianIndexTargetFile const *const>(Index);
+	 if (debIndex != nullptr)
+	 {
+	    auto const IT = debIndex->GetIndexTarget();
+	    fields.emplace("Target-Repo-URI", IT.Option(IndexTarget::REPO_URI));
+	    fields.emplace("Target-Release", IT.Option(IndexTarget::RELEASE));
+	    fields.emplace("Target-Site", IT.Option(IndexTarget::SITE));
+	 }
+      }
+      fields.emplace("Target-Base-URI", Index->ArchiveURI(""));
       if (PkgF->Component != 0)
 	 fields.emplace("Target-Component", PkgF.Component());
       auto const RelF = PkgF.ReleaseFile();
@@ -3379,78 +3389,91 @@ bool pkgAcqArchive::QueueNext()
 	 if (RelF->Archive != 0)
 	    fields.emplace("Target-Suite", RelF.Archive());
       }
+      fields.emplace("Target-Architecture", Version.Arch());
+      fields.emplace("Target-Type", flExtension(poolfilename));
 
-      // See if we already have the file. (Legacy filenames)
-      FileSize = Version->Size;
-      string FinalFile = _config->FindDir("Dir::Cache::Archives") + flNotDir(PkgFile);
-      struct stat Buf;
-      if (stat(FinalFile.c_str(),&Buf) == 0)
+      if (StoreFilename.empty())
       {
-	 // Make sure the size matches
-	 if ((unsigned long long)Buf.st_size == Version->Size)
-	 {
-	    Complete = true;
-	    Local = true;
-	    Status = StatDone;
-	    StoreFilename = DestFile = FinalFile;
-	    return true;
-	 }
-	 
-	 /* Hmm, we have a file and its size does not match, this means it is
-	    an old style mismatched arch */
-	 RemoveFile("pkgAcqArchive::QueueNext", FinalFile);
-      }
+	 /* We pick a filename based on the information we have for the version,
+	    but we don't know what extension such a file should have, so we look
+	    at the filenames used online and assume that they are the same for
+	    all repositories containing this file */
+	 StoreFilename = QuoteString(Version.ParentPkg().Name(), "_:") + '_' +
+			 QuoteString(Version.VerStr(), "_:") + '_' +
+			 QuoteString(Version.Arch(), "_:.") +
+			 "." + flExtension(poolfilename);
 
-      // Check it again using the new style output filenames
-      FinalFile = _config->FindDir("Dir::Cache::Archives") + flNotDir(StoreFilename);
-      if (stat(FinalFile.c_str(),&Buf) == 0)
-      {
-	 // Make sure the size matches
-	 if ((unsigned long long)Buf.st_size == Version->Size)
-	 {
-	    Complete = true;
-	    Local = true;
-	    Status = StatDone;
-	    StoreFilename = DestFile = FinalFile;
-	    return true;
-	 }
-	 
-	 /* Hmm, we have a file and its size does not match, this shouldn't
-	    happen.. */
-	 RemoveFile("pkgAcqArchive::QueueNext", FinalFile);
+	 Desc.URI = Index->ArchiveURI(poolfilename);
+	 Desc.Description = Index->ArchiveInfo(Version);
+	 Desc.Owner = this;
+	 Desc.ShortDesc = Version.ParentPkg().FullName(true);
+	 auto &customfields = ModifyCustomFields();
+	 for (auto const &f : fields)
+	    customfields[f.first] = f.second;
+	 FileSize = Version->Size;
       }
+      else
+	 PushAlternativeURI(Index->ArchiveURI(poolfilename), std::move(fields), true);
+   }
+   if (StoreFilename.empty())
+   {
+      _error->Error(_("Can't find a source to download version '%s' of '%s'"),
+		    Version.VerStr(), Version.ParentPkg().FullName(false).c_str());
+      return;
+   }
 
-      DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(StoreFilename);
-      
-      // Check the destination file
-      if (stat(DestFile.c_str(),&Buf) == 0)
-      {
-	 // Hmm, the partial file is too big, erase it
-	 if ((unsigned long long)Buf.st_size > Version->Size)
-	    RemoveFile("pkgAcqArchive::QueueNext", DestFile);
-	 else
-	    PartialSize = Buf.st_size;
-      }
-
-      // Disables download of archives - useful if no real installation follows,
-      // e.g. if we are just interested in proposed installation order
-      if (_config->FindB("Debug::pkgAcqArchive::NoQueue", false) == true)
+   // Check if we already downloaded the file
+   struct stat Buf;
+   auto FinalFile = _config->FindDir("Dir::Cache::Archives") + flNotDir(StoreFilename);
+   if (stat(FinalFile.c_str(), &Buf) == 0)
+   {
+      // Make sure the size matches
+      if ((unsigned long long)Buf.st_size == Version->Size)
       {
 	 Complete = true;
 	 Local = true;
 	 Status = StatDone;
 	 StoreFilename = DestFile = FinalFile;
-	 return true;
+	 return;
       }
 
-      // Create the item
-      Local = false;
-      ++Vf;
-      QueueURI(Desc);
-      return true;
+      /* Hmm, we have a file and its size does not match, this shouldn't
+	 happen.. */
+      RemoveFile("pkgAcqArchive::QueueNext", FinalFile);
    }
+
+   // Check the destination file
+   DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(StoreFilename);
+   if (stat(DestFile.c_str(), &Buf) == 0)
+   {
+      // Hmm, the partial file is too big, erase it
+      if ((unsigned long long)Buf.st_size > Version->Size)
+	 RemoveFile("pkgAcqArchive::QueueNext", DestFile);
+      else
+	 PartialSize = Buf.st_size;
+   }
+
+   // Disables download of archives - useful if no real installation follows,
+   // e.g. if we are just interested in proposed installation order
+   if (_config->FindB("Debug::pkgAcqArchive::NoQueue", false) == true)
+   {
+      Complete = true;
+      Local = true;
+      Status = StatDone;
+      StoreFilename = DestFile = FinalFile;
+      return;
+   }
+
+   // Create the item
+   Local = false;
+   QueueURI(Desc);
+}
+APT_IGNORE_DEPRECATED_POP
+									/*}}}*/
+bool pkgAcqArchive::QueueNext() /*{{{*/
+{
    return false;
-}   
+}
 									/*}}}*/
 // AcqArchive::Done - Finished fetching					/*{{{*/
 // ---------------------------------------------------------------------
@@ -3483,25 +3506,6 @@ void pkgAcqArchive::Done(string const &Message, HashStringList const &Hashes,
 void pkgAcqArchive::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)
 {
    Item::Failed(Message,Cnf);
-
-   /* We don't really want to retry on failed media swaps, this prevents
-      that. An interesting observation is that permanent failures are not
-      recorded. */
-   if (Cnf->Removable == true &&
-       StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
-   {
-      // Vf = Version.FileList();
-      while (Vf.end() == false) ++Vf;
-      StoreFilename = string();
-      return;
-   }
-
-   Status = StatIdle;
-   if (QueueNext() == false)
-   {
-      StoreFilename = string();
-      Status = StatError;
-   }
 }
 									/*}}}*/
 APT_PURE bool pkgAcqArchive::IsTrusted() const				/*{{{*/

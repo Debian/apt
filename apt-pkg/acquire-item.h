@@ -244,6 +244,9 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
    APT_HIDDEN unsigned int &ModifyRetries();
    // this is more a hack than a proper external interface, hence hidden
    APT_HIDDEN std::unordered_map<std::string, std::string> &ModifyCustomFields();
+   // this isn't the super nicest interface either…
+   APT_HIDDEN bool PopAlternativeURI(std::string &NewURI);
+   APT_HIDDEN void PushAlternativeURI(std::string &&NewURI, std::unordered_map<std::string, std::string> &&fields, bool const at_the_back);
 
    /** \brief A "descriptive" URI-like string.
     *
@@ -993,6 +996,7 @@ class pkgAcqArchive : public pkgAcquire::Item
    std::string &StoreFilename;
 
    /** \brief The next file for this version to try to download. */
+   APT_DEPRECATED_MSG("Unused member")
    pkgCache::VerFileIterator Vf;
 
    /** \brief How many (more) times to try to find a new source from
