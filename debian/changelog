@@ -1,3 +1,18 @@
+apt (1.6~alpha3) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * debian/tests/control: Add dpkg so we get triggered by it
+  * seccomp: Allow ipc() for fakeroot, and allow sysinfo() for sort
+    (Closes: #879814, #879826)
+  * Drop unused gzip, lzma, bzip2, and xz symlinks of store
+  * seccomp: Allow clock_nanosleep() and nanosleep() syscalls
+  * Prevent overflow in Installed-Size (and Size) in apt show
+
+  [ David Kalnischkies ]
+  * use store: instead of gzip: to open local changelogs
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 28 Oct 2017 17:57:05 +0200
+
 apt (1.6~alpha2) unstable; urgency=medium
 
   * seccomp: Conditionalize statx() whitelisting
