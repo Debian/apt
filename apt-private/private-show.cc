@@ -184,12 +184,12 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgCache::VerIterator const
 
    // make size nice
    std::string installed_size;
-   if (Tags.FindI("Installed-Size") > 0)
+   if (Tags.FindULL("Installed-Size") > 0)
       strprintf(installed_size, "%sB", SizeToStr(Tags.FindULL("Installed-Size") * 1024).c_str());
    else
       installed_size = _("unknown");
    std::string package_size;
-   if (Tags.FindI("Size") > 0)
+   if (Tags.FindULL("Size") > 0)
       strprintf(package_size, "%sB", SizeToStr(Tags.FindULL("Size")).c_str());
    else
       package_size = _("unknown");
