@@ -11,6 +11,7 @@ DESCR='Some description
  That has multiple lines'
 insertpackage 'unstable' 'foo' 'all' '1.0' '' '' "$DESCR"
 insertpackage 'unstable' 'bar' 'i386,amd64' '1' '' '' "$DESCR"
+insertpackage 'unstable' 'big' 'i386,amd64' '1' 'Installed-Size: 4129421' '' "$DESCR"
 insertinstalledpackage 'foo' 'all' '1.0'
 
 setupaptarchive
@@ -53,6 +54,17 @@ APT-Sources: file:$APTARCHIVE unstable/main amd64 Packages
 Description: Some description
  That has multiple lines
 " apt show bar:amd64
+testsuccessequal "Package: big:amd64
+Version: 1
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 4229 MB
+Download-Size: unknown
+APT-Sources: file:$APTARCHIVE unstable/main amd64 Packages
+Description: Some description
+ That has multiple lines
+" apt show big:amd64
 
 # this is the default, but disabled by the testcases
 testsuccess apt show foo -o Apt::Cmd::Disable-Script-Warning=0
