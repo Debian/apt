@@ -3602,11 +3602,11 @@ std::string pkgAcqChangelog::URI(pkgCache::VerIterator const &Ver)	/*{{{*/
 	 if (FileExists(debianname))
 	    return "copy://" + debianname;
 	 else if (FileExists(debianname + ".gz"))
-	    return "gzip://" + debianname + ".gz";
+	    return "store://" + debianname + ".gz";
 	 else if (FileExists(basename))
 	    return "copy://" + basename;
 	 else if (FileExists(basename + ".gz"))
-	    return "gzip://" + basename + ".gz";
+	    return "store://" + basename + ".gz";
       }
    }
 
