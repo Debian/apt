@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 1.5~beta1-nl\n"
+"Project-Id-Version: apt-doc 1.5-nl\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-09-04 22:35+0200\n"
-"PO-Revision-Date: 2017-08-17 21:29+0200\n"
+"POT-Creation-Date: 2017-11-12 19:50+0100\n"
+"PO-Revision-Date: 2017-10-23 17:02+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -1820,15 +1820,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Force yes; this is a dangerous option that will cause apt to continue "
-#| "without prompting if it is doing something potentially harmful. It should "
-#| "not be used except in very special situations. Using <literal>force-yes</"
-#| "literal> can potentially destroy your system! Configuration Item: "
-#| "<literal>APT::Get::force-yes</literal>. This is deprecated and replaced "
-#| "by <option>--allow-downgrades</option>, <option>--allow-remove-essential</"
-#| "option>, <option>--allow-change-held-packages</option> in 1.1."
 msgid ""
 "Force yes; this is a dangerous option that will cause apt to continue "
 "without prompting if it is doing something potentially harmful. It should "
@@ -1845,8 +1836,9 @@ msgstr ""
 "<literal>force-yes</literal> kan mogelijkerwijs tot de vernietiging van uw "
 "systeem leiden! Configuratie-item: <literal>APT::Get::force-yes</literal>. "
 "Deze optie is verouderd en werd in 1.1 vervangen door <option>--allow-"
-"downgrades</option>, <option>--allow-remove-essential</option>, <option>--"
-"allow-change-held-packages</option>."
+"unauthenticated</option> , <option>--allow-downgrades</option> , <option>--"
+"allow-remove-essential</option> , <option>--allow-change-held-packages</"
+"option>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -2074,15 +2066,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Specialist options (<literal>--allow-releaseinfo-changes-</"
-#| "literal><replaceable>field</replaceable>)  exist to allow changes only "
-#| "for certain fields like <literal>origin</literal>, <literal>label</"
-#| "literal>, <literal>codename</literal>, <literal>suite</literal>, "
-#| "<literal>version</literal> and <literal>defaultpin</literal>. See also "
-#| "&apt-preferences;.  Configuration Item: <literal>Acquire::"
-#| "AllowReleaseInfoChanges</literal>."
 msgid ""
 "Specialist options (<literal>--allow-releaseinfo-change-</"
 "literal><replaceable>field</replaceable>)  exist to allow changes only for "
@@ -2091,7 +2074,7 @@ msgid ""
 "literal> and <literal>defaultpin</literal>. See also &apt-preferences;.  "
 "Configuration Item: <literal>Acquire::AllowReleaseInfoChanges</literal>."
 msgstr ""
-"Er bestaan specialistische opties (<literal>--allow-releaseinfo-changes-</"
+"Er bestaan specialistische opties (<literal>--allow-releaseinfo-change-</"
 "literal><replaceable>veld</replaceable>) om enkel veranderingen toe te staan "
 "voor bepaalde velden, zoals <literal>origin</literal>, <literal>label</"
 "literal>, <literal>codename</literal>, <literal>suite</literal>, "
@@ -3529,15 +3512,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "This information is shown in various places so a repository owner should "
-#| "always ensure correctness. Further more user configuration like &apt-"
-#| "preferences; can depend and make use of this information. Since version "
-#| "1.5 the user must therefore explicitly confirm changes to signal that the "
-#| "user is sufficently prepared e.g. for the new major release of the "
-#| "distribution shipped in the repository (as e.g. indicated by the "
-#| "codename)."
 msgid ""
 "This information is shown in various places so a repository owner should "
 "always ensure correctness. Further more user configuration like &apt-"
@@ -8439,6 +8413,17 @@ msgid ""
 "replaceable>.  The authentication details for proxies can also be supplied "
 "via &apt-authconf;."
 msgstr ""
+"De methode http geeft een HTTP-server op voor een archief. Dit is de meest "
+"gebruikte methode waarvoor veel configuratieopties beschikbaar zijn binnen "
+"de ruimte <literal>Acquire::http</literal>. Ze worden in &apt-conf; "
+"gedetailleerd. De URI zelf kan login-informatie bevatten als dat door het "
+"archief vereist wordt, maar de voorkeur moet gegeven worden aan het gebruik "
+"van &apt-authconf;. De methode biedt ook ondersteuning voor SOCKS5- en "
+"HTTP(S)-proxies, ofwel geconfigureerd via een apt-specifieke configuratie, "
+"of gespecificeerd met de omgevingsvariabele <envar>http_proxy</envar> "
+"volgens de indeling <replaceable>http://gebruiker:wachtwoord@server:poort/</"
+"replaceable> (er vanuit gaand dat het om een HTTP-proxy gaat die "
+"authenticatie vereist)."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8450,6 +8435,13 @@ msgid ""
 "communication through as APTs data security model is independent of the "
 "chosen transport method. See &apt-secure; for details."
 msgstr ""
+"Merk op dat deze authenticatiemethodes onveilig zijn, aangezien de volledige "
+"communicatie met de externe server (of de proxy) onversleuteld verloopt. "
+"Daardoor kan een voldoende onderlegde aanvaller de logingegevens bekijken en "
+"opslaan evenals de rest van de interactie. De aanvaller kan evenwel de "
+"communicatie <emphasis>niet</emphasis> beïnvloeden, vermits het "
+"databeveiligingsmodel dat toegepast wordt door APT, onafhankelijk van de "
+"gekozen transportmethode functioneert. Raadpleeg voor details &apt-secure;."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8462,6 +8454,15 @@ msgid ""
 "potentially still reveal which data was downloaded. If this is a concern the "
 "Tor-based schemes mentioned further below might be a suitable alternative."
 msgstr ""
+"De methode https geeft een HTTPS-server op voor een archief en is inzake "
+"gebruik en beschikbare opties erg vergelijkbaar met de http-methode. Het "
+"grote verschil is dat de communicatie tussen apt en de server (of de proxy) "
+"versleuteld verloopt. Merk op dat de versleuteling niet verhindert dat een "
+"aanvaller kan te weten komen met welke server (of welke proxy) apt "
+"communiceert. En eventueel kan deze via een meer diepgaande analyse toch nog "
+"achterhalen welke gegevens gedownload werden. Indien dit een bekommernis is, "
+"kunnen de op Tor gebaseerde methodes die later behandeld worden, een "
+"adequaat alternatief vormen."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8476,19 +8477,14 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "The cdrom scheme allows APT to use a local CD-ROM drive with media "
-#| "swapping. Use the &apt-cdrom; program to create cdrom entries in the "
-#| "source list."
 msgid ""
 "The cdrom scheme allows APT to use a local CD-ROM, DVD or USB drive with "
 "media swapping. Use the &apt-cdrom; program to create cdrom entries in the "
 "source list."
 msgstr ""
-"De methode cdrom laat APT toe om met meerdere CD's in een lokaal CD-station "
-"te werken. Gebruik het programma &apt-cdrom; om regels met CD-pakketbronnen "
-"aan te maken in de lijst met pakketbronnen."
+"De methode cdrom laat APT toe om een lokaal CD-, DVD- of USB-station te "
+"gebruiken en media te wisselen. Gebruik het programma &apt-cdrom; om regels "
+"met CD-pakketbronnen aan te maken in de lijst met pakketbronnen."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8499,19 +8495,15 @@ msgid ""
 "still need this method many configuration options for it are available in "
 "the <literal>Acquire::ftp</literal> scope and detailed in &apt-conf;."
 msgstr ""
+"De methode ftp geeft een FTP-server op voor een archief. Het gebruik van FTP "
+"is op de terugweg ten voordele van <literal>http</literal> en "
+"<literal>https</literal> en veel archieven hebben ofwel nooit FTP-toegang "
+"aangeboden of trekken die terug in. Indien u deze methode nog steeds nodig "
+"heeft, zijn er veel configuratieopties voor beschikbaar binnen de ruimte "
+"<literal>Acquire::ftp</literal>. Ze worden in &apt-conf; gedetailleerd."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "The ftp scheme specifies an FTP server for the archive. APT's FTP "
-#| "behavior is highly configurable; for more information see the &apt-conf; "
-#| "manual page. Please note that an FTP proxy can be specified by using the "
-#| "<envar>ftp_proxy</envar> environment variable. It is possible to specify "
-#| "an HTTP proxy (HTTP proxy servers often understand FTP URLs)  using this "
-#| "environment variable and <emphasis>only</emphasis> this environment "
-#| "variable. Proxies using HTTP specified in the configuration file will be "
-#| "ignored."
 msgid ""
 "Please note that an FTP proxy can be specified by using the "
 "<envar>ftp_proxy</envar> environment variable. It is possible to specify an "
@@ -8520,14 +8512,11 @@ msgid ""
 "variable. Proxies using HTTP specified in the configuration file will be "
 "ignored."
 msgstr ""
-"De methode ftp specificeert een FTP-server voor het archief. Het FTP-gedrag "
-"van APT kan in belangrijke mate geconfigureerd worden. Zie voor meer "
-"informatie de man-pagina &apt-conf;. Noteer dat een FTP-proxy opgegeven kan "
-"worden met de omgevingsvariabele <envar>ftp_proxy</envar>. Met deze "
-"omgevingsvariabele en <emphasis>enkel</emphasis> daarmee kan ook een HTTP-"
-"proxy opgegeven worden (HTTP proxyservers kunnen vaak omgaan met FTP-URL's). "
-"Proxy's die HTTP gebruiken en in het configuratiebestand vermeld staan "
-"worden genegeerd."
+"Noteer dat een FTP-proxy opgegeven kan worden met de omgevingsvariabele "
+"<envar>ftp_proxy</envar>. Met deze omgevingsvariabele en <emphasis>enkel</"
+"emphasis> daarmee kan ook een HTTP-proxy opgegeven worden (HTTP proxyservers "
+"kunnen vaak omgaan met FTP-URL's). Proxy's die HTTP gebruiken en in het "
+"configuratiebestand vermeld staan worden genegeerd."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8564,15 +8553,6 @@ msgstr "nog andere herkenbare URI-types toevoegen"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "APT can be extended with more methods shipped in other optional packages, "
-#| "which should follow the naming scheme <package>apt-transport-"
-#| "<replaceable>method</replaceable></package>.  For instance, the APT team "
-#| "also maintains the package <package>apt-transport-https</package>, which "
-#| "provides access methods for HTTPS URIs with features similar to the http "
-#| "method.  Methods for using e.g. debtorrent are also available - see &apt-"
-#| "transport-debtorrent;."
 msgid ""
 "APT can be extended with more methods shipped in other optional packages, "
 "which should follow the naming scheme <package>apt-transport-"
@@ -8584,10 +8564,8 @@ msgstr ""
 "pakketten ter beschikking gesteld worden en die moeten voldoen aan het "
 "naamgevingsschema <package>apt-transport-<replaceable>methode</replaceable></"
 "package>. Het APT-team onderhoudt bijvoorbeeld ook het pakket <package>apt-"
-"transport-https</package>, dat methodes aanbiedt om toegang te krijgen tot "
-"HTTPS URI's met dezelfde functionaliteit als bij de http-methode. Er zijn "
-"ook methodes beschikbaar om bijvoorbeeld van debtorrent gebruik te maken - "
-"zie &apt-transport-debtorrent;."
+"transport-tor</package>, dat methodes aanbiedt om toegang te krijgen tot "
+"HTTP- en HTTPS-URI's, waarbij een route via het Tor-netwerk genomen wordt."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
