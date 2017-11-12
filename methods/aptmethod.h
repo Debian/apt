@@ -14,9 +14,11 @@
 #include <string>
 #include <vector>
 
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include <apti18n.h>
@@ -60,6 +62,34 @@ protected:
       return true;
    }
 
+   bool RunningInQemu(void)
+   {
+      int status;
+      pid_t pid;
+
+      pid = fork();
+      if (pid == 0)
+      {
+	 close(0);
+	 close(1);
+	 close(2);
+	 setenv("QEMU_VERSION", "meow", 1);
+	 char path[] = LIBEXEC_DIR "/apt-helper";
+	 char *const argv[] = {path, NULL};
+	 execv(argv[0], argv);
+	 _exit(255);
+      }
+
+      // apt-helper is supposed to exit with an error. If it exited with 0,
+      // qemu-user had problems with QEMU_VERSION and returned 0 => running in
+      // qemu-user.
+
+      if (waitpid(pid, &status, 0) == pid && WIFEXITED(status) && WEXITSTATUS(status) == 0)
+	 return true;
+
+      return false;
+   }
+
    bool LoadSeccomp()
    {
 #ifdef HAVE_SECCOMP
@@ -71,6 +101,12 @@ protected:
 
       if (_config->FindB("APT::Sandbox::Seccomp", true) == false)
 	 return true;
+
+      if (RunningInQemu() == true)
+      {
+	 Warning("Running in qemu-user, not using seccomp");
+	 return true;
+      }
 
       ctx = seccomp_init(SCMP_ACT_TRAP);
       if (ctx == NULL)
@@ -270,7 +306,7 @@ protected:
 #undef ALLOW
 
       rc = seccomp_load(ctx);
-      if (rc == -EINVAL || rc == -EFAULT) // Qemu faults...
+      if (rc == -EINVAL)
 	 Warning("aptMethod::Configuration: could not load seccomp policy: %s", strerror(-rc));
       else if (rc != 0)
 	 return _error->FatalE("aptMethod::Configuration", "could not load seccomp policy: %s", strerror(-rc));
