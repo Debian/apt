@@ -199,3 +199,95 @@ testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' 
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-armel/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-armel_Packages 0 
 'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 " aptget update --print-uris
+
+msgcleantest 'Test deb822 sources with' 'multiline multivalues'
+cat > "$SOURCES" <<EOF
+Types: deb
+ deb-src
+URIs:
+ http://ftp.debian.org/debian
+ http://ftp.debian.org/debian2
+Suites: stable
+ 	  sid
+Components:
+ 	main
+ contrib	non-free
+Architectures: amd64
+ armhf	   powerpc
+EOF
+testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
+'http://ftp.debian.org/debian/dists/sid/InRelease' ftp.debian.org_debian_dists_sid_InRelease 0 
+'http://ftp.debian.org/debian2/dists/stable/InRelease' ftp.debian.org_debian2_dists_stable_InRelease 0 
+'http://ftp.debian.org/debian2/dists/sid/InRelease' ftp.debian.org_debian2_dists_sid_InRelease 0 
+'http://ftp.debian.org/debian/dists/stable/main/source/Sources.xz' ftp.debian.org_debian_dists_stable_main_source_Sources 0 
+'http://ftp.debian.org/debian/dists/stable/contrib/source/Sources.xz' ftp.debian.org_debian_dists_stable_contrib_source_Sources 0 
+'http://ftp.debian.org/debian/dists/stable/non-free/source/Sources.xz' ftp.debian.org_debian_dists_stable_non-free_source_Sources 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-amd64/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-armhf/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-powerpc/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_main_binary-all_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 
+'http://ftp.debian.org/debian/dists/stable/contrib/binary-amd64/Packages.xz' ftp.debian.org_debian_dists_stable_contrib_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/contrib/binary-armhf/Packages.xz' ftp.debian.org_debian_dists_stable_contrib_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/contrib/binary-powerpc/Packages.xz' ftp.debian.org_debian_dists_stable_contrib_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/contrib/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_contrib_binary-all_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/contrib/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_contrib_i18n_Translation-en 0 
+'http://ftp.debian.org/debian/dists/stable/non-free/binary-amd64/Packages.xz' ftp.debian.org_debian_dists_stable_non-free_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/non-free/binary-armhf/Packages.xz' ftp.debian.org_debian_dists_stable_non-free_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/non-free/binary-powerpc/Packages.xz' ftp.debian.org_debian_dists_stable_non-free_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/non-free/binary-all/Packages.xz' ftp.debian.org_debian_dists_stable_non-free_binary-all_Packages 0 
+'http://ftp.debian.org/debian/dists/stable/non-free/i18n/Translation-en.xz' ftp.debian.org_debian_dists_stable_non-free_i18n_Translation-en 0 
+'http://ftp.debian.org/debian/dists/sid/main/source/Sources.xz' ftp.debian.org_debian_dists_sid_main_source_Sources 0 
+'http://ftp.debian.org/debian/dists/sid/contrib/source/Sources.xz' ftp.debian.org_debian_dists_sid_contrib_source_Sources 0 
+'http://ftp.debian.org/debian/dists/sid/non-free/source/Sources.xz' ftp.debian.org_debian_dists_sid_non-free_source_Sources 0 
+'http://ftp.debian.org/debian/dists/sid/main/binary-amd64/Packages.xz' ftp.debian.org_debian_dists_sid_main_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/main/binary-armhf/Packages.xz' ftp.debian.org_debian_dists_sid_main_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/main/binary-powerpc/Packages.xz' ftp.debian.org_debian_dists_sid_main_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/main/binary-all/Packages.xz' ftp.debian.org_debian_dists_sid_main_binary-all_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/main/i18n/Translation-en.xz' ftp.debian.org_debian_dists_sid_main_i18n_Translation-en 0 
+'http://ftp.debian.org/debian/dists/sid/contrib/binary-amd64/Packages.xz' ftp.debian.org_debian_dists_sid_contrib_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/contrib/binary-armhf/Packages.xz' ftp.debian.org_debian_dists_sid_contrib_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/contrib/binary-powerpc/Packages.xz' ftp.debian.org_debian_dists_sid_contrib_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/contrib/binary-all/Packages.xz' ftp.debian.org_debian_dists_sid_contrib_binary-all_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/contrib/i18n/Translation-en.xz' ftp.debian.org_debian_dists_sid_contrib_i18n_Translation-en 0 
+'http://ftp.debian.org/debian/dists/sid/non-free/binary-amd64/Packages.xz' ftp.debian.org_debian_dists_sid_non-free_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/non-free/binary-armhf/Packages.xz' ftp.debian.org_debian_dists_sid_non-free_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/non-free/binary-powerpc/Packages.xz' ftp.debian.org_debian_dists_sid_non-free_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/non-free/binary-all/Packages.xz' ftp.debian.org_debian_dists_sid_non-free_binary-all_Packages 0 
+'http://ftp.debian.org/debian/dists/sid/non-free/i18n/Translation-en.xz' ftp.debian.org_debian_dists_sid_non-free_i18n_Translation-en 0 
+'http://ftp.debian.org/debian2/dists/stable/main/source/Sources.xz' ftp.debian.org_debian2_dists_stable_main_source_Sources 0 
+'http://ftp.debian.org/debian2/dists/stable/contrib/source/Sources.xz' ftp.debian.org_debian2_dists_stable_contrib_source_Sources 0 
+'http://ftp.debian.org/debian2/dists/stable/non-free/source/Sources.xz' ftp.debian.org_debian2_dists_stable_non-free_source_Sources 0 
+'http://ftp.debian.org/debian2/dists/stable/main/binary-amd64/Packages.xz' ftp.debian.org_debian2_dists_stable_main_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/main/binary-armhf/Packages.xz' ftp.debian.org_debian2_dists_stable_main_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/main/binary-powerpc/Packages.xz' ftp.debian.org_debian2_dists_stable_main_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/main/binary-all/Packages.xz' ftp.debian.org_debian2_dists_stable_main_binary-all_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/main/i18n/Translation-en.xz' ftp.debian.org_debian2_dists_stable_main_i18n_Translation-en 0 
+'http://ftp.debian.org/debian2/dists/stable/contrib/binary-amd64/Packages.xz' ftp.debian.org_debian2_dists_stable_contrib_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/contrib/binary-armhf/Packages.xz' ftp.debian.org_debian2_dists_stable_contrib_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/contrib/binary-powerpc/Packages.xz' ftp.debian.org_debian2_dists_stable_contrib_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/contrib/binary-all/Packages.xz' ftp.debian.org_debian2_dists_stable_contrib_binary-all_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/contrib/i18n/Translation-en.xz' ftp.debian.org_debian2_dists_stable_contrib_i18n_Translation-en 0 
+'http://ftp.debian.org/debian2/dists/stable/non-free/binary-amd64/Packages.xz' ftp.debian.org_debian2_dists_stable_non-free_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/non-free/binary-armhf/Packages.xz' ftp.debian.org_debian2_dists_stable_non-free_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/non-free/binary-powerpc/Packages.xz' ftp.debian.org_debian2_dists_stable_non-free_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/non-free/binary-all/Packages.xz' ftp.debian.org_debian2_dists_stable_non-free_binary-all_Packages 0 
+'http://ftp.debian.org/debian2/dists/stable/non-free/i18n/Translation-en.xz' ftp.debian.org_debian2_dists_stable_non-free_i18n_Translation-en 0 
+'http://ftp.debian.org/debian2/dists/sid/main/source/Sources.xz' ftp.debian.org_debian2_dists_sid_main_source_Sources 0 
+'http://ftp.debian.org/debian2/dists/sid/contrib/source/Sources.xz' ftp.debian.org_debian2_dists_sid_contrib_source_Sources 0 
+'http://ftp.debian.org/debian2/dists/sid/non-free/source/Sources.xz' ftp.debian.org_debian2_dists_sid_non-free_source_Sources 0 
+'http://ftp.debian.org/debian2/dists/sid/main/binary-amd64/Packages.xz' ftp.debian.org_debian2_dists_sid_main_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/main/binary-armhf/Packages.xz' ftp.debian.org_debian2_dists_sid_main_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/main/binary-powerpc/Packages.xz' ftp.debian.org_debian2_dists_sid_main_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/main/binary-all/Packages.xz' ftp.debian.org_debian2_dists_sid_main_binary-all_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/main/i18n/Translation-en.xz' ftp.debian.org_debian2_dists_sid_main_i18n_Translation-en 0 
+'http://ftp.debian.org/debian2/dists/sid/contrib/binary-amd64/Packages.xz' ftp.debian.org_debian2_dists_sid_contrib_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/contrib/binary-armhf/Packages.xz' ftp.debian.org_debian2_dists_sid_contrib_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/contrib/binary-powerpc/Packages.xz' ftp.debian.org_debian2_dists_sid_contrib_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/contrib/binary-all/Packages.xz' ftp.debian.org_debian2_dists_sid_contrib_binary-all_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/contrib/i18n/Translation-en.xz' ftp.debian.org_debian2_dists_sid_contrib_i18n_Translation-en 0 
+'http://ftp.debian.org/debian2/dists/sid/non-free/binary-amd64/Packages.xz' ftp.debian.org_debian2_dists_sid_non-free_binary-amd64_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/non-free/binary-armhf/Packages.xz' ftp.debian.org_debian2_dists_sid_non-free_binary-armhf_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/non-free/binary-powerpc/Packages.xz' ftp.debian.org_debian2_dists_sid_non-free_binary-powerpc_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/non-free/binary-all/Packages.xz' ftp.debian.org_debian2_dists_sid_non-free_binary-all_Packages 0 
+'http://ftp.debian.org/debian2/dists/sid/non-free/i18n/Translation-en.xz' ftp.debian.org_debian2_dists_sid_non-free_i18n_Translation-en 0 " aptget update --print-uris

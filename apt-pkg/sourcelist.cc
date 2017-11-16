@@ -43,6 +43,17 @@ static pkgSourceList::Type *ItmList[10];
 pkgSourceList::Type **pkgSourceList::Type::GlobalList = ItmList;
 unsigned long pkgSourceList::Type::GlobalListLen = 0;
 
+static std::vector<std::string> FindMultiValue(pkgTagSection &Tags, char const *const Field) /*{{{*/
+{
+   auto values = Tags.FindS(Field);
+   // we ignore duplicate spaces by removing empty values
+   std::replace_if(values.begin(), values.end(), isspace_ascii, ' ');
+   auto vect = VectorizeString(values, ' ');
+   vect.erase(std::remove_if(vect.begin(), vect.end(), [](std::string const &s) { return s.empty(); }), vect.end());
+   return vect;
+}
+									/*}}}*/
+
 // Type::Type - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* Link this to the global list of items*/
@@ -115,11 +126,13 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,	/*{{{*/
    for (std::map<char const * const, std::pair<char const * const, bool> >::const_iterator m = mapping.begin(); m != mapping.end(); ++m)
       if (Tags.Exists(m->first))
       {
-	 std::string option = Tags.FindS(m->first);
-	 // for deb822 the " " is the delimiter, but the backend expects ","
-	 if (m->second.second == true)
-	    std::replace(option.begin(), option.end(), ' ', ',');
-	 Options[m->second.first] = option;
+	 if (m->second.second)
+	 {
+	    auto const values = FindMultiValue(Tags, m->first);
+	    Options[m->second.first] = APT::String::Join(values, ",");
+	 }
+	 else
+	    Options[m->second.first] = Tags.FindS(m->first);
       }
 
    {
@@ -129,37 +142,34 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,	/*{{{*/
    }
 
    // now create one item per suite/section
-   string Suite = Tags.FindS("Suites");
-   Suite = SubstVar(Suite,"$(ARCH)",_config->Find("APT::Architecture"));
-   string const Component = Tags.FindS("Components");
-   string const URIS = Tags.FindS("URIs");
-
-   std::vector<std::string> const list_uris = VectorizeString(URIS, ' ');
-   std::vector<std::string> const list_suite = VectorizeString(Suite, ' ');
-   std::vector<std::string> const list_comp = VectorizeString(Component, ' ');
+   auto const list_uris = FindMultiValue(Tags, "URIs");
+   auto const list_comp = FindMultiValue(Tags, "Components");
+   auto list_suite = FindMultiValue(Tags, "Suites");
+   {
+      auto const nativeArch = _config->Find("APT::Architecture");
+      std::transform(list_suite.begin(), list_suite.end(), list_suite.begin(),
+		     [&](std::string const &suite) { return SubstVar(suite, "$(ARCH)", nativeArch); });
+   }
 
    if (list_uris.empty())
       // TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
       return _error->Error(_("Malformed entry %u in %s file %s (%s)"), i, "sources", Fd.Name().c_str(), "URI");
 
-   for (std::vector<std::string>::const_iterator U = list_uris.begin();
-        U != list_uris.end(); ++U)
+   if (list_suite.empty())
+      return _error->Error(_("Malformed entry %u in %s file %s (%s)"), i, "sources", Fd.Name().c_str(), "Suite");
+
+   for (auto URI : list_uris)
    {
-      std::string URI = *U;
-      if (U->empty() || FixupURI(URI) == false)
+      if (FixupURI(URI) == false)
 	 return _error->Error(_("Malformed entry %u in %s file %s (%s)"), i, "sources", Fd.Name().c_str(), "URI parse");
 
-      if (list_suite.empty())
-	 return _error->Error(_("Malformed entry %u in %s file %s (%s)"), i, "sources", Fd.Name().c_str(), "Suite");
-
-      for (std::vector<std::string>::const_iterator S = list_suite.begin();
-           S != list_suite.end(); ++S)
+      for (auto const &S : list_suite)
       {
-	 if (S->empty() == false && (*S)[S->size() - 1] == '/')
+	 if (likely(S.empty() == false) && S[S.size() - 1] == '/')
 	 {
 	    if (list_comp.empty() == false)
 	       return _error->Error(_("Malformed entry %u in %s file %s (%s)"), i, "sources", Fd.Name().c_str(), "absolute Suite Component");
-	    if (CreateItem(List, URI, *S, "", Options) == false)
+	    if (CreateItem(List, URI, S, "", Options) == false)
 	       return false;
 	 }
 	 else
@@ -167,14 +177,9 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,	/*{{{*/
 	    if (list_comp.empty())
 	       return _error->Error(_("Malformed entry %u in %s file %s (%s)"), i, "sources", Fd.Name().c_str(), "Component");
 
-	    for (std::vector<std::string>::const_iterator C = list_comp.begin();
-		  C != list_comp.end(); ++C)
-	    {
-	       if (CreateItem(List, URI, *S, *C, Options) == false)
-	       {
+	    for (auto const &C : list_comp)
+	       if (CreateItem(List, URI, S, C, Options) == false)
 		  return false;
-	       }
-	    }
 	 }
       }
    }
@@ -433,20 +438,17 @@ bool pkgSourceList::ParseFileDeb822(string const &File)
       if(Tags.Exists("Types") == false)
 	 return _error->Error(_("Malformed stanza %u in source list %s (type)"),i,File.c_str());
 
-      string const types = Tags.FindS("Types");
-      std::vector<std::string> const list_types = VectorizeString(types, ' ');
-      for (std::vector<std::string>::const_iterator I = list_types.begin();
-        I != list_types.end(); ++I)
+      for (auto const &type : FindMultiValue(Tags, "Types"))
       {
-         Type *Parse = Type::GetType((*I).c_str());
-         if (Parse == 0)
-         {
-            _error->Error(_("Type '%s' is not known on stanza %u in source list %s"), (*I).c_str(),i,Fd.Name().c_str());
-            return false;
-         }
+	 Type *Parse = Type::GetType(type.c_str());
+	 if (Parse == 0)
+	 {
+	    _error->Error(_("Type '%s' is not known on stanza %u in source list %s"), type.c_str(), i, Fd.Name().c_str());
+	    return false;
+	 }
 
-         if (!Parse->ParseStanza(SrcList, Tags, i, Fd))
-            return false;
+	 if (!Parse->ParseStanza(SrcList, Tags, i, Fd))
+	    return false;
       }
    }
    return true;
