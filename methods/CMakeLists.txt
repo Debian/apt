@@ -26,7 +26,7 @@ target_link_libraries(ftp ${GNUTLS_LIBRARIES})
 install(TARGETS file copy store gpgv cdrom http ftp rred rsh mirror
         RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/apt/methods)
 
-add_slaves(${CMAKE_INSTALL_LIBEXECDIR}/apt/methods mirror mirror+http mirror+https mirror+file)
+add_slaves(${CMAKE_INSTALL_LIBEXECDIR}/apt/methods mirror mirror+ftp mirror+http mirror+https mirror+file mirror+copy)
 add_slaves(${CMAKE_INSTALL_LIBEXECDIR}/apt/methods rsh ssh)
 
 

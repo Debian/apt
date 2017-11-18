@@ -28,6 +28,7 @@
 
 #include <apti18n.h>
 									/*}}}*/
+constexpr char const *const disallowLocal[] = {"ftp", "http", "https"};
 
 static void sortByLength(std::vector<std::string> &vec)			/*{{{*/
 {
@@ -204,17 +205,47 @@ bool MirrorMethod::MirrorListFileRecieved(MirrorListInfo &info, FetchItem *const
    FileFd mirrorlist;
    if (FileExists(Itm->DestFile) && mirrorlist.Open(Itm->DestFile, FileFd::ReadOnly, FileFd::Extension))
    {
+      auto const accessColon = info.baseuri.find(':');
+      auto access = info.baseuri.substr(0, accessColon);
+      std::string prefixAccess;
+      if (APT::String::Startswith(access, "mirror") == false)
+      {
+	 auto const plus = info.baseuri.find('+');
+	 prefixAccess = info.baseuri.substr(0, plus);
+	 access.erase(0, plus + 1);
+      }
+      std::vector<std::string> limitAccess;
+      // If the mirror file comes from an online source, allow only other online
+      // sources, not e.g. file:///. If the mirrorlist comes from there we can assume
+      // the admin knows what (s)he is doing through and not limit the options.
+      if (std::any_of(std::begin(disallowLocal), std::end(disallowLocal),
+		      [&access](char const *const a) { return APT::String::Endswith(access, std::string("+") + a); }) ||
+	  access == "mirror")
+      {
+	 for (auto const &a : disallowLocal)
+	    limitAccess.emplace_back(a);
+      }
       std::string line;
       while (mirrorlist.ReadLine(line))
       {
 	 if (line.empty() || line[0] == '#')
 	    continue;
+	 auto const access = line.substr(0, line.find(':'));
+	 if (limitAccess.empty() == false && std::find(limitAccess.begin(), limitAccess.end(), access) == limitAccess.end())
+	    continue;
 	 auto const tab = line.find('\t');
 	 if (tab == std::string::npos)
-	    info.list.emplace_back(std::move(line));
+	 {
+	    if (prefixAccess.empty())
+	       info.list.emplace_back(std::move(line));
+	    else
+	       info.list.emplace_back(prefixAccess + '+' + line);
+	 }
 	 else
 	 {
 	    auto uri = line.substr(0, tab);
+	    if (prefixAccess.empty() == false)
+	       uri = prefixAccess + '+' + uri;
 	    auto tagline = line.substr(tab + 1);
 	    std::replace_if(tagline.begin(), tagline.end(), isspace_ascii, ' ');
 	    auto tags = VectorizeString(tagline, ' ');
@@ -290,7 +321,20 @@ std::string MirrorMethod::GetMirrorFileURI(std::string const &Message, FetchItem
 	    continue;
 	 auto const plus = uristr.find("+");
 	 if (plus < colon)
-	    return uristr.substr(plus + 1);
+	 {
+	    // started as tor+mirror+http we want to get the file via tor+http
+	    auto access = uristr.substr(0, colon);
+	    std::string prefixAccess;
+	    if (APT::String::Startswith(access, "mirror") == false)
+	    {
+	       prefixAccess = uristr.substr(0, plus);
+	       access.erase(0, plus + 1);
+	       uristr.erase(plus, strlen("mirror") + 1);
+	       return uristr;
+	    }
+	    else
+	       return uristr.substr(plus + 1);
+	 }
 	 else
 	 {
 	    uristr.replace(0, strlen("mirror"), "http");
