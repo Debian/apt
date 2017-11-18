@@ -67,8 +67,24 @@ bool InitOutput(std::basic_streambuf<char> * const out)			/*{{{*/
       c1out.rdbuf(devnull.rdbuf());
 
    // deal with window size changes
-   signal(SIGWINCH,SigWinch);
-   SigWinch(0);
+   auto cols = getenv("COLUMNS");
+   if (cols != nullptr)
+   {
+      char * colends;
+      auto const sw = strtoul(cols, &colends, 10);
+      if (*colends != '\0' || sw == 0)
+      {
+	 _error->Warning("Environment variable COLUMNS was ignored as it has an invalid value: \"%s\"", cols);
+	 cols = nullptr;
+      }
+      else
+	 ScreenWidth = sw;
+   }
+   if (cols == nullptr)
+   {
+      signal(SIGWINCH,SigWinch);
+      SigWinch(0);
+   }
 
    if(!isatty(1))
    {

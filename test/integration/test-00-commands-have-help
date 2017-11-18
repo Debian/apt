@@ -86,3 +86,16 @@ testmoo '@1484822790' 'Have you mooed today?'
 testmoo '@1484822791' 'Have you mooed today?'
 testmoo '@1484822792' 'Have you mooed today?'
 testmoo '@1484822793' 'Have you mooed today?'
+
+# that also helps with reproducibility of output…
+export COLUMNS=80
+testsuccess aptget moo
+export COLUMNS=0
+testwarning aptget moo
+export COLUMNS=80a
+testwarning aptget moo
+export COLUMNS=a80
+testwarning aptget moo
+export COLUMNS=
+testwarning aptget moo
+unset COLUMNS
