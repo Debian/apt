@@ -425,7 +425,9 @@ bool HttpServerState::Open()
    In.Reset();
    Out.Reset();
    Persistent = true;
-   
+
+   bool tls = (ServerName.Access == "https" || APT::String::Endswith(ServerName.Access, "+https"));
+
    // Determine the proxy setting
    // Used to run AutoDetectProxy(ServerName) here, but we now send a Proxy
    // header in the URI Acquire request and set "Acquire::"+uri.Access+"::proxy::"+uri.Host
@@ -447,8 +449,16 @@ bool HttpServerState::Open()
 	   }
 	   else
 	   {
-		   char* result = getenv("http_proxy");
-		   Proxy = result ? result : "";
+	      char *result = getenv("http_proxy");
+	      Proxy = result ? result : "";
+	      if (tls == true)
+	      {
+		 char *result = getenv("https_proxy");
+		 if (result != nullptr)
+		 {
+		    Proxy = result;
+		 }
+	      }
 	   }
    }
    
@@ -462,7 +472,6 @@ bool HttpServerState::Open()
    if (Proxy.empty() == false)
       Owner->AddProxyAuth(Proxy, ServerName);
 
-   bool tls = (ServerName.Access == "https" || APT::String::Endswith(ServerName.Access, "+https"));
    auto const DefaultService = tls ? "https" : "http";
    auto const DefaultPort = tls ? 443 : 80;
    if (Proxy.Access == "socks5h")
