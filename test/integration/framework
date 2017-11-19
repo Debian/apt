@@ -1423,20 +1423,22 @@ downloadfile() {
 	fi
 }
 
+cleanup_output() {
+	cat "$1" | sed \
+		-e '/gpgv: WARNING: This key is not suitable for signing in --compliance=gnupg mode/ d' \
+		-e '/^profiling:/ d' \
+		| sed -e '/\.\.\.profiling:/ {N;s#\.\.\.profiling:.*\n#...#g}' \
+			>"$2"
+}
+
 checkdiff() {
 	local TMPFILE1="${TMPWORKINGDIRECTORY}/rootdir/tmp/checkdiff.1.tmp"
 	local TMPFILE2="${TMPWORKINGDIRECTORY}/rootdir/tmp/checkdiff.2.tmp"
 	touch "$TMPFILE1" "$TMPFILE2"
-	if [ "$1" != '-' ]; then
-		sed -e '/gpgv: WARNING: This key is not suitable for signing in --compliance=gnupg mode/ d' -e '/^profiling:/ d' -e '/\.\.\.profiling:/{N;s#\.\.\.profiling:.*\n#...#g}' < "$1" >"$TMPFILE1"
-	else
-		TMPFILE1='-'
-	fi
-	if [ "$2" != '-' ]; then
-		sed -e '/gpgv: WARNING: This key is not suitable for signing in --compliance=gnupg mode/ d' -e '/^profiling:/ d' -e '/\.\.\.profiling:/{N;s#\.\.\.profiling:.*\n#...#g}' < "$2" >"$TMPFILE2"
-	else
-		TMPFILE2='-'
-	fi
+
+	cleanup_output "$1" "$TMPFILE1"
+	cleanup_output "$2" "$TMPFILE2"
+
 	local DIFFTEXT="$(command diff -u "$TMPFILE1" "$TMPFILE2" 2>&1 | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
 	if [ -n "$DIFFTEXT" ]; then
 		echo >&2
