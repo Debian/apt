@@ -89,12 +89,18 @@ endfunction()
 # Process one document
 function(po4a_one stamp_out out full_document language deps)
     path_join(full_path "${CMAKE_CURRENT_SOURCE_DIR}" "${full_document}")
-    po4a_components(document _ section ext "${full_document}")
+    if (full_document MATCHES "\.ent$")
+        set(dest "${language}/${full_document}")
+        set(full_dest "${dest}")
+    else()
+        po4a_components(document _ section ext "${full_document}")
 
-    # Calculate target file name
-    set(dest "${language}/${document}.${language}")
-    if(section)
-        set(dest "${dest}.${section}")
+        # Calculate target file name
+        set(dest "${language}/${document}.${language}")
+        if(section)
+            set(dest "${dest}.${section}")
+        endif()
+        set(full_dest "${dest}.${ext}")
     endif()
 
     # po4a might drop files not translated enough, so build a stamp file
@@ -106,17 +112,17 @@ function(po4a_one stamp_out out full_document language deps)
                      --package-name='${PROJECT_NAME}-doc'
                      --package-version='${PACKAGE_VERSION}'
                      --msgid-bugs-address='${PACKAGE_MAIL}'
-                     --translate-only ${dest}.${ext}
+                     --translate-only ${full_dest}
                      --srcdir ${CMAKE_CURRENT_SOURCE_DIR}
                      --destdir ${CMAKE_CURRENT_BINARY_DIR}
                       ${CMAKE_CURRENT_SOURCE_DIR}/po4a.conf
         COMMAND ${CMAKE_COMMAND} -E touch ${stamp}
-        COMMENT "Generating ${dest}.${ext} (or dropping it)"
+        COMMENT "Generating ${full_dest} (or dropping it)"
         DEPENDS ${full_document} ${deps} po/${language}.po
     )
     # Return result
     set(${stamp_out} ${stamp} PARENT_SCOPE)
-    set(${out} ${CMAKE_CURRENT_BINARY_DIR}/${dest}.${ext} PARENT_SCOPE)
+    set(${out} ${CMAKE_CURRENT_BINARY_DIR}/${full_dest} PARENT_SCOPE)
 endfunction()
 
 function(xsltproc_one)
@@ -251,7 +257,7 @@ function(add_docbook target)
     set(generated "")
     set(options HTML TEXT MANPAGE ALL)
     set(oneValueArgs)
-    set(multiValueArgs INSTALL DOCUMENTS LINGUAS DEPENDS)
+    set(multiValueArgs INSTALL DOCUMENTS LINGUAS TRANSLATED_ENTITIES DEPENDS)
     cmake_parse_arguments(DOC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     if (DOC_HTML)
@@ -263,6 +269,13 @@ function(add_docbook target)
     if (DOC_MANPAGE)
         list(APPEND formats MANPAGE)
     endif()
+
+    foreach(document ${DOC_TRANSLATED_ENTITIES})
+        foreach(lang ${DOC_LINGUAS})
+            po4a_one(po4a_stamp po4a_out ${document} "${lang}" "")
+            list(APPEND DOC_DEPENDS ${po4a_stamp})
+        endforeach()
+    endforeach()
 
     foreach(document ${DOC_DOCUMENTS})
         foreach(lang ${DOC_LINGUAS})

@@ -12,8 +12,11 @@ set(LINGUAS
     pt
 )
 
-set(ENTITIES
+set(TRANSLATED_ENTITIES
     apt.ent
+)
+
+set(ENTITIES
     apt-verbatim.ent
     ../vendor/${CURRENT_VENDOR}/apt-vendor.ent
 )
@@ -25,6 +28,7 @@ add_docbook(apt-doc HTML TEXT ALL
         offline.dbk
     INSTALL ${CMAKE_INSTALL_DOCDIR}/../apt-doc
     LINGUAS ${LINGUAS}
+    TRANSLATED_ENTITIES ${TRANSLATED_ENTITIES}
     DEPENDS ${ENTITIES}
 )
 
@@ -36,6 +40,7 @@ add_docbook(libapt-pkg-doc HTML TEXT ALL
         method.dbk
     INSTALL ${CMAKE_INSTALL_DOCDIR}/../libapt-pkg-doc
     LINGUAS ${LINGUAS}
+    TRANSLATED_ENTITIES ${TRANSLATED_ENTITIES}
     DEPENDS ${ENTITIES}
 )
 
@@ -81,6 +86,7 @@ add_docbook(apt-man MANPAGE ALL
         apt-sortpkgs.1.xml
         sources.list.5.xml
     DEPENDS ${ENTITIES}
+    TRANSLATED_ENTITIES ${TRANSLATED_ENTITIES}
     LINGUAS ${LINGUAS}
 )
 
