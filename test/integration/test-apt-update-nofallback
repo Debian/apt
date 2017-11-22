@@ -178,8 +178,10 @@ test_subvert_inrelease()
     # replace InRelease with something else
     mv "$APTARCHIVE/dists/unstable/Release" "$APTARCHIVE/dists/unstable/InRelease"
 
-    testfailuremsg "E: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  Clearsigned file isn't valid, got 'NOSPLIT' (does the network require authentication?)
-E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update
+    testfailuremsg "E: Failed to fetch file://${APTARCHIVE}/dists/unstable/InRelease  Clearsigned file isn't valid, got 'NOSPLIT' (does the network require authentication?)
+E: The repository 'file:${APTARCHIVE} unstable InRelease' is no longer signed.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details." aptget update
 
     # ensure we keep the repo
     testfileequal lists.before "$(listcurrentlistsdirectory)"

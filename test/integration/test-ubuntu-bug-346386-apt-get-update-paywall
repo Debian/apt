@@ -78,4 +78,24 @@ testfailureequal "Err:1 http://localhost:${APTHTTPPORT} unstable InRelease
   511  Network Authentication Required
 Reading package lists...
 E: Failed to fetch http://localhost:${APTHTTPPORT}/dists/unstable/InRelease  511  Network Authentication Required
-E: Some index files failed to download. They have been ignored, or old ones used instead." apt update
+E: The repository 'http://localhost:${APTHTTPPORT} unstable InRelease' is not signed.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details." aptget update
+
+# on S3 all files get a 403. If we accept unsigned, lets be liberal in non-existence acceptance
+webserverconfig 'aptwebserver::httpcode::404' '403 Forbidden'
+rm -rf rootdir/var/lib/apt/lists
+testfailureequal "Err:1 http://localhost:${APTHTTPPORT} unstable InRelease
+  403  Forbidden
+Reading package lists...
+E: Failed to fetch http://localhost:${APTHTTPPORT}/dists/unstable/InRelease  403  Forbidden
+E: The repository 'http://localhost:${APTHTTPPORT} unstable InRelease' is not signed.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details." apt update
+
+sed -i 's#^deb\(-src\)\? #deb\1 [allow-insecure=yes] #' rootdir/etc/apt/sources.list.d/*
+testfailure apt update
+testequal "Ign:1 http://localhost:${APTHTTPPORT} unstable InRelease
+  403  Forbidden
+Ign:2 http://localhost:${APTHTTPPORT} unstable Release
+  403  Forbidden" head -n 4 rootdir/tmp/testfailure.output

@@ -1784,18 +1784,27 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 
    if (AuthPass == false)
    {
+      if (Status == StatTransientNetworkError)
+      {
+	 TransactionManager->AbortTransaction();
+	 return;
+      }
       auto const failreason = LookupTag(Message, "FailReason");
       auto const httperror = "HttpError";
-      if (Status == StatAuthError || Status == StatTransientNetworkError ||
-	    (strncmp(failreason.c_str(), httperror, strlen(httperror)) == 0 &&
-	     failreason != "HttpError404"))
+      if (Status == StatAuthError ||
+	  (strncmp(failreason.c_str(), httperror, strlen(httperror)) == 0 &&
+	   failreason != "HttpError404"))
       {
 	 // if we expected a ClearTextSignature (InRelease) but got a network
 	 // error or got a file, but it wasn't valid, we end up here (see VerifyDone).
 	 // As these is usually called by web-portals we do not try Release/Release.gpg
 	 // as this is gonna fail anyway and instead abort our try (LP#346386)
-	 TransactionManager->AbortTransaction();
-	 return;
+	 _error->PushToStack();
+	 _error->Error(_("Failed to fetch %s  %s"), Target.URI.c_str(), ErrorText.c_str());
+	 if (AllowInsecureRepositories(InsecureType::UNSIGNED, Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
+	    _error->RevertToStack();
+	 else
+	    return;
       }
 
       // Queue the 'old' InRelease file for removal if we try Release.gpg
