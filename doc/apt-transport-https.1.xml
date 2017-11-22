@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % aptent SYSTEM "apt.ent"> %aptent;
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent"> %aptverbatiment;
+<!ENTITY % aptvendor SYSTEM "apt-vendor.ent"> %aptvendor;
+]>
+
+<refentry>
+
+ <refentryinfo>
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>2017-11-22T00:00:00Z</date>
+ </refentryinfo>
+
+ <refmeta>
+   <refentrytitle>apt-transport-https</refentrytitle>
+   <manvolnum>1</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
+ </refmeta>
+
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-transport-https</refname>
+    <refpurpose>APT transport for downloading via the HTTP Secure protocol (HTTPS)</refpurpose>
+ </refnamediv>
+
+<refsect1><title>Description</title>
+<para>This APT transport allows the use of repositories accessed via the
+HTTP Secure protocol (HTTPS) also referred to as HTTP over TLS. It is available
+by default since apt 1.5 and was before that available in a <package>apt-transport-https</package>
+package. Note that a transport is never called directly by
+a user but used by APT tools based on user configuration.</para>
+<para>HTTP is by itself an unencrypted transport protocol (compare &apt-transport-http;),
+which, as indicated by the appended S is wrapped in an encrypted layer known as
+Transport Layer Security (TLS) which provides end-to-end encryption.
+A sufficiently capable attacker can still observe the communication partners
+and deeper analyse of the encrypted communcation might still reveal important details.
+An overview over available alternative transport methods is given in &sources-list;.</para>
+</refsect1>
+
+<refsect1><title>Options</title>
+<para>The HTTPS protocol is based on the HTTP protocol and as such this implementation
+has the same relation meaning that all options supported by &apt-transport-http; are also
+available via <literal>Acquire::https</literal> and will default to the same values specified
+for <literal>Acquire::http</literal>. This manpage will only document the options
+<emphasis>unique to https</emphasis>.</para>
+
+<refsect2><title>Server credentials</title>
+<para>By default all certificates trusted by the system (see
+<package>ca-certificates</package> package) are used for the verification of
+the server certificate. An alternative certificate authority (CA) can be
+configured with the <literal>Acquire::https::CAInfo</literal> option and its
+host-specific option <literal>Acquire::https::CAInfo::<replaceable>host</replaceable></literal>.
+The option specifies a file is made of the concatenation of the CA certificates
+(in PEM format) creating the chain used for the verification of the path
+from the root (self signed one). If the remote server provides the
+whole chain during the exchange, the file need only contain the root
+certificate. Otherwise, the whole chain is required. If you need to support
+multiple authorities, the only way is to concatenate everything.</para>
+<para>A custom certificate revocation list (CRL) can be configured with the options
+<literal>Acquire::https::CRLFile</literal> and
+<literal>Acquire::https::CRLFile::<replaceable>host</replaceable></literal> respectively.
+Like the previous option a file in PEM format needs to be specified.</para>
+</refsect2>
+
+<refsect2><title>Disabling security</title>
+<para>When authenticating the server, if the certificate verification fails
+for some reason (expired, revoked, man in the middle, …), the connection fails.
+This is obviously what you want in all cases and what the default value (true)
+of the option <literal>Acquire::https::Verify-Peer</literal> and its host-specific
+variant provides. If you know <emphasis>exactly</emphasis> what you are doing,
+setting this option to "false" allows you to skip peer certificate verification and
+make the exchange succeed. Again, this option is for debugging or testing purpose
+only as it removes all security provided by the use of HTTPS.</para>
+<para>Similarly the option <literal>Acquire::https::Verify-Host</literal> and its
+host-specific variant can be used to deactivate a security feature: The certificate
+provided by the server includes the identity of the server which should match the
+DNS name used to access it. By default, as requested by RFC 2818, the name of the
+mirror is checked against the identity found in the certificate. This default behavior
+is safe and should not be changed, but if you know that the server you are using has a
+DNS name which does not match the identity in its certificate, you can set the option to
+"false", which will prevent the comparison to be done.</para>
+</refsect2>
+
+<refsect2><title>Client authentication</title>
+<para>Beside the password based authentication available (see &apt-authconf;) HTTPS supports
+authentication based on client certificates as well via <literal>Acquire::https::SSLCert</literal>
+and <literal>Acquire::https::SSLKey</literal>. They respectively should be set to the filename of
+the X.509 client certificate and the associated (unencrypted) private key, both in PEM format.
+In practice the use of the host-specific variants of both options is highly recommended.</para>
+</refsect2>
+
+</refsect1>
+
+<refsect1><title>Examples</title>
+<literallayout>
+Acquire::https {
+	Proxy::example.org "DIRECT";
+	Proxy "socks5h://apt:pass@localhost:9050";
+	Proxy-Auto-Detect "/usr/local/bin/apt-https-proxy-auto-detect";
+	No-Cache "true";
+	Max-Age "3600";
+	No-Store "true";
+	Timeout "10";
+	Dl-Limit "42";
+	Pipeline-Depth "0";
+	AllowRedirect "false";
+	User-Agent "My APT-HTTPS";
+	SendAccept "false";
+
+	CAInfo "/path/to/ca/certs.pem";
+	CRLFile "/path/to/all/crl.pem";
+	Verify-Peer "true";
+	Verify-Host::broken.example.org "false";
+	SSLCert::example.org "/path/to/client/cert.pem";
+	SSLKey::example.org "/path/to/client/key.pem"
+};
+</literallayout>
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+<para>&apt-transport-http; &apt-conf; &apt-authconf; &sources-list;
+</para>
+</refsect1>
+
+ &manbugs;
+
+</refentry>
