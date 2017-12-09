@@ -86,6 +86,7 @@ add_docbook(apt-man MANPAGE ALL
         apt-sortpkgs.1.xml
         apt-transport-http.1.xml
         apt-transport-https.1.xml
+        apt-transport-mirror.1.xml
         sources.list.5.xml
     DEPENDS ${ENTITIES}
     TRANSLATED_ENTITIES ${TRANSLATED_ENTITIES}
