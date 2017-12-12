@@ -1559,6 +1559,13 @@ bool pkgDepCache::SetCandidateRelease(pkgCache::VerIterator TargetVer,
 	 // virtual packages can't be a solution
 	 if (P.end() == true || (P->ProvidesList == 0 && P->VersionList == 0))
 	    continue;
+	 // if its already installed, check if this one is good enough
+	 pkgCache::VerIterator const Now = P.CurrentVer();
+	 if (Now.end() == false && Start.IsSatisfied(Now))
+	 {
+	    itsFine = true;
+	    break;
+	 }
 	 pkgCache::VerIterator const Cand = PkgState[P->ID].CandidateVerIter(*this);
 	 // no versioned dependency - but is it installable?
 	 if (Start.TargetVer() == 0 || Start.TargetVer()[0] == '\0')
