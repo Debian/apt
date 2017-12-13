@@ -14,6 +14,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/progress.h>
 
+#include <cmath>
 #include <cstring>
 #include <iostream>
 #include <string>
@@ -44,7 +45,7 @@ void OpProgress::Progress(unsigned long long Cur)
    if (Total == 0 || Size == 0 || SubTotal == 0)
       Percent = 0;
    else
-      Percent = (Current + Cur/((float)SubTotal)*Size)*100.0/Total;
+      Percent = (Current + Cur/((double)SubTotal)*Size)*100.0/Total;
    Update();
 }
 									/*}}}*/
@@ -106,7 +107,7 @@ bool OpProgress::CheckChange(float Interval)
       return true;
    }
    
-   if ((int)LastPercent == (int)Percent)
+   if (std::lround(LastPercent) == std::lround(Percent))
       return false;
 
    LastPercent = Percent;

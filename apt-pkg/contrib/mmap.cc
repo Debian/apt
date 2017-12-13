@@ -28,7 +28,6 @@
 #include <string>
 #include <errno.h>
 #include <stdlib.h>
-#include <sys/mman.h>
 #include <unistd.h>
 
 #include <apti18n.h>
@@ -415,7 +414,7 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
 unsigned long DynamicMMap::WriteString(const char *String,
 				       unsigned long Len)
 {
-   if (Len == (unsigned long)-1)
+   if (Len == std::numeric_limits<unsigned long>::max())
       Len = strlen(String);
 
    _error->PushToStack();

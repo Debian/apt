@@ -133,8 +133,8 @@ static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
 // LocalitySort - Sort a version list by package file locality		/*{{{*/
 static int LocalityCompare(const void * const a, const void * const b)
 {
-   pkgCache::VerFile const * const A = *(pkgCache::VerFile const * const * const)a;
-   pkgCache::VerFile const * const B = *(pkgCache::VerFile const * const * const)b;
+   pkgCache::VerFile const * const A = *static_cast<pkgCache::VerFile const * const *>(a);
+   pkgCache::VerFile const * const B = *static_cast<pkgCache::VerFile const * const *>(b);
 
    if (A == 0 && B == 0)
       return 0;
@@ -164,6 +164,7 @@ struct ExDescFile
    pkgCache::DescFile *Df;
    pkgCache::VerIterator V;
    map_id_t ID;
+   ExDescFile() : Df(nullptr), ID(0) {}
 };
 static bool Search(CommandLine &CmdL)
 {
@@ -203,7 +204,6 @@ static bool Search(CommandLine &CmdL)
    
    size_t const descCount = Cache->HeaderP->GroupCount + 1;
    ExDescFile *DFList = new ExDescFile[descCount];
-   memset(DFList,0,sizeof(*DFList) * descCount);
 
    bool *PatternMatch = new bool[descCount * NumPatterns];
    memset(PatternMatch,false,sizeof(*PatternMatch) * descCount * NumPatterns);

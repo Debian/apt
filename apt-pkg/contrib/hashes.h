@@ -197,7 +197,7 @@ class Hashes
    bool Add(const unsigned char * const Data, unsigned long long const Size) APT_NONNULL(2);
    APT_DEPRECATED_MSG("Construct accordingly instead of choosing hashes while adding") bool Add(const unsigned char * const Data, unsigned long long const Size, unsigned int const Hashes) APT_NONNULL(2);
    inline bool Add(const char * const Data) APT_NONNULL(2)
-   {return Add((unsigned char const * const)Data,strlen(Data));};
+   {return Add(reinterpret_cast<unsigned char const *>(Data),strlen(Data));};
    inline bool Add(const unsigned char * const Beg,const unsigned char * const End) APT_NONNULL(2,3)
    {return Add(Beg,End-Beg);};
 
@@ -227,12 +227,12 @@ APT_IGNORE_DEPRECATED_POP
    private:
    APT_HIDDEN APT_PURE inline unsigned int boolsToFlag(bool const addMD5, bool const addSHA1, bool const addSHA256, bool const addSHA512)
    {
-      unsigned int Hashes = ~0;
-      if (addMD5 == false) Hashes &= ~MD5SUM;
-      if (addSHA1 == false) Hashes &= ~SHA1SUM;
-      if (addSHA256 == false) Hashes &= ~SHA256SUM;
-      if (addSHA512 == false) Hashes &= ~SHA512SUM;
-      return Hashes;
+      unsigned int hashes = ~0;
+      if (addMD5 == false) hashes &= ~MD5SUM;
+      if (addSHA1 == false) hashes &= ~SHA1SUM;
+      if (addSHA256 == false) hashes &= ~SHA256SUM;
+      if (addSHA512 == false) hashes &= ~SHA512SUM;
+      return hashes;
    }
 
    public:

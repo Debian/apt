@@ -197,7 +197,7 @@ static bool ServiceIsActive(const char *service)
    return ExecWait(pid, "systemctl is-active", true);
 }
 
-static bool DoWaitOnline(CommandLine &CmdL)
+static bool DoWaitOnline(CommandLine &)
 {
    // Also add services to After= in .service
    static const char *WaitingTasks[][6] = {

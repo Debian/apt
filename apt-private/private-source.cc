@@ -208,12 +208,7 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 	 // or RelTag
 	 if (Cache.BuildPolicy() == false)
 	    return nullptr;
-	 pkgPolicy * Policy = dynamic_cast<pkgPolicy*>(Cache.GetPolicy());
-	 if (Policy == nullptr)
-	 {
-	    _error->Fatal("Implementation error: dynamic up-casting policy engine failed in FindSrc!");
-	    return nullptr;
-	 }
+	 pkgPolicy * const Policy = Cache.GetPolicy();
 	 pkgCache::VerIterator const Ver = Policy->GetCandidateVer(Pkg);
 	 if (Ver.end() == false)
 	 {

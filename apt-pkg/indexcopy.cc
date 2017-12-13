@@ -58,15 +58,14 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    // Prepare the progress indicator
    off_t TotalSize = 0;
    std::vector<APT::Configuration::Compressor> const compressor = APT::Configuration::getCompressors();
-   for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
+   for (auto const &F : List)
    {
       struct stat Buf;
       bool found = false;
-      std::string file = std::string(*I).append(GetFileName());
-      for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
-	   c != compressor.end(); ++c)
+      auto const file = F + GetFileName();
+      for (auto const &ext: APT::Configuration::getCompressorExtensions())
       {
-	 if (stat((file + c->Extension).c_str(), &Buf) != 0)
+	 if (stat((file + ext).c_str(), &Buf) != 0)
 	    continue;
 	 found = true;
 	 break;
@@ -82,9 +81,9 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    unsigned int WrongSize = 0;
    unsigned int Packages = 0;
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
-   {      
-      string OrigPath = string(*I,CDROM.length());
-      
+   {
+      std::string OrigPath(*I,CDROM.length());
+
       // Open the package file
       FileFd Pkg(*I + GetFileName(), FileFd::ReadOnly, FileFd::Auto);
       off_t const FileSize = Pkg.Size();

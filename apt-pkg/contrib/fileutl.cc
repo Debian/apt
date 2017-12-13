@@ -1107,7 +1107,7 @@ public:
 	 }
 
 	 unsigned long long const OutputSize = std::min(Size, buffer.size());
-	 char const * const newline = static_cast<char const * const>(memchr(buffer.get(), '\n', OutputSize));
+	 char const * const newline = static_cast<char const *>(memchr(buffer.get(), '\n', OutputSize));
 	 // Read until end of line or up to Size bytes from the buffer.
 	 unsigned long long actualread = buffer.read(To,
 						     (newline != nullptr)

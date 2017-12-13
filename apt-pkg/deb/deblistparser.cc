@@ -170,15 +170,15 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    Ver->SourceVerStr = Ver->VerStr;
    if (Section.Find(pkgTagSection::Key::Source,Start,Stop) == true)
    {
-      const char * const Space = (const char * const) memchr(Start, ' ', Stop - Start);
+      const char * const Space = static_cast<const char *>(memchr(Start, ' ', Stop - Start));
       pkgCache::VerIterator V;
 
       if (Space != NULL)
       {
-	 const char * const Open = (const char * const) memchr(Space, '(', Stop - Space);
+	 const char * const Open = static_cast<const char *>(memchr(Space, '(', Stop - Space));
 	 if (likely(Open != NULL))
 	 {
-	    const char * const Close = (const char * const) memchr(Open, ')', Stop - Open);
+	    const char * const Close = static_cast<const char *>(memchr(Open, ')', Stop - Open));
 	    if (likely(Close != NULL))
 	    {
 	       APT::StringView const version(Open + 1, (Close - Open) - 1);

@@ -128,7 +128,7 @@ int main(int argc,const char *argv[])					/*{{{*/
       _config->Set(comp + "Name", c->Name);
       _config->Set(comp + "Extension", c->Extension);
       _config->Set(comp + "Binary", c->Binary);
-      _config->Set(std::string(comp + "Cost").c_str(), c->Cost);
+      _config->Set((comp + "Cost").c_str(), c->Cost);
       for (std::vector<std::string>::const_iterator a = c->CompressArgs.begin(); a != c->CompressArgs.end(); ++a)
 	 _config->Set(comp + "CompressArg::", *a);
       for (std::vector<std::string>::const_iterator a = c->UncompressArgs.begin(); a != c->UncompressArgs.end(); ++a)

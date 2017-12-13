@@ -315,7 +315,7 @@ bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
       for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
 	   c != compressor.end(); ++c)
       {
-	 std::string filename = std::string(List[I]).append(Name).append(c->Extension);
+	 std::string const filename = List[I] + Name + c->Extension;
          if (stat(filename.c_str(), &Buf) != 0)
 	    continue;
 	 Inodes[I] = Buf.st_ino;

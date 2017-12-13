@@ -66,7 +66,7 @@ class Configuration
    Item *Lookup(const char *Name,const bool &Create);
    inline const Item *Lookup(const char *Name) const
    {
-      return ((Configuration *)this)->Lookup(Name,false);
+      return const_cast<Configuration *>(this)->Lookup(Name,false);
    }  
    
    public:

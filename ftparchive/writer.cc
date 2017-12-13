@@ -477,10 +477,7 @@ bool PackagesWriter::DoPackage(string FileName)
 
    // This lists all the changes to the fields we are going to make.
    std::vector<pkgTagSection::Tag> Changes;
-
-   std::string Size;
-   strprintf(Size, "%llu", (unsigned long long) FileSize);
-   Changes.push_back(pkgTagSection::Tag::Rewrite("Size", Size));
+   Changes.push_back(pkgTagSection::Tag::Rewrite("Size", std::to_string(FileSize)));
 
    for (HashStringList::const_iterator hs = Db.HashesList.begin(); hs != Db.HashesList.end(); ++hs)
    {
