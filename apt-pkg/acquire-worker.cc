@@ -211,6 +211,39 @@ static bool isDoomedItem(pkgAcquire::Item const * const Itm)
       return false;
    return TransItm->TransactionManager->State != pkgAcqTransactionItem::TransactionStarted;
 }
+static HashStringList GetHashesFromMessage(std::string const &Prefix, std::string const &Message)
+{
+   HashStringList hsl;
+   for (char const *const *type = HashString::SupportedHashes(); *type != NULL; ++type)
+   {
+      std::string const tagname = Prefix + *type + "-Hash";
+      std::string const hashsum = LookupTag(Message, tagname.c_str());
+      if (hashsum.empty() == false)
+	 hsl.push_back(HashString(*type, hashsum));
+   }
+   return hsl;
+}
+static void APT_NONNULL(3) ChangeSiteIsMirrorChange(std::string const &NewURI, pkgAcquire::ItemDesc &desc, pkgAcquire::Item *const Owner)
+{
+   if (URI::SiteOnly(NewURI) == URI::SiteOnly(desc.URI))
+      return;
+
+   auto const firstSpace = desc.Description.find(" ");
+   if (firstSpace != std::string::npos)
+   {
+      std::string const OldSite = desc.Description.substr(0, firstSpace);
+      if (likely(APT::String::Startswith(desc.URI, OldSite)))
+      {
+	 std::string const OldExtra = desc.URI.substr(OldSite.length() + 1);
+	 if (likely(APT::String::Endswith(NewURI, OldExtra)))
+	 {
+	    std::string const NewSite = NewURI.substr(0, NewURI.length() - OldExtra.length());
+	    Owner->UsedMirror = URI::ArchiveOnly(NewSite);
+	    desc.Description.replace(0, firstSpace, Owner->UsedMirror);
+	 }
+      }
+   }
+}
 bool pkgAcquire::Worker::RunMessages()
 {
    while (MessageQueue.empty() == false)
@@ -377,13 +410,7 @@ bool pkgAcquire::Worker::RunMessages()
 	       std::string const givenfilename = LookupTag(Message, "Filename");
 	       std::string const filename = givenfilename.empty() ? Itm->Owner->DestFile : givenfilename;
 	       // see if we got hashes to verify
-	       for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
-	       {
-		  std::string const tagname = std::string(*type) + "-Hash";
-		  std::string const hashsum = LookupTag(Message, tagname.c_str());
-		  if (hashsum.empty() == false)
-		     ReceivedHashes.push_back(HashString(*type, hashsum));
-	       }
+	       ReceivedHashes = GetHashesFromMessage("", Message);
 	       // not all methods always sent Hashes our way
 	       if (ReceivedHashes.usable() == false)
 	       {
@@ -506,6 +533,9 @@ bool pkgAcquire::Worker::RunMessages()
 	    Itm = nullptr;
 
 	    bool errTransient = false, errAuthErr = false;
+	    if (StringToBool(LookupTag(Message, "Transient-Failure"), false) == true)
+	       errTransient = true;
+	    else
 	    {
 	       std::string const failReason = LookupTag(Message, "FailReason");
 	       {
@@ -522,15 +552,40 @@ bool pkgAcquire::Worker::RunMessages()
 
 	    for (auto const Owner: ItmOwners)
 	    {
-	       if (errAuthErr && Owner->GetExpectedHashes().empty() == false)
-		  Owner->Status = pkgAcquire::Item::StatAuthError;
-	       else if (errTransient)
-		  Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
-	       auto SavedDesc = Owner->GetItemDesc();
-	       if (isDoomedItem(Owner) == false)
-		  Owner->Failed(Message,Config);
-	       if (Log != nullptr)
-		  Log->Fail(SavedDesc);
+	       std::string NewURI;
+	       if (errTransient == true && Config->LocalOnly == false && Owner->ModifyRetries() != 0)
+	       {
+		  --Owner->ModifyRetries();
+		  Owner->FailMessage(Message);
+		  auto SavedDesc = Owner->GetItemDesc();
+		  if (Log != nullptr)
+		     Log->Fail(SavedDesc);
+		  if (isDoomedItem(Owner) == false)
+		     OwnerQ->Owner->Enqueue(SavedDesc);
+	       }
+	       else if (Owner->PopAlternativeURI(NewURI))
+	       {
+		  Owner->FailMessage(Message);
+		  auto &desc = Owner->GetItemDesc();
+		  if (Log != nullptr)
+		     Log->Fail(desc);
+		  ChangeSiteIsMirrorChange(NewURI, desc, Owner);
+		  desc.URI = NewURI;
+		  if (isDoomedItem(Owner) == false)
+		     OwnerQ->Owner->Enqueue(desc);
+	       }
+	       else
+	       {
+		  if (errAuthErr && Owner->GetExpectedHashes().empty() == false)
+		     Owner->Status = pkgAcquire::Item::StatAuthError;
+		  else if (errTransient)
+		     Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
+		  auto SavedDesc = Owner->GetItemDesc();
+		  if (isDoomedItem(Owner) == false)
+		     Owner->Failed(Message, Config);
+		  if (Log != nullptr)
+		     Log->Fail(SavedDesc);
+	       }
 	    }
 	    ItemDone();
 

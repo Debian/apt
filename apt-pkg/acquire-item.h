@@ -27,6 +27,7 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #ifndef APT_8_CLEANER_HEADERS
@@ -174,6 +175,7 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     *  \sa pkgAcqMethod
     */
    virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf);
+   APT_HIDDEN void FailMessage(std::string const &Message);
 
    /** \brief Invoked by the acquire worker to check if the successfully
     * fetched object is also the objected we wanted to have.
@@ -238,6 +240,13 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     *  no trailing newline.
     */
    virtual std::string Custom600Headers() const;
+   // Retries should really be a member of the Item, but can't be for ABI reasons
+   APT_HIDDEN unsigned int &ModifyRetries();
+   // this is more a hack than a proper external interface, hence hidden
+   APT_HIDDEN std::unordered_map<std::string, std::string> &ModifyCustomFields();
+   // this isn't the super nicest interface either…
+   APT_HIDDEN bool PopAlternativeURI(std::string &NewURI);
+   APT_HIDDEN void PushAlternativeURI(std::string &&NewURI, std::unordered_map<std::string, std::string> &&fields, bool const at_the_back);
 
    /** \brief A "descriptive" URI-like string.
     *
@@ -987,6 +996,7 @@ class pkgAcqArchive : public pkgAcquire::Item
    std::string &StoreFilename;
 
    /** \brief The next file for this version to try to download. */
+   APT_DEPRECATED_MSG("Unused member")
    pkgCache::VerFileIterator Vf;
 
    /** \brief How many (more) times to try to find a new source from
@@ -994,6 +1004,7 @@ class pkgAcqArchive : public pkgAcquire::Item
     *
     *  Set from Acquire::Retries.
     */
+   APT_DEPRECATED_MSG("Unused member. See pkgAcqItem::Retries.")
    unsigned int Retries;
 
    /** \brief \b true if this version file is being downloaded from a
@@ -1171,6 +1182,7 @@ class pkgAcqFile : public pkgAcquire::Item
    /** \brief How many times to retry the download, set from
     *  Acquire::Retries.
     */
+   APT_DEPRECATED_MSG("Unused member. See pkgAcqItem::Retries.")
    unsigned int Retries;
 
    /** \brief Should this file be considered a index file */

@@ -14,7 +14,7 @@
 #include <string>
 #include <stddef.h>
 
-class aptMethod;
+#include "aptmethod.h"
 
 /**
  * \brief Small representation of a file descriptor for network traffic.
@@ -39,11 +39,11 @@ struct MethodFd
    virtual bool HasPending();
 };
 
-bool Connect(std::string To, int Port, const char *Service, int DefPort,
-	     std::unique_ptr<MethodFd> &Fd, unsigned long TimeOut, aptMethod *Owner);
+ResultState Connect(std::string To, int Port, const char *Service, int DefPort,
+		    std::unique_ptr<MethodFd> &Fd, unsigned long TimeOut, aptMethod *Owner);
 
-bool UnwrapSocks(std::string To, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd, unsigned long Timeout, aptMethod *Owner);
-bool UnwrapTLS(std::string To, std::unique_ptr<MethodFd> &Fd, unsigned long Timeout, aptMethod *Owner);
+ResultState UnwrapSocks(std::string To, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd, unsigned long Timeout, aptMethod *Owner);
+ResultState UnwrapTLS(std::string To, std::unique_ptr<MethodFd> &Fd, unsigned long Timeout, aptMethod *Owner);
 
 void RotateDNS();
 

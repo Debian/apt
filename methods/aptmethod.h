@@ -29,6 +29,13 @@
 #include <seccomp.h>
 #endif
 
+enum class ResultState
+{
+   TRANSIENT_ERROR,
+   FATAL_ERROR,
+   SUCCESSFUL
+};
+
 static bool hasDoubleColon(std::string const &n)
 {
    return n.find("::") != std::string::npos;

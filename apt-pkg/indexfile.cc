@@ -273,6 +273,10 @@ std::string pkgDebianIndexTargetFile::GetProgressDescription() const
 {
    return Target.Description;
 }
+IndexTarget pkgDebianIndexTargetFile::GetIndexTarget() const
+{
+   return Target;
+}
 
 pkgDebianIndexRealFile::pkgDebianIndexRealFile(std::string const &pFile, bool const Trusted) :/*{{{*/
    pkgDebianIndexFile(Trusted), d(NULL)

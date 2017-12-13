@@ -319,3 +319,45 @@ TEST(StrUtilTest,RFC1123StrToTime)
    EXPECT_FALSE(RFC1123StrToTime("Sunday, 06-Nov-94 08:49:37 -0100", t));
    EXPECT_FALSE(RFC1123StrToTime("Sunday, 06-Nov-94 08:49:37 -0.1", t));
 }
+TEST(StrUtilTest, LookupTag)
+{
+   EXPECT_EQ("", LookupTag("", "Field", ""));
+   EXPECT_EQ("", LookupTag("", "Field", nullptr));
+   EXPECT_EQ("default", LookupTag("", "Field", "default"));
+   EXPECT_EQ("default", LookupTag("Field1: yes", "Field", "default"));
+   EXPECT_EQ("default", LookupTag("Fiel: yes", "Field", "default"));
+   EXPECT_EQ("default", LookupTag("Fiel d: yes", "Field", "default"));
+   EXPECT_EQ("foo", LookupTag("Field: foo", "Field", "default"));
+   EXPECT_EQ("foo", LookupTag("Field: foo\n", "Field", "default"));
+   EXPECT_EQ("foo", LookupTag("\nField: foo\n", "Field", "default"));
+   EXPECT_EQ("foo", LookupTag("Field:foo", "Field", "default"));
+   EXPECT_EQ("foo", LookupTag("Field:foo\n", "Field", "default"));
+   EXPECT_EQ("foo", LookupTag("\nField:foo\n", "Field", "default"));
+   EXPECT_EQ("foo", LookupTag("Field:\tfoo\n", "Field", "default"));
+   EXPECT_EQ("foo", LookupTag("Field:  foo  \t", "Field", "default"));
+   EXPECT_EQ("foo", LookupTag("Field:  foo  \t\n", "Field", "default"));
+   EXPECT_EQ("Field : yes", LookupTag("Field:  Field : yes  \t\n", "Field", "default"));
+   EXPECT_EQ("Field : yes", LookupTag("Field:\n Field : yes  \t\n", "Field", "default"));
+   EXPECT_EQ("Field : yes", LookupTag("Foo: bar\nField:  Field : yes  \t\n", "Field", "default"));
+   EXPECT_EQ("line1\nline2", LookupTag("Multi: line1\n line2", "Multi", "default"));
+   EXPECT_EQ("line1\nline2", LookupTag("Multi: line1\n line2\n", "Multi", "default"));
+   EXPECT_EQ("line1\nline2", LookupTag("Multi:\n line1\n line2\n", "Multi", "default"));
+   EXPECT_EQ("line1\n\nline2", LookupTag("Multi:\n line1\n .\n line2\n", "Multi", "default"));
+   EXPECT_EQ("line1\na\nline2", LookupTag("Multi:\n line1\n a\n line2\n", "Multi", "default"));
+   EXPECT_EQ("line1\nfoo\nline2", LookupTag("Multi:\n line1\n foo\n line2\n", "Multi", "default"));
+   EXPECT_EQ("line1\n  line2", LookupTag("Multi: line1\n   line2", "Multi", "default"));
+   EXPECT_EQ("  line1\n \t line2", LookupTag("Multi:\t \n   line1\n  \t line2\n", "Multi", "default"));
+   EXPECT_EQ("  line1\n\n\n \t line2", LookupTag("Multi:\t \n   line1\n .\n .   \n  \t line2\n", "Multi", "default"));
+
+   std::string const msg =
+      "Field1: Value1\nField2:Value2\nField3:\t   Value3\n"
+      "Multi-Field1: Line1\n Line2\nMulti-Field2:\n Line1\n Line2\n"
+      "Field4: Value4\nField5:Value5";
+   EXPECT_EQ("Value1", LookupTag(msg, "Field1", ""));
+   EXPECT_EQ("Value2", LookupTag(msg, "Field2", ""));
+   EXPECT_EQ("Value3", LookupTag(msg, "Field3", ""));
+   EXPECT_EQ("Line1\nLine2", LookupTag(msg, "Multi-Field1", ""));
+   EXPECT_EQ("Line1\nLine2", LookupTag(msg, "Multi-Field2", ""));
+   EXPECT_EQ("Value4", LookupTag(msg, "Field4", ""));
+   EXPECT_EQ("Value5", LookupTag(msg, "Field5", ""));
+}

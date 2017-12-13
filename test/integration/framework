@@ -1273,8 +1273,8 @@ webserverconfig() {
 		NOCHECK=true
 		shift
 	fi
-	local DOWNLOG='rootdir/tmp/download-testfile.log'
-	local STATUS='downloaded/webserverconfig.status'
+	local DOWNLOG="${TMPWORKINGDIRECTORY}/rootdir/tmp/download-testfile.log"
+	local STATUS="${TMPWORKINGDIRECTORY}/downloaded/webserverconfig.status"
 	rm -f "$STATUS" "$DOWNLOG"
 	# very very basic URI encoding
 	local URI
@@ -1298,7 +1298,7 @@ webserverconfig() {
 rewritesourceslist() {
 	local APTARCHIVE="file://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive" | sed 's# #%20#g')"
 	local APTARCHIVE2="copy://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive" | sed 's# #%20#g')"
-	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
+	for LIST in $(find "${TMPWORKINGDIRECTORY}/rootdir/etc/apt/sources.list.d/" -name 'apt-test-*.list'); do
 		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#$APTARCHIVE2#${1}#" \
 			-e "s#http://[^@]*@\?localhost:${APTHTTPPORT}/\?#${1}#" \
 			-e "s#https://[^@]*@\?localhost:${APTHTTPSPORT}/\?#${1}#"
@@ -1937,8 +1937,8 @@ testaccessrights() {
 
 testwebserverlaststatuscode() {
 	msggroup 'testwebserverlaststatuscode'
-	local DOWNLOG='rootdir/tmp/webserverstatus-testfile.log'
-	local STATUS='downloaded/webserverstatus-statusfile.log'
+	local DOWNLOG="${TMPWORKINGDIRECTORY}/rootdir/tmp/webserverstatus-testfile.log"
+	local STATUS="${TMPWORKINGDIRECTORY}/downloaded/webserverstatus-statusfile.log"
 	rm -f "$DOWNLOG" "$STATUS"
 	msgtest 'Test last status code from the webserver was' "$1"
 	if downloadfile "http://localhost:${APTHTTPPORT}/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG" && [ "$(cat "$STATUS")" = "$1" ]; then

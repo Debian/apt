@@ -82,7 +82,10 @@ static std::string httpcodeToStr(int const httpcode)			/*{{{*/
       case 504: return _config->Find("aptwebserver::httpcode::504", "504 Gateway Time-out");
       case 505: return _config->Find("aptwebserver::httpcode::505", "505 HTTP Version not supported");
    }
-   return "";
+   std::string codeconf, code;
+   strprintf(codeconf, "aptwebserver::httpcode::%i", httpcode);
+   strprintf(code, "%i Unknown HTTP code", httpcode);
+   return _config->Find(codeconf, code);
 }
 									/*}}}*/
 static bool chunkedTransferEncoding(std::list<std::string> const &headers) {
@@ -693,6 +696,18 @@ static void * handleClient(int const client, size_t const id)		/*{{{*/
 		  break;
 	       }
 	       regfree(pattern);
+	    }
+	 }
+
+	 // automatic retry can be tested with this
+	 {
+	    int failrequests = _config->FindI("aptwebserver::failrequest::" + filename, 0);
+	    if (failrequests != 0)
+	    {
+	       --failrequests;
+	       _config->Set(("aptwebserver::failrequest::" + filename).c_str(), failrequests);
+	       sendError(log, client, _config->FindI("aptwebserver::failrequest", 400), *m, sendContent, "Server is configured to fail this file.", headers);
+	       continue;
 	    }
 	 }
 

@@ -1,0 +1,55 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'testpkg' 'all' '1' 'stable'
+
+setupaptarchive --no-update
+changetowebserver
+testsuccess apt update
+
+cd downloaded
+testsuccess apt download testpkg
+testsuccess test -f testpkg_1_all.deb
+rm -f testpkg_1_all.deb
+
+msgmsg 'Fail after too many retries'
+webserverconfig 'aptwebserver::failrequest' '429'
+webserverconfig 'aptwebserver::failrequest::pool/testpkg_1_all.deb' '99'
+testfailure apt download testpkg -o acquire::retries=3
+testfailure test -f testpkg_1_all.deb
+
+msgmsg 'Success in the third try'
+webserverconfig 'aptwebserver::failrequest::pool/testpkg_1_all.deb' '2'
+testsuccess apt download testpkg -o acquire::retries=3
+testsuccess test -f testpkg_1_all.deb
+rm -f testpkg_1_all.deb
+
+msgmsg 'Do not try everything again, hard failures keep hard failures'
+webserverconfig 'aptwebserver::failrequest' '404'
+webserverconfig 'aptwebserver::failrequest::pool/testpkg_1_all.deb' '2'
+testfailure apt download testpkg -o acquire::retries=3
+testfailure test -f testpkg_1_all.deb
+
+cat ../rootdir/etc/apt/sources.list.d/apt-test-*.list > ../rootdir/etc/apt/sources.list.d/00http-source.list
+changetohttpswebserver
+
+msgmsg 'Check download from alternative sources if first failed'
+webserverconfig 'aptwebserver::failrequest::pool/testpkg_1_all.deb' '0'
+testsuccess apt update
+testsuccess apt download testpkg -o acquire::retries=0
+testsuccess test -f testpkg_1_all.deb
+rm -f testpkg_1_all.deb
+
+# we make the first source fail by disabling http support
+webserverconfig 'aptwebserver::support::http' 'false'
+testsuccess apt download testpkg -o acquire::retries=0
+cp ../rootdir/tmp/testsuccess.output alt.output
+testsuccess grep '^  400  Bad Request' alt.output
+testsuccess test -f testpkg_1_all.deb
+rm -f testpkg_1_all.deb

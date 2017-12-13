@@ -199,6 +199,7 @@ public:
    virtual std::string Describe(bool const Short = false) const APT_OVERRIDE;
    virtual bool Exists() const APT_OVERRIDE;
    virtual unsigned long Size() const APT_OVERRIDE;
+   IndexTarget GetIndexTarget() const APT_HIDDEN;
 
    pkgDebianIndexTargetFile(IndexTarget const &Target, bool const Trusted);
    virtual ~pkgDebianIndexTargetFile();

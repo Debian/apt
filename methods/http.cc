@@ -328,8 +328,8 @@ struct HttpConnectFd : public MethodFd
    }
 };
 
-bool UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd,
-		       unsigned long Timeout, aptAuthConfMethod *Owner)
+static ResultState UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd,
+				     unsigned long Timeout, aptAuthConfMethod *Owner)
 {
    Owner->Status(_("Connecting to %s (%s)"), "HTTP proxy", URI::SiteOnly(Proxy).c_str());
    // The HTTP server expects a hostname with a trailing :port
@@ -369,17 +369,29 @@ bool UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std::unique_ptr<Me
    while (Out.WriteSpace() > 0)
    {
       if (WaitFd(Fd->Fd(), true, Timeout) == false)
-	 return _error->Errno("select", "Writing to proxy failed");
+      {
+	 _error->Errno("select", "Writing to proxy failed");
+	 return ResultState::TRANSIENT_ERROR;
+      }
       if (Out.Write(Fd) == false)
-	 return _error->Errno("write", "Writing to proxy failed");
+      {
+	 _error->Errno("write", "Writing to proxy failed");
+	 return ResultState::TRANSIENT_ERROR;
+      }
    }
 
    while (In.ReadSpace() > 0)
    {
       if (WaitFd(Fd->Fd(), false, Timeout) == false)
-	 return _error->Errno("select", "Reading from proxy failed");
+      {
+	 _error->Errno("select", "Reading from proxy failed");
+	 return ResultState::TRANSIENT_ERROR;
+      }
       if (In.Read(Fd) == false)
-	 return _error->Errno("read", "Reading from proxy failed");
+      {
+	 _error->Errno("read", "Reading from proxy failed");
+	 return ResultState::TRANSIENT_ERROR;
+      }
 
       if (In.WriteTillEl(Headers))
 	 break;
@@ -389,7 +401,10 @@ bool UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std::unique_ptr<Me
       cerr << Headers << endl;
 
    if (!(APT::String::Startswith(Headers, "HTTP/1.0 200") || APT::String::Startswith(Headers, "HTTP/1.1 200")))
-      return _error->Error("Invalid response from proxy: %s", Headers.c_str());
+   {
+      _error->Error("Invalid response from proxy: %s", Headers.c_str());
+      return ResultState::TRANSIENT_ERROR;
+   }
 
    if (In.WriteSpace() > 0)
    {
@@ -400,7 +415,7 @@ bool UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std::unique_ptr<Me
       Fd = std::move(NewFd);
    }
 
-   return true;
+   return ResultState::SUCCESSFUL;
 }
 									/*}}}*/
 
@@ -415,12 +430,12 @@ HttpServerState::HttpServerState(URI Srv,HttpMethod *Owner) : ServerState(Srv, O
 // HttpServerState::Open - Open a connection to the server		/*{{{*/
 // ---------------------------------------------------------------------
 /* This opens a connection to the server. */
-bool HttpServerState::Open()
+ResultState HttpServerState::Open()
 {
    // Use the already open connection if possible.
    if (ServerFd->Fd() != -1)
-      return true;
-   
+      return ResultState::SUCCESSFUL;
+
    Close();
    In.Reset();
    Out.Reset();
@@ -476,12 +491,14 @@ bool HttpServerState::Open()
    auto const DefaultPort = tls ? 443 : 80;
    if (Proxy.Access == "socks5h")
    {
-      if (Connect(Proxy.Host, Proxy.Port, "socks", 1080, ServerFd, TimeOut, Owner) == false)
-	 return false;
+      auto result = Connect(Proxy.Host, Proxy.Port, "socks", 1080, ServerFd, TimeOut, Owner);
+      if (result != ResultState::SUCCESSFUL)
+	 return result;
 
-      if (UnwrapSocks(ServerName.Host, ServerName.Port == 0 ? DefaultPort : ServerName.Port,
-		      Proxy, ServerFd, Owner->ConfigFindI("TimeOut", 120), Owner) == false)
-	 return false;
+      result = UnwrapSocks(ServerName.Host, ServerName.Port == 0 ? DefaultPort : ServerName.Port,
+			   Proxy, ServerFd, Owner->ConfigFindI("TimeOut", 120), Owner);
+      if (result != ResultState::SUCCESSFUL)
+	 return result;
    }
    else
    {
@@ -495,7 +512,10 @@ bool HttpServerState::Open()
 	 Host = ServerName.Host;
       }
       else if (Proxy.Access != "http" && Proxy.Access != "https")
-	 return _error->Error("Unsupported proxy configured: %s", URI::SiteOnly(Proxy).c_str());
+      {
+	 _error->Error("Unsupported proxy configured: %s", URI::SiteOnly(Proxy).c_str());
+	 return ResultState::FATAL_ERROR;
+      }
       else
       {
 	 if (Proxy.Port != 0)
@@ -505,18 +525,27 @@ bool HttpServerState::Open()
 	 if (Proxy.Access == "https" && Port == 0)
 	    Port = 443;
       }
-      if (!Connect(Host, Port, DefaultService, DefaultPort, ServerFd, TimeOut, Owner))
-	 return false;
-      if (Host == Proxy.Host && Proxy.Access == "https" && UnwrapTLS(Proxy.Host, ServerFd, TimeOut, Owner) == false)
-	 return false;
-      if (Host == Proxy.Host && tls && UnwrapHTTPConnect(ServerName.Host, ServerName.Port == 0 ? DefaultPort : ServerName.Port, Proxy, ServerFd, Owner->ConfigFindI("TimeOut", 120), Owner) == false)
-	 return false;
+      auto result = Connect(Host, Port, DefaultService, DefaultPort, ServerFd, TimeOut, Owner);
+      if (result != ResultState::SUCCESSFUL)
+	 return result;
+      if (Host == Proxy.Host && Proxy.Access == "https")
+      {
+	 result = UnwrapTLS(Proxy.Host, ServerFd, TimeOut, Owner);
+	 if (result != ResultState::SUCCESSFUL)
+	    return result;
+      }
+      if (Host == Proxy.Host && tls)
+      {
+	 result = UnwrapHTTPConnect(ServerName.Host, ServerName.Port == 0 ? DefaultPort : ServerName.Port, Proxy, ServerFd, Owner->ConfigFindI("TimeOut", 120), Owner);
+	 if (result != ResultState::SUCCESSFUL)
+	    return result;
+      }
    }
 
-   if (tls && UnwrapTLS(ServerName.Host, ServerFd, TimeOut, Owner) == false)
-      return false;
+   if (tls)
+      return UnwrapTLS(ServerName.Host, ServerFd, TimeOut, Owner);
 
-   return true;
+   return ResultState::SUCCESSFUL;
 }
 									/*}}}*/
 // HttpServerState::Close - Close a connection to the server		/*{{{*/
@@ -529,7 +558,7 @@ bool HttpServerState::Close()
 }
 									/*}}}*/
 // HttpServerState::RunData - Transfer the data from the socket		/*{{{*/
-bool HttpServerState::RunData(RequestState &Req)
+ResultState HttpServerState::RunData(RequestState &Req)
 {
    Req.State = RequestState::Data;
    
@@ -539,19 +568,18 @@ bool HttpServerState::RunData(RequestState &Req)
       while (1)
       {
 	 // Grab the block size
-	 bool Last = true;
+	 ResultState Last = ResultState::SUCCESSFUL;
 	 string Data;
 	 In.Limit(-1);
 	 do
 	 {
 	    if (In.WriteTillEl(Data,true) == true)
 	       break;
-	 }
-	 while ((Last = Go(false, Req)) == true);
+	 } while ((Last = Go(false, Req)) == ResultState::SUCCESSFUL);
 
-	 if (Last == false)
-	    return false;
-	 	 
+	 if (Last != ResultState::SUCCESSFUL)
+	    return Last;
+
 	 // See if we are done
 	 unsigned long long Len = strtoull(Data.c_str(),0,16);
 	 if (Len == 0)
@@ -559,39 +587,35 @@ bool HttpServerState::RunData(RequestState &Req)
 	    In.Limit(-1);
 	    
 	    // We have to remove the entity trailer
-	    Last = true;
+	    Last = ResultState::SUCCESSFUL;
 	    do
 	    {
 	       if (In.WriteTillEl(Data,true) == true && Data.length() <= 2)
 		  break;
-	    }
-	    while ((Last = Go(false, Req)) == true);
-	    if (Last == false)
-	       return false;
-	    return !_error->PendingError();
+	    } while ((Last = Go(false, Req)) == ResultState::SUCCESSFUL);
+	    return Last;
 	 }
-	 
+
 	 // Transfer the block
 	 In.Limit(Len);
-	 while (Go(true, Req) == true)
+	 while (Go(true, Req) == ResultState::SUCCESSFUL)
 	    if (In.IsLimit() == true)
 	       break;
 	 
 	 // Error
 	 if (In.IsLimit() == false)
-	    return false;
-	 
+	    return ResultState::TRANSIENT_ERROR;
+
 	 // The server sends an extra new line before the next block specifier..
 	 In.Limit(-1);
-	 Last = true;
+	 Last = ResultState::SUCCESSFUL;
 	 do
 	 {
 	    if (In.WriteTillEl(Data,true) == true)
 	       break;
-	 }
-	 while ((Last = Go(false, Req)) == true);
-	 if (Last == false)
-	    return false;
+	 } while ((Last = Go(false, Req)) == ResultState::SUCCESSFUL);
+	 if (Last != ResultState::SUCCESSFUL)
+	    return Last;
       }
    }
    else
@@ -605,34 +629,41 @@ bool HttpServerState::RunData(RequestState &Req)
 	 if (Req.MaximumSize != 0 && Req.DownloadSize > Req.MaximumSize)
 	 {
 	    Owner->SetFailReason("MaximumSizeExceeded");
-	    return _error->Error(_("File has unexpected size (%llu != %llu). Mirror sync in progress?"),
-				 Req.DownloadSize, Req.MaximumSize);
+	    _error->Error(_("File has unexpected size (%llu != %llu). Mirror sync in progress?"),
+			  Req.DownloadSize, Req.MaximumSize);
+	    return ResultState::FATAL_ERROR;
 	 }
 	 In.Limit(Req.DownloadSize);
       }
       else if (Persistent == false)
 	 In.Limit(-1);
-      
+
       // Just transfer the whole block.
-      do
+      while (true)
       {
 	 if (In.IsLimit() == false)
-	    continue;
-	 
+	 {
+	    auto const result = Go(true, Req);
+	    if (result == ResultState::SUCCESSFUL)
+	       continue;
+	    return result;
+	 }
+
 	 In.Limit(-1);
-	 return !_error->PendingError();
+	 return _error->PendingError() ? ResultState::FATAL_ERROR : ResultState::SUCCESSFUL;
       }
-      while (Go(true, Req) == true);
    }
 
-   return Flush(&Req.File) && !_error->PendingError();
+   if (Flush(&Req.File) == false)
+      return ResultState::TRANSIENT_ERROR;
+   return ResultState::SUCCESSFUL;
 }
 									/*}}}*/
-bool HttpServerState::RunDataToDevNull(RequestState &Req)		/*{{{*/
+ResultState HttpServerState::RunDataToDevNull(RequestState &Req) /*{{{*/
 {
    // no need to clean up if we discard the connection anyhow
    if (Persistent == false)
-      return true;
+      return ResultState::SUCCESSFUL;
    Req.File.Open("/dev/null", FileFd::WriteOnly);
    return RunData(Req);
 }
@@ -642,7 +673,7 @@ bool HttpServerState::ReadHeaderLines(std::string &Data)		/*{{{*/
    return In.WriteTillEl(Data);
 }
 									/*}}}*/
-bool HttpServerState::LoadNextResponse(bool const ToFile, RequestState &Req)/*{{{*/
+ResultState HttpServerState::LoadNextResponse(bool const ToFile, RequestState &Req) /*{{{*/
 {
    return Go(ToFile, Req);
 }
@@ -677,7 +708,7 @@ APT_PURE Hashes * HttpServerState::GetHashes()				/*{{{*/
 }
 									/*}}}*/
 // HttpServerState::Die - The server has closed the connection.		/*{{{*/
-bool HttpServerState::Die(RequestState &Req)
+ResultState HttpServerState::Die(RequestState &Req)
 {
    unsigned int LErrno = errno;
 
@@ -685,7 +716,7 @@ bool HttpServerState::Die(RequestState &Req)
    if (Req.State == RequestState::Data)
    {
       if (Req.File.IsOpen() == false)
-	 return true;
+	 return ResultState::SUCCESSFUL;
       // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
       // can't be set
       if (Req.File.Name() != "/dev/null")
@@ -693,11 +724,14 @@ bool HttpServerState::Die(RequestState &Req)
       while (In.WriteSpace() == true)
       {
 	 if (In.Write(MethodFd::FromFd(Req.File.Fd())) == false)
-	    return _error->Errno("write",_("Error writing to the file"));
+	 {
+	    _error->Errno("write", _("Error writing to the file"));
+	    return ResultState::TRANSIENT_ERROR;
+	 }
 
 	 // Done
 	 if (In.IsLimit() == true)
-	    return true;
+	    return ResultState::SUCCESSFUL;
       }
    }
 
@@ -707,9 +741,13 @@ bool HttpServerState::Die(RequestState &Req)
    {
       Close();
       if (LErrno == 0)
-	 return _error->Error(_("Error reading from server. Remote end closed connection"));
+      {
+	 _error->Error(_("Error reading from server. Remote end closed connection"));
+	 return ResultState::TRANSIENT_ERROR;
+      }
       errno = LErrno;
-      return _error->Errno("read",_("Error reading from server"));
+      _error->Errno("read", _("Error reading from server"));
+      return ResultState::TRANSIENT_ERROR;
    }
    else
    {
@@ -717,14 +755,14 @@ bool HttpServerState::Die(RequestState &Req)
 
       // Nothing left in the buffer
       if (In.WriteSpace() == false)
-	 return false;
+	 return ResultState::TRANSIENT_ERROR;
 
       // We may have got multiple responses back in one packet..
       Close();
-      return true;
+      return ResultState::SUCCESSFUL;
    }
 
-   return false;
+   return ResultState::TRANSIENT_ERROR;
 }
 									/*}}}*/
 // HttpServerState::Flush - Dump the buffer into the file		/*{{{*/
@@ -760,12 +798,12 @@ bool HttpServerState::Flush(FileFd * const File)
 // ---------------------------------------------------------------------
 /* This runs the select loop over the server FDs, Output file FDs and
    stdin. */
-bool HttpServerState::Go(bool ToFile, RequestState &Req)
+ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
 {
    // Server has closed the connection
    if (ServerFd->Fd() == -1 && (In.WriteSpace() == false ||
 				ToFile == false))
-      return false;
+      return ResultState::TRANSIENT_ERROR;
 
    // Handle server IO
    if (ServerFd->HasPending() && In.ReadSpace() == true)
@@ -811,8 +849,9 @@ bool HttpServerState::Go(bool ToFile, RequestState &Req)
    if ((Res = select(MaxFd+1,&rfds,&wfds,0,&tv)) < 0)
    {
       if (errno == EINTR)
-	 return true;
-      return _error->Errno("select",_("Select failed"));
+	 return ResultState::SUCCESSFUL;
+      _error->Errno("select", _("Select failed"));
+      return ResultState::TRANSIENT_ERROR;
    }
    
    if (Res == 0)
@@ -840,14 +879,18 @@ bool HttpServerState::Go(bool ToFile, RequestState &Req)
    if (FileFD->Fd() != -1 && FD_ISSET(FileFD->Fd(), &wfds))
    {
       if (In.Write(FileFD) == false)
-	 return _error->Errno("write",_("Error writing to output file"));
+      {
+	 _error->Errno("write", _("Error writing to output file"));
+	 return ResultState::TRANSIENT_ERROR;
+      }
    }
 
    if (Req.MaximumSize > 0 && Req.File.IsOpen() && Req.File.Failed() == false && Req.File.Tell() > Req.MaximumSize)
    {
       Owner->SetFailReason("MaximumSizeExceeded");
-      return _error->Error(_("File has unexpected size (%llu != %llu). Mirror sync in progress?"),
-			   Req.File.Tell(), Req.MaximumSize);
+      _error->Error(_("File has unexpected size (%llu != %llu). Mirror sync in progress?"),
+		    Req.File.Tell(), Req.MaximumSize);
+      return ResultState::FATAL_ERROR;
    }
 
    // Handle commands from APT
@@ -855,9 +898,9 @@ bool HttpServerState::Go(bool ToFile, RequestState &Req)
    {
       if (Owner->Run(true) != -1)
 	 exit(100);
-   }   
-       
-   return true;
+   }
+
+   return ResultState::SUCCESSFUL;
 }
 									/*}}}*/
 

@@ -62,7 +62,6 @@ struct RequestState
    RequestState(BaseHttpMethod * const Owner, ServerState * const Server) :
       Owner(Owner), Server(Server) { time(&Date); }
 };
-
 struct ServerState
 {
    bool Persistent;
@@ -78,7 +77,7 @@ struct ServerState
    BaseHttpMethod *Owner;
 
    virtual bool ReadHeaderLines(std::string &Data) = 0;
-   virtual bool LoadNextResponse(bool const ToFile, RequestState &Req) = 0;
+   virtual ResultState LoadNextResponse(bool const ToFile, RequestState &Req) = 0;
 
    public:
 
@@ -99,16 +98,16 @@ struct ServerState
    virtual bool WriteResponse(std::string const &Data) = 0;
 
    /** \brief Transfer the data from the socket */
-   virtual bool RunData(RequestState &Req) = 0;
-   virtual bool RunDataToDevNull(RequestState &Req) = 0;
+   virtual ResultState RunData(RequestState &Req) = 0;
+   virtual ResultState RunDataToDevNull(RequestState &Req) = 0;
 
-   virtual bool Open() = 0;
+   virtual ResultState Open() = 0;
    virtual bool IsOpen() = 0;
    virtual bool Close() = 0;
    virtual bool InitHashes(HashStringList const &ExpectedHashes) = 0;
-   virtual bool Die(RequestState &Req) = 0;
+   virtual ResultState Die(RequestState &Req) = 0;
    virtual bool Flush(FileFd * const File) = 0;
-   virtual bool Go(bool ToFile, RequestState &Req) = 0;
+   virtual ResultState Go(bool ToFile, RequestState &Req) = 0;
    virtual Hashes * GetHashes() = 0;
 
    ServerState(URI Srv, BaseHttpMethod *Owner);
