@@ -241,7 +241,11 @@ bool debSrcRecordParser::Files2(std::vector<pkgSrcRecords::File2> &List)
 	 if (file != List.end())
 	 {
 	    if (checksumField == "Files")
-	       APT_IGNORE_DEPRECATED(file->MD5Hash = hash;)
+	    {
+	       APT_IGNORE_DEPRECATED_PUSH
+	       file->MD5Hash = hash;
+	       APT_IGNORE_DEPRECATED_POP
+	    }
 	    // an error here indicates that we have two different hashes for the same file
 	    if (file->Hashes.push_back(hashString) == false)
 	       return _error->Error("Error parsing checksum in %s of source package %s", checksumField.c_str(), Package().c_str());

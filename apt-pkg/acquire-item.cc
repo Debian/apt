@@ -971,7 +971,9 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
 void pkgAcquire::Item::SetActiveSubprocess(const std::string &subprocess)/*{{{*/
 {
       ActiveSubprocess = subprocess;
-      APT_IGNORE_DEPRECATED(Mode = ActiveSubprocess.c_str();)
+      APT_IGNORE_DEPRECATED_PUSH
+      Mode = ActiveSubprocess.c_str();
+      APT_IGNORE_DEPRECATED_POP
 }
 									/*}}}*/
 // Acquire::Item::ReportMirrorFailure					/*{{{*/

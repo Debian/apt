@@ -143,6 +143,7 @@
 		_Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
 	#define APT_IGNORE_DEPRECATED_POP \
 		_Pragma("GCC diagnostic pop")
+	/* gcc has various problems with this shortcut, so prefer the long form */
 	#define APT_IGNORE_DEPRECATED(XXX) \
 		APT_IGNORE_DEPRECATED_PUSH \
 		XXX \
