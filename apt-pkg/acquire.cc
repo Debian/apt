@@ -31,6 +31,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cmath>
 
 #include <dirent.h>
 #include <errno.h>
@@ -437,7 +438,7 @@ string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
       clog << "Found " << Instances << " instances of " << U.Access << endl;
    }
 
-   if (Instances >= (unsigned int)_config->FindI("Acquire::QueueHost::Limit",10))
+   if (Instances >= static_cast<decltype(Instances)>(_config->FindI("Acquire::QueueHost::Limit",10)))
       return U.Access;
 
    return FullQueueName;
@@ -1074,7 +1075,7 @@ bool pkgAcquire::Queue::Cycle()
    // Look for a queable item
    QItem *I = Items;
    int ActivePriority = 0;
-   while (PipeDepth < (signed)MaxPipeDepth)
+   while (PipeDepth < static_cast<decltype(PipeDepth)>(MaxPipeDepth))
    {
       for (; I != 0; I = I->Next) {
 	 if (I->Owner->Status == pkgAcquire::Item::StatFetching)
@@ -1285,7 +1286,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       else
 	 CurrentCPS = ((CurrentBytes - ResumeSize) - LastBytes)/Delta;
       LastBytes = CurrentBytes - ResumeSize;
-      ElapsedTime = (unsigned long long)Delta;
+      ElapsedTime = std::llround(Delta);
       Time = NewTime;
    }
 
@@ -1295,8 +1296,8 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       Percent = 0;
    else
       // use both files and bytes because bytes can be unreliable
-      Percent = (0.8 * (CurrentBytes/float(TotalBytes)*100.0) +
-                 0.2 * (CurrentItems/float(TotalItems)*100.0));
+      Percent = (0.8 * (CurrentBytes/double(TotalBytes)*100.0) +
+                 0.2 * (CurrentItems/double(TotalItems)*100.0));
 
    // debug
    if (_config->FindB("Debug::acquire::progress", false) == true)
@@ -1380,7 +1381,7 @@ void pkgAcquireStatus::Stop()
    else
       CurrentCPS = FetchedBytes/Delta;
    LastBytes = CurrentBytes;
-   ElapsedTime = (unsigned long long)Delta;
+   ElapsedTime = std::llround(Delta);
 }
 									/*}}}*/
 // AcquireStatus::Fetched - Called when a byte set has been fetched	/*{{{*/

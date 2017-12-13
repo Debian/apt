@@ -55,8 +55,8 @@ bool PackageManager::StatusChanged(std::string /*PackageName*/,
                                    std::string /*HumanReadableAction*/)
 {
    int reporting_steps = _config->FindI("DpkgPM::Reporting-Steps", 1);
-   percentage = StepsDone/(float)TotalSteps * 100.0;
-   strprintf(progress_str, _("Progress: [%3i%%]"), (int)percentage);
+   percentage = StepsDone/(double)TotalSteps * 100.0;
+   strprintf(progress_str, _("Progress: [%3li%%]"), std::lround(percentage));
 
    if(percentage < (last_reported_progress + reporting_steps))
       return false;
@@ -382,8 +382,8 @@ bool PackageManagerFancy::DrawStatusLine()
    if (_config->FindB("Dpkg::Progress-Fancy::Progress-Bar", true))
    {
       int padding = 4;
-      float progressbar_size = size.columns - padding - progress_str.size();
-      float current_percent = percentage / 100.0;
+      auto const progressbar_size = size.columns - padding - progress_str.size();
+      auto const current_percent = percentage / 100.0;
       std::cout << " " 
                 << GetTextProgressStr(current_percent, progressbar_size)
                 << " ";
