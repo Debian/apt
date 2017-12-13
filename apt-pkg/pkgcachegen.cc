@@ -159,8 +159,8 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
 
    Cache.ReMap(false);
 
-   CurrentFile += (pkgCache::PackageFile const * const) newMap - (pkgCache::PackageFile const * const) oldMap;
-   CurrentRlsFile += (pkgCache::ReleaseFile const * const) newMap - (pkgCache::ReleaseFile const * const) oldMap;
+   CurrentFile += static_cast<pkgCache::PackageFile const *>(newMap) - static_cast<pkgCache::PackageFile const *>(oldMap);
+   CurrentRlsFile += static_cast<pkgCache::ReleaseFile const *>(newMap) - static_cast<pkgCache::ReleaseFile const *>(oldMap);
 
    for (std::vector<pkgCache::GrpIterator*>::const_iterator i = Dynamic<pkgCache::GrpIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::GrpIterator>::toReMap.end(); ++i)
@@ -439,7 +439,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 			   Pkg.Name(), "NewVersion", 1);
 
    if (oldMap != Map.Data())
-	 LastVer += (map_pointer_t const * const) Map.Data() - (map_pointer_t const * const) oldMap;
+	 LastVer += static_cast<map_pointer_t const *>(Map.Data()) - static_cast<map_pointer_t const *>(oldMap);
    *LastVer = verindex;
 
    if (unlikely(List.NewVersion(Ver) == false))
@@ -1056,7 +1056,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
       for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; ++D)
 	 OldDepLast = &D->NextDepends;
    } else if (oldMap != Map.Data())
-      OldDepLast += (map_pointer_t const * const) Map.Data() - (map_pointer_t const * const) oldMap;
+      OldDepLast += static_cast<map_pointer_t const *>(Map.Data()) - static_cast<map_pointer_t const *>(oldMap);
 
    Dep->NextDepends = *OldDepLast;
    *OldDepLast = Dependency;

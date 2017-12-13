@@ -26,6 +26,9 @@
 #define PKGLIB_MMAP_H
 
 #include <string>
+#include <limits>
+
+#include <sys/mman.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/fileutl.h>
@@ -65,7 +68,7 @@ class MMap
    inline void *Data() {return Base;}; 
    inline unsigned long long Size() {return iSize;};
    inline void AddSize(unsigned long long const size) {iSize += size;};
-   inline bool validData() const { return Base != (void *)-1 && Base != 0; };
+   inline bool validData() const { return Base != MAP_FAILED && Base != 0; };
    
    // File manipulators
    bool Sync();
@@ -104,7 +107,7 @@ class DynamicMMap : public MMap
    // Allocation
    unsigned long RawAllocate(unsigned long long Size,unsigned long Aln = 0);
    unsigned long Allocate(unsigned long ItemSize);
-   unsigned long WriteString(const char *String,unsigned long Len = (unsigned long)-1);
+   unsigned long WriteString(const char *String,unsigned long Len = std::numeric_limits<unsigned long>::max());
    inline unsigned long WriteString(const std::string &S) {return WriteString(S.c_str(),S.length());};
    void UsePools(Pool &P,unsigned int Count) {Pools = &P; PoolCount = Count;};
    

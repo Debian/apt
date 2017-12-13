@@ -133,8 +133,8 @@ static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
 // LocalitySort - Sort a version list by package file locality		/*{{{*/
 static int LocalityCompare(const void * const a, const void * const b)
 {
-   pkgCache::VerFile const * const A = *(pkgCache::VerFile const * const * const)a;
-   pkgCache::VerFile const * const B = *(pkgCache::VerFile const * const * const)b;
+   pkgCache::VerFile const * const A = *static_cast<pkgCache::VerFile const * const *>(a);
+   pkgCache::VerFile const * const B = *static_cast<pkgCache::VerFile const * const *>(b);
 
    if (A == 0 && B == 0)
       return 0;
