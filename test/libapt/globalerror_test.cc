@@ -111,11 +111,11 @@ TEST(GlobalErrorTest,LongMessage)
       longText.append("a");
    EXPECT_FALSE(e.Error("%s horrible %s %d times", longText.c_str(), "happened", 2));
    EXPECT_TRUE(e.PopMessage(text));
-   EXPECT_EQ(std::string(longText).append(" horrible happened 2 times"), text);
+   EXPECT_EQ(longText + " horrible happened 2 times", text);
 
    EXPECT_FALSE(e.Errno("errno", "%s horrible %s %d times", longText.c_str(), "happened", 2));
    EXPECT_TRUE(e.PopMessage(text));
-   EXPECT_EQ(std::string(longText).append(" horrible happened 2 times - errno (0: ").append(textOfErrnoZero).append(")"), text);
+   EXPECT_EQ(longText + " horrible happened 2 times - errno (0: " + textOfErrnoZero + ")", text);
 
    EXPECT_FALSE(e.Error("%s horrible %s %d times", longText.c_str(), "happened", 2));
    std::ostringstream out;

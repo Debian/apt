@@ -191,7 +191,7 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 	 ; // we got the expected filesize which is all we wanted
       else if (sscanf(Val.c_str(),"bytes %llu-%*u/%llu",&StartPos,&TotalFileSize) != 2)
 	 return _error->Error(_("The HTTP server sent an invalid Content-Range header"));
-      if ((unsigned long long)StartPos > TotalFileSize)
+      if (StartPos > TotalFileSize)
 	 return _error->Error(_("This HTTP server has broken range support"));
 
       // figure out what we will download

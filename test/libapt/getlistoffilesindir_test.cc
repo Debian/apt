@@ -11,7 +11,7 @@
 
 #include "file-helpers.h"
 
-#define P(x)	std::string(tempdir).append("/").append(x)
+#define P(x)	tempdir + "/" + x
 
 TEST(FileUtlTest,GetListOfFilesInDir)
 {

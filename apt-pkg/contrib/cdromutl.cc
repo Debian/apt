@@ -105,13 +105,14 @@ bool UnmountCdrom(string Path)
 	 }
 	 else
 	 {
-	    const char *Args[10];
-	    Args[0] = "umount";
-	    Args[1] = Path.c_str();
-	    Args[2] = 0;
-	    execvp(Args[0],(char **)Args);      
+	    const char * const Args[] = {
+	       "umount",
+	       Path.c_str(),
+	       nullptr
+	    };
+	    execvp(Args[0], const_cast<char **>(Args));
 	    _exit(100);
-	 }      
+	 }
       }
 
       // if it can not be umounted, give it a bit more time
@@ -222,15 +223,13 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
 
       std::string S;
       if (Version <= 1)
-      {
-	 strprintf(S, "%lu", (unsigned long)Dir->d_ino);
-      }
+	 S = std::to_string(Dir->d_ino);
       else
       {
 	 struct stat Buf;
 	 if (fstatat(dirfd, Dir->d_name, &Buf, 0) != 0)
 	    continue;
-	 strprintf(S, "%lu", (unsigned long)Buf.st_mtime);
+	 S = std::to_string(Buf.st_mtime);
       }
 
       Hash.Add(S.c_str());
@@ -246,21 +245,17 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
 	 return _error->Errno("statfs",_("Failed to stat the cdrom"));
 
       // We use a kilobyte block size to avoid overflow
-      if (writable_media)
-      {
-         strprintf(S, "%lu", (unsigned long)(Buf.f_blocks*(Buf.f_bsize/1024)));
-      } else {
-         strprintf(S, "%lu %lu", (unsigned long)(Buf.f_blocks*(Buf.f_bsize/1024)),
-                 (unsigned long)(Buf.f_bfree*(Buf.f_bsize/1024)));
-      }
-      Hash.Add(S.c_str());
+      S = std::to_string(Buf.f_blocks * (Buf.f_bsize / 1024));
+      if (writable_media == false)
+	 S.append(" ").append(std::to_string(Buf.f_bfree * (Buf.f_bsize / 1024)));
+      Hash.Add(S.c_str(), S.length());
       strprintf(S, "-%u", Version);
    }
    else
       strprintf(S, "-%u.debug", Version);
 
    closedir(D);
-   Res = Hash.Result().Value() + S;
+   Res = Hash.Result().Value().append(std::move(S));
    return true;
 }
 									/*}}}*/
