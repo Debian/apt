@@ -164,6 +164,7 @@ struct ExDescFile
    pkgCache::DescFile *Df;
    pkgCache::VerIterator V;
    map_id_t ID;
+   ExDescFile() : Df(nullptr), ID(0) {}
 };
 static bool Search(CommandLine &CmdL)
 {
@@ -203,7 +204,6 @@ static bool Search(CommandLine &CmdL)
    
    size_t const descCount = Cache->HeaderP->GroupCount + 1;
    ExDescFile *DFList = new ExDescFile[descCount];
-   memset(DFList,0,sizeof(*DFList) * descCount);
 
    bool *PatternMatch = new bool[descCount * NumPatterns];
    memset(PatternMatch,false,sizeof(*PatternMatch) * descCount * NumPatterns);
