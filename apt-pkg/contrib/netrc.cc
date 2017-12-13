@@ -127,8 +127,18 @@ bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
       return true;
    }
    else if (Debug)
-      std::clog << "MaybeAddAuth: Found no matching host (syntax error: " << active_token << ") for "
-		<< (std::string)Uri << " from " << NetRCFile.Name() << std::endl;
+   {
+      std::clog << "MaybeAddAuth: Found no matching host (syntax error: token:";
+      switch (active_token)
+      {
+	 case NO: std::clog << "NO"; break;
+	 case MACHINE: std::clog << "MACHINE"; break;
+	 case GOOD_MACHINE: std::clog << "GOOD_MACHINE"; break;
+	 case LOGIN: std::clog << "LOGIN"; break;
+	 case PASSWORD: std::clog << "PASSWORD"; break;
+      }
+      std::clog << ") for " << (std::string)Uri << " from " << NetRCFile.Name() << std::endl;
+   }
    return false;
 }
 
