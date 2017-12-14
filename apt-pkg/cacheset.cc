@@ -737,7 +737,7 @@ void CacheSetHelper::canNotFindRegEx(PackageContainerInterface * const /*pci*/, 
 }
 									/*}}}*/
 // canNotFindPackage - handle the case no package is found from a string/*{{{*/
-APT_PURE void CacheSetHelper::canNotFindPackage(PackageContainerInterface * const /*pci*/, pkgCacheFile &/*Cache*/, std::string const &/*str*/) {
+void CacheSetHelper::canNotFindPackage(PackageContainerInterface * const /*pci*/, pkgCacheFile &/*Cache*/, std::string const &/*str*/) {
 }
 									/*}}}*/
 									/*}}}*/
@@ -863,17 +863,17 @@ APT_IGNORE_DEPRECATED_POP
 	}
 }
 // showTaskSelection							/*{{{*/
-APT_PURE void CacheSetHelper::showTaskSelection(pkgCache::PkgIterator const &/*pkg*/,
+void CacheSetHelper::showTaskSelection(pkgCache::PkgIterator const &/*pkg*/,
 				       std::string const &/*pattern*/) {
 }
 									/*}}}*/
 // showRegExSelection							/*{{{*/
-APT_PURE void CacheSetHelper::showRegExSelection(pkgCache::PkgIterator const &/*pkg*/,
+void CacheSetHelper::showRegExSelection(pkgCache::PkgIterator const &/*pkg*/,
 					std::string const &/*pattern*/) {
 }
 									/*}}}*/
 // showFnmatchSelection							/*{{{*/
-APT_PURE void CacheSetHelper::showFnmatchSelection(pkgCache::PkgIterator const &/*pkg*/,
+void CacheSetHelper::showFnmatchSelection(pkgCache::PkgIterator const &/*pkg*/,
                                          std::string const &/*pattern*/) {
 }
 									/*}}}*/
@@ -901,7 +901,7 @@ APT_IGNORE_DEPRECATED_POP
 		break;
 	}
 }
-APT_PURE void CacheSetHelper::showSelectedVersion(pkgCache::PkgIterator const &/*Pkg*/,
+void CacheSetHelper::showSelectedVersion(pkgCache::PkgIterator const &/*Pkg*/,
 					 pkgCache::VerIterator const /*Ver*/,
 					 std::string const &/*ver*/,
 					 bool const /*verIsRel*/) {

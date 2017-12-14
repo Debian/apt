@@ -27,8 +27,8 @@ namespace APT {
 APT_HIDDEN std::unordered_map<std::string, std::vector<std::string>> ArchToTupleMap;
 
 namespace CacheFilter {
-APT_PURE Matcher::~Matcher() {}
-APT_PURE PackageMatcher::~PackageMatcher() {}
+Matcher::~Matcher() {}
+PackageMatcher::~PackageMatcher() {}
 
 // Name matches RegEx							/*{{{*/
 PackageNameMatchesRegEx::PackageNameMatchesRegEx(std::string const &Pattern) {

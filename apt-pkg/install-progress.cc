@@ -103,7 +103,7 @@ void PackageManagerProgressFd::StartDpkg()
    WriteToStatusFd(GetProgressFdString("pmstatus", "dpkg-exec", StepsDone, StepsTotal, _("Running dpkg")));
 }
 
-APT_PURE void PackageManagerProgressFd::Stop()
+void PackageManagerProgressFd::Stop()
 {
 }
 
@@ -184,7 +184,7 @@ void PackageManagerProgressDeb822Fd::StartDpkg()
    WriteToStatusFd(GetProgressDeb822String("progress", nullptr, StepsDone, StepsTotal, _("Running dpkg")));
 }
 
-APT_PURE void PackageManagerProgressDeb822Fd::Stop()
+void PackageManagerProgressDeb822Fd::Stop()
 {
 }
 

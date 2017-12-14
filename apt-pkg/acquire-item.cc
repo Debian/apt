@@ -766,7 +766,7 @@ std::string pkgAcquire::Item::ShortDesc() const				/*{{{*/
    return DescURI();
 }
 									/*}}}*/
-APT_PURE void pkgAcquire::Item::Finished()				/*{{{*/
+void pkgAcquire::Item::Finished()					/*{{{*/
 {
 }
 									/*}}}*/

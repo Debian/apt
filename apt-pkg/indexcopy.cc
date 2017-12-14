@@ -785,13 +785,13 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 									/*}}}*/
 
 IndexCopy::IndexCopy() : d(nullptr), Section(nullptr) {}
-APT_PURE IndexCopy::~IndexCopy() {}
+IndexCopy::~IndexCopy() {}
 
 PackageCopy::PackageCopy() : IndexCopy(), d(NULL) {}
-APT_PURE PackageCopy::~PackageCopy() {}
+PackageCopy::~PackageCopy() {}
 SourceCopy::SourceCopy() : IndexCopy(), d(NULL) {}
-APT_PURE SourceCopy::~SourceCopy() {}
+SourceCopy::~SourceCopy() {}
 TranslationsCopy::TranslationsCopy() : d(nullptr), Section(nullptr) {}
-APT_PURE TranslationsCopy::~TranslationsCopy() {}
+TranslationsCopy::~TranslationsCopy() {}
 SigVerify::SigVerify() : d(NULL) {}
-APT_PURE SigVerify::~SigVerify() {}
+SigVerify::~SigVerify() {}
