@@ -55,7 +55,7 @@ using APT::StringView;
 /* We set the dirty flag and make sure that is written to the disk */
 pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 		    Map(*pMap), Cache(pMap,false), Progress(Prog),
-		     CurrentRlsFile(NULL), CurrentFile(NULL), d(NULL)
+		     CurrentRlsFile(nullptr), CurrentFile(nullptr), d(nullptr)
 {
 }
 bool pkgCacheGenerator::Start()
@@ -159,8 +159,10 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
 
    Cache.ReMap(false);
 
-   CurrentFile += static_cast<pkgCache::PackageFile const *>(newMap) - static_cast<pkgCache::PackageFile const *>(oldMap);
-   CurrentRlsFile += static_cast<pkgCache::ReleaseFile const *>(newMap) - static_cast<pkgCache::ReleaseFile const *>(oldMap);
+   if (CurrentFile != nullptr)
+      CurrentFile += static_cast<pkgCache::PackageFile const *>(newMap) - static_cast<pkgCache::PackageFile const *>(oldMap);
+   if (CurrentRlsFile != nullptr)
+      CurrentRlsFile += static_cast<pkgCache::ReleaseFile const *>(newMap) - static_cast<pkgCache::ReleaseFile const *>(oldMap);
 
    for (std::vector<pkgCache::GrpIterator*>::const_iterator i = Dynamic<pkgCache::GrpIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::GrpIterator>::toReMap.end(); ++i)
@@ -396,7 +398,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 	    if (List.SameVersion(Hash, Ver) == true)
 	       break;
 	    // sort (volatile) sources above not-sources like the status file
-	    if ((CurrentFile->Flags & pkgCache::Flag::NotSource) == 0)
+	    if (CurrentFile == nullptr || (CurrentFile->Flags & pkgCache::Flag::NotSource) == 0)
 	    {
 	       auto VF = Ver.FileList();
 	       for (; VF.end() == false; ++VF)
@@ -818,7 +820,7 @@ bool pkgCacheGenerator::AddImplicitDepends(pkgCache::VerIterator &V,
 bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
 				   ListParser &List)
 {
-   if (CurrentFile == 0)
+   if (CurrentFile == nullptr)
       return true;
    
    // Get a structure
@@ -903,7 +905,7 @@ map_pointer_t pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
 bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
 				   ListParser &List)
 {
-   if (CurrentFile == 0)
+   if (CurrentFile == nullptr)
       return true;
    
    // Get a structure
@@ -1246,11 +1248,9 @@ bool pkgCacheListParser::SameVersion(unsigned short const Hash,		/*{{{*/
 bool pkgCacheGenerator::SelectReleaseFile(const string &File,const string &Site,
 				   unsigned long Flags)
 {
+   CurrentRlsFile = nullptr;
    if (File.empty() && Site.empty())
-   {
-      CurrentRlsFile = NULL;
       return true;
-   }
 
    // Get some space for the structure
    map_pointer_t const idxFile = AllocateInMap(sizeof(*CurrentRlsFile));
@@ -1285,6 +1285,7 @@ bool pkgCacheGenerator::SelectFile(std::string const &File,
 				   std::string const &Component,
 				   unsigned long const Flags)
 {
+   CurrentFile = nullptr;
    // Get some space for the structure
    map_pointer_t const idxFile = AllocateInMap(sizeof(*CurrentFile));
    if (unlikely(idxFile == 0))
@@ -1316,7 +1317,7 @@ bool pkgCacheGenerator::SelectFile(std::string const &File,
       return false;
    CurrentFile->Component = component;
    CurrentFile->Flags = Flags;
-   if (CurrentRlsFile != NULL)
+   if (CurrentRlsFile != nullptr)
       CurrentFile->Release = CurrentRlsFile - Cache.RlsFileP;
    else
       CurrentFile->Release = 0;

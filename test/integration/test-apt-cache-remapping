@@ -1,0 +1,47 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'foo' 'amd64' '1'
+
+# the default is 1MB – too much for our simple tests
+echo 'APT::Cache-Grow "1000";' > rootdir/etc/apt/apt.conf.d/limit-cachegrow.conf
+
+# experiment with cache remapping
+rm -f rootdir/var/cache/apt/*.bin
+testsuccess apt install ./incoming/foo_1_amd64.deb -s
+msgtest 'Cache files are generated in tests'
+if [ ! -e rootdir/var/cache/apt/srcpkgcache.bin -o ! -e rootdir/var/cache/apt/pkgcache.bin ]; then
+	msgfail 'files do not exist'
+	ls -l rootdir/var/cache/apt/*.bin
+	exit 1
+else
+	msgpass
+fi
+
+SLSIZE="$(stat -c '%s' rootdir/var/cache/apt/srcpkgcache.bin)"
+STSIZE="$(stat -c '%s' rootdir/var/cache/apt/pkgcache.bin)"
+rm -f rootdir/var/cache/apt/*.bin
+testfailure apt install ./incoming/foo_1_amd64.deb -s -o APT::Cache-Start="$SLSIZE" -o APT::Cache-Grow=0
+testfailure test -e rootdir/var/cache/apt/pkgcache.bin
+rm -f rootdir/var/cache/apt/*.bin
+testfailure apt install ./incoming/foo_1_amd64.deb -s -o APT::Cache-Start="$SLSIZE" -o APT::Cache-Limit="$SLSIZE"
+testfailure test -e rootdir/var/cache/apt/pkgcache.bin
+rm -f rootdir/var/cache/apt/*.bin
+testsuccess apt install ./incoming/foo_1_amd64.deb -s -o APT::Cache-Start="$SLSIZE"
+testsuccess test -e rootdir/var/cache/apt/srcpkgcache.bin -a -e rootdir/var/cache/apt/pkgcache.bin
+
+rm -f rootdir/var/cache/apt/*.bin
+testfailure apt install ./incoming/foo_1_amd64.deb -s -o APT::Cache-Start="$STSIZE" -o APT::Cache-Grow=0
+rm -f rootdir/var/cache/apt/*.bin
+testfailure apt install ./incoming/foo_1_amd64.deb -s -o APT::Cache-Start="$STSIZE" -o APT::Cache-Limit="$SLSIZE"
+rm -f rootdir/var/cache/apt/*.bin
+testfailure apt install ./incoming/foo_1_amd64.deb -s -o APT::Cache-Start="$STSIZE" -o APT::Cache-Limit="$STSIZE"
+rm -f rootdir/var/cache/apt/*.bin
+testsuccess apt install ./incoming/foo_1_amd64.deb -s -o APT::Cache-Start="$STSIZE"
+testsuccess test -e rootdir/var/cache/apt/srcpkgcache.bin -a -e rootdir/var/cache/apt/pkgcache.bin
