@@ -198,6 +198,50 @@ static ResultState DoConnect(struct addrinfo *Addr, std::string const &Host,
    return ResultState::SUCCESSFUL;
 }
 									/*}}}*/
+// Order the given host names returned by getaddrinfo()			/*{{{*/
+static std::vector<struct addrinfo *> OrderAddresses(struct addrinfo *CurHost)
+{
+   std::vector<struct addrinfo *> preferredAddrs;
+   std::vector<struct addrinfo *> otherAddrs;
+   std::vector<struct addrinfo *> allAddrs;
+
+   // Partition addresses into preferred and other address families
+   while (CurHost != 0)
+   {
+      if (preferredAddrs.empty() || CurHost->ai_family == preferredAddrs[0]->ai_family)
+	 preferredAddrs.push_back(CurHost);
+      else
+	 otherAddrs.push_back(CurHost);
+
+      // Ignore UNIX domain sockets
+      do
+      {
+	 CurHost = CurHost->ai_next;
+      } while (CurHost != 0 && CurHost->ai_family == AF_UNIX);
+
+      /* If we reached the end of the search list then wrap around to the
+	 start */
+      if (CurHost == 0 && LastUsed != 0)
+	 CurHost = LastHostAddr;
+
+      // Reached the end of the search cycle
+      if (CurHost == LastUsed)
+	 break;
+   }
+
+   // Build a new address vector alternating between preferred and other
+   for (auto prefIter = preferredAddrs.cbegin(), otherIter = otherAddrs.cbegin();
+	prefIter != preferredAddrs.end() || otherIter != otherAddrs.end();)
+   {
+      if (prefIter != preferredAddrs.end())
+	 allAddrs.push_back(*prefIter++);
+      if (otherIter != otherAddrs.end())
+	 allAddrs.push_back(*otherIter++);
+   }
+
+   return std::move(allAddrs);
+}
+									/*}}}*/
 // Connect to a given Hostname						/*{{{*/
 static ResultState ConnectToHostname(std::string const &Host, int const Port,
 				     const char *const Service, int DefPort, std::unique_ptr<MethodFd> &Fd,
@@ -301,12 +345,11 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
    }
 
    // When we have an IP rotation stay with the last IP.
-   struct addrinfo *CurHost = LastHostAddr;
-   if (LastUsed != 0)
-       CurHost = LastUsed;
-   
-   while (CurHost != 0)
+   auto Addresses = OrderAddresses(LastUsed != nullptr ? LastUsed : LastHostAddr);
+
+   for (auto CurHost : Addresses)
    {
+      _error->Discard();
       auto const result = DoConnect(CurHost, Host, TimeOut, Fd, Owner);
       if (result == ResultState::SUCCESSFUL)
       {
@@ -314,25 +357,6 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
 	 return result;
       }
       Fd->Close();
-
-      // Ignore UNIX domain sockets
-      do
-      {
-	 CurHost = CurHost->ai_next;
-      }
-      while (CurHost != 0 && CurHost->ai_family == AF_UNIX);
-
-      /* If we reached the end of the search list then wrap around to the
-         start */
-      if (CurHost == 0 && LastUsed != 0)
-	 CurHost = LastHostAddr;
-      
-      // Reached the end of the search cycle
-      if (CurHost == LastUsed)
-	 break;
-      
-      if (CurHost != 0)
-	 _error->Discard();
    }   
 
    if (_error->PendingError() == true)
