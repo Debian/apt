@@ -112,16 +112,43 @@ std::unique_ptr<MethodFd> MethodFd::FromFd(int iFd)
 // DoConnect - Attempt a connect operation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This helper function attempts a connection to a single address. */
-static ResultState DoConnect(struct addrinfo *Addr, std::string const &Host,
-			     unsigned long TimeOut, std::unique_ptr<MethodFd> &Fd, aptMethod *Owner)
+struct Connection
 {
-   // Show a status indicator
+   struct addrinfo *Addr;
+   std::string Host;
+   aptMethod *Owner;
+   std::unique_ptr<FdFd> Fd;
    char Name[NI_MAXHOST];
    char Service[NI_MAXSERV];
-   Fd.reset(new FdFd());
 
-   Name[0] = 0;   
-   Service[0] = 0;
+   Connection(struct addrinfo *Addr, std::string const &Host, aptMethod *Owner) : Addr(Addr), Host(Host), Owner(Owner), Fd(new FdFd()), Name{0}, Service{0}
+   {
+   }
+
+   // Allow moving values, but not connections.
+   Connection(Connection &&Conn) = default;
+   Connection(const Connection &Conn) = delete;
+   Connection &operator=(const Connection &) = delete;
+   Connection &operator=(Connection &&Conn) = default;
+
+   ~Connection()
+   {
+      if (Fd != nullptr)
+      {
+	 Fd->Close();
+      }
+   }
+
+   std::unique_ptr<MethodFd> Take()
+   {
+      return std::move(Fd);
+   }
+
+   ResultState DoConnect(unsigned long TimeOut);
+};
+
+ResultState Connection::DoConnect(unsigned long TimeOut)
+{
    getnameinfo(Addr->ai_addr,Addr->ai_addrlen,
 	       Name,sizeof(Name),Service,sizeof(Service),
 	       NI_NUMERICHOST|NI_NUMERICSERV);
@@ -350,13 +377,14 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
    for (auto CurHost : Addresses)
    {
       _error->Discard();
-      auto const result = DoConnect(CurHost, Host, TimeOut, Fd, Owner);
+      Connection Conn(CurHost, Host, Owner);
+      auto const result = Conn.DoConnect(TimeOut);
       if (result == ResultState::SUCCESSFUL)
       {
+	 Fd = Conn.Take();
 	 LastUsed = CurHost;
 	 return result;
       }
-      Fd->Close();
    }   
 
    if (_error->PendingError() == true)
