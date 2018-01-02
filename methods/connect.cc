@@ -23,6 +23,7 @@
 #include <gnutls/gnutls.h>
 #include <gnutls/x509.h>
 
+#include <list>
 #include <set>
 #include <sstream>
 #include <string>
@@ -35,6 +36,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <sys/select.h>
 #include <sys/socket.h>
 
 #include "aptmethod.h"
@@ -146,14 +148,19 @@ struct Connection
       std::stringstream ss;
       ioprintf(ss, _("[IP: %s %s]"), Name, Service);
       Owner->SetIP(ss.str());
+      Owner->Status(_("Connected to %s (%s)"), Host.c_str(), Name);
+      _error->Discard();
+      Owner->SetFailReason("");
+      LastUsed = Addr;
       return std::move(Fd);
    }
 
-   ResultState DoConnect(unsigned long TimeOut);
+   ResultState DoConnect();
+
    ResultState CheckError();
 };
 
-ResultState Connection::DoConnect(unsigned long TimeOut)
+ResultState Connection::DoConnect()
 {
    getnameinfo(Addr->ai_addr,Addr->ai_addrlen,
 	       Name,sizeof(Name),Service,sizeof(Service),
@@ -183,19 +190,7 @@ ResultState Connection::DoConnect(unsigned long TimeOut)
       return ResultState::TRANSIENT_ERROR;
    }
 
-   /* This implements a timeout for connect by opening the connection
-      nonblocking */
-   if (WaitFd(Fd->Fd(), true, TimeOut) == false)
-   {
-      bad_addr.insert(bad_addr.begin(), std::string(Name));
-      Owner->SetFailReason("Timeout");
-      _error->Error(_("Could not connect to %s:%s (%s), "
-		      "connection timed out"),
-		    Host.c_str(), Service, Name);
-      return ResultState::TRANSIENT_ERROR;
-   }
-
-   return CheckError();
+   return ResultState::SUCCESSFUL;
 }
 
 ResultState Connection::CheckError()
@@ -269,6 +264,82 @@ static std::vector<struct addrinfo *> OrderAddresses(struct addrinfo *CurHost)
    }
 
    return std::move(allAddrs);
+}
+									/*}}}*/
+// Check for errors and report them					/*{{{*/
+static ResultState WaitAndCheckErrors(std::list<Connection> &Conns, std::unique_ptr<MethodFd> &Fd, long TimeoutMsec, bool ReportTimeout)
+{
+   // The last error detected
+   ResultState Result = ResultState::TRANSIENT_ERROR;
+
+   struct timeval tv = {
+      // Split our millisecond timeout into seconds and microseconds
+      .tv_sec = TimeoutMsec / 1000,
+      .tv_usec = (TimeoutMsec % 1000) * 1000,
+   };
+
+   // We will return once we have no more connections, a time out, or
+   // a success.
+   while (!Conns.empty())
+   {
+      fd_set Set;
+      int nfds = -1;
+
+      FD_ZERO(&Set);
+
+      for (auto &Conn : Conns)
+      {
+	 int fd = Conn.Fd->Fd();
+	 FD_SET(fd, &Set);
+	 nfds = std::max(nfds, fd);
+      }
+
+      {
+	 int Res;
+	 do
+	 {
+	    Res = select(nfds + 1, 0, &Set, 0, (TimeoutMsec != 0 ? &tv : 0));
+	 } while (Res < 0 && errno == EINTR);
+
+	 if (Res == 0)
+	 {
+	    if (ReportTimeout)
+	    {
+	       for (auto &Conn : Conns)
+	       {
+		  Conn.Owner->SetFailReason("Timeout");
+		  _error->Error(_("Could not connect to %s:%s (%s), "
+				  "connection timed out"),
+				Conn.Host.c_str(), Conn.Service, Conn.Name);
+	       }
+	    }
+	    return ResultState::TRANSIENT_ERROR;
+	 }
+      }
+
+      // iterate over connections, remove failed ones, and return if
+      // there was a successful one.
+      for (auto ConnI = Conns.begin(); ConnI != Conns.end();)
+      {
+	 if (!FD_ISSET(ConnI->Fd->Fd(), &Set))
+	 {
+	    ConnI++;
+	    continue;
+	 }
+
+	 Result = ConnI->CheckError();
+	 if (Result == ResultState::SUCCESSFUL)
+	 {
+	    Fd = ConnI->Take();
+	    return Result;
+	 }
+
+	 // Connection failed. Erase it and continue to next position
+	 ConnI = Conns.erase(ConnI);
+      }
+   }
+
+   return Result;
 }
 									/*}}}*/
 // Connect to a given Hostname						/*{{{*/
@@ -375,19 +446,22 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
 
    // When we have an IP rotation stay with the last IP.
    auto Addresses = OrderAddresses(LastUsed != nullptr ? LastUsed : LastHostAddr);
+   std::list<Connection> Conns;
 
-   for (auto CurHost : Addresses)
+   for (auto Addr : Addresses)
    {
-      _error->Discard();
-      Connection Conn(CurHost, Host, Owner);
-      auto const result = Conn.DoConnect(TimeOut);
-      if (result == ResultState::SUCCESSFUL)
-      {
-	 Fd = Conn.Take();
-	 LastUsed = CurHost;
-	 return result;
-      }
-   }   
+      Connection Conn(Addr, Host, Owner);
+      if (Conn.DoConnect() != ResultState::SUCCESSFUL)
+	 continue;
+
+      Conns.push_back(std::move(Conn));
+
+      if (WaitAndCheckErrors(Conns, Fd, Owner->ConfigFindI("ConnectionAttemptDelayMsec", 250), false) == ResultState::SUCCESSFUL)
+	 return ResultState::SUCCESSFUL;
+   }
+
+   if (WaitAndCheckErrors(Conns, Fd, TimeOut * 1000, true) == ResultState::SUCCESSFUL)
+      return ResultState::SUCCESSFUL;
 
    if (_error->PendingError() == true)
       return ResultState::FATAL_ERROR;
