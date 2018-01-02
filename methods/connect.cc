@@ -150,6 +150,7 @@ struct Connection
    }
 
    ResultState DoConnect(unsigned long TimeOut);
+   ResultState CheckError();
 };
 
 ResultState Connection::DoConnect(unsigned long TimeOut)
@@ -194,6 +195,11 @@ ResultState Connection::DoConnect(unsigned long TimeOut)
       return ResultState::TRANSIENT_ERROR;
    }
 
+   return CheckError();
+}
+
+ResultState Connection::CheckError()
+{
    // Check the socket for an error condition
    unsigned int Err;
    unsigned int Len = sizeof(Err);
