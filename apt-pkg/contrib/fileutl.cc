@@ -43,6 +43,7 @@
 #include <signal.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <sys/select.h>
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -928,17 +929,31 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
 // StartsWithGPGClearTextSignature - Check if a file is Pgp/GPG clearsigned	/*{{{*/
 bool StartsWithGPGClearTextSignature(string const &FileName)
 {
-   static const char* SIGMSG = "-----BEGIN PGP SIGNED MESSAGE-----\n";
-   char buffer[strlen(SIGMSG)+1];
    FILE* gpg = fopen(FileName.c_str(), "r");
-   if (gpg == NULL)
+   if (gpg == nullptr)
       return false;
 
-   char const * const test = fgets(buffer, sizeof(buffer), gpg);
+   char * lineptr = nullptr;
+   size_t n = 0;
+   errno = 0;
+   ssize_t const result = getline(&lineptr, &n, gpg);
+   if (errno != 0)
+   {
+      _error->Errno("getline", "Could not read from %s", FileName.c_str());
+      fclose(gpg);
+      free(lineptr);
+      return false;
+   }
    fclose(gpg);
-   if (test == NULL || strcmp(buffer, SIGMSG) != 0)
-      return false;
 
+   _strrstrip(lineptr);
+   static const char* SIGMSG = "-----BEGIN PGP SIGNED MESSAGE-----";
+   if (result == -1 || strcmp(lineptr, SIGMSG) != 0)
+   {
+      free(lineptr);
+      return false;
+   }
+   free(lineptr);
    return true;
 }
 									/*}}}*/
