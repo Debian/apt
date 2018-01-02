@@ -78,19 +78,19 @@ check_stamp()
     stamp="$1"
     interval="$2"
 
-    if [ $interval = always ]; then
+    if [ "$interval" = always ]; then
 	debug_echo "check_stamp: ignoring time stamp file, interval set to always"
 	# treat as enough time has passed
         return 0
     fi
 
-    if [ $interval -eq 0 ]; then
+    if [ "$interval" -eq 0 ]; then
 	debug_echo "check_stamp: interval=0"
 	# treat as no time has passed
         return 1
     fi
 
-    if [ ! -f $stamp ]; then
+    if [ ! -f "$stamp" ]; then
 	debug_echo "check_stamp: missing time stamp file: $stamp."
 	# treat as enough time has passed
         return 0
@@ -98,7 +98,7 @@ check_stamp()
 
     # compare midnight today to midnight the day the stamp was updated
     stamp_file="$stamp"
-    stamp=$(date --date=$(date -r $stamp_file --iso-8601) +%s 2>/dev/null)
+    stamp=$(date --date="$(date -r "$stamp_file" --iso-8601)" +%s 2>/dev/null)
     if [ "$?" != "0" ]; then
         # Due to some timezones returning 'invalid date' for midnight on
         # certain dates (e.g. America/Sao_Paulo), if date returns with error
@@ -108,7 +108,7 @@ check_stamp()
         return 0
     fi
 
-    now=$(date --date=$(date --iso-8601) +%s 2>/dev/null)
+    now=$(date --date="$(date --iso-8601)" +%s 2>/dev/null)
     if [ "$?" != "0" ]; then
         # As above, due to some timezones returning 'invalid date' for midnight
         # on certain dates (e.g. America/Sao_Paulo), if date returns with error
@@ -116,7 +116,7 @@ check_stamp()
         return 0
     fi
 
-    delta=$(($now-$stamp))
+    delta=$((now-stamp))
 
     # Calculate the interval in seconds depending on the unit specified
     if [ "${interval%s}" != "$interval" ] ; then
@@ -135,7 +135,7 @@ check_stamp()
     debug_echo "check_stamp: interval=$interval, now=$now, stamp=$stamp, delta=$delta (sec)"
 
     # remove timestamps a day (or more) in the future and force re-check
-    if [ $stamp -gt $(($now+86400)) ]; then
+    if [ "$stamp" -gt $((now+86400)) ]; then
          echo "WARNING: file $stamp_file has a timestamp in the future: $stamp"
          rm -f "$stamp_file"
          return 0
@@ -151,7 +151,7 @@ check_stamp()
 update_stamp()
 {
     stamp="$1"
-    touch $stamp
+    touch "$stamp"
 }
 
 # we check here if autoclean was enough sizewise
@@ -192,11 +192,11 @@ check_size_constraints()
     # check size
     if [ ! $MaxSize -eq 0 ]; then
 	# maxSize is in MB
-	MaxSize=$(($MaxSize*1024))
+	MaxSize=$((MaxSize*1024))
 
 	#get current time
-	now=$(date --date=$(date --iso-8601) +%s)
-	MinAge=$(($MinAge*24*60*60))
+	now=$(date --date="$(date --iso-8601)" +%s)
+	MinAge=$((MinAge*24*60*60))
 
 	# reverse-sort by mtime
 	for file in $(ls -rt $Cache/*.deb 2>/dev/null); do 
@@ -211,12 +211,12 @@ check_size_constraints()
 	    # check for MinAge of the file
 	    if [ $MinAge -ne 0 ]; then 
 		# check both ctime and mtime 
-		mtime=$(stat -c %Y $file)
-		ctime=$(stat -c %Z $file)
-		if [ $mtime -gt $ctime ]; then
-		    delta=$(($now-$mtime))
+		mtime=$(stat -c %Y "$file")
+		ctime=$(stat -c %Z "$file")
+		if [ "$mtime" -gt "$ctime" ]; then
+		    delta=$((now-mtime))
 		else
-		    delta=$(($now-$ctime))
+		    delta=$((now-ctime))
 		fi
 		if [ $delta -le $MinAge ]; then
 		    debug_echo "skip remove by archive size:  $file, delta=$delta < $MinAge"
@@ -224,7 +224,7 @@ check_size_constraints()
 		else
 		    # delete oldest file
 		    debug_echo "remove by archive size: $file, delta=$delta >= $MinAge (sec), size=$size >= $MaxSize"
-		    rm -f $file
+		    rm -f "$file"
 		fi
 	    fi
 	done
@@ -235,10 +235,10 @@ check_size_constraints()
 do_cache_backup()
 {
     BackupArchiveInterval="$1"
-    if [ $BackupArchiveInterval = always ]; then
+    if [ "$BackupArchiveInterval" = always ]; then
         :
-    elif [ $BackupArchiveInterval -eq 0 ]; then
-	return
+    elif [ "$BackupArchiveInterval" -eq 0 ]; then
+        return
     fi
 
     # Set default values and normalize
@@ -273,20 +273,20 @@ do_cache_backup()
     CacheArchive="$(basename "${Cache}")"
     test -n "${CacheArchive}" || CacheArchive="archives"
     BackX="${Back}${CacheArchive}/"
-    for x in $(seq 0 1 $((${BackupLevel}-1))); do 
+    for x in $(seq 0 1 $((BackupLevel-1))); do
 	eval "Back${x}=${Back}${x}/"
     done
     
     # backup after n-days if archive contents changed.
     # (This uses hardlink to save disk space)
     BACKUP_ARCHIVE_STAMP=/var/lib/apt/periodic/backup-archive-stamp
-    if check_stamp $BACKUP_ARCHIVE_STAMP $BackupArchiveInterval; then
-	if [ $({(cd $Cache 2>/dev/null; find . -name "*.deb"); (cd $Back0 2>/dev/null;find . -name "*.deb") ;}| sort|uniq -u|wc -l) -ne 0 ]; then
+    if check_stamp $BACKUP_ARCHIVE_STAMP "$BackupArchiveInterval"; then
+	if [ $({ (cd $Cache 2>/dev/null; find . -name "*.deb"); (cd $Back0 2>/dev/null;find . -name "*.deb") ;}| sort|uniq -u|wc -l) -ne 0 ]; then
 	    mkdir -p $Back
-	    rm -rf $Back$((${BackupLevel}-1))
-	    for y in $(seq $((${BackupLevel}-1)) -1 1); do 
+	    rm -rf $Back$((BackupLevel-1))
+	    for y in $(seq $((BackupLevel-1)) -1 1); do
 		eval BackY=${Back}$y
-		eval BackZ=${Back}$(($y-1))
+		eval BackZ=${Back}$((y-1))
 		if [ -e $BackZ ]; then 
 		    mv -f $BackZ $BackY ; 
 		fi
@@ -306,7 +306,7 @@ debug_echo()
 {
     # Display message if $VERBOSE >= 1
     if [ "$VERBOSE" -ge 1 ]; then
-	echo $1 1>&2
+        echo "$1" 1>&2
     fi
 }
 
@@ -428,7 +428,7 @@ elif [ $UpdateInterval -eq 0 ] &&
     exit 0
 fi
 
-if [ "$1" = "update" -o -z "$1" ] ; then
+if [ "$1" = "update" ] || [ -z "$1" ] ; then
     # deal with BackupArchiveInterval
     do_cache_backup $BackupArchiveInterval
 
@@ -482,7 +482,7 @@ if [ "$1" = "update" -o -z "$1" ] ; then
     fi
 fi
 
-if [ "$1" = "install" -o -z "$1" ] ; then
+if [ "$1" = "install" ] || [ -z "$1" ] ; then
     # auto upgrade all upgradeable packages
     UPGRADE_STAMP=/var/lib/apt/periodic/upgrade-stamp
     if which unattended-upgrade >/dev/null 2>&1 && check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
