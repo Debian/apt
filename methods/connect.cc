@@ -141,6 +141,11 @@ struct Connection
 
    std::unique_ptr<MethodFd> Take()
    {
+      /* Store the IP we are using.. If something goes
+      wrong this will get tacked onto the end of the error message */
+      std::stringstream ss;
+      ioprintf(ss, _("[IP: %s %s]"), Name, Service);
+      Owner->SetIP(ss.str());
       return std::move(Fd);
    }
 
@@ -157,15 +162,6 @@ ResultState Connection::DoConnect(unsigned long TimeOut)
    // if that addr did timeout before, we do not try it again
    if(bad_addr.find(std::string(Name)) != bad_addr.end())
       return ResultState::TRANSIENT_ERROR;
-
-   /* If this is an IP rotation store the IP we are using.. If something goes
-      wrong this will get tacked onto the end of the error message */
-   if (LastHostAddr->ai_next != 0)
-   {
-      std::stringstream ss;
-      ioprintf(ss, _("[IP: %s %s]"),Name,Service);
-      Owner->SetIP(ss.str());
-   }
       
    // Get a socket
    if ((static_cast<FdFd *>(Fd.get())->fd = socket(Addr->ai_family, Addr->ai_socktype,
