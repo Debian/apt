@@ -830,7 +830,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    if (creation_fail == true)
    {
       UnmountCDROM(CDROM, NULL);
-      return _error->Errno("cdrom", _("List directory %spartial is missing."), listDir.c_str());
+      return _error->Errno("cdrom", _("List directory %s is missing."), (listDir + "partial").c_str());
    }
 
    // take care of the signatures and copy them if they are ok

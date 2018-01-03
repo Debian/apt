@@ -118,12 +118,12 @@ bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
    {
       string const listDir = _config->FindDir("Dir::State::lists");
       if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "partial", 0700) == false)
-	 return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+	 return _error->Errno("Acquire", _("List directory %s is missing."), (listDir + "partial").c_str());
       if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "auxfiles", 0755) == false)
-	 return _error->Errno("Acquire", _("List directory %sauxfiles is missing."), listDir.c_str());
+	 return _error->Errno("Acquire", _("List directory %s is missing."), (listDir + "auxfiles").c_str());
       string const archivesDir = _config->FindDir("Dir::Cache::Archives");
       if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir, "partial", 0700) == false)
-	 return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
+	 return _error->Errno("Acquire", _("Archives directory %s is missing."), (archivesDir + "partial").c_str());
       return true;
    }
    return GetLock(Lock);
@@ -140,17 +140,17 @@ bool pkgAcquire::GetLock(std::string const &Lock)
    if (Lock == listDir)
    {
       if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "partial", 0700) == false)
-	 return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+	 return _error->Errno("Acquire", _("List directory %s is missing."), (listDir + "partial").c_str());
    }
    if (Lock == archivesDir)
    {
       if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir, "partial", 0700) == false)
-	 return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
+	 return _error->Errno("Acquire", _("Archives directory %s is missing."), (archivesDir + "partial").c_str());
    }
    if (Lock == listDir || Lock == archivesDir)
    {
       if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "auxfiles", 0755) == false)
-	 return _error->Errno("Acquire", _("List directory %sauxfiles is missing."), listDir.c_str());
+	 return _error->Errno("Acquire", _("List directory %s is missing."), (listDir + "auxfiles").c_str());
    }
 
    if (_config->FindB("Debug::NoLocking", false) == true)
