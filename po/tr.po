@@ -1,15 +1,15 @@
 # Turkish translation for apt
 # Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
 # Copyright (c) 2013 Debian L10n Turkish 2013
-# Mert Dirik <mertdirik@gmail.com>, 2013-2014.
+# Mert Dirik <mertdirik@gmail.com>, 2013-2018.
 # This file is distributed under the same license as the apt package.
 # Rosetta Contributors, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-01-03 22:34+0000\n"
-"PO-Revision-Date: 2016-09-24 03:24+0300\n"
+"POT-Creation-Date: 2018-01-04 00:29+0100\n"
+"PO-Revision-Date: 2018-01-03 16:32+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
 "Language: tr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n!=1;\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 1.8.11\n"
 "X-Launchpad-Export-Date: 2013-02-04 12:16+0000\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -307,16 +307,14 @@ msgid "GPG error: %s: %s"
 msgstr "GPG hatası: %s: %s"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Skipping acquire of configured file '%s' as repository '%s' doesn't "
-#| "support architecture '%s'"
+#, c-format
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
 "component '%s' (component misspelt in sources.list?)"
 msgstr ""
-"'%2$s' deposu '%3$s' mimarisini desteklemediği için yapılandırılmış '%1$s' "
-"dosyası alınmıyor"
+"'%2$s' deposunda '%3$s' adlı bir bileşen mevcut olmadığı için '%1$s' dosyası "
+"alınmıyor (sources.list dosyasındaki bileşen adı yanlış yazılmış olabilir "
+"mi?)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -328,16 +326,13 @@ msgstr ""
 "dosyası alınmıyor"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Skipping acquire of configured file '%s' as repository '%s' doesn't "
-#| "support architecture '%s'"
+#, c-format
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' does not seem to "
 "provide it (sources.list entry misspelt?)"
 msgstr ""
-"'%2$s' deposu '%3$s' mimarisini desteklemediği için yapılandırılmış '%1$s' "
-"dosyası alınmıyor"
+"'%2$s' deposunda mevcut olmadığı için yapılandırılmış '%1$s' dosyası "
+"alınmıyor (sources.list girdisi yanlış yazılmış olabilir mi?)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -368,12 +363,14 @@ msgstr "Dağıtım çakışması: %s (beklenen %s ama eldeki %s)"
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
-msgstr ""
+msgstr "'%s' deposu '%s' değerini '%s' yerine '%s' olarak değiştirmiş"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
 msgstr ""
+"'%s' deposu %s için öntanımlı önceliğini %hi değerinden %hi değerine "
+"değiştirdi."
 
 #. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
 #: apt-pkg/acquire-item.cc
@@ -381,6 +378,8 @@ msgstr ""
 msgid ""
 "More information about this can be found online in the Release notes at: %s"
 msgstr ""
+"Bu durumla ilgili daha fazla bilgi şu adresten ulaşılabilen Sürüm notlarında "
+"bulunabilir: %s"
 
 #. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
 #: apt-pkg/acquire-item.cc
@@ -389,6 +388,8 @@ msgid ""
 "This must be accepted explicitly before updates for this repository can be "
 "applied. See %s manpage for details."
 msgstr ""
+"Bu depodaki güncellemelerin uygulanabilmesi için bu duruma onay "
+"verilmelidir. Ayrıntılar için %s rehber sayfasına bakın."
 
 #: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
 #, c-format
@@ -470,16 +471,13 @@ msgstr ""
 "'%s' kullanıcısı sistemde mevcut olmadığı için ayrıcalıklar bırakılamıyor"
 
 #: apt-pkg/acquire.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Can't drop privileges for downloading as file '%s' couldn't be accessed "
-#| "by user '%s'."
+#, c-format
 msgid ""
 "Download is performed unsandboxed as root as file '%s' couldn't be accessed "
 "by user '%s'."
 msgstr ""
-"'%2$s' kullanıcısının '%1$s' dosyasına erişimi olmadığı için dosya "
-"indirilirken ayrıcalıklar bırakılamıyor."
+"'%2$s' kullanıcısının '%1$s' dosyasına erişimi olmadığı için indirme işlemi "
+"root kullanıcısı olarak yapılıyor."
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
 #, c-format
@@ -1679,6 +1677,8 @@ msgid ""
 "Do you want to accept these changes and continue updating from this "
 "repository?"
 msgstr ""
+"Bu değişiklikleri onaylamak ve bu depodan güncelleme yapmaya devam etmek "
+"istiyor musunuz?"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -2558,6 +2558,8 @@ msgid ""
 "Usage of %s should be preferred over embedding login information directly in "
 "the %s entry for '%s'"
 msgstr ""
+"Oturum açma ayrıcalıklarını '%3$s' '%2$s' girdisinin içinde doğrudan "
+"belirtmek yerine '%1$s' kullanmayı tercih edin"
 
 #: apt-private/private-update.cc
 #, c-format
@@ -2954,7 +2956,7 @@ msgstr "apt.conf kullanarak vekil sunucuyu algıla"
 
 #: cmdline/apt-helper.cc
 msgid "wait for system to be online"
-msgstr ""
+msgstr "sistemin çevrimiçi olmasını bekle"
 
 #: cmdline/apt-internal-planner.cc
 msgid ""
@@ -3529,6 +3531,8 @@ msgstr "Bağlantı başarısız"
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
+"Dosya boyutu beklenenden farklı (%llu != %llu). Yansı güncelleme işlemi "
+"devam ediyor olabilir."
 
 #: methods/basehttp.cc
 #, c-format
@@ -3585,10 +3589,9 @@ msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
 
 #: methods/connect.cc
-#, fuzzy, c-format
-#| msgid "Connecting to %s (%s)"
+#, c-format
 msgid "Connected to %s (%s)"
-msgstr "Bağlanılıyor %s (%s)"
+msgstr "Bağlanıldı %s (%s)"
 
 #: methods/connect.cc methods/http.cc
 #, c-format
