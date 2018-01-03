@@ -364,7 +364,7 @@ SHA256-Download:
 	# we let it fail by removing the files so the webserver reports 404
 	rm -f "$PATCHINDEX" "$PATCHFILE" "${PATCHFILE}.gz"
 	wasmergeused "$@" -o test::cannot-use-pdiff=1
-	testsuccess grep '400%20URI%20Failure.*Packages\.diff/Index.*FailReason.*HttpError404' rootdir/tmp/aptupdate.output
+	testsuccess grep '400%20URI%20Failure.*FailReason.*HttpError404.*Packages\.diff/Index' rootdir/tmp/aptupdate.output
 	testnopackage oldstuff
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt newstuff

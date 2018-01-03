@@ -409,98 +409,11 @@ APT::Compressor::rev {
      be symlinked when possible instead of copying. True is the default.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term><option>http</option></term>
-     <listitem><para><literal>http::Proxy</literal> sets the default proxy to use for HTTP
-     URIs. It is in the standard form of <literal>http://[[user][:pass]@]host[:port]/</literal>.
-     Per host proxies can also be specified by using the form
-     <literal>http::Proxy::&lt;host&gt;</literal> with the special keyword <literal>DIRECT</literal> 
-	 meaning to use no proxies. If no one of the above settings is specified,
-	 <envar>http_proxy</envar> environment variable
-	 will be used.</para>
-
-     <para>Three settings are provided for cache control with HTTP/1.1 compliant
-     proxy caches.
-     <literal>No-Cache</literal> tells the proxy not to use its cached
-     response under any circumstances.
-     <literal>Max-Age</literal> sets the allowed maximum age (in seconds) of
-     an index file in the cache of the proxy.
-     <literal>No-Store</literal> specifies that the proxy should not store
-     the requested archive files in its cache, which can be used to prevent
-     the proxy from polluting its cache with (big) .deb files.</para>
-
-     <para>The option <literal>timeout</literal> sets the timeout timer used by the method;
-     this value applies to the connection as well as the data timeout.</para>
-
-     <para>The setting <literal>Acquire::http::Pipeline-Depth</literal> can be used to
-     enable HTTP pipelining (RFC 2616 section 8.1.2.2) which can be beneficial e.g. on
-     high-latency connections. It specifies how many requests are sent in a pipeline.
-     APT tries to detect and workaround misbehaving webservers and proxies at runtime, but
-     if you know that yours does not conform to the HTTP/1.1 specification pipelining can
-     be disabled by setting the value to 0. It is enabled by default with the value 10.</para>
-
-     <para><literal>Acquire::http::AllowRedirect</literal> controls whether APT will follow
-     redirects, which is enabled by default.</para>
-
-     <para>The used bandwidth can be limited with
-     <literal>Acquire::http::Dl-Limit</literal> which accepts integer
-     values in kilobytes per second. The default value is 0 which
-     deactivates the limit and tries to use all available bandwidth.
-     Note that this option implicitly disables downloading from
-     multiple servers at the same time.</para>
-
-     <para><literal>Acquire::http::User-Agent</literal> can be used to set a different
-     User-Agent for the http download method as some proxies allow access for clients
-     only if the client uses a known identifier.</para>
-
-     <para><literal>Acquire::http::Proxy-Auto-Detect</literal> can be used to
-     specify an external command to discover the http proxy to use. The first
-     and only parameter is an URI denoting the host to be contacted to allow
-     for host-specific configuration. APT expects the command to output the
-     proxy on stdout as a single line in the style <literal>http://proxy:port/</literal>
-     or the word <literal>DIRECT</literal> if no proxy should be used. No output
-     indicates that the generic proxy settings should be used.
-
-     Note that auto-detection will not be used for a host if a host-specific proxy
-     configuration is already set via <literal>Acquire::http::Proxy::<replaceable>HOST</replaceable></literal>.
-
-     See the &squid-deb-proxy-client; package for an example implementation that
-     uses avahi.
-
-     This option takes precedence over the legacy option name
-     <literal>ProxyAutoDetect</literal>.
-     </para>
-
-     </listitem>
+     <varlistentry><term><option>http</option> <option>https</option></term>
+     <listitem><para>The options in these scopes configure APTs acquire transports for the protocols
+     HTTP and HTTPS and are documented in the &apt-transport-http; and &apt-transport-https;
+     manpages respectively.</para></listitem>
      </varlistentry>
-
-     <varlistentry><term><option>https</option></term>
-	 <listitem><para>
-	 The <literal>Cache-control</literal>, <literal>Timeout</literal>,
-	 <literal>AllowRedirect</literal>, <literal>Dl-Limit</literal> and
-	 <literal>proxy</literal> options work for HTTPS URIs in the same way
-	 as for the <literal>http</literal> method, and default to the same
-	 values if they are not explicitly set. The
-	 <literal>Pipeline-Depth</literal> option is not yet supported.
-	 </para>
-
-	 <para><literal>CaInfo</literal> suboption specifies place of file that
-	 holds info about trusted certificates.
-	 <literal>&lt;host&gt;::CaInfo</literal> is the corresponding per-host option.
-	 <literal>Verify-Peer</literal> boolean suboption determines whether or not the
-	 server's host certificate should be verified against trusted certificates.
-	 <literal>&lt;host&gt;::Verify-Peer</literal> is the corresponding per-host option.
-	 <literal>Verify-Host</literal> boolean suboption determines whether or not the
-	 server's hostname should be verified.
-	 <literal>&lt;host&gt;::Verify-Host</literal> is the corresponding per-host option.
-	 <literal>SslCert</literal> determines what certificate to use for client
-	 authentication. <literal>&lt;host&gt;::SslCert</literal> is the corresponding per-host option.
-	 <literal>SslKey</literal> determines what private key to use for client
-	 authentication. <literal>&lt;host&gt;::SslKey</literal> is the corresponding per-host option.
-	 <literal>SslForceVersion</literal> overrides default SSL version to use.
-	 It can contain either of the strings '<literal>TLSv1</literal>' or
-	 '<literal>SSLv3</literal>'.
-	 <literal>&lt;host&gt;::SslForceVersion</literal> is the corresponding per-host option.
-	 </para></listitem></varlistentry>
 
      <varlistentry><term><option>ftp</option></term>
      <listitem><para>

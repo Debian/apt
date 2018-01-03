@@ -16,6 +16,7 @@
 #include <config.h>
 
 #include <apt-pkg/acquire-item.h>
+#include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
@@ -34,6 +35,7 @@
 #include <algorithm>
 #include <ctime>
 #include <iostream>
+#include <memory>
 #include <numeric>
 #include <random>
 #include <sstream>
@@ -1070,6 +1072,12 @@ bool pkgAcquire::Item::IsRedirectionLoop(std::string const &NewURI)	/*{{{*/
 									/*}}}*/
 int pkgAcquire::Item::Priority()					/*{{{*/
 {
+   // Stage 0: Files requested by methods
+   // - they will usually not end up here, but if they do we make sure
+   //   to get them as soon as possible as they are probably blocking
+   //   the processing of files by the requesting method
+   if (dynamic_cast<pkgAcqAuxFile *>(this) != nullptr)
+      return 5000;
    // Stage 1: Meta indices and diff indices
    // - those need to be fetched first to have progress reporting working
    //   for the rest
@@ -3892,3 +3900,114 @@ string pkgAcqFile::Custom600Headers() const				/*{{{*/
 }
 									/*}}}*/
 pkgAcqFile::~pkgAcqFile() {}
+
+void pkgAcqAuxFile::Failed(std::string const &Message, pkgAcquire::MethodConfig const *const Cnf) /*{{{*/
+{
+   pkgAcqFile::Failed(Message, Cnf);
+   if (Status == StatIdle)
+      return;
+   if (RealFileExists(DestFile))
+      Rename(DestFile, DestFile + ".FAILED");
+   Worker->ReplyAux(Desc);
+}
+									/*}}}*/
+void pkgAcqAuxFile::Done(std::string const &Message, HashStringList const &CalcHashes, /*{{{*/
+			 pkgAcquire::MethodConfig const *const Cnf)
+{
+   pkgAcqFile::Done(Message, CalcHashes, Cnf);
+   if (Status == StatDone)
+      Worker->ReplyAux(Desc);
+   else if (Status == StatAuthError || Status == StatError)
+      Worker->ReplyAux(Desc);
+}
+									/*}}}*/
+std::string pkgAcqAuxFile::Custom600Headers() const /*{{{*/
+{
+   if (MaximumSize == 0)
+      return pkgAcqFile::Custom600Headers();
+   std::string maxsize;
+   strprintf(maxsize, "\nMaximum-Size: %llu", MaximumSize);
+   return pkgAcqFile::Custom600Headers().append(maxsize);
+}
+									/*}}}*/
+void pkgAcqAuxFile::Finished() /*{{{*/
+{
+   auto dirname = flCombine(_config->FindDir("Dir::State::lists"), "auxfiles/");
+   if (APT::String::Startswith(DestFile, dirname))
+   {
+      // the file is never returned by method requesting it, so fix up the permission now
+      if (FileExists(DestFile))
+      {
+	 ChangeOwnerAndPermissionOfFile("pkgAcqAuxFile", DestFile.c_str(), "root", ROOT_GROUP, 0644);
+	 if (Status == StatDone)
+	    return;
+      }
+   }
+   else
+   {
+      dirname = flNotFile(DestFile);
+      RemoveFile("pkgAcqAuxFile::Finished", DestFile);
+      RemoveFile("pkgAcqAuxFile::Finished", DestFile + ".FAILED");
+      rmdir(dirname.c_str());
+   }
+   DestFile.clear();
+}
+									/*}}}*/
+// GetAuxFileNameFromURI						/*{{{*/
+static std::string GetAuxFileNameFromURIInLists(std::string const &uri)
+{
+   // check if we have write permission for our usual location.
+   auto const dirname = flCombine(_config->FindDir("Dir::State::lists"), "auxfiles/");
+   char const * const filetag = ".apt-acquire-privs-test.XXXXXX";
+   std::string const tmpfile_tpl = flCombine(dirname, filetag);
+   std::unique_ptr<char, decltype(std::free) *> tmpfile { strdup(tmpfile_tpl.c_str()), std::free };
+   int const fd = mkstemp(tmpfile.get());
+   if (fd == -1 && errno == EACCES)
+      return "";
+   RemoveFile("GetAuxFileNameFromURI", tmpfile.get());
+   close(fd);
+   return flCombine(dirname, URItoFileName(uri));
+}
+static std::string GetAuxFileNameFromURI(std::string const &uri)
+{
+   auto const lists = GetAuxFileNameFromURIInLists(uri);
+   if (lists.empty() == false)
+      return lists;
+
+   std::string tmpdir_tpl;
+   strprintf(tmpdir_tpl, "%s/apt-auxfiles-XXXXXX", GetTempDir().c_str());
+   std::unique_ptr<char, decltype(std::free) *> tmpdir { strndup(tmpdir_tpl.data(), tmpdir_tpl.length()), std::free };
+   if (mkdtemp(tmpdir.get()) == nullptr)
+   {
+      _error->Errno("GetAuxFileNameFromURI", "mkdtemp of %s failed", tmpdir.get());
+      return flCombine("/nonexistent/auxfiles/", URItoFileName(uri));
+   }
+   chmod(tmpdir.get(), 0755);
+   auto const filename = flCombine(tmpdir.get(), URItoFileName(uri));
+   _error->PushToStack();
+   FileFd in(flCombine(flCombine(_config->FindDir("Dir::State::lists"), "auxfiles/"), URItoFileName(uri)), FileFd::ReadOnly);
+   if (in.IsOpen())
+   {
+      FileFd out(filename, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive);
+      CopyFile(in, out);
+   }
+   _error->RevertToStack();
+   return filename;
+}
+									/*}}}*/
+pkgAcqAuxFile::pkgAcqAuxFile(pkgAcquire::Item *const Owner, pkgAcquire::Worker *const Worker,
+			     std::string const &ShortDesc, std::string const &Desc, std::string const &URI,
+			     HashStringList const &Hashes, unsigned long long const MaximumSize) : pkgAcqFile(Owner->GetOwner(), URI, Hashes, Hashes.FileSize(), Desc, ShortDesc, "", GetAuxFileNameFromURI(URI), false),
+												   Owner(Owner), Worker(Worker), MaximumSize(MaximumSize)
+{
+   /* very bad failures can happen while constructing which causes
+      us to hang as the aux request is never answered (e.g. method not available)
+      Ideally we catch failures earlier, but a safe guard can't hurt. */
+   if (Status == pkgAcquire::Item::StatIdle || Status == pkgAcquire::Item::StatFetching)
+      return;
+   Failed(std::string("400 URI Failure\n") +
+	     "URI: " + URI + "\n" +
+	     "Filename: " + DestFile,
+	  nullptr);
+}
+pkgAcqAuxFile::~pkgAcqAuxFile() {}

@@ -1,0 +1,190 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture "i386"
+
+buildsimplenativepackage 'foo' 'all' '1' 'stable'
+buildsimplenativepackage 'foo' 'all' '2' 'unstable'
+setupaptarchive --no-update
+changetowebserver
+webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "http://localhost:${APTHTTPPORT}/"
+addtrap 'prefix' "chmod -f -R +w $PWD/rootdir/var/lib/apt/lists || true;"
+
+testrundownload_internal() {
+	cd downloaded
+	testsuccess apt download "$@"
+	while [ -n "$1" ]; do
+		local fndeb="$(echo "$1" | tr '=' '_')_all.deb"
+		testsuccess test -e "$fndeb"
+		rm -f "$fndeb"
+		shift
+	done
+	testempty find . -name '*mirror*'
+	cd ..
+}
+testrundownload() {
+	if [ "$(id -u)" = '0' ]; then
+		testrundownload_internal "$@"
+	else
+		chmod -f -R -w rootdir/var/lib/apt/lists
+		testrundownload_internal "$@"
+		chmod -f -R +w rootdir/var/lib/apt/lists/auxfiles
+		rm -f rootdir/var/lib/apt/lists/auxfiles/*
+		chmod -f -R -w rootdir/var/lib/apt/lists/auxfiles
+		testrundownload_internal "$@"
+		chmod -f -R +w rootdir/var/lib/apt/lists
+	fi
+}
+testrun() {
+	rm -rf rootdir/var/lib/apt/lists
+	testsuccess apt update #-o Debug::Acquire::mirror=1 -o Debug::Acquire::http=1 -o Debug::pkgAcquire::Worker=1
+	cp -a rootdir/tmp/testsuccess.output aptupdate.output
+	test -z "$1" || testempty find rootdir/var/lib/apt/lists -maxdepth 1 -name "$1" -type f
+	test -z "$2" || testnotempty find rootdir/var/lib/apt/lists -maxdepth 1 -name "$2" -type f
+	testsuccess apt show foo=1
+	testrundownload 'foo=1' 'foo=2'
+}
+
+msgmsg 'basic setup'
+testrun '' ''
+
+msgmsg 'redirect setup'
+sed -i -e 's#/ stable#/redirectme stable#' rootdir/etc/apt/sources.list.d/*-stable-*
+testrun '' '*_redirectme_*'
+
+msgmsg 'mirror file does not exist'
+sed -i -e 's# http:# mirror:#' -e 's#/redirectme stable#/mirror.txt stable#' rootdir/etc/apt/sources.list.d/*-stable-*
+testfailure apt update
+
+echo "http://localhost:${APTHTTPPORT}" > aptarchive/mirror.txt
+
+msgmsg 'stable mirror setup'
+testrun '*_redirectme_stable_*' '*_mirror.txt_*'
+
+msgmsg 'all mirror setup'
+sed -i -e 's# http:# mirror:#' -e 's#/ unstable#/mirror.txt unstable#' rootdir/etc/apt/sources.list.d/*
+testrun '*_redirectme_stable_*' '*_mirror.txt_*'
+
+msgmsg 'all mirror+http setup'
+sed -i -e 's# mirror:# mirror+http:#' rootdir/etc/apt/sources.list.d/*
+testrun '*_redirectme_*' '*_mirror.txt_*'
+
+msgmsg 'stable gzipped redirect setup'
+echo "http://localhost:${APTHTTPPORT}/redirectme" > aptarchive/mirror.txt
+compressfile aptarchive/mirror.txt
+sed -i -e 's#/mirror\.txt stable#/mirror.txt.gz stable#' rootdir/etc/apt/sources.list.d/*-stable-*
+testrun '*_redirectme_*' '*_mirror.txt.gz_*'
+
+msgmsg 'all mirrored via file'
+APTARCHIVE="$(readlink -f ./aptarchive)"
+sed -i -e "s#mirror+http://localhost:${APTHTTPPORT}#mirror+file:${APTARCHIVE}#" rootdir/etc/apt/sources.list.d/*
+testrun '*_localhost_*' '*_aptarchive_mirror.txt.gz_*'
+
+msgmsg 'fallback mirrors are used if needed' 'as usual'
+sed -i -e 's#/mirror\.txt\.gz stable#/mirror.txt stable#' rootdir/etc/apt/sources.list.d/*
+echo "http://localhost:${APTHTTPPORT}/failure2	priority:3
+http://localhost:${APTHTTPPORT}/redirectme	priority:2
+http://localhost:${APTHTTPPORT}/failure	priority:1" > aptarchive/mirror.txt
+testrun '*_localhost_*' '*_aptarchive_mirror.txt_*'
+testsuccessequal "Get:1 file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
+Ign:2 http://localhost:${APTHTTPPORT}/failure stable InRelease
+  404  Not Found
+Ign:3 http://localhost:${APTHTTPPORT}/failure unstable InRelease
+  404  Not Found" head -n 5 aptupdate.output
+
+msgmsg 'fallback mirrors are used if needed' 'by tags'
+echo "http://localhost:${APTHTTPPORT}/failure2	priority:1	release:stable
+http://localhost:${APTHTTPPORT}/redirectme	priority:2
+http://localhost:${APTHTTPPORT}/failure	priority:1 release:unstable" > aptarchive/mirror.txt
+testrun '*_localhost_*' '*_aptarchive_mirror.txt_*'
+testsuccessequal "Get:1 file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
+Ign:2 http://localhost:${APTHTTPPORT}/failure2 stable InRelease
+  404  Not Found
+Ign:3 http://localhost:${APTHTTPPORT}/failure unstable InRelease
+  404  Not Found" head -n 5 aptupdate.output
+
+changetohttpswebserver
+rm -f rootdir/etc/apt/sources.list.d/*-stable-*
+msgmsg 'fallback mirrors are used if needed' 'random'
+echo "http://localhost:${APTHTTPPORT}/failure2	priority:1
+http://localhost:${APTHTTPPORT}/redirectme	priority:2
+https://localhost:${APTHTTPSPORT}/failure	priority:1
+http://localhost:${APTHTTPPORT}/unused-failure1
+http://localhost:${APTHTTPPORT}/unused-failure2
+http://localhost:${APTHTTPPORT}/unused-failure3
+http://localhost:${APTHTTPPORT}/unused-failure4
+http://localhost:${APTHTTPPORT}/unused-failure5
+http://localhost:${APTHTTPPORT}/unused-failure6
+http://localhost:${APTHTTPPORT}/unused-failure7
+http://localhost:${APTHTTPPORT}/unused-failure8
+http://localhost:${APTHTTPPORT}/unused-failure9
+" > aptarchive/mirror.txt
+testequalor2 "Get:1 file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
+Ign:2 http://localhost:${APTHTTPPORT}/failure2 unstable InRelease
+  404  Not Found
+Ign:2 https://localhost:${APTHTTPSPORT}/failure unstable InRelease
+  404  Not Found
+Hit:2 http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
+Reading package lists...
+Building dependency tree...
+All packages are up to date." "Get:1 file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
+Ign:2 https://localhost:${APTHTTPSPORT}/failure unstable InRelease
+  404  Not Found
+Ign:2 http://localhost:${APTHTTPPORT}/failure2 unstable InRelease
+  404  Not Found
+Hit:2 http://localhost:${APTHTTPPORT}/failure2 unstable InRelease
+Reading package lists...
+Building dependency tree...
+All packages are up to date." apt update
+testfailure grep '/unused-failure' aptarchive/webserver.log
+
+msgmsg 'Mirrors can be filtered by' 'type'
+echo "http://localhost:${APTHTTPPORT}/failure
+http://localhost:${APTHTTPPORT}/redirectme	type:deb
+" > aptarchive/mirror.txt
+testfailure apt update
+testrundownload 'foo=2'
+
+msgmsg 'The prefix for the mirrorlist is' 'passed on'
+echo 'Dir::Bin::Methods::foo+mirror+file "mirror";
+Dir::Bin::Methods::foo+mirror+http "mirror";
+Dir::Bin::Methods::foo+http "http";
+' > rootdir/etc/apt/apt.conf.d/99add-foo-method
+echo "http://localhost:${APTHTTPPORT}/redirectme
+" > aptarchive/mirror.txt
+testsuccessequal "Get:1 file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
+Hit:2 http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
+Reading package lists...
+Building dependency tree...
+All packages are up to date." apt update
+sed -i -e 's# mirror+# foo+mirror+#' rootdir/etc/apt/sources.list.d/*
+testfailure apt update
+testsuccess grep 'package apt-transport-foo installed' rootdir/tmp/testfailure.output
+echo 'Dir::Bin::Methods::foo+file "file";' >> rootdir/etc/apt/apt.conf.d/99add-foo-method
+testsuccessequal "Get:1 foo+file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
+Hit:2 foo+http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
+Reading package lists...
+Building dependency tree...
+All packages are up to date." apt update
+echo "file:/nonexistent/apt/archive	priority:1
+http://localhost:${APTHTTPPORT}/redirectme
+" > aptarchive/mirror.txt
+testsuccessequal "Get:1 foo+file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
+Get:2 foo+file:/nonexistent/apt/archive unstable InRelease
+Ign:2 foo+file:/nonexistent/apt/archive unstable InRelease
+  File not found - /nonexistent/apt/archive/dists/unstable/InRelease (2: No such file or directory)
+Hit:2 foo+http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
+Reading package lists...
+Building dependency tree...
+All packages are up to date." apt update
+sed -i -e "s#+file:${APTARCHIVE}#+http://localhost:${APTHTTPPORT}#" rootdir/etc/apt/sources.list.d/*
+testsuccess apt update
+testsuccessequal "Get:1 foo+http://localhost:${APTHTTPPORT}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
+Hit:2 foo+http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
+Reading package lists...
+Building dependency tree...
+All packages are up to date." apt update

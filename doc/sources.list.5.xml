@@ -352,17 +352,15 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 
     <para>The currently recognized URI types are:
    <variablelist>
-    <varlistentry><term><command>http</command></term>
+    <varlistentry><term><command>http</command> (&apt-transport-http;)</term>
     <listitem><para>
     The http scheme specifies an HTTP server for an archive and is the most
-    commonly used method, with many options in the
-    <literal>Acquire::http</literal> scope detailed in &apt-conf;. The URI can
-    directly include login information if the archive requires it, but the use
-    of &apt-authconf; should be preferred. The method also supports SOCKS5 and
-    HTTP(S) proxies either configured via apt-specific configuration or
-    specified by the environment variable <envar>http_proxy</envar> in the
-    format (assuming an HTTP proxy requiring authentication)
-    <replaceable>http://user:pass@server:port/</replaceable>.
+    commonly used method. The URI can directly include login information if the
+    archive requires it, but the use of &apt-authconf; should be preferred.
+    The method also supports SOCKS5 and HTTP(S) proxies either configured via
+    apt-specific configuration or specified by the environment variable
+    <envar>http_proxy</envar> in the format (assuming an HTTP proxy requiring
+    authentication) <replaceable>http://user:pass@server:port/</replaceable>.
     The authentication details for proxies can also be supplied via
     &apt-authconf;.</para>
     <para>Note that these forms of authentication are insecure as the whole
@@ -373,7 +371,7 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
     chosen transport method. See &apt-secure; for details.</para></listitem>
     </varlistentry>
 
-    <varlistentry><term><command>https</command></term>
+    <varlistentry><term><command>https</command> (&apt-transport-https;)</term>
     <listitem><para>
     The https scheme specifies an HTTPS server for an archive and is very
     similar in use and available options to the http scheme. The main

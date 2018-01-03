@@ -276,6 +276,7 @@ class pkgAcquire::Worker : public WeakPointable
     *  queue.
     */
    bool QueueItem(pkgAcquire::Queue::QItem *Item);
+   APT_HIDDEN bool ReplyAux(pkgAcquire::ItemDesc const &Item);
 
    /** \brief Start up the worker and fill in #Config.
     *
@@ -328,6 +329,9 @@ class pkgAcquire::Worker : public WeakPointable
 
 private:
    APT_HIDDEN void PrepareFiles(char const * const caller, pkgAcquire::Queue::QItem const * const Itm);
+   APT_HIDDEN void HandleFailure(std::vector<pkgAcquire::Item *> const &ItmOwners,
+				 pkgAcquire::MethodConfig *const Config, pkgAcquireStatus *const Log,
+				 std::string const &Message, bool const errTransient, bool const errAuthErr);
 };
 
 /** @} */

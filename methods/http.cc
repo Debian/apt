@@ -31,6 +31,7 @@
 #include <sstream>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <signal.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1034,7 +1035,7 @@ BaseHttpMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &R
    return FILE_IS_OPEN;
 }
 									/*}}}*/
-HttpMethod::HttpMethod(std::string &&pProg) : BaseHttpMethod(pProg.c_str(), "1.2", Pipeline | SendConfig)/*{{{*/
+HttpMethod::HttpMethod(std::string &&pProg) : BaseHttpMethod(std::move(pProg), "1.2", Pipeline | SendConfig) /*{{{*/
 {
    SeccompFlags = aptMethod::BASE | aptMethod::NETWORK;
 
@@ -1051,3 +1052,14 @@ HttpMethod::HttpMethod(std::string &&pProg) : BaseHttpMethod(pProg.c_str(), "1.2
    }
 }
 									/*}}}*/
+
+int main(int, const char *argv[])
+{
+   // ignore SIGPIPE, this can happen on write() if the socket
+   // closes the connection (this is dealt with via ServerDie())
+   signal(SIGPIPE, SIG_IGN);
+   std::string Binary = flNotDir(argv[0]);
+   if (Binary.find('+') == std::string::npos && Binary != "https" && Binary != "http")
+      Binary.append("+http");
+   return HttpMethod(std::move(Binary)).Loop();
+}

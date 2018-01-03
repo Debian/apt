@@ -138,7 +138,6 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::State", STATE_DIR + 1);
    Cnf.CndSet("Dir::State::lists","lists/");
    Cnf.CndSet("Dir::State::cdroms","cdroms.list");
-   Cnf.CndSet("Dir::State::mirrors","mirrors/");
 
    // Cache
    Cnf.CndSet("Dir::Cache", CACHE_DIR + 1);

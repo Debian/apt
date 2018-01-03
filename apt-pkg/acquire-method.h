@@ -26,6 +26,7 @@
 #include <time.h>
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #ifndef APT_8_CLEANER_HEADERS
@@ -99,6 +100,7 @@ class pkgAcqMethod
    virtual void Fail(std::string Why, bool Transient = false);
    virtual void URIStart(FetchResult &Res);
    virtual void URIDone(FetchResult &Res,FetchResult *Alt = 0);
+   void SendMessage(std::string const &header, std::unordered_map<std::string, std::string> &&fields);
 
    bool MediaFail(std::string Required,std::string Drive);
    virtual void Exit() {};
@@ -106,10 +108,16 @@ class pkgAcqMethod
    void PrintStatus(char const * const header, const char* Format, va_list &args) const;
 
    public:
-   enum CnfFlags {SingleInstance = (1<<0),
-                  Pipeline = (1<<1), SendConfig = (1<<2),
-                  LocalOnly = (1<<3), NeedsCleanup = (1<<4), 
-                  Removable = (1<<5)};
+   enum CnfFlags
+   {
+      SingleInstance = (1 << 0),
+      Pipeline = (1 << 1),
+      SendConfig = (1 << 2),
+      LocalOnly = (1 << 3),
+      NeedsCleanup = (1 << 4),
+      Removable = (1 << 5),
+      AuxRequests = (1 << 6)
+   };
 
    void Log(const char *Format,...);
    void Status(const char *Format,...);

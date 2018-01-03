@@ -192,7 +192,8 @@ bool pkgAcquire::Worker::ReadMessages()
 // ---------------------------------------------------------------------
 /* This takes the messages from the message queue and runs them through
    the parsers in order. */
-enum class APT_HIDDEN MessageType {
+enum class APT_HIDDEN MessageType
+{
    CAPABILITIES = 100,
    LOG = 101,
    STATUS = 102,
@@ -200,6 +201,7 @@ enum class APT_HIDDEN MessageType {
    WARNING = 104,
    URI_START = 200,
    URI_DONE = 201,
+   AUX_REQUEST = 351,
    URI_FAILURE = 400,
    GENERAL_FAILURE = 401,
    MEDIA_CHANGE = 403
@@ -306,6 +308,7 @@ bool pkgAcquire::Worker::RunMessages()
 
 	    std::string const NewURI = LookupTag(Message,"New-URI",URI.c_str());
             Itm->URI = NewURI;
+	    auto const AltUris = VectorizeString(LookupTag(Message, "Alternate-URIs"), '\n');
 
 	    ItemDone();
 
@@ -333,28 +336,14 @@ bool pkgAcquire::Worker::RunMessages()
 	       if (Log != nullptr)
 		  Log->Done(desc);
 
-	       // if we change site, treat it as a mirror change
-	       if (URI::SiteOnly(NewURI) != URI::SiteOnly(desc.URI))
-	       {
-		  auto const firstSpace = desc.Description.find(" ");
-		  if (firstSpace != std::string::npos)
-		  {
-		     std::string const OldSite = desc.Description.substr(0, firstSpace);
-		     if (likely(APT::String::Startswith(desc.URI, OldSite)))
-		     {
-			std::string const OldExtra = desc.URI.substr(OldSite.length() + 1);
-			if (likely(APT::String::Endswith(NewURI, OldExtra)))
-			{
-			   std::string const NewSite = NewURI.substr(0, NewURI.length() - OldExtra.length());
-			   Owner->UsedMirror = URI::ArchiveOnly(NewSite);
-			   desc.Description.replace(0, firstSpace, Owner->UsedMirror);
-			}
-		     }
-		  }
-	       }
+	       ChangeSiteIsMirrorChange(NewURI, desc, Owner);
 	       desc.URI = NewURI;
 	       if (isDoomedItem(Owner) == false)
+	       {
+		  for (auto alt = AltUris.crbegin(); alt != AltUris.crend(); ++alt)
+		     Owner->PushAlternativeURI(std::string(*alt), {}, false);
 		  OwnerQ->Owner->Enqueue(desc);
+	       }
 	    }
             break;
          }
@@ -512,6 +501,42 @@ bool pkgAcquire::Worker::RunMessages()
 	    break;
 	 }
 
+	 case MessageType::AUX_REQUEST:
+	 {
+	    if (Itm == nullptr)
+	    {
+	       _error->Error("Method gave invalid Aux Request message");
+	       break;
+	    }
+	    else if (Config->GetAuxRequests() == false)
+	    {
+	       std::vector<Item *> const ItmOwners = Itm->Owners;
+	       Message.append("\nMessage: Method tried to make an Aux Request while not being allowed to do them");
+	       OwnerQ->ItemDone(Itm);
+	       Itm = nullptr;
+	       HandleFailure(ItmOwners, Config, Log, Message, false, false);
+	       ItemDone();
+
+	       std::string Msg = "600 URI Acquire\n";
+	       Msg.reserve(200);
+	       Msg += "URI: " + LookupTag(Message, "Aux-URI", "");
+	       Msg += "\nFilename: /nonexistent/auxrequest.blocked";
+	       Msg += "\n\n";
+	       if (Debug == true)
+		  clog << " -> " << Access << ':' << QuoteString(Msg, "\n") << endl;
+	       OutQueue += Msg;
+	       OutReady = true;
+	       break;
+	    }
+
+	    auto maxsizestr = LookupTag(Message, "MaximumSize", "");
+	    unsigned long long const MaxSize = maxsizestr.empty() ? 0 : strtoull(maxsizestr.c_str(), nullptr, 10);
+	    new pkgAcqAuxFile(Itm->Owner, this, LookupTag(Message, "Aux-ShortDesc", ""),
+			      LookupTag(Message, "Aux-Description", ""), LookupTag(Message, "Aux-URI", ""),
+			      GetHashesFromMessage("Aux-", Message), MaxSize);
+	    break;
+	 }
+
 	 case MessageType::URI_FAILURE:
 	 {
 	    if (Itm == nullptr)
@@ -549,44 +574,7 @@ bool pkgAcquire::Worker::RunMessages()
 		  errAuthErr = std::find(std::begin(reasons), std::end(reasons), failReason) != std::end(reasons);
 	       }
 	    }
-
-	    for (auto const Owner: ItmOwners)
-	    {
-	       std::string NewURI;
-	       if (errTransient == true && Config->LocalOnly == false && Owner->ModifyRetries() != 0)
-	       {
-		  --Owner->ModifyRetries();
-		  Owner->FailMessage(Message);
-		  auto SavedDesc = Owner->GetItemDesc();
-		  if (Log != nullptr)
-		     Log->Fail(SavedDesc);
-		  if (isDoomedItem(Owner) == false)
-		     OwnerQ->Owner->Enqueue(SavedDesc);
-	       }
-	       else if (Owner->PopAlternativeURI(NewURI))
-	       {
-		  Owner->FailMessage(Message);
-		  auto &desc = Owner->GetItemDesc();
-		  if (Log != nullptr)
-		     Log->Fail(desc);
-		  ChangeSiteIsMirrorChange(NewURI, desc, Owner);
-		  desc.URI = NewURI;
-		  if (isDoomedItem(Owner) == false)
-		     OwnerQ->Owner->Enqueue(desc);
-	       }
-	       else
-	       {
-		  if (errAuthErr && Owner->GetExpectedHashes().empty() == false)
-		     Owner->Status = pkgAcquire::Item::StatAuthError;
-		  else if (errTransient)
-		     Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
-		  auto SavedDesc = Owner->GetItemDesc();
-		  if (isDoomedItem(Owner) == false)
-		     Owner->Failed(Message, Config);
-		  if (Log != nullptr)
-		     Log->Fail(SavedDesc);
-	       }
-	    }
+	    HandleFailure(ItmOwners, Config, Log, Message, errTransient, errAuthErr);
 	    ItemDone();
 
 	    break;
@@ -602,6 +590,49 @@ bool pkgAcquire::Worker::RunMessages()
       }
    }
    return true;
+}
+									/*}}}*/
+void pkgAcquire::Worker::HandleFailure(std::vector<pkgAcquire::Item *> const &ItmOwners, /*{{{*/
+				       pkgAcquire::MethodConfig *const Config, pkgAcquireStatus *const Log,
+				       std::string const &Message, bool const errTransient, bool const errAuthErr)
+{
+   for (auto const Owner : ItmOwners)
+   {
+      std::string NewURI;
+      if (errTransient == true && Config->LocalOnly == false && Owner->ModifyRetries() != 0)
+      {
+	 --Owner->ModifyRetries();
+	 Owner->FailMessage(Message);
+	 auto SavedDesc = Owner->GetItemDesc();
+	 if (Log != nullptr)
+	    Log->Fail(SavedDesc);
+	 if (isDoomedItem(Owner) == false)
+	    OwnerQ->Owner->Enqueue(SavedDesc);
+      }
+      else if (Owner->PopAlternativeURI(NewURI))
+      {
+	 Owner->FailMessage(Message);
+	 auto &desc = Owner->GetItemDesc();
+	 if (Log != nullptr)
+	    Log->Fail(desc);
+	 ChangeSiteIsMirrorChange(NewURI, desc, Owner);
+	 desc.URI = NewURI;
+	 if (isDoomedItem(Owner) == false)
+	    OwnerQ->Owner->Enqueue(desc);
+      }
+      else
+      {
+	 if (errAuthErr && Owner->GetExpectedHashes().empty() == false)
+	    Owner->Status = pkgAcquire::Item::StatAuthError;
+	 else if (errTransient)
+	    Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
+	 auto SavedDesc = Owner->GetItemDesc();
+	 if (isDoomedItem(Owner) == false)
+	    Owner->Failed(Message, Config);
+	 if (Log != nullptr)
+	    Log->Fail(SavedDesc);
+      }
+   }
 }
 									/*}}}*/
 // Worker::Capabilities - 100 Capabilities handler			/*{{{*/
@@ -620,18 +651,13 @@ bool pkgAcquire::Worker::Capabilities(string Message)
    Config->LocalOnly = StringToBool(LookupTag(Message,"Local-Only"),false);
    Config->NeedsCleanup = StringToBool(LookupTag(Message,"Needs-Cleanup"),false);
    Config->Removable = StringToBool(LookupTag(Message,"Removable"),false);
+   Config->SetAuxRequests(StringToBool(LookupTag(Message, "AuxRequests"), false));
 
    // Some debug text
    if (Debug == true)
    {
       clog << "Configured access method " << Config->Access << endl;
-      clog << "Version:" << Config->Version <<
-	      " SingleInstance:" << Config->SingleInstance <<
-	      " Pipeline:" << Config->Pipeline <<
-	      " SendConfig:" << Config->SendConfig <<
-	      " LocalOnly: " << Config->LocalOnly <<
-	      " NeedsCleanup: " << Config->NeedsCleanup <<
-	      " Removable: " << Config->Removable << endl;
+      clog << "Version:" << Config->Version << " SingleInstance:" << Config->SingleInstance << " Pipeline:" << Config->Pipeline << " SendConfig:" << Config->SendConfig << " LocalOnly: " << Config->LocalOnly << " NeedsCleanup: " << Config->NeedsCleanup << " Removable: " << Config->Removable << " AuxRequests: " << Config->GetAuxRequests() << endl;
    }
 
    return true;
@@ -766,6 +792,46 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
 
    if (Debug == true)
       clog << " -> " << Access << ':' << QuoteString(Message,"\n") << endl;
+   OutQueue += Message;
+   OutReady = true;
+
+   return true;
+}
+									/*}}}*/
+// Worker::ReplyAux - reply to an aux request from this worker		/*{{{*/
+bool pkgAcquire::Worker::ReplyAux(pkgAcquire::ItemDesc const &Item)
+{
+   if (OutFd == -1)
+      return false;
+
+   if (isDoomedItem(Item.Owner))
+      return true;
+
+   string Message = "600 URI Acquire\n";
+   Message.reserve(200);
+   Message += "URI: " + Item.URI;
+   if (RealFileExists(Item.Owner->DestFile))
+   {
+      if (Item.Owner->Status == pkgAcquire::Item::StatDone)
+      {
+	 std::string const SandboxUser = _config->Find("APT::Sandbox::User");
+	 ChangeOwnerAndPermissionOfFile("Worker::ReplyAux", Item.Owner->DestFile.c_str(),
+					SandboxUser.c_str(), ROOT_GROUP, 0600);
+	 Message += "\nFilename: " + Item.Owner->DestFile;
+      }
+      else
+      {
+	 // we end up here in case we would need root-rights to delete a file,
+	 // but we run the command as non-root… (yes, it is unlikely)
+	 Message += "\nFilename: " + flCombine("/nonexistent", Item.Owner->DestFile);
+      }
+   }
+   else
+      Message += "\nFilename: " + Item.Owner->DestFile;
+   Message += "\n\n";
+
+   if (Debug == true)
+      clog << " -> " << Access << ':' << QuoteString(Message, "\n") << endl;
    OutQueue += Message;
    OutReady = true;
 

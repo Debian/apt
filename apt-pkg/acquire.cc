@@ -78,13 +78,13 @@ void pkgAcquire::Initialize()
 }
 									/*}}}*/
 // Acquire::GetLock - lock directory and prepare for action		/*{{{*/
-static bool SetupAPTPartialDirectory(std::string const &grand, std::string const &parent)
+static bool SetupAPTPartialDirectory(std::string const &grand, std::string const &parent, std::string const &postfix, mode_t const mode)
 {
-   std::string const partial = parent + "partial";
-   mode_t const mode = umask(S_IWGRP | S_IWOTH);
+   std::string const partial = parent + postfix;
+   mode_t const old_umask = umask(S_IWGRP | S_IWOTH);
    bool const creation_fail = (CreateAPTDirectoryIfNeeded(grand, partial) == false &&
 	 CreateAPTDirectoryIfNeeded(parent, partial) == false);
-   umask(mode);
+   umask(old_umask);
    if (creation_fail == true)
       return false;
 
@@ -100,7 +100,7 @@ static bool SetupAPTPartialDirectory(std::string const &grand, std::string const
             _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of directory %s failed", SandboxUser.c_str(), partial.c_str());
       }
    }
-   if (chmod(partial.c_str(), 0700) != 0)
+   if (chmod(partial.c_str(), mode) != 0)
       _error->WarningE("SetupAPTPartialDirectory", "chmod 0700 of directory %s failed", partial.c_str());
 
    _error->PushToStack();
@@ -117,10 +117,12 @@ bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
    if (Lock.empty())
    {
       string const listDir = _config->FindDir("Dir::State::lists");
-      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir) == false)
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "partial", 0700) == false)
 	 return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "auxfiles", 0755) == false)
+	 return _error->Errno("Acquire", _("List directory %sauxfiles is missing."), listDir.c_str());
       string const archivesDir = _config->FindDir("Dir::Cache::Archives");
-      if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir) == false)
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir, "partial", 0700) == false)
 	 return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
       return true;
    }
@@ -137,13 +139,18 @@ bool pkgAcquire::GetLock(std::string const &Lock)
 
    if (Lock == listDir)
    {
-      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir) == false)
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "partial", 0700) == false)
 	 return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
    }
    if (Lock == archivesDir)
    {
-      if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir) == false)
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir, "partial", 0700) == false)
 	 return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
+   }
+   if (Lock == listDir || Lock == archivesDir)
+   {
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "auxfiles", 0755) == false)
+	 return _error->Errno("Acquire", _("List directory %sauxfiles is missing."), listDir.c_str());
    }
 
    if (_config->FindB("Debug::NoLocking", false) == true)
@@ -288,7 +295,6 @@ static bool CheckForBadItemAndFailIt(pkgAcquire::Item * const Item,
 	 "\nFilename: " + Item->DestFile +
 	 "\nFailReason: WeakHashSums";
 
-      auto SavedDesc = Item->GetItemDesc();
       Item->Status = pkgAcquire::Item::StatAuthError;
       Item->Failed(Message, Config);
       if (Log != nullptr)
@@ -303,7 +309,10 @@ void pkgAcquire::Enqueue(ItemDesc &Item)
    const MethodConfig *Config;
    string Name = QueueName(Item.URI,Config);
    if (Name.empty() == true)
+   {
+      Item.Owner->Status = pkgAcquire::Item::StatError;
       return;
+   }
 
    /* the check for running avoids that we produce errors
       in logging before we actually have started, which would
@@ -769,11 +778,12 @@ bool pkgAcquire::Clean(string Dir)
    for (struct dirent *E = readdir(D); E != nullptr; E = readdir(D))
    {
       // Skip some entries
-      if (strcmp(E->d_name,"lock") == 0 ||
-	  strcmp(E->d_name,"partial") == 0 ||
-	  strcmp(E->d_name,"lost+found") == 0 ||
-	  strcmp(E->d_name,".") == 0 ||
-	  strcmp(E->d_name,"..") == 0)
+      if (strcmp(E->d_name, "lock") == 0 ||
+	  strcmp(E->d_name, "partial") == 0 ||
+	  strcmp(E->d_name, "auxfiles") == 0 ||
+	  strcmp(E->d_name, "lost+found") == 0 ||
+	  strcmp(E->d_name, ".") == 0 ||
+	  strcmp(E->d_name, "..") == 0)
 	 continue;
 
       // Look in the get list and if not found nuke
@@ -845,12 +855,25 @@ pkgAcquire::UriIterator pkgAcquire::UriEnd()
 }
 									/*}}}*/
 // Acquire::MethodConfig::MethodConfig - Constructor			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgAcquire::MethodConfig::MethodConfig() : d(NULL), Next(0), SingleInstance(false),
-   Pipeline(false), SendConfig(false), LocalOnly(false), NeedsCleanup(false),
-   Removable(false)
+class pkgAcquire::MethodConfig::Private
 {
+   public:
+   bool AuxRequests = false;
+};
+pkgAcquire::MethodConfig::MethodConfig() : d(new Private()), Next(0), SingleInstance(false),
+					   Pipeline(false), SendConfig(false), LocalOnly(false), NeedsCleanup(false),
+					   Removable(false)
+{
+}
+									/*}}}*/
+bool pkgAcquire::MethodConfig::GetAuxRequests() const /*{{{*/
+{
+   return d->AuxRequests;
+}
+									/*}}}*/
+void pkgAcquire::MethodConfig::SetAuxRequests(bool const value) /*{{{*/
+{
+   d->AuxRequests = value;
 }
 									/*}}}*/
 // Queue::Queue - Constructor						/*{{{*/

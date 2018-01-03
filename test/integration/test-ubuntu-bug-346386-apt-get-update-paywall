@@ -41,7 +41,8 @@ runtests() {
 	testsuccess grep "$1" rootdir/tmp/testfailure.output
 
 	ensure_n_canary_strings_in_dir "$LISTS" 'ni ni ni' 0
-	testequal 'lock
+	testequal 'auxfiles
+lock
 partial' ls "$LISTS"
 
 	# and again with pre-existing files with "valid data" which should remain
