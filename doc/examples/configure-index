@@ -257,6 +257,7 @@ Acquire
     Proxy "http://127.0.0.1:3128";
     Proxy::http.us.debian.org "DIRECT";  // Specific per-host setting
     Timeout "120";
+    ConnectionAttemptDelayMsec "250";
     Pipeline-Depth "5";
     AllowRedirect  "true";
 
@@ -285,6 +286,7 @@ Acquire
 	AllowRedirect  "true";
 
 	Timeout "120";
+	ConnectionAttemptDelayMsec "250";
 	AllowRedirect  "true";
 
 	// Cache Control. Note these do not work with Squid 2.0.2
@@ -312,6 +314,7 @@ Acquire
     };
     
     Timeout "120";
+    ConnectionAttemptDelayMsec "250";
     
     /* Passive mode control, proxy, non-proxy and per-host. Pasv mode
        is preferred if possible */
