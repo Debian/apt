@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.5.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2017-10-08 11:00+0000\n"
 "Last-Translator: Mo Zhou <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -149,7 +149,7 @@ msgstr "文件 %s/%s 会覆盖属于软件包 %s 中的同名文件"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "无法读取 %s"
@@ -368,6 +368,11 @@ msgid ""
 msgstr ""
 "为了让这个仓库能够应用，这必须在更新之前显式接受。更多细节请参阅 %s 手册。"
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "无法下载 %s  %s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -381,12 +386,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "没有源可以用来下载 %s 版本的 %s"
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr "软件包的索引文件已损坏。找不到对应软件包 %s 的 Filename: 字段。"
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -428,6 +427,12 @@ msgstr "请把标有 “%s” 的盘片插入驱动器 “%s” 再按「回车�
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %spartial is missing."
+msgstr "软件包列表的目录 %spartial 缺失。"
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
 msgstr "软件包列表的目录 %spartial 缺失。"
 
 #: apt-pkg/acquire.cc
@@ -497,7 +502,7 @@ msgstr "无法解析或打开软件包的列表或是状态文件。"
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "您可能需要运行 apt-get update 来解决这些问题"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "无法读取源列表。"
 
@@ -1551,11 +1556,6 @@ msgstr "您必须在 sources.list 中指定代码源(deb-src) URI"
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr "无法将 %s 转换为整数：超出范围"
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "无法下载 %s  %s"
 
 #: apt-pkg/update.cc
 msgid ""
@@ -3444,15 +3444,21 @@ msgstr "无法找到文件"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr "通向 %s 域名的直接连接被设为默认阻止。"
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "正在连接 %s (%s)"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "正在连接 %s (%s)"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "正在连接 %s (%s)"
 
 #: methods/connect.cc
 #, c-format
@@ -3464,11 +3470,6 @@ msgstr "无法为 %s 创建套接字(f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "无法发起与 %s:%s (%s) 的连接"
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "无法连接上 %s:%s (%s)，连接超时"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "失败"
@@ -3477,6 +3478,11 @@ msgstr "失败"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "无法连接上 %s:%s (%s)。"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "无法连接上 %s:%s (%s)，连接超时"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3724,30 +3730,6 @@ msgstr "连接超时"
 msgid "Error writing to output file"
 msgstr "写输出文件时出错"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "没有找到镜像文件 %s"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "无法读取镜像文件 %s"
-
-#: methods/mirror.cc
-#, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "在镜像文件 %s 中未找到所需条目"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[镜像：%s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "无法设置文件的修改日期"
@@ -3759,6 +3741,22 @@ msgstr "连接被永久关闭"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "空文件不是有效归档"
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr "软件包的索引文件已损坏。找不到对应软件包 %s 的 Filename: 字段。"
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "没有找到镜像文件 %s"
+
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "无法读取镜像文件 %s"
+
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "在镜像文件 %s 中未找到所需条目"
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[镜像：%s]"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "正在打开配置文件 %s"

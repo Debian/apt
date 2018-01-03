@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.18\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2010-10-02 23:35+0100\n"
 "Last-Translator: Iñigo Varela <ivarela@softastur.org>\n"
 "Language-Team: Asturian (ast)\n"
@@ -144,7 +144,7 @@ msgstr "El ficheru %s/%s sobreescribe al que ta nel paquete %s"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nun ye a lleer %s"
@@ -357,6 +357,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Falló algamar %s  %s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -370,14 +375,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"Los ficheros d'indiz de paquetes tan corrompíos. Nun hai campu Filename: pal "
-"paquete %s."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -419,6 +416,12 @@ msgstr "Por favor, introduz el discu '%s' nel preséu '%s' y calca Intro."
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %spartial is missing."
+msgstr "Falta'l direutoriu de llistes %spartial."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
 msgstr "Falta'l direutoriu de llistes %spartial."
 
 #: apt-pkg/acquire.cc
@@ -488,7 +491,7 @@ msgstr ""
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "Has d'executar apt-get update pa iguar estos problemes"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "Nun pudo lleese la llista de fontes."
 
@@ -1575,11 +1578,6 @@ msgstr "Has de poner delles URIs 'fonte' nel ficheru sources.list"
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Falló algamar %s  %s"
 
 #: apt-pkg/update.cc
 #, fuzzy
@@ -3502,15 +3500,21 @@ msgstr "Nun s'atopa'l ficheru."
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Coneutando a %s (%s)"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "Coneutando a %s (%s)"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Coneutando a %s (%s)"
 
 #: methods/connect.cc
 #, c-format
@@ -3522,11 +3526,6 @@ msgstr "Nun se pudo crear un socket pa %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Nun se pudo coneutar a %s:%s (%s)."
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Nun se pudo coneutar a %s:%s (%s); expiró'l tiempu de conexón"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "Falló"
@@ -3535,6 +3534,11 @@ msgstr "Falló"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Nun se pudo coneutar a %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Nun se pudo coneutar a %s:%s (%s); expiró'l tiempu de conexón"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3787,30 +3791,6 @@ msgstr "Gandió'l tiempu de conexón"
 msgid "Error writing to output file"
 msgstr "Fallu al escribir nel ficheru de salida"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Nun s'alcontró ficheru espeyu '%s'"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Nun s'alcontró ficheru espeyu '%s'"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Nun s'alcontró ficheru espeyu '%s'"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Espeyu: %s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Nun se pudo afitar la hora de modificación"
@@ -3822,6 +3802,26 @@ msgstr "Conexón encaboxada prematuramente"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr ""
+#~ "Los ficheros d'indiz de paquetes tan corrompíos. Nun hai campu Filename: "
+#~ "pal paquete %s."
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "Nun s'alcontró ficheru espeyu '%s'"
+
+#, fuzzy
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "Nun s'alcontró ficheru espeyu '%s'"
+
+#, fuzzy
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "Nun s'alcontró ficheru espeyu '%s'"
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[Espeyu: %s]"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "Abriendo ficheros de configuración %s"

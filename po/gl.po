@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2011-05-12 15:28+0100\n"
 "Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: galician <proxecto@trasno.net>\n"
@@ -151,7 +151,7 @@ msgstr "O ficheiro %s/%s sobrescribe o do paquete %s"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "Non é posíbel ler %s"
@@ -365,6 +365,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Non foi posíbel obter %s  %s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -378,14 +383,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"Os ficheiros de índices de paquetes están danados. Non hai un campo "
-"Filename: para o paquete %s."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -427,6 +424,12 @@ msgstr "Insira o disco etiquetado: «%s» na unidade «%s» e prema Intro."
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %spartial is missing."
+msgstr "Non se atopa a lista de directorios %sparcial."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
 msgstr "Non se atopa a lista de directorios %sparcial."
 
 #: apt-pkg/acquire.cc
@@ -498,7 +501,7 @@ msgstr ""
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "Pode querer executar «apt-get update» para corrixir estes problemas"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "Non foi posíbel ler a lista de orixes."
 
@@ -1597,11 +1600,6 @@ msgstr "Debe introducir algúns URI «orixe» no seu ficheiro sources.list"
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Non foi posíbel obter %s  %s"
 
 #: apt-pkg/update.cc
 #, fuzzy
@@ -3533,15 +3531,21 @@ msgstr "Non se atopou o ficheiro"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Conectando a %s (%s)"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "Conectando a %s (%s)"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Conectando a %s (%s)"
 
 #: methods/connect.cc
 #, c-format
@@ -3553,11 +3557,6 @@ msgstr "Non foi posíbel crear un socket para %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Non é posíbel iniciar a conexión a %s:%s (%s)."
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Non foi posíbel conectar a %s:%s (%s), a conexión esgotou o tempo"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "Fallou"
@@ -3566,6 +3565,11 @@ msgstr "Fallou"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Non foi posíbel conectar a %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Non foi posíbel conectar a %s:%s (%s), a conexión esgotou o tempo"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3822,30 +3826,6 @@ msgstr "A conexión esgotou o tempo"
 msgid "Error writing to output file"
 msgstr "Produciuse un erro ao escribir no ficheiro de saída"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Non se atopou ningún ficheiro de replica «%s» "
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Non é posíbel ler o ficheiro de replica «%s»"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Non é posíbel ler o ficheiro de replica «%s»"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Replica: %s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Non foi posíbel estabelecer a hora de modificación"
@@ -3857,6 +3837,25 @@ msgstr "A conexión pechouse prematuramente"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Os ficheiros baleiros non poden ser arquivadores válidos"
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr ""
+#~ "Os ficheiros de índices de paquetes están danados. Non hai un campo "
+#~ "Filename: para o paquete %s."
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "Non se atopou ningún ficheiro de replica «%s» "
+
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "Non é posíbel ler o ficheiro de replica «%s»"
+
+#, fuzzy
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "Non é posíbel ler o ficheiro de replica «%s»"
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[Replica: %s]"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "Abrindo o ficheiro de configuración %s"

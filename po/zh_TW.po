@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.X\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -149,7 +149,7 @@ msgstr "檔案 %s/%s 覆寫了套件 %s 中的相同檔案"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "無法讀取 %s"
@@ -360,6 +360,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "無法取得 %s，%s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -373,12 +378,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr "這個套件的索引檔損壞了。沒有套件 %s 的 Filename: 欄位。"
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -420,6 +419,11 @@ msgstr "請把標籤為 '%s' 的光碟放入 '%s' 裝置中，然後按下 [Ente
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, fuzzy, c-format
 msgid "List directory %spartial is missing."
+msgstr "找不到清單目錄 %spartial。"
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "List directory %sauxfiles is missing."
 msgstr "找不到清單目錄 %spartial。"
 
 #: apt-pkg/acquire.cc
@@ -487,7 +491,7 @@ msgstr "無法分析或開啟套件清單或狀況檔。"
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "您也許得執行 apt-get update 以修正這些問題"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "無法讀取來源列表。"
 
@@ -1536,11 +1540,6 @@ msgstr "在 sources.list 中必須包含一些 'source' URI"
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "無法取得 %s，%s"
 
 #: apt-pkg/update.cc
 #, fuzzy
@@ -3427,15 +3426,21 @@ msgstr "找不到檔案"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "正和 %s (%s) 連線"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "正和 %s (%s) 連線"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "正和 %s (%s) 連線"
 
 #: methods/connect.cc
 #, c-format
@@ -3447,11 +3452,6 @@ msgstr "無法建立 socket 指向 %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "無法初始和 %s:%s (%s) 的連線。"
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "無法和 %s:%s (%s) 連線，連線逾時"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "失敗"
@@ -3460,6 +3460,11 @@ msgstr "失敗"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "無法和 %s:%s (%s) 連線。"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "無法和 %s:%s (%s) 連線，連線逾時"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3708,30 +3713,6 @@ msgstr "連線逾時"
 msgid "Error writing to output file"
 msgstr "在寫入輸出檔時發生錯誤"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr ""
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "無法開啟檔案 %s"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "無法開啟檔案 %s"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr ""
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "無法設定修改時間"
@@ -3743,6 +3724,18 @@ msgstr "連線突然終止"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr "這個套件的索引檔損壞了。沒有套件 %s 的 Filename: 欄位。"
+
+#, fuzzy
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "無法開啟檔案 %s"
+
+#, fuzzy
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "無法開啟檔案 %s"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "開啟設定檔 %s"

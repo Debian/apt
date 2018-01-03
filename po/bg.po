@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -150,7 +150,7 @@ msgstr "Файл %s/%s заменя този в пакет %s"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "Неуспех при четенето на %s"
@@ -365,6 +365,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Неуспех при изтеглянето на %s  %s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -378,13 +383,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Не е открит източник, от който да се изтегли версия „%s“ на „%s“"
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"Индексните файлове на пакета са повредени. Няма поле Filename: за пакет %s."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -426,6 +424,12 @@ msgstr "Сложете диска, озаглавен „%s“ в устройс
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %spartial is missing."
+msgstr "Директорията със списъци %spartial липсва."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
 msgstr "Директорията със списъци %spartial липсва."
 
 #: apt-pkg/acquire.cc
@@ -499,7 +503,7 @@ msgid "You may want to run apt-get update to correct these problems"
 msgstr ""
 "Може да искате да изпълните „apt-get update“, за да коригирате тези проблеми"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "Списъкът с източници не можа да бъде прочетен."
 
@@ -1605,11 +1609,6 @@ msgstr "Трябва да добавите адреси-URI от тип „sourc
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Неуспех при изтеглянето на %s  %s"
 
 #: apt-pkg/update.cc
 msgid ""
@@ -3545,15 +3544,21 @@ msgstr "Файлът не е намерен"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Свързване с %s (%s)"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "Свързване с %s (%s)"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Свързване с %s (%s)"
 
 #: methods/connect.cc
 #, c-format
@@ -3565,11 +3570,6 @@ msgstr "Неуспех при създаването на гнездо за %s (
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Не може да се започне свързване с %s:%s (%s)."
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Неуспех при свързване с %s:%s (%s), допустимото време изтече"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "Неуспех"
@@ -3578,6 +3578,11 @@ msgstr "Неуспех"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Неуспех при свързване с %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Неуспех при свързване с %s:%s (%s), допустимото време изтече"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3834,30 +3839,6 @@ msgstr "Допустимото време за свързване изтече"
 msgid "Error writing to output file"
 msgstr "Грешка при записа на изходен файл"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Файлът „%s“ на огледалния сървър не е намерен "
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Грешка при четене файла „%s“ от огледалния сървър"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Грешка при четене файла „%s“ от огледалния сървър"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Огледален сървър: %s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Неуспех при задаването на време на промяна"
@@ -3869,6 +3850,25 @@ msgstr "Връзката прекъсна преждевременно"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Празни файлове не могат да бъдат валидни архиви"
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr ""
+#~ "Индексните файлове на пакета са повредени. Няма поле Filename: за пакет "
+#~ "%s."
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "Файлът „%s“ на огледалния сървър не е намерен "
+
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "Грешка при четене файла „%s“ от огледалния сървър"
+
+#, fuzzy
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "Грешка при четене файла „%s“ от огледалния сървър"
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[Огледален сървър: %s]"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "Отваряне на конфигурационен файл %s"

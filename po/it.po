@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.6~alpha5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-01-01 18:06+0100\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2017-11-27 13:57+0100\n"
 "Last-Translator: Milo Casagrande <milo@milo.name>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -149,7 +149,7 @@ msgstr "Il file %s/%s sovrascrive quello nel pacchetto %s"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "Impossibile leggere %s"
@@ -452,6 +452,13 @@ msgstr "Inserire il disco chiamato \"%s\" nell'unità \"%s\" e premere Invio."
 msgid "List directory %spartial is missing."
 msgstr "Manca la directory di liste %spartial."
 
+# (ndt) sarebbe da controllare meglio assieme a quella dopo
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
+msgstr "Manca la directory di liste %spartial."
+
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Archives directory %spartial is missing."
@@ -525,7 +532,7 @@ msgid "You may want to run apt-get update to correct these problems"
 msgstr ""
 "È consigliato eseguire \"apt-get update\" per correggere questi problemi"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "Impossibile leggere l'elenco dei sorgenti."
 
@@ -3659,15 +3666,21 @@ msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 "Il collegamento diretto ai domini %s è bloccato per impostazione predefinita."
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Connessione a %s (%s)"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "Connessione a %s (%s)"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Connessione a %s (%s)"
 
 #: methods/connect.cc
 #, c-format
@@ -3679,12 +3692,6 @@ msgstr "Impossibile creare un socket per %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Impossibile iniziare la connessione a %s:%s (%s)."
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr ""
-"Impossibile connettersi a %s:%s (%s), tempo esaurito per la connessione"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "Non riuscito"
@@ -3693,6 +3700,12 @@ msgstr "Non riuscito"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Impossibile connettersi a %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr ""
+"Impossibile connettersi a %s:%s (%s), tempo esaurito per la connessione"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3952,30 +3965,6 @@ msgstr "Connessione terminata"
 msgid "Error writing to output file"
 msgstr "Errore nello scrivere sul file di output"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Nessun file mirror \"%s\" trovato "
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Impossibile leggere il file mirror \"%s\""
-
-#: methods/mirror.cc
-#, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Nessuna voce trovata nel file mirror \"%s\""
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Mirror: %s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Impostazione della data di modifica non riuscita"
@@ -3987,6 +3976,18 @@ msgstr "Connessione chiusa prematuramente"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "File vuoti non possono essere archivi validi"
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "Nessun file mirror \"%s\" trovato "
+
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "Impossibile leggere il file mirror \"%s\""
+
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "Nessuna voce trovata nel file mirror \"%s\""
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[Mirror: %s]"
 
 # (ndt) sarebbe da controllare se veramente possono esistere più file indice
 #~ msgid ""

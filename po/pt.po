@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2012-06-29 15:45+0100\n"
 "Last-Translator: Miguel Figueiredo <elmig@debianpt.org>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -147,7 +147,7 @@ msgstr "O ficheiro %s/%s substitui o que está no pacote %s"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "Não foi possível ler %s"
@@ -363,6 +363,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Falhou obter %s  %s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -377,14 +382,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Não conseguiu encontrar uma fonte para obter a versão '%s' de '%s'"
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"Os arquivos de índice de pacotes estão corrompidos. Nenhum campo Filename: "
-"para o pacote %s."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -427,6 +424,12 @@ msgstr ""
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %spartial is missing."
+msgstr "Falta directório de listas %spartial."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
 msgstr "Falta directório de listas %spartial."
 
 #: apt-pkg/acquire.cc
@@ -500,7 +503,7 @@ msgstr ""
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "Você terá que executar apt-get update para corrigir estes problemas"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "A lista de fontes não pôde ser lida."
 
@@ -1610,11 +1613,6 @@ msgstr "Você deve colocar alguns URIs 'source' no seu sources.list"
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Falhou obter %s  %s"
 
 #: apt-pkg/update.cc
 msgid ""
@@ -3552,15 +3550,21 @@ msgstr "Ficheiro não encontrado"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "A Ligar a %s (%s)"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "A Ligar a %s (%s)"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "A Ligar a %s (%s)"
 
 #: methods/connect.cc
 #, c-format
@@ -3572,11 +3576,6 @@ msgstr "Não foi possível criar um socket para %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Não posso iniciar a ligação para %s:%s (%s)."
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Não foi possível ligar a %s:%s (%s), a conexão expirou"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "Falhou"
@@ -3585,6 +3584,11 @@ msgstr "Falhou"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Não foi possível ligar em %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Não foi possível ligar a %s:%s (%s), a conexão expirou"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3839,30 +3843,6 @@ msgstr "O tempo da ligação expirou"
 msgid "Error writing to output file"
 msgstr "Erro ao escrever para o ficheiro de saída"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Não foi encontrado ficheiro de mirror '%s'"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Não pode ler ficheiro de mirror '%s'"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Não pode ler ficheiro de mirror '%s'"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Mirror: %s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Falhou definir hora de modificação"
@@ -3874,6 +3854,25 @@ msgstr "Ligação encerrada prematuramente"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Ficheiros vazios não podem ser arquivos válidos"
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr ""
+#~ "Os arquivos de índice de pacotes estão corrompidos. Nenhum campo "
+#~ "Filename: para o pacote %s."
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "Não foi encontrado ficheiro de mirror '%s'"
+
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "Não pode ler ficheiro de mirror '%s'"
+
+#, fuzzy
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "Não pode ler ficheiro de mirror '%s'"
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[Mirror: %s]"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "A abrir o ficheiro de configuração %s"

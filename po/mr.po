@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2008-11-20 23:27+0530\n"
 "Last-Translator: Sampada <sampadanakhare@gmail.com>\n"
 "Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -146,7 +146,7 @@ msgstr "File %s/%s, %s पॅकेज मधल्या एका वर प�
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s वाचण्यास असमर्थ"
@@ -357,6 +357,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "%s  %s आणणे असफल"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -370,14 +375,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"पॅकेज यादीची/सुचीची संचिका दूषित/खराब झालेली आहे. संचिका नाव नाही: पॅकेजकरीता क्षेत्र/"
-"ठिकाण %s."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -419,6 +416,11 @@ msgstr "कृपया '%s' लेबल असलेली डिस्क '%s
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, fuzzy, c-format
 msgid "List directory %spartial is missing."
+msgstr "संचयिका यादीत %s पार्शल हरवले आहे."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "List directory %sauxfiles is missing."
 msgstr "संचयिका यादीत %s पार्शल हरवले आहे."
 
 #: apt-pkg/acquire.cc
@@ -487,7 +489,7 @@ msgstr "पॅकेजच्या याद्या किंवा संच
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "तुम्ही ह्या समस्यांचे निवारण करण्यासाठी  apt-get update प्रोग्राम चालू करु शकता"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "उगमांच्या याद्या वाचता येणार नाहीत."
 
@@ -1542,11 +1544,6 @@ msgstr "तुम्ही तुमच्या उगमस्थान या
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "%s  %s आणणे असफल"
 
 #: apt-pkg/update.cc
 #, fuzzy
@@ -3447,15 +3444,21 @@ msgstr "फाईल सापडली नाही"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "%s (%s) ला जोडत आहे"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[आयपी:%s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "%s (%s) ला जोडत आहे"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "%s (%s) ला जोडत आहे"
 
 #: methods/connect.cc
 #, c-format
@@ -3467,11 +3470,6 @@ msgstr "%s (f=%u t=%u p=%u) साठी सॉकेट तयार करू 
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "%s:%s (%s). साठी जोडणी इनिशिएट/पुढाकारीत करू शकत नाही"
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "%s:%s (%s) ला जोडू शकत नाही,जोडणी वेळेअभावी तुटली"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "असमर्थ"
@@ -3480,6 +3478,11 @@ msgstr "असमर्थ"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "%s:%s (%s) ला जोडू शकत नाही"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "%s:%s (%s) ला जोडू शकत नाही,जोडणी वेळेअभावी तुटली"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3730,30 +3733,6 @@ msgstr "जोडणी वेळेअभावी तुटली"
 msgid "Error writing to output file"
 msgstr "निर्गत फाईल मध्ये लिहिताना त्रुटी/चूक"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr ""
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "%s फाईल उघडता येत नाही"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "%s फाईल उघडता येत नाही"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr ""
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "बदलण्याचा वेळ निश्चित करण्यास असमर्थ"
@@ -3765,6 +3744,20 @@ msgstr "जोडणी अकाली बंद झाली"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr ""
+#~ "पॅकेज यादीची/सुचीची संचिका दूषित/खराब झालेली आहे. संचिका नाव नाही: पॅकेजकरीता क्षेत्र/"
+#~ "ठिकाण %s."
+
+#, fuzzy
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "%s फाईल उघडता येत नाही"
+
+#, fuzzy
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "%s फाईल उघडता येत नाही"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "%s संरचना फाईल उघडत आहे"

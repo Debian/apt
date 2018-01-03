@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -144,7 +144,7 @@ msgstr "%s/%s 파일은 %s 패키지에 있는 파일을 덮어 씁니다"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s을(를) 읽을 수 없습니다"
@@ -357,6 +357,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "%s 파일을 받는데 실패했습니다  %s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -370,13 +375,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"패키지 인덱스 파일이 손상되었습니다. %s 패키지에 Filename: 필드가 없습니다."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -419,6 +417,12 @@ msgstr ""
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %spartial is missing."
+msgstr "목록 디렉터리 %spartial이 빠졌습니다."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
 msgstr "목록 디렉터리 %spartial이 빠졌습니다."
 
 #: apt-pkg/acquire.cc
@@ -487,7 +491,7 @@ msgstr "패키지 목록이나 상태 파일을 파싱할 수 없거나 열 수 
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "apt-get update를 실행하면 이 문제를 바로잡을 수도 있습니다."
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "소스 목록을 읽을 수 없습니다."
 
@@ -1551,11 +1555,6 @@ msgstr "sources.list에 '소스' URI를 써 넣어야 합니다"
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "%s 파일을 받는데 실패했습니다  %s"
 
 #: apt-pkg/update.cc
 #, fuzzy
@@ -3462,15 +3461,21 @@ msgstr "파일이 없습니다"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "%s(%s)에 연결하는 중입니다"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "%s(%s)에 연결하는 중입니다"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "%s(%s)에 연결하는 중입니다"
 
 #: methods/connect.cc
 #, c-format
@@ -3482,11 +3487,6 @@ msgstr "%s에 대한 소켓을 만들 수 없습니다 (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "%s:%s에 연결을 초기화할 수 없습니다 (%s)."
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "%s:%s에 연결할 수 없습니다 (%s). 연결 제한 시간이 초과했습니다"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "실패"
@@ -3495,6 +3495,11 @@ msgstr "실패"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "%s:%s에 연결할 수 없습니다 (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "%s:%s에 연결할 수 없습니다 (%s). 연결 제한 시간이 초과했습니다"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3745,30 +3750,6 @@ msgstr "연결 시간이 초과했습니다"
 msgid "Error writing to output file"
 msgstr "출력 파일에 쓰는데 오류가 발생했습니다"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "'%s' 미러 파일이 없습니다 "
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "'%s' 미러 파일이 없습니다 "
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "'%s' 미러 파일이 없습니다 "
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[미러 사이트: %s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "파일 변경 시각을 설정하는데 실패했습니다"
@@ -3780,6 +3761,26 @@ msgstr "연결이 너무 빨리 끊어졌습니다"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr ""
+#~ "패키지 인덱스 파일이 손상되었습니다. %s 패키지에 Filename: 필드가 없습니"
+#~ "다."
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "'%s' 미러 파일이 없습니다 "
+
+#, fuzzy
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "'%s' 미러 파일이 없습니다 "
+
+#, fuzzy
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "'%s' 미러 파일이 없습니다 "
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[미러 사이트: %s]"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "설정 파일 %s 파일을 여는 중입니다"

@@ -1,3 +1,54 @@
+apt (1.6~alpha6) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Add Breaks: aptitude (<< 0.8.10) for gzip method removal
+  * Also look at https_proxy for https URLs
+  * Run wrap-and-sort
+  * Translate shared documentation parts again
+  * tests: Improve handling profiling messages on CI
+  * connect: Store the IP used when picking a connection
+  * Add rapid "happy eyeballs" connection fallback (RFC 8305) (Closes: #668948)
+    (LP: #1308200)
+
+  [ David Kalnischkies ]
+  * allow multivalue fields in deb822 sources to be folded (Closes: 881875)
+  * support COLUMNS environment variable in apt tools
+  * allow apt_auth.conf(5) to be translated
+  * if insecure repo is allowed continue on all http errors
+  * don't auto-switch candidate if installed is good enough
+  * update libapt-pkg symbols file
+  * explicitly name token in auth.conf parsing error
+  * fix over-calculating dpkg commandline length
+  * avoid some useless casts reported by -Wuseless-cast
+  * deal with floats without old-style cast
+  * support multiline values in LookupTag
+  * mark some 500 HTTP codes as transient acquire errors
+  * report transient errors as transient errors
+  * implement Acquire::Retries support for all items
+  * give the methods more metadata about the files to acquire
+  * implement fallback to alternative URIs for all items
+  * do not remap current files if nullptrs in cache generation
+  * apt.daily: remove unused dbus signal for apt update (Closes: 849636)
+  * Support cleartext signed InRelease files with CRLF line endings.
+    Thanks to Lukas Wunner for detailed report & initial patch! (Closes: 884922)
+  * document http options in new apt-transport-http manpage
+  * document https options in new apt-transport-https manpage
+  * refactor message generation for methods
+  * allow a method to request auxiliary files
+  * reimplement and simplify mirror:// method
+  * require methods to request AuxRequest capability at startup
+  * add tag-based control over mirror choices from the list
+  * non-local mirrorlists shouldn't redirect to local
+  * add apt-transport-mirror manpage
+
+  [ Milo Casagrande ]
+  * Italian program translation update (Closes: 882850)
+
+  [ Christian Göttsche ]
+  * apt.daily: fix several "shellcheck" annotations
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 03 Jan 2018 22:33:37 +0000
+
 apt (1.6~alpha5) unstable; urgency=medium
 
   [ Julian Andres Klode ]

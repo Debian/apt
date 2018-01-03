@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -147,7 +147,7 @@ msgstr "แฟ้ม %s/%s เขียนทับแฟ้มในแพก�
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "ไม่สามารถอ่าน %s"
@@ -363,6 +363,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "ไม่สามารถดาวน์โหลด %s  %s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -374,12 +379,6 @@ msgstr "ไม่พบแฟ้มสำหรับแพกเกจ %s ค�
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "ไม่พบแหล่งที่จะดาวน์โหลดรุ่น '%s' ของ '%s' ได้"
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr "แฟ้มดัชนีแพกเกจเสียหาย ไม่มีข้อมูล Filename: (ชื่อแฟ้ม) สำหรับแพกเกจ %s"
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -421,6 +420,12 @@ msgstr "กรุณาใส่แผ่นชื่อ: '%s' ลงในไ�
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %spartial is missing."
+msgstr "ไม่มีไดเรกทอรีรายชื่อแพกเกจ %spartial"
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
 msgstr "ไม่มีไดเรกทอรีรายชื่อแพกเกจ %spartial"
 
 #: apt-pkg/acquire.cc
@@ -488,7 +493,7 @@ msgstr "ไม่สามารถแจงหรือเปิดรายช
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "คุณอาจเรียก `apt-get update' เพื่อแก้ปัญหาเหล่านี้ได้"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "ไม่สามารถอ่านรายชื่อแหล่งแพกเกจได้"
 
@@ -1549,11 +1554,6 @@ msgstr "คุณต้องเพิ่ม URI ชนิด 'source' ใน so
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "ไม่สามารถดาวน์โหลด %s  %s"
 
 #: apt-pkg/update.cc
 msgid ""
@@ -3440,15 +3440,21 @@ msgstr "ไม่พบแฟ้ม"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "เชื่อมต่อไปยัง %s (%s)"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "เชื่อมต่อไปยัง %s (%s)"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "เชื่อมต่อไปยัง %s (%s)"
 
 #: methods/connect.cc
 #, c-format
@@ -3460,11 +3466,6 @@ msgstr "ไม่สามารถสร้างซ็อกเก็ตสำ
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "ไม่สามารถเริ่มการเชื่อมต่อไปยัง %s:%s (%s)"
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "ไม่สามารถเชื่อมต่อไปยัง %s:%s (%s) เนื่องจากหมดเวลาคอย"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "ล้มเหลว"
@@ -3473,6 +3474,11 @@ msgstr "ล้มเหลว"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "ไม่สามารถเชื่อมต่อไปยัง %s:%s (%s)"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "ไม่สามารถเชื่อมต่อไปยัง %s:%s (%s) เนื่องจากหมดเวลาคอย"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3721,30 +3727,6 @@ msgstr "หมดเวลารอเชื่อมต่อ"
 msgid "Error writing to output file"
 msgstr "เกิดข้อผิดพลาดขณะเขียนลงแฟ้มผลลัพธ์"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "ไม่พบแฟ้มแหล่งสำเนา '%s'"
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "ไม่สามารถอ่านแฟ้มแหล่งสำเนา '%s'"
-
-#: methods/mirror.cc
-#, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "ไม่พบรายการในแฟ้มแหล่งสำเนา '%s'"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[แหล่งสำเนา: %s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "กำหนดเวลาแก้ไขไม่สำเร็จ"
@@ -3756,6 +3738,22 @@ msgstr "การเชื่อมต่อถูกปิดก่อนเว
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "แฟ้มว่างเปล่าไม่สามารถเป็นแฟ้มจัดเก็บที่ใช้การได้"
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr "แฟ้มดัชนีแพกเกจเสียหาย ไม่มีข้อมูล Filename: (ชื่อแฟ้ม) สำหรับแพกเกจ %s"
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "ไม่พบแฟ้มแหล่งสำเนา '%s'"
+
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "ไม่สามารถอ่านแฟ้มแหล่งสำเนา '%s'"
+
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "ไม่พบรายการในแฟ้มแหล่งสำเนา '%s'"
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[แหล่งสำเนา: %s]"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "ขณะเปิดแฟ้มค่าตั้ง %s"

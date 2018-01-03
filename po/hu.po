@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -148,7 +148,7 @@ msgstr "A(z) %s/%s fájl felülírja a(z) %s csomagban levőt"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s nem olvasható"
@@ -388,6 +388,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Sikertelen letöltés: %s  %s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -401,13 +406,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Nem található forrás a(z) „%2$s” „%1$s” verziójának letöltéséhez"
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"A csomagindexfájlok megsérültek. Nincs Filename: mező a(z) %s csomaghoz."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -451,6 +449,12 @@ msgstr ""
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %spartial is missing."
+msgstr "A(z) %spartial listakönyvtár hiányzik."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
 msgstr "A(z) %spartial listakönyvtár hiányzik."
 
 #: apt-pkg/acquire.cc
@@ -526,7 +530,7 @@ msgstr ""
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "Próbálja futtatni az „apt-get update” parancsot ezen hibák javításához"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "A források listája olvashatatlan."
 
@@ -1632,11 +1636,6 @@ msgstr "Néhány „source” URI-t el kell helyezni a sources.list fájlban"
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr "%s nem alakítható egésszé: kívül esik a tartományon"
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Sikertelen letöltés: %s  %s"
 
 #: apt-pkg/update.cc
 msgid ""
@@ -3591,15 +3590,21 @@ msgstr "A fájl nem található"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Csatlakozás: %s (%s)"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "Csatlakozás: %s (%s)"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Csatlakozás: %s (%s)"
 
 #: methods/connect.cc
 #, c-format
@@ -3611,11 +3616,6 @@ msgstr "Foglalat létrehozása sikertelen ehhez: %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Kapcsolat létrehozása sikertelen ehhez: %s: %s (%s)."
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Időtúllépés miatt nem lehet kapcsolódni a következőhöz: %s: %s (%s)"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "Sikertelen"
@@ -3624,6 +3624,11 @@ msgstr "Sikertelen"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Nem lehet kapcsolódni ehhez: %s: %s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Időtúllépés miatt nem lehet kapcsolódni a következőhöz: %s: %s (%s)"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3881,30 +3886,6 @@ msgstr "Időtúllépés a kapcsolatban"
 msgid "Error writing to output file"
 msgstr "Hiba a kimeneti fájl írásakor"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Nem található a(z) „%s” tükörfájl "
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "A(z) „%s” tükörfájl nem olvasható"
-
-#: methods/mirror.cc
-#, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Nem található bejegyzés a(z) „%s” tükörfájlban"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Tükör: %s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "A módosítási idő beállítása sikertelen"
@@ -3916,6 +3897,23 @@ msgstr "A kapcsolat idő előtt lezárult"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Az üres fájlok biztosan nem érvényes csomagok"
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr ""
+#~ "A csomagindexfájlok megsérültek. Nincs Filename: mező a(z) %s csomaghoz."
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "Nem található a(z) „%s” tükörfájl "
+
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "A(z) „%s” tükörfájl nem olvasható"
+
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "Nem található bejegyzés a(z) „%s” tükörfájlban"
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[Tükör: %s]"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "%s konfigurációs fájl megnyitása"

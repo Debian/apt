@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~rc2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2017-03-02 23:51+0200\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <debian-l10n-danish@lists.debian.org>\n"
@@ -151,7 +151,7 @@ msgstr "File %s/%s overskriver filen i pakken %s"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "Kunne ikke læse %s"
@@ -390,6 +390,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Kunne ikke hente %s %s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -403,12 +408,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Kan ikke finde en kilde til at hente version »%s« for »%s«"
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr "Pakkeindeksfilerne er i stykker. Intet »Filename:«-felt for pakken %s."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -450,6 +449,12 @@ msgstr "Indsæt venligst disken med navnet: »%s« i drevet »%s« og tryk [Retu
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %spartial is missing."
+msgstr "Listemappen %spartial mangler."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
 msgstr "Listemappen %spartial mangler."
 
 #: apt-pkg/acquire.cc
@@ -521,7 +526,7 @@ msgstr "Pakkelisterne eller statusfilen kunne ikke tolkes eller åbnes."
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "Du kan muligvis rette problemet ved at køre »apt-get update«"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "Listen med kilder kunne ikke læses."
 
@@ -1606,11 +1611,6 @@ msgstr "Du skal have nogle »source«-URI'er i din sources.list"
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr "Kan ikke konvertere %s til heltal: uden for interval"
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Kunne ikke hente %s %s"
 
 #: apt-pkg/update.cc
 msgid ""
@@ -3571,15 +3571,21 @@ msgstr "Fil blev ikke fundet"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr "Direkte forbindelse til %s-domæner er som standard blokeret."
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Forbinder til %s (%s)"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "Forbinder til %s (%s)"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Forbinder til %s (%s)"
 
 #: methods/connect.cc
 #, c-format
@@ -3591,11 +3597,6 @@ msgstr "Kunne ikke oprette sokkel til %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Kan ikke oprette forbindelse til %s:%s (%s)."
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Kunne ikke forbinde til %s:%s (%s) grundet tidsudløb"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "Mislykkedes"
@@ -3604,6 +3605,11 @@ msgstr "Mislykkedes"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Kunne ikke forbinde til %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Kunne ikke forbinde til %s:%s (%s) grundet tidsudløb"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3858,30 +3864,6 @@ msgstr "Tidsudløb på forbindelsen"
 msgid "Error writing to output file"
 msgstr "Fejl ved skrivning af uddatafil"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Ingen spejlfil »%s« fundet "
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Kan ikke læse spejlfil »%s«"
-
-#: methods/mirror.cc
-#, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Ingen post fundet i spejlfil »%s«"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Spejl: %s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Kunne ikke angive ændringstidspunkt"
@@ -3893,6 +3875,23 @@ msgstr "Forbindelsen lukkedes for hurtigt"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomme filer kan ikke være gyldige arkiver"
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr ""
+#~ "Pakkeindeksfilerne er i stykker. Intet »Filename:«-felt for pakken %s."
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "Ingen spejlfil »%s« fundet "
+
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "Kan ikke læse spejlfil »%s«"
+
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "Ingen post fundet i spejlfil »%s«"
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[Spejl: %s]"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "Åbner konfigurationsfilen %s"

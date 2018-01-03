@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-20 23:00+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2017-09-29 22:22+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -152,7 +152,7 @@ msgstr "Het bestand %s/%s overschrijft het bestand van pakket %s"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "Kan %s niet lezen"
@@ -396,6 +396,11 @@ msgstr ""
 "pakketbron uitgevoerd kunnen worden. Raadpleeg man-pagina %s voor bijkomende "
 "informatie."
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Ophalen van %s is mislukt  %s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -409,14 +414,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Kan geen bron vinden om versie '%s' van '%s' op te halen"
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"De pakketindex-bestanden zijn beschadigd. Er is geen 'Filename:'-veld voor "
-"pakket %s."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -460,6 +457,12 @@ msgstr ""
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %spartial is missing."
+msgstr "Lijstmap %spartial is afwezig."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
 msgstr "Lijstmap %spartial is afwezig."
 
 #: apt-pkg/acquire.cc
@@ -536,7 +539,7 @@ msgid "You may want to run apt-get update to correct these problems"
 msgstr ""
 "U kunt misschien 'apt-get update' uitvoeren om deze problemen te verhelpen"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "De lijst van bronnen kon niet gelezen worden."
 
@@ -1654,11 +1657,6 @@ msgstr ""
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr "Kan %s niet naar een geheel getal omzetten: buiten het bereik"
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Ophalen van %s is mislukt  %s"
 
 #: apt-pkg/update.cc
 msgid ""
@@ -3654,15 +3652,21 @@ msgstr "Bestand niet gevonden"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr "Een rechtstreekse verbinding met %s-domeinen is standaard geblokkeerd."
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Er wordt verbinding gemaakt met %s (%s)"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "Er wordt verbinding gemaakt met %s (%s)"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Er wordt verbinding gemaakt met %s (%s)"
 
 #: methods/connect.cc
 #, c-format
@@ -3674,11 +3678,6 @@ msgstr "Kon de socket voor %s (f=%u t=%u p=%u) niet aanmaken"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Kan de verbinding met %s:%s (%s) niet aangaan."
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Kon niet verbinden met %s:%s (%s); de verbinding verliep"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "Mislukt"
@@ -3687,6 +3686,11 @@ msgstr "Mislukt"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Kon niet verbinden met %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Kon niet verbinden met %s:%s (%s); de verbinding verliep"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3947,30 +3951,6 @@ msgstr "Verbinding verliep"
 msgid "Error writing to output file"
 msgstr "Fout bij het schrijven naar uitvoerbestand"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Geen spiegelbestand '%s' gevonden "
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Kan spiegelbestand '%s' niet lezen"
-
-#: methods/mirror.cc
-#, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Geen vermelding gevonden in spiegelbestand '%s'"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Spiegelserver: %s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Instellen van de aanpassingstijd is mislukt"
@@ -3982,6 +3962,24 @@ msgstr "Verbinding werd voortijdig afgebroken"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Lege bestanden kunnen geen geldige archieven zijn"
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr ""
+#~ "De pakketindex-bestanden zijn beschadigd. Er is geen 'Filename:'-veld "
+#~ "voor pakket %s."
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "Geen spiegelbestand '%s' gevonden "
+
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "Kan spiegelbestand '%s' niet lezen"
+
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "Geen vermelding gevonden in spiegelbestand '%s'"
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[Spiegelserver: %s]"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "Configuratiebestand %s wordt geopend"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -148,7 +148,7 @@ msgstr "ཐུམ་སྒྲིལ་%s་ནང་ལུ་་ཡིག་ས�
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s་འདི་ལུ་ལྷག་མ་ཚུགས།"
@@ -360,6 +360,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "%s  %s་ ལེན་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -373,13 +378,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"ཐུམ་སྒྲིལ་ ཟུར་ཐོ་ཡིག་སྣོད་ཚུ་ངན་ཅན་འགྱོ་ནུག  ཡིག་སྣོད་ཀྱི་མིང་མིན་འདུག: %s་ཐུམ་སྒྲིལ་གྱི་དོན་ལུ་ས་སྒོ།"
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -421,6 +419,11 @@ msgstr "ཁ་ཡིག་བཀོད་ཡོད་པའི་ ཌིསི�
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, fuzzy, c-format
 msgid "List directory %spartial is missing."
+msgstr "ཐོ་བཀོད་འབད་མི་སྣོད་ཐོ་%s་ཆ་ཤས་འདི་བརླག་སྟོར་ཟུགས་ཏེ་འདུག"
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+msgid "List directory %sauxfiles is missing."
 msgstr "ཐོ་བཀོད་འབད་མི་སྣོད་ཐོ་%s་ཆ་ཤས་འདི་བརླག་སྟོར་ཟུགས་ཏེ་འདུག"
 
 #: apt-pkg/acquire.cc
@@ -490,7 +493,7 @@ msgstr "ཐུམ་སྒྲིལ་གྱི་ཐོ་ཡིག་ཡང་
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "འ་ནི་དཀའ་ངལ་འདི་ཚུ་སེལ་ནིའི་ལུ་ ཁྱོད་ཀྱི་ apt-get update་དེ་གཡོག་བཀོལ་དགོཔ་འོང་།"
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "འབྱུང་ཁུངས་ཚུ་ཀྱི་ཐོ་ཡིག་དེ་ལྷག་མི་ཚུགས་པས།"
 
@@ -1547,11 +1550,6 @@ msgstr ""
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "%s  %s་ ལེན་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
 #: apt-pkg/update.cc
 #, fuzzy
@@ -3474,15 +3472,21 @@ msgstr "ཡིག་སྣོད་འཚོལ་མ་ཐོབ།"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "%s (%s)་ལུ་མཐུད་དོ།"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "%s (%s)་ལུ་མཐུད་དོ།"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "%s (%s)་ལུ་མཐུད་དོ།"
 
 #: methods/connect.cc
 #, c-format
@@ -3494,11 +3498,6 @@ msgstr "%s (f=%u t=%u p=%u)གི་དོན་ལུ་སོ་ཀེཊི�
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "%s:%s (%s)ལུ་མཐུད་ལམ་དེ་འགོ་འབྱེད་འབད་མ་ཚུགས།"
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr " %s:%s (%s)ལུ་མཐུད་མ་ཚུགས་  མཐུད་ལམ་ངལ་མཚམས།"
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "འཐུས་ཤོར་བྱུང་ཡོད།"
@@ -3507,6 +3506,11 @@ msgstr "འཐུས་ཤོར་བྱུང་ཡོད།"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr " %s:%s (%s)ལུ་མཐུད་མ་ཚུགས།"
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr " %s:%s (%s)ལུ་མཐུད་མ་ཚུགས་  མཐུད་ལམ་ངལ་མཚམས།"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3761,30 +3765,6 @@ msgstr "མཐུད་ལམ་ངལ་མཚམས་འབད་ཡོད།
 msgid "Error writing to output file"
 msgstr "ཨའུཊི་པུཊི་ཡིག་སྣོད་ལུ་འབྲིཝ་ད་འཛོལ་བ།"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr ""
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr ""
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "ཆུ་ཚོད་ལེགས་བཅོས་གཞི་སྒྲིག་འབཐ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
@@ -3796,6 +3776,19 @@ msgstr "དུས་སུ་མ་འབབ་པ་རང་མཐུད་ལ
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr ""
+#~ "ཐུམ་སྒྲིལ་ ཟུར་ཐོ་ཡིག་སྣོད་ཚུ་ངན་ཅན་འགྱོ་ནུག  ཡིག་སྣོད་ཀྱི་མིང་མིན་འདུག: %s་ཐུམ་སྒྲིལ་གྱི་དོན་ལུ་ས་སྒོ།"
+
+#, fuzzy
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#, fuzzy
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "རིམ་སྒྲིག་ཡིག་སྣོད་%s་འདི་ཁ་ཕྱེ་དོ།"

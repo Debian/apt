@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2017-10-22 23:49+0200\n"
+"POT-Creation-Date: 2018-01-03 22:34+0000\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -149,7 +149,7 @@ msgstr "Datoteka %s/%s prepisuje datoteko v paketu %s"
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc apt-pkg/acquire.cc apt-pkg/clean.cc
 #: apt-pkg/contrib/cdromutl.cc apt-pkg/contrib/fileutl.cc apt-pkg/deb/dpkgpm.cc
-#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc methods/mirror.cc
+#: apt-pkg/init.cc apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
 msgstr "Ni mogoče brati %s"
@@ -364,6 +364,11 @@ msgid ""
 "applied. See %s manpage for details."
 msgstr ""
 
+#: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
+#, c-format
+msgid "Failed to fetch %s  %s"
+msgstr "Ni mogoče dobiti %s  %s"
+
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
@@ -377,14 +382,6 @@ msgstr ""
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Ni mogoče najti vira za prejem različice '%s' paketa '%s'"
-
-#: apt-pkg/acquire-item.cc
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"Datoteke s kazali paketov so pokvarjene. Brez imena datotek: polje za paket "
-"%s."
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -426,6 +423,12 @@ msgstr "Vstavite disk z oznako '%s' v pogon '%s' in pritisnite vnosno tipko."
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %spartial is missing."
+msgstr "Mapa seznama %spartial manjka."
+
+#: apt-pkg/acquire.cc
+#, fuzzy, c-format
+#| msgid "List directory %spartial is missing."
+msgid "List directory %sauxfiles is missing."
 msgstr "Mapa seznama %spartial manjka."
 
 #: apt-pkg/acquire.cc
@@ -493,7 +496,7 @@ msgstr "Ni mogoče odprti ali razčleniti seznama paketov ali datoteke stanja."
 msgid "You may want to run apt-get update to correct these problems"
 msgstr "Za odpravljanje težav poskusite zagnati apt-get update."
 
-#: apt-pkg/cachefile.cc
+#: apt-pkg/cachefile.cc methods/mirror.cc
 msgid "The list of sources could not be read."
 msgstr "Seznama virov ni mogoče brati."
 
@@ -1576,11 +1579,6 @@ msgstr "V sources.list morate vstaviti URI-je z viri"
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
 msgstr ""
-
-#: apt-pkg/update.cc apt-private/private-download.cc
-#, c-format
-msgid "Failed to fetch %s  %s"
-msgstr "Ni mogoče dobiti %s  %s"
 
 #: apt-pkg/update.cc
 msgid ""
@@ -3523,15 +3521,21 @@ msgstr "Datoteke ni mogoče najti"
 msgid "Direct connection to %s domains is blocked by default."
 msgstr ""
 
-#: methods/connect.cc methods/http.cc
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "Povezovanje z %s (%s)"
-
 #: methods/connect.cc
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
+
+#: methods/connect.cc
+#, fuzzy, c-format
+#| msgid "Connecting to %s (%s)"
+msgid "Connected to %s (%s)"
+msgstr "Povezovanje z %s (%s)"
+
+#: methods/connect.cc methods/http.cc
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "Povezovanje z %s (%s)"
 
 #: methods/connect.cc
 #, c-format
@@ -3543,11 +3547,6 @@ msgstr "Ni mogoče ustvariti vtiča za %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Ni mogoče začeti povezave z %s:%s (%s)."
 
-#: methods/connect.cc
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Ni se mogoče povezati z %s:%s (%s). Povezava je zakasnela."
-
 #: methods/connect.cc methods/ftp.cc methods/rsh.cc
 msgid "Failed"
 msgstr "Spodletelo"
@@ -3556,6 +3555,11 @@ msgstr "Spodletelo"
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Ni se mogoče povezati z %s:%s (%s)."
+
+#: methods/connect.cc
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "Ni se mogoče povezati z %s:%s (%s). Povezava je zakasnela."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3807,30 +3811,6 @@ msgstr "Povezava je zakasnela"
 msgid "Error writing to output file"
 msgstr "Napaka med pisanjem v izhodno datoteko"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "Datoteke zrcalnih strežnikov '%s' ni mogoče najti "
-
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc
-#, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "Datoteke zrcalnega strežnika '%s' ni mogoče prebrati"
-
-#: methods/mirror.cc
-#, fuzzy, c-format
-msgid "No entry found in mirror file '%s'"
-msgstr "Datoteke zrcalnega strežnika '%s' ni mogoče prebrati"
-
-#: methods/mirror.cc
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[Zrcalni strežnik: %s]"
-
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Nastavitev časa spremembe je spodletela"
@@ -3842,6 +3822,25 @@ msgstr "Povezava se je prezgodaj zaprla"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prazne datoteke ne morejo biti veljavni arhivi"
+
+#~ msgid ""
+#~ "The package index files are corrupted. No Filename: field for package %s."
+#~ msgstr ""
+#~ "Datoteke s kazali paketov so pokvarjene. Brez imena datotek: polje za "
+#~ "paket %s."
+
+#~ msgid "No mirror file '%s' found "
+#~ msgstr "Datoteke zrcalnih strežnikov '%s' ni mogoče najti "
+
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "Datoteke zrcalnega strežnika '%s' ni mogoče prebrati"
+
+#, fuzzy
+#~ msgid "No entry found in mirror file '%s'"
+#~ msgstr "Datoteke zrcalnega strežnika '%s' ni mogoče prebrati"
+
+#~ msgid "[Mirror: %s]"
+#~ msgstr "[Zrcalni strežnik: %s]"
 
 #~ msgid "Opening configuration file %s"
 #~ msgstr "Odpiranje nastavitvene datoteke %s"
