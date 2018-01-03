@@ -447,6 +447,7 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
    // When we have an IP rotation stay with the last IP.
    auto Addresses = OrderAddresses(LastUsed != nullptr ? LastUsed : LastHostAddr);
    std::list<Connection> Conns;
+   ResultState Result = ResultState::SUCCESSFUL;
 
    for (auto Addr : Addresses)
    {
@@ -456,13 +457,16 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
 
       Conns.push_back(std::move(Conn));
 
-      if (WaitAndCheckErrors(Conns, Fd, Owner->ConfigFindI("ConnectionAttemptDelayMsec", 250), false) == ResultState::SUCCESSFUL)
+      Result = WaitAndCheckErrors(Conns, Fd, Owner->ConfigFindI("ConnectionAttemptDelayMsec", 250), false);
+
+      if (Result == ResultState::SUCCESSFUL)
 	 return ResultState::SUCCESSFUL;
    }
 
-   if (WaitAndCheckErrors(Conns, Fd, TimeOut * 1000, true) == ResultState::SUCCESSFUL)
-      return ResultState::SUCCESSFUL;
-
+   if (!Conns.empty())
+      return WaitAndCheckErrors(Conns, Fd, TimeOut * 1000, true);
+   if (Result != ResultState::SUCCESSFUL)
+      return Result;
    if (_error->PendingError() == true)
       return ResultState::FATAL_ERROR;
    _error->Error(_("Unable to connect to %s:%s:"), Host.c_str(), ServStr);
