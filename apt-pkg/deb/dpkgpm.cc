@@ -653,7 +653,13 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    // At this point we have a pkgname, but it might not be arch-qualified !
    if (pkgname.find(":") == std::string::npos)
    {
-      pkgCache::GrpIterator Grp = Cache.FindGrp(pkgname);
+      pkgCache::GrpIterator const Grp = Cache.FindGrp(pkgname);
+      if (unlikely(Grp.end()== true))
+      {
+	 if (Debug == true)
+	    std::clog << "unable to figure out which package is dpkg referring to with '" << pkgname << "'! (0)" << std::endl;
+	 return;
+      }
       /* No arch means that dpkg believes there can only be one package
          this can refer to so lets see what could be candidates here: */
       std::vector<pkgCache::PkgIterator> candset;
@@ -729,7 +735,16 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 	    if (PackageOps[fullname].size() != PackageOpsDone[fullname])
 	       pkgname = std::move(fullname);
 	    else
-	       pkgname = std::find_if_not(candset.begin(), candset.end(), PkgHasCurrentVersion)->FullName();
+	    {
+	       auto const pkgi = std::find_if_not(candset.begin(), candset.end(), PkgHasCurrentVersion);
+	       if (unlikely(pkgi == candset.end()))
+	       {
+		  if (Debug == true)
+		     std::clog << "situation for '" << pkgname << "' looked like a crossgrade, but all are installed?!" << std::endl;
+		  return;
+	       }
+	       pkgname = pkgi->FullName();
+	    }
 	 }
 	 // we are desperate: so "just" take the native one, but that might change mid-air,
 	 // so we have to ask dpkg what it believes native is at the moment… all the time
