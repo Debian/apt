@@ -31,44 +31,44 @@
 <refsect1><title>Description</title>
 <para>This APT transport isn't implementing a protocol to access local or remote repositories
 on its own, but acquires a mirrorlist and redirects all requests to the mirror(s) picked from
-this list access via other transports like &apt-transport-http;. The basic functionality is
-available since apt 0.7.24, but was undocumented until apt 1.6 which contained a complete
+this list, accessing them via other transports like &apt-transport-http;. The basic functionality has
+been available since apt 0.7.24, but was undocumented until apt 1.6 which contained a complete
 rework of the transport and its supported features. Note that a transport is never called directly
 by a user but used by APT tools based on user configuration.</para>
-<para>If the acquisition of a file via a mirror fails the method ensures that automatically
-another possible mirror of the list is tried until either the file is retrieved or no mirror is
-left in the list handling transparently server downtimes and similar problems.</para>
-<para>The security implications of the transport are based on the security considerations
+<para>If the acquisition of a file via a mirror fails, the method ensures that another possible mirror
+from the list is automatically tried until either the file is retrieved or no mirror is
+left in the list, transparently handling server downtimes and similar problems.</para>
+<para>The security implications of the transport depend on the security considerations
 associated with the transport used to acquire the mirrorlist and the transports involved in
 accessing the chosen mirror(s) by the transport.</para>
 </refsect1>
 
 <refsect1><title>Options</title>
 <para>This transport has no configuration options at present. The mirror selection is
-based entirely on the mirrors offered in the mirrorlist and the files apt needs to
+based entirely on the mirrors offered in the mirrorlist and the files APT needs to
 acquire.</para>
 
 <refsect2><title>Mirrorlist format</title>
-<para>A mirrorlist contains at least one line each specifying an URI for a mirror.
-Empty lines and those starting with a hash key (<literal>#</literal>) are ignored.
-An URI always starts with a URI scheme which defines the transport used for this
-mirror. If the URI e.g. starts with <literal>http:</literal> the responsible transport
+<para>A mirrorlist contains one or more lines each specifying a URI for a mirror.
+Empty lines and those starting with a hash character (<literal>#</literal>) are ignored.
+A URI always starts with a URI scheme which defines the transport used for this
+mirror. If for example the URI starts with <literal>http:</literal>, the responsible transport
 is &apt-transport-http; which might have specific requirements for the format of
 the remaining part of the URI.</para>
-<para>An URI can optionally be separated from metadata about the mirror by a tab.
-Multiple datapoints in the provided metadata can itself be separated by spaces for tabs.
+<para>Metadata about a mirror can be given on the same line, separated from the URI by a tab.
+Multiple items of metadata can themselves be separated by either tabs or spaces.
 (This is an advanced feature only available with apt >= 1.6. Earlier apt versions will
-fail to parse mirrorlists using this feature)</para>
-<para>Since apt 1.6 the usage of compressed mirrorlists is also supported.
-Note that the filename of the mirrorlist must specify the compression algorithm used,
-there is no auto-detection based on file content performed.</para>
+fail to parse mirrorlists using this feature.)</para>
+<para>Since apt 1.6 the use of compressed mirrorlists is also supported.
+Note that the filename of the mirrorlist must specify the compression algorithm used;
+there is no auto-detection based on file contents.</para>
 </refsect2>
 
 <refsect2><title>Mirror selection by metadata</title>
-<para>As specified in the format a mirror can have additional metadata attached to
+<para>As specified in the format, a mirror can have additional metadata attached to
 prevent a mirror from being selected for acquiring a file not matching this metadata.
 This way the mirrorlist can e.g. contain partial mirrors serving only certain
-architectures and apt will automatically choose a different mirror for files requiring
+architectures and APT will automatically choose a different mirror for files requiring
 an unlisted architecture. Supported are limits for the architecture (<literal>arch</literal>),
 codename of the release (<literal>codename</literal>), component of the repository
 the file is in (<literal>component</literal>), language the file applies to (<literal>lang</literal>),
@@ -76,18 +76,18 @@ suite name of the release (<literal>suite</literal>) and type of the file (<lite
 </refsect2>
 
 <refsect2><title>Fallback order for mirrors</title>
-<para>If no priority is given via the metadata key <literal>priority</literal> for a
-mirror the order in which mirrors are contacted is random. If a certain set of mirrors
-should be tried first before any of another set is tried a priority can be explicitly
+<para>If no priority is given for a mirror via the metadata key <literal>priority</literal>,
+the order in which mirrors are contacted is random. If a certain set of mirrors
+should be tried first before any of another set is tried, a priority can be explicitly
 set. The mirrors with the lowest number are tried first. Mirrors which have no explicit
 priority set default to the highest possible number and are therefore tried last. The
 choice between mirrors with the same priority is again random.</para>
 </refsect2>
 
 <refsect2><title>Allowed transports in a mirrorlist</title>
-<para>The availability and choice of transports in a mirrorlist is limited by how the apt
+<para>The availability and choice of transports in a mirrorlist is limited by how the APT
 client is accessing the mirrorlist. If a local transport like <literal>file</literal>
-or <literal>copy</literal> is used the mirrorlist can also include local sources while a
+or <literal>copy</literal> is used, the mirrorlist can also include local sources, while a
 mirrorlist accessed via <literal>http</literal> can not. Additionally, a mirrorlist can
 not contain a mirrorlist or other wrapping transports (like <package>apt-transport-tor</package>).
 See the documentation of these transports on how to use them with the mirror method.</para>
@@ -109,9 +109,9 @@ on your machine it can be used like this in &sources-list; (since apt 1.6):</par
 <literallayout>
 deb mirror+file:/etc/apt/mirrorlist.txt &debian-stable-codename; main
 </literallayout>
-<para>All versions of the mirror method support a mirrorlist accessible via http, so assuming
+<para>All versions of the mirror method support a mirrorlist accessible via HTTP, so assuming
 it is available at <literal>http://apt.example.org/mirror.lst</literal> the sources.list entry
-from above could be written instead as:</para>
+from above could instead be written as:</para>
 <literallayout>
 deb mirror://apt.example.org/mirror.lst &debian-stable-codename; main
 </literallayout>
@@ -120,10 +120,10 @@ be preferred over <literal>mirror</literal> for uniformity. The functionality is
 </refsect2>
 <refsect2><title>Example with metadata-enhanced mirror selection</title>
 <para>As explained in the format definition apt versions before 1.6 do not support this and
-will fail parsing the mirrorlist. The example mirrorlist is proposefully complicated to show some
-aspects of the selection. The following setup is assumed: The first mirror is local mirror
+will fail parsing the mirrorlist. The example mirrorlist is intentionally complicated to show some
+aspects of the selection. The following setup is assumed: The first mirror is a local mirror
 accessible via the file method, but potentially incomplete. The second mirror has a great
-connection, but is a partial mirror in sofar as it only contains files related
+connection, but is a partial mirror insofar as it only contains files related
 to the architectures <literal>amd64</literal> and <literal>all</literal>. The remaining mirrors
 are average mirrors which should be contacted only if the earlier ones didn't work.
 </para>
@@ -136,8 +136,8 @@ https://deb.debian.org/debian/
 </literallayout>
 <para>In this setup with this mirrorlist the first mirror will be used to download all
 index files assuming the mirrorlist itself is accessed via a local transport like
-<literal>file</literal>. If it isn't, the mirror is otherwise inaccessible or does not
-contain the requested file another mirror will be used to acquire the file, which one
+<literal>file</literal>. If it isn't, if the mirror is otherwise inaccessible or if it does not
+contain the requested file another mirror will be used to acquire the file, chosen
 depending on the type of the file: An index file will be served by the last
 mirror in the list, while a package of architecture <literal>amd64</literal> is served by
 the second and those of e.g. architecture <literal>i386</literal> by one of the last three.</para>
