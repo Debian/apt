@@ -46,7 +46,8 @@ class CDROMMethod : public aptMethod
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
    string GetID(string Name);
    virtual void Exit() APT_OVERRIDE;
-      
+   virtual bool Configuration(std::string Message) APT_OVERRIDE;
+
    public:
    
    CDROMMethod();
@@ -277,9 +278,14 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    return true;
 }
 									/*}}}*/
+bool CDROMMethod::Configuration(std::string Message)			/*{{{*/
+{
+   _config->CndSet("Binary::cdrom::Debug::NoDropPrivs", true);
+   return aptMethod::Configuration(Message);
+}
+									/*}}}*/
 
 int main()
 {
-   _config->CndSet("Binary::cdrom::Debug::NoDropPrivs", true);
    return CDROMMethod().Run();
 }
