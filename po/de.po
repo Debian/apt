@@ -1,6 +1,6 @@
 # German messages for the apt suite.
 # Copyright (C) 1997, 1998, 1999 Jason Gunthorpe and others.
-# Holger Wansing <linux@wansing-online.de>, 2008, 2009, 2010, 2012, 2014.
+# Holger Wansing <linux@wansing-online.de>, 2008, 2009, 2010, 2012, 2014, 2017, 2018.
 # Jens Seidel <jensseidel@users.sf.net>, 2008.
 # Michael Piefel <piefel@informatik.hu-berlin.de>, 2001, 2002, 2003, 2004, 2006.
 # Rüdiger Kuhlmann <Uebersetzung@ruediger-kuhlmann.de>, 2002.
@@ -8,17 +8,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.0.8\n"
+"Project-Id-Version: apt 1.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-01-03 22:34+0000\n"
-"PO-Revision-Date: 2014-09-19 13:04+0100\n"
+"POT-Creation-Date: 2018-01-06 13:55+0100\n"
+"PO-Revision-Date: 2018-01-11 21:11+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
-"Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
-"Language: \n"
+"Language-Team: German <debian-l10n-german@lists.debian.org>\n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;>\n"
+"X-Generator: Lokalize 2.0\n"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -46,9 +47,9 @@ msgid "Failed to read the archive headers"
 msgstr "Archiv-Kopfzeilen konnten nicht gelesen werden."
 
 #: apt-inst/contrib/extracttar.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot find a configured compressor for '%s'"
-msgstr "Authentifizierungs-Datensatz konnte nicht gefunden werden für: %s"
+msgstr "Konfigurierter Kompressionsbefehl für %s konnte nicht gefunden werden."
 
 #: apt-inst/contrib/extracttar.cc
 msgid "Corrupted archive"
@@ -195,49 +196,58 @@ msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
 "disabled by default."
 msgstr ""
+"Eine Aktualisierung von solch einem Depot kann nicht auf eine sichere Art "
+"durchgeführt werden, daher ist es standardmäßig deaktiviert."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Data from such a repository can't be authenticated and is therefore "
 "potentially dangerous to use."
 msgstr ""
+"Daten von solch einem Depot können nicht authentifiziert werden und deren "
+"Nutzung ist daher potentiell gefährlich."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
+"Weitere Details zur Erzeugung von Paketdepots sowie zu deren "
+"Benutzerkonfiguration finden Sie in der Handbuchseite apt-secure(8)."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is no longer signed."
-msgstr "Das Verzeichnis %s ist umgeleitet."
+msgstr "Das Depot »%s« ist nicht mehr signiert."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' no longer has a Release file."
-msgstr "Das Verzeichnis %s ist umgeleitet."
+msgstr "Das Depot »%s« enthält keine Release-Datei mehr."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "This is normally not allowed, but the option Acquire::"
 "AllowDowngradeToInsecureRepositories was given to override it."
 msgstr ""
+"Dies ist normalerweise nicht erlaubt, was aber wegen der angegebenen Option "
+"»Acquire::AllowDowngradeToInsecureRepositories« unbeachtet blieb."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is not signed."
-msgstr "Das Verzeichnis %s ist umgeleitet."
+msgstr "Das Depot »%s« ist nicht signiert."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' does not have a Release file."
-msgstr "Das Verzeichnis %s ist umgeleitet."
+msgstr "Das Depot »%s« enthält keine Release-Datei."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' provides only weak security information."
-msgstr "Das Verzeichnis %s ist umgeleitet."
+msgstr ""
+"Das Depot »%s« stellt nur schwache Sicherheitsinformationen zur Verfügung."
 
 #: apt-pkg/acquire-item.cc ftparchive/writer.cc
 #, c-format
@@ -251,6 +261,8 @@ msgstr "Hash-Summe stimmt nicht überein"
 #: apt-pkg/acquire-item.cc
 msgid "Insufficient information available to perform this download securely"
 msgstr ""
+"Es sind nur unzureichende Informationen verfügbar, um diesen Download auf "
+"sichere Art durchzuführen."
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -266,9 +278,8 @@ msgid "Invalid file format"
 msgstr "Ungültiges Dateiformat"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy
 msgid "Signature error"
-msgstr "Schreibfehler"
+msgstr "Signaturfehler"
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: apt-pkg/acquire-item.cc methods/gpgv.cc
@@ -281,14 +292,14 @@ msgstr ""
 "das Netzwerk eine Authentifizierung?)"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. GPG error: %s: %s"
 msgstr ""
-"Während der Überprüfung der Signatur trat ein Fehler auf. Das Repository "
-"wurde nicht aktualisiert und die vorherigen Indexdateien werden verwendet. "
-"GPG-Fehler: %s: %s\n"
+"Während der Überprüfung der Signatur trat ein Fehler auf. Das Depot wurde "
+"nicht aktualisiert und die vorherigen Indexdateien werden verwendet. GPG-"
+"Fehler: %s: %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
@@ -302,6 +313,9 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
 "component '%s' (component misspelt in sources.list?)"
 msgstr ""
+"Das Laden der konfigurierten Datei »%s« wird übersprungen, da das Depot »%s« "
+"die Komponente »%s« nicht enthält. (Schreibfehler bei der Angabe der "
+"Komponente in sources.list?)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -309,6 +323,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
 msgstr ""
+"Das Laden der konfigurierten Datei »%s« wird übersprungen, da das Depot »%s« "
+"die Architektur »%s« nicht unterstützt."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -316,6 +332,9 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' does not seem to "
 "provide it (sources.list entry misspelt?)"
 msgstr ""
+"Das Laden der konfigurierten Datei »%s« wird übersprungen, da das Depot »%s« "
+"die Datei scheinbar nicht bereitstellt. (Schreibfehler bei der Angabe der "
+"Komponente in sources.list?)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -323,6 +342,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
+"Das Laden der konfigurierten Datei »%s« wird übersprungen, da das Depot »%s« "
+"für diese Datei nur schwache Sicherheitsinformationen bereitstellt."
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -344,12 +365,14 @@ msgstr "Konflikt bei Distribution: %s (%s erwartet, aber %s bekommen)"
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
-msgstr ""
+msgstr "Für das Depot »%s« wurde der »%s«-Wert von »%s« in »%s« geändert."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
 msgstr ""
+"Für das Depot »%s« wurde die Standardpriorität für %s von »%hi« in »%hi« "
+"geändert."
 
 #. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
 #: apt-pkg/acquire-item.cc
@@ -357,6 +380,8 @@ msgstr ""
 msgid ""
 "More information about this can be found online in the Release notes at: %s"
 msgstr ""
+"Weitere Informationen hierzu finden Sie online in den "
+"Veröffentlichungshinweisen unter %s."
 
 #. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
 #: apt-pkg/acquire-item.cc
@@ -365,11 +390,14 @@ msgid ""
 "This must be accepted explicitly before updates for this repository can be "
 "applied. See %s manpage for details."
 msgstr ""
+"Sie müssen dies explizit bestätigen, bevor Aktualisierungen von diesem Depot "
+"angewendet werden können. Lesen Sie die %s-Handbuchseite, wenn Sie weitere "
+"Informationen benötigen."
 
 #: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
 #, c-format
 msgid "Failed to fetch %s  %s"
-msgstr "Fehlschlag beim Holen von %s  %s"
+msgstr "Fehlschlag beim Holen von %s %s"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -390,19 +418,21 @@ msgstr ""
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Changelog unavailable for %s=%s"
-msgstr "Änderungsprotokoll (Changelog) für %s (%s)"
+msgstr "Änderungsprotokoll (Changelog) nicht verfügbar für %s=%s"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "The method '%s' is explicitly disabled via configuration."
-msgstr ""
+msgstr "Die Methode »%s« ist über die Konfiguration explizit deaktiviert."
 
 #: apt-pkg/acquire-worker.cc methods/connect.cc
 #, c-format
 msgid "If you meant to use Tor remember to use %s instead of %s."
 msgstr ""
+"Falls Sie Tor verwenden wollten, denken Sie daran, %s anstatt von %s zu "
+"benutzen."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -420,12 +450,12 @@ msgid "Method %s did not start correctly"
 msgstr "Methode %s ist nicht korrekt gestartet."
 
 #: apt-pkg/acquire-worker.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please insert the disc labeled: '%s' in the drive '%s' and press [Enter]."
 msgstr ""
 "Bitte legen Sie das Medium mit dem Namen »%s« in Laufwerk »%s« ein und "
-"drücken Sie die Eingabetaste (Enter)."
+"drücken Sie die Eingabetaste [Enter]."
 
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
@@ -446,6 +476,8 @@ msgstr "Das Verzeichnis %s kann nicht gesperrt werden."
 #, c-format
 msgid "No sandbox user '%s' on the system, can not drop privileges"
 msgstr ""
+"Kein Sandbox-Benutzer »%s« auf dem System angelegt, Privilegien können nicht "
+"abgegeben werden."
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -453,6 +485,8 @@ msgid ""
 "Download is performed unsandboxed as root as file '%s' couldn't be accessed "
 "by user '%s'."
 msgstr ""
+"Der Download wird als root und nicht Sandbox-geschützt durchgeführt, da auf "
+"die Datei »%s« durch den Benutzer »%s« nicht zugegriffen werden kann."
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
 #, c-format
@@ -681,18 +715,22 @@ msgid "Failed to stat the cdrom"
 msgstr "CD-ROM mit »stat« abfragen fehlgeschlagen"
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option '%c' [from %s] is not understood in combination with the "
 "other options."
-msgstr "Befehlszeilenoption »%c« [aus %s] ist nicht bekannt."
+msgstr ""
+"Befehlszeilenoption »%c« [aus %s] kann in Kombination mit den anderen "
+"Optionen nicht interpretiert werden."
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option %s is not understood in combination with the other "
 "options"
-msgstr "Befehlszeilenoption %s konnte nicht ausgewertet werden."
+msgstr ""
+"Befehlszeilenoption »%s« kann in Kombination mit den anderen Optionen nicht "
+"interpretiert werden."
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -875,7 +913,7 @@ msgstr "Problem beim Schließen der gzip-Datei %s"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Unexpected end of file"
-msgstr ""
+msgstr "Unerwartetes Dateiende (end of file)"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"
@@ -1045,6 +1083,8 @@ msgstr "Auswahl %s nicht gefunden"
 #, c-format
 msgid "Target %s wants to acquire the same file (%s) as %s from source %s"
 msgstr ""
+"Für das Ziel %s soll die gleiche Datei (%s) heruntergeladen werden wie %s "
+"aus der Quelle %s."
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; filename and linenumber of
@@ -1052,7 +1092,7 @@ msgstr ""
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s (%s) is configured multiple times in %s and %s"
-msgstr ""
+msgstr "Ziel %s (%s) ist mehrfach konfiguriert in %s und %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -1075,6 +1115,8 @@ msgid ""
 "No Hash entry in Release file %s which is considered strong enough for "
 "security purposes"
 msgstr ""
+"Kein Hash-Eintrag in der Release-Datei %s vorhanden, der für "
+"Sicherheitsbelange als stark genug angesehen wird."
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -1086,16 +1128,19 @@ msgstr "Ungültiger »%s«-Eintrag in Release-Datei %s"
 #, c-format
 msgid "Conflicting values set for option %s regarding source %s %s"
 msgstr ""
+"Widersprüchliche Werte gesetzt für Option %s betreffend die Quelle %s %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Invalid value set for option %s regarding source %s %s (%s)"
-msgstr ""
+msgstr "Ungültiger Wert gesetzt für Option %s betreffend die Quelle %s %s (%s)"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
 msgstr ""
+"Widersprüchliche Werte gesetzt für Option %s betreffend die Quelle %s %s: "
+"%s != %s"
 
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
@@ -1317,32 +1362,27 @@ msgstr "Vorbereiten, eine Lösung zu erhalten"
 #: apt-pkg/edsp.cc
 msgid "External solver failed without a proper error message"
 msgstr ""
-"Externer Problemlöser ist ohne ordnungsgemäße Fehlermeldung fehlgeschlagen."
+"Externer Problemlöser ohne ordnungsgemäße Fehlermeldung fehlgeschlagen"
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Externen Problemlöser ausführen"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Execute external planner"
-msgstr "Externen Problemlöser ausführen"
+msgstr "Externen Planer ausführen"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send request to planner"
-msgstr "Anfrage an Problemlöser senden"
+msgstr "Anfrage an Planer senden"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send scenario to planner"
-msgstr "Szenario an Problemlöser senden"
+msgstr "Szenario an Planer senden"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "External planner failed without a proper error message"
-msgstr ""
-"Externer Problemlöser ist ohne ordnungsgemäße Fehlermeldung fehlgeschlagen."
+msgstr "Externer Planer ist ohne ordnungsgemäße Fehlermeldung fehlgeschlagen."
 
 #: apt-pkg/indexcopy.cc
 #, c-format
@@ -1440,14 +1480,17 @@ msgid "This APT does not support the versioning system '%s'"
 msgstr "Das Versionssystem »%s« wird durch dieses APT nicht unterstützt."
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The package cache was built for different architectures: %s vs %s"
-msgstr "Der Paketzwischenspeicher wurde für eine andere Architektur aufgebaut."
+msgstr ""
+"Der Paketzwischenspeicher wurde für andere Architekturen aufgebaut: %s <-> "
+"%s"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy
 msgid "The package cache file is corrupted, it has the wrong hash"
-msgstr "Die Paketzwischenspeicher-Datei ist beschädigt, sie ist zu klein."
+msgstr ""
+"Die Paketzwischenspeicher-Datei ist beschädigt, sie hat den falschen Hash-"
+"Wert."
 
 #: apt-pkg/pkgcache.cc
 msgid "Depends"
@@ -1577,6 +1620,7 @@ msgstr "Pinning-Typ %s kann nicht interpretiert werden."
 #, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
+"%s: Wert %s ist außerhalb des Bereichs gültiger Pin-Prioritäten (%d bis %d)"
 
 #: apt-pkg/policy.cc
 msgid "No priority (or zero) specified for pin"
@@ -1584,14 +1628,14 @@ msgstr "Keine Priorität (oder Null) für Pin angegeben"
 
 #. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed entry %u in %s file %s (%s)"
-msgstr "Missgestaltetes Override %s Zeile %llu (%s)"
+msgstr "Missgestalteter Eintrag %u in %s Datei %s (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
-msgstr "Missgestaltete Zeile %u in Quellliste %s (»type«)"
+msgstr "Missgestaltete Zeile %u in Quellliste %s (Typ)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -1599,9 +1643,9 @@ msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Typ »%s« in Zeile %u der Quellliste %s ist unbekannt."
 
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed stanza %u in source list %s (type)"
-msgstr "Missgestaltete Zeile %u in Quellliste %s (»type«)"
+msgstr "Missgestalteter Absatz %u in Quellliste %s (Typ)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -1611,7 +1655,7 @@ msgstr "Typ »%s« ist in Absatz %u der Quellliste %s ist unbekannt."
 #: apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
-msgstr ""
+msgstr "Nicht unterstützte Datei %s auf Befehlszeile angegeben"
 
 #: apt-pkg/srcrecords.cc
 msgid "You must put some 'source' URIs in your sources.list"
@@ -1622,7 +1666,7 @@ msgstr ""
 #: apt-pkg/tagfile.cc
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
-msgstr ""
+msgstr "%s kann nicht in Integer konvertiert werden: außerhalb des Bereichs"
 
 #: apt-pkg/update.cc
 msgid ""
@@ -1673,21 +1717,23 @@ msgid " [Working]"
 msgstr " [Wird verarbeitet]"
 
 #: apt-private/acqprogress.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
 " '%s'\n"
 "in the drive '%s' and press [Enter]\n"
 msgstr ""
 "Medienwechsel: Bitte legen Sie das Medium mit dem Namen\n"
-" »%s«\n"
-"in Laufwerk »%s« ein und drücken Sie die Eingabetaste (Enter).\n"
+"»%s«\n"
+"in Laufwerk »%s« ein und drücken Sie die Eingabetaste [Enter].\n"
 
 #: apt-private/acqprogress.cc
 msgid ""
 "Do you want to accept these changes and continue updating from this "
 "repository?"
 msgstr ""
+"Möchten Sie diese Änderungen übernehmen und mit der Aktualisierung von "
+"diesem Depot fortfahren?"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -1731,9 +1777,9 @@ msgid "Note, selecting '%s' for task '%s'\n"
 msgstr "Hinweis: »%s« wird für Task »%s« gewählt.\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "Hinweis: »%s« wird für regulären Ausdruck »%s« gewählt.\n"
+msgstr "Hinweis: »%s« wird für das Suchmuster »%s« gewählt.\n"
 
 #: apt-private/private-cacheset.cc
 #, c-format
@@ -1746,9 +1792,8 @@ msgid "Package %s is a virtual package provided by:\n"
 msgstr "Paket %s ist ein virtuelles Paket, das bereitgestellt wird von:\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Installed]"
-msgstr " [installiert]"
+msgstr " [Installiert]"
 
 #: apt-private/private-cacheset.cc
 msgid " [Not candidate version]"
@@ -1803,12 +1848,13 @@ msgstr "Hinweis: »%s« wird an Stelle von »%s« gewählt.\n"
 
 #: apt-private/private-cmndline.cc
 msgid "Most used commands:"
-msgstr ""
+msgstr "Meist verwendete Befehle:"
 
 #: apt-private/private-cmndline.cc
 #, c-format
 msgid "See %s for more information about the available commands."
 msgstr ""
+"Lesen Sie %s bezüglich weiterer Informationen über die verfügbaren Befehle."
 
 #: apt-private/private-cmndline.cc
 msgid ""
@@ -1817,6 +1863,13 @@ msgid ""
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
 msgstr ""
+"Konfigurationsoptionen und Syntax sind in apt.conf(5) detailliert "
+"beschrieben.\n"
+"Informationen dazu, wie Quellen konfiguriert werden, finden Sie in sources.\n"
+"list(5).\n"
+"Paket- und Versionsauswahlen können über apt_preferences(5) festgelegt "
+"werden.\n"
+"Details zu Sicherheitsbelangen sind in apt-secure(8) zu finden.\n"
 
 #: apt-private/private-cmndline.cc
 msgid "This APT has Super Cow Powers."
@@ -1831,6 +1884,8 @@ msgid ""
 "--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
+"--force-yes ist veraltet, verwenden Sie stattdessen eine der Optionen, die "
+"mit --allow beginnen."
 
 #: apt-private/private-depends.cc apt-private/private-show.cc
 #: cmdline/apt-mark.cc
@@ -1854,11 +1909,12 @@ msgid "Install these packages without verification?"
 msgstr "Diese Pakete ohne Überprüfung installieren?"
 
 #: apt-private/private-download.cc
-#, fuzzy
 msgid ""
 "There were unauthenticated packages and -y was used without --allow-"
 "unauthenticated"
-msgstr "Es gab Probleme und -y wurde ohne --force-yes verwendet."
+msgstr ""
+"Der Befehl betrifft nicht-authentifizierte Pakete und -y wurde ohne --allow-"
+"unauthenticated verwendet."
 
 #: apt-private/private-download.cc
 #, c-format
@@ -1922,22 +1978,26 @@ msgid "Packages need to be removed but remove is disabled."
 msgstr "Pakete müssen entfernt werden, aber Entfernen ist abgeschaltet."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid ""
 "Essential packages were removed and -y was used without --allow-remove-"
 "essential."
-msgstr "Es gab Probleme und -y wurde ohne --force-yes verwendet."
+msgstr ""
+"Essentielle Pakete wurden entfernt und -y wurde ohne --allow-remove-"
+"essential verwendet."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "Es gab Probleme und -y wurde ohne --force-yes verwendet."
+msgstr ""
+"Für einige Pakete wurde ein Downgrade durchgeführt und -y wurde ohne --allow-"
+"downgrades verwendet."
 
 #: apt-private/private-install.cc
 msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
 msgstr ""
+"Der Status gehaltener Pakete wurde geändert und -y wurde ohne --allow-change-"
+"held-packages verwendet."
 
 #: apt-private/private-install.cc
 msgid "Internal error, Ordering didn't finish"
@@ -1979,7 +2039,8 @@ msgstr "Nach dieser Operation werden %sB Plattenplatz freigegeben.\n"
 
 #: apt-private/private-install.cc
 msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "»Nur triviale« angegeben, aber dies ist keine triviale Operation."
+msgstr ""
+"»--trivial-only« wurde angegeben, aber dies ist keine triviale Operation."
 
 #. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
 #. careful with hard to type or special characters (like non-breaking spaces)
@@ -2093,7 +2154,6 @@ msgstr[0] "Verwenden Sie »%s«, um es zu entfernen."
 msgstr[1] "Verwenden Sie »%s«, um sie zu entfernen."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "The following additional packages will be installed:"
 msgstr "Die folgenden zusätzlichen Pakete werden installiert:"
 
@@ -2383,7 +2443,7 @@ msgstr "Mit Pinning verwaltete Pakete:"
 #: apt-private/private-show.cc
 #, c-format
 msgid "%s -> %s with priority %d\n"
-msgstr ""
+msgstr "%s -> %s mit Priorität %d\n"
 
 #: apt-private/private-show.cc
 msgid "  Installed: "
@@ -2537,11 +2597,14 @@ msgstr ""
 #, c-format
 msgid "Note, using directory '%s' to get the build dependencies\n"
 msgstr ""
+"Hinweis: Verzeichnis »%s« wird verwendet, um die Bauabhängigkeiten zu "
+"bekommen.\n"
 
 #: apt-private/private-source.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, using file '%s' to get the build dependencies\n"
-msgstr "Verarbeitung der Bauabhängigkeiten fehlgeschlagen"
+msgstr ""
+"Hinweis: Datei »%s« wird verwendet, um die Paketabhängigkeiten zu bekommen.\n"
 
 #: apt-private/private-source.cc
 msgid "Failed to process build dependencies"
@@ -2574,6 +2637,8 @@ msgid ""
 "Usage of %s should be preferred over embedding login information directly in "
 "the %s entry for '%s'"
 msgstr ""
+"Die Verwendung von %s sollte gegenüber der Methode bevorzugt werden, Login-"
+"Informationen direkt in den %s-Abschnitt für »%s« einzutragen."
 
 #: apt-private/private-update.cc
 #, c-format
@@ -2592,9 +2657,8 @@ msgid "All packages are up to date."
 msgstr "Alle Pakete sind aktuell."
 
 #: cmdline/apt-cache.cc
-#, fuzzy
 msgid "apt-cache stats does not take any arguments"
-msgstr "Der Befehl »update« akzeptiert keine Argumente."
+msgstr "Der Befehl »apt-cache stats« akzeptiert keine Argumente."
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -2678,6 +2742,17 @@ msgid ""
 "too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
 msgstr ""
+"Aufruf: apt-cache [Optionen] befehl\n"
+"        apt-cache [Optionen] show paket1 [paket2 ...]\n"
+"\n"
+"apt-cache ermöglicht die Abfrage und Anzeige verfügbarer Informationen über\n"
+"installierte und installierbare Pakete. Es arbeitet ausschließlich mit den\n"
+"Daten, die über den »update«-Befehl in den lokalen Zwischenspeicher geladen\n"
+"wurden, z.B. durch apt-get. Die angezeigten Informationen können daher\n"
+"veraltet sein, wenn der letzte Aktualisierungsvorgang schon länger her ist,\n"
+"aber dafür funktioniert es unabhängig von der Verfügbarkeit der "
+"konfigurierten\n"
+"Paketquellen (z.B. kann es auch offline arbeiten).\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -2714,11 +2789,10 @@ msgstr ""
 "5.0.3 Disk 1«"
 
 #: cmdline/apt-cdrom.cc
-#, fuzzy
 msgid "Please insert a Disc in the drive and press [Enter]"
 msgstr ""
 "Bitte legen Sie ein Medium in das Laufwerk ein und drücken Sie die "
-"Eingabetaste (Enter)."
+"Eingabetaste [Enter]."
 
 #: cmdline/apt-cdrom.cc
 #, c-format
@@ -2753,31 +2827,37 @@ msgid ""
 "media types as package sources to APT. The mount point and device\n"
 "information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
+"Aufruf: apt-cdrom [Optionen] befehl\n"
+"\n"
+"apt-cdrom wird verwendet, um CD-ROMs, USB-Speicher und andere Wechselmedien\n"
+"als Paketquelle für APT hinzuzufügen. Der Einbindungspunkt und andere\n"
+"Informationen werden aus apt.conf(5), udev(7) und fstab(5) ermittelt.\n"
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Argumente nicht paarweise"
 
 #: cmdline/apt-config.cc
-#, fuzzy
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
 "apt-config is an interface to the configuration settings used by\n"
 "all APT tools, mainly intended for debugging and shell scripting.\n"
 msgstr ""
-"Aufruf: apt-config [optionen] befehl\n"
+"Aufruf: apt-config [Optionen] befehl\n"
 "\n"
-"apt-config ist ein einfaches Werkzeug, um die APT-Konfigurationsdatei zu "
-"lesen.\n"
+"apt-config ist eine Schnittstelle zu den Konfigurationseinstellungen, die "
+"von\n"
+"den APT-Werkzeugen verwendet werden; es ist hauptsächlich für Fehlersuche\n"
+"und Shell-Skript-Verarbeitung gedacht.\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
-msgstr ""
+msgstr "Konfigurationswerte per Shell-Auswertung laden"
 
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
-msgstr ""
+msgstr "die aktive Konfigurationseinstellung anzeigen"
 
 #: cmdline/apt-dump-solver.cc
 msgid ""
@@ -2786,9 +2866,13 @@ msgid ""
 "apt-dump-solver is an interface to store an EDSP scenario in\n"
 "a file and optionally forwards it to another solver.\n"
 msgstr ""
+"Aufruf: apt-dump-solver\n"
+"\n"
+"apt-dump-solver ist eine Schnittstelle zur Speicherung eines EDSP-Szenarios\n"
+"in einer Datei sowie zur optionalen Weiterleitung an ein anderes Problemlöser-\n"
+"Programm.\n"
 
 #: cmdline/apt-extracttemplates.cc
-#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -2798,14 +2882,10 @@ msgid ""
 msgstr ""
 "Aufruf: apt-extracttemplates datei1 [datei2 ...]\n"
 "\n"
-"apt-extracttemplates ist ein Werkzeug, um Informationen zu Konfiguration\n"
-"und Vorlagen (Templates) aus Debian-Paketen zu extrahieren.\n"
-"\n"
-"Optionen:\n"
-"  -h    Dieser Hilfetext\n"
-"  -t    Das temporäre Verzeichnis setzen\n"
-"  -c=?  Diese Konfigurationsdatei lesen\n"
-"  -o=?  Eine beliebige Konfigurationsoption setzen, z.B. -o dir::cache=/tmp\n"
+"apt-extracttemplates wird verwendet, um Konfigurations- und Vorlagendateien\n"
+"(Templates) aus Debian-Paketen zu extrahieren.\n"
+"Es wird hauptsächlich von debconf(1) genutzt, um vor einer Installation\n"
+"Fragen zur Paketkonfiguration anzuzeigen.\n"
 
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
@@ -2839,7 +2919,6 @@ msgid "Supported modules:"
 msgstr "Unterstützte Module:"
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -2854,9 +2933,10 @@ msgstr ""
 "        apt-get [Optionen] install|remove paket1 [paket2 ...]\n"
 "        apt-get [Optionen] source paket1 [paket2 ...]\n"
 "\n"
-"apt-get ist ein einfaches Befehlszeilenwerkzeug zum Herunterladen\n"
-"und Installieren von Paketen. Die am häufigsten benutzten Befehle\n"
-"sind update und install.\n"
+"apt-get ist ein Befehlszeilenwerkzeug zum Herunterladen von Paketen (und\n"
+"Informationen zu diesen Paketen) von authentifizierten Paketquellen sowie\n"
+"für deren Installation, Aktualisierung und Entfernung zusammen mit ihren\n"
+"Paketabhängigkeiten.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -2935,10 +3015,9 @@ msgstr "Herunterladen fehlgeschlagen"
 #: cmdline/apt-helper.cc
 #, c-format
 msgid "GetSrvRec failed for %s"
-msgstr ""
+msgstr "GetSrvRec für %s fehlgeschlagen"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] cat-file file ...\n"
@@ -2947,10 +3026,15 @@ msgid ""
 "apt-helper bundles a variety of commands for shell scripts to use\n"
 "e.g. the same proxy configuration or acquire system as APT would.\n"
 msgstr ""
-"Aufruf: apt-helper [Optionen] Befehl\n"
+"Aufruf: apt-helper [Optionen] befehl\n"
+"        apt-helper [Optionen] cat-file datei ...\n"
 "        apt-helper [Optionen] download-file URI Zielpfad\n"
 "\n"
-"apt-helper ist ein internes Hilfsprogramm für apt.\n"
+"apt-helper vereint eine Vielzahl von Befehlen zur Shell-Skript-"
+"Verarbeitung,\n"
+"um z.B. die gleiche Proxy-Konfiguration oder das gleiche Acquire-System "
+"(zum\n"
+"Herunterladen von Paketen) zu benutzen, wie APT es tun würde.\n"
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -2958,11 +3042,11 @@ msgstr "den angegebenen URI in den Zielpfad herunterladen"
 
 #: cmdline/apt-helper.cc
 msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr ""
+msgstr "einen SRV-Eintrag abfragen (z.B. _http._tcp.ftp.debian.org)"
 
 #: cmdline/apt-helper.cc
 msgid "concatenate files, with automatic decompression"
-msgstr ""
+msgstr "verketten von Dateien, mit automatischer Dekomprimierung"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
@@ -2970,10 +3054,9 @@ msgstr "erkennen eines Proxy-Servers mittels apt.conf"
 
 #: cmdline/apt-helper.cc
 msgid "wait for system to be online"
-msgstr ""
+msgstr "warten, bis das System online ist"
 
 #: cmdline/apt-internal-planner.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-planner\n"
 "\n"
@@ -2981,20 +3064,13 @@ msgid ""
 "installation planner for the APT family like an external one,\n"
 "for debugging or the like.\n"
 msgstr ""
-"Aufruf: apt-internal-solver\n"
+"Aufruf: apt-internal-planer\n"
 "\n"
-"apt-internal-solver ist eine Schnittstelle, um den derzeitigen internen\n"
-"Problemlöser für die APT-Familie wie einen externen zu verwenden, zwecks\n"
-"Fehlersuche oder ähnlichem.\n"
-"\n"
-"Optionen:\n"
-"  -h   dieser Hilfetext\n"
-"  -q   protokollierbare Ausgabe – keine Fortschrittsanzeige\n"
-"  -c=? Diese Konfigurationsdatei benutzen\n"
-"  -o=? Beliebige Konfigurationsoption setzen, z.B. -o dir::cache=/tmp\n"
+"apt-internal-planer ist eine Schnittstelle, um den derzeitigen internen\n"
+"Installations-Planer aus der APT-Familie wie einen externen zu verwenden,\n"
+"zwecks Fehlersuche oder ähnlichem.\n"
 
 #: cmdline/apt-internal-solver.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -3005,14 +3081,8 @@ msgstr ""
 "Aufruf: apt-internal-solver\n"
 "\n"
 "apt-internal-solver ist eine Schnittstelle, um den derzeitigen internen\n"
-"Problemlöser für die APT-Familie wie einen externen zu verwenden, zwecks\n"
+"Problemlöser aus der APT-Familie wie einen externen zu verwenden, zwecks\n"
 "Fehlersuche oder ähnlichem.\n"
-"\n"
-"Optionen:\n"
-"  -h   dieser Hilfetext\n"
-"  -q   protokollierbare Ausgabe – keine Fortschrittsanzeige\n"
-"  -c=? Diese Konfigurationsdatei benutzen\n"
-"  -o=? Beliebige Konfigurationsoption setzen, z.B. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -3057,20 +3127,19 @@ msgstr "Halten-Markierung für %s entfernt.\n"
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for purge.\n"
-msgstr ""
+msgstr "%s zum vollständigen Entfernen vorgewählt.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for removal.\n"
-msgstr ""
+msgstr "%s zum Entfernen vorgewählt.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for installation.\n"
-msgstr ""
+msgstr "%s zur Installation vorgewählt.\n"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -3081,9 +3150,12 @@ msgid ""
 msgstr ""
 "Aufruf: apt-mark [Optionen] {auto|manual} paket1 [paket2 ...]\n"
 "\n"
-"apt-mark ist ein einfaches Befehlszeilenprogramm, um Pakete als manuell\n"
-"oder automatisch installiert zu markieren. Diese Markierungen können auch\n"
-"aufgelistet werden.\n"
+"apt-mark ist ein einfaches Befehlszeilenprogramm, um Pakete als manuell "
+"oder\n"
+"automatisch installiert zu markieren. Es kann auch verwendet werden, um den\n"
+"von dpkg(1) gesetzten Auswahlstatus von Paketen zu verändern oder alle "
+"Pakete\n"
+"aufzulisten, die eine bestimmte Markierung haben oder nicht haben.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -3125,6 +3197,15 @@ msgid ""
 "By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
+"Aufruf: apt-sortpkgs [options] datei1 [datei2 ...]\n"
+"\n"
+"apt-sortpkgs ist ein einfaches Werkzeug zur Sortierung von "
+"Paketinformations-\n"
+"dateien. Standardmäßig sortiert es nach binären Paketinformationen, aber "
+"die\n"
+"Option -s kann verwendet werden, um stattdessen nach "
+"Quellpaketinformationen\n"
+"zu sortieren.\n"
 
 #: cmdline/apt.cc
 msgid ""
@@ -3136,6 +3217,14 @@ msgid ""
 "like apt-get and apt-cache, but enables options more suitable for\n"
 "interactive use by default.\n"
 msgstr ""
+"Aufruf: apt [Optionen] befehl\n"
+"\n"
+"apt ist ein Paketmanager für die Befehlszeile und bietet Befehle für die\n"
+"Suche und Verwaltung von Paketen sowie für die Abfrage von Informationen\n"
+"zu diesen Paketen.\n"
+"Es stellt die gleiche Funktionalität zur Verfügung wie die spezialisierten\n"
+"APT-Werkzeuge apt-get und apt-cache, aber seine Optionen sind eher passend\n"
+"für die interaktive Nutzung.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -3184,9 +3273,8 @@ msgid "Bad default setting!"
 msgstr "Fehlerhafte Voreinstellung!"
 
 #: dselect/install dselect/update
-#, fuzzy
 msgid "Press [Enter] to continue."
-msgstr "Zum Fortfahren die Eingabetaste (Enter) drücken."
+msgstr "Zum Fortfahren die Eingabetaste [Enter] drücken."
 
 #: dselect/install
 msgid "Do you want to erase any previously downloaded .deb files?"
@@ -3561,6 +3649,8 @@ msgstr "Verbindung fehlgeschlagen"
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
+"Datei hat eine unerwartete Größe (%llu != %llu). Eventuell läuft gerade eine "
+"Spiegel-Synchronisierung?"
 
 #: methods/basehttp.cc
 #, c-format
@@ -3568,6 +3658,8 @@ msgid ""
 "Automatically disabled %s due to incorrect response from server/proxy. (man "
 "5 apt.conf)"
 msgstr ""
+"Funktion %s aufgrund inkorrekter Antwort vom Server/Proxy automatisch "
+"deaktiviert. Näheres unter apt.conf(5)."
 
 #: methods/basehttp.cc
 msgid "Internal error"
@@ -3609,7 +3701,7 @@ msgstr "Datei nicht gefunden"
 #: methods/connect.cc
 #, c-format
 msgid "Direct connection to %s domains is blocked by default."
-msgstr ""
+msgstr "Direkte Verbindung zu %s-Domains wird standardmäßig blockiert."
 
 #: methods/connect.cc
 #, c-format
@@ -3617,10 +3709,9 @@ msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
 
 #: methods/connect.cc
-#, fuzzy, c-format
-#| msgid "Connecting to %s (%s)"
+#, c-format
 msgid "Connected to %s (%s)"
-msgstr "Verbindung mit %s (%s)"
+msgstr "Verbunden mit %s (%s)"
 
 #: methods/connect.cc methods/http.cc
 #, c-format
@@ -3650,8 +3741,8 @@ msgstr "Verbindung mit %s:%s nicht möglich (%s)"
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr ""
-"Verbindung mit %s:%s konnte nicht aufgebaut werden (%s), eine "
-"Zeitüberschreitung trat auf."
+"Verbindung mit %s:%s konnte nicht aufgebaut werden (%s), "
+"Zeitüberschreitung aufgetreten"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3837,12 +3928,12 @@ msgstr "Aufruf nicht möglich: "
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Signed file isn't valid, got '%s' (does the network require authentication?)"
 msgstr ""
-"Durch Clearsign signierte Datei ist nicht gültig, »%s« erhalten (erfordert "
-"das Netzwerk eine Authentifizierung?)"
+"Signierte Datei ist nicht gültig, »%s« erhalten. (Erfordert das Netzwerk "
+"eine Authentifizierung?)"
 
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
@@ -3870,6 +3961,8 @@ msgstr "Unbekannter Fehler beim Ausführen von apt-key"
 #, c-format
 msgid "Signature by key %s uses weak digest algorithm (%s)"
 msgstr ""
+"Signatur von Schlüssel %s verwendet einen schwachen "
+"Hash-Algorithmus (%s)"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
