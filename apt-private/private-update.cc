@@ -32,7 +32,7 @@ bool DoUpdate(CommandLine &CmdL)
    if (CmdL.FileSize() != 1)
       return _error->Error(_("The update command takes no arguments"));
 
-  return PerformUpdate()
+  return PerformUpdate();
 }
                   /*}}}*/
 bool PerformUpdate()          /*{{{*/
