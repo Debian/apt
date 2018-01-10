@@ -19,9 +19,9 @@ check_power()
     #       255 (false) Power status could not be determined
     # Desktop systems always return 255 it seems
     if which on_ac_power >/dev/null 2>&1; then
-        on_ac_power
-        POWER=$?
-        if [ $POWER -eq 1 ]; then
+        if on_ac_power; then
+            :
+        elif [ $? -eq 1 ]; then
             return 1
         fi
     fi
