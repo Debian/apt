@@ -24,7 +24,7 @@ testdownloadfile() {
 	else
 		msgpass
 	fi
-	sed -e '/^ <- / s#%20# #g' -e '/^ <- / s#%0a#\n#g' "$DOWNLOADLOG" | grep '^.*-Hash: ' > receivedhashes.log
+	sed -e '/^ <- / s#%20# #g' -e '/^ <- / s#%0a#\n#g' "$DOWNLOADLOG" | grep '^.*-Hash: ' > receivedhashes.log || true
 	testsuccess test -s receivedhashes.log
 	local HASHES_OK=0
 	local HASHES_BAD=0

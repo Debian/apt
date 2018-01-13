@@ -398,7 +398,8 @@ testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=true
 
 
 partialleftovers() { generatepartialleftovers "redirectme_Packages.${LOWCOSTEXT}" "redirectme_Packages-patched.${LOWCOSTEXT}"; }
-webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "http://0.0.0.0:${APTHTTPPORT}/"
+# redirect the InRelease file only – the other files are auto-redirected by apt
+webserverconfig 'aptwebserver::redirect::replace::/redirectme/I' "http://0.0.0.0:${APTHTTPPORT}/I"
 rewritesourceslist "http://localhost:${APTHTTPPORT}/redirectme"
 aptautotest_apt_update() {
 	aptautotest_aptget_update "$@"

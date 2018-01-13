@@ -399,18 +399,23 @@ bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
       return false;
    }
    // If we got the InRelease file via a mirror, pick all indexes directly from this mirror, too
-   if (TransactionManager->BaseURI.empty() == false && UsedMirror.empty() &&
-	 URI::SiteOnly(Item.URI) != URI::SiteOnly(TransactionManager->BaseURI))
+   if (TransactionManager->BaseURI.empty() == false && TransactionManager->UsedMirror.empty() == false &&
+       URI::SiteOnly(Item.URI) != URI::SiteOnly(TransactionManager->BaseURI))
    {
       // this ensures we rewrite only once and only the first step
       auto const OldBaseURI = Target.Option(IndexTarget::BASE_URI);
       if (OldBaseURI.empty() == false && APT::String::Startswith(Item.URI, OldBaseURI))
       {
 	 auto const ExtraPath = Item.URI.substr(OldBaseURI.length());
-	 Item.URI = flCombine(TransactionManager->BaseURI, ExtraPath);
-	 UsedMirror = TransactionManager->UsedMirror;
-	 if (Item.Description.find(" ") != string::npos)
-	    Item.Description.replace(0, Item.Description.find(" "), UsedMirror);
+	 auto newURI = flCombine(TransactionManager->BaseURI, ExtraPath);
+	 if (IsGoodAlternativeURI(newURI))
+	 {
+	    PushAlternativeURI(std::string(Item.URI), {}, false);
+	    Item.URI = std::move(newURI);
+	    UsedMirror = TransactionManager->UsedMirror;
+	    if (Item.Description.find(" ") != string::npos)
+	       Item.Description.replace(0, Item.Description.find(" "), UsedMirror);
+	 }
       }
    }
    return pkgAcquire::Item::QueueURI(Item);
@@ -686,11 +691,12 @@ class pkgAcquire::Item::Private
 public:
    struct AlternateURI
    {
-      std::string const URI;
+      std::string URI;
       std::unordered_map<std::string, std::string> changefields;
       AlternateURI(std::string &&u, decltype(changefields) &&cf) : URI(u), changefields(cf) {}
    };
    std::list<AlternateURI> AlternativeURIs;
+   std::vector<std::string> BadAlternativeSites;
    std::vector<std::string> PastRedirections;
    std::unordered_map<std::string, std::string> CustomFields;
    unsigned int Retries;
@@ -749,12 +755,30 @@ bool pkgAcquire::Item::PopAlternativeURI(std::string &NewURI) /*{{{*/
    return true;
 }
 									/*}}}*/
+bool pkgAcquire::Item::IsGoodAlternativeURI(std::string const &AltUri) const/*{{{*/
+{
+   return std::find(d->PastRedirections.cbegin(), d->PastRedirections.cend(), AltUri) == d->PastRedirections.cend() &&
+	 std::find(d->BadAlternativeSites.cbegin(), d->BadAlternativeSites.cend(), URI::SiteOnly(AltUri)) == d->BadAlternativeSites.cend();
+}
+									/*}}}*/
 void pkgAcquire::Item::PushAlternativeURI(std::string &&NewURI, std::unordered_map<std::string, std::string> &&fields, bool const at_the_back) /*{{{*/
 {
+   if (IsGoodAlternativeURI(NewURI) == false)
+      return;
    if (at_the_back)
       d->AlternativeURIs.emplace_back(std::move(NewURI), std::move(fields));
    else
       d->AlternativeURIs.emplace_front(std::move(NewURI), std::move(fields));
+}
+									/*}}}*/
+void pkgAcquire::Item::RemoveAlternativeSite(std::string &&OldSite) /*{{{*/
+{
+   d->AlternativeURIs.erase(std::remove_if(d->AlternativeURIs.begin(), d->AlternativeURIs.end(),
+					   [&](decltype(*d->AlternativeURIs.cbegin()) AltUri) {
+					      return URI::SiteOnly(AltUri.URI) == OldSite;
+					   }),
+			    d->AlternativeURIs.end());
+   d->BadAlternativeSites.push_back(std::move(OldSite));
 }
 									/*}}}*/
 unsigned int &pkgAcquire::Item::ModifyRetries() /*{{{*/
@@ -2231,7 +2255,7 @@ void pkgAcqDiffIndex::QueueOnIMSHit() const				/*{{{*/
 {
    // list cleanup needs to know that this file as well as the already
    // present index is ours, so we create an empty diff to save it for us
-   new pkgAcqIndexDiffs(Owner, TransactionManager, Target, UsedMirror, Target.URI);
+   new pkgAcqIndexDiffs(Owner, TransactionManager, Target, Target.URI);
 }
 									/*}}}*/
 static bool RemoveFileForBootstrapLinking(std::string &ErrorText, std::string const &For, std::string const &Boot)/*{{{*/
@@ -2585,7 +2609,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 									/*}}}*/
 void pkgAcqDiffIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)/*{{{*/
 {
-   if (CommonFailed(GetDiffIndexURI(Target), GetDiffIndexFileName(Target.Description), Message, Cnf))
+   if (CommonFailed(GetDiffIndexURI(Target), Message, Cnf))
       return;
 
    RenameOnError(PDiffError);
@@ -2649,15 +2673,15 @@ void pkgAcqDiffIndex::Done(string const &Message,HashStringList const &Hashes,	/
       }
 
       if (pdiff_merge == false)
-	 new pkgAcqIndexDiffs(Owner, TransactionManager, Target, UsedMirror, indexURI, available_patches);
+	 new pkgAcqIndexDiffs(Owner, TransactionManager, Target, indexURI, available_patches);
       else
       {
 	 diffs = new std::vector<pkgAcqIndexMergeDiffs*>(available_patches.size());
 	 for(size_t i = 0; i < available_patches.size(); ++i)
 	    (*diffs)[i] = new pkgAcqIndexMergeDiffs(Owner, TransactionManager,
-		  Target, UsedMirror, indexURI,
-		  available_patches[i],
-		  diffs);
+						    Target, indexURI,
+						    available_patches[i],
+						    diffs);
       }
    }
 
@@ -2681,13 +2705,13 @@ pkgAcqDiffIndex::~pkgAcqDiffIndex()
 /* The package diff is added to the queue. one object is constructed
  * for each diff and the index
  */
-pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire * const Owner,
-                                   pkgAcqMetaClearSig * const TransactionManager,
-                                   IndexTarget const &Target,
-				   std::string const &indexUsedMirror, std::string const &indexURI,
+pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *const Owner,
+				   pkgAcqMetaClearSig *const TransactionManager,
+				   IndexTarget const &Target,
+				   std::string const &indexURI,
 				   vector<DiffInfo> const &diffs)
-   : pkgAcqBaseIndex(Owner, TransactionManager, Target), indexURI(indexURI),
-     available_patches(diffs)
+    : pkgAcqBaseIndex(Owner, TransactionManager, Target), indexURI(indexURI),
+      available_patches(diffs)
 {
    DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
 
@@ -2696,12 +2720,6 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire * const Owner,
    Desc.Owner = this;
    Description = Target.Description;
    Desc.ShortDesc = Target.ShortDesc;
-
-   UsedMirror = indexUsedMirror;
-   if (UsedMirror == "DIRECT")
-      UsedMirror.clear();
-   else if (UsedMirror.empty() == false && Description.find(" ") != string::npos)
-      Description.replace(0, Description.find(" "), UsedMirror);
 
    if(available_patches.empty() == true)
    {
@@ -2870,7 +2888,7 @@ void pkgAcqIndexDiffs::Done(string const &Message, HashStringList const &Hashes,
 	 // see if there is more to download
 	 if(available_patches.empty() == false)
 	 {
-	    new pkgAcqIndexDiffs(Owner, TransactionManager, Target, UsedMirror, indexURI, available_patches);
+	    new pkgAcqIndexDiffs(Owner, TransactionManager, Target, indexURI, available_patches);
 	    Finish();
 	 } else {
 	    DestFile = PatchedFile;
@@ -2896,23 +2914,17 @@ std::string pkgAcqIndexDiffs::Custom600Headers() const			/*{{{*/
 pkgAcqIndexDiffs::~pkgAcqIndexDiffs() {}
 
 // AcqIndexMergeDiffs::AcqIndexMergeDiffs - Constructor			/*{{{*/
-pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire * const Owner,
-                                             pkgAcqMetaClearSig * const TransactionManager,
-                                             IndexTarget const &Target,
-					     std::string const &indexUsedMirror, std::string const &indexURI,
-                                             DiffInfo const &patch,
-                                             std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
-  : pkgAcqBaseIndex(Owner, TransactionManager, Target), indexURI(indexURI),
-    patch(patch), allPatches(allPatches), State(StateFetchDiff)
+pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *const Owner,
+					     pkgAcqMetaClearSig *const TransactionManager,
+					     IndexTarget const &Target,
+					     std::string const &indexURI,
+					     DiffInfo const &patch,
+					     std::vector<pkgAcqIndexMergeDiffs *> const *const allPatches)
+    : pkgAcqBaseIndex(Owner, TransactionManager, Target), indexURI(indexURI),
+      patch(patch), allPatches(allPatches), State(StateFetchDiff)
 {
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
-
    Description = Target.Description;
-   UsedMirror = indexUsedMirror;
-   if (UsedMirror == "DIRECT")
-      UsedMirror.clear();
-   else if (UsedMirror.empty() == false && Description.find(" ") != string::npos)
-      Description.replace(0, Description.find(" "), UsedMirror);
 
    Desc.Owner = this;
    Desc.ShortDesc = Target.ShortDesc;
@@ -3170,24 +3182,10 @@ string pkgAcqIndex::Custom600Headers() const
 }
 									/*}}}*/
 // AcqIndex::Failed - getting the indexfile failed			/*{{{*/
-bool pkgAcqIndex::CommonFailed(std::string const &TargetURI, std::string const TargetDesc,
-      std::string const &Message, pkgAcquire::MethodConfig const * const Cnf)
+bool pkgAcqIndex::CommonFailed(std::string const &TargetURI,
+			       std::string const &Message, pkgAcquire::MethodConfig const *const Cnf)
 {
    pkgAcqBaseIndex::Failed(Message,Cnf);
-
-   if (UsedMirror.empty() == false && UsedMirror != "DIRECT" &&
-	 LookupTag(Message, "FailReason") == "HttpError404")
-   {
-      UsedMirror = "DIRECT";
-      if (Desc.URI.find("/by-hash/") != std::string::npos)
-	 CompressionExtensions = "by-hash " + CompressionExtensions;
-      else
-	 CompressionExtensions = CurrentCompressionExtension + ' ' + CompressionExtensions;
-      Init(TargetURI, TargetDesc, Desc.ShortDesc);
-      Status = StatIdle;
-      return true;
-   }
-
    // authorisation matches will not be fixed by other compression types
    if (Status != StatAuthError)
    {
@@ -3202,7 +3200,7 @@ bool pkgAcqIndex::CommonFailed(std::string const &TargetURI, std::string const T
 }
 void pkgAcqIndex::Failed(string const &Message,pkgAcquire::MethodConfig const * const Cnf)
 {
-   if (CommonFailed(Target.URI, Target.Description, Message, Cnf))
+   if (CommonFailed(Target.URI, Message, Cnf))
       return;
 
    if(Target.IsOptional && GetExpectedHashes().empty() && Stage == STAGE_DOWNLOAD)
