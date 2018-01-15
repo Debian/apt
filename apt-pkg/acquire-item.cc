@@ -398,26 +398,45 @@ bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
       Status = StatDone;
       return false;
    }
+   // this ensures we rewrite only once and only the first step
+   auto const OldBaseURI = Target.Option(IndexTarget::BASE_URI);
+   if (OldBaseURI.empty() || APT::String::Startswith(Item.URI, OldBaseURI) == false)
+      return pkgAcquire::Item::QueueURI(Item);
+
+   std::vector<std::string> urls = {Item.URI};
    // If we got the InRelease file via a mirror, pick all indexes directly from this mirror, too
    if (TransactionManager->BaseURI.empty() == false && TransactionManager->UsedMirror.empty() == false &&
        URI::SiteOnly(Item.URI) != URI::SiteOnly(TransactionManager->BaseURI))
    {
-      // this ensures we rewrite only once and only the first step
-      auto const OldBaseURI = Target.Option(IndexTarget::BASE_URI);
-      if (OldBaseURI.empty() == false && APT::String::Startswith(Item.URI, OldBaseURI))
+      auto ExtraPath = Item.URI.substr(OldBaseURI.length());
+      auto newURI = flCombine(TransactionManager->BaseURI, std::move(ExtraPath));
+      if (IsGoodAlternativeURI(newURI))
       {
-	 auto const ExtraPath = Item.URI.substr(OldBaseURI.length());
-	 auto newURI = flCombine(TransactionManager->BaseURI, ExtraPath);
-	 if (IsGoodAlternativeURI(newURI))
-	 {
-	    PushAlternativeURI(std::string(Item.URI), {}, false);
-	    Item.URI = std::move(newURI);
-	    UsedMirror = TransactionManager->UsedMirror;
-	    if (Item.Description.find(" ") != string::npos)
-	       Item.Description.replace(0, Item.Description.find(" "), UsedMirror);
-	 }
+	 urls.push_back(std::move(newURI));
+	 UsedMirror = TransactionManager->UsedMirror;
+	 if (Item.Description.find(" ") != string::npos)
+	    Item.Description.replace(0, Item.Description.find(" "), UsedMirror);
       }
    }
+   // add URI and by-hash based on it
+   auto const Expected = GetExpectedHashes();
+   auto const TargetHash = Expected.find(nullptr);
+   auto const useByHash = AcquireByHash();
+   for (auto &&U : urls)
+   {
+      PushAlternativeURI(std::string(U), {}, false);
+      if (useByHash == false || unlikely(TargetHash == nullptr))
+	 continue;
+      auto const trailing_slash = U.find_last_of("/");
+      if (unlikely(trailing_slash == std::string::npos))
+	 continue;
+      auto byhashSuffix = "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
+      U.replace(trailing_slash, U.length() - trailing_slash, std::move(byhashSuffix));
+      PushAlternativeURI(std::move(U), {}, false);
+   }
+   // the last URI added is the first one tried
+   if (unlikely(PopAlternativeURI(Item.URI) == false))
+      return false;
    return pkgAcquire::Item::QueueURI(Item);
 }
 /* The transition manager InRelease itself (or its older sisters-in-law
@@ -622,6 +641,26 @@ bool pkgAcqDiffIndex::TransactionState(TransactionStates const state)
    }
 
    return true;
+}
+									/*}}}*/
+// pkgAcqTransactionItem::AcquireByHash and specialisations for child classes	/*{{{*/
+bool pkgAcqTransactionItem::AcquireByHash() const
+{
+   if (TransactionManager->MetaIndexParser == nullptr)
+      return false;
+   auto const useByHashConf = Target.Option(IndexTarget::BY_HASH);
+   if (useByHashConf == "force")
+      return true;
+   return StringToBool(useByHashConf) == true && TransactionManager->MetaIndexParser->GetSupportsAcquireByHash();
+}
+// pdiff patches have a unique name already, no need for by-hash
+bool pkgAcqIndexMergeDiffs::AcquireByHash() const
+{
+   return false;
+}
+bool pkgAcqIndexDiffs::AcquireByHash() const
+{
+   return false;
 }
 									/*}}}*/
 
@@ -1453,7 +1492,6 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 
    std::set<std::string> targetsSeen;
    bool const hasReleaseFile = TransactionManager->MetaIndexParser != NULL;
-   bool const metaBaseSupportsByHash = hasReleaseFile && TransactionManager->MetaIndexParser->GetSupportsAcquireByHash();
    bool hasHashes = true;
    auto IndexTargets = TransactionManager->MetaIndexParser->GetIndexTargets();
    if (hasReleaseFile && verify == false)
@@ -1589,15 +1627,6 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	 if (types.empty() == false)
 	 {
 	    std::ostringstream os;
-	    // add the special compressiontype byhash first if supported
-	    std::string const useByHashConf = Target.Option(IndexTarget::BY_HASH);
-	    bool useByHash = false;
-	    if(useByHashConf == "force")
-	       useByHash = true;
-	    else
-	       useByHash = StringToBool(useByHashConf) == true && metaBaseSupportsByHash;
-	    if (useByHash == true)
-	       os << "by-hash ";
 	    std::copy(types.begin(), types.end()-1, std::ostream_iterator<std::string>(os, " "));
 	    os << *types.rbegin();
 	    Target.Options["COMPRESSIONTYPES"] = os.str();
@@ -2243,8 +2272,6 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire * const Owner,
 	 CompressionExtensions = os.str();
       }
    }
-   if (Target.Option(IndexTarget::COMPRESSIONTYPES).find("by-hash") != std::string::npos)
-      CompressionExtensions = "by-hash " + CompressionExtensions;
    Init(GetDiffIndexURI(Target), GetDiffIndexFileName(Target.Description), Target.ShortDesc);
 
    if(Debug)
@@ -2255,7 +2282,7 @@ void pkgAcqDiffIndex::QueueOnIMSHit() const				/*{{{*/
 {
    // list cleanup needs to know that this file as well as the already
    // present index is ours, so we create an empty diff to save it for us
-   new pkgAcqIndexDiffs(Owner, TransactionManager, Target, Target.URI);
+   new pkgAcqIndexDiffs(Owner, TransactionManager, Target);
 }
 									/*}}}*/
 static bool RemoveFileForBootstrapLinking(std::string &ErrorText, std::string const &For, std::string const &Boot)/*{{{*/
@@ -2655,31 +2682,14 @@ void pkgAcqDiffIndex::Done(string const &Message,HashStringList const &Hashes,	/
    }
    else
    {
-      // we have something, queue the diffs
-      string::size_type const last_space = Description.rfind(" ");
-      if(last_space != string::npos)
-	 Description.erase(last_space, Description.size()-last_space);
-
-      std::string indexURI = Desc.URI;
-      auto const byhashidx = indexURI.find("/by-hash/");
-      if (byhashidx != std::string::npos)
-	 indexURI = indexURI.substr(0, byhashidx - strlen(".diff"));
-      else
-      {
-	 auto end = indexURI.length() - strlen(".diff/Index");
-	 if (CurrentCompressionExtension != "uncompressed")
-	    end -= (1 + CurrentCompressionExtension.length());
-	 indexURI = indexURI.substr(0, end);
-      }
-
       if (pdiff_merge == false)
-	 new pkgAcqIndexDiffs(Owner, TransactionManager, Target, indexURI, available_patches);
+	 new pkgAcqIndexDiffs(Owner, TransactionManager, Target, available_patches);
       else
       {
 	 diffs = new std::vector<pkgAcqIndexMergeDiffs*>(available_patches.size());
 	 for(size_t i = 0; i < available_patches.size(); ++i)
 	    (*diffs)[i] = new pkgAcqIndexMergeDiffs(Owner, TransactionManager,
-						    Target, indexURI,
+						    Target,
 						    available_patches[i],
 						    diffs);
       }
@@ -2708,9 +2718,8 @@ pkgAcqDiffIndex::~pkgAcqDiffIndex()
 pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *const Owner,
 				   pkgAcqMetaClearSig *const TransactionManager,
 				   IndexTarget const &Target,
-				   std::string const &indexURI,
 				   vector<DiffInfo> const &diffs)
-    : pkgAcqBaseIndex(Owner, TransactionManager, Target), indexURI(indexURI),
+    : pkgAcqBaseIndex(Owner, TransactionManager, Target),
       available_patches(diffs)
 {
    DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
@@ -2718,7 +2727,6 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *const Owner,
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
    Desc.Owner = this;
-   Description = Target.Description;
    Desc.ShortDesc = Target.ShortDesc;
 
    if(available_patches.empty() == true)
@@ -2835,8 +2843,8 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    }
 
    // queue the right diff
-   Desc.URI = indexURI + ".diff/" + available_patches[0].file + ".gz";
-   Desc.Description = Description + " " + available_patches[0].file + string(".pdiff");
+   Desc.URI = Target.URI + ".diff/" + available_patches[0].file + ".gz";
+   Desc.Description = Target.Description + " " + available_patches[0].file + string(".pdiff");
    DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI + ".diff/" + available_patches[0].file), Target);
 
    if(Debug)
@@ -2888,7 +2896,7 @@ void pkgAcqIndexDiffs::Done(string const &Message, HashStringList const &Hashes,
 	 // see if there is more to download
 	 if(available_patches.empty() == false)
 	 {
-	    new pkgAcqIndexDiffs(Owner, TransactionManager, Target, indexURI, available_patches);
+	    new pkgAcqIndexDiffs(Owner, TransactionManager, Target, available_patches);
 	    Finish();
 	 } else {
 	    DestFile = PatchedFile;
@@ -2917,19 +2925,17 @@ pkgAcqIndexDiffs::~pkgAcqIndexDiffs() {}
 pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *const Owner,
 					     pkgAcqMetaClearSig *const TransactionManager,
 					     IndexTarget const &Target,
-					     std::string const &indexURI,
 					     DiffInfo const &patch,
 					     std::vector<pkgAcqIndexMergeDiffs *> const *const allPatches)
-    : pkgAcqBaseIndex(Owner, TransactionManager, Target), indexURI(indexURI),
+    : pkgAcqBaseIndex(Owner, TransactionManager, Target),
       patch(patch), allPatches(allPatches), State(StateFetchDiff)
 {
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
-   Description = Target.Description;
 
    Desc.Owner = this;
    Desc.ShortDesc = Target.ShortDesc;
-   Desc.URI = indexURI + ".diff/" + patch.file + ".gz";
-   Desc.Description = Description + " " + patch.file + ".pdiff";
+   Desc.URI = Target.URI + ".diff/" + patch.file + ".gz";
+   Desc.Description = Target.Description + " " + patch.file + ".pdiff";
    DestFile = GetPartialFileNameFromURI(Target.URI + ".diff/" + patch.file + ".gz");
 
    if(Debug)
@@ -3085,59 +3091,27 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire * const Owner,
 }
 									/*}}}*/
 // AcqIndex::Init - deferred Constructor				/*{{{*/
-static void NextCompressionExtension(std::string &CurrentCompressionExtension, std::string &CompressionExtensions, bool const preview)
-{
-   size_t const nextExt = CompressionExtensions.find(' ');
-   if (nextExt == std::string::npos)
-   {
-      CurrentCompressionExtension = CompressionExtensions;
-      if (preview == false)
-	 CompressionExtensions.clear();
-   }
-   else
-   {
-      CurrentCompressionExtension = CompressionExtensions.substr(0, nextExt);
-      if (preview == false)
-	 CompressionExtensions = CompressionExtensions.substr(nextExt+1);
-   }
-}
 void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
                        string const &ShortDesc)
 {
    Stage = STAGE_DOWNLOAD;
 
    DestFile = GetPartialFileNameFromURI(URI);
-   NextCompressionExtension(CurrentCompressionExtension, CompressionExtensions, false);
+   size_t const nextExt = CompressionExtensions.find(' ');
+   if (nextExt == std::string::npos)
+   {
+      CurrentCompressionExtension = CompressionExtensions;
+      CompressionExtensions.clear();
+   }
+   else
+   {
+      CurrentCompressionExtension = CompressionExtensions.substr(0, nextExt);
+      CompressionExtensions = CompressionExtensions.substr(nextExt+1);
+   }
 
    if (CurrentCompressionExtension == "uncompressed")
    {
       Desc.URI = URI;
-   }
-   else if (CurrentCompressionExtension == "by-hash")
-   {
-      NextCompressionExtension(CurrentCompressionExtension, CompressionExtensions, true);
-      if(unlikely(CurrentCompressionExtension.empty()))
-	 return;
-      if (CurrentCompressionExtension != "uncompressed")
-      {
-	 Desc.URI = URI + '.' + CurrentCompressionExtension;
-	 DestFile = DestFile + '.' + CurrentCompressionExtension;
-      }
-      else
-	 Desc.URI = URI;
-
-      HashStringList const Hashes = GetExpectedHashes();
-      HashString const * const TargetHash = Hashes.find(NULL);
-      if (unlikely(TargetHash == nullptr))
-	 return;
-      std::string const ByHash = "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
-      size_t const trailing_slash = Desc.URI.find_last_of("/");
-      if (unlikely(trailing_slash == std::string::npos))
-	 return;
-      Desc.URI = Desc.URI.replace(
-	    trailing_slash,
-	    Desc.URI.substr(trailing_slash+1).size()+1,
-	    ByHash);
    }
    else if (unlikely(CurrentCompressionExtension.empty()))
       return;

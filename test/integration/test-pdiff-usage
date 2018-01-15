@@ -138,6 +138,8 @@ SHA256-Download:
 	mkdir -p "${BYHASH}"
 	find "${NORMAL}/" -maxdepth 1 -name "Index*" -exec mv '{}' "$BYHASH" \;
 	ln -s "${BYHASH}/Index.gz" "${BYHASH}/$(sha256sum "${BYHASH}/Index.gz" | cut -f1 -d' ')"
+	echo 'foobar' > "${BYHASH}/$(sha256sum "$PATCHFILE" | cut -f1 -d' ')"
+	echo 'foobar' > "${BYHASH}/$(sha256sum "${PATCHFILE}.gz" | cut -f1 -d' ')"
 	rm -rf rootdir/var/lib/apt/lists
 	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
 	wasmergeused "$@" -o Acquire::By-Hash=force

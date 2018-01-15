@@ -407,7 +407,7 @@ class APT_HIDDEN pkgAcqTransactionItem: public pkgAcquire::Item		/*{{{*/
    virtual HashStringList GetExpectedHashes() const APT_OVERRIDE;
    virtual std::string GetMetaKey() const;
    virtual bool HashesRequired() const APT_OVERRIDE;
-
+   virtual bool AcquireByHash() const;
 
    pkgAcqTransactionItem(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager, IndexTarget const &Target) APT_NONNULL(2, 3);
    virtual ~pkgAcqTransactionItem();
@@ -730,11 +730,6 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqIndex
    /** \brief If \b true, debugging information will be written to std::clog. */
    bool Debug;
 
-   /** \brief A description of the Packages file (stored in
-    *  pkgAcquire::ItemDesc::Description).
-    */
-   std::string Description;
-
    /** \brief Get the full pathname of the final file for the current URI */
    virtual std::string GetFinalFilename() const APT_OVERRIDE;
 
@@ -792,17 +787,12 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqIndex
  */
 class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
 {
-   std::string const indexURI;
-
    protected:
 
    /** \brief If \b true, debugging output will be written to
     *  std::clog.
     */
    bool Debug;
-
-   /** \brief description of the file being downloaded. */
-   std::string Description;
 
    /** \brief information about the current patch */
    struct DiffInfo const patch;
@@ -839,6 +829,7 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
    virtual std::string DescURI() const APT_OVERRIDE {return Target.URI + "Index";};
    virtual HashStringList GetExpectedHashes() const APT_OVERRIDE;
    virtual bool HashesRequired() const APT_OVERRIDE;
+   virtual bool AcquireByHash() const APT_OVERRIDE;
 
    /** \brief Create an index merge-diff item.
     *
@@ -853,9 +844,8 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
     *  check if it was the last one to complete the download step
     */
    pkgAcqIndexMergeDiffs(pkgAcquire *const Owner, pkgAcqMetaClearSig *const TransactionManager,
-			 IndexTarget const &Target,
-			 std::string const &indexURI, DiffInfo const &patch,
-			 std::vector<pkgAcqIndexMergeDiffs *> const *const allPatches) APT_NONNULL(2, 3, 7);
+			 IndexTarget const &Target, DiffInfo const &patch,
+			 std::vector<pkgAcqIndexMergeDiffs *> const *const allPatches) APT_NONNULL(2, 3, 6);
    virtual ~pkgAcqIndexMergeDiffs();
 };
 									/*}}}*/
@@ -872,8 +862,6 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
  */
 class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
 {
-   std::string const indexURI;
-
    private:
 
    /** \brief Queue up the next diff download.
@@ -906,9 +894,6 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  std::clog.
     */
    bool Debug;
-
-   /** A description of the file being downloaded. */
-   std::string Description;
 
    /** The patches that remain to be downloaded, including the patch
     *  being downloaded right now.  This list should be ordered so
@@ -945,6 +930,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
    virtual std::string DescURI() const APT_OVERRIDE {return Target.URI + "IndexDiffs";};
    virtual HashStringList GetExpectedHashes() const APT_OVERRIDE;
    virtual bool HashesRequired() const APT_OVERRIDE;
+   virtual bool AcquireByHash() const APT_OVERRIDE;
 
    /** \brief Create an index diff item.
     *
@@ -961,7 +947,6 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
     */
    pkgAcqIndexDiffs(pkgAcquire *const Owner, pkgAcqMetaClearSig *const TransactionManager,
 		    IndexTarget const &Target,
-		    std::string const &indexURI,
 		    std::vector<DiffInfo> const &diffs = std::vector<DiffInfo>()) APT_NONNULL(2, 3);
    virtual ~pkgAcqIndexDiffs();
 };
