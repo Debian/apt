@@ -1092,6 +1092,10 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
       if (GetBoolOption(Options, "allow-downgrade-to-insecure", _config->FindB("Acquire::AllowDowngradeToInsecureRepositories")))
 	 ReleaseOptions.emplace("ALLOW_DOWNGRADE_TO_INSECURE", "true");
 
+      auto InReleasePath = Options.find("inrelease-path");
+      if (InReleasePath != Options.end())
+	 ReleaseOptions.emplace("INRELEASE_PATH", InReleasePath->second);
+
       debReleaseIndex * Deb = nullptr;
       std::string const FileName = URItoFileName(constructMetaIndexURI(URI, Dist, "Release"));
       for (auto const &I: List)
