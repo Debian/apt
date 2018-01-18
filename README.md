@@ -35,7 +35,7 @@ Our bugtracker as well as a general overview can be found at the [Debian Tracker
 Contributing
 ------------
 APT is maintained in git, the official repository being located at
-`git://anonscm.debian.org/apt/apt.git` ([webgit](https://anonscm.debian.org/git/apt/apt.git)),
+[https://salsa.debian.org/apt-team/apt](https://salsa.debian.org/apt-team/apt),
 but also available at other locations like [GitHub](https://github.com/Debian/apt).
 
 The default branch is `master`, other branches targeted at different
