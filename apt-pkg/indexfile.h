@@ -72,7 +72,8 @@ class IndexTarget							/*{{{*/
 	 std::string const &LongDesc, std::string const &URI, bool const IsOptional,
 	 bool const KeepCompressed, std::map<std::string, std::string> const &Options);
 
-   enum OptionKeys {
+   enum OptionKeys
+   {
       SITE,
       RELEASE,
       COMPONENT,
@@ -95,6 +96,7 @@ class IndexTarget							/*{{{*/
       ALLOW_INSECURE,
       ALLOW_WEAK,
       ALLOW_DOWNGRADE_TO_INSECURE,
+      INRELEASE_PATH,
    };
    std::string Option(OptionKeys const Key) const;
    bool OptionBool(OptionKeys const Key) const;

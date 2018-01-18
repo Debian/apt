@@ -149,6 +149,7 @@ std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
       APT_CASE(ALLOW_INSECURE);
       APT_CASE(ALLOW_WEAK);
       APT_CASE(ALLOW_DOWNGRADE_TO_INSECURE);
+      APT_CASE(INRELEASE_PATH);
 #undef APT_CASE
       case FILENAME:
       {

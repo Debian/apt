@@ -1324,9 +1324,13 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
    // Save the final base URI we got this Release file from
    if (I->UsedMirror.empty() == false && _config->FindB("Acquire::SameMirrorForAllIndexes", true))
    {
-      if (APT::String::Endswith(I->Desc.URI, "InRelease"))
+      auto InReleasePath = Target.Option(IndexTarget::INRELEASE_PATH);
+      if (InReleasePath.empty())
+	 InReleasePath = "InRelease";
+
+      if (APT::String::Endswith(I->Desc.URI, InReleasePath))
       {
-	 TransactionManager->BaseURI = I->Desc.URI.substr(0, I->Desc.URI.length() - strlen("InRelease"));
+	 TransactionManager->BaseURI = I->Desc.URI.substr(0, I->Desc.URI.length() - InReleasePath.length());
 	 TransactionManager->UsedMirror = I->UsedMirror;
       }
       else if (APT::String::Endswith(I->Desc.URI, "Release"))
@@ -1871,6 +1875,7 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
       auto const failreason = LookupTag(Message, "FailReason");
       auto const httperror = "HttpError";
       if (Status == StatAuthError ||
+	  Target.Option(IndexTarget::INRELEASE_PATH).empty() == false || /* do not fallback if InRelease was requested */
 	  (strncmp(failreason.c_str(), httperror, strlen(httperror)) == 0 &&
 	   failreason != "HttpError404"))
       {
@@ -1880,7 +1885,7 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 	 // as this is gonna fail anyway and instead abort our try (LP#346386)
 	 _error->PushToStack();
 	 _error->Error(_("Failed to fetch %s  %s"), Target.URI.c_str(), ErrorText.c_str());
-	 if (AllowInsecureRepositories(InsecureType::UNSIGNED, Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
+	 if (Target.Option(IndexTarget::INRELEASE_PATH).empty() == true && AllowInsecureRepositories(InsecureType::UNSIGNED, Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)
 	    _error->RevertToStack();
 	 else
 	    return;
@@ -1941,7 +1946,19 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire * const Owner,		/*{{{*/
    Desc.Description = DataTarget.Description;
    Desc.Owner = this;
    Desc.ShortDesc = DataTarget.ShortDesc;
-   Desc.URI = DataTarget.URI;
+
+   // Rewrite the description URI if INRELEASE_PATH was specified so
+   // we download the specified file instead.
+   auto InReleasePath = DataTarget.Option(IndexTarget::INRELEASE_PATH);
+   if (InReleasePath.empty() == false && APT::String::Endswith(DataTarget.URI, "/InRelease"))
+   {
+      Desc.URI = DataTarget.URI.substr(0, DataTarget.URI.size() - strlen("InRelease")) + InReleasePath;
+   }
+   else
+   {
+      Desc.URI = DataTarget.URI;
+   }
+
    QueueURI(Desc);
 }
 									/*}}}*/
