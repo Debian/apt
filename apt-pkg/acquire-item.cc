@@ -3979,7 +3979,7 @@ static std::string GetAuxFileNameFromURIInLists(std::string const &uri)
    std::string const tmpfile_tpl = flCombine(dirname, filetag);
    std::unique_ptr<char, decltype(std::free) *> tmpfile { strdup(tmpfile_tpl.c_str()), std::free };
    int const fd = mkstemp(tmpfile.get());
-   if (fd == -1 && errno == EACCES)
+   if (fd == -1)
       return "";
    RemoveFile("GetAuxFileNameFromURI", tmpfile.get());
    close(fd);

@@ -14,15 +14,37 @@ changetowebserver
 webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "http://localhost:${APTHTTPPORT}/"
 addtrap 'prefix' "chmod -f -R +w $PWD/rootdir/var/lib/apt/lists || true;"
 
-testrundownload_internal() {
-	cd downloaded
-	testsuccess apt download "$@"
+testrundownload_internal_debs() {
+	local WORKDIR="$1"
+	shift
+	if [ "$WORKDIR" != '.' ]; then cd "$WORKDIR"; fi
 	while [ -n "$1" ]; do
+		if [ "$1" = 'foo=1' ]; then shift; continue; fi
 		local fndeb="$(echo "$1" | tr '=' '_')_all.deb"
 		testsuccess test -e "$fndeb"
 		rm -f "$fndeb"
 		shift
 	done
+	if [ "$WORKDIR" != '.' ]; then cd - >/dev/null; fi
+}
+testrundownload_internal() {
+	cd downloaded
+	testsuccess apt install --download-only -o Debug::NoLocking=true -y "$@"
+	testrundownload_internal_debs '../rootdir/var/cache/apt/archives' "$@"
+	msgtest 'Repeat the download only install test with' 'aptitude'
+	if dpkg-checkbuilddeps -d 'aptitude' /dev/null >/dev/null 2>&1; then
+		if aptitude install --download-only -o Debug::NoLocking=true -y "$@" > ../rootdir/tmp/aptitude.log 2>&1; then
+			msgpass
+		else
+			msgfail
+			cat >&2 ../rootdir/tmp/aptitude.log
+		fi
+		testrundownload_internal_debs '../rootdir/var/cache/apt/archives' "$@"
+	else
+		msgskip 'not installed'
+	fi
+	testsuccess apt download "$@" -o Debug::pkgAcquire::Worker=1
+	testrundownload_internal_debs '.' "$@"
 	testempty find . -name '*mirror*'
 	cd ..
 }
@@ -35,6 +57,10 @@ testrundownload() {
 		chmod -f -R +w rootdir/var/lib/apt/lists/auxfiles
 		rm -f rootdir/var/lib/apt/lists/auxfiles/*
 		chmod -f -R -w rootdir/var/lib/apt/lists/auxfiles
+		testrundownload_internal "$@"
+		chmod -f -R +w rootdir/var/lib/apt/lists
+		rm -rf rootdir/var/lib/apt/lists/auxfiles
+		chmod -f -R -w rootdir/var/lib/apt/lists
 		testrundownload_internal "$@"
 		chmod -f -R +w rootdir/var/lib/apt/lists
 	fi
@@ -161,6 +187,7 @@ Hit:2 http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
 Reading package lists...
 Building dependency tree...
 All packages are up to date." apt update
+testrundownload 'foo=2'
 sed -i -e 's# mirror+# foo+mirror+#' rootdir/etc/apt/sources.list.d/*
 testfailure apt update
 testsuccess grep 'package apt-transport-foo installed' rootdir/tmp/testfailure.output
@@ -170,6 +197,8 @@ Hit:2 foo+http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
 Reading package lists...
 Building dependency tree...
 All packages are up to date." apt update
+testrundownload 'foo=2'
+
 echo "file:/nonexistent/apt/archive	priority:1
 http://localhost:${APTHTTPPORT}/redirectme
 " > aptarchive/mirror.txt
@@ -183,8 +212,11 @@ Building dependency tree...
 All packages are up to date." apt update
 sed -i -e "s#+file:${APTARCHIVE}#+http://localhost:${APTHTTPPORT}#" rootdir/etc/apt/sources.list.d/*
 testsuccess apt update
+testrundownload 'foo=2'
+
 testsuccessequal "Get:1 foo+http://localhost:${APTHTTPPORT}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
 Hit:2 foo+http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
 Reading package lists...
 Building dependency tree...
 All packages are up to date." apt update
+testrundownload 'foo=2'

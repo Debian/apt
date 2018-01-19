@@ -177,7 +177,11 @@ runapt() {
 	sh|aptitude|*/*|command) ;;
 	*) CMD="${BUILDDIRECTORY}/$CMD";;
 	esac
-	MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH="${LIBRARYPATH}:${LD_LIBRARY_PATH}" "$CMD" "$@"
+	if [ "$CMD" = 'aptitude' ]; then
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH="${LIBRARYPATH}:${LD_LIBRARY_PATH}" command "$CMD" "$@"
+	else
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH="${LIBRARYPATH}:${LD_LIBRARY_PATH}" "$CMD" "$@"
+	fi
 }
 runpython3() { runapt command python3 "$@"; }
 aptconfig() { runapt apt-config "$@"; }

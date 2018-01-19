@@ -81,27 +81,41 @@ void pkgAcquire::Initialize()
 static bool SetupAPTPartialDirectory(std::string const &grand, std::string const &parent, std::string const &postfix, mode_t const mode)
 {
    std::string const partial = parent + postfix;
-   mode_t const old_umask = umask(S_IWGRP | S_IWOTH);
-   bool const creation_fail = (CreateAPTDirectoryIfNeeded(grand, partial) == false &&
-	 CreateAPTDirectoryIfNeeded(parent, partial) == false);
-   umask(old_umask);
-   if (creation_fail == true)
-      return false;
+   bool const partialExists = DirectoryExists(partial);
+   if (partialExists == false)
+   {
+      mode_t const old_umask = umask(S_IWGRP | S_IWOTH);
+      bool const creation_fail = (CreateAPTDirectoryIfNeeded(grand, partial) == false &&
+	    CreateAPTDirectoryIfNeeded(parent, partial) == false);
+      umask(old_umask);
+      if (creation_fail == true)
+	 return false;
+   }
 
    std::string const SandboxUser = _config->Find("APT::Sandbox::User");
-   if (getuid() == 0 && SandboxUser.empty() == false && SandboxUser != "root") // if we aren't root, we can't chown, so don't try it
+   if (getuid() == 0)
    {
-      struct passwd const * const pw = getpwnam(SandboxUser.c_str());
-      struct group const * const gr = getgrnam(ROOT_GROUP);
-      if (pw != NULL && gr != NULL)
+      if (SandboxUser.empty() == false && SandboxUser != "root") // if we aren't root, we can't chown, so don't try it
       {
-         // chown the partial dir
-         if(chown(partial.c_str(), pw->pw_uid, gr->gr_gid) != 0)
-            _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of directory %s failed", SandboxUser.c_str(), partial.c_str());
+	 struct passwd const * const pw = getpwnam(SandboxUser.c_str());
+	 struct group const * const gr = getgrnam(ROOT_GROUP);
+	 if (pw != NULL && gr != NULL)
+	 {
+	    // chown the partial dir
+	    if(chown(partial.c_str(), pw->pw_uid, gr->gr_gid) != 0)
+	       _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of directory %s failed", SandboxUser.c_str(), partial.c_str());
+	 }
       }
+      if (chmod(partial.c_str(), mode) != 0)
+	 _error->WarningE("SetupAPTPartialDirectory", "chmod 0700 of directory %s failed", partial.c_str());
+
    }
-   if (chmod(partial.c_str(), mode) != 0)
-      _error->WarningE("SetupAPTPartialDirectory", "chmod 0700 of directory %s failed", partial.c_str());
+   else if (chmod(partial.c_str(), mode) != 0)
+   {
+      // if we haven't created the dir and aren't root, it is kinda expected that chmod doesn't work
+      if (partialExists == false)
+	 _error->WarningE("SetupAPTPartialDirectory", "chmod 0700 of directory %s failed", partial.c_str());
+   }
 
    _error->PushToStack();
    // remove 'old' FAILED files to stop us from collecting them for no reason
@@ -120,7 +134,9 @@ bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
       if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "partial", 0700) == false)
 	 return _error->Errno("Acquire", _("List directory %s is missing."), (listDir + "partial").c_str());
       if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "auxfiles", 0755) == false)
-	 return _error->Errno("Acquire", _("List directory %s is missing."), (listDir + "auxfiles").c_str());
+      {
+	 // not being able to create lists/auxfiles isn't critical as we will use a tmpdir then
+      }
       string const archivesDir = _config->FindDir("Dir::Cache::Archives");
       if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir, "partial", 0700) == false)
 	 return _error->Errno("Acquire", _("Archives directory %s is missing."), (archivesDir + "partial").c_str());
@@ -150,7 +166,9 @@ bool pkgAcquire::GetLock(std::string const &Lock)
    if (Lock == listDir || Lock == archivesDir)
    {
       if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "auxfiles", 0755) == false)
-	 return _error->Errno("Acquire", _("List directory %s is missing."), (listDir + "auxfiles").c_str());
+      {
+	 // not being able to create lists/auxfiles isn't critical as we will use a tmpdir then
+      }
    }
 
    if (_config->FindB("Debug::NoLocking", false) == true)
