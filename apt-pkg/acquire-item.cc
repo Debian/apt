@@ -402,9 +402,10 @@ bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
    auto const OldBaseURI = Target.Option(IndexTarget::BASE_URI);
    if (OldBaseURI.empty() || APT::String::Startswith(Item.URI, OldBaseURI) == false)
       return pkgAcquire::Item::QueueURI(Item);
-
-   std::vector<std::string> urls = {Item.URI};
+   // the given URI is our last resort
+   PushAlternativeURI(std::string(Item.URI), {}, false);
    // If we got the InRelease file via a mirror, pick all indexes directly from this mirror, too
+   std::string SameMirrorURI;
    if (TransactionManager->BaseURI.empty() == false && TransactionManager->UsedMirror.empty() == false &&
        URI::SiteOnly(Item.URI) != URI::SiteOnly(TransactionManager->BaseURI))
    {
@@ -412,31 +413,51 @@ bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
       auto newURI = flCombine(TransactionManager->BaseURI, std::move(ExtraPath));
       if (IsGoodAlternativeURI(newURI))
       {
-	 urls.push_back(std::move(newURI));
-	 UsedMirror = TransactionManager->UsedMirror;
-	 if (Item.Description.find(" ") != string::npos)
-	    Item.Description.replace(0, Item.Description.find(" "), UsedMirror);
+	 SameMirrorURI = std::move(newURI);
+	 PushAlternativeURI(std::string(SameMirrorURI), {}, false);
       }
    }
    // add URI and by-hash based on it
-   auto const Expected = GetExpectedHashes();
-   auto const TargetHash = Expected.find(nullptr);
-   auto const useByHash = AcquireByHash();
-   for (auto &&U : urls)
+   if (AcquireByHash())
    {
-      PushAlternativeURI(std::string(U), {}, false);
-      if (useByHash == false || unlikely(TargetHash == nullptr))
-	 continue;
-      auto const trailing_slash = U.find_last_of("/");
-      if (unlikely(trailing_slash == std::string::npos))
-	 continue;
-      auto byhashSuffix = "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
-      U.replace(trailing_slash, U.length() - trailing_slash, std::move(byhashSuffix));
-      PushAlternativeURI(std::move(U), {}, false);
+      // if we use the mirror transport, ask it for by-hash uris
+      // we need to stick to the same mirror only for non-unique filenames
+      auto const sameMirrorException = [&]() {
+	 if (Item.URI.find("mirror") == std::string::npos)
+	    return false;
+	 ::URI uri(Item.URI);
+	 return uri.Access == "mirror" || APT::String::Startswith(uri.Access, "mirror+") ||
+	    APT::String::Endswith(uri.Access, "+mirror") || uri.Access.find("+mirror+") != std::string::npos;
+      }();
+      if (sameMirrorException)
+	 SameMirrorURI.clear();
+      // now add the actual by-hash uris
+      auto const Expected = GetExpectedHashes();
+      auto const TargetHash = Expected.find(nullptr);
+      auto const PushByHashURI = [&](std::string U) {
+	 if (unlikely(TargetHash == nullptr))
+	    return false;
+	 auto const trailing_slash = U.find_last_of("/");
+	 if (unlikely(trailing_slash == std::string::npos))
+	    return false;
+	 auto byhashSuffix = "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
+	 U.replace(trailing_slash, U.length() - trailing_slash, std::move(byhashSuffix));
+	 PushAlternativeURI(std::move(U), {}, false);
+	 return true;
+      };
+      PushByHashURI(Item.URI);
+      if (SameMirrorURI.empty() == false && PushByHashURI(SameMirrorURI) == false)
+	 SameMirrorURI.clear();
    }
    // the last URI added is the first one tried
    if (unlikely(PopAlternativeURI(Item.URI) == false))
       return false;
+   if (SameMirrorURI.empty() == false)
+   {
+      UsedMirror = TransactionManager->UsedMirror;
+      if (Item.Description.find(" ") != string::npos)
+	 Item.Description.replace(0, Item.Description.find(" "), UsedMirror);
+   }
    return pkgAcquire::Item::QueueURI(Item);
 }
 /* The transition manager InRelease itself (or its older sisters-in-law
