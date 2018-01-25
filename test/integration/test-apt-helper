@@ -123,3 +123,10 @@ testfailureequal 'E: Must specify at least one SRV record' apthelper srv-lookup
 testfailureequal 'E: GetSrvRec failed for localhost' apthelper -q=1 srv-lookup 'localhost'
 testfailureequal "E: GetSrvRec failed for localhost:${APTHTTPPORT}" apthelper -q=1 srv-lookup "localhost:${APTHTTPPORT}"
 testfailureequal "E: GetSrvRec failed for localhost:${APTHTTPSPORT}" apthelper -q=1 srv-lookup "localhost:${APTHTTPSPORT}"
+
+msgmsg 'apt-helper' 'drop-privs'
+testfailureequal "E: No command given to run without privileges" apthelper drop-privs
+testsuccess apthelper -- drop-privs true
+testsuccess apthelper drop-privs -- true
+DATE="$(date -u +'%Y-%m-%d')"
+testsuccessequal "$DATE" apthelper drop-privs -- date -u -d "$DATE" +'%Y-%m-%d'

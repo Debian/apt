@@ -219,6 +219,22 @@ static bool DoWaitOnline(CommandLine &)
    return _error->PendingError() == false;
 }
 									/*}}}*/
+static bool DropPrivsAndRun(CommandLine &CmdL)				/*{{{*/
+{
+   if (CmdL.FileSize() < 2)
+      return _error->Error("No command given to run without privileges");
+   if (DropPrivileges() == false)
+      return _error->Error("Dropping Privileges failed, not executing '%s'", CmdL.FileList[1]);
+
+   std::vector<char const *> Args;
+   Args.reserve(CmdL.FileSize() + 1);
+   for (auto a = CmdL.FileList + 1; *a != nullptr; ++a)
+      Args.push_back(*a);
+   Args.push_back(nullptr);
+   auto const pid = ExecuteProcess(Args.data());
+   return ExecWait(pid, CmdL.FileList[1]);
+}
+									/*}}}*/
 static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
@@ -239,6 +255,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
        {"cat-file", &DoCatFile, _("concatenate files, with automatic decompression")},
        {"auto-detect-proxy", &DoAutoDetectProxy, _("detect proxy using apt.conf")},
        {"wait-online", &DoWaitOnline, _("wait for system to be online")},
+       {"drop-privs", &DropPrivsAndRun, _("drop privileges before running given command")},
        {nullptr, nullptr, nullptr}};
 }
 									/*}}}*/
