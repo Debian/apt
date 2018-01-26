@@ -945,13 +945,21 @@ bool TryToInstall::propergateReleaseCandiateSwitching(std::list<std::pair<pkgCac
 	 c != Changed.end(); ++c)
    {
       if (c->second.end() == true)
+      {
+	 auto const pkgname = c->first.ParentPkg().FullName(true);
+	 if (APT::String::Startswith(pkgname, "builddeps:"))
+	    continue;
 	 ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
-	       c->first.VerStr(), c->first.RelStr().c_str(), c->first.ParentPkg().FullName(true).c_str());
+	       c->first.VerStr(), c->first.RelStr().c_str(), pkgname.c_str());
+      }
       else if (c->first.ParentPkg()->Group != c->second.ParentPkg()->Group)
       {
+	 auto pkgname = c->second.ParentPkg().FullName(true);
+	 if (APT::String::Startswith(pkgname, "builddeps:"))
+	    pkgname.replace(0, strlen("builddeps"), "src");
 	 pkgCache::VerIterator V = (*Cache)[c->first.ParentPkg()].CandidateVerIter(*Cache);
 	 ioprintf(out, _("Selected version '%s' (%s) for '%s' because of '%s'\n"), V.VerStr(),
-	       V.RelStr().c_str(), V.ParentPkg().FullName(true).c_str(), c->second.ParentPkg().FullName(true).c_str());
+	       V.RelStr().c_str(), V.ParentPkg().FullName(true).c_str(), pkgname.c_str());
       }
    }
    return Success;

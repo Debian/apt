@@ -14,6 +14,10 @@ insertpackage 'wheezy' 'build-essential' 'all' '1.0'
 # a "normal" package with source and binary
 insertpackage 'unstable' 'foo' 'all' '2.0'
 insertsource 'unstable' 'foo' 'all' '2.0'
+insertpackage 'unstable' 'foo-common' 'all' '2.0' 'Source: foo (2.0)'
+insertpackage 'experimental' 'foo' 'all' '5' 'Depends: foo-common (= 5)'
+insertpackage 'experimental' 'foo-common' 'all' '5' 'Source: foo (5)'
+insertsource 'experimental' 'foo-source' 'all' '42' 'Build-Depends: foo (= 5), baz'
 
 # binary packages with Source-field
 insertpackage 'unstable,testing' 'bin' 'i386' '3-2+b1' 'Source: bin (3-2)'
@@ -40,6 +44,8 @@ insertsource 'wheezy' 'foo' 'all' '0.1'
 insertsource 'stable' 'baz' 'all' '1.0'
 insertsource 'unstable' 'baz' 'all' '2.0'
 insertsource 'unstable' 'baz' 'all' '1.5'
+insertpackage 'unstable' 'baz' 'all' '2.0'
+insertpackage 'experimental' 'baz' 'all' '5.0'
 
 # ensure we really have the situation we wanted (first 2.0 is foo above)
 testequal 'Version: 2.0
@@ -189,3 +195,56 @@ Need to get 0 B/43 B of source archives.
 Fetch source bin-backport" apt source bin/stable -s -q
 testsuccessequal "$(getbuilddep 'bin-backport' "Picking 'bin-backport' as source package instead of 'bin'
 Selected version '2-2' (stable) for bin-backport")" apt build-dep bin/stable -s
+
+testsuccess apt install foo/experimental -s
+testfailure apt build-dep foo-source -s
+testsuccessequal "Reading package lists...
+Selected version '42' (experimental) for foo-source
+Reading package lists...
+Building dependency tree...
+Selected version '5' (experimental [all]) for 'foo' because of 'src:foo-source'
+Selected version '5' (experimental [all]) for 'foo-common' because of 'foo'
+The following NEW packages will be installed:
+  baz build-essential foo foo-common
+0 upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+Inst baz (2.0 unstable [all])
+Inst build-essential (1.0 wheezy [all])
+Inst foo-common (5 experimental [all])
+Inst foo (5 experimental [all])
+Conf baz (2.0 unstable [all])
+Conf build-essential (1.0 wheezy [all])
+Conf foo-common (5 experimental [all])
+Conf foo (5 experimental [all])" apt build-dep foo-source/experimental -s
+testsuccessequal "Reading package lists...
+Selected version '42' (experimental) for foo-source
+Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  baz build-essential foo foo-common
+0 upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+Inst baz (5.0 experimental [all])
+Inst build-essential (1.0 wheezy [all])
+Inst foo-common (5 experimental [all])
+Inst foo (5 experimental [all])
+Conf baz (5.0 experimental [all])
+Conf build-essential (1.0 wheezy [all])
+Conf foo-common (5 experimental [all])
+Conf foo (5 experimental [all])" apt build-dep foo-source -t experimental -s
+# this checks that mentioning the source pkg baz has no influence on the binary package baz
+testsuccessequal "Reading package lists...
+Selected version '42' (experimental) for foo-source
+Selected version '2.0' (unstable) for baz
+baz has no build depends.
+Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  baz build-essential foo foo-common
+0 upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+Inst baz (5.0 experimental [all])
+Inst build-essential (1.0 wheezy [all])
+Inst foo-common (5 experimental [all])
+Inst foo (5 experimental [all])
+Conf baz (5.0 experimental [all])
+Conf build-essential (1.0 wheezy [all])
+Conf foo-common (5 experimental [all])
+Conf foo (5 experimental [all])" apt build-dep foo-source baz/unstable -t experimental -s
