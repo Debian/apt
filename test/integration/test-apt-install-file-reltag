@@ -1,0 +1,94 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'unstable' 'foo' 'all' '2' 'Depends: foo-common (= 2)'
+insertpackage 'unstable' 'foo-common' 'all' '2'
+insertpackage 'unstable' 'baz' 'all' '1'
+insertpackage 'experimental' 'foo' 'all' '5' 'Depends: foo-common (= 5)'
+insertpackage 'experimental' 'foo-common' 'all' '5' 'Source: foo (5)'
+insertpackage 'experimental' 'baz' 'all' '2'
+setupaptarchive
+
+insertinstalledpackage 'build-essential' 'all' '1'
+
+cat > foobar.dsc <<EOF
+Format: 3.0 (native)
+Source: foobar
+Binary: foobar
+Architecture: all
+Version: 1
+Maintainer: Joe Sixpack <joe@example.org>
+Build-Depends: foo (= 5), baz
+Standards-Version: 4.1.3
+EOF
+buildsimplenativepackage 'foobar2' 'all' '1' 'unstable' 'Depends: foo (= 5), baz'
+
+ln -s "$(readlink -f ./incoming/foobar2_1_all.deb)" foobar.deb
+mkdir -p foobar
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt build-dep "$(readlink -f ./foobar.dsc)" -s
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt install "$(readlink -f ./foobar.deb)" -s
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt build-dep ./foobar.dsc -s
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt install ./foobar.deb -s
+cd foobar
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt build-dep ../foobar.dsc -s
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt install ../foobar.deb -s
+cd ..
+
+SUCCESSDSC='The following NEW packages will be installed:
+  baz foo foo-common
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Inst baz (1 unstable [all])
+Inst foo-common (5 experimental [all])
+Inst foo (5 experimental [all])
+Conf baz (1 unstable [all])
+Conf foo-common (5 experimental [all])
+Conf foo (5 experimental [all])'
+SUCCESSDEB='The following additional packages will be installed:
+  baz foo foo-common
+The following NEW packages will be installed:
+  baz foo foo-common foobar2
+0 upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+Inst baz (1 unstable [all])
+Inst foo-common (5 experimental [all])
+Inst foo (5 experimental [all])
+Inst foobar2 (1 local-deb [all])
+Conf baz (1 unstable [all])
+Conf foo-common (5 experimental [all])
+Conf foo (5 experimental [all])
+Conf foobar2 (1 local-deb [all])'
+testsuccessequal "Note, using file '$(readlink -f ./foobar.dsc)' to get the build dependencies
+$SUCCESSDSC" apt build-dep "$(readlink -f ./foobar.dsc)/experimental" -s -q=2
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'foobar2' instead of '$(readlink -f ./foobar.deb)'
+$SUCCESSDEB" apt install "$(readlink -f ./foobar.deb)/experimental" -s
+testsuccessequal "Note, using file './foobar.dsc' to get the build dependencies
+$SUCCESSDSC" apt build-dep ./foobar.dsc/experimental -sq=2
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'foobar2' instead of './foobar.deb'
+$SUCCESSDEB" apt install "./foobar.deb/experimental" -s
+cd foobar
+testsuccessequal "Note, using file '../foobar.dsc' to get the build dependencies
+$SUCCESSDSC" apt build-dep ../foobar.dsc/experimental -sqq
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'foobar2' instead of '../foobar.deb'
+$SUCCESSDEB" apt install "../foobar.deb/experimental" -s
+cd ..
+
+msgmsg 'fail with' 'incorrect release'
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt build-dep "$(readlink -f ./foobar.dsc)/stable" -s
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt install "$(readlink -f ./foobar.deb)/stable" -s
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt build-dep ./foobar.dsc/stable -s
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt install ./foobar.deb/stable -s
+cd foobar
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt build-dep ../foobar.dsc/stable -s
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' apt install ../foobar.deb/stable -s
+cd ..
