@@ -699,7 +699,8 @@ echo '$NAME says \"Hello!\"'" > "${BUILDDIR}/${NAME}"
 		echo "Source: $NAME
 Priority: $PRIORITY
 Maintainer: Joe Sixpack <joe@example.org>
-Standards-Version: 3.9.3"
+Standards-Version: 4.3.1
+Rules-Requires-Root: no"
 		if [ "$SECTION" != '<none>' ]; then
 			echo "Section: $SECTION"
 		fi
@@ -738,7 +739,7 @@ setupsimplenativepackage() {
 	local NAME="$1"
 	local VERSION="$3"
 	local BUILDDIR="${TMPWORKINGDIRECTORY}/incoming/${NAME}-${VERSION}"
-	test -e "${BUILDDIR}/debian/compat" || echo '7' > "${BUILDDIR}/debian/compat"
+	test -e "${BUILDDIR}/debian/compat" || echo '10' > "${BUILDDIR}/debian/compat"
 	test -e  "${BUILDDIR}/debian/rules" || make_tiny_rules "${BUILDDIR}/debian/rules"
 }
 
