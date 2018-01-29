@@ -72,6 +72,13 @@ APT_PURE std::string metaIndex::GetReleaseNotes() const { return d->ReleaseNotes
 APT_PURE signed short metaIndex::GetDefaultPin() const { return d->DefaultPin; }
 APT_PURE bool metaIndex::GetSupportsAcquireByHash() const { return SupportsAcquireByHash; }
 APT_PURE time_t metaIndex::GetValidUntil() const { return ValidUntil; }
+APT_PURE time_t metaIndex::GetNotBefore() const
+{
+   debReleaseIndex const *const deb = dynamic_cast<debReleaseIndex const *>(this);
+   if (deb != nullptr)
+      return deb->GetNotBefore();
+   return 0;
+}
 APT_PURE time_t metaIndex::GetDate() const { return this->Date; }
 APT_PURE metaIndex::TriState metaIndex::GetLoadedSuccessfully() const { return LoadedSuccessfully; }
 APT_PURE std::string metaIndex::GetExpectedDist() const { return Dist; }

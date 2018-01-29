@@ -1,3 +1,19 @@
+apt (1.6~alpha8) UNRELEASED; urgency=medium
+
+  APT now verifies that the date of Release files is not in the future. By
+  default, it may be 10 seconds in the future to allow for some clock drift.
+
+  Two new configuration options can be used to tweak the behavior:
+    Acquire::Check-Date
+    Acquire::Max-DateFuture
+
+  These can be overridden in sources.list entries using the check-date
+  and date-future-max options. Note that disabling check-date also
+  disables checks on valid-until: It is considered to mean that your
+  machine's time is not reliable.
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Mon, 12 Feb 2018 12:53:18 +0100
+
 apt (1.6~alpha1) unstable; urgency=medium
 
   All methods provided by apt except for cdrom, gpgv, and rsh now

@@ -49,12 +49,16 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
    time_t ValidUntilMin;
    time_t ValidUntilMax;
 
+   metaIndex::TriState CheckDate;
+   time_t DateMaxFuture;
+   time_t NotBefore;
+
    std::vector<std::string> Architectures;
    std::vector<std::string> NoSupportForAll;
    std::vector<std::string> SupportedComponents;
    std::map<std::string, std::string> const ReleaseOptions;
 
-   debReleaseIndexPrivate(std::map<std::string, std::string> const &Options) : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0), ReleaseOptions(Options) {}
+   debReleaseIndexPrivate(std::map<std::string, std::string> const &Options) : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0), CheckDate(metaIndex::TRI_UNSET), DateMaxFuture(0), NotBefore(0), ReleaseOptions(Options) {}
 };
 									/*}}}*/
 // ReleaseIndex::MetaIndex* - display helpers				/*{{{*/
@@ -482,54 +486,77 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
       Date = 0;
    }
 
-   bool CheckValidUntil = _config->FindB("Acquire::Check-Valid-Until", true);
-   if (d->CheckValidUntil == metaIndex::TRI_NO)
-      CheckValidUntil = false;
-   else if (d->CheckValidUntil == metaIndex::TRI_YES)
-      CheckValidUntil = true;
+   bool CheckDate = _config->FindB("Acquire::Check-Date", true);
+   if (d->CheckDate == metaIndex::TRI_NO)
+      CheckDate = false;
+   else if (d->CheckDate == metaIndex::TRI_YES)
+      CheckDate = true;
 
-   if (CheckValidUntil == true)
+   if (CheckDate)
    {
-      std::string const StrValidUntil = Section.FindS("Valid-Until");
-
-      // if we have a Valid-Until header in the Release file, use it as default
-      if (StrValidUntil.empty() == false)
-      {
-	 if(RFC1123StrToTime(StrValidUntil.c_str(), ValidUntil) == false)
-	 {
-	    if (ErrorText != NULL)
-	       strprintf(*ErrorText, _("Invalid '%s' entry in Release file %s"), "Valid-Until", Filename.c_str());
-	    return false;
-	 }
-      }
       auto const Label = GetLabel();
-      // get the user settings for this archive and use what expires earlier
-      time_t MaxAge = d->ValidUntilMax;
-      if (MaxAge == 0)
+      // get the user settings for this archive
+      time_t MaxFuture = d->DateMaxFuture;
+      if (MaxFuture == 0)
       {
-	 MaxAge = _config->FindI("Acquire::Max-ValidTime", 0);
+	 MaxFuture = _config->FindI("Acquire::Max-FutureTime", 10);
 	 if (Label.empty() == false)
-	    MaxAge = _config->FindI(("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
-      }
-      time_t MinAge = d->ValidUntilMin;
-      if (MinAge == 0)
-      {
-	 MinAge = _config->FindI("Acquire::Min-ValidTime", 0);
-	 if (Label.empty() == false)
-	    MinAge = _config->FindI(("Acquire::Min-ValidTime::" + Label).c_str(), MinAge);
+	    MaxFuture = _config->FindI(("Acquire::Max-FutureTime::" + Label).c_str(), MaxFuture);
       }
 
-      if (MinAge != 0 || ValidUntil != 0 || MaxAge != 0)
+      d->NotBefore = Date - MaxFuture;
+
+      bool CheckValidUntil = _config->FindB("Acquire::Check-Valid-Until", true);
+      if (d->CheckValidUntil == metaIndex::TRI_NO)
+	 CheckValidUntil = false;
+      else if (d->CheckValidUntil == metaIndex::TRI_YES)
+	 CheckValidUntil = true;
+
+      if (CheckValidUntil == true)
       {
-	 if (MinAge != 0 && ValidUntil != 0) {
-	    time_t const min_date = Date + MinAge;
-	    if (ValidUntil < min_date)
-	       ValidUntil = min_date;
+	 std::string const StrValidUntil = Section.FindS("Valid-Until");
+
+	 // if we have a Valid-Until header in the Release file, use it as default
+	 if (StrValidUntil.empty() == false)
+	 {
+	    if (RFC1123StrToTime(StrValidUntil.c_str(), ValidUntil) == false)
+	    {
+	       if (ErrorText != NULL)
+		  strprintf(*ErrorText, _("Invalid '%s' entry in Release file %s"), "Valid-Until", Filename.c_str());
+	       return false;
+	    }
 	 }
-	 if (MaxAge != 0 && Date != 0) {
-	    time_t const max_date = Date + MaxAge;
-	    if (ValidUntil == 0 || ValidUntil > max_date)
-	       ValidUntil = max_date;
+	 auto const Label = GetLabel();
+	 // get the user settings for this archive and use what expires earlier
+	 time_t MaxAge = d->ValidUntilMax;
+	 if (MaxAge == 0)
+	 {
+	    MaxAge = _config->FindI("Acquire::Max-ValidTime", 0);
+	    if (Label.empty() == false)
+	       MaxAge = _config->FindI(("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
+	 }
+	 time_t MinAge = d->ValidUntilMin;
+	 if (MinAge == 0)
+	 {
+	    MinAge = _config->FindI("Acquire::Min-ValidTime", 0);
+	    if (Label.empty() == false)
+	       MinAge = _config->FindI(("Acquire::Min-ValidTime::" + Label).c_str(), MinAge);
+	 }
+
+	 if (MinAge != 0 || ValidUntil != 0 || MaxAge != 0)
+	 {
+	    if (MinAge != 0 && ValidUntil != 0)
+	    {
+	       time_t const min_date = Date + MinAge;
+	       if (ValidUntil < min_date)
+		  ValidUntil = min_date;
+	    }
+	    if (MaxAge != 0 && Date != 0)
+	    {
+	       time_t const max_date = Date + MaxAge;
+	       if (ValidUntil == 0 || ValidUntil > max_date)
+		  ValidUntil = max_date;
+	    }
 	 }
       }
    }
@@ -564,6 +591,11 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    if (AuthPossible)
       LoadedSuccessfully = TRI_YES;
    return AuthPossible;
+}
+									/*}}}*/
+time_t debReleaseIndex::GetNotBefore() const /*{{{*/
+{
+   return d->NotBefore;
 }
 									/*}}}*/
 metaIndex * debReleaseIndex::UnloadedClone() const			/*{{{*/
@@ -683,6 +715,22 @@ bool debReleaseIndex::SetValidUntilMax(time_t const Valid)
       d->ValidUntilMax = Valid;
    else if (d->ValidUntilMax != Valid)
       return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Max-ValidTime", URI.c_str(), Dist.c_str());
+   return true;
+}
+bool debReleaseIndex::SetCheckDate(TriState const pCheckDate)
+{
+   if (d->CheckDate == TRI_UNSET)
+      d->CheckDate = pCheckDate;
+   else if (d->CheckDate != pCheckDate)
+      return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Check-Date", URI.c_str(), Dist.c_str());
+   return true;
+}
+bool debReleaseIndex::SetDateMaxFuture(time_t const DateMaxFuture)
+{
+   if (d->DateMaxFuture == 0)
+      d->DateMaxFuture = DateMaxFuture;
+   else if (d->DateMaxFuture != DateMaxFuture)
+      return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Date-Max-Future", URI.c_str(), Dist.c_str());
    return true;
 }
 bool debReleaseIndex::SetSignedBy(std::string const &pSignedBy)
@@ -1168,9 +1216,11 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    );
 
       if (Deb->SetTrusted(GetTriStateOption(Options, "trusted")) == false ||
-	 Deb->SetCheckValidUntil(GetTriStateOption(Options, "check-valid-until")) == false ||
-	 Deb->SetValidUntilMax(GetTimeOption(Options, "valid-until-max")) == false ||
-	 Deb->SetValidUntilMin(GetTimeOption(Options, "valid-until-min")) == false)
+	  Deb->SetCheckValidUntil(GetTriStateOption(Options, "check-valid-until")) == false ||
+	  Deb->SetValidUntilMax(GetTimeOption(Options, "valid-until-max")) == false ||
+	  Deb->SetValidUntilMin(GetTimeOption(Options, "valid-until-min")) == false ||
+	  Deb->SetCheckDate(GetTriStateOption(Options, "check-date")) == false ||
+	  Deb->SetDateMaxFuture(GetTimeOption(Options, "date-max-future")) == false)
 	 return false;
 
       std::map<std::string, std::string>::const_iterator const signedby = Options.find("signed-by");
