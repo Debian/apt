@@ -3622,7 +3622,7 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
    }
    TemporaryDirectory = tmpname;
 
-   ChangeOwnerAndPermissionOfFile("Item::QueueURI", TemporaryDirectory.c_str(),
+   ChangeOwnerAndPermissionOfFile("pkgAcqChangelog::Init", TemporaryDirectory.c_str(),
 	 SandboxUser.c_str(), ROOT_GROUP, 0700);
 
    DestFile = flCombine(TemporaryDirectory, DestFileName);
@@ -3635,6 +3635,7 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
 	 if (file1.Open(DestFile, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive) &&
 	       file2.Open(d->FinalFile, FileFd::ReadOnly) && CopyFile(file2, file1))
 	 {
+	    ChangeOwnerAndPermissionOfFile("pkgAcqChangelog::Init", DestFile.c_str(), "root", ROOT_GROUP, 0644);
 	    struct timeval times[2];
 	    times[0].tv_sec = times[1].tv_sec = file2.ModificationTime();
 	    times[0].tv_usec = times[1].tv_usec = 0;
@@ -4007,6 +4008,7 @@ static std::string GetAuxFileNameFromURI(std::string const &uri)
    {
       FileFd out(filename, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive);
       CopyFile(in, out);
+      ChangeOwnerAndPermissionOfFile("GetAuxFileNameFromURI", filename.c_str(), "root", ROOT_GROUP, 0644);
    }
    _error->RevertToStack();
    return filename;

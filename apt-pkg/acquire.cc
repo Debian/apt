@@ -80,6 +80,8 @@ void pkgAcquire::Initialize()
 // Acquire::GetLock - lock directory and prepare for action		/*{{{*/
 static bool SetupAPTPartialDirectory(std::string const &grand, std::string const &parent, std::string const &postfix, mode_t const mode)
 {
+   if (_config->FindB("Debug::SetupAPTPartialDirectory::AssumeGood", false))
+      return true;
    std::string const partial = parent + postfix;
    bool const partialExists = DirectoryExists(partial);
    if (partialExists == false)

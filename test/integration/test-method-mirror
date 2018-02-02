@@ -1,5 +1,6 @@
 #!/bin/sh
 set -e
+umask 0
 
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
@@ -15,6 +16,8 @@ setupaptarchive --no-update
 changetowebserver
 webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "http://localhost:${APTHTTPPORT}/"
 addtrap 'prefix' "chmod -f -R +w $PWD/rootdir/var/lib/apt/lists || true;"
+mkdir -m 755 -p rootdir/var/lib/apt
+touch rootdir/var/lib/apt/extended_states
 
 testrundownload_internal_debs() {
 	local WORKDIR="$1"
@@ -54,17 +57,27 @@ testrundownload() {
 	if [ "$(id -u)" = '0' ]; then
 		testrundownload_internal "$@"
 	else
-		chmod -f -R -w rootdir/var/lib/apt/lists
+		mkdir -p rootdir/var/cache/apt/archives/partial
+		echo 'Debug::SetupAPTPartialDirectory::AssumeGood "true";' > rootdir/etc/apt/apt.conf.d/assumegooddirs.conf
+		chmod -f 555 rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists/auxfiles rootdir/var/lib/apt/lists/partial
 		testrundownload_internal "$@"
-		chmod -f -R +w rootdir/var/lib/apt/lists/auxfiles
+		testnotempty find rootdir/var/lib/apt/lists/auxfiles
+		testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/auxfiles" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:555"
+
+		chmod -f 755 rootdir/var/lib/apt/lists/auxfiles
 		rm -f rootdir/var/lib/apt/lists/auxfiles/*
-		chmod -f -R -w rootdir/var/lib/apt/lists/auxfiles
+		chmod -f 555 rootdir/var/lib/apt/lists/auxfiles
 		testrundownload_internal "$@"
-		chmod -f -R +w rootdir/var/lib/apt/lists
+		testfilestats "${TMPWORKINGDIRECTORY}/rootdir/var/lib/apt/lists/auxfiles" '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:555"
+		testempty find rootdir/var/lib/apt/lists/auxfiles ! -type d
+
+		chmod -f 755 rootdir/var/lib/apt/lists
 		rm -rf rootdir/var/lib/apt/lists/auxfiles
-		chmod -f -R -w rootdir/var/lib/apt/lists
+		chmod -f 555 rootdir/var/lib/apt/lists
 		testrundownload_internal "$@"
-		chmod -f -R +w rootdir/var/lib/apt/lists
+		chmod -f 755 rootdir/var/lib/apt/lists
+		testsuccess test ! -d rootdir/var/lib/apt/lists/auxfiles
+		rm -f rootdir/etc/apt/apt.conf.d/assumegooddirs.conf
 	fi
 }
 testrun() {
@@ -159,6 +172,7 @@ Ign:2 https://localhost:${APTHTTPSPORT}/failure unstable InRelease
 Hit:2 http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
 Reading package lists...
 Building dependency tree...
+Reading state information...
 All packages are up to date." "Get:1 file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
 Ign:2 https://localhost:${APTHTTPSPORT}/failure unstable InRelease
   404  Not Found
@@ -167,6 +181,7 @@ Ign:2 http://localhost:${APTHTTPPORT}/failure2 unstable InRelease
 Hit:2 http://localhost:${APTHTTPPORT}/failure2 unstable InRelease
 Reading package lists...
 Building dependency tree...
+Reading state information...
 All packages are up to date." apt update
 testfailure grep '/unused-failure' aptarchive/webserver.log
 
@@ -188,6 +203,7 @@ testsuccessequal "Get:1 file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'a
 Hit:2 http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
 Reading package lists...
 Building dependency tree...
+Reading state information...
 All packages are up to date." apt update
 testrundownload 'foo=2'
 sed -i -e 's# mirror+# foo+mirror+#' rootdir/etc/apt/sources.list.d/*
@@ -198,6 +214,7 @@ testsuccessequal "Get:1 foo+file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%
 Hit:2 foo+http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
 Reading package lists...
 Building dependency tree...
+Reading state information...
 All packages are up to date." apt update
 testrundownload 'foo=2'
 
@@ -211,6 +228,7 @@ Ign:2 foo+file:/nonexistent/apt/archive unstable InRelease
 Hit:2 foo+http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
 Reading package lists...
 Building dependency tree...
+Reading state information...
 All packages are up to date." apt update
 sed -i -e "s#+file:${APTARCHIVE}#+http://localhost:${APTHTTPPORT}#" rootdir/etc/apt/sources.list.d/*
 testsuccess apt update
@@ -220,5 +238,6 @@ testsuccessequal "Get:1 foo+http://localhost:${APTHTTPPORT}/mirror.txt Mirrorlis
 Hit:2 foo+http://localhost:${APTHTTPPORT}/redirectme unstable InRelease
 Reading package lists...
 Building dependency tree...
+Reading state information...
 All packages are up to date." apt update
 testrundownload 'foo=2'
