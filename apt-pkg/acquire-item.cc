@@ -1661,6 +1661,25 @@ bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
       }
    }
 
+   if (TransactionManager->MetaIndexParser->GetNotBefore() > 0)
+   {
+      time_t const invalid_for = TransactionManager->MetaIndexParser->GetNotBefore() - time(nullptr);
+      if (invalid_for > 0)
+      {
+	 std::string errmsg;
+	 strprintf(errmsg,
+		   // TRANSLATOR: The first %s is the URL of the bad Release file, the second is
+		   // the time until the file will be valid - formatted in the same way as in
+		   // the download progress display (e.g. 7d 3h 42min 1s)
+		   _("Release file for %s is not valid yet (invalid for another %s). "
+		     "Updates for this repository will not be applied."),
+		   Target.URI.c_str(), TimeToStr(invalid_for).c_str());
+	 if (ErrorText.empty())
+	    ErrorText = errmsg;
+	 return _error->Error("%s", errmsg.c_str());
+      }
+   }
+
    /* Did we get a file older than what we have? This is a last minute IMS hit and doubles
       as a prevention of downgrading us to older (still valid) files */
    if (TransactionManager->IMSHit == false && TransactionManager->LastMetaIndexParser != NULL &&

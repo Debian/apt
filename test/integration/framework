@@ -460,6 +460,8 @@ EOF
 	echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
 	export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=no
 	echo 'Acquire::Connect::AddrConfig "false";' > rootdir/etc/apt/apt.conf.d/connect-addrconfig
+	# Allow release files to be 10 hours in the future, rather than 10 seconds
+	echo 'Acquire::Max-FutureTime "'$((10 * 60 * 60))'";' > rootdir/etc/apt/apt.conf.d/future-time
 
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 	confighashes 'SHA256' # these are tests, not security best-practices

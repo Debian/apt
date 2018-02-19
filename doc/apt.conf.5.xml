@@ -315,6 +315,27 @@ APT::Compressor::rev {
    for the download itself (see also &sources-list;).</para>
 
    <variablelist>
+     <varlistentry><term><option>Check-Date</option></term>
+	 <listitem><para>
+	 Security related option defaulting to true, enabling time-related
+	 checks. Disabling it means that the machine's time cannot be
+	 trusted, and APT will hence disable all time-related checks,
+	 such as <option>Check-Valid-Until</option> and verifying that
+	 the Date field of a release file is not in the future.
+	 </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>Max-FutureTime</option></term>
+	 <listitem><para>Maximum time (in seconds) before its creation (as indicated
+	 by the <literal>Date</literal> header) that the <filename>Release</filename>
+	 file should be considered valid.
+
+	 The default value is <literal>10</literal>.
+	 Archive specific settings can be made by appending the label of the archive
+	 to the option name. Preferably, the same can be achieved for specific
+	 &sources-list; entries by using the <option>Date-Max-Future</option> option there.
+	 </para></listitem>
+     </varlistentry>
      <varlistentry><term><option>Check-Valid-Until</option></term>
      <listitem><para>
      Security related option defaulting to true, as giving a Release file's

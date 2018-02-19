@@ -343,6 +343,23 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 		default.
 	  </para></listitem>
 
+	  <listitem><para><option>Check-Date</option> (<option>check-date</option>)
+		is a yes/no value which controls if APT should consider
+		the machine's time correct and hence perform time related
+		checks, such as verifying that a Release file is not
+		from the future. Disabling it also disables the
+		<option>Check-Valid-Until</option> option
+		mentioned above.
+	  </para></listitem>
+
+	  <listitem><para><option>Date-Max-Future</option>
+		(<option>date-max-future</option>) controls how far
+		from the future a repository may be.
+		Default to the value of the configuration option
+		<option>Acquire::Max-FutureTime</option> which is
+		10 seconds by default.
+	  </para></listitem>
+
 	  <listitem><para><option>InRelease-Path</option> (<option>inrelease-path</option>)
 		determines the path to the InRelease file, relative
 		to the normal position of an <filename>InRelease</filename> file.

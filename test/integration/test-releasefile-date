@@ -1,0 +1,46 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'wheezy' 'apt' 'all' '0.8.15'
+
+getlabelfromsuite() {
+	echo -n 'Testcases'
+}
+
+setupaptarchive --no-update
+
+runtest() {
+	local MSG="$1"
+	msgtest "Release file is $MSG as it has" "$2"
+	rm -rf rootdir/var/lib/apt/lists
+	generatereleasefiles "$3"
+	signreleasefiles
+	shift 3
+	if [ "$MSG" = 'accepted' ]; then
+		testsuccess --nomsg aptget update "$@"
+		testfailure grep -q 'is not valid yet' rootdir/tmp/testsuccess.output
+	else
+		testfailure --nomsg aptget update "$@"
+		testsuccess grep -q 'is not valid yet' rootdir/tmp/testfailure.output
+	fi
+}
+
+
+runtest 'accepted' 'no date' ''
+runtest 'accepted' 'ok date' 'now + 1 hour'
+runtest 'rejected' 'date to far in the future' 'now + 12 hours'
+runtest 'accepted' 'date to far in the future, but accepted via option' 'now + 12 hours' -o Acquire::Max-FutureTime=86400
+
+sed -i -e 's#\(deb\(-src\)\?\) #\1 [check-date=no] #' rootdir/etc/apt/sources.list.d/*
+runtest 'accepted' 'bad Date but overridden by sources option' 'now + 1 day'
+
+sed -i -e 's#\(deb\(-src\)\?\) \[.*\] #\1 [date-max-future=86400] #' rootdir/etc/apt/sources.list.d/*
+runtest 'accepted' 'Date allowed via sources list option via sources option' 'now + 12 hours'
+
+sed -i -e 's#\(deb\(-src\)\?\) \[.*\] #\1 [date-max-future=86405] #' rootdir/etc/apt/sources.list.d/*
+runtest 'rejected' 'Date further in the future than allowed by sources.list option' 'now + 2 day'
