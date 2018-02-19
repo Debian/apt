@@ -63,9 +63,9 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       struct stat Buf;
       bool found = false;
       auto const file = F + GetFileName();
-      for (auto const &ext: APT::Configuration::getCompressorExtensions())
+      for (auto const &c : compressor)
       {
-	 if (stat((file + ext).c_str(), &Buf) != 0)
+	 if (stat((file + c.Extension).c_str(), &Buf) != 0)
 	    continue;
 	 found = true;
 	 break;
