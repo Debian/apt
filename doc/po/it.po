@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-01-18 14:46+0000\n"
+"POT-Creation-Date: 2018-02-26 13:14+0100\n"
 "PO-Revision-Date: 2017-03-27 19:05+0200\n"
 "Last-Translator: Beatrice Torracca <beatricet@libero.it>\n"
 "Language-Team: Italian <debian-l10n-italian@lists.debian.org>\n"
@@ -4546,6 +4546,49 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
 msgid ""
+"Security related option defaulting to true, enabling time-related checks. "
+"Disabling it means that the machine's time cannot be trusted, and APT will "
+"hence disable all time-related checks, such as <option>Check-Valid-Until</"
+"option> and verifying that the Date field of a release file is not in the "
+"future."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "Maximum time (in seconds) after its creation (as indicated by the "
+#| "<literal>Date</literal> header) that the <filename>Release</filename> "
+#| "file should be considered valid.  If the Release file itself includes a "
+#| "<literal>Valid-Until</literal> header the earlier date of the two is used "
+#| "as the expiration date.  The default value is <literal>0</literal> which "
+#| "stands for \"valid forever\".  Archive specific settings can be made by "
+#| "appending the label of the archive to the option name. Preferably, the "
+#| "same can be achieved for specific &sources-list; entries by using the "
+#| "<option>Valid-Until-Max</option> option there."
+msgid ""
+"Maximum time (in seconds) before its creation (as indicated by the "
+"<literal>Date</literal> header) that the <filename>Release</filename> file "
+"should be considered valid.  The default value is <literal>10</literal>.  "
+"Archive specific settings can be made by appending the label of the archive "
+"to the option name. Preferably, the same can be achieved for specific "
+"&sources-list; entries by using the <option>Date-Max-Future</option> option "
+"there."
+msgstr ""
+"Tempo massimo (in secondi) dalla sua creazione (come indicata "
+"dall'intestazione <literal>Date</literal>) per il quale il file "
+"<filename>Release</filename> deve essere considerato valido. Se il file "
+"Release stesso include un'intestazione <literal>Valid-Until</literal>, viene "
+"usata come data di scadenza quella più corta. Il valore predefinito è "
+"<literal>0</literal> che sta per «valido per sempre». Possono essere fatte "
+"impostazioni specifiche per ciascun archivio aggiungendo l'etichetta "
+"dell'archivio in fondo al nome dell'opzione. È preferibile ottenere la "
+"stessa cosa per voci specifiche in &sources-list; usando lì l'opzione "
+"<option>Valid-Until-Max</option>."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
 "Security related option defaulting to true, as giving a Release file's "
 "validation an expiration date prevents replay attacks over a long timescale, "
 "and can also for example help users to identify mirrors that are no longer "
@@ -8070,6 +8113,25 @@ msgstr ""
 "controllo. I valori assunti in modo predefinito sono quelli delle opzioni di "
 "configurazione <option>Acquire::Min-ValidTime</option> e <option>Acquire::"
 "Max-ValidTime</option> che sono entrambe non impostate in modo predefinito."
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: sources.list.5.xml
+msgid ""
+"<option>Check-Date</option> (<option>check-date</option>)  is a yes/no value "
+"which controls if APT should consider the machine's time correct and hence "
+"perform time related checks, such as verifying that a Release file is not "
+"from the future. Disabling it also disables the <option>Check-Valid-Until</"
+"option> option mentioned above."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: sources.list.5.xml
+msgid ""
+"<option>Date-Max-Future</option> (<option>date-max-future</option>) controls "
+"how far from the future a repository may be.  Default to the value of the "
+"configuration option <option>Acquire::Max-FutureTime</option> which is 10 "
+"seconds by default."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-01-03 22:34+0000\n"
+"POT-Creation-Date: 2018-02-26 13:14+0100\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -338,6 +338,21 @@ msgstr ""
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
+msgstr ""
+"Файл 'Release' для %s застарів (недійсний з %s). Оновлення для цього "
+"репозиторія не будуть застосовані."
+
+#. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
+#. the time until the file will be valid - formatted in the same way as in
+#. the download progress display (e.g. 7d 3h 42min 1s)
+#: apt-pkg/acquire-item.cc
+#, fuzzy, c-format
+#| msgid ""
+#| "Release file for %s is expired (invalid since %s). Updates for this "
+#| "repository will not be applied."
+msgid ""
+"Release file for %s is not valid yet (invalid for another %s). Updates for "
+"this repository will not be applied."
 msgstr ""
 "Файл 'Release' для %s застарів (недійсний з %s). Оновлення для цього "
 "репозиторія не будуть застосовані."
@@ -2924,6 +2939,10 @@ msgstr ""
 
 #: cmdline/apt-helper.cc
 msgid "wait for system to be online"
+msgstr ""
+
+#: cmdline/apt-helper.cc
+msgid "drop privileges before running given command"
 msgstr ""
 
 #: cmdline/apt-internal-planner.cc

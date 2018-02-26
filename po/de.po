@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-01-06 13:55+0100\n"
+"POT-Creation-Date: 2018-02-26 13:14+0100\n"
 "PO-Revision-Date: 2018-01-11 21:11+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -353,6 +353,21 @@ msgstr ""
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
+msgstr ""
+"Release-Datei für %s ist abgelaufen (ungültig seit %s). Aktualisierungen für "
+"dieses Depot werden nicht angewendet."
+
+#. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
+#. the time until the file will be valid - formatted in the same way as in
+#. the download progress display (e.g. 7d 3h 42min 1s)
+#: apt-pkg/acquire-item.cc
+#, fuzzy, c-format
+#| msgid ""
+#| "Release file for %s is expired (invalid since %s). Updates for this "
+#| "repository will not be applied."
+msgid ""
+"Release file for %s is not valid yet (invalid for another %s). Updates for "
+"this repository will not be applied."
 msgstr ""
 "Release-Datei für %s ist abgelaufen (ungültig seit %s). Aktualisierungen für "
 "dieses Depot werden nicht angewendet."
@@ -1361,8 +1376,7 @@ msgstr "Vorbereiten, eine Lösung zu erhalten"
 
 #: apt-pkg/edsp.cc
 msgid "External solver failed without a proper error message"
-msgstr ""
-"Externer Problemlöser ohne ordnungsgemäße Fehlermeldung fehlgeschlagen"
+msgstr "Externer Problemlöser ohne ordnungsgemäße Fehlermeldung fehlgeschlagen"
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
@@ -1483,8 +1497,7 @@ msgstr "Das Versionssystem »%s« wird durch dieses APT nicht unterstützt."
 #, c-format
 msgid "The package cache was built for different architectures: %s vs %s"
 msgstr ""
-"Der Paketzwischenspeicher wurde für andere Architekturen aufgebaut: %s <-> "
-"%s"
+"Der Paketzwischenspeicher wurde für andere Architekturen aufgebaut: %s <-> %s"
 
 #: apt-pkg/pkgcache.cc
 msgid "The package cache file is corrupted, it has the wrong hash"
@@ -2869,7 +2882,8 @@ msgstr ""
 "Aufruf: apt-dump-solver\n"
 "\n"
 "apt-dump-solver ist eine Schnittstelle zur Speicherung eines EDSP-Szenarios\n"
-"in einer Datei sowie zur optionalen Weiterleitung an ein anderes Problemlöser-\n"
+"in einer Datei sowie zur optionalen Weiterleitung an ein anderes "
+"Problemlöser-\n"
 "Programm.\n"
 
 #: cmdline/apt-extracttemplates.cc
@@ -3055,6 +3069,10 @@ msgstr "erkennen eines Proxy-Servers mittels apt.conf"
 #: cmdline/apt-helper.cc
 msgid "wait for system to be online"
 msgstr "warten, bis das System online ist"
+
+#: cmdline/apt-helper.cc
+msgid "drop privileges before running given command"
+msgstr ""
 
 #: cmdline/apt-internal-planner.cc
 msgid ""
@@ -3741,8 +3759,8 @@ msgstr "Verbindung mit %s:%s nicht möglich (%s)"
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr ""
-"Verbindung mit %s:%s konnte nicht aufgebaut werden (%s), "
-"Zeitüberschreitung aufgetreten"
+"Verbindung mit %s:%s konnte nicht aufgebaut werden (%s), Zeitüberschreitung "
+"aufgetreten"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3961,8 +3979,7 @@ msgstr "Unbekannter Fehler beim Ausführen von apt-key"
 #, c-format
 msgid "Signature by key %s uses weak digest algorithm (%s)"
 msgstr ""
-"Signatur von Schlüssel %s verwendet einen schwachen "
-"Hash-Algorithmus (%s)"
+"Signatur von Schlüssel %s verwendet einen schwachen Hash-Algorithmus (%s)"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"

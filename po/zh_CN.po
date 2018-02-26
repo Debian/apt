@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.5.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-01-03 22:34+0000\n"
+"POT-Creation-Date: 2018-02-26 13:14+0100\n"
 "PO-Revision-Date: 2017-10-08 11:00+0000\n"
 "Last-Translator: Mo Zhou <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -334,6 +334,20 @@ msgstr "鉴于仓库 '%2$s' 提供的安全信息强度太低，跳过配置文�
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
+msgstr ""
+"%s 的 Release 文件已经过期(invalid since %s)。该仓库的更新将不会被应用。"
+
+#. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
+#. the time until the file will be valid - formatted in the same way as in
+#. the download progress display (e.g. 7d 3h 42min 1s)
+#: apt-pkg/acquire-item.cc
+#, fuzzy, c-format
+#| msgid ""
+#| "Release file for %s is expired (invalid since %s). Updates for this "
+#| "repository will not be applied."
+msgid ""
+"Release file for %s is not valid yet (invalid for another %s). Updates for "
+"this repository will not be applied."
 msgstr ""
 "%s 的 Release 文件已经过期(invalid since %s)。该仓库的更新将不会被应用。"
 
@@ -2829,6 +2843,10 @@ msgstr "用 apt.conf 检测代理设置"
 #: cmdline/apt-helper.cc
 msgid "wait for system to be online"
 msgstr "等待系统上线"
+
+#: cmdline/apt-helper.cc
+msgid "drop privileges before running given command"
+msgstr ""
 
 #: cmdline/apt-internal-planner.cc
 msgid ""

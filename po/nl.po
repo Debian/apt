@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-01-03 22:34+0000\n"
+"POT-Creation-Date: 2018-02-26 13:14+0100\n"
 "PO-Revision-Date: 2017-09-29 22:22+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -355,6 +355,21 @@ msgstr ""
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
+msgstr ""
+"Het Release-bestand voor %s is vervallen (ongeldig sinds %s). Bijwerkingen "
+"voor deze pakketbron zullen niet uitgevoerd worden."
+
+#. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
+#. the time until the file will be valid - formatted in the same way as in
+#. the download progress display (e.g. 7d 3h 42min 1s)
+#: apt-pkg/acquire-item.cc
+#, fuzzy, c-format
+#| msgid ""
+#| "Release file for %s is expired (invalid since %s). Updates for this "
+#| "repository will not be applied."
+msgid ""
+"Release file for %s is not valid yet (invalid for another %s). Updates for "
+"this repository will not be applied."
 msgstr ""
 "Het Release-bestand voor %s is vervallen (ongeldig sinds %s). Bijwerkingen "
 "voor deze pakketbron zullen niet uitgevoerd worden."
@@ -3008,6 +3023,10 @@ msgstr "proxy opzoeken met behulp van apt.conf"
 #: cmdline/apt-helper.cc
 msgid "wait for system to be online"
 msgstr "wacht tot het systeem online is"
+
+#: cmdline/apt-helper.cc
+msgid "drop privileges before running given command"
+msgstr ""
 
 #: cmdline/apt-internal-planner.cc
 msgid ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.7\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-01-18 14:46+0000\n"
+"POT-Creation-Date: 2018-02-26 13:14+0100\n"
 "PO-Revision-Date: 2014-08-29 00:34+0100\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -4449,6 +4449,45 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
+msgid ""
+"Security related option defaulting to true, enabling time-related checks. "
+"Disabling it means that the machine's time cannot be trusted, and APT will "
+"hence disable all time-related checks, such as <option>Check-Valid-Until</"
+"option> and verifying that the Date field of a release file is not in the "
+"future."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "Maximum time (in seconds) after its creation (as indicated by the "
+#| "<literal>Date</literal> header) that the <filename>Release</filename> "
+#| "file should be considered valid.  If the Release file itself includes a "
+#| "<literal>Valid-Until</literal> header the earlier date of the two is used "
+#| "as the expiration date.  The default value is <literal>0</literal> which "
+#| "stands for \"valid forever\".  Archive specific settings can be made by "
+#| "appending the label of the archive to the option name."
+msgid ""
+"Maximum time (in seconds) before its creation (as indicated by the "
+"<literal>Date</literal> header) that the <filename>Release</filename> file "
+"should be considered valid.  The default value is <literal>10</literal>.  "
+"Archive specific settings can be made by appending the label of the archive "
+"to the option name. Preferably, the same can be achieved for specific "
+"&sources-list; entries by using the <option>Date-Max-Future</option> option "
+"there."
+msgstr ""
+"O tempo máximo (em segundos) após a sua criação (como indicado pelo "
+"cabeçalho <literal>Date</literal>) que o ficheiro <filename>Release</"
+"filename> deve ser considerado como válido. Se o próprio ficheiro Release "
+"incluir um cabeçalho <literal>Valid-Until</literal> é usada como data de "
+"expiração a data que expira mais cedo. O valor predefinido é <literal>0</"
+"literal> o que significa \"válido para sempre\". Podem ser criadas "
+"definições específicas de arquivo ao acrescentar a etiqueta do arquivo ao "
+"nome da opção."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
 #, fuzzy
 #| msgid ""
 #| "Security related option defaulting to true, as giving a Release file's "
@@ -7849,6 +7888,25 @@ msgid ""
 "entirely.  Default to the value of the configuration options "
 "<option>Acquire::Min-ValidTime</option> and <option>Acquire::Max-ValidTime</"
 "option> which are both unset by default."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: sources.list.5.xml
+msgid ""
+"<option>Check-Date</option> (<option>check-date</option>)  is a yes/no value "
+"which controls if APT should consider the machine's time correct and hence "
+"perform time related checks, such as verifying that a Release file is not "
+"from the future. Disabling it also disables the <option>Check-Valid-Until</"
+"option> option mentioned above."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: sources.list.5.xml
+msgid ""
+"<option>Date-Max-Future</option> (<option>date-max-future</option>) controls "
+"how far from the future a repository may be.  Default to the value of the "
+"configuration option <option>Acquire::Max-FutureTime</option> which is 10 "
+"seconds by default."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-01-06 21:14+0100\n"
+"POT-Creation-Date: 2018-02-26 13:14+0100\n"
 "PO-Revision-Date: 2018-01-02 15:09+0100\n"
 "Last-Translator: Julien Patriarca <leatherface@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -349,6 +349,21 @@ msgstr ""
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
+msgstr ""
+"Le fichier « Release » pour %s a expiré (invalide depuis %s). Les mises à "
+"jour depuis ce dépôt ne s'effectueront pas."
+
+#. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
+#. the time until the file will be valid - formatted in the same way as in
+#. the download progress display (e.g. 7d 3h 42min 1s)
+#: apt-pkg/acquire-item.cc
+#, fuzzy, c-format
+#| msgid ""
+#| "Release file for %s is expired (invalid since %s). Updates for this "
+#| "repository will not be applied."
+msgid ""
+"Release file for %s is not valid yet (invalid for another %s). Updates for "
+"this repository will not be applied."
 msgstr ""
 "Le fichier « Release » pour %s a expiré (invalide depuis %s). Les mises à "
 "jour depuis ce dépôt ne s'effectueront pas."
@@ -3066,6 +3081,10 @@ msgstr "détecter la configuration proxy en utilisant apt.conf"
 #: cmdline/apt-helper.cc
 msgid "wait for system to be online"
 msgstr "En attente de la connexion du système"
+
+#: cmdline/apt-helper.cc
+msgid "drop privileges before running given command"
+msgstr ""
 
 #: cmdline/apt-internal-planner.cc
 msgid ""
