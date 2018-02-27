@@ -409,6 +409,17 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
     alternative.</para></listitem>
     </varlistentry>
 
+    <varlistentry><term><command>mirror</command>, <command>mirror+<replaceable>scheme</replaceable></command> (&apt-transport-mirror;)</term>
+    <listitem><para>
+    The mirror scheme specifies the location of a mirrorlist. By default the
+    scheme used for the location is <literal>http</literal>, but any other
+    scheme can be used via <command>mirror+<replaceable>scheme</replaceable></command>.
+    The mirrorlist itself can contain many different URIs for mirrors the APT client
+    can transparently pick, choose and fallback between intended to help both
+    with distributing the load over the available mirrors and ensuring that
+    clients can acquire data even if some configured mirrors are not available.
+    </para></listitem>
+    </varlistentry>
 
     <varlistentry><term><command>file</command></term>
     <listitem><para>
