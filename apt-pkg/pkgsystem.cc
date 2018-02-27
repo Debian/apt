@@ -72,7 +72,7 @@ std::vector<std::string> pkgSystem::ArchitecturesSupported() const	/*{{{*/
    return {};
 }
 									/*}}}*/
-// pkgSystem::Set/GetVersionMapping - for internal/external communcation/*{{{*/
+// pkgSystem::Set/GetVersionMapping - for internal/external communication/*{{{*/
 void pkgSystem::SetVersionMapping(map_id_t const in, map_id_t const out)
 {
    if (in == out)
