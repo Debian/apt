@@ -105,6 +105,12 @@ elif [ "$1" = 'pre-build' ]; then
 			echo "You probably want to run »./prepare-release pre-export« to fix this."
 			exit 1
 		fi
+		NEWSDISTRIBUTION=$(dpkg-parsechangelog -l debian/NEWS | sed -n -e '/^Distribution:/s/^Distribution: //p')
+		if [ "$NEWSDISTRIBUTION" = 'UNRELEASED' ]; then
+			 echo "changelog (${VERSION}) has a distribution (${DISTRIBUTION}) set, while the NEWS file hasn't!"
+			echo "You probably want to edit »debian/NEWS« to fix this."
+			exit 1
+		fi
 	fi
 elif [ "$1" = 'post-build' ]; then
 	if [ "$DISTRIBUTION" != "UNRELEASED" ]; then
