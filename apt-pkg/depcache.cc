@@ -1876,16 +1876,21 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 
       if ((PkgState[P->ID].Flags & Flag::Auto) == 0)
 	 ;
-      else if ((P->Flags & Flag::Essential) || (P->Flags & Flag::Important))
+      else if ((P->Flags & Flag::Essential) || (P->Flags & Flag::Important)) {
+	 if (debug_autoremove)
+	    std::clog << "Marking " << P.FullName()
+		  << " because it's essential/important." << std::endl;
+      } else if (P->CurrentVer != 0 && P.CurrentVer()->Priority == pkgCache::State::Required)
+	 // be nice even then a required package violates the policy (#583517)
+	 // and do the full mark process also for required packages
 	 ;
-      // be nice even then a required package violates the policy (#583517)
-      // and do the full mark process also for required packages
-      else if (P->CurrentVer != 0 && P.CurrentVer()->Priority == pkgCache::State::Required)
-	 ;
-      else if (userFunc.InRootSet(P))
-	 ;
-      // packages which can't be changed (like holds) can't be garbage
-      else if (IsModeChangeOk(ModeGarbage, P, 0, false) == false)
+      else if (userFunc.InRootSet(P)) {
+	 if (debug_autoremove)
+	    std::clog << "Marking " << P.FullName()
+		  << " because it's blacklisted in APT::NeverAutoRemove."
+		  << std::endl;
+      } else if (IsModeChangeOk(ModeGarbage, P, 0, false) == false)
+	 // packages which can't be changed (like holds) can't be garbage
 	 ;
       else
 	 continue;
