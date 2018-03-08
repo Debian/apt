@@ -624,6 +624,7 @@ configcompression() {
 		'.') printf ".\t.\tcat\n";;
 		'gz') printf "gzip\tgz\t$CMD $1\n";;
 		'bz2') printf "bzip2\tbz2\t$CMD $1\n";;
+		'zst') printf "zstd\tzst\t$CMD $1\n";;
 		*) printf "$1\t$1\t$CMD $1\n";;
 		esac
 		shift
@@ -652,6 +653,7 @@ forcecompressor() {
 	case $COMPRESSOR in
 	gzip) COMPRESS='gz';;
 	bzip2) COMPRESS='bz2';;
+	zstd) COMPRESS='zst';;
 	esac
 	local CONFFILE="${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/00force-compressor"
 	echo "Acquire::CompressionTypes::Order { \"${COMPRESS}\"; };
