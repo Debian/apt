@@ -50,7 +50,9 @@ debDebFile::debDebFile(FileFd &File) : File(File), AR(File)
 
    if (!CheckMember("control.tar") &&
        !CheckMember("control.tar.gz") &&
-       !CheckMember("control.tar.xz")) {
+       !CheckMember("control.tar.xz") &&
+       !CheckMember("control.tar.zst"))
+   {
       _error->Error(_("This is not a valid DEB archive, missing '%s' member"), "control.tar");
       return;
    }
@@ -59,7 +61,9 @@ debDebFile::debDebFile(FileFd &File) : File(File), AR(File)
        !CheckMember("data.tar.gz") &&
        !CheckMember("data.tar.bz2") &&
        !CheckMember("data.tar.lzma") &&
-       !CheckMember("data.tar.xz")) {
+       !CheckMember("data.tar.xz") &&
+       !CheckMember("data.tar.zst"))
+   {
       _error->Error(_("This is not a valid DEB archive, missing '%s' member"), "data.tar");
       return;
    }
