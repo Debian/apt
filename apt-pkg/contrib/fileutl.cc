@@ -1740,7 +1740,7 @@ class APT_HIDDEN ZstdFileFdPrivate : public FileFdPrivate
       if ((Mode & FileFd::WriteOnly) == FileFd::WriteOnly)
       {
 	 cctx = ZSTD_createCStream();
-	 res = ZSTD_initCStream(cctx, 19);
+	 res = ZSTD_initCStream(cctx, findLevel(compressor.CompressArgs));
 	 zstd_buffer.reset(APT_BUFFER_SIZE);
       }
       else
@@ -1896,6 +1896,23 @@ class APT_HIDDEN ZstdFileFdPrivate : public FileFdPrivate
       }
 
       return ZSTD_isError(res) == false;
+   }
+
+   static uint32_t findLevel(std::vector<std::string> const &Args)
+   {
+      for (auto a = Args.rbegin(); a != Args.rend(); ++a)
+      {
+	 if (a->size() >= 2 && (*a)[0] == '-' && (*a)[1] != '-')
+	 {
+	    auto const level = a->substr(1);
+	    auto const notANumber = level.find_first_not_of("0123456789");
+	    if (notANumber != std::string::npos)
+	       continue;
+
+	    return (uint32_t)stoi(level);
+	 }
+      }
+      return 19;
    }
 
    explicit ZstdFileFdPrivate(FileFd *const filefd) : FileFdPrivate(filefd), dctx(nullptr), cctx(nullptr) {}
