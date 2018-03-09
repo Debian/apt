@@ -1764,7 +1764,7 @@ class APT_HIDDEN ZstdFileFdPrivate : public FileFdPrivate
    virtual ssize_t InternalUnbufferedRead(void *const To, unsigned long long const Size) APT_OVERRIDE
    {
       /* Keep reading as long as the compressor still wants to read */
-      while (next_to_load)
+      while (true)
       {
 	 // Fill compressed buffer;
 	 if (zstd_buffer.empty())
@@ -1776,9 +1776,12 @@ class APT_HIDDEN ZstdFileFdPrivate : public FileFdPrivate
 	       return -1;
 	    zstd_buffer.bufferend += read;
 
-	    /* Expected EOF */
 	    if (read == 0)
 	    {
+	       /* Expected EOF */
+	       if (next_to_load == 0)
+		  return 0;
+
 	       res = -1;
 	       return filefd->FileFdError("ZSTD: %s %s",
 					  filefd->FileName.c_str(),
@@ -1798,11 +1801,16 @@ class APT_HIDDEN ZstdFileFdPrivate : public FileFdPrivate
 	    .pos = 0,
 	 };
 
-	 res = ZSTD_decompressStream(dctx, &out, &in);
+	 next_to_load = res = ZSTD_decompressStream(dctx, &out, &in);
+
+	 if (res == 0)
+	 {
+	    res = ZSTD_initDStream(dctx);
+	 }
+
 	 if (ZSTD_isError(res))
 	    return -1;
 
-	 next_to_load = res;
 	 zstd_buffer.bufferstart += in.pos;
 
 	 if (out.pos != 0)
