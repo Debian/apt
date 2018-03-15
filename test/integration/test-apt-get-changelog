@@ -27,12 +27,12 @@ releasechanger() {
 	rm -f rootdir/var/cache/apt/*.bin
 }
 releasechanger 'Origin' 'Ubuntu'
-testsuccessequal "'http://changelogs.ubuntu.com/changelogs/pool/main/f/foo/foo_1.0/changelog' foo.changelog
-'http://changelogs.ubuntu.com/changelogs/pool/main/libb/libbar/libbar_1.0/changelog' libbar.changelog" aptget changelog foo libbar --print-uris
+testsuccessequal "'https://changelogs.ubuntu.com/changelogs/pool/main/f/foo/foo_1.0/changelog' foo.changelog
+'https://changelogs.ubuntu.com/changelogs/pool/main/libb/libbar/libbar_1.0/changelog' libbar.changelog" aptget changelog foo libbar --print-uris
 
 releasechanger 'Label' 'Debian'
-testsuccessequal "'http://changelogs.ubuntu.com/changelogs/pool/main/f/foo/foo_1.0/changelog' foo.changelog
-'http://changelogs.ubuntu.com/changelogs/pool/main/libb/libbar/libbar_1.0/changelog' libbar.changelog" aptget changelog foo libbar --print-uris
+testsuccessequal "'https://changelogs.ubuntu.com/changelogs/pool/main/f/foo/foo_1.0/changelog' foo.changelog
+'https://changelogs.ubuntu.com/changelogs/pool/main/libb/libbar/libbar_1.0/changelog' libbar.changelog" aptget changelog foo libbar --print-uris
 
 testsuccessequal "'http://localhost:${APTHTTPPORT}/main/f/foo/foo_1.0.changelog' foo.changelog
 'http://localhost:${APTHTTPPORT}/main/libb/libbar/libbar_1.0.changelog' libbar.changelog" aptget changelog foo libbar --print-uris -o Acquire::Changelogs::URI::Label::Debian="http://localhost:${APTHTTPPORT}/@CHANGEPATH@.changelog"
