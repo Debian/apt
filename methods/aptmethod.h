@@ -227,6 +227,7 @@ protected:
       ALLOW(rename);
       ALLOW(renameat);
       ALLOW(renameat2);
+      ALLOW(restart_syscall);
       ALLOW(rt_sigaction);
       ALLOW(rt_sigpending);
       ALLOW(rt_sigprocmask);
