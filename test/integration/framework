@@ -479,6 +479,9 @@ EOF
 	unset GREP_OPTIONS DEB_BUILD_PROFILES
 	unset http_proxy HTTP_PROXY https_proxy HTTPS_PROXY no_proxy
 
+	# Make gcov shut up
+	export GCOV_ERROR_FILE=/dev/null
+
 	# If gpgv supports --weak-digest, pass it to make sure we can disable SHA1
 	if aptkey verify --weak-digest SHA1 --help 2>/dev/null >/dev/null; then
 		echo 'Acquire::gpgv::Options { "--weak-digest"; "sha1"; };' > rootdir/etc/apt/apt.conf.d/no-sha1
