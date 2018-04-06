@@ -7,5 +7,6 @@ RUN sed -i s#://deb.debian.org#://cdn-fastly.deb.debian.org# /etc/apt/sources.li
     && env DEBIAN_FRONTEND=noninteractive apt-get install build-essential ccache ninja-build expect curl git -q -y \
     && env DEBIAN_FRONTEND=noninteractive ./prepare-release travis-ci \
     && dpkg-reconfigure ccache \
+    && rm -f /etc/dpkg/dpkg.cfg.d/excludes \
     && rm -r /tmp/* \
     && apt-get clean
