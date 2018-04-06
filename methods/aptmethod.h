@@ -106,7 +106,7 @@ protected:
       if (SeccompFlags == 0)
 	 return true;
 
-      if (_config->FindB("APT::Sandbox::Seccomp", true) == false)
+      if (_config->FindB("APT::Sandbox::Seccomp", false) == false)
 	 return true;
 
       if (RunningInQemu() == true)
