@@ -1,0 +1,48 @@
+#!/bin/sh
+#
+# Ensure that when going from unauthenticated to authenticated all
+# files are checked again
+#
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'foo' 'all' '1.0'
+insertsource 'unstable' 'foo' 'all' '1.0'
+
+setupaptarchive
+changetowebserver
+
+runtest() {
+    # start unauthenticated
+    find rootdir/var/lib/apt/lists/ -type f | xargs rm -f
+    rm -f aptarchive/dists/unstable/*Release*
+    aptget update -qq
+
+    # become authenticated
+    generatereleasefiles
+    signreleasefiles
+
+    # and ensure we do download the data again
+    msgtest "Check that the data is check when going to authenticated"
+    if aptget update |grep -q Hit; then
+        msgfail
+    else
+        msgpass
+    fi
+}
+
+for COMPRESSEDINDEXES in 'false' 'true'; do
+	echo "Acquire::GzipIndexes \"$COMPRESSEDINDEXES\";" > rootdir/etc/apt/apt.conf.d/compressindexes
+	if $COMPRESSEDINDEXES; then
+		msgmsg 'Run tests with GzipIndexes enabled'
+	else
+		msgmsg 'Run tests with GzipIndexes disabled'
+	fi
+
+        runtest
+done

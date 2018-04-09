@@ -1,0 +1,17 @@
+#!/bin/sh
+# regresion test for bug #762160 where apt-get update fails when a 
+# relative directory is given
+#
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'foo' 'all' '1'
+setupaptarchive
+changetowebserver
+
+testsuccess aptget update -o Dir=./rootdir
+testsuccess aptget update -o Dir=./rootdir 

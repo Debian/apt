@@ -64,7 +64,7 @@ runtest() {
         msgtest 'No package from the source available'
         [ "$(aptcache show apt 2>&1)" = "E: No packages found" ] && msgpass || msgfail
         msgtest 'No Packages file in /var/lib/apt/lists'
-        [ "$(ls rootdir/var/lib/apt/lists/*Package* 2>/dev/null)" = "" ] && msgpass || msgfail 
+        [ "$(ls rootdir/var/lib/apt/lists/*Package* 2>/dev/null | grep -v FAILED 2>/dev/null)" = "" ] && msgpass || msgfail 
         
         # now with the unsigned Release file
         rm -rf rootdir/var/lib/apt/lists
@@ -75,5 +75,13 @@ runtest() {
 
 }
 
-runtest
-
+for COMPRESSEDINDEXES in 'false' 'true'; do
+	echo "Acquire::GzipIndexes \"$COMPRESSEDINDEXES\";" > rootdir/etc/apt/apt.conf.d/compressindexes
+	if $COMPRESSEDINDEXES; then
+		msgmsg 'Run tests with GzipIndexes enabled'
+	else
+		msgmsg 'Run tests with GzipIndexes disabled'
+	fi
+ 
+        runtest
+done

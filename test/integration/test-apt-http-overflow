@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Ensure we do not crash on long urls
+#
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "amd64"
+configcompression '.' 'gz' 
+
+insertpackage 'unstable' 'foo' 'all' '1.0'
+
+setupaptarchive --no-update
+changetowebserver
+
+rm -f rootdir/var/cache/apt/*.bin
+sed -i 's#Filename: pool/main/foo/foo_1.0_all.deb#Filename: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx#' \
+    aptarchive/dists/unstable/main/binary-amd64/Packages
+gzip -c aptarchive/dists/unstable/main/binary-amd64/Packages > \
+     aptarchive/dists/unstable/main/binary-amd64/Packages.gz
+bzip2 -c aptarchive/dists/unstable/main/binary-amd64/Packages > \
+     aptarchive/dists/unstable/main/binary-amd64/Packages.bz2
+
+generatereleasefiles
+signreleasefiles
+
+testsuccess aptget update
+msgmsg "Ensure http does not segfault"
+
+aptget install foo -qq 2> output.log || true
+grep -q 'Unable to fetch some archives, ' output.log && msgpass || msgfail
+

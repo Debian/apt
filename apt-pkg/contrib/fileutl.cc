@@ -781,11 +781,26 @@ pid_t ExecFork(std::set<int> KeepFDs)
       signal(SIGCONT,SIG_DFL);
       signal(SIGTSTP,SIG_DFL);
 
-      // Close all of our FDs - just in case
-      for (int K = 3; K != sysconf(_SC_OPEN_MAX); K++)
+      DIR *dir = opendir("/proc/self/fd");
+      if (dir != NULL)
       {
-	 if(KeepFDs.find(K) == KeepFDs.end())
-	    fcntl(K,F_SETFD,FD_CLOEXEC);
+	 struct dirent *ent;
+	 while ((ent = readdir(dir)))
+	 {
+	    int fd = atoi(ent->d_name);
+	    // If fd > 0, it was a fd number and not . or ..
+	    if (fd >= 3 && KeepFDs.find(fd) == KeepFDs.end())
+	       fcntl(fd,F_SETFD,FD_CLOEXEC);
+	 }
+	 closedir(dir);
+      } else {
+	 long ScOpenMax = sysconf(_SC_OPEN_MAX);
+	 // Close all of our FDs - just in case
+	 for (int K = 3; K != ScOpenMax; K++)
+	 {
+	    if(KeepFDs.find(K) == KeepFDs.end())
+	       fcntl(K,F_SETFD,FD_CLOEXEC);
+	 }
       }
    }
    
@@ -1574,18 +1589,34 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 	 size_t const n = sizeof(d->lzma->buffer)/sizeof(d->lzma->buffer[0]) - d->lzma->stream.avail_out;
 	 size_t const m = (n == 0) ? 0 : fwrite(d->lzma->buffer, 1, n, d->lzma->file);
 	 if (m != n)
+	 {
 	    Res = -1;
+	    errno = 0;
+	 }
 	 else
+	 {
 	    Res = Size - d->lzma->stream.avail_in;
+	    if (Res == 0)
+	    {
+	       // lzma run was okay, but produced no output…
+	       Res = -1;
+	       errno = EINTR;
+	    }
+	 }
       }
 #endif
       else
 	 Res = write(iFd,From,Size);
 
-      if (Res < 0 && errno == EINTR)
-	 continue;
       if (Res < 0)
       {
+	 if (errno == EINTR)
+	 {
+	    // trick the while-loop into running again
+	    Res = 1;
+	    errno = 0;
+	    continue;
+	 }
 	 if (false)
 	    /* dummy so that the rest can be 'else if's */;
 #ifdef HAVE_ZLIB

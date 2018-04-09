@@ -1,13 +1,137 @@
-apt (1.0.1ubuntu2.2) trusty-proposed; urgency=medium
+apt (1.0.1ubuntu2.18) trusty; urgency=medium
 
-  * Implement CacheDB for source packages in apt-ftparchive  
-    LP: #1329212
-  * Only do openpty() if both stdin/stdout are terminals (Closes: 746434)
-    LP: #1324399
-  * Add compat mode for old (32bit FileSize) CacheDB (LP: #1274466)
-  * fix tests and add db-util to the test dependencies
+  * ExecFork: Use /proc/self/fd to determine which files to close
+    (Closes: #764204) (LP: #1332440).
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 18 Jun 2014 11:09:52 +0200
+ -- Julian Andres Klode <juliank@ubuntu.com>  Mon, 09 Apr 2018 15:32:09 +0200
+
+apt (1.0.1ubuntu2.17) trusty-security; urgency=high
+
+  * SECURITY UPDATE: gpgv: Check for errors when splitting files (CVE-2016-1252)
+    Thanks to Jann Horn, Google Project Zero for reporting the issue
+    (LP: #1647467)
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Thu, 08 Dec 2016 15:31:29 +0100
+
+apt (1.0.1ubuntu2.15) trusty; urgency=medium
+
+  * Fixes failure to download the Package index file when using
+    mirror:// URL in sources.list and the archive fails to profile
+    a file. APT would try the next archive in the list for .deb
+    packages but did not retry when the index file failed to download.
+    (LP: #1625667)
+
+ -- Louis Bouchard <louis.bouchard@ubuntu.com>  Tue, 20 Sep 2016 17:02:03 +0200
+
+apt (1.0.1ubuntu2.14) trusty; urgency=medium
+
+  * When using the https transport mechanism, $no_proxy is ignored if apt is
+    getting it's proxy information from $https_proxy (as opposed to
+    Acquire::https::Proxy somewhere in apt config). If the source of proxy
+    information is Acquire::https::Proxy set in apt.conf (or apt.conf.d),
+    then $no_proxy is honored. This patch makes the behavior similar for
+    both methods of setting the proxy. (LP: #1575877)
+
+ -- Patrick Cable <pc@pcable.net>  Tue, 17 May 2016 13:45:06 -0700
+
+apt (1.0.1ubuntu2.13) trusty; urgency=medium
+
+  * Recheck Pre-Depends satisfaction in SmartConfigure, to avoid unconfigured
+    Pre-Depends (which dpkg later fails on). Fixes upgrade failures of
+    systemd, util-linux, and other packages with Pre-Depends. Many thanks to
+    David Kalnischkies for figuring out the patch and Winfried PLappert for
+    testing! Patch taken from Debian git. (LP: #1560797)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 19 Apr 2016 12:32:43 +0200
+
+apt (1.0.1ubuntu2.12) trusty; urgency=medium
+
+  [ Colin Watson ]
+  * Fix lzma write support to handle "try again" case (closes: #751688,
+    LP: #1553770).
+
+  [ David Kalnischkies ]
+  * Handle moved mmap after UniqFindTagWrite call (closes: #753941,
+    LP: #1445436).
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Sun, 06 Mar 2016 19:01:04 +0000
+
+apt (1.0.1ubuntu2.11) trusty; urgency=medium
+
+  * apt-pkg/packagemanager.cc:
+    - fix incorrect configure ordering in the SmartConfigure step by skipping
+      packages that do not need immediate action. (LP: #1347721, #1497688)
+
+ -- Brian Murray <brian@ubuntu.com>  Fri, 08 Jan 2016 16:09:22 -0800
+
+apt (1.0.1ubuntu2.10) trusty; urgency=medium
+
+  * Fix regression from the previous upload by ensuring we're actually
+    testing for the right member before iterating on it (LP: #1480592)
+
+ -- Adam Conrad <adconrad@ubuntu.com>  Sat, 01 Aug 2015 04:52:49 -0600
+
+apt (1.0.1ubuntu2.9) trusty; urgency=medium
+
+  * Fix regression in the Never-MarkAuto-Sections feature caused by the
+    previous auto-removal fix, with inspiration drawn from the patches
+    and conversation from http://bugs.debian.org/793360 (LP: #1479207)
+
+ -- Adam Conrad <adconrad@ubuntu.com>  Wed, 29 Jul 2015 21:23:49 -0600
+
+apt (1.0.1ubuntu2.8) trusty-proposed; urgency=low
+
+  * fix crash for packages that have no section in their instVersion
+    (LP: #1449394)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 28 Apr 2015 09:00:52 +0200
+
+apt (1.0.1ubuntu2.7) trusty-proposed; urgency=low
+
+  * fix auto-removal behavior (thanks to Adam Conrad)
+    LP: #1429041
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 13 Mar 2015 14:55:31 +0100
+
+apt (1.0.1ubuntu2.6) trusty-proposed; urgency=medium
+
+  * apt-pkg/deb/dpkgpm.cc:
+    - update string matching for dpkg I/O errors. (LP: #1363257)
+    - properly parse the dpkg status line so that package name is properly set
+      and an apport report is created. Thanks to Anders Kaseorg for the patch.
+      (LP: #1353171)
+
+ -- Brian Murray <brian@ubuntu.com>  Wed, 08 Oct 2014 14:01:41 -0700
+
+apt (1.0.1ubuntu2.5) trusty-security; urgency=low
+
+  * SECURITY UPDATE:
+      - cmdline/apt-get.cc: fix insecure tempfile handling in
+        apt-get changelog (CVE-2014-7206). Thanks to Guillem Jover
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 08 Oct 2014 10:38:50 +0200
+
+apt (1.0.1ubuntu2.4.1) trusty-security; urgency=low
+
+  * SECURITY UPDATE:
+    - fix potential buffer overflow, thanks to the
+      Google Security Team (CVE-2014-6273)
+  * Fix regression from the previous upload when file:/// sources
+    are used and those are on a different partition than
+    the apt state directory
+  * Fix regression when Dir::state::lists is set to a relative path
+  * Fix regression when cdrom: sources got rewriten by apt-cdrom add
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 23 Sep 2014 09:04:44 +0200
+
+apt (1.0.1ubuntu2.3) trusty-security; urgency=low
+
+  * SECURITY UPDATE:
+    - incorrect invalidating of unauthenticated data (CVE-2014-0488)
+    - incorect verification of 304 reply (CVE-2014-0487)
+    - incorrect verification of Acquire::Gzip indexes (CVE-2014-0489)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 15 Sep 2014 08:23:35 +0200
 
 apt (1.0.1ubuntu2.1) trusty-security; urgency=low
 

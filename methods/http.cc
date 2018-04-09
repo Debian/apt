@@ -667,7 +667,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
    URI Uri = Itm->Uri;
 
    // The HTTP server expects a hostname with a trailing :port
-   char Buf[1000];
+   string Buf;
    string ProperHost;
 
    if (Uri.Host.find(':') != string::npos)
@@ -676,14 +676,10 @@ void HttpMethod::SendReq(FetchItem *Itm)
       ProperHost = Uri.Host;
    if (Uri.Port != 0)
    {
-      sprintf(Buf,":%u",Uri.Port);
+      strprintf(Buf,":%u",Uri.Port);
       ProperHost += Buf;
    }   
       
-   // Just in case.
-   if (Itm->Uri.length() >= sizeof(Buf))
-       abort();
-
    /* RFC 2616 §5.1.2 requires absolute URIs for requests to proxies,
       but while its a must for all servers to accept absolute URIs,
       it is assumed clients will sent an absolute path for non-proxies */
@@ -701,25 +697,27 @@ void HttpMethod::SendReq(FetchItem *Itm)
       in 1.1, can cause problems with proxies, and we are an HTTP/1.1
       client anyway.
       C.f. https://tools.ietf.org/wg/httpbis/trac/ticket/158 */
-   sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\n",
+   strprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\n",
 	   requesturi.c_str(),ProperHost.c_str());
 
    // generate a cache control header (if needed)
    if (_config->FindB("Acquire::http::No-Cache",false) == true) 
    {
-      strcat(Buf,"Cache-Control: no-cache\r\nPragma: no-cache\r\n");
+      Buf += "Cache-Control: no-cache\r\nPragma: no-cache\r\n";
    }
    else
    {
       if (Itm->IndexFile == true) 
       {
-	 sprintf(Buf+strlen(Buf),"Cache-Control: max-age=%u\r\n",
+         string Tmp;
+	 strprintf(Tmp,"Cache-Control: max-age=%u\r\n",
 		 _config->FindI("Acquire::http::Max-Age",0));
+         Buf += Tmp;
       }
       else
       {
 	 if (_config->FindB("Acquire::http::No-Store",false) == true)
-	    strcat(Buf,"Cache-Control: no-store\r\n");
+	    Buf += "Cache-Control: no-store\r\n";
       }
    }
 
@@ -733,7 +731,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
       size_t const filepos = Itm->Uri.find_last_of('/');
       string const file = Itm->Uri.substr(filepos + 1);
       if (flExtension(file) == file)
-	 strcat(Buf,"Accept: text/*\r\n");
+	 Buf += "Accept: text/*\r\n";
    }
 
    string Req = Buf;
@@ -743,7 +741,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {
       // In this case we send an if-range query with a range header
-      sprintf(Buf,"Range: bytes=%lli-\r\nIf-Range: %s\r\n",(long long)SBuf.st_size,
+      strprintf(Buf,"Range: bytes=%lli-\r\nIf-Range: %s\r\n",(long long)SBuf.st_size,
 	      TimeRFC1123(SBuf.st_mtime).c_str());
       Req += Buf;
    }
@@ -751,7 +749,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
    {
       if (Itm->LastModified != 0)
       {
-	 sprintf(Buf,"If-Modified-Since: %s\r\n",TimeRFC1123(Itm->LastModified).c_str());
+	 strprintf(Buf,"If-Modified-Since: %s\r\n",TimeRFC1123(Itm->LastModified).c_str());
 	 Req += Buf;
       }
    }

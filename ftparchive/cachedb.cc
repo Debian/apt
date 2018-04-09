@@ -20,7 +20,6 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/debfile.h>
-#include <apt-pkg/gpgv.h>
 
 #include <netinet/in.h>       // htonl, etc
 #include <ctype.h>
@@ -86,7 +85,7 @@ bool CacheDB::ReadyDB(std::string const &DB)
           return _error->Error(_("Unable to open DB file %s: %s"),DB.c_str(), db_strerror(err));
       }
    }
-
+   
    DBFile = DB;
    DBLoaded = true;
    return true;
@@ -97,54 +96,14 @@ bool CacheDB::ReadyDB(std::string const &DB)
 /* */
 bool CacheDB::OpenFile()
 {
-   // always close existing file first
-   CloseFile();
-
-   // open a new file
-   Fd = new FileFd(FileName,FileFd::ReadOnly);
-   if (_error->PendingError() == true)
-   {
-      CloseFile();
-      return false;
-   }
-   return true;
-}
-									/*}}}*/
-// CacheDB::CloseFile - Close the file					/*{{{*/
-void CacheDB::CloseFile()
-{
-   if(Fd != NULL)
-   {
-      delete Fd;
-      Fd = NULL;
-   }
-}
-									/*}}}*/
-// CacheDB::OpenDebFile - Open a debfile				/*{{{*/
-bool CacheDB::OpenDebFile()
-{
-   // always close existing file first
-   CloseDebFile();
-
-   // first open the fd, then pass it to the debDebFile
-   if(OpenFile() == false)
-      return false;
-   DebFile = new debDebFile(*Fd);
-   if (_error->PendingError() == true)
-      return false;
-   return true;
-}
-									/*}}}*/
-// CacheDB::CloseDebFile - Close a debfile again 			/*{{{*/
-void CacheDB::CloseDebFile()
-{
-   CloseFile();
-
-   if(DebFile != NULL)
-   {
-      delete DebFile;
-      DebFile = NULL;
-   }
+	Fd = new FileFd(FileName,FileFd::ReadOnly);
+	if (_error->PendingError() == true)
+	{
+		delete Fd;
+		Fd = NULL;
+		return false;
+	}
+	return true;
 }
 									/*}}}*/
 // CacheDB::GetFileStat - Get stats from the file 			/*{{{*/
@@ -153,65 +112,29 @@ void CacheDB::CloseDebFile()
  * to look at the file, also get the mtime from the file. */
 bool CacheDB::GetFileStat(bool const &doStat)
 {
-   if ((CurStat.Flags & FlSize) == FlSize && doStat == false)
-      return true;
-
-   /* Get it from the file. */
-   if (OpenFile() == false)
-      return false;
-   
-   // Stat the file
-   struct stat St;
-   if (fstat(Fd->Fd(),&St) != 0)
-   {
-      CloseFile();
-      return _error->Errno("fstat",
-                           _("Failed to stat %s"),FileName.c_str());
-   }
-   CurStat.FileSize = St.st_size;
-   CurStat.mtime = htonl(St.st_mtime);
-   CurStat.Flags |= FlSize;
-   
-   return true;
-}
-									/*}}}*/
-// CacheDB::GetCurStatCompatOldFormat           			/*{{{*/
-// ---------------------------------------------------------------------
-/* Read the old (32bit FileSize) StateStore format from disk */
-bool CacheDB::GetCurStatCompatOldFormat()
-{
-   InitQueryStats();
-   Data.data = &CurStatOldFormat;
-   Data.flags = DB_DBT_USERMEM;
-   Data.ulen = sizeof(CurStatOldFormat);
-   if (Get() == false)
-   {
-      CurStat.Flags = 0;
-   } else {
-      CurStat.Flags = CurStatOldFormat.Flags;
-      CurStat.mtime = CurStatOldFormat.mtime;
-      CurStat.FileSize = CurStatOldFormat.FileSize;
-      memcpy(CurStat.MD5, CurStatOldFormat.MD5, sizeof(CurStat.MD5));
-      memcpy(CurStat.SHA1, CurStatOldFormat.SHA1, sizeof(CurStat.SHA1));
-      memcpy(CurStat.SHA256, CurStatOldFormat.SHA256, sizeof(CurStat.SHA256));
-   }
-   return true;
-}
-									/*}}}*/
-// CacheDB::GetCurStatCompatOldFormat           			/*{{{*/
-// ---------------------------------------------------------------------
-/* Read the new (64bit FileSize) StateStore format from disk */
-bool CacheDB::GetCurStatCompatNewFormat()
-{
-   InitQueryStats();
-   Data.data = &CurStat;
-   Data.flags = DB_DBT_USERMEM;
-   Data.ulen = sizeof(CurStat);
-   if (Get() == false)
-   {
-      CurStat.Flags = 0;
-   }
-   return true;
+	if ((CurStat.Flags & FlSize) == FlSize && doStat == false)
+	{
+		/* Already worked out the file size */
+	}
+	else
+	{
+		/* Get it from the file. */
+		if (Fd == NULL && OpenFile() == false)
+		{
+			return false;
+		}
+		// Stat the file
+		struct stat St;
+		if (fstat(Fd->Fd(),&St) != 0)
+		{
+			return _error->Errno("fstat",
+				_("Failed to stat %s"),FileName.c_str());
+		}
+		CurStat.FileSize = St.st_size;
+		CurStat.mtime = htonl(St.st_mtime);
+		CurStat.Flags |= FlSize;
+	}
+	return true;
 }
 									/*}}}*/
 // CacheDB::GetCurStat - Set the CurStat variable.			/*{{{*/
@@ -222,110 +145,79 @@ bool CacheDB::GetCurStat()
 {
    memset(&CurStat,0,sizeof(CurStat));
    
-   if (DBLoaded)
-   {
-      // do a first query to just get the size of the data on disk
-      InitQueryStats();
-      Data.data = &CurStat;
-      Data.flags = DB_DBT_USERMEM;
-      Data.ulen = 0;
-      Get();
+	if (DBLoaded)
+	{
+		/* First see if there is anything about it
+		   in the database */
 
-      if (Data.size == 0)
+		/* Get the flags (and mtime) */
+   InitQuery("st");
+   // Ensure alignment of the returned structure
+   Data.data = &CurStat;
+   Data.ulen = sizeof(CurStat);
+   Data.flags = DB_DBT_USERMEM;
+		if (Get() == false)
       {
-         // nothing needs to be done, we just have not data for this deb
-      }
-      // check if the record is written in the old format (32bit filesize)
-      else if(Data.size == sizeof(CurStatOldFormat))
-      {
-         GetCurStatCompatOldFormat();
-      }
-      else if(Data.size == sizeof(CurStat))
-      {
-         GetCurStatCompatNewFormat();
-      } else {
-         return _error->Error("Cache record size mismatch (%ul)", Data.size);
-      }
-
-      CurStat.Flags = ntohl(CurStat.Flags);
-      CurStat.FileSize = ntohl(CurStat.FileSize);
+	 CurStat.Flags = 0;
+      }      
+		CurStat.Flags = ntohl(CurStat.Flags);
+		CurStat.FileSize = ntohl(CurStat.FileSize);
    }      
-   return true;
+	return true;
 }
 									/*}}}*/
 // CacheDB::GetFileInfo - Get all the info about the file		/*{{{*/
 // ---------------------------------------------------------------------
-bool CacheDB::GetFileInfo(std::string const &FileName, bool const &DoControl, 
-                          bool const &DoContents,
-                          bool const &GenContentsOnly, 
-                          bool const &DoSource,
-                          bool const &DoMD5, bool const &DoSHA1,
-                          bool const &DoSHA256, bool const &DoSHA512, 
+bool CacheDB::GetFileInfo(std::string const &FileName, bool const &DoControl, bool const &DoContents,
+				bool const &GenContentsOnly, bool const &DoMD5, bool const &DoSHA1,
+				bool const &DoSHA256, 	bool const &DoSHA512, 
                           bool const &checkMtime)
 {
-   bool result = true;
-   this->FileName = FileName;
+	this->FileName = FileName;
 
-   if (GetCurStat() == false)
-      return false;
+	if (GetCurStat() == false)
+   {
+		return false;
+   }   
    OldStat = CurStat;
 
-   if (GetFileStat(checkMtime) == false)
-      return false;	
+	if (GetFileStat(checkMtime) == false)
+	{
+		delete Fd;
+		Fd = NULL;
+		return false;	
+	}
 
-   /* if mtime changed, update CurStat from disk */
-   if (checkMtime == true && OldStat.mtime != CurStat.mtime)
-      CurStat.Flags = FlSize;
+    /* if mtime changed, update CurStat from disk */
+    if (checkMtime == true && OldStat.mtime != CurStat.mtime)
+        CurStat.Flags = FlSize;
 
-   Stats.Bytes += CurStat.FileSize;
-   Stats.Packages++;
+	Stats.Bytes += CurStat.FileSize;
+	Stats.Packages++;
 
-   if ((DoControl && LoadControl() == false)
-       || (DoContents && LoadContents(GenContentsOnly) == false)
-       || (DoSource && LoadSource() == false)
-       || (DoMD5 && GetMD5(false) == false)
-       || (DoSHA1 && GetSHA1(false) == false)
-       || (DoSHA256 && GetSHA256(false) == false)
-       || (DoSHA512 && GetSHA512(false) == false) )
-   {
-      result = false;
-   }
-    
-   return result;
-}
-									/*}}}*/
+	if ((DoControl && LoadControl() == false)
+		|| (DoContents && LoadContents(GenContentsOnly) == false)
+		|| (DoMD5 && GetMD5(false) == false)
+		|| (DoSHA1 && GetSHA1(false) == false)
+		|| (DoSHA256 && GetSHA256(false) == false)
+		|| (DoSHA512 && GetSHA512(false) == false)
+           )
+	{
+		delete Fd;
+		Fd = NULL;
+		delete DebFile;
+		DebFile = NULL;
+		return false;	
+	}
 
-bool CacheDB::LoadSource()
-{
-   // Try to read the control information out of the DB.
-   if ((CurStat.Flags & FlSource) == FlSource)
-   {
-      // Lookup the control information
-      InitQuerySource();
-      if (Get() == true && Dsc.TakeDsc(Data.data, Data.size) == true)
-      {
-	    return true;
-      }
-      CurStat.Flags &= ~FlSource;
-   }
-   if (OpenFile() == false)
-      return false;
-
-   Stats.Misses++;
-   if (Dsc.Read(FileName) == false)
-      return false;
-
-   if (Dsc.Data == 0)
-      return _error->Error(_("Failed to read .dsc"));
-   
-   // Write back the control information
-   InitQuerySource();
-   if (Put(Dsc.Data, Dsc.Length) == true)
-      CurStat.Flags |= FlSource;
+	delete Fd;
+	Fd = NULL;
+	delete DebFile;
+	DebFile = NULL;
 
    return true;
 }
-
+									/*}}}*/
 // CacheDB::LoadControl - Load Control information			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -335,14 +227,23 @@ bool CacheDB::LoadControl()
    if ((CurStat.Flags & FlControl) == FlControl)
    {
       // Lookup the control information
-      InitQueryControl();
+      InitQuery("cl");
       if (Get() == true && Control.TakeControl(Data.data,Data.size) == true)
 	    return true;
       CurStat.Flags &= ~FlControl;
    }
    
-   if(OpenDebFile() == false)
+   if (Fd == NULL && OpenFile() == false)
+   {
       return false;
+   }
+   // Create a deb instance to read the archive
+   if (DebFile == 0)
+   {
+      DebFile = new debDebFile(*Fd);
+      if (_error->PendingError() == true)
+	 return false;
+   }
    
    Stats.Misses++;
    if (Control.Read(*DebFile) == false)
@@ -352,7 +253,7 @@ bool CacheDB::LoadControl()
       return _error->Error(_("Archive has no control record"));
    
    // Write back the control information
-   InitQueryControl();
+   InitQuery("cl");
    if (Put(Control.Control,Control.Length) == true)
       CurStat.Flags |= FlControl;
    return true;
@@ -370,7 +271,7 @@ bool CacheDB::LoadContents(bool const &GenOnly)
 	 return true;
       
       // Lookup the contents information
-      InitQueryContent();
+      InitQuery("cn");
       if (Get() == true)
       {
 	 if (Contents.TakeContents(Data.data,Data.size) == true)
@@ -380,15 +281,23 @@ bool CacheDB::LoadContents(bool const &GenOnly)
       CurStat.Flags &= ~FlContents;
    }
    
-   if(OpenDebFile() == false)
+   if (Fd == NULL && OpenFile() == false)
+   {
       return false;
+   }
+   // Create a deb instance to read the archive
+   if (DebFile == 0)
+   {
+      DebFile = new debDebFile(*Fd);
+      if (_error->PendingError() == true)
+	 return false;
+   }
 
-   Stats.Misses++;
    if (Contents.Read(*DebFile) == false)
       return false;	    
    
    // Write back the control information
-   InitQueryContent();
+   InitQuery("cn");
    if (Put(Contents.Data,Contents.CurSize) == true)
       CurStat.Flags |= FlContents;
    return true;
@@ -438,13 +347,14 @@ bool CacheDB::GetMD5(bool const &GenOnly)
       
       MD5Res = bytes2hex(CurStat.MD5, sizeof(CurStat.MD5));
 	 return true;
-   }
+      }
    
    Stats.MD5Bytes += CurStat.FileSize;
 	 
-   if (OpenFile() == false)
+   if (Fd == NULL && OpenFile() == false)
+   {
       return false;
-
+   }
    MD5Summation MD5;
    if (Fd->Seek(0) == false || MD5.AddFD(*Fd, CurStat.FileSize) == false)
       return false;
@@ -472,9 +382,10 @@ bool CacheDB::GetSHA1(bool const &GenOnly)
    
    Stats.SHA1Bytes += CurStat.FileSize;
 	 
-   if (OpenFile() == false)
+   if (Fd == NULL && OpenFile() == false)
+   {
       return false;
-
+   }
    SHA1Summation SHA1;
    if (Fd->Seek(0) == false || SHA1.AddFD(*Fd, CurStat.FileSize) == false)
       return false;
@@ -502,9 +413,10 @@ bool CacheDB::GetSHA256(bool const &GenOnly)
    
    Stats.SHA256Bytes += CurStat.FileSize;
 	 
-   if (OpenFile() == false)
+   if (Fd == NULL && OpenFile() == false)
+   {
       return false;
-
+   }
    SHA256Summation SHA256;
    if (Fd->Seek(0) == false || SHA256.AddFD(*Fd, CurStat.FileSize) == false)
       return false;
@@ -532,9 +444,10 @@ bool CacheDB::GetSHA512(bool const &GenOnly)
    
    Stats.SHA512Bytes += CurStat.FileSize;
 	 
-   if (OpenFile() == false)
+   if (Fd == NULL && OpenFile() == false)
+   {
       return false;
-
+   }
    SHA512Summation SHA512;
    if (Fd->Seek(0) == false || SHA512.AddFD(*Fd, CurStat.FileSize) == false)
       return false;
@@ -554,11 +467,11 @@ bool CacheDB::Finish()
    if (CurStat.Flags == OldStat.Flags &&
        CurStat.mtime == OldStat.mtime)
       return true;
-
+   
    // Write the stat information
    CurStat.Flags = htonl(CurStat.Flags);
    CurStat.FileSize = htonl(CurStat.FileSize);
-   InitQueryStats();
+   InitQuery("st");
    Put(&CurStat,sizeof(CurStat));
    CurStat.Flags = ntohl(CurStat.Flags);
    CurStat.FileSize = ntohl(CurStat.FileSize);
@@ -591,24 +504,16 @@ bool CacheDB::Clean()
       {
          if (stringcmp(Colon + 1, (char *)Key.data+Key.size,"st") == 0 ||
              stringcmp(Colon + 1, (char *)Key.data+Key.size,"cl") == 0 ||
-             stringcmp(Colon + 1, (char *)Key.data+Key.size,"cs") == 0 ||
              stringcmp(Colon + 1, (char *)Key.data+Key.size,"cn") == 0)
 	 {
-            std::string FileName = std::string((const char *)Key.data,Colon);
-            if (FileExists(FileName) == true) {
-		continue;
-            }
+            if (FileExists(std::string((const char *)Key.data,Colon)) == true)
+		continue;	     
 	 }
       }
+      
       Cursor->c_del(Cursor,0);
    }
-   int res = Dbp->compact(Dbp, NULL, NULL, NULL, NULL, DB_FREE_SPACE, NULL);
-   if (res < 0)
-      _error->Warning("compact failed with result %i", res);
-
-   if(_config->FindB("Debug::APT::FTPArchive::Clean", false) == true)
-      Dbp->stat_print(Dbp, 0);
-
+   Dbp->compact(Dbp, NULL, NULL, NULL, NULL, DB_FREE_SPACE, NULL);
 
    return true;
 }
