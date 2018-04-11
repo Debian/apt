@@ -30,35 +30,23 @@
 #include <apti18n.h>
 									/*}}}*/
 
-static bool OpenPackagesFile(pkgCacheFile &CacheFile, pkgCache::VerIterator const &V,/*{{{*/
-      FileFd &PkgF, pkgCache::VerFileIterator &Vf)
+pkgRecords::Parser &LookupParser(pkgRecords &Recs, pkgCache::VerIterator const &V, pkgCache::VerFileIterator &Vf) /*{{{*/
 {
-   pkgCache const * const Cache = CacheFile.GetPkgCache();
-   if (unlikely(Cache == NULL))
-      return false;
-
-   // Find an appropriate file
    Vf = V.FileList();
    for (; Vf.end() == false; ++Vf)
       if ((Vf.File()->Flags & pkgCache::Flag::NotSource) == 0)
 	 break;
    if (Vf.end() == true)
       Vf = V.FileList();
-      
-   // Check and load the package list file
-   pkgCache::PkgFileIterator I = Vf.File();
-   if (I.IsOk() == false)
-      return _error->Error(_("Package file %s is out of sync."),I.FileName());
-
-   // Read the record
-   return PkgF.Open(I.FileName(), FileFd::ReadOnly, FileFd::Extension);
+   return Recs.Lookup(Vf);
 }
 									/*}}}*/
-static APT_PURE unsigned char const* skipDescriptionFields(unsigned char const * DescP)/*{{{*/
+static APT_PURE char const *skipDescriptionFields(char const *DescP, size_t const Length) /*{{{*/
 {
+   auto const backup = DescP;
    char const * const TagName = "\nDescription";
    size_t const TagLen = strlen(TagName);
-   while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
+   while ((DescP = static_cast<char const *>(memchr(DescP, '\n', Length - (DescP - backup)))) != nullptr)
    {
       if (DescP[1] == ' ')
 	 DescP += 2;
@@ -72,114 +60,126 @@ static APT_PURE unsigned char const* skipDescriptionFields(unsigned char const *
    return DescP;
 }
 									/*}}}*/
-bool DisplayRecordV1(pkgCacheFile &CacheFile, pkgCache::VerIterator const &V,/*{{{*/
-                   std::ostream &out)
+static APT_PURE char const *findDescriptionField(char const *DescP, size_t const Length) /*{{{*/
 {
-   FileFd PkgF;
-   pkgCache::VerFileIterator Vf;
-   if (OpenPackagesFile(CacheFile, V, PkgF, Vf) == false)
-      return false;
-
-   pkgCache * const Cache = CacheFile.GetPkgCache();
-   if (unlikely(Cache == NULL))
-      return false;
-
-   // Read the record (and ensure that it ends with a newline and NUL)
-   unsigned char *Buffer = new unsigned char[Cache->HeaderP->MaxVerFileSize+2];
-   Buffer[Vf->Size] = '\n';
-   Buffer[Vf->Size+1] = '\0';
-   if (PkgF.Seek(Vf->Offset) == false ||
-       PkgF.Read(Buffer,Vf->Size) == false)
+   auto const backup = DescP;
+   char const * const TagName = "\nDescription";
+   size_t const TagLen = strlen(TagName);
+   while ((DescP = static_cast<char const *>(memchr(DescP, '\n', Length - (DescP - backup)))) != nullptr)
    {
-      delete [] Buffer;
+      if (strncmp(DescP, TagName, TagLen) == 0)
+	 break;
+      else
+	 ++DescP;
+   }
+   if (DescP != nullptr)
+      ++DescP;
+   return DescP;
+}
+									/*}}}*/
+
+bool DisplayRecordV1(pkgCacheFile &, pkgRecords &Recs, /*{{{*/
+		     pkgCache::VerIterator const &V, pkgCache::VerFileIterator const &,
+		     char const *Buffer, size_t Length, std::ostream &out)
+{
+   if (unlikely(Length == 0))
       return false;
+
+   auto const Desc = V.TranslatedDescription();
+   if (Desc.end())
+   {
+      // we have no translation output whatever we have got
+      return FileFd::Write(STDOUT_FILENO, Buffer, Length);
    }
 
    // Get a pointer to start of Description field
-   const unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "\nDescription");
-   if (DescP != NULL)
-      ++DescP;
-   else
-      DescP = Buffer + Vf->Size;
+   char const *DescP = findDescriptionField(Buffer, Length);
+   if (DescP == nullptr)
+      DescP = Buffer + Length;
 
    // Write all but Description
-   size_t const length = DescP - Buffer;
-   if (length != 0 && FileFd::Write(STDOUT_FILENO, Buffer, length) == false)
-   {
-      delete [] Buffer;
+   size_t const untilDesc = DescP - Buffer;
+   if (untilDesc != 0 && FileFd::Write(STDOUT_FILENO, Buffer, untilDesc) == false)
       return false;
-   }
 
    // Show the right description
-   pkgRecords Recs(*Cache);
-   pkgCache::DescIterator Desc = V.TranslatedDescription();
-   if (Desc.end() == false)
-   {
-      pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
-      out << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc();
-      out << std::endl << "Description-md5: " << Desc.md5() << std::endl;
+   char desctag[50];
+   auto const langcode = Desc.LanguageCode();
+   if (strcmp(langcode, "") == 0)
+      strcpy(desctag, "\nDescription");
+   else
+      snprintf(desctag, sizeof(desctag), "\nDescription-%s", langcode);
 
-      // Find the first field after the description (if there is any)
-      DescP = skipDescriptionFields(DescP);
+   out << desctag + 1 << ": ";
+   auto const Df = Desc.FileList();
+   if (Df.end() == false)
+   {
+      pkgRecords::Parser &P = Recs.Lookup(Df);
+      out << P.LongDesc();
    }
-   // else we have no translation, so we found a lonely Description-md5 -> don't skip it
+
+   out << std::endl << "Description-md5: " << Desc.md5() << std::endl;
+
+   // Find the first field after the description (if there is any)
+   DescP = skipDescriptionFields(DescP, Length - (DescP - Buffer));
 
    // write the rest of the buffer, but skip mixed in Descriptions* fields
-   while (DescP != NULL)
+   while (DescP != nullptr)
    {
-      const unsigned char * const Start = DescP;
-      const unsigned char *End = (unsigned char*)strstr((char*)DescP, "\nDescription");
-      if (End == NULL)
+      char const *const Start = DescP;
+      char const *End = findDescriptionField(DescP, Length - (DescP - Buffer));
+      if (End == nullptr)
       {
-	 End = &Buffer[Vf->Size];
-	 DescP = NULL;
+	 DescP = nullptr;
+	 End = Buffer + Length - 1;
+	 size_t endings = 0;
+	 while (*End == '\n')
+	 {
+	    --End;
+	    if (*End == '\r')
+	       --End;
+	    ++endings;
+	 }
+	 if (endings >= 1)
+	 {
+	    ++End;
+	    if (*End == '\r')
+	       ++End;
+	 }
+	 ++End;
       }
       else
-      {
-	 ++End; // get the newline into the output
-	 DescP = skipDescriptionFields(End + strlen("Description"));
-      }
+	 DescP = skipDescriptionFields(End + strlen("Description"), Length - (End - Buffer));
+
       size_t const length = End - Start;
       if (length != 0 && FileFd::Write(STDOUT_FILENO, Start, length) == false)
-      {
-	 delete [] Buffer;
 	 return false;
-      }
    }
    // write a final newline after the last field
    out << std::endl;
 
-   delete [] Buffer;
    return true;
 }
 									/*}}}*/
-static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgCache::VerIterator const &V,/*{{{*/
-                   std::ostream &out)
+static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgRecords &Recs, /*{{{*/
+			    pkgCache::VerIterator const &V, pkgCache::VerFileIterator const &Vf,
+			    char const *Buffer, size_t const Length, std::ostream &out)
 {
-   FileFd PkgF;
-   pkgCache::VerFileIterator Vf;
-   if (OpenPackagesFile(CacheFile, V, PkgF, Vf) == false)
-      return false;
-
    // Check and load the package list file
    pkgCache::PkgFileIterator I = Vf.File();
-   if (I.IsOk() == false)
-      return _error->Error(_("Package file %s is out of sync."),I.FileName());
 
    // find matching sources.list metaindex
    pkgSourceList *SrcList = CacheFile.GetSourceList();
    pkgIndexFile *Index;
    if (SrcList->FindIndex(I, Index) == false &&
        _system->FindIndex(I, Index) == false)
-      return _error->Error("Can not find indexfile for Package %s (%s)", 
-                           V.ParentPkg().Name(), V.VerStr());
+      return _error->Error("Can not find indexfile for Package %s (%s)",
+			   V.ParentPkg().Name(), V.VerStr());
    std::string source_index_file = Index->Describe(true);
 
    // Read the record
    pkgTagSection Tags;
-   pkgTagFile TagF(&PkgF);
-
-   if (TagF.Jump(Tags, V.FileList()->Offset) == false)
+   if (Tags.Scan(Buffer, Length, true) == false)
       return _error->Error("Internal Error, Unable to parse a package record");
 
    // make size nice
@@ -234,10 +234,6 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgCache::VerIterator const
       return _error->Error("Internal Error, Unable to parse a package record");
 
    // write the description
-   pkgCache * const Cache = CacheFile.GetPkgCache();
-   if (unlikely(Cache == NULL))
-      return false;
-   pkgRecords Recs(*Cache);
    // FIXME: show (optionally) all available translations(?)
    pkgCache::DescIterator Desc = V.TranslatedDescription();
    if (Desc.end() == false)
@@ -245,7 +241,7 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgCache::VerIterator const
       pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
       out << "Description: " << P.LongDesc();
    }
-   
+
    // write a final newline (after the description)
    out << std::endl << std::endl;
 
@@ -255,6 +251,8 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgCache::VerIterator const
 bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
+   if (unlikely(CacheFile.GetPkgCache() == nullptr))
+      return false;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
    APT::CacheSetHelper::VerSelector const select = _config->FindB("APT::Cache::AllVersions", true) ?
 			APT::CacheSetHelper::ALL : APT::CacheSetHelper::CANDIDATE;
@@ -262,15 +260,23 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
       return false;
    APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
    int const ShowVersion = _config->FindI("APT::Cache::Show::Version", 1);
+   pkgRecords Recs(CacheFile);
    for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
+   {
+      pkgCache::VerFileIterator Vf;
+      auto &Parser = LookupParser(Recs, Ver, Vf);
+      char const *Start, *Stop;
+      Parser.GetRec(Start, Stop);
+      size_t const Length = Stop - Start;
+
       if (ShowVersion <= 1)
       {
-	 if (DisplayRecordV1(CacheFile, Ver, std::cout) == false)
+	 if (DisplayRecordV1(CacheFile, Recs, Ver, Vf, Start, Length, std::cout) == false)
 	    return false;
       }
-      else
-	 if (DisplayRecordV2(CacheFile, Ver, c1out) == false)
-	    return false;
+      else if (DisplayRecordV2(CacheFile, Recs, Ver, Vf, Start, Length + 1, c1out) == false)
+	 return false;
+   }
 
    if (select == APT::CacheSetHelper::CANDIDATE)
    {
