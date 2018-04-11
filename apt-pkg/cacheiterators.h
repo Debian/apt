@@ -422,6 +422,7 @@ class pkgCache::RlsFileIterator : public Iterator<ReleaseFile, RlsFileIterator> 
 	inline const char *Site() const {return S->Site == 0?0:Owner->StrP + S->Site;}
 	inline bool Flagged(pkgCache::Flag::ReleaseFileFlags const flag) const {return (S->Flags & flag) == flag; }
 
+	APT_DEPRECATED_MSG("Can be remove without replacement; it is a no-op")
 	bool IsOk();
 	std::string RelStr();
 
@@ -457,6 +458,7 @@ class pkgCache::PkgFileIterator : public Iterator<PackageFile, PkgFileIterator> 
 	inline const char *Architecture() const {return S->Architecture == 0?0:Owner->StrP + S->Architecture;}
 	inline const char *IndexType() const {return S->IndexType == 0?0:Owner->StrP + S->IndexType;}
 
+	APT_DEPRECATED_MSG("Can be remove without replacement; it is a no-op")
 	bool IsOk();
 	std::string RelStr();
 
