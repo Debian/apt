@@ -185,28 +185,22 @@ bool debDebPkgFileIndex::GetContent(std::ostream &content, std::string const &de
    if(Popen((const char**)&Args[0], PipeFd, Child, FileFd::ReadOnly) == false)
       return _error->Error("Popen failed");
 
-   content << "Filename: " << debfile << "\n";
-   content << "Size: " << std::to_string(Buf.st_size) << "\n";
+   std::string line;
    bool first_line_seen = false;
-   char buffer[1024];
-   do {
-      unsigned long long actual = 0;
-      if (PipeFd.Read(buffer, sizeof(buffer)-1, &actual) == false)
-	 return _error->Errno("read", "Failed to read dpkg pipe");
-      if (actual == 0)
-	 break;
-      buffer[actual] = '\0';
-      char const * b = buffer;
+   while (PipeFd.ReadLine(line))
+   {
       if (first_line_seen == false)
       {
-	 for (; *b != '\0' && (*b == '\n' || *b == '\r'); ++b)
-	    /* skip over leading newlines */;
-	 if (*b == '\0')
+	 if (line.empty())
 	    continue;
 	 first_line_seen = true;
       }
-      content << b;
-   } while(true);
+      else if (line.empty())
+	 break;
+      content << line << "\n";
+   }
+   content << "Filename: " << debfile << "\n";
+   content << "Size: " << std::to_string(Buf.st_size) << "\n";
    ExecWait(Child, "Popen");
 
    return true;
