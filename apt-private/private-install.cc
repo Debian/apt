@@ -733,39 +733,54 @@ bool AddVolatileBinaryFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector
    return true;
 }
 									/*}}}*/
-std::vector<PseudoPkg> GetPseudoPackages(pkgSourceList *const SL, CommandLine &CmdL, bool (*Add)(pkgSourceList *const, PseudoPkg &&, std::vector<PseudoPkg> &), std::string const &pseudoArch)/*{{{*/
+static bool AddIfVolatile(pkgSourceList *const SL, std::vector<PseudoPkg> &VolatileCmdL, bool (*Add)(pkgSourceList *const, PseudoPkg &&, std::vector<PseudoPkg> &), char const * const I, std::string const &pseudoArch)/*{{{*/
 {
-   std::vector<PseudoPkg> VolatileCmdL;
-   std::remove_if(CmdL.FileList + 1, CmdL.FileList + 1 + CmdL.FileSize(), [&](char const *const I) {
-      if (I != nullptr && (I[0] == '/' || (I[0] == '.' && (I[1] == '\0' || (I[1] == '.' && (I[2] == '\0' || I[2] == '/')) || I[1] == '/'))))
+   if (I != nullptr && (I[0] == '/' || (I[0] == '.' && (I[1] == '\0' || (I[1] == '.' && (I[2] == '\0' || I[2] == '/')) || I[1] == '/'))))
+   {
+      PseudoPkg pkg(I, pseudoArch, "", SL->GetVolatileFiles().size());
+      if (FileExists(I)) // this accepts directories and symlinks, too
       {
-	 PseudoPkg pkg(I, pseudoArch, "", SL->GetVolatileFiles().size());
-	 if (FileExists(I)) // this accepts directories and symlinks, too
+	 if (Add(SL, std::move(pkg), VolatileCmdL))
+	    ;
+	 else
+	    _error->Error(_("Unsupported file %s given on commandline"), I);
+	 return true;
+      }
+      else
+      {
+	 auto const found = pkg.name.rfind("/");
+	 if (found == pkg.name.find("/"))
+	    _error->Error(_("Unsupported file %s given on commandline"), I);
+	 else
 	 {
+	    pkg.release = pkg.name.substr(found + 1);
+	    pkg.name.erase(found);
 	    if (Add(SL, std::move(pkg), VolatileCmdL))
 	       ;
 	    else
 	       _error->Error(_("Unsupported file %s given on commandline"), I);
-	    return true;
 	 }
-	 else
-	 {
-	    auto const found = pkg.name.rfind("/");
-	    if (found == pkg.name.find("/"))
-	       _error->Error(_("Unsupported file %s given on commandline"), I);
-	    else
-	    {
-	       pkg.release = pkg.name.substr(found + 1);
-	       pkg.name.erase(found);
-	       if (Add(SL, std::move(pkg), VolatileCmdL))
-		  ;
-	       else
-		  _error->Error(_("Unsupported file %s given on commandline"), I);
-	    }
-	    return true;
-	 }
+	 return true;
       }
-      return false;
+   }
+   return false;
+}
+									/*}}}*/
+std::vector<PseudoPkg> GetAllPackagesAsPseudo(pkgSourceList *const SL, CommandLine &CmdL, bool (*Add)(pkgSourceList *const, PseudoPkg &&, std::vector<PseudoPkg> &), std::string const &pseudoArch)/*{{{*/
+{
+   std::vector<PseudoPkg> PkgCmdL;
+   std::for_each(CmdL.FileList + 1, CmdL.FileList + CmdL.FileSize(), [&](char const *const I) {
+      if (AddIfVolatile(SL, PkgCmdL, Add, I, pseudoArch) == false)
+	 PkgCmdL.emplace_back(I, pseudoArch, "", -1);
+   });
+   return PkgCmdL;
+}
+									/*}}}*/
+std::vector<PseudoPkg> GetPseudoPackages(pkgSourceList *const SL, CommandLine &CmdL, bool (*Add)(pkgSourceList *const, PseudoPkg &&, std::vector<PseudoPkg> &), std::string const &pseudoArch)/*{{{*/
+{
+   std::vector<PseudoPkg> VolatileCmdL;
+   std::remove_if(CmdL.FileList + 1, CmdL.FileList + 1 + CmdL.FileSize(), [&](char const *const I) {
+      return AddIfVolatile(SL, VolatileCmdL, Add, I, pseudoArch);
    });
    return VolatileCmdL;
 }

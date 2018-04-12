@@ -20,6 +20,7 @@
 
 #include <apt-private/private-cacheset.h>
 #include <apt-private/private-output.h>
+#include <apt-private/private-install.h>
 #include <apt-private/private-show.h>
 
 #include <ostream>
@@ -251,6 +252,8 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgRecords &Recs, /*{{{*/
 bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
+   auto VolatileCmdL = GetAllPackagesAsPseudo(CacheFile.GetSourceList(), CmdL, AddVolatileBinaryFile, "");
+
    if (unlikely(CacheFile.GetPkgCache() == nullptr))
       return false;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
@@ -258,7 +261,38 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 			APT::CacheSetHelper::ALL : APT::CacheSetHelper::CANDIDATE;
    if (select == APT::CacheSetHelper::CANDIDATE && CacheFile.GetDepCache() == nullptr)
       return false;
-   APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
+
+   APT::VersionList verset;
+   size_t normalPackages = 0;
+   for (auto const &I: VolatileCmdL)
+   {
+      if (I.index == -1)
+      {
+	 APT::VersionContainerInterface::FromString(&verset, CacheFile, I.name, select, helper);
+	 ++normalPackages;
+      }
+      else
+      {
+	 if (select != APT::CacheSetHelper::CANDIDATE && unlikely(CacheFile.GetDepCache() == nullptr))
+	    return false;
+	 pkgCache::PkgIterator const P = CacheFile->FindPkg(I.name);
+	 if (unlikely(P.end()))
+	    continue;
+
+	 // Set any version providing the .deb as the candidate.
+	 for (auto Prv = P.ProvidesList(); Prv.end() == false; ++Prv)
+	 {
+	    if (I.release.empty())
+	       CacheFile->SetCandidateVersion(Prv.OwnerVer());
+	    else
+	       CacheFile->SetCandidateRelease(Prv.OwnerVer(), I.release);
+
+	    // via cacheset to have our usual handling
+	    APT::VersionContainerInterface::FromPackage(&verset, CacheFile, Prv.OwnerPkg(), APT::CacheSetHelper::CANDIDATE, helper);
+	 }
+      }
+   }
+
    int const ShowVersion = _config->FindI("APT::Cache::Show::Version", 1);
    pkgRecords Recs(CacheFile);
    for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
@@ -278,9 +312,33 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 	 return false;
    }
 
-   if (select == APT::CacheSetHelper::CANDIDATE)
+   if (select == APT::CacheSetHelper::CANDIDATE && normalPackages != 0)
    {
-      APT::VersionList const verset_all = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::CacheSetHelper::ALL, helper);
+      APT::VersionList verset_all;
+      for (auto const &I: VolatileCmdL)
+      {
+	 if (I.index == -1)
+	    APT::VersionContainerInterface::FromString(&verset_all, CacheFile, I.name, APT::CacheSetHelper::ALL, helper);
+	 else
+	 {
+	    pkgCache::PkgIterator const P = CacheFile->FindPkg(I.name);
+	    if (unlikely(P.end()))
+	       continue;
+
+	    // Set any version providing the .deb as the candidate.
+	    for (auto Prv = P.ProvidesList(); Prv.end() == false; ++Prv)
+	    {
+	       if (I.release.empty())
+		  CacheFile->SetCandidateVersion(Prv.OwnerVer());
+	       else
+		  CacheFile->SetCandidateRelease(Prv.OwnerVer(), I.release);
+
+	       // via cacheset to have our usual virtual handling
+	       APT::VersionContainerInterface::FromPackage(&verset_all, CacheFile, Prv.OwnerPkg(), APT::CacheSetHelper::CANDIDATE, helper);
+	    }
+	 }
+      }
+
       int const records = verset_all.size() - verset.size();
       if (records > 0)
          _error->Notice(P_("There is %i additional record. Please use the '-a' switch to see it", "There are %i additional records. Please use the '-a' switch to see them.", records), records);

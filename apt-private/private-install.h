@@ -26,6 +26,7 @@ struct PseudoPkg
    PseudoPkg(std::string const &n, std::string const &a, std::string const &r) : name(n), arch(a), release(r), index(-1) {}
    PseudoPkg(std::string const &n, std::string const &a, std::string const &r, ssize_t i) : name(n), arch(a), release(r), index(i) {}
 };
+std::vector<PseudoPkg> GetAllPackagesAsPseudo(pkgSourceList *const SL, CommandLine &CmdL, bool (*Add)(pkgSourceList *const, PseudoPkg &&, std::vector<PseudoPkg> &), std::string const &pseudoArch);
 std::vector<PseudoPkg> GetPseudoPackages(pkgSourceList *const SL, CommandLine &CmdL, bool (*Add)(pkgSourceList *const, PseudoPkg &&, std::vector<PseudoPkg> &), std::string const &pseudoArch);
 bool AddVolatileBinaryFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector<PseudoPkg> &VolatileCmdL);
 bool AddVolatileSourceFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector<PseudoPkg> &VolatileCmdL);
