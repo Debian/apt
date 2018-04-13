@@ -94,9 +94,9 @@ class CacheSetHelperAPTGet : public APT::CacheSetHelper {
 	bool explicitlyNamed;
 
 	APT::PackageSet virtualPkgs;
-
 public:
 	std::list<std::pair<pkgCache::VerIterator, std::string> > selectedByRelease;
+	std::set<std::string> notFound;
 
 	explicit CacheSetHelperAPTGet(std::ostream &out);
 
