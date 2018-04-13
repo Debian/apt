@@ -13,7 +13,9 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
 
+#include <apt-private/private-cachefile.h>
 #include <apt-private/private-cacheset.h>
+#include <apt-private/private-json-hooks.h>
 #include <apt-private/private-output.h>
 #include <apt-private/private-search.h>
 #include <apt-private/private-show.h>
@@ -30,7 +32,9 @@
 
 static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
 {
-   pkgCacheFile CacheFile;
+
+   CacheFile CacheFile;
+   CacheFile.GetDepCache();
    pkgCache *Cache = CacheFile.GetPkgCache();
    pkgDepCache::Policy *Plcy = CacheFile.GetPolicy();
    if (unlikely(Cache == NULL || Plcy == NULL))
@@ -40,6 +44,8 @@ static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
    unsigned int const NumPatterns = CmdL.FileSize() -1;
    if (NumPatterns < 1)
       return _error->Error(_("You must give at least one search pattern"));
+
+   RunJsonHook("AptCli::Hooks::Search", "org.debian.apt.hooks.search.pre", CmdL.FileList, CacheFile);
 
 #define APT_FREE_PATTERNS() for (std::vector<regex_t>::iterator P = Patterns.begin(); \
       P != Patterns.end(); ++P) { regfree(&(*P)); }
@@ -128,6 +134,10 @@ static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
    for (K = output_map.begin(); K != output_map.end(); ++K)
       std::cout << (*K).second << std::endl;
 
+   if (output_map.empty())
+      RunJsonHook("AptCli::Hooks::Search", "org.debian.apt.hooks.search.fail", CmdL.FileList, CacheFile);
+   else
+      RunJsonHook("AptCli::Hooks::Search", "org.debian.apt.hooks.search.post", CmdL.FileList, CacheFile);
    return true;
 }
 									/*}}}*/
