@@ -135,6 +135,12 @@ PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 221],
        [HAVE_SYSTEMD=yes
 	AC_DEFINE(HAVE_SYSTEMD)])
 
+HAVE_ZSTD=no
+AC_SUBST(HAVE_ZSTD)
+PKG_CHECK_MODULES([ZSTD], [libzstd >= 1],
+       [HAVE_ZSTD=yes
+	AC_DEFINE(HAVE_ZSTD)])
+
 dnl Converts the ARCH to be something singular for this general CPU family
 dnl This is often the dpkg architecture string.
 dnl First check against the full canonical canoncial-system-type in $target

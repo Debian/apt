@@ -12,7 +12,7 @@ include ../buildlib/defaults.mak
 # The library name and version (indirectly used from init.h)
 include ../buildlib/libversion.mak
 
-CPPFLAGS+=-DAPT_PKG_EXPOSE_STRING_VIEW $(SYSTEMD_CFLAGS)
+CPPFLAGS+=-DAPT_PKG_EXPOSE_STRING_VIEW $(SYSTEMD_CFLAGS) $(ZSTD_CFLAGS)
 LIBRARY=apt-pkg
 MAJOR=$(LIBAPTPKG_MAJOR)
 MINOR=$(LIBAPTPKG_RELEASE)
@@ -28,6 +28,9 @@ SLIBS+= -llzma
 endif
 ifeq ($(HAVE_LZ4),yes)
 SLIBS+= -llz4
+endif
+ifeq ($(HAVE_ZSTD),yes)
+SLIBS+= $(ZSTD_LIBS)
 endif
 ifeq ($(HAVE_SYSTEMD),yes)
 SLIBS+= $(SYSTEMD_LIBS)
