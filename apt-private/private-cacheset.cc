@@ -358,9 +358,15 @@ APT::VersionSet CacheSetHelperAPTGet::tryVirtualPackage(pkgCacheFile &Cache, pkg
 }
 pkgCache::PkgIterator CacheSetHelperAPTGet::canNotFindPkgName(pkgCacheFile &Cache, std::string const &str)
 {
-   pkgCache::PkgIterator const Pkg = canNotFindPkgName_impl(Cache, str);
+   pkgCache::PkgIterator Pkg = canNotFindPkgName_impl(Cache, str);
    if (Pkg.end())
-      return APT::CacheSetHelper::canNotFindPkgName(Cache, str);
+   {
+      Pkg = APT::CacheSetHelper::canNotFindPkgName(Cache, str);
+      if (Pkg.end() && ShowError)
+      {
+	 notFound.insert(str);
+      }
+   }
    return Pkg;
 }
 									/*}}}*/
