@@ -1,5 +1,5 @@
 # Translation of apt package man pages
-# Copyright (C) 2000-2009 Debian French l10n team <debian-l10n-french@lists.debian.org>
+# Copyright (C) 2000-2018 Debian French l10n team <debian-l10n-french@lists.debian.org>
 # This file is distributed under the same license as the apt package.
 #
 # Translators:
@@ -7,20 +7,20 @@
 # Jérôme Marant, 2000.
 # Philippe Batailler, 2005.
 # Christian Perrier <bubulle@debian.org>, 2009, 2010, 2011, 2012, 2013.
-# Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>, 2014, 2017.
+# Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>, 2014, 2017, 2018.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 1.0.5\n"
+"Project-Id-Version: apt-doc 1.0.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
-"PO-Revision-Date: 2017-01-24 22:43+0100\n"
+"POT-Creation-Date: 2018-04-15 21:56+0200\n"
+"PO-Revision-Date: 2018-03-16 00:54+0100\n"
 "Last-Translator: Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Lokalize 2.0\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. type: Plain text
@@ -1317,10 +1317,10 @@ msgid ""
 "<filename>&cachedir;/archives/</filename> and <filename>&cachedir;/archives/"
 "partial/</filename>."
 msgstr ""
-"La commande <literal>clean</literal> nettoie le référentiel local des "
-"paquets récupérés. Elle supprime tout, excepté le fichier de verrou situé "
-"dans <filename>&cachedir;/archives/</filename> et <filename>&cachedir;/"
-"archives/partial/</filename>."
+"La commande <literal>clean</literal> nettoie le dépôt local des paquets "
+"récupérés. Elle supprime tout, excepté le fichier de verrou situé dans "
+"<filename>&cachedir;/archives/</filename> et <filename>&cachedir;/archives/"
+"partial/</filename>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-get.8.xml
@@ -1344,7 +1344,7 @@ msgid ""
 "is set to off."
 msgstr ""
 "Tout comme <literal>clean</literal>, <literal>autoclean</literal> nettoie le "
-"référentiel local des paquets récupérés. La différence est qu'il supprime "
+"dépôt local des paquets récupérés. La différence est qu'il supprime "
 "uniquement les paquets qui ne peuvent plus être téléchargés et qui sont "
 "inutiles.  On peut ainsi contrôler la taille de ce cache sur une longue "
 "période.  Tant qu'elle n'est pas activée, l'option de configuration "
@@ -1750,15 +1750,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Force yes; this is a dangerous option that will cause apt to continue "
-#| "without prompting if it is doing something potentially harmful. It should "
-#| "not be used except in very special situations. Using <literal>force-yes</"
-#| "literal> can potentially destroy your system! Configuration Item: "
-#| "<literal>APT::Get::force-yes</literal>. This is deprecated and replaced "
-#| "by <option>--allow-downgrades</option>, <option>--allow-remove-essential</"
-#| "option>, <option>--allow-change-held-packages</option> in 1.1."
 msgid ""
 "Force yes; this is a dangerous option that will cause apt to continue "
 "without prompting if it is doing something potentially harmful. It should "
@@ -1775,9 +1766,9 @@ msgstr ""
 "circonstances très spéciales. Utiliser <literal>force-yes</literal> peut "
 "éventuellement détruire le système ! Élément de configuration : "
 "<literal>APT::Get::force-yes</literal>. Cette option est obsolète et "
-"remplacée par <option>--allow-downgrades</option>, <option>--allow-remove-"
-"essential</option>, et <option>--allow-change-held-packages</option> dans "
-"APT 1.1."
+"remplacée par <option>--allow-unauthenticated</option>, <option>--allow-"
+"downgrades</option>, <option>--allow-remove-essential</option> et <option>--"
+"allow-change-held-packages</option> dans APT 1.1."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1997,6 +1988,13 @@ msgid ""
 "prepared for the change.  See also &apt-secure; for details on the concept "
 "and configuration."
 msgstr ""
+"Permettre à la commande update de poursuivre le téléchargement de données à "
+"partir d'un dépôt qui a modifié ses informations sur la version contenue "
+"dans le dépôt indiquant par exemple une nouvelle version majeure. APT "
+"échouera à l'exécution de la commande update pour ces dépôts jusqu'à ce que "
+"la modification soit confirmée pour s'assurer que l'utilisateur est préparé "
+"à ce changement. Voir aussi &apt-secure; pour plus de détails sur le concept "
+"et la configuration."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -2008,6 +2006,13 @@ msgid ""
 "literal> and <literal>defaultpin</literal>. See also &apt-preferences;.  "
 "Configuration Item: <literal>Acquire::AllowReleaseInfoChange</literal>."
 msgstr ""
+"Des options spécialisées (<literal>--allow-releaseinfo-change-</literal> "
+"<replaceable>champ</replaceable>) existent pour permettre des modifications "
+"uniquement pour certains champs tels que <literal>origin</literal>, "
+"<literal>label</literal>, <literal>codename</literal>, <literal>suite</"
+"literal>, <literal>version</literal> et <literal>defaultpin</literal>. Voir "
+"aussi &apt-preferences;. Élément de configuration : <literal>Acquire::"
+"AllowReleaseInfoChange</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -3167,14 +3172,6 @@ msgstr "Gestion de l'authentification d'archive avec APT"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "Starting with version 0.6, <command>APT</command> contains code that does "
-#| "signature checking of the Release file for all repositories. This ensures "
-#| "that data like packages in the archive can't be modified by people who "
-#| "have no access to the Release file signing key. Starting with version 1.1 "
-#| "<command>APT</command> requires repositories to provide recent "
-#| "authentication information for unimpeded usage of the repository."
 msgid ""
 "Starting with version 0.6, <command>APT</command> contains code that does "
 "signature checking of the Release file for all repositories. This ensures "
@@ -3186,12 +3183,15 @@ msgid ""
 "the repository need to be confirmed before APT continues to apply updates "
 "from this repository."
 msgstr ""
-"Depuis sa version 0.6, <command>apt</command> sait vérifier la signature du "
-"fichier Release de chaque archive. On s'assure ainsi que les paquets de "
-"cette archive ne peuvent pas être modifiés par quelqu'un qui ne possède pas "
-"la clé de la signature du fichier Release. À partir de la version 1.1, "
+"Depuis sa version 0.6, <command>apt</command> sait vérifier la signature du "
+"fichier Release de chaque dépôt. On s'assure ainsi que les paquets dans "
+"l'archive ne peuvent pas être modifiés par quelqu'un qui ne possède pas la "
+"clé de la signature du fichier Release. À partir de la version 1.1, "
 "<command>apt</command> exige que les dépôts fournissent des informations "
-"récentes d'authentification pour une utilisation libre du dépôt."
+"récentes d'authentification pour une utilisation libre du dépôt. Depuis la "
+"version 1.5, les modifications dans les informations contenues dans le "
+"fichier Release sur le dépôt, doivent être confirmées avant qu'APT continue "
+"à appliquer les mises à jour depuis ce dépôt."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3207,10 +3207,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid "Trusted Repositories"
 msgid "Unsigned Repositories"
-msgstr "Archives de confiance"
+msgstr "Dépôts non signés"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3274,10 +3272,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid "Trusted Repositories"
 msgid "Signed Repositories"
-msgstr "Archives de confiance"
+msgstr "Dépôts signés"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3416,7 +3412,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
 msgid "Information changes"
-msgstr ""
+msgstr "Modifications des informations"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3425,6 +3421,9 @@ msgid ""
 "also general information about the repository like the origin, codename or "
 "version number of the release."
 msgstr ""
+"Le fichier Release renferme, en plus des sommes de contrôle pour les "
+"fichiers du dépôt, des informations générales sur le dépôt comme l'origine, "
+"le nom de code ou le numéro de la version."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3436,6 +3435,14 @@ msgid ""
 "is sufficiently prepared e.g. for the new major release of the distribution "
 "shipped in the repository (as e.g. indicated by the codename)."
 msgstr ""
+"Ces informations apparaissent à plusieurs endroits, aussi, le propriétaire "
+"d'un dépôt devrait toujours s'assurer de leur exactitude. Par ailleurs, les "
+"configurations de l'utilisateur, comme &apt-preferences;, peuvent dépendre "
+"de ces informations et les utiliser. Depuis la version 1.5, l'utilisateur "
+"doit par conséquent confirmer de façon explicite les modifications pour "
+"signaler qu'il est suffisamment préparé, par exemple, pour la nouvelle "
+"version majeure de la distribution fournie dans le dépôt (comme indiqué par "
+"exemple par le nom de code)."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
@@ -3489,10 +3496,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid "User Configuration"
 msgid "Repository Configuration"
-msgstr "Configuration utilisateur"
+msgstr "Configuration du dépôt"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -4537,20 +4542,15 @@ msgid ""
 "option> and verifying that the Date field of a release file is not in the "
 "future."
 msgstr ""
+"Les options relatives à la sécurité sont positionnées par défaut à « true »,"
+"permettant des vérifications relatives à l'heure. Leur désactivation "
+"signifie qu'on ne peut pas faire confiance à l'heure de la machine, et APT "
+"de ce fait désactivera toutes les vérifications de ce type, telles que "
+"<option>Check-Valid-Until</option> et la vérification que le champ Date d'un "
+"fichier Release n'est pas dans le futur."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Maximum time (in seconds) after its creation (as indicated by the "
-#| "<literal>Date</literal> header) that the <filename>Release</filename> "
-#| "file should be considered valid.  If the Release file itself includes a "
-#| "<literal>Valid-Until</literal> header the earlier date of the two is used "
-#| "as the expiration date.  The default value is <literal>0</literal> which "
-#| "stands for \"valid forever\".  Archive specific settings can be made by "
-#| "appending the label of the archive to the option name. Preferably, the "
-#| "same can be achieved for specific &sources-list; entries by using the "
-#| "<option>Valid-Until-Max</option> option there."
 msgid ""
 "Maximum time (in seconds) before its creation (as indicated by the "
 "<literal>Date</literal> header) that the <filename>Release</filename> file "
@@ -4562,14 +4562,11 @@ msgid ""
 msgstr ""
 "Durée maximale (en secondes) pendant laquelle un fichier Release est "
 "considéré comme valable, à partir du moment de sa création (tel que cela est "
-"indiqué dans l'en-tête <literal>Date</literal>). Si ce fichier lui-même "
-"comporte un en-tête <literal>Valid-Until</literal> la plus ancienne des deux "
-"dates est utilisée comme date d'expiration. La valeur par défaut "
-"(<literal>0</literal>) signifie « valable éternellement ». Un réglage "
-"spécifique pour une archive donnée peut être défini en ajoutant l'étiquette "
-"de l'archive au nom de l'option. De préférence, le même résultat peut être "
-"obtenu pour des entrées particulières de &sources-list; en utilisant ici "
-"l'option <option>Valid-Until-Max</option>."
+"indiqué dans l'en-tête <literal>Date</literal>). La valeur par défaut est "
+"<literal>10</literal>. Un réglage spécifique pour une archive donnée peut "
+"être défini en ajoutant l'étiquette de l'archive au nom de l'option. De "
+"préférence, le même résultat peut être obtenu pour des entrées particulières "
+"de &sources-list; en utilisant ici l'option <option>Date-Max-Future</option>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4653,6 +4650,11 @@ msgid ""
 "this completely disables support for TLS in apt's own methods (excluding the "
 "curl-based https method). No TLS-related functions will be called anymore."
 msgstr ""
+"Permet l'utilisation de la prise en charge interne de TLS dans la méthode "
+"http. Si la valeur de l'option est « false », cela désactive totalement la "
+"prise en charge de TLS dans les méthodes propres d'Apt (à l'exclusion de la "
+"méthode https basée sur curl). Plus aucune des fonctions liées à TLS ne peut "
+"être appelée."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4750,6 +4752,10 @@ msgid ""
 "protocols HTTP and HTTPS and are documented in the &apt-transport-http; and "
 "&apt-transport-https; manpages respectively."
 msgstr ""
+"Les options dans ces champs d'action configurent les transports "
+"d'acquisition d'APT pour les protocoles HTTP et HTTPS et sont documentées "
+"dans les pages de manuel &apt-transport-http; et &apt-transport-https; "
+"respectivement."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -6150,7 +6156,7 @@ msgstr ""
 "Veuillez noter que les fichiers du répertoire <filename>/etc/apt/preferences."
 "d</filename> sont analysés par ordre alphanumérique ascendant, doivent avoir "
 "l'extension \"<literal>pref</literal>\" ou aucune extension et ne peuvent "
-"continir que des caractères alphanumériques, des tirets (-), des caractères "
+"contenir que des caractères alphanumériques, des tirets (-), des caractères "
 "de soulignement (_) et des points (.). Dans le cas contraire, APT affichera "
 "un avertissement indiquant qu'il a ignoré un fichier si celui-ci ne "
 "correspond par à un motif défini dans <literal>Dir::Ignore-Files-Silently</"
@@ -7562,25 +7568,6 @@ msgstr "Format deb822-Style"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "Files in this format have the extension <filename>.sources</filename>.  "
-#| "The format is similar in syntax to other files used by Debian and its "
-#| "derivatives, such as the metadata files that apt will download from the "
-#| "configured sources or the <filename>debian/control</filename> file in a "
-#| "Debian source package.  Individual entries are separated by an empty "
-#| "line; additional empty lines are ignored, and a <literal>#</literal> "
-#| "character at the start of the line marks the entire line as a comment. An "
-#| "entry can hence be disabled by commenting out each line belonging to the "
-#| "stanza, but it is usually easier to add the field \"Enabled: no\" to the "
-#| "stanza to disable the entry. Removing the field or setting it to yes "
-#| "reenables it.  Options have the same syntax as every other field: A "
-#| "fieldname separated by a colon (<literal>:</literal>) and optionally "
-#| "spaces from its value(s).  Note especially that multiple values are "
-#| "separated by spaces, not by commas as in the one-line format. Multivalue "
-#| "fields like <literal>Architectures</literal> also have "
-#| "<literal>Architectures-Add</literal> and <literal>Architectures-Remove</"
-#| "literal> to modify the default value rather than replacing it."
 msgid ""
 "Files in this format have the extension <filename>.sources</filename>.  The "
 "format is similar in syntax to other files used by Debian and its "
@@ -7612,14 +7599,14 @@ msgstr ""
 "habituellement plus facile d'ajouter le champ « Enabled: no » au paragraphe "
 "pour désactiver l'entrée. Retirer ce champ ou le définir à « yes » le "
 "réactive. Les options ont la même syntaxe que tous les autres champs : un "
-"nom de champ séparé par le caracère deux-points (<literal>:</literal>) et "
+"nom de champ séparé par le caractère deux-points (<literal>:</literal>) et "
 "éventuellement des valeurs séparées par des espaces. Veuillez noter "
-"particulièrement que des valeurs multiples sont séparées par des espaces et "
-"non par des virgules comme dans le format « One-Line ». Les champs "
-"multivaleurs comme <literal>Architectures</literal> disposent aussi des "
-"options <literal>Architectures-Add</literal> et <literal>Architectures-"
-"Remove</literal> pour modifier la valeur par défaut plutôt que de la "
-"remplacer."
+"particulièrement que des valeurs multiples sont séparées par des espacements "
+"(espaces, tabulations ou nouvelles lignes) et non par des virgules comme "
+"dans le format « One-Line ». Les champs multivaleurs comme "
+"<literal>Architectures</literal> disposent aussi des options "
+"<literal>Architectures-Add</literal> et <literal>Architectures-Remove</"
+"literal> pour modifier la valeur par défaut plutôt que de la remplacer."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8123,6 +8110,11 @@ msgid ""
 "from the future. Disabling it also disables the <option>Check-Valid-Until</"
 "option> option mentioned above."
 msgstr ""
+"<option>Check-Date</option> (<option>check-date</option>) est une valeur yes/"
+"no qui contrôle si APT doit considérer que la date de la machine est "
+"correcte et donc effectuer les vérifications liées au temps, comme vérifier "
+"si le fichier Release n'est pas dans le futur. Sa désactivation désactive "
+"l'option <option>Check-Valid-Until</option> mentionnée ci-dessus."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -8132,6 +8124,10 @@ msgid ""
 "configuration option <option>Acquire::Max-FutureTime</option> which is 10 "
 "seconds by default."
 msgstr ""
+"<option>Date-Max-Future</option> (<option>date-max-future</option>) contrôle "
+"jusqu'où un dépôt peut être dans le futur. Elle possède la valeur del'option "
+"de configuration <option>Acquire::Max-FutureTime</option> qui est par défaut "
+"de 10 secondes."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -8145,6 +8141,14 @@ msgid ""
 "path will be tried instead of the InRelease file, and the fallback to "
 "<filename>Release</filename> files will be disabled."
 msgstr ""
+"<option>InRelease-Path</option> (<option>inrelease-path</option>) détermine "
+"le chemin du fichier InRelease, relativement à la position normale d'un "
+"fichier <filename>InRelease</filename>. Par défaut, cette option n'est pas "
+"définie et APT cherchera à récupérer un fichier <filename>InRelease</"
+"filename> ou, s'il échoue, un fichier <filename>Release</filename> et le "
+"fichier <filename>Release.gpg</filename> associé. Si cette option est "
+"définie, le chemin spécifié sera essayé à la place du fichier InRelease, et "
+"le repli vers les fichiers <filename>Release</filename> sera désactivé."
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
@@ -8159,7 +8163,7 @@ msgstr "Les types d'URI actuellement reconnus sont :"
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: sources.list.5.xml
 msgid "(&apt-transport-http;)"
-msgstr ""
+msgstr "(&apt-transport-http;)"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8174,6 +8178,16 @@ msgid ""
 "The authentication details for proxies can also be supplied via &apt-"
 "authconf;."
 msgstr ""
+"Le procédé http précise un serveur HTTP pour une archive et c'est la méthode "
+"la plus couramment utilisée. L'URI peut inclure directement les information "
+"de connexion si l'archive le requiert, mais l'utilisation de &apt-authconf; "
+"devrait être préférée. La méthode prend également en charge SOCKS5 et les "
+"mandataires HTTP(S) configurés soit au moyen d'une configuration spécifique "
+"à apt ou spécifiés par la variable d'environnement <envar>http_proxy</envar> "
+"au format <replaceable>http://user:pass@server:port/</replaceable> (en "
+"supposant un mandataire HTTP nécessitant une authentification). Les détails "
+"de l'authentification pour les mandataires peuvent aussi être fournis avec "
+"&apt-authconf;."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8185,11 +8199,18 @@ msgid ""
 "communication through as APTs data security model is independent of the "
 "chosen transport method. See &apt-secure; for details."
 msgstr ""
+"Veuillez noter que ces formes d'authentification ne sont pas sûres puisque "
+"toutes les communications avec le serveur distant (ou le mandataire) ne sont "
+"pas chiffrées, donc un attaquant suffisamment compétent peut observer et "
+"enregistrer la connexion ainsi que les autres interactions. L'attaquant ne "
+"peut <emphasis>pas</emphasis> modifier la communication dans la mesure où le "
+"modèle de sécurité des données d'Apt est indépendant de la méthode de "
+"transport choisie. Voir &apt-secure; pour plus de détails."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: sources.list.5.xml
 msgid "(&apt-transport-https;)"
-msgstr ""
+msgstr "(&apt-transport-https;)"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8202,6 +8223,15 @@ msgid ""
 "potentially still reveal which data was downloaded. If this is a concern the "
 "Tor-based schemes mentioned further below might be a suitable alternative."
 msgstr ""
+"Le procédé https précise un serveur HTTPS pour une archive et il est très "
+"semblable au procédé http en termes d'utilisation et d'options disponibles. "
+"La principale différence est que les communications entre apt et le serveur "
+"(ou le mandataire) sont chiffrées. Veuillez noter que le chiffrage n'empêche "
+"pas un attaquant de savoir avec quel serveur (ou mandataire) apt est en "
+"communication et que des analyses approfondies peuvent encore "
+"potentiellement révéler quelles données sont téléchargées. Si cela est une "
+"préoccupation, des procédés basés sur Tor, mentionnés plus bas, pourraient "
+"être une alternative appropriée."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8211,24 +8241,20 @@ msgid ""
 "archives."
 msgstr ""
 "Le procédé <literal>file</literal> permet qu'un répertoire arbitraire au "
-"sein du système de fichier soit considéré comme une archive. On s'en sert "
-"avec les montages NFS, les miroirs et les archives locaux."
+"sein du système de fichiers soit considéré comme une archive. Cela est "
+"utilisé avec les montages NFS, les miroirs et les archives locaux."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "The cdrom scheme allows APT to use a local CD-ROM drive with media "
-#| "swapping. Use the &apt-cdrom; program to create cdrom entries in the "
-#| "source list."
 msgid ""
 "The cdrom scheme allows APT to use a local CD-ROM, DVD or USB drive with "
 "media swapping. Use the &apt-cdrom; program to create cdrom entries in the "
 "source list."
 msgstr ""
-"Le procédé <literal>cdrom</literal> permet l'utilisation d'un lecteur de CD "
-"avec la possibilité de changer de media. Utilisez le programme &apt-cdrom; "
-"pour créer des entrées dans la liste des sources."
+"Le procédé <literal>cdrom</literal> permet l'utilisation d'un lecteur de CD, "
+"de DVD ou USB, avec la possibilité de changer de média. Utilisez le "
+"programme &apt-cdrom; pour créer des entrées <literal>cdrom</literal> dans "
+"la liste des sources."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8239,19 +8265,15 @@ msgid ""
 "still need this method many configuration options for it are available in "
 "the <literal>Acquire::ftp</literal> scope and detailed in &apt-conf;."
 msgstr ""
+"Le procédé <literal>ftp</literal> indique un serveur FTP comme archive. "
+"L'utilisation de FTP décline en faveur de <literal>http</literal> et "
+"<literal>https</literal> et plusieurs archives soit n'ont jamais offert "
+"d'accès FTP, soit le retirent. Si vous avez encore besoin de cette méthode, "
+"plusieurs options de configuration sont disponibles dans le champ d'action "
+"<literal>Acquire::ftp</literal> et détaillées dans &apt-conf;."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "The ftp scheme specifies an FTP server for the archive. APT's FTP "
-#| "behavior is highly configurable; for more information see the &apt-conf; "
-#| "manual page. Please note that an FTP proxy can be specified by using the "
-#| "<envar>ftp_proxy</envar> environment variable. It is possible to specify "
-#| "an HTTP proxy (HTTP proxy servers often understand FTP URLs)  using this "
-#| "environment variable and <emphasis>only</emphasis> this environment "
-#| "variable. Proxies using HTTP specified in the configuration file will be "
-#| "ignored."
 msgid ""
 "Please note that an FTP proxy can be specified by using the "
 "<envar>ftp_proxy</envar> environment variable. It is possible to specify an "
@@ -8260,15 +8282,12 @@ msgid ""
 "variable. Proxies using HTTP specified in the configuration file will be "
 "ignored."
 msgstr ""
-"Le procédé <literal>ftp</literal> indique un serveur FTP comme archive. Le "
-"fonctionnement en mode ftp est largement configurable ; référez-vous à la "
-"page de manuel de &apt-cdrom; pour d'autres informations. On remarquera "
-"qu'on peut indiquer un mandataire FTP avec la variable d'environnement "
-"<envar>ftp_proxy</envar>. On peut aussi spécifier un mandataire HTTP (les "
-"serveurs mandataires HTTP comprennent souvent les URL FTP) en utilisant "
-"cette méthode et <emphasis>seulement</emphasis> cette méthode. Les "
-"mandataires qui utilisent HTTP et qui sont spécifiés dans le fichier de "
-"configuration seront ignorés."
+"Veuillez noter qu'on peut spécifier un mandataire FTP en utilisant la "
+"variable d'environnement <envar>ftp_proxy</envar>. On peut aussi spécifier "
+"un mandataire HTTP (les serveurs mandataires HTTP comprennent souvent les "
+"URL FTP) en utilisant cette méthode et <emphasis>seulement</emphasis> cette "
+"méthode. Les mandataires qui utilisent HTTP et qui sont spécifiés dans le "
+"fichier de configuration seront ignorés."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
@@ -8301,19 +8320,10 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: sources.list.5.xml
 msgid "adding more recognizable URI types"
-msgstr "ajout de types d'URI supplémentaires reconnues"
+msgstr "ajout de types d'URI supplémentaires reconnus"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "APT can be extended with more methods shipped in other optional packages, "
-#| "which should follow the naming scheme <package>apt-transport-"
-#| "<replaceable>method</replaceable></package>.  For instance, the APT team "
-#| "also maintains the package <package>apt-transport-https</package>, which "
-#| "provides access methods for HTTPS URIs with features similar to the http "
-#| "method.  Methods for using e.g. debtorrent are also available - see &apt-"
-#| "transport-debtorrent;."
 msgid ""
 "APT can be extended with more methods shipped in other optional packages, "
 "which should follow the naming scheme <package>apt-transport-"
@@ -8323,11 +8333,10 @@ msgid ""
 msgstr ""
 "APT peut être complété avec des méthodes supplémentaires fournies par des "
 "paquets optionnels dont le schéma de nommage est <literal>apt-transport-"
-"<replaceable>méthode</replaceable></literal>.  Ainsi, l'équipe de "
-"maintenance d'APT gère un paquet <literal>apt-transport-https</literal> qui "
-"gère les accès par URI de type https, avec des fonctionnalités analogues à "
-"la méthode http. D'autres méthodes telles que debtorrent sont aussi "
-"disponibles (voir &apt-transport-debtorrent;)."
+"<replaceable>méthode</replaceable></literal>. Ainsi, l'équipe de maintenance "
+"d'APT gère un paquet <package>apt-transport-tor</package> qui gère les "
+"méthodes d'accès par URI de type HTTP et HTTPS routées à travers le réseau "
+"Tor."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -9732,10 +9741,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid "Configuration file for APT"
 msgid "Login configuration file for APT sources and proxies"
-msgstr "Fichier de configuration pour APT"
+msgstr ""
+"Fichier de configuration de connexion pour les sources et les mandataires "
+"d'APT"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
@@ -9747,6 +9756,14 @@ msgid ""
 "repository on the other hand shouldn't always be accessible by everyone and "
 "can hence not be placed in a file with world-readable file permissions."
 msgstr ""
+"Les fichiers de configuration d'APT tels que &sources-list; ou &apt-conf; "
+"doivent pouvoir être accessibles à tous ceux qui utilisent les outils d'APT "
+"sur le système pour accéder à toutes les informations relatives aux paquets "
+"telles que les paquets disponibles dans un dépôt. Les informations de "
+"connexion nécessaires pour se connecter à un mandataire ou pour télécharger "
+"des données à partir d'un dépôt, d'un autre côté, ne devraient pas toujours "
+"être accessibles à tous et ne peuvent donc pas être mises dans un fichier "
+"doté de droits de lecture universels."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
@@ -9755,11 +9772,14 @@ msgid ""
 "to store login information in a netrc-like format with restrictive file "
 "permissions."
 msgstr ""
+" Le fichier auth.conf d'APT <filename>/etc/apt/auth.conf</filename> peut "
+"être utilisé pour stocker les informations de connexion dans un format "
+"detype netrc avec des droits d'accès restreints"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt_auth.conf.5.xml
 msgid "netrc-like format"
-msgstr ""
+msgstr "format de type netrc"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
@@ -9771,6 +9791,13 @@ msgid ""
 "following tokens being recognized; Unknown tokens will be ignored. Tokens "
 "may be separated by spaces, tabs or newlines."
 msgstr ""
+"Le format défini ici est analogue au format du fichier <filename>~/.netrc</"
+"filename> utilisé par <citerefentry><refentrytitle><command>ftp</command></"
+"refentrytitle><manvolnum>1</manvolnum></citerefentry> et des programmes "
+"similaires interagissant avec des serveurs. C'est un format simple basé sur "
+"les jetons qui reconnaît les jetons suivants ; les jetons inconnus seront "
+"ignorés. Les jetons peuvent être séparés par des espaces, des tabulations ou "
+"des changements de ligne."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt_auth.conf.5.xml
@@ -9778,6 +9805,8 @@ msgid ""
 "<literal>machine</literal> <replaceable>hostname</replaceable>[:"
 "<replaceable>port</replaceable>][/<replaceable>path</replaceable>]"
 msgstr ""
+"<literal>machine</literal> <replaceable>nom d'hôte</replaceable>[:"
+"<replaceable>port</replaceable>][/<replaceable>chemin</replaceable>]"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt_auth.conf.5.xml
@@ -9793,51 +9822,55 @@ msgid ""
 "end of file is reached or another <emphasis><literal>machine</literal></"
 "emphasis> token is encountered."
 msgstr ""
+"Les entrées sont trouvées en recherchant le jeton de "
+"<emphasis><literal>machine</literal></emphasis> correspondant au nom d'hôte "
+"de l'URI qui fournit les informations de connexion dont APT a besoin. Comme "
+"extension du format netrc, un numéro de port peut être défini. Si ce n'est "
+"pas le cas, le jeton est valide pour tous les ports. De la même manière, le "
+"chemin est facultatif et seulement nécessaire et utile si plusieurs dépôts, "
+"avec des informations de connexion différentes, sont hébergées sur le même "
+"serveur. Un jeton de machine avec un chemin correspond si le chemin dans "
+"l'URI débute par le chemin donné dans le jeton. Une fois qu'une "
+"correspondance est établie, les jetons suivants sont traités, s'arrêtant "
+"lorsque la fin du fichier est atteinte ou qu'un autre jeton de "
+"<emphasis><literal>machine</literal></emphasis> est rencontré."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid "--keyring <replaceable>filename</replaceable>"
 msgid "<literal>login</literal> <replaceable>name</replaceable>"
-msgstr "--keyring <replaceable>fichier</replaceable>"
+msgstr "<literal>login</literal> <replaceable>nom</replaceable>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt_auth.conf.5.xml
 msgid "The username to be used."
-msgstr ""
+msgstr "L'identifiant à utiliser"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid "add <replaceable>file(s)</replaceable>"
 msgid "<literal>password</literal> <replaceable>string</replaceable>"
-msgstr "add <replaceable>fichier(s)</replaceable>"
+msgstr "<literal>password</literal> <replaceable>chaîne</replaceable>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt_auth.conf.5.xml
 msgid "The password to be used."
-msgstr ""
+msgstr "Le mot de passe à utiliser."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid "Examples"
 msgid "Example"
-msgstr "Exemples"
+msgstr "Exemple"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: apt_auth.conf.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
+#, no-wrap
 msgid "deb http://example.org/debian &debian-stable-codename; main"
-msgstr "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
+msgstr "deb http://example.org/debian &debian-stable-codename; main"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: apt_auth.conf.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
+#, no-wrap
 msgid "deb http://apt:debian@example.org/debian &debian-stable-codename; main"
-msgstr "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
+msgstr "deb http://apt:debian@example.org/debian &debian-stable-codename; main"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: apt_auth.conf.5.xml
@@ -9847,12 +9880,15 @@ msgid ""
 "login apt\n"
 "password debian"
 msgstr ""
+"machine example.org\n"
+"login apt\n"
+"password debian"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: apt_auth.conf.5.xml
 #, no-wrap
 msgid "machine example.org login apt password debian"
-msgstr ""
+msgstr "machine example.org login apt password debian"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: apt_auth.conf.5.xml
@@ -9862,6 +9898,9 @@ msgid ""
 "machine example.org/debian login apt password debian\n"
 "machine example.org/debian/ login apt password debian\n"
 msgstr ""
+"machine example.org/deb login apt password debian\n"
+"machine example.org/debian login apt password debian\n"
+"machine example.org/debian/ login apt password debian\n"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: apt_auth.conf.5.xml
@@ -9873,6 +9912,11 @@ msgid ""
 "machine example.orga login apt password debian\n"
 "machine example.net login apt password debian\n"
 msgstr ""
+"machine example.org:80 login apt password debian\n"
+"machine example.org/deb/ login apt password debian\n"
+"machine example.org/ubuntu login apt password debian\n"
+"machine example.orga login apt password debian\n"
+"machine example.net login apt password debian\n"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
@@ -9888,11 +9932,22 @@ msgid ""
 "<placeholder type=\"literallayout\" id=\"4\"/> On the other hand neither of "
 "the following lines apply: <placeholder type=\"literallayout\" id=\"5\"/>"
 msgstr ""
+"La fourniture d'informations de connexion pour un utilisateur nommé "
+"<literal>apt</literal> avec le mot de passe <literal>debian</literal> pour "
+"l'entrée de &sources-list; <placeholder type=\"literallayout\" id=\"0\"/> "
+"peut se faire directement dans l'entrée : <placeholder type=\"literallayout"
+"\" id=\"1\"/> Autrement, une entrée dans le fichier auth.conf telle que la "
+"suivante peut être utilisée : <placeholder type=\"literallayout\" id=\"2\"/> "
+"Ou enfin, en une seule ligne : <placeholder type=\"literallayout\" id=\"3\"/"
+">. Si vous avez besoin d'être plus précis, tout le contenu de ces lignes "
+"s'appliquera également à l'entrée d'exemple : <placeholder type="
+"\"literallayout\" id=\"4\"/> En revanche, aucune des lignes suivantes ne "
+"s'applique : <placeholder type=\"literallayout\" id=\"5\"/>"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt_auth.conf.5.xml
 msgid "Notes"
-msgstr ""
+msgstr "Remarque"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
@@ -9904,39 +9959,41 @@ msgid ""
 "hostname, but if you need multiple they should all have a path specified in "
 "the <literal>machine</literal> token."
 msgstr ""
+"Une prise en charge basique de cette fonctionnalité est présente depuis la "
+"version 0.7.25, mais n'était pas documentée depuis des années. La "
+"documentation a été ajoutée dans la version 1.5, modifiant aussi légèrement "
+"l'implémentation. Pour une compatibilité ascendante maximale, vous devriez "
+"éviter d'avoir plusieurs jetons de <literal>machine</literal> avec le même "
+"nom d'hôte, mais si vous devez en avoir plusieurs, il faudrait qu'un chemin "
+"soit précisé dans le jeton de <literal>machine</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid "<filename>/etc/apt/trustdb.gpg</filename>"
 msgid "<filename>/etc/apt/auth.conf</filename>"
-msgstr "<filename>/etc/apt/trustdb.gpg</filename>"
+msgstr "<filename>/etc/apt/auth.conf</filename>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "APT configuration file fragments.  Configuration Item: <literal>Dir::Etc::"
-#| "Parts</literal>."
 msgid ""
 "Login information for APT sources and proxies in a netrc-like format.  "
 "Configuration Item: <literal>Dir::Etc::netrc</literal>."
 msgstr ""
-"Éléments du fichier de configuration d'APT. Élément de configuration : "
-"<literal>Dir::Etc::Parts</literal>."
+"Informations de connexion pour les sources et les mandataires d'APT dans un "
+"format de type netrc. Élément de configuration : <literal>Dir::Etc::netrc</"
+"literal>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid "&apt-conf;, &sources-list;, &apt-get;"
 msgid "&apt-conf; &sources-list;"
-msgstr "&apt-conf;, &sources-list;, &apt-get;."
+msgstr "&apt-conf; &sources-list;"
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-transport-http.1.xml
 msgid ""
 "APT transport for downloading via the Hypertext Transfer Protocol (HTTP)"
 msgstr ""
+"Transport d'APT pour téléchargement par HTTP (protocole de transfert "
+"hypertexte)"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-http.1.xml
@@ -9946,6 +10003,11 @@ msgid ""
 "used of all transports. Note that a transport is never called directly by a "
 "user but used by APT tools based on user configuration."
 msgstr ""
+"Ce transport d'APT permet d'utiliser les dépôts auxquels on accède au moyen "
+"de HTTP (Hypertext Transfer Protocol). Il est disponible par défaut et il "
+"est probablement le transport le plus utilisé de tous. Veuillez noter qu'un "
+"transport n'est jamais appelé directement par l'utilisateur, mais utilisé "
+"par les outils d'APT s'appuyant sur la configuration de l'utilisateur."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-http.1.xml
@@ -9959,6 +10021,15 @@ msgid ""
 "explained in detail in &apt-secure;. An overview of available transport "
 "methods is given in &sources-list;."
 msgstr ""
+"HTTP est un protocole de transport non chiffré ce qui veut dire que toutes "
+"les communications avec le serveur distant (ou le mandataire) peuvent être "
+"observées par un attaquant suffisamment compétent appelé couramment « homme "
+"du milieu » (MITM). Cependant, un tel attaquant ne peut <emphasis>pas</"
+"emphasis> modifier la communication pour compromettre la sécurité du système "
+"dans la mesure où le modèle de sécurité des données d'APT est indépendant de "
+"la méthode de transport choisie. Cela est expliqué en détail dans &apt-"
+"secure;. Un aperçu des méthodes de transport disponibles est donné dans "
+"&sources-list;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-http.1.xml
@@ -9967,13 +10038,14 @@ msgid ""
 "ranging from proxy configuration to workarounds for specific server "
 "limitations."
 msgstr ""
+"Diverses options peuvent être réglées dans un fichier &apt-conf; pour "
+"modifier son comportement depuis la configuration d'un mandataire à des "
+"contournements pour les limites d'un serveur particulier."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-http.1.xml
-#, fuzzy
-#| msgid "User Configuration"
 msgid "Proxy Configuration"
-msgstr "Configuration utilisateur"
+msgstr "Configuration du mandataire"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
@@ -9992,6 +10064,21 @@ msgid ""
 "<literal>https</literal>.  Authentication details can be supplied via &apt-"
 "authconf; instead of including it in the URI directly."
 msgstr ""
+"La variable d'environnement <envar>http_proxy</envar> est prise en charge "
+"pour une configuration au niveau du système. Les mandataires particuliers à "
+"APT peuvent être configurés grâce à l'option <literal>Acquire::http::Proxy</"
+"literal>. Les mandataires qui devraient être utilisés seulement pour "
+"certains hôtes peuvent être spécifiés avec <literal>Acquire::http::Proxy::"
+"<replaceable>hôte</replaceable></literal>. Un contrôle encore plus fin peut "
+"être obtenu avec l'autodétection du mandataire, détaillée ci-dessous. Toutes "
+"ces options utilisent le format d'URI <literal><replaceable>schéma</"
+"replaceable>://[[<replaceable>utilisateur</replaceable>][:"
+"<replaceable>mot_de_passe</replaceable>]@]<replaceable>hôte</replaceable>[:"
+"<replaceable>port</replaceable>]/</literal>. Les schémas d'URI pris en "
+"charge sont <literal> socks5h</literal> (SOCKS5 avec résolution distante de "
+"DNS), <literal>http</literal> et <literal>https</literal>. Les détails "
+"d'authentification peuvent être fournis avec &apt-authconf; plutôt que de "
+"les inclure directement dans l'URI."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
@@ -10001,18 +10088,13 @@ msgid ""
 "environment variable <envar>no_proxy</envar> is also supported for the same "
 "purpose."
 msgstr ""
+"Les diverses options de configuration d'APT prennent en charge la valeur "
+"particulière <literal>DIRECT</literal> signifiant qu'aucun mandataire ne "
+"doit être utilisé. La variable d'environnement <envar>no_proxy</envar> est "
+"aussi prise en charge dans le même but."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
-#, fuzzy
-#| msgid ""
-#| "Three settings are provided for cache control with HTTP/1.1 compliant "
-#| "proxy caches.  <literal>No-Cache</literal> tells the proxy not to use its "
-#| "cached response under any circumstances.  <literal>Max-Age</literal> sets "
-#| "the allowed maximum age (in seconds) of an index file in the cache of the "
-#| "proxy.  <literal>No-Store</literal> specifies that the proxy should not "
-#| "store the requested archive files in its cache, which can be used to "
-#| "prevent the proxy from polluting its cache with (big) .deb files."
 msgid ""
 "Furthermore, there are three settings provided for cache control with "
 "HTTP/1.1 compliant proxy caches: <literal>Acquire::http::No-Cache</literal> "
@@ -10023,39 +10105,22 @@ msgid ""
 "requested archive files in its cache, which can be used to prevent the proxy "
 "from polluting its cache with (big) .deb files."
 msgstr ""
-"Trois options de configuration sont fournies pour le contrôle des caches "
-"compatibles avec HTTP/1.1. <literal>No-Cache</literal> signifie que le "
-"mandataire ne doit jamais utiliser les réponses qu'il a stockées ; "
-"<literal>Max-Age</literal> établit l'ancienneté maximale (en secondes) d'un "
-"fichier d'index dans le cache du mandataire. <literal>No-Store</literal> "
-"indique que le mandataire ne doit pas mettre en cache les fichiers "
-"d'archive, ce qui peut éviter de polluer un cache mandataire avec des "
-"fichiers .deb très grands."
+"De plus, il y a trois options de configuration fournies pour le contrôle des "
+"caches mandataire compatibles avec HTTP/1.1 : <literal>Acquire::http::No-"
+"Cache</literal> dit au mandataire de ne jamais utiliser les réponses qu'il a "
+"stockées. <literal>Acquire::http::Max-Age</literal> établit l'ancienneté "
+"maximale (en secondes) d'un fichier d'index dans le cache du mandataire. "
+"<literal>Acquire::http::No-Store</literal> indique que le mandataire ne doit "
+"pas mettre en cache les fichiers d'archive, ce qui peut éviter de polluer un "
+"cache mandataire avec des fichiers .deb très grands."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-http.1.xml
-#, fuzzy
-#| msgid "User Configuration"
 msgid "Automatic Proxy Configuration"
-msgstr "Configuration utilisateur"
+msgstr "Configuration automatique du mandataire"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>Acquire::http::Proxy-Auto-Detect</literal> can be used to "
-#| "specify an external command to discover the http proxy to use. The first "
-#| "and only parameter is an URI denoting the host to be contacted to allow "
-#| "for host-specific configuration. APT expects the command to output the "
-#| "proxy on stdout as a single line in the style <literal>http://proxy:port/"
-#| "</literal> or the word <literal>DIRECT</literal> if no proxy should be "
-#| "used. No output indicates that the generic proxy settings should be "
-#| "used.  Note that auto-detection will not be used for a host if a host-"
-#| "specific proxy configuration is already set via <literal>Acquire::http::"
-#| "Proxy::<replaceable>HOST</replaceable></literal>.  See the &squid-deb-"
-#| "proxy-client; package for an example implementation that uses avahi.  "
-#| "This option takes precedence over the legacy option name "
-#| "<literal>ProxyAutoDetect</literal>."
 msgid ""
 "<literal>Acquire::http::Proxy-Auto-Detect</literal> can be used to specify "
 "an external command to discover the HTTP proxy to use. The first and only "
@@ -10069,15 +10134,10 @@ msgstr ""
 "utilisée pour indiquer une commande externe pour découvrir le mandataire "
 "HTTP à utiliser. Le premier et seul paramètre est un URI indiquant l'hôte à "
 "contacter pour permettre une configuration propre à l'hôte. Apt s'attend à "
-"ce que la commande indique le mandataire sur la sortie standard dans le "
-"style <literal>http://proxy:port/</literal> ou le mot <literal>DIRECT</"
-"literal> si aucun mandataire ne doit être utilisé. Aucune sortie indique que "
-"le mandataire générique doit être utilisé. Notez que l'auto-détection ne "
-"sera pas exécutée si une configuration spécifique de mandataire hôte a déjà "
-"été établie par <literal>Acquire::http::Proxy::$HOST</literal>. Voir le "
-"paquet &squid-deb-proxy-client; pour un exemple d'implémentation qui utilise "
-"avahi. Cette option l'emporte sur l'ancien nom d'option "
-"<literal>ProxyAutoDetect</literal>."
+"ce que la commande indique le mandataire sur la sortie standard sur une "
+"seule ligne dans le format d'URI précédemment défini ou le mot "
+"<literal>DIRECT</literal> si aucun mandataire ne doit être utilisé. Aucune "
+"sortie indique que le mandataire générique doit être utilisé."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
@@ -10086,6 +10146,9 @@ msgid ""
 "proxy configuration is already set via <literal>Acquire::http::Proxy::"
 "<replaceable>host</replaceable></literal>."
 msgstr ""
+"Notez que l'auto-détection ne sera pas exécutée si une configuration "
+"spécifique de mandataire hôte a déjà été établie par <literal>Acquire::http::"
+"Proxy::<replaceable>hôte</replaceable></literal>."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
@@ -10093,6 +10156,8 @@ msgid ""
 "See the &squid-deb-proxy-client; and &auto-apt-proxy; packages for example "
 "implementations."
 msgstr ""
+"Voir les paquets &squid-deb-proxy-client; et &auto-apt-proxy; pour des "
+"exemples d'implémentation."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
@@ -10100,38 +10165,27 @@ msgid ""
 "This option takes precedence over the legacy option name <literal>Acquire::"
 "http::ProxyAutoDetect</literal>."
 msgstr ""
+"Cette option prend le pas sur l'ancien nom d'option <literal>Acquire::http::"
+"ProxyAutoDetect</literal>."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-http.1.xml
-#, fuzzy
-#| msgid "User Configuration"
 msgid "Connection Configuration"
-msgstr "Configuration utilisateur"
+msgstr "Configuration de connexion"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
-#, fuzzy
-#| msgid ""
-#| "The option <literal>timeout</literal> sets the timeout timer used by the "
-#| "method; this value applies to the connection as well as the data timeout."
 msgid ""
 "The option <literal>Acquire::http::Timeout</literal> sets the timeout timer "
 "used by the method; this value applies to the connection as well as the data "
 "timeout."
 msgstr ""
-"L'option <literal>timeout</literal> positionne le compteur d'expiration du "
-"délai (timeout) utilisé par la méthode. Cela s'applique aussi bien à la "
-"connexion qu'aux données."
+"L'option <literal>Acquire::http::Timeout</literal> positionne le compteur "
+"d'expiration du délai (timeout) utilisé par la méthode. Cela s'applique "
+"aussi bien à la connexion qu'aux données."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
-#, fuzzy
-#| msgid ""
-#| "The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</"
-#| "literal> which accepts integer values in kilobytes per second. The "
-#| "default value is 0 which deactivates the limit and tries to use all "
-#| "available bandwidth.  Note that this option implicitly disables "
-#| "downloading from multiple servers at the same time."
 msgid ""
 "The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</"
 "literal> which accepts integer values in kilobytes per second. The default "
@@ -10139,7 +10193,7 @@ msgid ""
 "bandwidth. Note that this option implicitly disables downloading from "
 "multiple servers at the same time."
 msgstr ""
-"La bande passante utilisée peut être limité avec <literal>Acquire::http::Dl-"
+"La bande passante utilisée peut être limitée avec <literal>Acquire::http::Dl-"
 "Limit</literal> qui peut prendre une valeur entière, l'unité utilisée étant "
 "le kilo-octet par seconde. La valeur par défaut est 0, ce qui correspond à "
 "aucune limitation de bande passante. Veuillez noter que cette option "
@@ -10148,15 +10202,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
-#, fuzzy
-#| msgid ""
-#| "The setting <literal>Acquire::http::Pipeline-Depth</literal> can be used "
-#| "to enable HTTP pipelining (RFC 2616 section 8.1.2.2) which can be "
-#| "beneficial e.g. on high-latency connections. It specifies how many "
-#| "requests are sent in a pipeline.  APT tries to detect and workaround "
-#| "misbehaving webservers and proxies at runtime, but if you know that yours "
-#| "does not conform to the HTTP/1.1 specification pipelining can be disabled "
-#| "by setting the value to 0. It is enabled by default with the value 10."
 msgid ""
 "The setting <literal>Acquire::http::Pipeline-Depth</literal> can be used to "
 "enable HTTP pipelining (RFC 2616 section 8.1.2.2) which can be beneficial e."
@@ -10167,13 +10212,13 @@ msgid ""
 "0. It is enabled by default with the value 10."
 msgstr ""
 "Le réglage <literal>Acquire::http::Pipeline-Depth</literal> permet "
-"d'utiliser l'enchaînement HTTP (« HTTP pipelining », RFC 2616 section "
-"8.1.2.2) ce qui peut être utile par exemple avec des connexions à latence "
-"élevée. Il indique le nombre de requêtes envoyées dans le tuyau. APT tente "
-"de détecter et de contourner les serveurs web et les mandataires qui se "
-"comportent mal à l'exécution, mais si vous savez que vos serveurs ne "
+"d'utiliser l'enchaînement HTTP (« HTTP pipelining », RFC 2616 "
+"section 8.1.2.2) ce qui peut être utile par exemple avec des connexions à "
+"latence élevée. Il indique le nombre de requêtes envoyées dans le tuyau. APT "
+"tente de détecter et de contourner les serveurs web et les mandataires qui "
+"se comportent mal à l'exécution, mais si vous savez que vos serveurs ne "
 "respectent pas la norme HTTP/1.1, l'enchaînement peut être désactivé en "
-"définissant cette valeur à 0. Il est activé par défaut avec une valeur de 10."
+"définissant cette valeur à 0. Il est activé par défaut avec une valeur de 10."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
@@ -10194,7 +10239,7 @@ msgstr ""
 "L'option <literal>Acquire::http::User-Agent</literal> peut être utilisée "
 "pour envoyer une valeur User-Agent modifiée pour les téléchargements HTTP, "
 "ce qui peut par exemple être utile avec certains mandataires HTTP qui "
-"n'autorisent l'accès qu'aux client s'identifiant de manière spécifique.."
+"n'autorisent l'accès qu'aux clients s'identifiant de manière spécifique."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-http.1.xml
@@ -10204,6 +10249,10 @@ msgid ""
 "without file extensions to prevent the server from attempting content "
 "negotiation."
 msgstr ""
+"<literal>Acquire::http::SendAccept</literal> est activé par défaut et envoie "
+"un champ d'en-tête <literal>Accept: text/*</literal> au serveur pourles "
+"requêtes sans extension de fichier pour éviter que le serveur ne tente une "
+"négociation de contenu."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: apt-transport-http.1.xml
@@ -10224,18 +10273,32 @@ msgid ""
 "\tSendAccept \"false\";\n"
 "};\n"
 msgstr ""
+"Acquire::http {\n"
+"\tProxy::example.org \"DIRECT\";\n"
+"\tProxy \"socks5h://apt:pass@localhost:9050\";\n"
+"\tProxy-Auto-Detect \"/usr/local/bin/apt-http-proxy-auto-detect\";\n"
+"\tNo-Cache \"true\";\n"
+"\tMax-Age \"3600\";\n"
+"\tNo-Store \"true\";\n"
+"\tTimeout \"10\";\n"
+"\tDl-Limit \"42\";\n"
+"\tPipeline-Depth \"0\";\n"
+"\tAllowRedirect \"false\";\n"
+"\tUser-Agent \"My APT-HTTP\";\n"
+"\tSendAccept \"false\";\n"
+"};\n"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-http.1.xml
-#, fuzzy
-#| msgid "&apt-conf;, &apt-get;, &sources-list;"
 msgid "&apt-conf; &apt-authconf; &sources-list;"
-msgstr "&apt-conf;, &apt-get;, &sources-list;."
+msgstr "&apt-conf; &apt-authconf; &sources-list;"
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-transport-https.1.xml
 msgid "APT transport for downloading via the HTTP Secure protocol (HTTPS)"
 msgstr ""
+"Le transport d'APT pour télécharger par HTTPS (protocole de transfert "
+"hypertexte sécurisé)"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-https.1.xml
@@ -10246,6 +10309,12 @@ msgid ""
 "<package>apt-transport-https</package>. Note that a transport is never "
 "called directly by a user but used by APT tools based on user configuration."
 msgstr ""
+"Ce transport d'APT permet d'utiliser les dépôts auxquels on accède au moyen "
+"de HTTPS (protocole HTTP Secure), aussi appelé HTTP sur TLS. Il est "
+"disponible par défaut depuis apt 1.5 et était disponible auparavant dans "
+"lepaquet <package>apt-transport-https</package>. Veuillez noter qu'un "
+"transport n'est jamais appelé directement par l'utilisateur, maisutilisé par "
+"les outils d'APT s'appuyant sur la configuration de l'utilisateur."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-https.1.xml
@@ -10258,6 +10327,14 @@ msgid ""
 "might still reveal important details.  An overview over available "
 "alternative transport methods is given in &sources-list;."
 msgstr ""
+"HTTP est un protocole de transport non chiffré (comparez avec &apt-transport-"
+"http;), qui, comme l'indique le S ajouté, est enveloppé dans une couche "
+"chiffrée, connue sous le nom de « Transport Layer Security » (TLS), pour "
+"fournir un chiffrement de bout en bout. Un attaquant suffisamment compétent "
+"peut encore observer les partenaires de la communication et une analyse "
+"approfondie de la communication chiffrée pourrait toujours révéler des "
+"détails importants. Un aperçu des méthodes de transport alternatives "
+"disponibles est donné dans &sources-list;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-https.1.xml
@@ -10268,11 +10345,16 @@ msgid ""
 "http</literal>. This manpage will only document the options <emphasis>unique "
 "to https</emphasis>."
 msgstr ""
+"Le protocole HTTPS est basé sur le protocole HTTP, aussi toutes les options "
+"prises en charge par &apt-transport-http; sont aussi disponibles au moyen de "
+"<literal>Acquire::https</literal> et ont par défaut les même valeurs que "
+"celles spécifiées pour <literal>Acquire::http</literal>. Cette page de "
+"manuel ne documentera que les options <emphasis>propres à https</emphasis>."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-https.1.xml
 msgid "Server credentials"
-msgstr ""
+msgstr "Accréditations du serveur"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-https.1.xml
@@ -10290,6 +10372,18 @@ msgid ""
 "whole chain is required. If you need to support multiple authorities, the "
 "only way is to concatenate everything."
 msgstr ""
+"Par défaut, tous les certificats de confiance du système (voir le paquet "
+"<package>ca-certificates</package> sont utilisés pour la vérification du "
+"certificat du serveur. Une autre autorité de certification (CA) peut être "
+"configurée avec l'option <literal>Acquire::https::CAInfo</literal> et son "
+"option spécifique de l'hôte <literal>Acquire::https::CAInfo::"
+"<replaceable>hôte</replaceable></literal>. L'option CAInfo spécifie un "
+"fichier composé des certificats de CA (au format PEM) concaténés pour créer "
+"la chaîne qu'APT peut utiliser pour vérifier le chemin à partir du "
+"certificat racine auto-signée. Si le serveur distant fournit toute la chaîne "
+"pendant l'échange, le fichier ne doit contenir que le certificat racine. "
+"Autrement, toute la chaîne est requise. Si la gestion de plusieurs autorités "
+"est nécessaire, le seul moyen est de tout concaténer."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-https.1.xml
@@ -10299,11 +10393,15 @@ msgid ""
 "https::CRLFile::<replaceable>host</replaceable></literal>.  As with the "
 "previous option, a file in PEM format needs to be specified."
 msgstr ""
+"Une liste de révocation de certificats (CRL) personnalisée peut être "
+"configurée avec l'option <literal>Acquire::https::CRLFile</literal> et "
+"<literal>Acquire::https::CRLFile::<replaceable>hôte</replaceable></literal>. "
+"Comme avec l'option précédente, il faut spécifier un fichier au format PEM."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-https.1.xml
 msgid "Disabling security"
-msgstr ""
+msgstr "Désactiver la sécurité"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-https.1.xml
@@ -10318,6 +10416,17 @@ msgid ""
 "succeed. Again, this option is for debugging or testing purposes only as it "
 "removes all security provided by the use of HTTPS."
 msgstr ""
+"Durant l'authentification du serveur, si la vérification du certificat "
+"échoue pour une raison quelconque (expiré, révoqué, homme du milieu, etc.), "
+"la connexion échoue. C'est certainement ce que vous souhaitez dans tous les "
+"cas et ce que fournit la valeur par défaut (« <literal>true</literal> ») de "
+"l'option <literal>Acquire::https::Verify-Peer</literal> et de ses variantes "
+"spécifiques à l'hôte. Si vous savez <emphasis>exactement</emphasis> ce que "
+"vous faites, la configuration de cette option à « <literal>false</literal> » "
+"vous permet d'ignorer la vérification du certificat du pair et de faire "
+"réussir l'échange. Une fois de plus, cette option est seulement destinée au "
+"test ou au débogage dans la mesure où elle supprime toute la sécurité "
+"apportée par l'utilisation de HTTPS."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-https.1.xml
@@ -10332,11 +10441,22 @@ msgid ""
 "the identity in its certificate, you can set the option to \"<literal>false</"
 "literal>\", which will prevent the comparison from being performed."
 msgstr ""
+"De la même façon, l'option <literal>Acquire::https::Verify-Host</literal> et "
+"sa variante spécifique à l'hôte peuvent être utilisées pour désactiver la "
+"fonction de sécurité. Le certificat fourni par le serveur comprend "
+"l'identité du serveur qui devrait correspondre au nom de DNS utilisé pour y "
+"accéder. Par défaut, comme cela est requis par la RFC 2818, le nom du miroir "
+"est vérifié par rapport à l'identité trouvée dans le certificat. Ce "
+"comportement par défaut est sûr et ne devrait pas être modifié, mais si vous "
+"savez que le serveur que vous utilisez à un nom de DNS qui ne correspond pas "
+"à l'identité de son certificat, il est possible de régler l'option à "
+"\"<literal>false</literal>\", ce qui empêchera la réalisation de la "
+"comparaison."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-https.1.xml
 msgid "Client authentication"
-msgstr ""
+msgstr "Authentification du client"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-https.1.xml
@@ -10349,10 +10469,40 @@ msgid ""
 "in PEM format.  In practice the use of the host-specific variants of both "
 "options is highly recommended."
 msgstr ""
+"Outre la gestion de l'authentification basée sur les mots de passe (voir "
+"&apt-authconf;) HTTPS prend aussi en charge l'authentification basée sur les "
+"certificats du client avec <literal>Acquire::https::SSLCert</literal> et "
+"<literal>Acquire::https::SSLKey</literal>. Leurs valeurs doivent être "
+"respectivement celle du nom de fichier du certificat X.509 du client et "
+"celle de la clé privée (non chiffrée) associée, toutes les deux au format "
+"PEM. En pratique, l'utilisation des variantes spécifiques à l'hôte des deux "
+"options est fortement recommandée."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: apt-transport-https.1.xml
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "acquire::https {\n"
+#| "\tproxy::example.org \"direct\";\n"
+#| "\tproxy \"socks5h://apt:pass@localhost:9050\";\n"
+#| "\tproxy-auto-detect \"/usr/local/bin/apt-https-proxy-auto-detect\";\n"
+#| "\tno-cache \"true\";\n"
+#| "\tmax-age \"3600\";\n"
+#| "\tno-store \"true\";\n"
+#| "\ttimeout \"10\";\n"
+#| "\tdl-limit \"42\";\n"
+#| "\tpipeline-depth \"0\";\n"
+#| "\tallowredirect \"false\";\n"
+#| "\tuser-agent \"my apt-https\";\n"
+#| "\tsendaccept \"false\";\n"
+#| "\n"
+#| "\tcainfo \"/path/to/ca/certs.pem\";\n"
+#| "\tCRLFile \"/path/to/all/crl.pem\";\n"
+#| "\tVerify-Peer \"true\";\n"
+#| "\tVerify-Host::broken.example.org \"false\";\n"
+#| "\tSSLCert::example.org \"/path/to/client/cert.pem\";\n"
+#| "\tSSLKey::example.org \"/path/to/client/key.pem\"\n"
+#| "};\n"
 msgid ""
 "Acquire::https {\n"
 "\tProxy::example.org \"DIRECT\";\n"
@@ -10376,18 +10526,37 @@ msgid ""
 "\tSSLKey::example.org \"/path/to/client/key.pem\"\n"
 "};\n"
 msgstr ""
+"acquire::https {\n"
+"\tproxy::example.org \"direct\";\n"
+"\tproxy \"socks5h://apt:pass@localhost:9050\";\n"
+"\tproxy-auto-detect \"/usr/local/bin/apt-https-proxy-auto-detect\";\n"
+"\tno-cache \"true\";\n"
+"\tmax-age \"3600\";\n"
+"\tno-store \"true\";\n"
+"\ttimeout \"10\";\n"
+"\tdl-limit \"42\";\n"
+"\tpipeline-depth \"0\";\n"
+"\tallowredirect \"false\";\n"
+"\tuser-agent \"my apt-https\";\n"
+"\tsendaccept \"false\";\n"
+"\n"
+"\tcainfo \"/path/to/ca/certs.pem\";\n"
+"\tCRLFile \"/path/to/all/crl.pem\";\n"
+"\tVerify-Peer \"true\";\n"
+"\tVerify-Host::broken.example.org \"false\";\n"
+"\tSSLCert::example.org \"/path/to/client/cert.pem\";\n"
+"\tSSLKey::example.org \"/path/to/client/key.pem\"\n"
+"};\n"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-https.1.xml
-#, fuzzy
-#| msgid "&apt-get; &apt-cache; &apt-conf; &sources-list;"
 msgid "&apt-transport-http; &apt-conf; &apt-authconf; &sources-list;"
-msgstr "&apt-get; &apt-cache; &apt-conf; &sources-list;"
+msgstr "&apt-transport-http; &apt-conf; &apt-authconf; &sources-list;"
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-transport-mirror.1.xml
 msgid "APT transport for more automated mirror selection"
-msgstr ""
+msgstr "Transport d'APT pour une sélection plus automatique du miroir"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-mirror.1.xml
@@ -10401,6 +10570,16 @@ msgid ""
 "Note that a transport is never called directly by a user but used by APT "
 "tools based on user configuration."
 msgstr ""
+"Ce transport d'APT ne met pas en œuvre un protocole pour accéder tout seul à "
+"des dépôts locaux ou distants, mais obtenir une liste de miroirs et redirige "
+"toutes les requêtes vers le(s) miroir(s) choisi(s) dans cette liste, en y "
+"accédant grâce à d'autres transports tels que &apt-transport-http;. La "
+"fonctionnalité de base est disponible depuis apt 0.7.24, mais n'a été "
+"documentée qu'à partir d'apt 1.6 qui fournit une version totalement "
+"retravaillée du transport et des fonctionnalités prises en charge. Veuillez "
+"noter qu'un transport n'est jamais appelé directement par l'utilisateur, "
+"mais utilisé par les outils d'APT s'appuyant sur la configuration de "
+"l'utilisateur."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-mirror.1.xml
@@ -10410,6 +10589,11 @@ msgid ""
 "the file is retrieved or no mirror is left in the list, transparently "
 "handling server downtimes and similar problems."
 msgstr ""
+"Si la récupération d'un fichier à partir d'un miroir échoue, la méthode "
+"assure qu'un autre miroir possible de la liste est automatiquement essayé "
+"jusqu'à ce que le fichier soit récupéré ou qu'il ne reste plus de miroir sur "
+"la liste, gérant de façon transparente les indisponibilités de serveur ou "
+"d'autres problèmes similaires."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-mirror.1.xml
@@ -10419,6 +10603,10 @@ msgid ""
 "and the transports involved in accessing the chosen mirror(s) by the "
 "transport."
 msgstr ""
+"Les implications de sécurité du transport dépendent des considérations de "
+"sécurité, associées au transport, qui ont présidé à l'acquisition de la "
+"liste de miroirs et des transports impliqués dans l'accession au(x) "
+"miroir(s) choisi(s) par le transport."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-transport-mirror.1.xml
@@ -10427,11 +10615,14 @@ msgid ""
 "is based entirely on the mirrors offered in the mirrorlist and the files APT "
 "needs to acquire."
 msgstr ""
+"Ce transport ne possède pas d'option de configuration pour le moment. La "
+"sélection du miroir est basée uniquement sur les miroirs offerts dans la "
+"liste de miroirs et des fichiers qu'APT doit se procurer."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-mirror.1.xml
 msgid "Mirrorlist format"
-msgstr ""
+msgstr "Format de la liste de miroirs"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10444,6 +10635,13 @@ msgid ""
 "which might have specific requirements for the format of the remaining part "
 "of the URI."
 msgstr ""
+"Une liste de miroirs contient une ou plusieurs lignes qui spécifient chacune "
+"l'URI d'un miroir. Les lignes vides et celles commençant par un caractère "
+"dièse (<literal>#</literal>) sont ignorées. Un URI débute toujours par un "
+"schème d'URI qui définit le transport utilisé pour ce miroir. Si, par "
+"exemple, l'URI débute par <literal>http:</literal>, le transport responsable "
+"est &apt-transport-http; qui pourrait avoir des exigences particulières pour "
+"le format du reste de l'URI."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10454,6 +10652,12 @@ msgid ""
 ">= 1.6. Earlier apt versions will fail to parse mirrorlists using this "
 "feature.)"
 msgstr ""
+"Les métadonnées d'un miroir peuvent être placées sur la même ligne, séparées "
+"de l'URI par une tabulation. De multiples éléments de métadonnées peuvent "
+"être eux-mêmes séparés par des tabulations ou des espaces. (C'est une "
+"fonctionnalité avancée seulement disponible avec apt >= 1.6. Les versions "
+"d'APT antérieures échoueront à analyser les listes de miroirs utilisant "
+"cette fonctionnalité.)"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10462,11 +10666,15 @@ msgid ""
 "that the filename of the mirrorlist must specify the compression algorithm "
 "used; there is no auto-detection based on file contents."
 msgstr ""
+"Depuis apt 1.6, l'utilisation de listes de miroirs compressées est aussi "
+"gérée. Veuillez noter que le nom de fichier de la liste de miroirs doit "
+"spécifier l'algorithme de compression utilisé ; il n'y a pas d'auto-"
+"détection basée sur le contenu du fichier."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-mirror.1.xml
 msgid "Mirror selection by metadata"
-msgstr ""
+msgstr "Sélection du miroir par les métadonnées"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10482,11 +10690,23 @@ msgid ""
 "(<literal>lang</literal>), suite name of the release (<literal>suite</"
 "literal>) and type of the file (<literal>type</literal>)."
 msgstr ""
+"Comme cela est spécifié dans le format, un miroir peut avoir des métadonnées "
+"supplémentaires attachées pour éviter qu'il soit sélectionné pour la "
+"récupération d'un fichier qui ne correspond pas à ces métadonnées. De cette "
+"façon, la liste de miroirs peut contenir par exemple des miroirs partiels "
+"fournissant seulement certaines architectures et APT choisira "
+"automatiquement un autre miroir pour les fichiers requérant une architecture "
+"non listée. Sont prises en charge les limites liées à l'architecture "
+"(<literal>arch</literal>), au nom de code de la version (<literal>codename</"
+"literal>), aux composants du dépôt où se trouve le fichier "
+"(<literal>component</literal>), à la langue à laquelle le fichier s'applique "
+"(<literal>lang</literal>), au nom de la suite de la version <literal>suite</"
+"literal>) et au type du fichier (<literal>type</literal>)."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-mirror.1.xml
 msgid "Fallback order for mirrors"
-msgstr ""
+msgstr "Ordre de repli pour les miroirs"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10499,11 +10719,19 @@ msgid ""
 "possible number and are therefore tried last. The choice between mirrors "
 "with the same priority is again random."
 msgstr ""
+"Si aucune priorité n'est donnée à un miroir par la clé de métadonnée "
+"<literal>priority</literal>, l'ordre de contact des miroirs est aléatoire. "
+"Si un ensemble particulier de miroirs doit être essayé avant que n'importe "
+"lequel des autres ensembles ne le soit, une priorité peut être spécifiée "
+"explicitement. Les miroirs avec les numéros les plus bas sont essayés en "
+"premier. Les miroirs qui n'ont pas de priorité explicite portent par défaut "
+"le numéro le plus élevé possible, et donc, sont essayés en dernier. Le choix "
+"entre les miroirs de même priorité est aussi aléatoire."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-mirror.1.xml
 msgid "Allowed transports in a mirrorlist"
-msgstr ""
+msgstr "Transports permis dans une liste de miroir"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10517,6 +10745,15 @@ msgid ""
 "package>).  See the documentation of these transports on how to use them "
 "with the mirror method."
 msgstr ""
+"La disponibilité et le choix des transports dans une liste de miroirs sont "
+"limités par la manière dont le client APT accède à la liste des miroirs. Si "
+"un transport local comme <literal>file</literal> ou <literal>copy</literal> "
+"est utilisé, la liste de miroirs peut aussi inclure des sources locales, "
+"alors qu'une liste de miroirs atteinte par <literal>http</literal> ne le "
+"peut pas. Par ailleurs, une liste de miroirs ne peut pas contenir une liste "
+"de miroirs ou d'autres transports enveloppants (comme <package>apt-transport-"
+"tor</package>). Voir la documentation sur ces transports pour connaître la "
+"manière de les utiliser avec la méthode miroir."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10524,11 +10761,13 @@ msgid ""
 "Note that apt versions before 1.6 do not support any other transport than "
 "<literal>http</literal>."
 msgstr ""
+"Veuillez noter que les versions d'APT antérieures à 1.6 ne prennent pas en "
+"charge d'autres transports que <literal>http</literal>."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-mirror.1.xml
 msgid "Basic example"
-msgstr ""
+msgstr "Exemple basique"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10536,6 +10775,9 @@ msgid ""
 "A basic mirrorlist example supported by all apt versions with a mirror "
 "method (>= 0.7.24) in which the client will pick any of the three mirrors:"
 msgstr ""
+"Voici un exemple basique de liste de miroirs prise en charge par toutes les "
+"versions d'APT avec une méthode de miroir (>= 0.7.24) dans lequel le client "
+"choisira n'importe lequel des trois miroirs :"
 
 #. type: Content of: <refentry><refsect1><refsect2><literallayout>
 #: apt-transport-mirror.1.xml
@@ -10545,6 +10787,9 @@ msgid ""
 "http://ftp.us.debian.org/debian/\n"
 "http://deb.debian.org/debian/\n"
 msgstr ""
+"http://ftp.de.debian.org/debian/\n"
+"http://ftp.us.debian.org/debian/\n"
+"http://deb.debian.org/debian/\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10553,12 +10798,15 @@ msgid ""
 "txt</filename> on your machine it can be used like this in &sources-list; "
 "(since apt 1.6):"
 msgstr ""
+"Si un fichier avec ce contenu est stocké sur la machine sous le nom de "
+"<filename>/etc/apt/mirrorlist.txt</filename>, il peut être utilisé comme "
+"cela dans &sources-list; (à partir d'apt 1.6) :"
 
 #. type: Content of: <refentry><refsect1><refsect2><literallayout>
 #: apt-transport-mirror.1.xml
 #, no-wrap
 msgid "deb mirror+file:/etc/apt/mirrorlist.txt &debian-stable-codename; main\n"
-msgstr ""
+msgstr "deb mirror+file:/etc/apt/mirrorlist.txt &debian-stable-codename; main\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10567,13 +10815,16 @@ msgid ""
 "so assuming it is available at <literal>http://apt.example.org/mirror.lst</"
 "literal> the sources.list entry from above could instead be written as:"
 msgstr ""
+"Toutes les versions de la méthode miroir prennent en charge une liste de "
+"miroirs accessible par HTTP, aussi, dans la mesure où elle est disponible à "
+"l'adresse <literal>http://apt.example.org/mirror.lst</literal>, l'entrée de "
+"sources.list ci-dessus peut être écrite plutôt ainsi :"
 
 #. type: Content of: <refentry><refsect1><refsect2><literallayout>
 #: apt-transport-mirror.1.xml
-#, fuzzy, no-wrap
-#| msgid "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
+#, no-wrap
 msgid "deb mirror://apt.example.org/mirror.lst &debian-stable-codename; main\n"
-msgstr "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
+msgstr "deb mirror://apt.example.org/mirror.lst &debian-stable-codename; main\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10582,11 +10833,14 @@ msgid ""
 "preferred over <literal>mirror</literal> for uniformity. The functionality "
 "is the same."
 msgstr ""
+"Veuillez noter que depuis apt 1.6, l'utilisation de <literal>mirror+http</"
+"literal> est préférable à <literal>mirror</literal> pour uniformiser. La "
+"fonctionnalité est la même."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-transport-mirror.1.xml
 msgid "Example with metadata-enhanced mirror selection"
-msgstr ""
+msgstr "Exemple de sélection du miroir avec des métadonnées améliorées"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10601,6 +10855,17 @@ msgid ""
 "literal>. The remaining mirrors are average mirrors which should be "
 "contacted only if the earlier ones didn't work."
 msgstr ""
+"Comme cela est expliqué dans la définition de format, les versions d'APT "
+"antérieures à 1.6 ne prennent pas cela en charge et échoueront à analyser la "
+"liste de miroirs. L'exemple de liste de miroirs est complexe "
+"intentionnellement pour montrer certains aspects de la sélection. La "
+"configuration suivante est supposée : le premier miroir est un miroir local "
+"accessible par la méthode « file », mais possiblement incomplet ; le second "
+"miroir possède une excellente connexion, c'est un miroir partiel dans la "
+"mesure où il ne contient que des fichiers liés aux architectures "
+"<literal>amd64</literal> et <literal>all</literal>. Les miroirs restants "
+"sont des miroirs ordinaires qui devraient être contactés seulement si les "
+"précédents ne fonctionnent pas."
 
 #. type: Content of: <refentry><refsect1><refsect2><literallayout>
 #: apt-transport-mirror.1.xml
@@ -10612,6 +10877,11 @@ msgid ""
 "http://ftp.de.debian.org/debian/\ttype:deb\n"
 "https://deb.debian.org/debian/\n"
 msgstr ""
+"file:/srv/local/debian/mirror/\tpriority:1 type:index\n"
+"http://partial.example.org/mirror/\tpriority:2 arch:amd64 arch:all type:deb\n"
+"http://ftp.us.debian.org/debian/\ttype:deb\n"
+"http://ftp.de.debian.org/debian/\ttype:deb\n"
+"https://deb.debian.org/debian/\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-transport-mirror.1.xml
@@ -10625,6 +10895,16 @@ msgid ""
 "package of architecture <literal>amd64</literal> is served by the second and "
 "those of e.g. architecture <literal>i386</literal> by one of the last three."
 msgstr ""
+"Dans une configuration avec cette liste de miroirs, le premier miroir sera "
+"utilisé pour télécharger tous les fichiers d'index en supposant que la liste "
+"de miroirs elle-même est atteinte par un transport local comme "
+"<literal>file</literal>. Si ce n'est pas le cas, si le miroir est "
+"inaccessible ou s'il ne contient pas le fichier requis, un autre miroir sera "
+"utilisé pour récupérer le fichier, choisi selon le type du fichier : un "
+"fichier d'index sera servi par le dernier miroir de la liste, tandis qu'un "
+"paquet de l'architecture <literal>amd64</literal> est servi par le second et "
+"ceux, par exemple, de l'architecture <literal>i386</literal> par un des "
+"trois derniers."
 
 #. type: Attribute 'lang' of: <book>
 #: guide.dbk offline.dbk
