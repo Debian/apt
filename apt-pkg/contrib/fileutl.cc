@@ -67,6 +67,9 @@
 #ifdef HAVE_LZ4
 #include <lz4frame.h>
 #endif
+#ifdef HAVE_ZSTD
+#include <zstd.h>
+#endif
 #include <endian.h>
 #include <stdint.h>
 
@@ -1716,6 +1719,218 @@ public:
 #endif
 };
 									/*}}}*/
+
+class APT_HIDDEN ZstdFileFdPrivate : public FileFdPrivate
+{ /*{{{*/
+#ifdef HAVE_ZSTD
+   ZSTD_DStream *dctx;
+   ZSTD_CStream *cctx;
+   size_t res;
+   FileFd backend;
+   simple_buffer zstd_buffer;
+   // Count of bytes that the decompressor expects to read next, or buffer size.
+   size_t next_to_load = APT_BUFFER_SIZE;
+
+   public:
+   virtual bool InternalOpen(int const iFd, unsigned int const Mode) APT_OVERRIDE
+   {
+      if ((Mode & FileFd::ReadWrite) == FileFd::ReadWrite)
+	 return _error->Error("zstd only supports write or read mode");
+
+      if ((Mode & FileFd::WriteOnly) == FileFd::WriteOnly)
+      {
+	 cctx = ZSTD_createCStream();
+	 res = ZSTD_initCStream(cctx, findLevel(compressor.CompressArgs));
+	 zstd_buffer.reset(APT_BUFFER_SIZE);
+      }
+      else
+      {
+	 dctx = ZSTD_createDStream();
+	 res = ZSTD_initDStream(dctx);
+	 zstd_buffer.reset(APT_BUFFER_SIZE);
+      }
+
+      filefd->Flags |= FileFd::Compressed;
+
+      if (ZSTD_isError(res))
+	 return false;
+
+      unsigned int flags = (Mode & (FileFd::WriteOnly | FileFd::ReadOnly));
+      if (backend.OpenDescriptor(iFd, flags, FileFd::None, true) == false)
+	 return false;
+
+      return true;
+   }
+   virtual ssize_t InternalUnbufferedRead(void *const To, unsigned long long const Size) APT_OVERRIDE
+   {
+      /* Keep reading as long as the compressor still wants to read */
+      while (true)
+      {
+	 // Fill compressed buffer;
+	 if (zstd_buffer.empty())
+	 {
+	    unsigned long long read;
+	    /* Reset - if LZ4 decompressor wants to read more, allocate more */
+	    zstd_buffer.reset(next_to_load);
+	    if (backend.Read(zstd_buffer.getend(), zstd_buffer.free(), &read) == false)
+	       return -1;
+	    zstd_buffer.bufferend += read;
+
+	    if (read == 0)
+	    {
+	       /* Expected EOF */
+	       if (next_to_load == 0)
+		  return 0;
+
+	       res = -1;
+	       return filefd->FileFdError("ZSTD: %s %s",
+					  filefd->FileName.c_str(),
+					  _("Unexpected end of file")),
+		      -1;
+	    }
+	 }
+	 // Drain compressed buffer as far as possible.
+	 ZSTD_inBuffer in = {
+	    .src = zstd_buffer.get(),
+	    .size = zstd_buffer.size(),
+	    .pos = 0,
+	 };
+	 ZSTD_outBuffer out = {
+	    .dst = To,
+	    .size = Size,
+	    .pos = 0,
+	 };
+
+	 next_to_load = res = ZSTD_decompressStream(dctx, &out, &in);
+
+	 if (res == 0)
+	 {
+	    res = ZSTD_initDStream(dctx);
+	 }
+
+	 if (ZSTD_isError(res))
+	    return -1;
+
+	 zstd_buffer.bufferstart += in.pos;
+
+	 if (out.pos != 0)
+	    return out.pos;
+      }
+
+      return 0;
+   }
+   virtual bool InternalReadError() APT_OVERRIDE
+   {
+      char const *const errmsg = ZSTD_getErrorName(res);
+
+      return filefd->FileFdError("ZSTD: %s %s (%zu: %s)", filefd->FileName.c_str(), _("Read error"), res, errmsg);
+   }
+   virtual ssize_t InternalWrite(void const *const From, unsigned long long const Size) APT_OVERRIDE
+   {
+      // Drain compressed buffer as far as possible.
+      ZSTD_outBuffer out = {
+	 .dst = zstd_buffer.buffer,
+	 .size = zstd_buffer.buffersize_max,
+	 .pos = 0,
+      };
+      ZSTD_inBuffer in = {
+	 .src = From,
+	 .size = Size,
+	 .pos = 0,
+      };
+
+      res = ZSTD_compressStream(cctx, &out, &in);
+
+      if (ZSTD_isError(res) || backend.Write(zstd_buffer.buffer, out.pos) == false)
+	 return -1;
+
+      return in.pos;
+   }
+
+   virtual bool InternalWriteError() APT_OVERRIDE
+   {
+      char const *const errmsg = ZSTD_getErrorName(res);
+
+      return filefd->FileFdError("ZSTD: %s %s (%zu: %s)", filefd->FileName.c_str(), _("Write error"), res, errmsg);
+   }
+   virtual bool InternalStream() const APT_OVERRIDE { return true; }
+
+   virtual bool InternalFlush() APT_OVERRIDE
+   {
+      return backend.Flush();
+   }
+
+   virtual bool InternalClose(std::string const &) APT_OVERRIDE
+   {
+      /* Reset variables */
+      res = 0;
+      next_to_load = APT_BUFFER_SIZE;
+
+      if (cctx != nullptr)
+      {
+	 if (filefd->Failed() == false)
+	 {
+	    do
+	    {
+	       ZSTD_outBuffer out = {
+		  .dst = zstd_buffer.buffer,
+		  .size = zstd_buffer.buffersize_max,
+		  .pos = 0,
+	       };
+	       res = ZSTD_endStream(cctx, &out);
+	       if (ZSTD_isError(res) || backend.Write(zstd_buffer.buffer, out.pos) == false)
+		  return false;
+	    } while (res > 0);
+
+	    if (!backend.Flush())
+	       return false;
+	 }
+	 if (!backend.Close())
+	    return false;
+
+	 res = ZSTD_freeCStream(cctx);
+	 cctx = nullptr;
+      }
+
+      if (dctx != nullptr)
+      {
+	 res = ZSTD_freeDStream(dctx);
+	 dctx = nullptr;
+      }
+      if (backend.IsOpen())
+      {
+	 backend.Close();
+	 filefd->iFd = -1;
+      }
+
+      return ZSTD_isError(res) == false;
+   }
+
+   static uint32_t findLevel(std::vector<std::string> const &Args)
+   {
+      for (auto a = Args.rbegin(); a != Args.rend(); ++a)
+      {
+	 if (a->size() >= 2 && (*a)[0] == '-' && (*a)[1] != '-')
+	 {
+	    auto const level = a->substr(1);
+	    auto const notANumber = level.find_first_not_of("0123456789");
+	    if (notANumber != std::string::npos)
+	       continue;
+
+	    return (uint32_t)stoi(level);
+	 }
+      }
+      return 19;
+   }
+
+   explicit ZstdFileFdPrivate(FileFd *const filefd) : FileFdPrivate(filefd), dctx(nullptr), cctx(nullptr) {}
+   virtual ~ZstdFileFdPrivate()
+   {
+      InternalClose("");
+   }
+#endif
+};
+									/*}}}*/
 class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {				/*{{{*/
 #ifdef HAVE_LZMA
    struct LZMAFILE {
@@ -2212,6 +2427,7 @@ bool FileFd::Open(string FileName,unsigned int const Mode,CompressMode Compress,
       case Lzma: name = "lzma"; break;
       case Xz: name = "xz"; break;
       case Lz4: name = "lz4"; break;
+      case Zstd: name = "zstd"; break;
       case Auto:
       case Extension:
 	 // Unreachable
@@ -2329,6 +2545,7 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compre
    case Lzma: name = "lzma"; break;
    case Xz: name = "xz"; break;
    case Lz4: name = "lz4"; break;
+   case Zstd: name = "zstd"; break;
    case Auto:
    case Extension:
       if (AutoClose == true && Fd != -1)
@@ -2392,6 +2609,9 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 #endif
 #ifdef HAVE_LZ4
       APT_COMPRESS_INIT("lz4", Lz4FileFdPrivate);
+#endif
+#ifdef HAVE_ZSTD
+      APT_COMPRESS_INIT("zstd", ZstdFileFdPrivate);
 #endif
 #undef APT_COMPRESS_INIT
       else if (compressor.Name == "." || compressor.Binary.empty() == true)

@@ -103,6 +103,12 @@ if (LZ4_FOUND)
   set(HAVE_LZ4 1)
 endif()
 
+find_package(Zstd REQUIRED)
+if (ZSTD_FOUND)
+  set(HAVE_ZSTD 1)
+endif()
+
+
 find_package(Udev)
 if (UDEV_FOUND)
   set(HAVE_UDEV 1)

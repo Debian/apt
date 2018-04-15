@@ -180,7 +180,7 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
 static void TestFileFd(unsigned int const filemode)
 {
    auto const compressors = APT::Configuration::getCompressors();
-   EXPECT_EQ(7, compressors.size());
+   EXPECT_EQ(8, compressors.size());
    bool atLeastOneWasTested = false;
    for (auto const &c: compressors)
    {
@@ -204,7 +204,7 @@ TEST(FileUtlTest, FileFD)
    _config->Set("APT::Compressor::rev::Binary", "rev");
    _config->Set("APT::Compressor::rev::Cost", 10);
    auto const compressors = APT::Configuration::getCompressors(false);
-   EXPECT_EQ(7, compressors.size());
+   EXPECT_EQ(8, compressors.size());
    EXPECT_TRUE(std::any_of(compressors.begin(), compressors.end(), [](APT::Configuration::Compressor const &c) { return c.Name == "rev"; }));
 
    std::string const startdir = SafeGetCWD();

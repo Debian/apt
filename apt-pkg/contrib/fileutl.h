@@ -46,6 +46,7 @@ class FileFd
    friend class Bz2FileFdPrivate;
    friend class LzmaFileFdPrivate;
    friend class Lz4FileFdPrivate;
+   friend class ZstdFileFdPrivate;
    friend class DirectFileFdPrivate;
    friend class PipedFileFdPrivate;
    protected:
@@ -76,8 +77,19 @@ class FileFd
 	ReadOnlyGzip,
 	WriteAtomic = ReadWrite | Create | Atomic
    };
-   enum CompressMode { Auto = 'A', None = 'N', Extension = 'E', Gzip = 'G', Bzip2 = 'B', Lzma = 'L', Xz = 'X', Lz4='4' };
-   
+   enum CompressMode
+   {
+      Auto = 'A',
+      None = 'N',
+      Extension = 'E',
+      Gzip = 'G',
+      Bzip2 = 'B',
+      Lzma = 'L',
+      Xz = 'X',
+      Lz4 = '4',
+      Zstd = 'Z'
+   };
+
    inline bool Read(void *To,unsigned long long Size,bool AllowEof)
    {
       unsigned long long Jnk;

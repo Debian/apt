@@ -39,6 +39,7 @@ static void setDefaultConfigurationForCompressors() {
 	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
 	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
 	_config->CndSet("Dir::Bin::lz4", "/usr/bin/lz4");
+	_config->CndSet("Dir::Bin::zstd", "/usr/bin/zstd");
 	if (FileExists(_config->Find("Dir::Bin::xz")) == true) {
 		_config->Set("Dir::Bin::lzma", _config->Find("Dir::Bin::xz"));
 		_config->Set("APT::Compressor::lzma::Binary", "xz");
@@ -67,6 +68,7 @@ static void setDefaultConfigurationForCompressors() {
 	_config->CndSet("Acquire::CompressionTypes::lzma","lzma");
 	_config->CndSet("Acquire::CompressionTypes::gz","gzip");
 	_config->CndSet("Acquire::CompressionTypes::lz4","lz4");
+	_config->CndSet("Acquire::CompressionTypes::zst", "zstd");
 }
 									/*}}}*/
 // getCompressionTypes - Return Vector of usable compressiontypes	/*{{{*/
@@ -369,6 +371,12 @@ const Configuration::getCompressors(bool const Cached) {
 # define APT_ADD_COMPRESSOR(NAME, EXT, BINARY, ARG, DEARG, COST) \
 	{ CompressorsDone.push_back(NAME); compressors.emplace_back(NAME, EXT, BINARY, ARG, DEARG, COST); }
 	APT_ADD_COMPRESSOR(".", "", "", nullptr, nullptr, 0)
+	if (_config->Exists("Dir::Bin::zstd") == false || FileExists(_config->Find("Dir::Bin::zstd")) == true)
+	   APT_ADD_COMPRESSOR("zstd", ".zst", "zstd", "-19", "-d", 60)
+#ifdef HAVE_ZSTD
+	else
+	   APT_ADD_COMPRESSOR("zstd", ".zst", "false", nullptr, nullptr, 60)
+#endif
 	if (_config->Exists("Dir::Bin::lz4") == false || FileExists(_config->Find("Dir::Bin::lz4")) == true)
 		APT_ADD_COMPRESSOR("lz4",".lz4","lz4","-1","-d",50)
 #ifdef HAVE_LZ4
