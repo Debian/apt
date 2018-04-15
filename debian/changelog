@@ -1,3 +1,29 @@
+apt (1.6~rc1) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Experimental support for zstd (LP: #1763839)
+  * Fix debian/NEWS entry for 1.6~beta1
+  * Use https for Ubuntu changelogs
+  * Bump cache major version to allow different 1.5 and 1.6 updates
+  * CI: Switch testing to use ubuntu:bionic for 1.6.y
+  * Turn off seccomp sandboxing by default (LP: #1732030) (Closes: #890489)
+  * Allow restart_syscall() syscall in seccomp sandboxes (Closes: #891644)
+  * Delete /etc/dpkg/dpkg.cfg.d/excludes on Docker CI images
+  * test: export GCOV_ERROR_FILE=/dev/null to make it fail less/no tests
+  * apt-private: Collect not found packages in CacheSetHelperAPTGet
+  * Introduce experimental new hooks for command-line tools (LP: #1763839)
+
+  [ David Kalnischkies ]
+  * remove duplicate changelog lines from 1.6~beta1 entry
+  * fix communication typo in https manpage
+  * set our two libapt libraries to prio:optional
+  * document Acquire::AllowReleaseInfoChange without extra s
+
+  [ jean-pierre giraud ]
+  * French man pages translation (Closes: #895117)
+
+ -- Julian Andres Klode <jak@debian.org>  Sun, 15 Apr 2018 21:41:44 +0200
+
 apt (1.6~beta1) unstable; urgency=medium
 
   [ David Kalnischkies ]
