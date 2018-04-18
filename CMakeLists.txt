@@ -103,7 +103,7 @@ if (LZ4_FOUND)
   set(HAVE_LZ4 1)
 endif()
 
-find_package(Zstd REQUIRED)
+find_package(Zstd)
 if (ZSTD_FOUND)
   set(HAVE_ZSTD 1)
 endif()
