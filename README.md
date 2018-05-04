@@ -198,3 +198,17 @@ block the correct installation of very important packages. Which option to use d
 if you are interested in the topology sorting (`Debug::pkgOrderList`), the dependency-aware
 cycle and unconfigured prevention (`Debug::pkgPackageManager`) or the actual calls
 to dpkg (`Debug::pkgDpkgPm`).
+
+
+Additional documentation
+------------------------
+
+Many more things could and should be said about APT and its usage but are more
+targeted at developers of related programs or only of special interest.
+
+* [Protocol specification of APTs communication with external dependency solvers (EDSP)](./doc/external-dependency-solver-protocol.md)
+* [Protocol specification of APTs communication with external installation planners (EIPP)](./doc/external-installation-planner-protocol.md)
+* [Howto use and configure APT to acquire additional files in 'update' operations](./doc/acquire-additional-files.md)
+* [Download and package installation progress reporting details](./doc/progress-reporting.md)
+* [Remarks on DNS SRV record support in APT](./doc/srv-records-support.md)
+* [Protocol specification of APT interfacing with external hooks via JSON](./doc/json-hooks-protocol.md)
