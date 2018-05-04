@@ -16,7 +16,7 @@ if(NOT GTEST_FOUND AND EXISTS ${GTEST_ROOT})
    set(GTEST_LIBRARIES "-lgtest")
    set(GTEST_DEPENDENCIES "gtest")
    set(GTEST_FOUND TRUE)
-   find_path(GTEST_INCLUDE_DIRS NAMES gtest/gtest.h)
+   find_path(GTEST_INCLUDE_DIRS NAMES gtest/gtest.h PATHS ${GTEST_ROOT}/include)
 
    message(STATUS "Found GTest at ${GTEST_ROOT}, headers at ${GTEST_INCLUDE_DIRS}")
 endif()
