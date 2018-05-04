@@ -37,7 +37,7 @@ using std::string;
 
 class FileFd;
 
-/* This should be a 32 bit type, larger tyes use too much ram and smaller
+/* This should be a 32 bit type, larger types use too much ram and smaller
    types are too small. Where ever possible 'unsigned long' should be used
    instead of this internal type */
 typedef unsigned int map_ptrloc;

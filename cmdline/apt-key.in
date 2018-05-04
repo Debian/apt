@@ -131,7 +131,7 @@ net_update() {
 	exit 1
     fi
     # in theory we would need to depend on wget for this, but this feature
-    # isn't useable in debian anyway as we have no keyring uri nor a master key
+    # isn't usable in debian anyway as we have no keyring uri nor a master key
     if ! command_available 'wget'; then
 	apt_error 'wget is required for a network-based update, but it is not installed'
 	exit 1

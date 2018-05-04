@@ -203,7 +203,7 @@ int debVersioningSystem::DoCmpVersion(const char *A,const char *AEnd,
 									/*}}}*/
 // debVS::CheckDep - Check a single dependency				/*{{{*/
 // ---------------------------------------------------------------------
-/* This simply preforms the version comparison and switch based on 
+/* This simply performs the version comparison and switch based on 
    operator. If DepVer is 0 then we are comparing against a provides
    with no version. */
 bool debVersioningSystem::CheckDep(const char *PkgVer,

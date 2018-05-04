@@ -1901,7 +1901,7 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 	 // if we expected a ClearTextSignature (InRelease) but got a network
 	 // error or got a file, but it wasn't valid, we end up here (see VerifyDone).
 	 // As these is usually called by web-portals we do not try Release/Release.gpg
-	 // as this is gonna fail anyway and instead abort our try (LP#346386)
+	 // as this is going to fail anyway and instead abort our try (LP#346386)
 	 _error->PushToStack();
 	 _error->Error(_("Failed to fetch %s  %s"), Target.URI.c_str(), ErrorText.c_str());
 	 if (Target.Option(IndexTarget::INRELEASE_PATH).empty() == true && AllowInsecureRepositories(InsecureType::UNSIGNED, Target.Description, TransactionManager->MetaIndexParser, TransactionManager, this) == true)

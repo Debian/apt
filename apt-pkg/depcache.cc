@@ -414,7 +414,7 @@ bool pkgDepCache::CheckDep(DepIterator const &Dep,int const Type,PkgIterator &Re
 									/*}}}*/
 // DepCache::AddSizes - Add the packages sizes to the counters		/*{{{*/
 // ---------------------------------------------------------------------
-/* Call with Inverse = true to preform the inverse opration */
+/* Call with Inverse = true to perform the inverse opration */
 void pkgDepCache::AddSizes(const PkgIterator &Pkg, bool const Inverse)
 {
    StateCache &P = PkgState[Pkg->ID];
@@ -480,10 +480,10 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg, bool const Inverse)
 									/*}}}*/
 // DepCache::AddStates - Add the package to the state counter		/*{{{*/
 // ---------------------------------------------------------------------
-/* This routine is tricky to use, you must make sure that it is never 
+/* This routine is tricky to use, you must make sure that it is never
    called twice for the same package. This means the Remove/Add section
-   should be as short as possible and not encompass any code that will 
-   calld Remove/Add itself. Remember, dependencies can be circular so
+   should be as short as possible and not encompass any code that will
+   call Remove/Add itself. Remember, dependencies can be circular so
    while processing a dep for Pkg it is possible that Add/Remove
    will be called on Pkg */
 void pkgDepCache::AddStates(const PkgIterator &Pkg, bool const Invert)
@@ -600,7 +600,7 @@ unsigned char pkgDepCache::VersionState(DepIterator D, unsigned char const Check
 // DepCache::DependencyState - Compute the 3 results for a dep		/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the main dependency computation bit. It computes the 3 main
-   results for a dependencys, Now, Install and Candidate. Callers must
+   results for a dependency: Now, Install and Candidate. Callers must
    invert the result if dealing with conflicts. */
 unsigned char pkgDepCache::DependencyState(DepIterator const &D)
 {

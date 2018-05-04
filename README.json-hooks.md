@@ -59,7 +59,7 @@ The following methods are supported:
 
 1. `org.debian.apt.hooks.install.pre-prompt` - Run before the y/n prompt
 1. `org.debian.apt.hooks.install.post` - Run after success
-1. `org.debian.apt.hooks.install.fail` - Run after failed instal
+1. `org.debian.apt.hooks.install.fail` - Run after failed install
 1. `org.debian.apt.hooks.search.pre` - Run before search
 1. `org.debian.apt.hooks.search.post` - Run after successful search
 1. `org.debian.apt.hooks.search.fail` - Run after search without results

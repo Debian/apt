@@ -148,7 +148,7 @@ bool pkgSimulate::RealInstall(PkgIterator iPkg,string /*File*/)
 									/*}}}*/
 // Simulate::Configure - Simulate configuration of a Package		/*{{{*/
 // ---------------------------------------------------------------------
-/* This is not an acurate simulation of relatity, we should really not
+/* This is not an accurate simulation of relatity, we should really not
    install the package.. For some investigations it may be necessary 
    however. */
 bool pkgSimulate::Configure(PkgIterator iPkg)

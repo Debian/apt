@@ -692,7 +692,7 @@ int stringcasecmp(string::const_iterator A,string::const_iterator AEnd,
 }
 #endif
 									/*}}}*/
-// LookupTag - Lookup the value of a tag in a taged string		/*{{{*/
+// LookupTag - Lookup the value of a tag in a tagged string		/*{{{*/
 // ---------------------------------------------------------------------
 /* The format is like those used in package files and the method
    communication system */
@@ -1001,7 +1001,7 @@ static time_t timegm(struct tm *t)
 bool RFC1123StrToTime(const char* const str,time_t &time)
 {
    unsigned short day = 0;
-   signed int year = 0; // yes, Y23K problem – we gonna worry then…
+   signed int year = 0; // yes, Y23K problem – we going to worry then…
    std::string weekday, month, datespec, timespec, zone;
    std::istringstream ss(str);
    auto const &posix = std::locale::classic();

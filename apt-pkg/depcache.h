@@ -22,7 +22,7 @@
      Now - Compared using the Currently install version
      Install - Compared using the install version (final state)
      CVer - (Candidate Version) Compared using the Candidate Version
-   The candidate and now results are used to decide wheather a package
+   The candidate and now results are used to decide whether a package
    should be automatically installed or if it should be left alone.
    
    Remember, the Candidate Version is selected based on the distribution
@@ -182,7 +182,7 @@ class pkgDepCache : protected pkgCache::Namespace
 
        /** \brief Clean up the action group before it is destroyed.
         *
-        *  If it is destroyed later, no second cleanup wil be run.
+        *  If it is destroyed later, no second cleanup will be run.
 	*/
        void release();
 

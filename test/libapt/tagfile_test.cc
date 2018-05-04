@@ -235,7 +235,7 @@ TEST(TagFileTest, Comments)
 "Source: foo\n"
 "#Package: foo\n"
 "Section: bar\n"
-"#Section: overriden\n"
+"#Section: overridden\n"
 "Priority: optional\n"
 "Build-Depends: debhelper,\n"
 "# apt-utils, (temporarily disabled)\n"

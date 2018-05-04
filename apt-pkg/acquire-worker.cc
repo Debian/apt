@@ -879,7 +879,7 @@ bool pkgAcquire::Worker::MethodFailure()
 {
    _error->Error("Method %s has died unexpectedly!",Access.c_str());
 
-   // do not reap the child here to show meaningfull error to the user
+   // do not reap the child here to show meaningful error to the user
    ExecWait(Process,Access.c_str(),false);
    Process = -1;
    close(InFd);

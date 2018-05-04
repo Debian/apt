@@ -3,7 +3,7 @@
 // $Id: indexfile.cc,v 1.2.2.1 2003/12/24 23:09:17 mdz Exp $
 /* ######################################################################
 
-   Index File - Abstraction for an index of archive/souce file.
+   Index File - Abstraction for an index of archive/source file.
    
    ##################################################################### */
 									/*}}}*/

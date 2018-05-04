@@ -37,19 +37,20 @@ static bool callDPKG(const char * const val, const char * const ref, char const 
    if (Process == 0)
    {
       const char * args[] = {
-	 BIN_DIR "/dpkg",
+	 "dpkg",
 	 "--compare-versions",
 	 val,
 	 op,
 	 ref,
 	 nullptr
       };
-      execv(args[0], (char**) args);
+      execvp(args[0], (char**) args);
       exit(1);
    }
    int Ret;
    waitpid(Process, &Ret, 0);
-   return WIFEXITED(Ret) == true && WEXITSTATUS(Ret) == 0;
+   EXPECT_TRUE(WIFEXITED(Ret));
+   return WEXITSTATUS(Ret) == 0;
 }
 
 

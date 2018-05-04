@@ -665,7 +665,7 @@ bool pkgOrderList::DepUnPackCrit(DepIterator D)
 	    continue;
 	 
 	 /* For reverse dependencies we wish to check if the
-	    dependency is satisifed in the install state. The
+	    dependency is satisfied in the install state. The
 	    target package (caller) is going to be in the installed
 	    state. */
 	 if (CheckDep(D) == true)

@@ -194,7 +194,7 @@ elif [ "$1" = 'travis-ci' ]; then
 	gdebi -n apt-test-depends_1.0_all.deb
 elif [ "$1" = 'coverage' ]; then
 	DIR="${2:-./coverage}"
-	git clean -dfX # remove ignored build artefacts for a clean start
+	git clean -dfX # remove ignored build artifacts for a clean start
 	make CFLAGS+='--coverage' CXXFLAGS+='--coverage'
 	LCOVRC='--rc geninfo_checksum=1 --rc lcov_branch_coverage=1'
 	mkdir "$DIR"
@@ -227,11 +227,21 @@ elif [ "$1" = 'coverage' ]; then
 elif [ "$1" = 'spellcheckers' ]; then
 	echo '### codespell in source directories:'
 	codespell --enable-colors $(find . -mindepth 1 -maxdepth 1 -type d \! -name '.git' \! -name 'doc' \! -name 'po' \! -name 'build' \! -name 'test') | \
-		grep -v '^.*debian/changelog.*Troup.*==>.*Troupe.*$' || true
+		grep -v -e '^.*debian/changelog.*Troup.*==>.*Troupe.*$' \
+			-e '^.*apt-pkg/contrib/fileutl\.cc.*creat.*==>.*create.*$' \
+			-e '^.*methods/aptmethod\.h.*creat.*==>.*create.*$' \
+			-e '^.*dselect/install.*ans.*==>.*and.*$' \
+			|| true
 	echo '### codespell in testcases:'
-	codespell $(find test -type f \! -name 'status-*' \! -name 'Packages-*' \! -name '*.deb' \! -name '*.sec' \! -name '*.pub' \! -name '*.db')
+	codespell --enable-colors $(find test -type f \! -name 'status-*' \! -name 'Packages-*' \! -name '*.deb' \! -name '*.sec' \! -name '*.pub' \! -name '*.db') | \
+		grep -v -e '^.*test/libapt/file-helpers\.cc.*creat.*==>.*create.*$' \
+			-e '^.*test/libapt/tagfile_test\.cc.*tyes.*==>.*types.*$' \
+			-e '^.*test/libapt/strutil_test\.cc.*Fiel.*==>.*Feel.*$' \
+			-e '^.*test/integration/skip-bug-601016-description-translation.*Paket.*==>.*Packet.*$' \
+			-e '^.*test/integration/skip-bug-601016-description-translation.*Wege.*==>.*Wedge.*$' \
+			|| true
 	echo '### codespell in documentation:'
-	codespell doc/*.xml doc/*.txt doc/*.dbk doc/*.ent doc/*.cmake.in doc/xml.add doc/po4a.conf doc/examples doc/po/apt-doc.pot po/apt-all.pot README.* COPYING
+	codespell --enable-colors doc/*.xml doc/*.txt doc/*.dbk doc/*.ent doc/*.cmake.in doc/xml.add doc/po4a.conf doc/examples doc/po/apt-doc.pot po/apt-all.pot README.* COPYING || true
 
 	echo '### spellintian in source directories:'
 	{
@@ -263,6 +273,12 @@ elif [ "$1" = 'spellcheckers' ]; then
 		-e '^./methods/http.cc: Sz Sz (duplicate word) -> Sz$' \
 		-e '^./methods/ftp.cc: AFMap AFMap (duplicate word) -> AFMap$' \
 		-e '^./dselect/install: fi fi (duplicate word) -> fi$' \
+		-e '^./CMake/Documentation.cmake: endforeach endforeach (duplicate word) -> endforeach$' \
+		-e '^./apt-pkg/deb/deblistparser.cc: c c (duplicate word) -> c$' \
+		-e '^./apt-private/private-install.cc: result result (duplicate word) -> result$' \
+		-e '^./debian/changelog: the the (duplicate word) -> the$' \
+		-e '^./debian/changelog: procceed -> proceed$' \
+		-e '^./methods/aptmethod.h: QueueBack QueueBack (duplicate word) -> QueueBack$' \
 		|| true
 	echo '### spellintian in testcases:'
 	spellintian $(find test -type f \! -name 'status-*' \! -name 'Packages-*' \! -name '*.deb' \! -name '*.sec' \! -name '*.pub' \! -name '*.db') \
@@ -285,7 +301,10 @@ elif [ "$1" = 'spellcheckers' ]; then
 		-e '^test/integration/test-apt-source-and-build-dep: foo foo (duplicate word) -> foo$' \
 		|| true
 	echo '### spellintian in documentation:'
-	spellintian doc/*.xml doc/*.txt doc/*.dbk doc/*.ent doc/*.cmake.in doc/xml.add doc/po4a.conf doc/examples/* doc/po/apt-doc.pot po/apt-all.pot README.* COPYING
+	spellintian doc/*.xml doc/*.txt doc/*.dbk doc/*.ent doc/*.cmake.in doc/xml.add doc/po4a.conf doc/examples/* doc/po/apt-doc.pot po/apt-all.pot README.* COPYING \
+	| grep -v \
+		-e '^doc/examples/configure-index: https https (duplicate word) -> https$' \
+		|| true
 
 else
 	echo >&1 "Usage:\t$0 pre-export

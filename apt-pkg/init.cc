@@ -123,7 +123,7 @@ static bool pkgInitArchTupleMap()
 // ---------------------------------------------------------------------
 /* Directories are specified in such a way that the FindDir function will
    understand them. That is, if they don't start with a / then their parent
-   is prepended, this allows a fair degree of flexability. */
+   is prepended, this allows a fair degree of flexibility. */
 bool pkgInitConfig(Configuration &Cnf)
 {
    // General APT things
