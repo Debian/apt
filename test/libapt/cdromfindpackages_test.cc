@@ -76,21 +76,21 @@ TEST(CDROMTest,FindPackages)
    std::vector<std::string> Packages, Sources, Signatur, Translation;
    std::string InfoDir;
    EXPECT_TRUE(cd.FindPackages(path, Packages, Sources, Signatur, Translation, InfoDir));
-   EXPECT_EQ(5, Packages.size());
+   EXPECT_EQ(5u, Packages.size());
    EXPECT_EQ(path + "/dists/sid/main/binary-i386/", Packages[0]);
    EXPECT_EQ(path + "/dists/stable/contrib/binary-amd64/", Packages[1]);
    EXPECT_EQ(path + "/dists/stable/main/binary-i386/", Packages[2]);
    EXPECT_EQ(path + "/dists/stable/non-free/binary-all/", Packages[3]);
    EXPECT_EQ(path + "/dists/unstable/main/binary-i386/", Packages[4]);
-   EXPECT_EQ(3, Sources.size());
+   EXPECT_EQ(3u, Sources.size());
    EXPECT_EQ(path + "/dists/sid/main/source/", Sources[0]);
    EXPECT_EQ(path + "/dists/stable/main/source/", Sources[1]);
    EXPECT_EQ(path + "/dists/unstable/main/source/", Sources[2]);
-   EXPECT_EQ(3, Signatur.size());
+   EXPECT_EQ(3u, Signatur.size());
    EXPECT_EQ(path + "/dists/sid/", Signatur[0]);
    EXPECT_EQ(path + "/dists/stable/", Signatur[1]);
    EXPECT_EQ(path + "/dists/unstable/", Signatur[2]);
-   EXPECT_EQ(4, Translation.size());
+   EXPECT_EQ(4u, Translation.size());
    EXPECT_EQ(path + "/dists/sid/main/i18n/Translation-de", Translation[0]);
    EXPECT_EQ(path + "/dists/sid/main/i18n/Translation-en", Translation[1]);
    EXPECT_EQ(path + "/dists/unstable/main/i18n/Translation-de", Translation[2]);
@@ -106,18 +106,18 @@ TEST(CDROMTest,FindPackages)
    _error->DumpErrors();
    cd.DropRepeats(Translation, "");
 
-   EXPECT_EQ(4, Packages.size());
+   EXPECT_EQ(4u, Packages.size());
    EXPECT_EQ(path + "/dists/stable/contrib/binary-amd64/", Packages[0]);
    EXPECT_EQ(path + "/dists/stable/main/binary-i386/", Packages[1]);
    EXPECT_EQ(path + "/dists/stable/non-free/binary-all/", Packages[2]);
    EXPECT_EQ(path + "/dists/unstable/main/binary-i386/", Packages[3]);
-   EXPECT_EQ(2, Sources.size());
+   EXPECT_EQ(2u, Sources.size());
    EXPECT_EQ(path + "/dists/stable/main/source/", Sources[0]);
    EXPECT_EQ(path + "/dists/unstable/main/source/", Sources[1]);
-   EXPECT_EQ(2, Signatur.size());
+   EXPECT_EQ(2u, Signatur.size());
    EXPECT_EQ(path + "/dists/stable/", Signatur[0]);
    EXPECT_EQ(path + "/dists/unstable/", Signatur[1]);
-   EXPECT_EQ(2, Translation.size());
+   EXPECT_EQ(2u, Translation.size());
    EXPECT_EQ(path + "/dists/unstable/main/i18n/Translation-de", Translation[0]);
    EXPECT_EQ(path + "/dists/unstable/main/i18n/Translation-en", Translation[1]);
 

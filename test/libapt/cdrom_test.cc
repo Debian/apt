@@ -32,59 +32,59 @@ TEST(CDROMTest,ReduceSourcelist)
 
    List.push_back(" wheezy main");
    R = cd.ReduceSourcelist(CD, List);
-   ASSERT_EQ(1, R.size());
+   ASSERT_EQ(1u, R.size());
    EXPECT_EQ(" wheezy main", R[0]);
 
    List.push_back(" wheezy main");
    R = cd.ReduceSourcelist(CD, List);
-   ASSERT_EQ(1, R.size());
+   ASSERT_EQ(1u, R.size());
    EXPECT_EQ(" wheezy main", R[0]);
 
    List.push_back(" wheezy contrib");
    R = cd.ReduceSourcelist(CD, List);
-   ASSERT_EQ(1, R.size());
+   ASSERT_EQ(1u, R.size());
    EXPECT_EQ(" wheezy contrib main", R[0]);
 
    List.push_back(" wheezy-update contrib");
    R = cd.ReduceSourcelist(CD, List);
-   ASSERT_EQ(2, R.size());
+   ASSERT_EQ(2u, R.size());
    EXPECT_EQ(" wheezy contrib main", R[0]);
    EXPECT_EQ(" wheezy-update contrib", R[1]);
 
    List.push_back(" wheezy-update contrib");
    R = cd.ReduceSourcelist(CD, List);
-   ASSERT_EQ(2, R.size());
+   ASSERT_EQ(2u, R.size());
    EXPECT_EQ(" wheezy contrib main", R[0]);
    EXPECT_EQ(" wheezy-update contrib", R[1]);
 
    List.push_back(" wheezy-update non-free");
    R = cd.ReduceSourcelist(CD, List);
-   ASSERT_EQ(2, R.size());
+   ASSERT_EQ(2u, R.size());
    EXPECT_EQ(" wheezy contrib main", R[0]);
    EXPECT_EQ(" wheezy-update contrib non-free", R[1]);
 
    List.push_back(" wheezy-update main");
    R = cd.ReduceSourcelist(CD, List);
-   ASSERT_EQ(2, R.size());
+   ASSERT_EQ(2u, R.size());
    EXPECT_EQ(" wheezy contrib main", R[0]);
    EXPECT_EQ(" wheezy-update contrib main non-free", R[1]);
 
    List.push_back(" wheezy non-free");
    R = cd.ReduceSourcelist(CD, List);
-   ASSERT_EQ(2, R.size());
+   ASSERT_EQ(2u, R.size());
    EXPECT_EQ(" wheezy contrib main non-free", R[0]);
    EXPECT_EQ(" wheezy-update contrib main non-free", R[1]);
 
    List.push_back(" sid main");
    R = cd.ReduceSourcelist(CD, List);
-   ASSERT_EQ(3, R.size());
+   ASSERT_EQ(3u, R.size());
    EXPECT_EQ(" sid main", R[0]);
    EXPECT_EQ(" wheezy contrib main non-free", R[1]);
    EXPECT_EQ(" wheezy-update contrib main non-free", R[2]);
 
    List.push_back(" sid main-reduce");
    R = cd.ReduceSourcelist(CD, List);
-   ASSERT_EQ(3, R.size());
+   ASSERT_EQ(3u, R.size());
    EXPECT_EQ(" sid main main-reduce", R[0]);
    EXPECT_EQ(" wheezy contrib main non-free", R[1]);
    EXPECT_EQ(" wheezy-update contrib main non-free", R[2]);

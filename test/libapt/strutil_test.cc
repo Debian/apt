@@ -40,21 +40,21 @@ TEST(StrUtilTest,StringStrip)
 TEST(StrUtilTest,StringSplitBasic)
 {
    std::vector<std::string> result = StringSplit("", "");
-   EXPECT_EQ(result.size(), 0);
+   EXPECT_TRUE(result.empty());
 
    result = StringSplit("abc", "");
-   EXPECT_EQ(result.size(), 0);
+   EXPECT_TRUE(result.empty());
 
    result = StringSplit("", "abc");
-   EXPECT_EQ(result.size(), 1);
+   EXPECT_EQ(result.size(), 1u);
 
    result = StringSplit("abc", "b");
-   ASSERT_EQ(result.size(), 2);
+   ASSERT_EQ(result.size(), 2u);
    EXPECT_EQ(result[0], "a");
    EXPECT_EQ(result[1], "c");
 
    result = StringSplit("abc", "abc");
-   ASSERT_EQ(result.size(), 2);
+   ASSERT_EQ(result.size(), 2u);
    EXPECT_EQ(result[0], "");
    EXPECT_EQ(result[1], "");
 }
@@ -62,20 +62,20 @@ TEST(StrUtilTest,StringSplitDpkgStatus)
 {
    std::string const input = "status: libnet1:amd64: unpacked";
    std::vector<std::string> result = StringSplit(input, "xxx");
-   ASSERT_EQ(result.size(), 1);
+   ASSERT_EQ(result.size(), 1u);
    EXPECT_EQ(result[0], input);
 
    result = StringSplit(input, "");
-   EXPECT_EQ(result.size(), 0);
+   EXPECT_TRUE(result.empty());
 
    result = StringSplit(input, ": ");
-   ASSERT_EQ(result.size(), 3);
+   ASSERT_EQ(result.size(), 3u);
    EXPECT_EQ(result[0], "status");
    EXPECT_EQ(result[1], "libnet1:amd64");
    EXPECT_EQ(result[2], "unpacked");
 
    result = StringSplit("x:y:z", ":", 2);
-   ASSERT_EQ(result.size(), 2);
+   ASSERT_EQ(result.size(), 2u);
    EXPECT_EQ(result[0], "x");
    EXPECT_EQ(result[1], "y:z");
 }
@@ -190,7 +190,7 @@ static void ReadMessagesTestWithNewLine(char const * const nl, char const * cons
    createTemporaryFile("readmessage", fd, NULL, (pkgA + nl + pkgB + nl + pkgC + nl).c_str());
    std::vector<std::string> list;
    EXPECT_TRUE(ReadMessages(fd.Fd(), list));
-   EXPECT_EQ(3, list.size());
+   EXPECT_EQ(3u, list.size());
    EXPECT_EQ(pkgA, list[0]);
    EXPECT_EQ(pkgB, list[1]);
    EXPECT_EQ(pkgC, list[2]);
@@ -210,7 +210,7 @@ static void ReadMessagesTestWithNewLine(char const * const nl, char const * cons
       fd.Seek(0);
       list.clear();
       EXPECT_TRUE(ReadMessages(fd.Fd(), list));
-      EXPECT_EQ(1, list.size());
+      EXPECT_EQ(1u, list.size());
       EXPECT_EQ((msgsize + i) * strlen(ab), list[0].length());
       EXPECT_EQ(std::string::npos, list[0].find_first_not_of(ab));
    }
@@ -220,7 +220,7 @@ static void ReadMessagesTestWithNewLine(char const * const nl, char const * cons
    fd.Write(nl, strlen(nl));
    fd.Seek(0);
    EXPECT_TRUE(ReadMessages(fd.Fd(), list));
-   EXPECT_EQ(2, list.size());
+   EXPECT_EQ(2u, list.size());
    EXPECT_EQ((msgsize + 20) * strlen(ab), list[0].length());
    EXPECT_EQ(std::string::npos, list[0].find_first_not_of(ab));
    EXPECT_EQ(pkgA, list[1]);

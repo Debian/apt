@@ -22,6 +22,11 @@ if(NOT GTEST_FOUND AND EXISTS ${GTEST_ROOT})
 endif()
 
 if(GTEST_FOUND)
+   # gtest produces some warnings with the set of warnings we activate,
+   # so disable the offending warnings while compiling tests for now
+   add_optional_compile_options(Wno-undef)
+   add_optional_compile_options(Wno-ctor-dtor-privacy)
+
    # Definition of the C++ files used to build the test binary - note that this
    # is expanded at CMake time, so you have to rerun cmake if you add or remove
    # a file (you can just run cmake . in the build directory)

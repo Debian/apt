@@ -32,7 +32,7 @@ TEST(SourceListTest,ParseFileDeb822)
 
    pkgSourceList sources;
    EXPECT_EQ(true, sources.Read(tempfile));
-   EXPECT_EQ(2, sources.size());
+   EXPECT_EQ(2u, sources.size());
 
    if (tempfile.empty() == false)
       unlink(tempfile.c_str());

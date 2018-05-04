@@ -16,17 +16,17 @@ TEST(StringViewTest,EmptyString)
    static_assert( 0 == defString.length(), "def right size");
 
    APT::StringView strString{std::string{}};
-   EXPECT_EQ(0, strString.length());
+   EXPECT_EQ(0u, strString.length());
 
    constexpr char const * const charp = "";
    constexpr APT::StringView charpString{charp, 0};
    static_assert( 0 == charpString.length(), "charp right size");
 
    APT::StringView charp2String{charp};
-   EXPECT_EQ(0, strString.length());
+   EXPECT_EQ(0u, strString.length());
 
    const APT::StringView charaString{""};
-   EXPECT_EQ(0, charaString.length());
+   EXPECT_EQ(0u, charaString.length());
 
    EXPECT_TRUE(APT::StringView("") == "");
    EXPECT_FALSE(APT::StringView("") != "");
@@ -39,22 +39,22 @@ TEST(StringViewTest,FooString)
    EXPECT_EQ(0, defString.to_string().compare(0, defString.length(), defString.data(), 3));
 
    APT::StringView strString{std::string{"foo"}};
-   EXPECT_EQ(3, strString.length());
+   EXPECT_EQ(3u, strString.length());
    EXPECT_EQ(0, strString.to_string().compare(0, strString.length(), strString.data(), 3));
 
    constexpr char const * const charp = "fooGARBAGE";
    constexpr APT::StringView charpString{charp, 3};
-   EXPECT_EQ(3, charpString.length());
+   EXPECT_EQ(3u, charpString.length());
    EXPECT_EQ(0, charpString.to_string().compare(0, charpString.length(), charpString.data(), 3));
 
    char * charp2 = strdup("foo");
    APT::StringView charp2String{charp2};
-   EXPECT_EQ(3, charp2String.length());
+   EXPECT_EQ(3u, charp2String.length());
    EXPECT_EQ(0, charp2String.to_string().compare(0, charp2String.length(), charp2String.data(), 3));
    free(charp2);
 
    const APT::StringView charaString{"foo"};
-   EXPECT_EQ(3, charaString.length());
+   EXPECT_EQ(3u, charaString.length());
    EXPECT_EQ(0, charaString.to_string().compare(0, charaString.length(), charaString.data(), 3));
 
    EXPECT_TRUE(APT::StringView("foo") == "foo");

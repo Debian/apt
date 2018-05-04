@@ -23,7 +23,7 @@ TEST(TagFileTest,SingleField)
    ASSERT_TRUE(tfile.Step(section));
 
    // It has one field
-   EXPECT_EQ(1, section.Count());
+   EXPECT_EQ(1u, section.Count());
    // ... and it is called FieldA-12345678
    EXPECT_TRUE(section.Exists("FieldA-12345678"));
    // its value is correct
@@ -37,13 +37,13 @@ TEST(TagFileTest,SingleField)
 
    // Now we scan an empty section to test reset
    ASSERT_TRUE(section.Scan("\n\n", 2, true));
-   EXPECT_EQ(0, section.Count());
+   EXPECT_EQ(0u, section.Count());
    EXPECT_FALSE(section.Exists("FieldA-12345678"));
    EXPECT_FALSE(section.Exists("FieldB-12345678"));
 
    createTemporaryFile("emptyfile", fd, NULL, NULL);
    ASSERT_FALSE(tfile.Step(section));
-   EXPECT_EQ(0, section.Count());
+   EXPECT_EQ(0u, section.Count());
 }
 
 TEST(TagFileTest,MultipleSections)
@@ -72,7 +72,7 @@ TEST(TagFileTest,MultipleSections)
    EXPECT_FALSE(section.Exists("Version"));
 
    EXPECT_TRUE(tfile.Step(section));
-   EXPECT_EQ(4, section.Count());
+   EXPECT_EQ(4u, section.Count());
    EXPECT_TRUE(section.Exists("Version"));
    EXPECT_TRUE(section.Exists("Package"));
    EXPECT_TRUE(section.Exists("Size"));
@@ -80,19 +80,19 @@ TEST(TagFileTest,MultipleSections)
    EXPECT_TRUE(section.Exists("Description"));
    EXPECT_EQ("pkgA", section.FindS("Package"));
    EXPECT_EQ("1", section.FindS("Version"));
-   EXPECT_EQ(1, section.FindULL("Version"));
-   EXPECT_EQ(100, section.FindULL("Size"));
+   EXPECT_EQ(1u, section.FindULL("Version"));
+   EXPECT_EQ(100u, section.FindULL("Size"));
    unsigned long Flags = 1;
    EXPECT_TRUE(section.FindFlag("Flag", Flags, 1));
-   EXPECT_EQ(1, Flags);
+   EXPECT_EQ(1u, Flags);
    Flags = 0;
    EXPECT_TRUE(section.FindFlag("Flag", Flags, 1));
-   EXPECT_EQ(0, Flags);
+   EXPECT_EQ(0u, Flags);
    EXPECT_EQ("aaa\n aaa", section.FindS("Description"));
 
 
    EXPECT_TRUE(tfile.Step(section));
-   EXPECT_EQ(4, section.Count());
+   EXPECT_EQ(4u, section.Count());
    EXPECT_TRUE(section.Exists("Version"));
    EXPECT_TRUE(section.Exists("Package"));
    EXPECT_FALSE(section.Exists("Size"));
@@ -100,18 +100,18 @@ TEST(TagFileTest,MultipleSections)
    EXPECT_TRUE(section.Exists("Description"));
    EXPECT_EQ("pkgB", section.FindS("Package"));
    EXPECT_EQ("1", section.FindS("Version"));
-   EXPECT_EQ(1, section.FindULL("Version"));
-   EXPECT_EQ(0, section.FindULL("Size"));
+   EXPECT_EQ(1u, section.FindULL("Version"));
+   EXPECT_EQ(0u, section.FindULL("Size"));
    Flags = 1;
    EXPECT_TRUE(section.FindFlag("Flag", Flags, 1));
-   EXPECT_EQ(0, Flags);
+   EXPECT_EQ(0u, Flags);
    Flags = 0;
    EXPECT_TRUE(section.FindFlag("Flag", Flags, 1));
-   EXPECT_EQ(0, Flags);
+   EXPECT_EQ(0u, Flags);
    EXPECT_EQ("bbb", section.FindS("Description"));
 
    EXPECT_TRUE(tfile.Step(section));
-   EXPECT_EQ(4, section.Count());
+   EXPECT_EQ(4u, section.Count());
    EXPECT_TRUE(section.Exists("Version"));
    EXPECT_TRUE(section.Exists("Package"));
    EXPECT_FALSE(section.Exists("Size"));
@@ -119,13 +119,13 @@ TEST(TagFileTest,MultipleSections)
    EXPECT_TRUE(section.Exists("Description"));
    EXPECT_EQ("pkgC", section.FindS("Package"));
    EXPECT_EQ("2", section.FindS("Version"));
-   EXPECT_EQ(2, section.FindULL("Version"));
+   EXPECT_EQ(2u, section.FindULL("Version"));
    Flags = 0;
    EXPECT_TRUE(section.FindFlag("Flag", Flags, 1));
-   EXPECT_EQ(1, Flags);
+   EXPECT_EQ(1u, Flags);
    Flags = 1;
    EXPECT_TRUE(section.FindFlag("Flag", Flags, 1));
-   EXPECT_EQ(1, Flags);
+   EXPECT_EQ(1u, Flags);
    EXPECT_EQ("ccc", section.FindS("Description"));
 
    // There is no section left in this tag file
@@ -152,7 +152,7 @@ TEST(TagFileTest,BigSection)
       std::stringstream name;
       name << "Field-" << i;
       EXPECT_TRUE(section.Exists(name.str().c_str())) << name.str() << " does not exist";
-      EXPECT_EQ((2000 + i), section.FindULL(name.str().c_str()));
+      EXPECT_EQ((i + 2000), section.FindULL(name.str().c_str()));
    }
 
    // There is only one section in this tag file
@@ -170,7 +170,7 @@ TEST(TagFileTest, PickedUpFromPreviousCall)
 
    pkgTagSection section;
    EXPECT_FALSE(section.Scan(content.c_str(), content.size()/2));
-   EXPECT_NE(0, section.Count());
+   EXPECT_NE(0u, section.Count());
    EXPECT_NE(count, section.Count());
    EXPECT_TRUE(section.Scan(content.c_str(), content.size(), false));
    EXPECT_EQ(count, section.Count());
@@ -180,7 +180,7 @@ TEST(TagFileTest, PickedUpFromPreviousCall)
       std::stringstream name;
       name << "Field-" << i;
       EXPECT_TRUE(section.Exists(name.str().c_str())) << name.str() << " does not exist";
-      EXPECT_EQ((2000 + i), section.FindULL(name.str().c_str()));
+      EXPECT_EQ((i + 2000), section.FindULL(name.str().c_str()));
    }
 }
 
@@ -224,7 +224,7 @@ TEST(TagFileTest, SpacesEverywhere)
    EXPECT_EQ("yes", section.FindS("Naming  Spaces"));
    EXPECT_EQ(":yes:", section.FindS("Multi-Colon"));
    // overridden values are still present, but not really accessible
-   EXPECT_EQ(12, section.Count());
+   EXPECT_EQ(12u, section.Count());
 }
 
 TEST(TagFileTest, Comments)

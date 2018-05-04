@@ -60,7 +60,7 @@ machine example.last/debian login debian password rules)apt");
    EXPECT_EQ("apt", U.User);
    EXPECT_EQ("apt", U.Password);
    EXPECT_EQ("example.org", U.Host);
-   EXPECT_EQ(90, U.Port);
+   EXPECT_EQ(90u, U.Port);
    EXPECT_EQ("/foo", U.Path);
 
    EXPECT_TRUE(fd.Seek(0));

@@ -49,7 +49,7 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
    EXPECT_TRUE(f.IsOpen());
    EXPECT_FALSE(f.Failed());
    EXPECT_FALSE(f.Eof());
-   EXPECT_NE(0, f.FileSize());
+   EXPECT_NE(0u, f.FileSize());
    EXPECT_FALSE(f.Failed());
    EXPECT_NE(0, f.ModificationTime());
    EXPECT_FALSE(f.Failed());
@@ -96,7 +96,7 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
       EXPECT_FALSE(f.Failed());
       EXPECT_FALSE(f.Eof());
       EXPECT_N_STR(expect, readback);
-      EXPECT_EQ(7, f.Tell());
+      EXPECT_EQ(7u, f.Tell());
    }
    {
       APT_INIT_READBACK
@@ -180,7 +180,7 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
 static void TestFileFd(unsigned int const filemode)
 {
    auto const compressors = APT::Configuration::getCompressors();
-   EXPECT_EQ(8, compressors.size());
+   EXPECT_EQ(8u, compressors.size());
    bool atLeastOneWasTested = false;
    for (auto const &c: compressors)
    {
@@ -204,7 +204,7 @@ TEST(FileUtlTest, FileFD)
    _config->Set("APT::Compressor::rev::Binary", "rev");
    _config->Set("APT::Compressor::rev::Cost", 10);
    auto const compressors = APT::Configuration::getCompressors(false);
-   EXPECT_EQ(8, compressors.size());
+   EXPECT_EQ(8u, compressors.size());
    EXPECT_TRUE(std::any_of(compressors.begin(), compressors.end(), [](APT::Configuration::Compressor const &c) { return c.Name == "rev"; }));
 
    std::string const startdir = SafeGetCWD();
@@ -232,7 +232,7 @@ TEST(FileUtlTest, Glob)
    std::vector<std::string> files;
    // normal match
    files = Glob("*MakeLists.txt");
-   EXPECT_EQ(1, files.size());
+   EXPECT_EQ(1u, files.size());
 
    // not there
    files = Glob("xxxyyyzzz");
@@ -241,7 +241,7 @@ TEST(FileUtlTest, Glob)
 
    // many matches (number is a bit random)
    files = Glob("*.cc");
-   EXPECT_LT(10, files.size());
+   EXPECT_LT(10u, files.size());
 }
 TEST(FileUtlTest, GetTempDir)
 {
@@ -296,7 +296,7 @@ TEST(FileUtlTest, Popen)
    EXPECT_TRUE(Popen(Args, Fd, Child, FileFd::ReadOnly));
    EXPECT_TRUE(Fd.Read(buf, sizeof(buf)-1, &n));
    buf[n] = 0;
-   EXPECT_NE(n, 0);
+   EXPECT_NE(n, 0u);
    EXPECT_STREQ(buf, "meepmeep\n");
 
    // wait for the child to exit and cleanup

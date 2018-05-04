@@ -19,7 +19,7 @@ TEST(ConfigurationTest,Lists)
 	Cnf.Set("APT::Keep-Fds::2",47);
 	Cnf.Set("APT::Keep-Fds::","broken");
 	std::vector<std::string> fds = Cnf.FindVector("APT::Keep-Fds");
-	ASSERT_EQ(4, fds.size());
+	ASSERT_EQ(4u, fds.size());
 	EXPECT_EQ("28", fds[0]);
 	EXPECT_EQ("17", fds[1]);
 	EXPECT_EQ("47", fds[2]);
@@ -36,7 +36,7 @@ TEST(ConfigurationTest,Lists)
 	Cnf.Clear("APT::Keep-Fds::2");
 	EXPECT_TRUE(Cnf.Exists("APT::Keep-Fds::2"));
 	fds = Cnf.FindVector("APT::Keep-Fds");
-	ASSERT_EQ(4, fds.size());
+	ASSERT_EQ(4u, fds.size());
 	EXPECT_EQ("28", fds[0]);
 	EXPECT_EQ("17", fds[1]);
 	EXPECT_EQ("", fds[2]);
@@ -44,7 +44,7 @@ TEST(ConfigurationTest,Lists)
 
 	Cnf.Clear("APT::Keep-Fds",28);
 	fds = Cnf.FindVector("APT::Keep-Fds");
-	ASSERT_EQ(3, fds.size());
+	ASSERT_EQ(3u, fds.size());
 	EXPECT_EQ("17", fds[0]);
 	EXPECT_EQ("", fds[1]);
 	EXPECT_EQ("broken", fds[2]);
@@ -60,7 +60,7 @@ TEST(ConfigurationTest,Lists)
 	Cnf.Set("APT::Keep-Fds::",21);
 	Cnf.Set("APT::Keep-Fds::",42);
 	fds = Cnf.FindVector("APT::Keep-Fds");
-	ASSERT_EQ(2, fds.size());
+	ASSERT_EQ(2u, fds.size());
 	EXPECT_EQ("21", fds[0]);
 	EXPECT_EQ("42", fds[1]);
 
@@ -145,30 +145,30 @@ TEST(ConfigurationTest,Vector)
 	Configuration Cnf;
 
 	std::vector<std::string> vec = Cnf.FindVector("Test::Vector", "");
-	EXPECT_EQ(0, vec.size());
+	EXPECT_EQ(0u, vec.size());
 	vec = Cnf.FindVector("Test::Vector", "foo");
-	ASSERT_EQ(1, vec.size());
+	ASSERT_EQ(1u, vec.size());
 	EXPECT_EQ("foo", vec[0]);
 	vec = Cnf.FindVector("Test::Vector", "foo,bar");
-	EXPECT_EQ(2, vec.size());
+	EXPECT_EQ(2u, vec.size());
 	EXPECT_EQ("foo", vec[0]);
 	EXPECT_EQ("bar", vec[1]);
 	Cnf.Set("Test::Vector::", "baz");
 	Cnf.Set("Test::Vector::", "bob");
 	Cnf.Set("Test::Vector::", "dob");
 	vec = Cnf.FindVector("Test::Vector");
-	ASSERT_EQ(3, vec.size());
+	ASSERT_EQ(3u, vec.size());
 	EXPECT_EQ("baz", vec[0]);
 	EXPECT_EQ("bob", vec[1]);
 	EXPECT_EQ("dob", vec[2]);
 	vec = Cnf.FindVector("Test::Vector", "foo,bar");
-	ASSERT_EQ(3, vec.size());
+	ASSERT_EQ(3u, vec.size());
 	EXPECT_EQ("baz", vec[0]);
 	EXPECT_EQ("bob", vec[1]);
 	EXPECT_EQ("dob", vec[2]);
 	Cnf.Set("Test::Vector", "abel,bravo");
 	vec = Cnf.FindVector("Test::Vector", "foo,bar");
-	ASSERT_EQ(2, vec.size());
+	ASSERT_EQ(2u, vec.size());
 	EXPECT_EQ("abel", vec[0]);
 	EXPECT_EQ("bravo", vec[1]);
 }
@@ -220,12 +220,12 @@ List::Option2 { "Multi";
    EXPECT_EQ(42, Cnf.FindI("Answer::Simple"));
    EXPECT_TRUE(Cnf.Exists("List::Option"));
    auto const singleline = Cnf.FindVector("List::Option");
-   EXPECT_EQ(3, singleline.size());
+   EXPECT_EQ(3u, singleline.size());
    EXPECT_EQ("In", singleline[0]);
    EXPECT_EQ("One", singleline[1]);
    EXPECT_EQ("Line", singleline[2]);
    auto const multiline = Cnf.FindVector("List::Option2");
-   EXPECT_EQ(3, multiline.size());
+   EXPECT_EQ(3u, multiline.size());
    EXPECT_EQ("Multi", multiline[0]);
    EXPECT_EQ("Line", multiline[1]);
    EXPECT_EQ("Options", multiline[2]);

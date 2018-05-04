@@ -16,16 +16,16 @@ TEST(SrvRecTest, PopFromSrvRecs)
    Meep.emplace_back("bar", 20, 0, 80);
    Meep.emplace_back("baz", 30, 0, 80);
 
-   EXPECT_EQ(Meep.size(), 3);
+   EXPECT_EQ(Meep.size(), 3u);
    SrvRec const result = PopFromSrvRecs(Meep);
    // ensure that pop removed one element
-   EXPECT_EQ(Meep.size(), 2);
+   EXPECT_EQ(Meep.size(), 2u);
    EXPECT_NE(result.target, "baz");
 
    SrvRec const result2 = PopFromSrvRecs(Meep);
    EXPECT_NE(result.target, result2.target);
    EXPECT_NE(result2.target, "baz");
-   EXPECT_EQ(Meep.size(), 1);
+   EXPECT_EQ(Meep.size(), 1u);
 
    SrvRec const result3 = PopFromSrvRecs(Meep);
    EXPECT_EQ(result3.target, "baz");
