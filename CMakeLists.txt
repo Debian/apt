@@ -68,6 +68,7 @@ add_optional_compile_options(Wmissing-include-dirs)
 add_optional_compile_options(Wnoexcept)
 add_optional_compile_options(Wsign-promo)
 add_optional_compile_options(Wundef)
+add_optional_compile_options(Wdouble-promotion)
 
 # apt-ftparchive dependencies
 find_package(BerkeleyDB REQUIRED)

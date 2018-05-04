@@ -383,7 +383,7 @@ bool PackageManagerFancy::DrawStatusLine()
    {
       int padding = 4;
       auto const progressbar_size = size.columns - padding - progress_str.size();
-      auto const current_percent = percentage / 100.0;
+      auto const current_percent = percentage / 100.0f;
       std::cout << " " 
                 << GetTextProgressStr(current_percent, progressbar_size)
                 << " ";

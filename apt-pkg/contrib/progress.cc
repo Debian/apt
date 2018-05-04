@@ -118,7 +118,7 @@ bool OpProgress::CheckChange(float Interval)
    // Check time delta
    struct timeval Now;
    gettimeofday(&Now,0);
-   double Diff = Now.tv_sec - LastTime.tv_sec + (Now.tv_usec - LastTime.tv_usec)/1000000.0;
+   decltype(Interval) const Diff = Now.tv_sec - LastTime.tv_sec + (Now.tv_usec - LastTime.tv_usec)/1000000.0;
    if (Diff < Interval)
       return false;
    LastTime = Now;   
