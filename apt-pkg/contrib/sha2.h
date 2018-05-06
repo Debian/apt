@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description                                                          /*{{{*/
-// $Id: sha512.h,v 1.3 2001/05/07 05:05:47 jgg Exp $
 /* ######################################################################
 
    SHA{512,256}SumValue - Storage for a SHA-{512,256} hash.

@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: policy.cc,v 1.10 2003/08/12 00:17:37 mdz Exp $
 /* ######################################################################
 
    Package Version Policy implementation

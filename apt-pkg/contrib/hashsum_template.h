@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description                                                          /*{{{*/
-// $Id: hashsum_template.h,v 1.3 2001/05/07 05:05:47 jgg Exp $
 /* ######################################################################
 
    HashSumValueTemplate - Generic Storage for a hash value

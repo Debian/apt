@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgsystem.cc,v 1.3 2004/02/27 00:43:16 mdz Exp $
 /* ######################################################################
 
    System - Abstraction for running on different systems.

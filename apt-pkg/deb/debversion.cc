@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debversion.cc,v 1.8 2003/09/10 23:39:49 mdz Exp $
 /* ######################################################################
 
    Debian Version - Versioning system for Debian

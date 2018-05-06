@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: file.cc,v 1.9.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    File URI method for APT

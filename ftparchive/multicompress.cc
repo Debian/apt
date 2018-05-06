@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: multicompress.cc,v 1.4 2003/02/10 07:34:41 doogie Exp $
 /* ######################################################################
 
    MultiCompressor

@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: strutl.h,v 1.22 2003/02/02 22:20:27 jgg Exp $
 /* ######################################################################
 
    String Util - These are some useful string functions

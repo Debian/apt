@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: cmndline.cc,v 1.15 2003/02/10 01:40:58 doogie Exp $
 /* ######################################################################
 
    Command Line Class - Sophisticated command line parser

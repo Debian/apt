@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sptr.h,v 1.3 2001/03/11 07:22:19 jgg Exp $
 /* ######################################################################
    
    Trivial non-ref counted 'smart pointer'

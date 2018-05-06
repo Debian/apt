@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description                                                          /*{{{*/
-// $Id: sha1.cc,v 1.3 2001/05/13 05:15:03 jgg Exp $
 /* ######################################################################
    
    SHA1 - SHA-1 Secure Hash Algorithm.

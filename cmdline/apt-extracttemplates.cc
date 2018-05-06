@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-extracttemplates.cc,v 1.15 2003/07/26 00:00:11 mdz Exp $
 /* ######################################################################
    
    APT Extract Templates - Program to extract debconf config and template

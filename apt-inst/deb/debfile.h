@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debfile.h,v 1.2 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
 
    Debian Archive File (.deb)

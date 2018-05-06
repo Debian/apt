@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: http.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
    HTTP Acquire Method - This is the HTTP acquire method for APT.

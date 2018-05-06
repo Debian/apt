@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: sha1.h,v 1.3 2001/05/07 05:05:47 jgg Exp $
 /* ######################################################################
 
    SHA1SumValue - Storage for a SHA-1 hash.

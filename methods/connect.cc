@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: connect.cc,v 1.10.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    Connect - Replacement connect call

@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: orderlist.cc,v 1.14 2001/05/07 05:49:43 jgg Exp $
 /* ######################################################################
 
    Order List - Represents and Manipulates an ordered list of packages.

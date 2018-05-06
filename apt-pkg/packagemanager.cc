@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: packagemanager.cc,v 1.30 2003/04/27 03:04:15 doogie Exp $
 /* ######################################################################
 
    Package Manager - Abstacts the package manager

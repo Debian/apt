@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-config.cc,v 1.11 2003/01/11 07:18:44 jgg Exp $
 /* ######################################################################
    
    APT Config - Program to manipulate APT configuration files

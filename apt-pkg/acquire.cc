@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: acquire.cc,v 1.50 2004/03/17 05:17:11 mdz Exp $
 /* ######################################################################
 
    Acquire - File Acquiration

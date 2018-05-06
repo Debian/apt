@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-cache.cc,v 1.72 2004/04/30 04:34:03 mdz Exp $
 /* ######################################################################
    
    apt-cache - Manages the cache files
