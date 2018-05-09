@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: apt-get.cc,v 1.156 2004/08/28 01:05:16 mdz Exp $
 /* ######################################################################
    
    apt-get - Cover for dpkg

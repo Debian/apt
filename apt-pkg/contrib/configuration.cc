@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.cc,v 1.28 2004/04/30 04:00:15 mdz Exp $
 /* ######################################################################
 
    Configuration Class

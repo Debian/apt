@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: version.h,v 1.8 2001/05/27 05:55:27 jgg Exp $
 /* ######################################################################
 
    Version - Versioning system..

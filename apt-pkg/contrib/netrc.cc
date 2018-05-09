@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: netrc.c,v 1.38 2007-11-07 09:21:35 bagder Exp $
 /* ######################################################################
 
    netrc file parser - returns the login and password of a give host in

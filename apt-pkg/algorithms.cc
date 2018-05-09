@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: algorithms.cc,v 1.44 2002/11/28 18:49:16 jgg Exp $
 /* ######################################################################
 
    Algorithms - A set of misc algorithms

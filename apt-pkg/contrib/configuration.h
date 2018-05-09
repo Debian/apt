@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: configuration.h,v 1.16 2002/11/11 06:55:50 doogie Exp $
 /* ######################################################################
 
    Configuration Class

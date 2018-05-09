@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: depcache.cc,v 1.25 2001/05/27 05:36:04 jgg Exp $
 /* ######################################################################
 
    Dependency Cache - Caches Dependency information.

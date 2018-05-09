@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: extract.cc,v 1.6.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    Archive Extraction Directory Stream

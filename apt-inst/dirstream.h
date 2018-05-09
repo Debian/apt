@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: dirstream.h,v 1.2 2001/02/20 07:03:16 jgg Exp $
 /* ######################################################################
 
    Directory Stream 

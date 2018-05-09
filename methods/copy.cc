@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: copy.cc,v 1.7.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
    Copy URI - This method takes a uri like a file: uri and copies it

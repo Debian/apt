@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: clean.h,v 1.2 1999/07/20 05:53:33 jgg Exp $
 /* ######################################################################
 
    Clean - Clean out downloaded directories

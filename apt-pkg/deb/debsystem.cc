@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsystem.cc,v 1.4 2004/01/26 17:01:53 mdz Exp $
 /* ######################################################################
 
    System - Abstraction for running on different systems.

@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: deblistparser.h,v 1.9 2001/02/20 07:03:17 jgg Exp $
 /* ######################################################################
    
    Debian Package List Parser - This implements the abstract parser 

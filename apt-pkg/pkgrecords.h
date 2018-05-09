@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: pkgrecords.h,v 1.6 2001/03/13 06:51:46 jgg Exp $
 /* ######################################################################
    
    Package Records - Allows access to complete package description records

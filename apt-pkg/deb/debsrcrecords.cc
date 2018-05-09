@@ -1,6 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
-// $Id: debsrcrecords.cc,v 1.6 2004/03/17 05:58:54 mdz Exp $
 /* ######################################################################
    
    Debian Source Package Records - Parser implementation for Debian style
