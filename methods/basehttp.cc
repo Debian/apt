@@ -873,7 +873,7 @@ bool BaseHttpMethod::Configuration(std::string Message)			/*{{{*/
       return false;
 
    _config->CndSet("Acquire::tor::Proxy",
-	 "socks5h://apt-transport-tor@localhost:9050");
+	 "socks5h://apt-transport-tor@127.0.0.1:9050");
    return true;
 }
 									/*}}}*/
