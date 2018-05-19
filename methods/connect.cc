@@ -546,7 +546,12 @@ static bool TalkToSocksProxy(int const ServerFd, std::string const &Proxy,
 			     unsigned int const Size, unsigned int const Timeout)
 {
    if (WaitFd(ServerFd, ReadWrite, Timeout) == false)
-      return _error->Error("Waiting for the SOCKS proxy %s to %s timed out", URI::SiteOnly(Proxy).c_str(), type);
+   {
+      if (ReadWrite)
+	 return _error->Error("Timed out while waiting to write '%s' to proxy %s", type, URI::SiteOnly(Proxy).c_str());
+      else
+	 return _error->Error("Timed out while waiting to read '%s' from proxy %s", type, URI::SiteOnly(Proxy).c_str());
+   }
    if (ReadWrite == false)
    {
       if (FileFd::Read(ServerFd, ToFrom, Size) == false)
