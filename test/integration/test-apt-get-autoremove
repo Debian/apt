@@ -9,6 +9,12 @@ configarchitecture 'i386'
 buildsimplenativepackage 'unrelated' 'all' '1' 'unstable'
 buildsimplenativepackage 'po-debconf' 'all' '1.0.16' 'unstable'
 buildsimplenativepackage 'debhelper' 'all' '8.0.0' 'unstable' 'Depends: po-debconf'
+buildsimplenativepackage 'base-files' 'all' '10' 'unstable' 'Essential: yes'
+buildsimplenativepackage 'fdisk' 'all' '2.30.2' 'unstable' 'XB-Important: yes'
+buildsimplenativepackage 'linux-image' 'all' '4.9.80' 'unstable'
+buildsimplenativepackage 'hold-me' 'all' '1.0' 'unstable'
+buildsimplenativepackage 'remove-me' 'all' '1.0' 'unstable'
+buildsimplenativepackage 'system-base' 'all' '1.0' 'unstable' 'Depends: unrelated, base-files, fdisk, linux-image, hold-me, remove-me'
 setupaptarchive
 
 testsuccess aptget install unrelated debhelper -y
@@ -156,6 +162,25 @@ testdpkgstatus 'pi' '1' 'unrelated'
 testmarkedauto
 testsuccess aptget install debhelper --solver apt -y -o Debug::pkgDepCache::Marker=1
 testmarkedauto 'po-debconf'
+testdpkgstatus 'pi' '1' 'unrelated'
+
+testsuccess aptget install system-base debhelper -y
+testdpkginstalled 'debhelper' 'po-debconf' 'system-base' 'base-files' 'fdisk' 'linux-image' 'hold-me' 'remove-me'
+testsuccess aptmark hold 'hold-me'
+echo 'APT::NeverAutoRemove { "^linux-image$"; };' > rootdir/etc/apt/apt.conf.d/00autoremove
+testsuccess aptget remove system-base -y
+testsuccess aptget autoremove -y -o Debug::pkgAutoRemove=yes
+DEBUGLOG=${TMPWORKINGDIRECTORY}/rootdir/tmp/autoremove.debuglog
+cp "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "$DEBUGLOG"
+testsuccess grep -Fx 'Marking: fdisk:i386 2.30.2 (Important)' "$DEBUGLOG"
+testsuccess grep -Fx 'Marking: base-files:i386 10 (Essential)' "$DEBUGLOG"
+testsuccess grep -Fx 'Marking: unrelated:i386 1 (Manual-Installed)' "$DEBUGLOG"
+testsuccess grep -Fx 'Marking: hold-me:i386 1.0 (Hold)' "$DEBUGLOG"
+testsuccess grep -Fx 'Marking: po-debconf:i386 1.0.16 (Dependency)' "$DEBUGLOG"
+testsuccess grep -Fx 'Marking: linux-image:i386 4.9.80 (Blacklisted [APT::NeverAutoRemove])' "$DEBUGLOG"
+testdpkginstalled 'debhelper' 'po-debconf' 'base-files' 'fdisk' 'linux-image'
+testdpkgstatus 'hi' '1' 'hold-me'
+testdpkgnotinstalled 'remove-me'
 testdpkgstatus 'pi' '1' 'unrelated'
 
 insertinstalledpackage 'bar' 'all' '1' 'Depends: foo-provider'

@@ -1873,28 +1873,29 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
       if (PkgState[P->ID].Marked || IsPkgInBoringState(P, PkgState))
 	 continue;
 
+      const char *reason = nullptr;
+
       if ((PkgState[P->ID].Flags & Flag::Auto) == 0)
-	 ;
-      else if ((P->Flags & Flag::Essential) || (P->Flags & Flag::Important))
-	 ;
-      // be nice even then a required package violates the policy (#583517)
-      // and do the full mark process also for required packages
+	 reason = "Manual-Installed";
+      else if (P->Flags & Flag::Essential)
+	 reason = "Essential";
+      else if (P->Flags & Flag::Important)
+	 reason = "Important";
       else if (P->CurrentVer != 0 && P.CurrentVer()->Priority == pkgCache::State::Required)
-	 ;
+	 reason = "Required";
       else if (userFunc.InRootSet(P))
-	 ;
-      // packages which can't be changed (like holds) can't be garbage
+	 reason = "Blacklisted [APT::NeverAutoRemove]";
       else if (IsModeChangeOk(ModeGarbage, P, 0, false) == false)
-	 ;
+	 reason = "Hold";
       else
 	 continue;
 
       if (PkgState[P->ID].Install())
 	 MarkPackage(P, PkgState[P->ID].InstVerIter(*this),
-	       follow_recommends, follow_suggests);
+	       follow_recommends, follow_suggests, reason);
       else
 	 MarkPackage(P, P.CurrentVer(),
-	       follow_recommends, follow_suggests);
+	       follow_recommends, follow_suggests, reason);
    }
 
    return true;
@@ -1904,7 +1905,8 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 			      const pkgCache::VerIterator &Ver,
 			      bool const &follow_recommends,
-			      bool const &follow_suggests)
+			      bool const &follow_suggests,
+			      const char *reason)
 {
    {
       pkgDepCache::StateCache &state = PkgState[Pkg->ID];
@@ -1919,7 +1921,8 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 
    bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove", false);
    if(debug_autoremove)
-      std::clog << "Marking: " << Pkg.FullName() << " " << Ver.VerStr() << std::endl;
+      std::clog << "Marking: " << Pkg.FullName() << " " << Ver.VerStr()
+		<< " (" << reason << ")" << std::endl;
 
    for (auto D = Ver.DependsList(); D.end() == false; ++D)
    {
@@ -1976,7 +1979,7 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 	       std::clog << "Following dep: " << APT::PrettyDep(this, D)
 		  << ", provided by " << PP.FullName() << " " << PV.VerStr()
 		  << " (" << providers.size() << "/" << prvsize << ")"<< std::endl;
-	    MarkPackage(PP, PV, follow_recommends, follow_suggests);
+	    MarkPackage(PP, PV, follow_recommends, follow_suggests, "Provider");
 	 }
       }
 
@@ -1991,7 +1994,7 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 
       if (debug_autoremove)
 	 std::clog << "Following dep: " << APT::PrettyDep(this, D) << std::endl;
-      MarkPackage(T, TV, follow_recommends, follow_suggests);
+      MarkPackage(T, TV, follow_recommends, follow_suggests, "Dependency");
    }
 }
 									/*}}}*/
