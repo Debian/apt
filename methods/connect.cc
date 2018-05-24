@@ -308,6 +308,7 @@ static ResultState WaitAndCheckErrors(std::list<Connection> &Conns, std::unique_
 	       for (auto &Conn : Conns)
 	       {
 		  Conn.Owner->SetFailReason("Timeout");
+		  bad_addr.insert(bad_addr.begin(), Conn.Name);
 		  _error->Error(_("Could not connect to %s:%s (%s), "
 				  "connection timed out"),
 				Conn.Host.c_str(), Conn.Service, Conn.Name);
