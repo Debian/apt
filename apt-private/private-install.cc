@@ -564,16 +564,16 @@ static const unsigned short MOD_INSTALL = 2;
 
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache, int UpgradeMode)
 {
-   std::vector<std::string> VolatileCmdL;
+   std::vector<PseudoPkg> VolatileCmdL;
    return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, UpgradeMode);
 }
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<std::string> &VolatileCmdL, CacheFile &Cache, int UpgradeMode)
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache, int UpgradeMode)
 {
    std::map<unsigned short, APT::VersionSet> verset;
    std::set<std::string> UnknownPackages;
    return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, UpgradeMode, UnknownPackages);
 }
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<std::string> &VolatileCmdL, CacheFile &Cache,
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache,
 					std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode, std::set<std::string> &UnknownPackages)
 {
    // Enter the special broken fixing mode if the user specified arguments
@@ -611,13 +611,18 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<std::stri
 
    for (auto const &I: VolatileCmdL)
    {
-      pkgCache::PkgIterator const P = Cache->FindPkg(I);
+      pkgCache::PkgIterator const P = Cache->FindPkg(I.name);
       if (P.end())
 	 continue;
 
       // Set any version providing the .deb as the candidate.
       for (auto Prv = P.ProvidesList(); Prv.end() == false; Prv++)
-	 Cache.GetDepCache()->SetCandidateVersion(Prv.OwnerVer());
+      {
+	 if (I.release.empty())
+	    Cache.GetDepCache()->SetCandidateVersion(Prv.OwnerVer());
+	 else
+	    Cache.GetDepCache()->SetCandidateRelease(Prv.OwnerVer(), I.release);
+      }
 
       // via cacheset to have our usual virtual handling
       APT::VersionContainerInterface::FromPackage(&(verset[MOD_INSTALL]), Cache, P, APT::CacheSetHelper::CANDIDATE, helper);
@@ -703,6 +708,83 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<std::stri
    return true;
 }
 									/*}}}*/
+bool AddVolatileSourceFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector<PseudoPkg> &VolatileCmdL)/*{{{*/
+{
+   auto const ext = flExtension(pkg.name);
+   if (ext != "dsc" && FileExists(pkg.name + "/debian/control") == false)
+      return false;
+   std::vector<std::string> files;
+   SL->AddVolatileFile(pkg.name, &files);
+   for (auto &&f: files)
+      VolatileCmdL.emplace_back(std::move(f), pkg.arch, pkg.release, pkg.index);
+   return true;
+
+}
+									/*}}}*/
+bool AddVolatileBinaryFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector<PseudoPkg> &VolatileCmdL)/*{{{*/
+{
+   auto const ext = flExtension(pkg.name);
+   if (ext != "deb" && ext != "ddeb" && ext != "changes")
+      return false;
+   std::vector<std::string> files;
+   SL->AddVolatileFile(pkg.name, &files);
+   for (auto &&f: files)
+      VolatileCmdL.emplace_back(std::move(f), pkg.arch, pkg.release, pkg.index);
+   return true;
+}
+									/*}}}*/
+static bool AddIfVolatile(pkgSourceList *const SL, std::vector<PseudoPkg> &VolatileCmdL, bool (*Add)(pkgSourceList *const, PseudoPkg &&, std::vector<PseudoPkg> &), char const * const I, std::string const &pseudoArch)/*{{{*/
+{
+   if (I != nullptr && (I[0] == '/' || (I[0] == '.' && (I[1] == '\0' || (I[1] == '.' && (I[2] == '\0' || I[2] == '/')) || I[1] == '/'))))
+   {
+      PseudoPkg pkg(I, pseudoArch, "", SL->GetVolatileFiles().size());
+      if (FileExists(I)) // this accepts directories and symlinks, too
+      {
+	 if (Add(SL, std::move(pkg), VolatileCmdL))
+	    ;
+	 else
+	    _error->Error(_("Unsupported file %s given on commandline"), I);
+	 return true;
+      }
+      else
+      {
+	 auto const found = pkg.name.rfind("/");
+	 if (found == pkg.name.find("/"))
+	    _error->Error(_("Unsupported file %s given on commandline"), I);
+	 else
+	 {
+	    pkg.release = pkg.name.substr(found + 1);
+	    pkg.name.erase(found);
+	    if (Add(SL, std::move(pkg), VolatileCmdL))
+	       ;
+	    else
+	       _error->Error(_("Unsupported file %s given on commandline"), I);
+	 }
+	 return true;
+      }
+   }
+   return false;
+}
+									/*}}}*/
+std::vector<PseudoPkg> GetAllPackagesAsPseudo(pkgSourceList *const SL, CommandLine &CmdL, bool (*Add)(pkgSourceList *const, PseudoPkg &&, std::vector<PseudoPkg> &), std::string const &pseudoArch)/*{{{*/
+{
+   std::vector<PseudoPkg> PkgCmdL;
+   std::for_each(CmdL.FileList + 1, CmdL.FileList + CmdL.FileSize(), [&](char const *const I) {
+      if (AddIfVolatile(SL, PkgCmdL, Add, I, pseudoArch) == false)
+	 PkgCmdL.emplace_back(I, pseudoArch, "", -1);
+   });
+   return PkgCmdL;
+}
+									/*}}}*/
+std::vector<PseudoPkg> GetPseudoPackages(pkgSourceList *const SL, CommandLine &CmdL, bool (*Add)(pkgSourceList *const, PseudoPkg &&, std::vector<PseudoPkg> &), std::string const &pseudoArch)/*{{{*/
+{
+   std::vector<PseudoPkg> VolatileCmdL;
+   std::remove_if(CmdL.FileList + 1, CmdL.FileList + 1 + CmdL.FileSize(), [&](char const *const I) {
+      return AddIfVolatile(SL, VolatileCmdL, Add, I, pseudoArch);
+   });
+   return VolatileCmdL;
+}
+									/*}}}*/
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named packages */
@@ -721,8 +803,7 @@ struct PkgIsExtraInstalled {
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
-   std::vector<std::string> VolatileCmdL;
-   Cache.GetSourceList()->AddVolatileFiles(CmdL, &VolatileCmdL);
+   auto VolatileCmdL = GetPseudoPackages(Cache.GetSourceList(), CmdL, AddVolatileBinaryFile, "");
 
    // then open the cache
    if (Cache.OpenForInstall() == false || 
@@ -945,13 +1026,21 @@ bool TryToInstall::propergateReleaseCandiateSwitching(std::list<std::pair<pkgCac
 	 c != Changed.end(); ++c)
    {
       if (c->second.end() == true)
+      {
+	 auto const pkgname = c->first.ParentPkg().FullName(true);
+	 if (APT::String::Startswith(pkgname, "builddeps:"))
+	    continue;
 	 ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
-	       c->first.VerStr(), c->first.RelStr().c_str(), c->first.ParentPkg().FullName(true).c_str());
+	       c->first.VerStr(), c->first.RelStr().c_str(), pkgname.c_str());
+      }
       else if (c->first.ParentPkg()->Group != c->second.ParentPkg()->Group)
       {
+	 auto pkgname = c->second.ParentPkg().FullName(true);
+	 if (APT::String::Startswith(pkgname, "builddeps:"))
+	    pkgname.replace(0, strlen("builddeps"), "src");
 	 pkgCache::VerIterator V = (*Cache)[c->first.ParentPkg()].CandidateVerIter(*Cache);
 	 ioprintf(out, _("Selected version '%s' (%s) for '%s' because of '%s'\n"), V.VerStr(),
-	       V.RelStr().c_str(), V.ParentPkg().FullName(true).c_str(), c->second.ParentPkg().FullName(true).c_str());
+	       V.RelStr().c_str(), V.ParentPkg().FullName(true).c_str(), pkgname.c_str());
       }
    }
    return Success;

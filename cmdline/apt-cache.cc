@@ -470,12 +470,7 @@ static bool DumpAvail(CommandLine &)
    for (pkgCache::VerFile **J = VFList; *J != 0;)
    {
       pkgCache::PkgFileIterator File(*Cache,(*J)->File + Cache->PkgFileP);
-      if (File.IsOk() == false)
-      {
-	 _error->Error(_("Package file %s is out of sync."),File.FileName());
-	 break;
-      }
-
+      // FIXME: Add support for volatile/with-source files
       FileFd PkgF(File.FileName(),FileFd::ReadOnly, FileFd::Extension);
       if (_error->PendingError() == true)
 	 break;
