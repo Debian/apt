@@ -259,7 +259,7 @@ Acquire
   {
     Proxy "http://127.0.0.1:3128";
     Proxy::http.us.debian.org "DIRECT";  // Specific per-host setting
-    Timeout "120";
+    Timeout "30";
     ConnectionAttemptDelayMsec "250";
     Pipeline-Depth "5";
     AllowRedirect  "true";
@@ -285,7 +285,7 @@ Acquire
 	Verify-Host "true";
 	AllowRedirect  "true";
 
-	Timeout "120";
+	Timeout "30";
 	ConnectionAttemptDelayMsec "250";
 	AllowRedirect  "true";
 
@@ -313,7 +313,7 @@ Acquire
        "PASS $(SITE_PASS)";
     };
     
-    Timeout "120";
+    Timeout "30";
     ConnectionAttemptDelayMsec "250";
     
     /* Passive mode control, proxy, non-proxy and per-host. Pasv mode
