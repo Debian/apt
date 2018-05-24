@@ -33,7 +33,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-unsigned long TimeOut = 120;
+unsigned long TimeOut = 30;
 Configuration::Item const *RshOptions = 0;
 time_t RSHMethod::FailTime = 0;
 std::string RSHMethod::FailFile;
