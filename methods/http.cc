@@ -25,6 +25,7 @@
 #include <apt-pkg/proxy.h>
 #include <apt-pkg/strutl.h>
 
+#include <chrono>
 #include <cstring>
 #include <iostream>
 #include <sstream>
@@ -49,7 +50,7 @@ using namespace std;
 
 unsigned long long CircleBuf::BwReadLimit=0;
 unsigned long long CircleBuf::BwTickReadData=0;
-struct timeval CircleBuf::BwReadTick={0,0};
+std::chrono::steady_clock::duration CircleBuf::BwReadTick{0};
 const unsigned int CircleBuf::BW_HZ=10;
 
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
@@ -98,18 +99,17 @@ bool CircleBuf::Read(std::unique_ptr<MethodFd> const &Fd)
       unsigned long long const BwReadMax = CircleBuf::BwReadLimit/BW_HZ;
 
       if(CircleBuf::BwReadLimit) {
-	 struct timeval now;
-	 gettimeofday(&now,0);
+	 auto const now = std::chrono::steady_clock::now().time_since_epoch();
+	 auto const d = now - CircleBuf::BwReadTick;
 
-	 unsigned long long d = (now.tv_sec-CircleBuf::BwReadTick.tv_sec)*1000000 +
-	    now.tv_usec-CircleBuf::BwReadTick.tv_usec;
-	 if(d > 1000000/BW_HZ) {
+	 auto const tickLen = std::chrono::microseconds(std::chrono::seconds(1)) / BW_HZ;
+	 if(d > tickLen) {
 	    CircleBuf::BwReadTick = now;
 	    CircleBuf::BwTickReadData = 0;
-	 } 
-	 
+	 }
+
 	 if(CircleBuf::BwTickReadData >= BwReadMax) {
-	    usleep(1000000/BW_HZ);
+	    usleep(tickLen.count());
 	    return true;
 	 }
       }

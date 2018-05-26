@@ -12,6 +12,7 @@
 
 #include <apt-pkg/strutl.h>
 
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -39,7 +40,7 @@ class CircleBuf
 
    static unsigned long long BwReadLimit;
    static unsigned long long BwTickReadData;
-   static struct timeval BwReadTick;
+   static std::chrono::steady_clock::duration BwReadTick;
    static const unsigned int BW_HZ;
 
    unsigned long long LeftRead() const
