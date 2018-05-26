@@ -134,8 +134,6 @@ bool CircleBuf::Read(std::unique_ptr<MethodFd> const &Fd)
 	 return false;
       }
 
-      if (InP == 0)
-	 gettimeofday(&Start,0);
       InP += Res;
    }
 }
@@ -265,21 +263,6 @@ bool CircleBuf::Write(string &Data)
    Data = std::string((char *)Buf + (OutP % Size), LeftWrite());
    OutP += LeftWrite();
    return true;
-}
-									/*}}}*/
-// CircleBuf::Stats - Print out stats information			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-void CircleBuf::Stats()
-{
-   if (InP == 0)
-      return;
-   
-   struct timeval Stop;
-   gettimeofday(&Stop,0);
-/*   float Diff = Stop.tv_sec - Start.tv_sec + 
-             (float)(Stop.tv_usec - Start.tv_usec)/1000000;
-   clog << "Got " << InP << " in " << Diff << " at " << InP/Diff << endl;*/
 }
 									/*}}}*/
 CircleBuf::~CircleBuf()							/*{{{*/

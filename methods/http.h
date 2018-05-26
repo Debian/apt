@@ -36,7 +36,6 @@ class CircleBuf
    std::string OutQueue;
    unsigned long long StrPos;
    unsigned long long MaxGet;
-   struct timeval Start;
 
    static unsigned long long BwReadLimit;
    static unsigned long long BwTickReadData;
@@ -85,8 +84,6 @@ class CircleBuf
    bool WriteSpace() const {return InP - OutP > 0;};
 
    void Reset();
-   // Dump everything
-   void Stats();
 
    CircleBuf(HttpMethod const * const Owner, unsigned long long Size);
    ~CircleBuf();
