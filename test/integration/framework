@@ -1382,7 +1382,7 @@ cert = ${TMPWORKINGDIRECTORY}/rootdir/etc/webserver.pem
 output = /dev/null
 
 [https]
-accept = 0
+accept = 127.0.0.1:0
 connect = $APTHTTPPORT
 " > "${TMPWORKINGDIRECTORY}/stunnel.conf"
 	$stunnel4 "${TMPWORKINGDIRECTORY}/stunnel.conf"
