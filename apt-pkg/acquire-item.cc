@@ -39,6 +39,7 @@
 #include <random>
 #include <sstream>
 #include <string>
+#include <unordered_set>
 #include <vector>
 #include <errno.h>
 #include <stddef.h>
@@ -1511,7 +1512,7 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
    // at this point the real Items are loaded in the fetcher
    ExpectedAdditionalItems = 0;
 
-   std::set<std::string> targetsSeen;
+   std::unordered_set<std::string> targetsSeen, componentsSeen;
    bool const hasReleaseFile = TransactionManager->MetaIndexParser != NULL;
    bool hasHashes = true;
    auto IndexTargets = TransactionManager->MetaIndexParser->GetIndexTargets();
@@ -1535,6 +1536,18 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	 range_start = range_end;
       } while (range_start != IndexTargets.end());
    }
+   /* Collect all components for which files exist to prevent apt from warning users
+      about "hidden" components for which not all files exist like main/debian-installer
+      and Translation files */
+   if (hasReleaseFile == true)
+      for (auto const &Target : IndexTargets)
+	 if (TransactionManager->MetaIndexParser->Exists(Target.MetaKey))
+	 {
+	    auto component = Target.Option(IndexTarget::COMPONENT);
+	    if (component.empty() == false)
+	       componentsSeen.emplace(std::move(component));
+	 }
+
    for (auto&& Target: IndexTargets)
    {
       // if we have seen a target which is created-by a target this one here is declared a
@@ -1566,7 +1579,9 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	 if (TransactionManager->MetaIndexParser->Exists(Target.MetaKey) == false)
 	 {
 	    auto const component = Target.Option(IndexTarget::COMPONENT);
-	    if (component.empty() == false && TransactionManager->MetaIndexParser->HasSupportForComponent(component) == false)
+	    if (component.empty() == false &&
+		componentsSeen.find(component) == std::end(componentsSeen) &&
+		TransactionManager->MetaIndexParser->HasSupportForComponent(component) == false)
 	    {
 	       new CleanupItem(Owner, TransactionManager, Target);
 	       _error->Warning(_("Skipping acquire of configured file '%s' as repository '%s' doesn't have the component '%s' (component misspelt in sources.list?)"),

@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'stable' 'foo' 'all' '1'
+insertpackage 'stable' 'bar' 'all' '1' '' '' '' 'main/debian-installer/others'
+insertpackage 'stable-backports' 'foo' 'all' '1+sb'
+insertpackage 'stable-backports' 'bar' 'all' '1+sb' '' '' '' 'main/debian-installer/others'
+
+find aptarchive/dists -path '*/debian-installer/i18n/Translation-en*' -delete
+
+setupaptarchive --no-update
+sed -i -e '/^Codename: / a\
+Components: main contrib' $(find ./aptarchive -name 'Release')
+signreleasefiles
+
+testsuccess aptget update
+
+sed -i -e 's# main\w*$# main main/debian-installer#' rootdir/etc/apt/sources.list.d/*
+
+testsuccess aptget update
