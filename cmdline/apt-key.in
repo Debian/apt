@@ -621,7 +621,7 @@ cleanup_gpg_home() {
 	cat >&2 "$GPGHOMEDIR/aptwarnings.log"
     fi
     if command_available 'gpgconf'; then
-	GNUPGHOME="${GPGHOMEDIR}" gpgconf --kill gpg-agent >/dev/null 2>&1 || true
+	GNUPGHOME="${GPGHOMEDIR}" gpgconf --kill all >/dev/null 2>&1 || true
     fi
     rm -rf "$GPGHOMEDIR"
 }
