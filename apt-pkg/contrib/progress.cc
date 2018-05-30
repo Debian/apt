@@ -14,6 +14,7 @@
 #include <apt-pkg/progress.h>
 
 #include <cmath>
+#include <chrono>
 #include <cstring>
 #include <iostream>
 #include <string>
@@ -115,12 +116,18 @@ bool OpProgress::CheckChange(float Interval)
       return false;
    
    // Check time delta
-   struct timeval Now;
-   gettimeofday(&Now,0);
-   decltype(Interval) const Diff = Now.tv_sec - LastTime.tv_sec + (Now.tv_usec - LastTime.tv_usec)/1000000.0;
-   if (Diff < Interval)
+   auto const Now = std::chrono::steady_clock::now().time_since_epoch();
+   auto const Now_sec = std::chrono::duration_cast<std::chrono::seconds>(Now);
+   auto const Now_usec = std::chrono::duration_cast<std::chrono::microseconds>(Now - Now_sec);
+   struct timeval NowTime = { Now_sec.count(), Now_usec.count() };
+
+   std::chrono::duration<decltype(Interval)> Delta =
+      std::chrono::seconds(NowTime.tv_sec - LastTime.tv_sec) +
+      std::chrono::microseconds(NowTime.tv_sec - LastTime.tv_usec);
+
+   if (Delta.count() < Interval)
       return false;
-   LastTime = Now;   
+   LastTime = NowTime;
    return true;
 }
 									/*}}}*/
