@@ -29,6 +29,8 @@ execute_process(COMMAND grep "^#define APT_PKG_RELEASE"
 message(STATUS "Building libapt-pkg ${MAJOR} (release ${MINOR})")
 set(APT_PKG_MAJOR ${MAJOR} PARENT_SCOPE) # exporting for methods/CMakeLists.txt
 
+configure_file(apt-pkg.pc.in ${CMAKE_CURRENT_BINARY_DIR}/apt-pkg.pc @ONLY)
+
 # Definition of the C++ files used to build the library - note that this
 # is expanded at CMake time, so you have to rerun cmake if you add or remove
 # a file (you can just run cmake . in the build directory)
@@ -67,6 +69,7 @@ add_version_script(apt-pkg)
 # Install the library and the header files
 install(TARGETS apt-pkg LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/apt-pkg)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/apt-pkg.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 flatify(${PROJECT_BINARY_DIR}/include/apt-pkg/ "${headers}")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
