@@ -78,7 +78,7 @@ debSystem::~debSystem()
 bool debSystem::Lock()
 {
    // Disable file locking
-   if (_config->FindB("Debug::NoLocking",false) == true || d->LockCount > 1)
+   if (_config->FindB("Debug::NoLocking",false) == true || d->LockCount > 0)
    {
       d->LockCount++;
       return true;
