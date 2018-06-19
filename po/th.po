@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-06-19 17:12+0200\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -464,8 +464,6 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "ไม่รองรับการล้างข้อมูลที่ %s"
 
-#. only show the ETA if it makes sense
-#. two days
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
@@ -1550,7 +1548,7 @@ msgstr "บรรทัด %u ในแฟ้มรายชื่อแหล�
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "ไม่รู้จักชนิด '%s' ที่วรรคที่ %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s"
 
-#: apt-pkg/sourcelist.cc
+#: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
 msgstr ""
@@ -2247,11 +2245,6 @@ msgstr "คุณต้องระบุแพตเทิร์นสำหร
 msgid "Full Text Search"
 msgstr "ค้นทั่วทั้งเนื้อความ"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "ข้อมูลแฟ้ม Package %s ไม่ตรงกับความเป็นจริง"
-
 #: apt-private/private-show.cc
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -2411,16 +2404,16 @@ msgid "%s has no build depends.\n"
 msgstr "%s ไม่ต้องการสิ่งใดสำหรับ build\n"
 
 #: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "ต้องระบุแพกเกจอย่างน้อยหนึ่งแพกเกจที่จะตรวจสอบสิ่งที่ต้องการสำหรับการ build"
-
-#: apt-private/private-source.cc
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 "ไม่มีข้อมูลสถาปัตยกรรมสำหรับ %s ดูวิธีตั้งค่าที่หัวข้อ APT::Architectures ของ apt.conf(5)"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "ต้องระบุแพกเกจอย่างน้อยหนึ่งแพกเกจที่จะตรวจสอบสิ่งที่ต้องการสำหรับการ build"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3751,6 +3744,9 @@ msgstr "การเชื่อมต่อถูกปิดก่อนเว
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "แฟ้มว่างเปล่าไม่สามารถเป็นแฟ้มจัดเก็บที่ใช้การได้"
+
+#~ msgid "Package file %s is out of sync."
+#~ msgstr "ข้อมูลแฟ้ม Package %s ไม่ตรงกับความเป็นจริง"
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."

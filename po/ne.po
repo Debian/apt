@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-06-19 17:12+0200\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -456,8 +456,6 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "अनुक्रमणिका फाइल प्रकार '%s' समर्थित छैन"
 
-#. only show the ETA if it makes sense
-#. two days
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
@@ -1533,7 +1531,7 @@ msgstr "वैरुप्य लाइन %u स्रोत सूचिमा
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "स्रोत सूची %s भित्र %u लाइनमा टाइप '%s' ज्ञात छैन"
 
-#: apt-pkg/sourcelist.cc
+#: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
 msgstr ""
@@ -2242,11 +2240,6 @@ msgstr "तपाईँले एउटा वास्तविक बान्
 msgid "Full Text Search"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "प्याकेज फाइल %s sync भन्दा बाहिर छ ।"
-
 #: apt-private/private-show.cc
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -2402,15 +2395,15 @@ msgid "%s has no build depends.\n"
 msgstr "%s कुनै निर्माणमा आधारित हुदैन ।\n"
 
 #: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "को लागि builddeps जाँच्न कम्तिमा एउटा प्याकेज निर्दष्ट गर्नुपर्छ"
-
-#: apt-private/private-source.cc
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "को लागि builddeps जाँच्न कम्तिमा एउटा प्याकेज निर्दष्ट गर्नुपर्छ"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3754,6 +3747,9 @@ msgstr "जडान असमायिक बन्द भयो"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Package file %s is out of sync."
+#~ msgstr "प्याकेज फाइल %s sync भन्दा बाहिर छ ।"
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."

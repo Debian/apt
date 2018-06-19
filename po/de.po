@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-06-19 17:12+0200\n"
 "PO-Revision-Date: 2018-01-11 21:11+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -508,8 +508,6 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "Leeren von %s wird nicht unterstützt."
 
-#. only show the ETA if it makes sense
-#. two days
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
@@ -1665,7 +1663,7 @@ msgstr "Missgestalteter Absatz %u in Quellliste %s (Typ)"
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Typ »%s« ist in Absatz %u der Quellliste %s ist unbekannt."
 
-#: apt-pkg/sourcelist.cc
+#: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
 msgstr "Nicht unterstützte Datei %s auf Befehlszeile angegeben"
@@ -2416,11 +2414,6 @@ msgstr "Sie müssen mindestens ein Suchmuster angeben"
 msgid "Full Text Search"
 msgstr "Volltextsuche"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "Paketdatei %s ist nicht synchronisiert."
-
 #: apt-private/private-show.cc
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -2592,12 +2585,6 @@ msgid "%s has no build depends.\n"
 msgstr "%s hat keine Bauabhängigkeiten.\n"
 
 #: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Es muss mindestens ein Paket angegeben werden, dessen Bauabhängigkeiten "
-"überprüft werden sollen."
-
-#: apt-private/private-source.cc
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
@@ -2605,6 +2592,12 @@ msgid ""
 msgstr ""
 "Keine Architekturinformation für %s verfügbar. Weiteres zur Einrichtung "
 "finden Sie unter apt.conf(5) APT::Architectures."
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Es muss mindestens ein Paket angegeben werden, dessen Bauabhängigkeiten "
+"überprüft werden sollen."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -4035,6 +4028,9 @@ msgstr "Verbindung vorzeitig beendet"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Leere Dateien können kein gültiges Archiv sein."
+
+#~ msgid "Package file %s is out of sync."
+#~ msgstr "Paketdatei %s ist nicht synchronisiert."
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.18\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-06-19 17:12+0200\n"
 "PO-Revision-Date: 2010-10-02 23:35+0100\n"
 "Last-Translator: Iñigo Varela <ivarela@softastur.org>\n"
 "Language-Team: Asturian (ast)\n"
@@ -455,8 +455,6 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "La triba de ficheru d'indiz '%s' nun ta sofitada"
 
-#. only show the ETA if it makes sense
-#. two days
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
@@ -1569,7 +1567,7 @@ msgstr "Llinia %u mal formada na llista d'oríxenes %s (triba)"
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Triba '%s' desconocida na llinia %u de la llista d'oríxenes %s"
 
-#: apt-pkg/sourcelist.cc
+#: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
 msgstr ""
@@ -2286,11 +2284,6 @@ msgstr "Has de dar polo menos un patrón de gueta"
 msgid "Full Text Search"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "El ficheru de paquetes %s nun ta sincronizáu."
-
 #: apt-private/private-show.cc
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -2453,17 +2446,17 @@ msgid "%s has no build depends.\n"
 msgstr "%s nun tien dependencies de construcción.\n"
 
 #: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Hai que conseñar polo menos un paquete pa verificar les dependencies de "
-"construcción"
-
-#: apt-private/private-source.cc
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Hai que conseñar polo menos un paquete pa verificar les dependencies de "
+"construcción"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3810,6 +3803,9 @@ msgstr "Conexón encaboxada prematuramente"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Package file %s is out of sync."
+#~ msgstr "El ficheru de paquetes %s nun ta sincronizáu."
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."

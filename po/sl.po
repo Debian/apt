@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-06-19 17:12+0200\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -467,8 +467,6 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "Vrsta datoteke s kazalom '%s' ni podprta"
 
-#. only show the ETA if it makes sense
-#. two days
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
@@ -1575,7 +1573,7 @@ msgstr "Slabo oblikovana vrstica %u v seznamu virov %s (vrsta)"
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Vrsta '%s' v vrstici %u na seznamu virov %s ni znana"
 
-#: apt-pkg/sourcelist.cc
+#: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
 msgstr ""
@@ -2308,11 +2306,6 @@ msgstr "Podati morate vsaj en iskalni vzorec"
 msgid "Full Text Search"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "Datoteka paketa %s ni usklajena."
-
 #: apt-private/private-show.cc
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -2476,12 +2469,6 @@ msgid "%s has no build depends.\n"
 msgstr "%s nima odvisnosti za gradnjo.\n"
 
 #: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Potrebno je navesti vsaj en paket, za katerega želite preveriti odvisnosti "
-"za gradnjo"
-
-#: apt-private/private-source.cc
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
@@ -2489,6 +2476,12 @@ msgid ""
 msgstr ""
 "Za %s ni bilo mogoče najti podatkov o arhitekturi. Za nastavitev si oglejte "
 "apt.conf(5) APT::Architectures"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Potrebno je navesti vsaj en paket, za katerega želite preveriti odvisnosti "
+"za gradnjo"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3835,6 +3828,9 @@ msgstr "Povezava se je prezgodaj zaprla"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prazne datoteke ne morejo biti veljavni arhivi"
+
+#~ msgid "Package file %s is out of sync."
+#~ msgstr "Datoteka paketa %s ni usklajena."
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."
