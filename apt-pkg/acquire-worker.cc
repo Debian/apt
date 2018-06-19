@@ -321,28 +321,35 @@ bool pkgAcquire::Worker::RunMessages()
 	    Itm = nullptr;
 	    for (auto const &Owner: ItmOwners)
 	    {
+	       for (auto alt = AltUris.crbegin(); alt != AltUris.crend(); ++alt)
+		  Owner->PushAlternativeURI(std::string(*alt), {}, false);
+
 	       pkgAcquire::ItemDesc &desc = Owner->GetItemDesc();
-	       if (Owner->IsRedirectionLoop(NewURI))
+	       // for a simplified retry a method might redirect without URI change
+	       // see also IsRedirectionLoop implementation
+	       if (desc.URI != NewURI)
 	       {
-		  std::string msg = Message;
-		  msg.append("\nFailReason: RedirectionLoop");
-		  Owner->Failed(msg, Config);
+		  auto newuri = NewURI;
+		  if (Owner->IsGoodAlternativeURI(newuri) == false && Owner->PopAlternativeURI(newuri) == false)
+		     newuri.clear();
+		  if (newuri.empty() || Owner->IsRedirectionLoop(newuri))
+		  {
+		     std::string msg = Message;
+		     msg.append("\nFailReason: RedirectionLoop");
+		     Owner->Failed(msg, Config);
+		     if (Log != nullptr)
+			Log->Fail(Owner->GetItemDesc());
+		     continue;
+		  }
+
 		  if (Log != nullptr)
-		     Log->Fail(Owner->GetItemDesc());
-		  continue;
+		     Log->Done(desc);
+
+		  ChangeSiteIsMirrorChange(NewURI, desc, Owner);
+		  desc.URI = NewURI;
 	       }
-
-	       if (Log != nullptr)
-		  Log->Done(desc);
-
-	       ChangeSiteIsMirrorChange(NewURI, desc, Owner);
-	       desc.URI = NewURI;
 	       if (isDoomedItem(Owner) == false)
-	       {
-		  for (auto alt = AltUris.crbegin(); alt != AltUris.crend(); ++alt)
-		     Owner->PushAlternativeURI(std::string(*alt), {}, false);
 		  OwnerQ->Owner->Enqueue(desc);
-	       }
 	    }
             break;
          }
@@ -608,28 +615,33 @@ void pkgAcquire::Worker::HandleFailure(std::vector<pkgAcquire::Item *> const &It
 	 if (isDoomedItem(Owner) == false)
 	    OwnerQ->Owner->Enqueue(SavedDesc);
       }
-      else if (Owner->PopAlternativeURI(NewURI))
-      {
-	 Owner->FailMessage(Message);
-	 auto &desc = Owner->GetItemDesc();
-	 if (Log != nullptr)
-	    Log->Fail(desc);
-	 ChangeSiteIsMirrorChange(NewURI, desc, Owner);
-	 desc.URI = NewURI;
-	 if (isDoomedItem(Owner) == false)
-	    OwnerQ->Owner->Enqueue(desc);
-      }
       else
       {
-	 if (errAuthErr && Owner->GetExpectedHashes().empty() == false)
-	    Owner->Status = pkgAcquire::Item::StatAuthError;
-	 else if (errTransient)
-	    Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
-	 auto SavedDesc = Owner->GetItemDesc();
-	 if (isDoomedItem(Owner) == false)
-	    Owner->Failed(Message, Config);
-	 if (Log != nullptr)
-	    Log->Fail(SavedDesc);
+	 if (errAuthErr)
+	    Owner->RemoveAlternativeSite(URI::SiteOnly(Owner->GetItemDesc().URI));
+	 if (Owner->PopAlternativeURI(NewURI))
+	 {
+	    Owner->FailMessage(Message);
+	    auto &desc = Owner->GetItemDesc();
+	    if (Log != nullptr)
+	       Log->Fail(desc);
+	    ChangeSiteIsMirrorChange(NewURI, desc, Owner);
+	    desc.URI = NewURI;
+	    if (isDoomedItem(Owner) == false)
+	       OwnerQ->Owner->Enqueue(desc);
+	 }
+	 else
+	 {
+	    if (errAuthErr && Owner->GetExpectedHashes().empty() == false)
+	       Owner->Status = pkgAcquire::Item::StatAuthError;
+	    else if (errTransient)
+	       Owner->Status = pkgAcquire::Item::StatTransientNetworkError;
+	    auto SavedDesc = Owner->GetItemDesc();
+	    if (isDoomedItem(Owner) == false)
+	       Owner->Failed(Message, Config);
+	    if (Log != nullptr)
+	       Log->Fail(SavedDesc);
+	 }
       }
    }
 }

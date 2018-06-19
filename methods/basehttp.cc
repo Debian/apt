@@ -250,7 +250,7 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 									/*}}}*/
 // ServerState::ServerState - Constructor				/*{{{*/
 ServerState::ServerState(URI Srv, BaseHttpMethod *Owner) :
-   ServerName(Srv), TimeOut(120), Owner(Owner)
+   ServerName(Srv), TimeOut(30), Owner(Owner)
 {
    Reset();
 }
@@ -873,7 +873,7 @@ bool BaseHttpMethod::Configuration(std::string Message)			/*{{{*/
       return false;
 
    _config->CndSet("Acquire::tor::Proxy",
-	 "socks5h://apt-transport-tor@localhost:9050");
+	 "socks5h://apt-transport-tor@127.0.0.1:9050");
    return true;
 }
 									/*}}}*/

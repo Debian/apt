@@ -968,13 +968,6 @@ const char * pkgCache::VerIterator::MultiArchType() const
    included here. */
 bool pkgCache::RlsFileIterator::IsOk()
 {
-   struct stat Buf;
-   if (stat(FileName(),&Buf) != 0)
-      return false;
-
-   if (Buf.st_size != (signed)S->Size || Buf.st_mtime != S->mtime)
-      return false;
-
    return true;
 }
 									/*}}}*/
@@ -1002,13 +995,6 @@ string pkgCache::RlsFileIterator::RelStr()
    included here. */
 bool pkgCache::PkgFileIterator::IsOk()
 {
-   struct stat Buf;
-   if (stat(FileName(),&Buf) != 0)
-      return false;
-
-   if (Buf.st_size != (signed)S->Size || Buf.st_mtime != S->mtime)
-      return false;
-
    return true;
 }
 									/*}}}*/

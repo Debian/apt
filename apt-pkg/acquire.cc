@@ -23,6 +23,7 @@
 #include <apt-pkg/strutl.h>
 
 #include <algorithm>
+#include <chrono>
 #include <iomanip>
 #include <iostream>
 #include <memory>
@@ -1256,6 +1257,13 @@ pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Percent(-1), Update(true), MoreP
 /* This computes some internal state variables for the derived classes to
    use. It generates the current downloaded bytes and total bytes to download
    as well as the current CPS estimate. */
+static struct timeval GetTimevalFromSteadyClock()
+{
+   auto const Time = std::chrono::steady_clock::now().time_since_epoch();
+   auto const Time_sec = std::chrono::duration_cast<std::chrono::seconds>(Time);
+   auto const Time_usec = std::chrono::duration_cast<std::chrono::microseconds>(Time - Time_sec);
+   return { Time_sec.count(), Time_usec.count() };
+}
 bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 {
    TotalBytes = 0;
@@ -1314,21 +1322,22 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       CurrentBytes = TotalBytes;
 
    // Compute the CPS
-   struct timeval NewTime;
-   gettimeofday(&NewTime,0);
+   struct timeval NewTime = GetTimevalFromSteadyClock();
+
    if ((NewTime.tv_sec - Time.tv_sec == 6 && NewTime.tv_usec > Time.tv_usec) ||
        NewTime.tv_sec - Time.tv_sec > 6)
-   {    
-      double Delta = NewTime.tv_sec - Time.tv_sec + 
-	             (NewTime.tv_usec - Time.tv_usec)/1000000.0;
-      
+   {
+      std::chrono::duration<double> Delta =
+	 std::chrono::seconds(NewTime.tv_sec - Time.tv_sec) +
+	 std::chrono::microseconds(NewTime.tv_sec - Time.tv_usec);
+
       // Compute the CPS value
-      if (Delta < 0.01)
+      if (Delta < std::chrono::milliseconds(10))
 	 CurrentCPS = 0;
       else
-	 CurrentCPS = ((CurrentBytes - ResumeSize) - LastBytes)/Delta;
+	 CurrentCPS = ((CurrentBytes - ResumeSize) - LastBytes)/ Delta.count();
       LastBytes = CurrentBytes - ResumeSize;
-      ElapsedTime = std::llround(Delta);
+      ElapsedTime = llround(Delta.count());
       Time = NewTime;
    }
 
@@ -1360,21 +1369,21 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       return true;
 
    int fd = _config->FindI("APT::Status-Fd",-1);
-   if(fd > 0) 
+   if(fd > 0)
    {
       ostringstream status;
 
-      char msg[200];
-      long i = CurrentItems < TotalItems ? CurrentItems + 1 : CurrentItems;
       unsigned long long ETA = 0;
-      if(CurrentCPS > 0)
+      if(CurrentCPS > 0 && TotalBytes > CurrentBytes)
          ETA = (TotalBytes - CurrentBytes) / CurrentCPS;
 
+      std::string msg;
+      long i = CurrentItems < TotalItems ? CurrentItems + 1 : CurrentItems;
       // only show the ETA if it makes sense
-      if (ETA > 0 && ETA < 172800 /* two days */ )
-	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li (%s remaining)"), i, TotalItems, TimeToStr(ETA).c_str());
+      if (ETA > 0 && ETA < std::chrono::seconds(std::chrono::hours(24 * 2)).count())
+	 strprintf(msg, _("Retrieving file %li of %li (%s remaining)"), i, TotalItems, TimeToStr(ETA).c_str());
       else
-	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li"), i, TotalItems);
+	 strprintf(msg, _("Retrieving file %li of %li"), i, TotalItems);
 
       // build the status str
       std::ostringstream str;
@@ -1393,8 +1402,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 /* We just reset the counters */
 void pkgAcquireStatus::Start()
 {
-   gettimeofday(&Time,0);
-   gettimeofday(&StartTime,0);
+   Time = StartTime = GetTimevalFromSteadyClock();
    LastBytes = 0;
    CurrentCPS = 0;
    CurrentBytes = 0;
@@ -1411,19 +1419,19 @@ void pkgAcquireStatus::Start()
 void pkgAcquireStatus::Stop()
 {
    // Compute the CPS and elapsed time
-   struct timeval NewTime;
-   gettimeofday(&NewTime,0);
-   
-   double Delta = NewTime.tv_sec - StartTime.tv_sec + 
-                  (NewTime.tv_usec - StartTime.tv_usec)/1000000.0;
-   
+   struct timeval NewTime = GetTimevalFromSteadyClock();
+
+   std::chrono::duration<double> Delta =
+      std::chrono::seconds(NewTime.tv_sec - StartTime.tv_sec) +
+      std::chrono::microseconds(NewTime.tv_sec - StartTime.tv_usec);
+
    // Compute the CPS value
-   if (Delta < 0.01)
+   if (Delta < std::chrono::milliseconds(10))
       CurrentCPS = 0;
    else
-      CurrentCPS = FetchedBytes/Delta;
+      CurrentCPS = FetchedBytes / Delta.count();
    LastBytes = CurrentBytes;
-   ElapsedTime = std::llround(Delta);
+   ElapsedTime = llround(Delta.count());
 }
 									/*}}}*/
 // AcquireStatus::Fetched - Called when a byte set has been fetched	/*{{{*/

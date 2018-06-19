@@ -138,6 +138,8 @@ SHA256-Download:
 	mkdir -p "${BYHASH}"
 	find "${NORMAL}/" -maxdepth 1 -name "Index*" -exec mv '{}' "$BYHASH" \;
 	ln -s "${BYHASH}/Index.gz" "${BYHASH}/$(sha256sum "${BYHASH}/Index.gz" | cut -f1 -d' ')"
+	echo 'foobar' > "${BYHASH}/$(sha256sum "$PATCHFILE" | cut -f1 -d' ')"
+	echo 'foobar' > "${BYHASH}/$(sha256sum "${PATCHFILE}.gz" | cut -f1 -d' ')"
 	rm -rf rootdir/var/lib/apt/lists
 	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
 	wasmergeused "$@" -o Acquire::By-Hash=force
@@ -398,7 +400,8 @@ testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=true
 
 
 partialleftovers() { generatepartialleftovers "redirectme_Packages.${LOWCOSTEXT}" "redirectme_Packages-patched.${LOWCOSTEXT}"; }
-webserverconfig 'aptwebserver::redirect::replace::/redirectme/' "http://0.0.0.0:${APTHTTPPORT}/"
+# redirect the InRelease file only – the other files are auto-redirected by apt
+webserverconfig 'aptwebserver::redirect::replace::/redirectme/I' "http://0.0.0.0:${APTHTTPPORT}/I"
 rewritesourceslist "http://localhost:${APTHTTPPORT}/redirectme"
 aptautotest_apt_update() {
 	aptautotest_aptget_update "$@"

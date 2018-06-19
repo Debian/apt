@@ -316,7 +316,14 @@ static bool Search(CommandLine &CmdL)
       if (matchedAll == true)
       {
 	 if (ShowFull == true)
-	    DisplayRecordV1(CacheFile, J->V, std::cout);
+	 {
+	    pkgCache::VerFileIterator Vf;
+	    auto &Parser = LookupParser(Recs, J->V, Vf);
+	    char const *Start, *Stop;
+	    Parser.GetRec(Start, Stop);
+	    size_t const Length = Stop - Start;
+	    DisplayRecordV1(CacheFile, Recs, J->V, Vf, Start, Length, std::cout);
+	 }
 	 else
 	    printf("%s - %s\n",P.Name().c_str(),P.ShortDesc().c_str());
       }

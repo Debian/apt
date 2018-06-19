@@ -62,7 +62,7 @@ struct AFMap AFMap[] = {{AF_INET,1},{0, 0}};
 struct AFMap AFMap[] = {{AF_INET,1},{AF_INET6,2},{0, 0}};
 #endif
 
-unsigned long TimeOut = 120;
+unsigned long TimeOut = 30;
 URI Proxy;
 string FtpMethod::FailFile;
 int FtpMethod::FailFd = -1;

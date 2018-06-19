@@ -307,6 +307,7 @@ static ResultState WaitAndCheckErrors(std::list<Connection> &Conns, std::unique_
 	       for (auto &Conn : Conns)
 	       {
 		  Conn.Owner->SetFailReason("Timeout");
+		  bad_addr.insert(bad_addr.begin(), Conn.Name);
 		  _error->Error(_("Could not connect to %s:%s (%s), "
 				  "connection timed out"),
 				Conn.Host.c_str(), Conn.Service, Conn.Name);
@@ -546,7 +547,12 @@ static bool TalkToSocksProxy(int const ServerFd, std::string const &Proxy,
 			     unsigned int const Size, unsigned int const Timeout)
 {
    if (WaitFd(ServerFd, ReadWrite, Timeout) == false)
-      return _error->Error("Waiting for the SOCKS proxy %s to %s timed out", URI::SiteOnly(Proxy).c_str(), type);
+   {
+      if (ReadWrite)
+	 return _error->Error("Timed out while waiting to write '%s' to proxy %s", type, URI::SiteOnly(Proxy).c_str());
+      else
+	 return _error->Error("Timed out while waiting to read '%s' from proxy %s", type, URI::SiteOnly(Proxy).c_str());
+   }
    if (ReadWrite == false)
    {
       if (FileFd::Read(ServerFd, ToFrom, Size) == false)
