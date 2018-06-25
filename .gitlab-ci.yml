@@ -8,7 +8,7 @@ test as root:
     - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
     - rm -f /etc/dpkg/dpkg.cfg.d/excludes
     - apt-get update
-    - apt-get install -qq build-essential expect gcovr sudo
+    - apt-get install -qq build-essential expect gcovr sudo ninja-build
     - chmod -R o+rwX $PWD
     - ./prepare-release travis-ci
     - sudo -u travis mkdir build
@@ -24,7 +24,7 @@ test as user:
     - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
     - rm -f /etc/dpkg/dpkg.cfg.d/excludes
     - apt-get update
-    - apt-get install -qq build-essential expect gcovr sudo
+    - apt-get install -qq build-essential expect gcovr sudo ninja-build
     - chmod -R o+rwX $PWD
     - ./prepare-release travis-ci
     - sudo -u travis mkdir build
