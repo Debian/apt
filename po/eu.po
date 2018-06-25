@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-06-25 17:12+0200\n"
 "PO-Revision-Date: 2009-05-17 00:41+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
@@ -456,8 +456,6 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "'%s' motako indize fitxategirik ez da onartzen"
 
-#. only show the ETA if it makes sense
-#. two days
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
@@ -1540,7 +1538,7 @@ msgstr "Gaizki osatutako %u lerroa %s Iturburu zerrendan (type)"
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "'%s' mota ez da ezagutzen %u lerroan %s Iturburu zerrendan"
 
-#: apt-pkg/sourcelist.cc
+#: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
 msgstr ""
@@ -2257,11 +2255,6 @@ msgstr "Zehazki eredu bat eman behar duzu."
 msgid "Full Text Search"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "%s pakete fitxategia ez dago sinkronizatuta."
-
 #: apt-private/private-show.cc
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -2420,16 +2413,16 @@ msgid "%s has no build depends.\n"
 msgstr "%s: ez du eraikitze mendekotasunik.\n"
 
 #: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Gutxienez pakete bat zehaztu behar duzu eraikitze mendekotasunak egiaztatzeko"
-
-#: apt-private/private-source.cc
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Gutxienez pakete bat zehaztu behar duzu eraikitze mendekotasunak egiaztatzeko"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3779,6 +3772,9 @@ msgstr "Konexioa behar baino lehenago itxi da"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Package file %s is out of sync."
+#~ msgstr "%s pakete fitxategia ez dago sinkronizatuta."
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."

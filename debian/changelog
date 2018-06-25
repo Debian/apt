@@ -1,3 +1,64 @@
+apt (1.7.0~alpha1) experimental; urgency=medium
+
+  [ Julian Andres Klode ]
+  * CMake: Fix builds without zstd
+  * apt.conf.autoremove: Catch some new Ubuntu module packages
+  * Fix build with new gtest (Closes: #897149)
+  * tests: Do not expect requested-by if sudo was invoked by root
+  * Run tests on GitLab CI
+  * Handle a missed case of timed out ip addresses (LP: #1766542)
+  * Lower default timeout from 120s to 30s
+  * apt-key: Pass all instead of gpg-agent to gpgconf --kill (LP: #1773992)
+  * Fix lock counting in debSystem
+  * CI: Export DEBIAN_FRONTEND=noninteractive in all CI environments
+  * Ensure that we are online in apt-daily-upgrade.service (LP: #1723761)
+  * gitlab-ci: chmod 755 /root
+
+  [ David Kalnischkies ]
+  * move special READMEs into doc/ and format as md
+  * Add boilerplate plural form to po/apt-all.pot
+  * don't try SRV requests based on IP addresses
+  * use 127.0.0.1 instead of localhost as default Tor proxy
+  * Extend apt build-dep pkg/release to switch dep as needed
+  * Support release selector for volatile files as well
+  * Start pkg records for deb files with dpkg output
+  * Deprectate buggy/incorrect Rls/PkgFile::IsOk methods
+  * Support --with-source in show & search commands
+  * Support local files as arguments in show command (Closes: 883206)
+  * Drop alternative URIs we got a hash-based fail from
+  * Handle by-hash URI construction more centrally
+  * Don't force the same mirror for by-hash URIs
+  * Reword error for timed out read/write on SOCKS proxy (Closes: #898886)
+  * Don't show acquire warning for "hidden" components (Closes: #879591)
+  * Use a steady clock source for progress reporting
+  * Use steady clock source for bandwidth limitation
+
+  [ Guillem Jover ]
+  * Remove obsolete RCS keywords
+  * Normalize authors through a mailmap file
+  * po: Fill Project-Id-Version with correct project id and version
+  * po: Fix translated string not matching format string arguments
+  * po: Fix Language field to match actual locale
+  * po: Remove spurious text in Plural-Forms field
+  * po: Add missing Plural-Forms fields
+
+  [ Filipe Brandenburger ]
+  * Update .gitignore
+  * Increase debug verbosity in `apt-get autoremove`
+  * Extend test-apt-get-autoremove to check debug output
+
+  [ annadane ]
+  * Add verb 'be' to NEWS entry for 1.5~beta1 (Closes: 892792)
+
+  [ Алексей Шилин ]
+  * Russian program translation update (Closes: 898797)
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #900589)
+  * Dutch manpage translation update (Closes: #900602)
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 25 Jun 2018 17:12:30 +0200
+
 apt (1.7.0~alpha0) experimental; urgency=medium
 
   [ David Kalnischkies ]

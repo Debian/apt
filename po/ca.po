@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-06-25 17:12+0200\n"
 "PO-Revision-Date: 2016-12-05 21:09+0100\n"
 "Last-Translator: Oriol Debian <oriol.debian@gmail.com>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -500,8 +500,6 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "No està suportada la neteja de «%s» "
 
-#. only show the ETA if it makes sense
-#. two days
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
@@ -1643,7 +1641,7 @@ msgstr "La línia %u està mal formada en la llista de fonts %s (tipus)"
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Es desconeix el tipus «%s» en la línia %u de la llista de fonts %s"
 
-#: apt-pkg/sourcelist.cc
+#: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
 msgstr "S'ha subministrat el fitxer no admès %s en la línia d'ordres"
@@ -2378,11 +2376,6 @@ msgstr "Heu de donar com a mínim un patró de cerca"
 msgid "Full Text Search"
 msgstr "Buscar en tot el text"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "El fitxer %s del paquet està desincronitzat."
-
 #: apt-private/private-show.cc
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -2549,12 +2542,6 @@ msgid "%s has no build depends.\n"
 msgstr "%s no té dependències de construcció.\n"
 
 #: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"S'ha d'especificar un paquet per a verificar les dependències de construcció "
-"per a"
-
-#: apt-private/private-source.cc
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
@@ -2562,6 +2549,12 @@ msgid ""
 msgstr ""
 "No hi ha informació d'arquitectura disponible per a %s. Vegeu apt.conf(5) "
 "APT::Architectures per a configurar-ho"
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"S'ha d'especificar un paquet per a verificar les dependències de construcció "
+"per a"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3951,6 +3944,9 @@ msgstr "La connexió s'ha tancat prematurament"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Els fitxers buits no poden ser arxius vàlids"
+
+#~ msgid "Package file %s is out of sync."
+#~ msgstr "El fitxer %s del paquet està desincronitzat."
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."

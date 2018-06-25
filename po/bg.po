@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-06-25 17:12+0200\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -468,8 +468,6 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "Не се поддържа индексен файл от типа „%s“"
 
-#. only show the ETA if it makes sense
-#. two days
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
@@ -1605,7 +1603,7 @@ msgstr "Лошо форматиран ред %u в списъка с източ�
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Типът „%s“ на ред %u в списъка с източници %s е неизвестен."
 
-#: apt-pkg/sourcelist.cc
+#: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
 msgstr ""
@@ -2327,11 +2325,6 @@ msgstr "Трябва да въведете поне един шаблон за �
 msgid "Full Text Search"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "Пакетният файл %s не е синхронизиран."
-
 #: apt-private/private-show.cc
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -2497,11 +2490,6 @@ msgid "%s has no build depends.\n"
 msgstr "%s няма зависимости за компилиране.\n"
 
 #: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr ""
-"Трябва да укажете поне един пакет за проверка на зависимости за компилиране"
-
-#: apt-private/private-source.cc
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
@@ -2509,6 +2497,11 @@ msgid ""
 msgstr ""
 "Липсва информация за архитектурата %s. Прегледайте информацията за APT::"
 "Architectures в apt.conf(5)."
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr ""
+"Трябва да укажете поне един пакет за проверка на зависимости за компилиране"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3863,6 +3856,9 @@ msgstr "Връзката прекъсна преждевременно"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Празни файлове не могат да бъдат валидни архиви"
+
+#~ msgid "Package file %s is out of sync."
+#~ msgstr "Пакетният файл %s не е синхронизиран."
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."

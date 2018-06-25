@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-06-25 17:12+0200\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -456,8 +456,6 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "ཟུར་ཐོ་ཡིག་སྣོད་ཀྱི་དབྱེ་བ་ '%s' འདི་རྒྱབ་སྐྱོར་མ་འབད་བས།"
 
-#. only show the ETA if it makes sense
-#. two days
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
@@ -1539,7 +1537,7 @@ msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐི
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "དབྱེ་བ་'%s'་འདི་གྲལ་ཐིག་%u་གུར་ལུ་ཡོདཔ་འབྱུང་ཁུངས་ཐོ་ཡིག་%s་གི་ནང་ན་མ་ཤེས་པས།"
 
-#: apt-pkg/sourcelist.cc
+#: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
 msgstr ""
@@ -2256,11 +2254,6 @@ msgstr "ཁྱོད་ཀྱིས་ཏག་ཏག་སྦེ་དཔེ་
 msgid "Full Text Search"
 msgstr ""
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "ཐུམ་སྒྲིལ་ཡིག་སྣོད་ %sའདི་མཉམ་འབྱུང་གི་ཕྱི་ཁར་ཨིན་པས།"
-
 #: apt-private/private-show.cc
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -2417,15 +2410,15 @@ msgid "%s has no build depends.\n"
 msgstr "%s ལུ་བཟོ་བརྩིགས་རྟེན་འབྲེལ་མིན་འདུག\n"
 
 #: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "builddeps ཞིབ་དཔྱད་འབད་ནིའི་དོན་ལུ་ཉུང་མཐའ་རང་ཐུམ་སྒྲིལ་གཅིག་གསལ་བཀོད་འབད་དགོ"
-
-#: apt-private/private-source.cc
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "builddeps ཞིབ་དཔྱད་འབད་ནིའི་དོན་ལུ་ཉུང་མཐའ་རང་ཐུམ་སྒྲིལ་གཅིག་གསལ་བཀོད་འབད་དགོ"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3783,6 +3776,9 @@ msgstr "དུས་སུ་མ་འབབ་པ་རང་མཐུད་ལ
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Package file %s is out of sync."
+#~ msgstr "ཐུམ་སྒྲིལ་ཡིག་སྣོད་ %sའདི་མཉམ་འབྱུང་གི་ཕྱི་ཁར་ཨིན་པས།"
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."

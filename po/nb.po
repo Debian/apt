@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-06-25 17:12+0200\n"
 "PO-Revision-Date: 2016-06-11 22:38+0200\n"
 "Last-Translator: Petter Reinholdtsen <pere@hungry.com>\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
@@ -463,8 +463,6 @@ msgstr ""
 msgid "Clean of %s is not supported"
 msgstr "Oversiktsfil av typen «%s» støttes ikke"
 
-#. only show the ETA if it makes sense
-#. two days
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
@@ -1565,7 +1563,7 @@ msgstr "Feil på %u i kildelista %s (type)"
 msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "Typen «%s» er ukjent i linje %u i kildelista %s"
 
-#: apt-pkg/sourcelist.cc
+#: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
 msgstr ""
@@ -2294,11 +2292,6 @@ msgstr "Du må oppgi minst ett søkemønster"
 msgid "Full Text Search"
 msgstr "Fulltekstsøk"
 
-#: apt-private/private-show.cc cmdline/apt-cache.cc
-#, c-format
-msgid "Package file %s is out of sync."
-msgstr "Pakkefila %s er ikke oppdatert."
-
 #: apt-private/private-show.cc
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -2463,10 +2456,6 @@ msgid "%s has no build depends.\n"
 msgstr "%s har ingen avhengigheter.\n"
 
 #: apt-private/private-source.cc
-msgid "Must specify at least one package to check builddeps for"
-msgstr "Du må angi minst en pakke du vil sjekke «builddeps» for"
-
-#: apt-private/private-source.cc
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
@@ -2474,6 +2463,10 @@ msgid ""
 msgstr ""
 "Ingen arkitekturinformasjon tilgjengelig for %s.  Se apt.conf(5) APT::"
 "Architectures for oppsett."
+
+#: apt-private/private-source.cc
+msgid "Must specify at least one package to check builddeps for"
+msgstr "Du må angi minst en pakke du vil sjekke «builddeps» for"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3827,6 +3820,9 @@ msgstr "Forbindelsen ble uventet stengt"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomme filer kan ikke være gyldige arkiver"
+
+#~ msgid "Package file %s is out of sync."
+#~ msgstr "Pakkefila %s er ikke oppdatert."
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."
