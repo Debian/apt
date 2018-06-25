@@ -4,8 +4,11 @@ sudo: required
 services:
   - docker
 env:
- - USER=travis CMAKE_FLAGS=
- - USER=root CMAKE_FLAGS=-DWITH_DOC=OFF
+ global:
+  - DEBIAN_FRONTEND=noninteractive
+ matrix:
+  - USER=travis CMAKE_FLAGS=
+  - USER=root CMAKE_FLAGS=-DWITH_DOC=OFF
 install:
  - sed -i -e "s#1000#$(id -u)#g" Dockerfile
  - docker build --tag=apt-ci .
