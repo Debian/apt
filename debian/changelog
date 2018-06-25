@@ -1,3 +1,17 @@
+apt (1.6.2) unstable; urgency=medium
+
+  * Fix build with new gtest (Closes: #897149)
+  * Handle a missed case of timed out ip addresses (LP: #1766542)
+  * Lower default network timeouts from 120s to 30s
+  * apt-key: Pass all instead of gpg-agent to gpgconf --kill (LP: #1773992)
+  * Fix lock counting in debSystem (LP: #1778547)
+  * CI fixes:
+   - tests: Do not expect requested-by if sudo was invoked by root
+   - Run tests on GitLab CI
+   - CI: Export DEBIAN_FRONTEND=noninteractive in all CI environments
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 25 Jun 2018 17:15:10 +0200
+
 apt (1.6.1) unstable; urgency=medium
 
   * CMake: Fix builds without zstd
