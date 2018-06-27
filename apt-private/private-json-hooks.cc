@@ -387,21 +387,26 @@ bool RunJsonHook(std::string const &option, std::string const &method, const cha
 
       if (size < 0)
       {
-	 _error->Error("Could not read response to hello message from hook %s: %s", Opts->Value.c_str(), strerror(errno));
+	 if (errno != ECONNRESET)
+	    _error->Error("Could not read response to hello message from hook %s: %s", Opts->Value.c_str(), strerror(errno));
+	 goto out;
       }
       else if (strstr(line, "error") != nullptr)
       {
 	 _error->Error("Hook %s reported an error during hello: %s", Opts->Value.c_str(), line);
+	 goto out;
       }
 
       size = getline(&line, &linesize, F);
       if (size < 0)
       {
-	 _error->Error("Could not read message separator line after handshake from %s: %s", Opts->Value.c_str(), strerror(errno));
+	 _error->Error("Could not read message separator line after handshake from %s: %s", Opts->Value.c_str(), feof(F) ? "end of file" : strerror(errno));
+	 goto out;
       }
       else if (size == 0 || line[0] != '\n')
       {
 	 _error->Error("Expected empty line after handshake from %s, received %s", Opts->Value.c_str(), line);
+	 goto out;
       }
 
       fwrite(TheData.data(), TheData.size(), 1, F);
@@ -409,6 +414,7 @@ bool RunJsonHook(std::string const &option, std::string const &method, const cha
 
       fwrite(ByeData.data(), ByeData.size(), 1, F);
       fwrite("\n\n", 2, 1, F);
+   out:
       fclose(F);
       // Clean up the sub process
       if (ExecWait(Process, Opts->Value.c_str()) == false)
