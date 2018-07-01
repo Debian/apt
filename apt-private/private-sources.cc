@@ -97,7 +97,7 @@ bool EditSources(CommandLine &CmdL)
    if (res == true && file_changed == true)
    {
       ioprintf(
-         std::cout, _("Your '%s' file changed, please run 'apt-get update'."),
+         std::cout, _("Your '%s' file changed, please run 'apt-get update'.\n"),
          sourceslist.c_str());
    }
    return res;
