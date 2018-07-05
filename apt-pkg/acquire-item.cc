@@ -33,6 +33,7 @@
 
 #include <algorithm>
 #include <ctime>
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <numeric>
@@ -1526,8 +1527,8 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	 can be as we shouldn't be telling the mirrors (and everyone else watching)
 	 which is native/foreign arch, specific order of preference of translations, … */
       auto range_start = IndexTargets.begin();
-      std::random_device rd;
-      std::default_random_engine g(rd());
+      auto seed = (std::chrono::high_resolution_clock::now().time_since_epoch() /  std::chrono::nanoseconds(1)) ^ getpid();
+      std::default_random_engine g(seed);
       do {
 	 auto const type = range_start->Option(IndexTarget::CREATED_BY);
 	 auto const range_end = std::find_if_not(range_start, IndexTargets.end(),
