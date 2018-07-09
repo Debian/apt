@@ -956,6 +956,7 @@ int main(int const argc, const char * argv[])
    _config->CndSet("aptwebserver::response-header::Server", "APT webserver");
    _config->CndSet("aptwebserver::response-header::Accept-Ranges", "bytes");
    _config->CndSet("aptwebserver::directoryindex", "index.html");
+   APT::Configuration::getCompressors();
 
    size_t id = 0;
    while (true)
