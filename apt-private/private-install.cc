@@ -346,7 +346,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       }
 
       auto const progress = APT::Progress::PackageManagerProgressFactory();
-      _system->UnLock();
+      _system->UnLockInner();
       pkgPackageManager::OrderResult const Res = PM->DoInstall(progress);
       delete progress;
 
@@ -355,7 +355,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       if (Res == pkgPackageManager::Completed)
 	 break;
 
-      _system->Lock();
+      _system->LockInner();
 
       // Reload the fetcher object and loop again for media swapping
       Fetcher.Shutdown();
