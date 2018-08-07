@@ -44,10 +44,11 @@ debSystem debSys;
 
 class APT_HIDDEN debSystemPrivate {
 public:
-   debSystemPrivate() : LockFD(-1), LockCount(0), StatusFile(0)
+   debSystemPrivate() : FrontendLockFD(-1), LockFD(-1), LockCount(0), StatusFile(0)
    {
    }
    // For locking support
+   int FrontendLockFD;
    int LockFD;
    unsigned LockCount;
    
@@ -85,21 +86,29 @@ bool debSystem::Lock()
 
    // Create the lockfile
    string AdminDir = flNotFile(_config->FindFile("Dir::State::status"));
-   d->LockFD = GetLock(AdminDir + "lock");
-   if (d->LockFD == -1)
+   string FrontendLockFile = AdminDir + "lock-frontend";
+   d->FrontendLockFD = GetLock(FrontendLockFile);
+   if (d->FrontendLockFD == -1)
    {
       if (errno == EACCES || errno == EAGAIN)
-	 return _error->Error(_("Unable to lock the administration directory (%s), "
-	                        "is another process using it?"),AdminDir.c_str());
+	 return _error->Error(_("Unable to acquire the dpkg frontend lock (%s), "
+	                        "is another process using it?"),FrontendLockFile.c_str());
       else
-	 return _error->Error(_("Unable to lock the administration directory (%s), "
-	                        "are you root?"),AdminDir.c_str());
+	 return _error->Error(_("Unable to acquire the dpkg frontend lock (%s), "
+	                        "are you root?"),FrontendLockFile.c_str());
+   }
+   if (LockInner() == false)
+   {
+      close(d->FrontendLockFD);
+      return false;
    }
    
    // See if we need to abort with a dirty journal
    if (CheckUpdates() == true)
    {
       close(d->LockFD);
+      close(d->FrontendLockFD);
+      d->FrontendLockFD = -1;
       d->LockFD = -1;
       const char *cmd;
       if (getenv("SUDO_USER") != NULL)
@@ -116,6 +125,21 @@ bool debSystem::Lock()
       
    return true;
 }
+
+bool debSystem::LockInner() {
+   string AdminDir = flNotFile(_config->FindFile("Dir::State::status"));
+   d->LockFD = GetLock(AdminDir + "lock");
+   if (d->LockFD == -1)
+   {
+      if (errno == EACCES || errno == EAGAIN)
+	 return _error->Error(_("Unable to lock the administration directory (%s), "
+	                        "is another process using it?"),AdminDir.c_str());
+      else
+	 return _error->Error(_("Unable to lock the administration directory (%s), "
+	                        "are you root?"),AdminDir.c_str());
+   }
+   return true;
+}
 									/*}}}*/
 // System::UnLock - Drop a lock						/*{{{*/
 // ---------------------------------------------------------------------
@@ -129,11 +153,26 @@ bool debSystem::UnLock(bool NoErrors)
       return _error->Error(_("Not locked"));
    if (--d->LockCount == 0)
    {
+      close(d->FrontendLockFD);
       close(d->LockFD);
       d->LockCount = 0;
    }
    
    return true;
+}
+bool debSystem::UnLockInner(bool NoErrors) {
+   (void) NoErrors;
+   close(d->LockFD);
+   return true;
+}
+									/*}}}*/
+// System::IsLocked - Check if system is locked						/*{{{*/
+// ---------------------------------------------------------------------
+/* This checks if the frontend lock is hold. The inner lock might be
+ * released. */
+bool debSystem::IsLocked()
+{
+   return d->LockCount > 0;
 }
 									/*}}}*/
 // System::CheckUpdates - Check if the updates dir is dirty		/*{{{*/

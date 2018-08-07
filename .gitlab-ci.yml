@@ -1,4 +1,6 @@
 image: debian:testing
+variables:
+  DEBIAN_FRONTEND: noninteractive
 
 test as root:
   stage: test
@@ -23,6 +25,7 @@ test as user:
     - rm -f /etc/dpkg/dpkg.cfg.d/excludes
     - apt-get update
     - apt-get install -qq build-essential expect gcovr sudo
+    - chmod 755 /root
     - chmod -R o+rwX $PWD
     - ./prepare-release travis-ci
     - sudo -u travis mkdir build
