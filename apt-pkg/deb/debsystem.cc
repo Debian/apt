@@ -375,6 +375,11 @@ pid_t debSystem::ExecDpkg(std::vector<std::string> const &sArgs, int * const inp
       if (DiscardOutput == true)
 	 dup2(nullfd, STDERR_FILENO);
       debSystem::DpkgChrootDirectory();
+
+      if (_system != nullptr && _system->IsLocked() == true)
+      {
+	 setenv("DPKG_FRONTEND_LOCKED", "true", 1);
+      }
       execvp(Args[0], (char**) &Args[0]);
       _error->WarningE("dpkg", "Can't execute dpkg!");
       _exit(100);
