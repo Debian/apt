@@ -165,6 +165,9 @@
      the <option>-t</option> option or per package with the
      <literal>pkg/release</literal> syntax, if possible.</para>
 
+    <para>The arguments are interpreted as binary package names. See the
+    <option>--only-source</option> option.</para>
+
      <para>Source packages are tracked separately
      from binary packages via <literal>deb-src</literal> lines 
      in the &sources-list; file. This means that you will need to add such a line
@@ -193,7 +196,8 @@
      <listitem><para><literal>build-dep</literal> causes apt-get to install/remove packages in an 
      attempt to satisfy the build dependencies for a source package. By default the dependencies are
      satisfied to build the package natively. If desired a host-architecture can be specified
-     with the <option>--host-architecture</option> option instead.</para></listitem>
+     with the <option>--host-architecture</option> option instead.</para><para>The arguments are
+     interpreted as binary package names. See the <option>--only-source</option> option.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>check</option></term>
