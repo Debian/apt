@@ -177,9 +177,9 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgCache::VerIterator const
 
    // Read the record
    pkgTagSection Tags;
-   pkgTagFile TagF(&PkgF);
+   pkgTagFile TagF(&PkgF, Vf->Size);
 
-   if (TagF.Jump(Tags, V.FileList()->Offset) == false)
+   if (TagF.Jump(Tags, Vf->Offset) == false)
       return _error->Error("Internal Error, Unable to parse a package record");
 
    // make size nice
