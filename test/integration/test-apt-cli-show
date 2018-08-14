@@ -7,11 +7,19 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'i386' 'amd64'
 
+generatelotsofnames() {
+	for i in $(seq 0 10000); do
+		printf ', this-is-a-long-pkg-name-%s (= 0.a.long.version)' "$i"
+	done
+}
+
 DESCR='Some description
  That has multiple lines'
 insertpackage 'unstable' 'foo' 'all' '1.0' '' '' "$DESCR"
 insertpackage 'unstable' 'bar' 'i386,amd64' '1' '' '' "$DESCR"
 insertpackage 'unstable' 'big' 'i386,amd64' '1' 'Installed-Size: 4129421' '' "$DESCR"
+insertpackage 'unstable' 'large' 'all' '1' "Provides: pkga$(generatelotsofnames)" '' "$DESCR"
+insertpackage 'unstable' 'large2' 'all' '1' "Provides: foobar, pkga$(generatelotsofnames)" '' "$DESCR"
 insertinstalledpackage 'foo' 'all' '1.0'
 
 setupaptarchive
@@ -65,6 +73,31 @@ APT-Sources: file:$APTARCHIVE unstable/main amd64 Packages
 Description: Some description
  That has multiple lines
 " apt show big:amd64
+
+testsuccessequal "Package: large
+Version: 1
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Provides: pkga$(generatelotsofnames)
+Download-Size: unknown
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+" apt show large
+testsuccessequal "Package: large2
+Version: 1
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Provides: foobar, pkga$(generatelotsofnames)
+Download-Size: unknown
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+" apt show large2
 
 # this is the default, but disabled by the testcases
 testsuccess apt show foo -o Apt::Cmd::Disable-Script-Warning=0
