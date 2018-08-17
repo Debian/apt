@@ -108,17 +108,20 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    Args.push_back(aptkey.c_str());
    Args.push_back("--quiet");
    Args.push_back("--readonly");
-   if (key.empty() == false)
+   auto const keysFileFpr = VectorizeString(key, ',');
+   for (auto const &k: keysFileFpr)
    {
-      if (key[0] == '/')
+      if (unlikely(k.empty()))
+	 continue;
+      if (k[0] == '/')
       {
 	 Args.push_back("--keyring");
-	 Args.push_back(key.c_str());
+	 Args.push_back(k.c_str());
       }
       else
       {
 	 Args.push_back("--keyid");
-	 Args.push_back(key.c_str());
+	 Args.push_back(k.c_str());
       }
    }
    Args.push_back("verify");

@@ -92,7 +92,21 @@ Config-Item: APT::Hashes::SHA1::Weak=true
 600 URI Acquire
 URI: file:///dev/null
 Filename: /dev/zero
-Signed-By: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
+Signed-By: /dev/null,34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
+' | runapt "${METHODSDIR}/gpgv"
+}
+testrun
+
+gpgvmethod() {
+	echo '601 Configuration
+Config-Item: Debug::Acquire::gpgv=1
+Config-Item: Dir::Bin::apt-key=./faked-apt-key
+Config-Item: APT::Hashes::SHA1::Weak=true
+
+600 URI Acquire
+URI: file:///dev/null
+Filename: /dev/zero
+Signed-By: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE,/dev/null
 ' | runapt "${METHODSDIR}/gpgv"
 }
 testrun
