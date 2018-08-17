@@ -342,6 +342,44 @@ Signed-By: ${MARVIN} ${MARVIN}, \\
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt
 	installaptnew
+
+	cp -a keys/sebastiansubkey.pub rootdir/etc/apt/trusted.gpg.d/sebastiansubkey.gpg
+	local SEBASTIAN="$(aptkey --keyring keys/sebastiansubkey.pub finger --with-colons | grep -m 1 '^fpr' | cut -d':' -f 10)"
+	msgmsg 'Warm archive with subkey signing' 'Sebastian Subkey'
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	signreleasefiles 'Sebastian Subkey'
+	sed -i "/^Valid-Until: / a\
+Signed-By: ${SEBASTIAN}" rootdir/var/lib/apt/lists/*Release
+	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+	successfulaptgetupdate
+	testsuccessequal "$(cat "${PKGFILE}-new")
+" aptcache show apt
+	installaptnew
+
+	msgmsg 'Warm archive with wrong exact subkey signing' 'Sebastian Subkey'
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	sed -i "/^Valid-Until: / a\
+Signed-By: ${SEBASTIAN}!" rootdir/var/lib/apt/lists/*Release
+	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+	updatewithwarnings 'W: .* public key is not available: GOODSIG'
+	testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+	installaptold
+
+	local SUBKEY="$(aptkey --keyring keys/sebastiansubkey.pub finger --with-colons | grep -m 2 '^fpr' | tail -n -1 | cut -d':' -f 10)"
+	msgmsg 'Warm archive with correct exact subkey signing' 'Sebastian Subkey'
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	sed -i "/^Valid-Until: / a\
+Signed-By: ${SUBKEY}!" rootdir/var/lib/apt/lists/*Release
+	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+	successfulaptgetupdate
+	testsuccessequal "$(cat "${PKGFILE}-new")
+" aptcache show apt
+	installaptnew
+	rm -f rootdir/etc/apt/trusted.gpg.d/sebastiansubkey.gpg
 }
 
 runtest2() {

@@ -28,6 +28,57 @@
 
 #include <apti18n.h>
 
+static std::string transformFingergrpints(std::string finger) /*{{{*/
+{
+   std::transform(finger.begin(), finger.end(), finger.begin(), ::toupper);
+   if (finger.length() == 40)
+   {
+      if (finger.find_first_not_of("0123456789ABCDEF") == std::string::npos)
+	 return finger;
+   }
+   else if (finger.length() == 41)
+   {
+      auto bang = finger.find_first_not_of("0123456789ABCDEF");
+      if (bang == 40 && finger[bang] == '!')
+	 return finger;
+   }
+   return "";
+}
+									/*}}}*/
+static std::string transformFingergrpintsWithFilenames(std::string const &finger) /*{{{*/
+{
+   // no check for existence as we could be chrooting later or such things
+   if (finger.empty() == false && finger[0] == '/')
+      return finger;
+   return transformFingergrpints(finger);
+}
+									/*}}}*/
+static std::string NormalizeSignedBy(std::string SignedBy, bool const SupportFilenames) /*{{{*/
+{
+   // we could go all fancy and allow short/long/string matches as gpgv/apt-key does,
+   // but fingerprints are harder to fake than the others and this option is set once,
+   // not interactively all the time so easy to type is not really a concern.
+   std::transform(SignedBy.begin(), SignedBy.end(), SignedBy.begin(), [](char const c) {
+      return (isspace(c) == 0) ? c : ',';
+   });
+   auto fingers = VectorizeString(SignedBy, ',');
+   auto const isAnEmptyString = [](std::string const &s) { return s.empty(); };
+   fingers.erase(std::remove_if(fingers.begin(), fingers.end(), isAnEmptyString), fingers.end());
+   if (unlikely(fingers.empty()))
+      return "";
+   if (SupportFilenames)
+      std::transform(fingers.begin(), fingers.end(), fingers.begin(), transformFingergrpintsWithFilenames);
+   else
+      std::transform(fingers.begin(), fingers.end(), fingers.begin(), transformFingergrpints);
+   if (std::any_of(fingers.begin(), fingers.end(), isAnEmptyString))
+      return "";
+   std::stringstream os;
+   std::copy(fingers.begin(), fingers.end() - 1, std::ostream_iterator<std::string>(os, ","));
+   os << *fingers.rbegin();
+   return os.str();
+}
+									/*}}}*/
+
 class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
 {
    public:
@@ -566,26 +617,9 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    auto Sign = Section.FindS("Signed-By");
    if (Sign.empty() == false)
    {
-      std::transform(Sign.begin(), Sign.end(), Sign.begin(), [&](char const c) {
-	 return (isspace(c) == 0) ? c : ',';
-      });
-      auto fingers = VectorizeString(Sign, ',');
-      std::transform(fingers.begin(), fingers.end(), fingers.begin(), [&](std::string finger) {
-	 std::transform(finger.begin(), finger.end(), finger.begin(), ::toupper);
-	 if (finger.length() != 40 || finger.find_first_not_of("0123456789ABCDEF") != std::string::npos)
-	 {
-	    if (ErrorText != NULL)
-	       strprintf(*ErrorText, _("Invalid '%s' entry in Release file %s"), "Signed-By", Filename.c_str());
-	    return std::string();
-	 }
-	 return finger;
-      });
-      if (fingers.empty() == false && std::find(fingers.begin(), fingers.end(), "") == fingers.end())
-      {
-	 std::stringstream os;
-	 std::copy(fingers.begin(), fingers.end(), std::ostream_iterator<std::string>(os, ","));
-	 SignedBy = os.str();
-      }
+      SignedBy = NormalizeSignedBy(Sign, false);
+      if (SignedBy.empty() && ErrorText != NULL)
+	 strprintf(*ErrorText, _("Invalid '%s' entry in Release file %s"), "Signed-By", Filename.c_str());
    }
 
    if (AuthPossible)
@@ -737,38 +771,15 @@ bool debReleaseIndex::SetSignedBy(std::string const &pSignedBy)
 {
    if (SignedBy.empty() == true && pSignedBy.empty() == false)
    {
-      if (pSignedBy[0] == '/') // no check for existence as we could be chrooting later or such things
-	 SignedBy = pSignedBy; // absolute path to a keyring file
-      else
-      {
-	 // we could go all fancy and allow short/long/string matches as gpgv/apt-key does,
-	 // but fingerprints are harder to fake than the others and this option is set once,
-	 // not interactively all the time so easy to type is not really a concern.
-	 auto fingers = VectorizeString(pSignedBy, ',');
-	 std::transform(fingers.begin(), fingers.end(), fingers.begin(), [&](std::string finger) {
-	    std::transform(finger.begin(), finger.end(), finger.begin(), ::toupper);
-	    if (finger.length() != 40 || finger.find_first_not_of("0123456789ABCDEF") != std::string::npos)
-	    {
-	       _error->Error(_("Invalid value set for option %s regarding source %s %s (%s)"), "Signed-By", URI.c_str(), Dist.c_str(), "not a fingerprint");
-	       return std::string();
-	    }
-	    return finger;
-	 });
-	 std::stringstream os;
-	 std::copy(fingers.begin(), fingers.end(), std::ostream_iterator<std::string>(os, ","));
-	 SignedBy = os.str();
-      }
-      // Normalize the string: Remove trailing commas
-      while (SignedBy[SignedBy.size() - 1] == ',')
-	 SignedBy.resize(SignedBy.size() - 1);
+      SignedBy = NormalizeSignedBy(pSignedBy, true);
+      if (SignedBy.empty())
+	 _error->Error(_("Invalid value set for option %s regarding source %s %s (%s)"), "Signed-By", URI.c_str(), Dist.c_str(), "not a fingerprint");
    }
-   else {
-      // Only compare normalized strings
-      auto pSignedByView = APT::StringView(pSignedBy);
-      while (pSignedByView[pSignedByView.size() - 1] == ',')
-	 pSignedByView = pSignedByView.substr(0, pSignedByView.size() - 1);
-      if (pSignedByView != SignedBy)
-	 return _error->Error(_("Conflicting values set for option %s regarding source %s %s: %s != %s"), "Signed-By", URI.c_str(), Dist.c_str(), SignedBy.c_str(), pSignedByView.to_string().c_str());
+   else
+   {
+      auto const normalSignedBy = NormalizeSignedBy(pSignedBy, true);
+      if (normalSignedBy != SignedBy)
+	 return _error->Error(_("Conflicting values set for option %s regarding source %s %s: %s != %s"), "Signed-By", URI.c_str(), Dist.c_str(), SignedBy.c_str(), normalSignedBy.c_str());
    }
    return true;
 }

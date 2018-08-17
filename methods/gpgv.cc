@@ -20,6 +20,7 @@
 #include <array>
 #include <iostream>
 #include <iterator>
+#include <map>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -175,6 +176,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    // Loop over the output of apt-key (which really is gnupg), and check the signatures.
    std::vector<std::string> ValidSigners;
    std::vector<std::string> ErrSigners;
+   std::map<std::string, std::vector<std::string>> SubKeyMapping;
    size_t buffersize = 0;
    char *buffer = NULL;
    bool gotNODATA = false;
@@ -242,6 +244,9 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
          }
 
          ValidSigners.push_back(sig);
+
+	 if (tokens.size() > 9 && sig != tokens[9])
+	    SubKeyMapping[tokens[9]].emplace_back(sig);
       }
       else if (strncmp(buffer, APTKEYWARNING, sizeof(APTKEYWARNING)-1) == 0)
          Warning("%s", buffer + sizeof(APTKEYWARNING));
@@ -265,15 +270,38 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	 if (Debug == true)
 	    std::clog << "Key " << good << " is good sig, is it also a valid and allowed one? ";
 	 bool found = false;
-	 for (auto const &l : limitedTo)
+	 for (auto l : limitedTo)
 	 {
-	    if (IsTheSameKey(l, good) == false)
-	       continue;
-	    // GOODSIG might be "just" a longid, so we check VALIDSIG which is always a fingerprint
-	    if (std::find(ValidSigners.begin(), ValidSigners.end(), l) == ValidSigners.end())
-	       continue;
-	    found = true;
-	    break;
+	    bool exactKey = false;
+	    if (APT::String::Endswith(l, "!"))
+	    {
+	       exactKey = true;
+	       l.erase(l.length() - 1);
+	    }
+	    if (IsTheSameKey(l, good))
+	    {
+	       // GOODSIG might be "just" a longid, so we check VALIDSIG which is always a fingerprint
+	       if (std::find(ValidSigners.cbegin(), ValidSigners.cend(), l) == ValidSigners.cend())
+		  continue;
+	       found = true;
+	       break;
+	    }
+	    else if (exactKey == false)
+	    {
+	       auto const master = SubKeyMapping.find(l);
+	       if (master == SubKeyMapping.end())
+		  continue;
+	       for (auto const &sub : master->second)
+		  if (IsTheSameKey(sub, good))
+		  {
+		     if (std::find(ValidSigners.cbegin(), ValidSigners.cend(), sub) == ValidSigners.cend())
+			continue;
+		     found = true;
+		     break;
+		  }
+	       if (found)
+		  break;
+	    }
 	 }
 	 if (Debug)
 	    std::clog << (found ? "yes" : "no") << "\n";
