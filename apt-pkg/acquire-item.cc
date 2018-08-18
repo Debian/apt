@@ -277,6 +277,27 @@ static HashStringList GetExpectedHashesFromFor(metaIndex * const Parser, std::st
 }
 									/*}}}*/
 
+class pkgAcquire::Item::Private /*{{{*/
+{
+public:
+   struct AlternateURI
+   {
+      std::string URI;
+      std::unordered_map<std::string, std::string> changefields;
+      AlternateURI(std::string &&u, decltype(changefields) &&cf) : URI(u), changefields(cf) {}
+   };
+   std::list<AlternateURI> AlternativeURIs;
+   std::vector<std::string> BadAlternativeSites;
+   std::vector<std::string> PastRedirections;
+   std::unordered_map<std::string, std::string> CustomFields;
+   unsigned int Retries;
+
+   Private() : Retries(_config->FindI("Acquire::Retries", 0))
+   {
+   }
+};
+									/*}}}*/
+
 // all ::HashesRequired and ::GetExpectedHashes implementations		/*{{{*/
 /* ::GetExpectedHashes is abstract and has to be implemented by all subclasses.
    It is best to implement it as broadly as possible, while ::HashesRequired defaults
@@ -748,25 +769,6 @@ class APT_HIDDEN CleanupItem : public pkgAcqTransactionItem		/*{{{*/
 									/*}}}*/
 
 // Acquire::Item::Item - Constructor					/*{{{*/
-class pkgAcquire::Item::Private
-{
-public:
-   struct AlternateURI
-   {
-      std::string URI;
-      std::unordered_map<std::string, std::string> changefields;
-      AlternateURI(std::string &&u, decltype(changefields) &&cf) : URI(u), changefields(cf) {}
-   };
-   std::list<AlternateURI> AlternativeURIs;
-   std::vector<std::string> BadAlternativeSites;
-   std::vector<std::string> PastRedirections;
-   std::unordered_map<std::string, std::string> CustomFields;
-   unsigned int Retries;
-
-   Private() : Retries(_config->FindI("Acquire::Retries", 0))
-   {
-   }
-};
 APT_IGNORE_DEPRECATED_PUSH
 pkgAcquire::Item::Item(pkgAcquire * const owner) :
    FileSize(0), PartialSize(0), Mode(0), ID(0), Complete(false), Local(false),
@@ -1045,7 +1047,7 @@ void pkgAcquire::Item::Done(string const &/*Message*/, HashStringList const &Has
    }
    Status = StatDone;
    ErrorText.clear();
-   Owner->Dequeue(this);
+   Dequeue();
 }
 									/*}}}*/
 // Acquire::Item::Rename - Rename a file				/*{{{*/
@@ -1070,6 +1072,7 @@ bool pkgAcquire::Item::Rename(string const &From,string const &To)
 									/*}}}*/
 void pkgAcquire::Item::Dequeue()					/*{{{*/
 {
+   d->AlternativeURIs.clear();
    Owner->Dequeue(this);
 }
 									/*}}}*/
@@ -1272,7 +1275,7 @@ void pkgAcqMetaBase::AbortTransaction()
    {
       (*I)->ExpectedAdditionalItems = 0;
       if ((*I)->Status != pkgAcquire::Item::StatFetching)
-	 Owner->Dequeue(*I);
+	 (*I)->Dequeue();
       (*I)->TransactionState(TransactionAbort);
    }
    Transaction.clear();
