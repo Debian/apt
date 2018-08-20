@@ -1,3 +1,28 @@
+apt (1.7.0~alpha3) experimental; urgency=medium
+
+  [ David Kalnischkies ]
+  * SECURITY UPDATE: Fallback in the mirror method allowed a later server to
+    supply any InRelease file without it having to be verified. (LP: #1787752)
+    - apt-pkg/acquire-item.cc:: clear alternative URIs for mirror:// between steps
+    - CVE-2018-0501
+    - https://mirror.fail/
+
+  [ Jean-Ralph Aviles ]
+  * Add trailing newline to output of edit-sources.
+
+  [ Julian Andres Klode ]
+  * Add support for dpkg frontend lock (Closes: #869546)
+  * Set DPKG_FRONTEND_LOCKED as needed when doing selection changes
+  * Update symbols files
+
+  [ Boyuan Yang ]
+  * Simplified Chinese program translation update (Closes: #903695)
+
+  [ David Kalnischkies ]
+  * Report (soon) worthless keys if gpg uses fpr for GOODSIG
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 20 Aug 2018 17:44:19 +0200
+
 apt (1.7.0~alpha2) experimental; urgency=medium
 
   * Handle JSON hooks that just close the file/exit and fix some other errors
