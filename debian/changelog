@@ -1,3 +1,14 @@
+apt (1.6.4) unstable; urgency=critical
+
+  [ David Kalnischkies ]
+  * SECURITY UPDATE: Fallback in the mirror method allowed a later server to
+    supply any InRelease file without it having to be verified. (LP: #1787752)
+    - apt-pkg/acquire-item.cc:: clear alternative URIs for mirror:// between steps
+    - CVE-2018-0501
+    - https://mirror.fail/
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 20 Aug 2018 17:38:50 +0200
+
 apt (1.6.3) unstable; urgency=medium
 
   * Handle JSON hooks that just close the file/exit and fix some other errors
