@@ -214,9 +214,12 @@ testequal "$(readfile Contents-all)" aptget indextargets --format '$(FILENAME)' 
 testsuccess cmp "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all" 'aptarchive/dists/unstable/main/Contents-all'
 
 rm ./rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_Contents-all
-rm -f rootdir/etc/apt/apt.conf.d/content-target.conf
 msgmsg "No Contents file"
-
+cat > rootdir/etc/apt/apt.conf.d/content-target-notdefault.conf <<EOF
+Acquire::IndexTargets::deb::Contents::DefaultEnabled "no";
+Acquire::IndexTargets::deb::Contents2::DefaultEnabled "no";
+Acquire::IndexTargets::deb::Contents3::DefaultEnabled "no";
+EOF
 testequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_unstable_main_source_Sources 0 
 'http://localhost:${APTHTTPPORT}/dists/unstable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_unstable_main_binary-amd64_Packages 0 
@@ -227,3 +230,17 @@ testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} unstable InRelease
 Reading package lists..." aptget update
 
 testempty find rootdir/var/lib/apt/lists -name '*Contents*'
+
+msgmsg "Order of Contents files"
+sameupdateoutput() {
+	testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/unstable/InRelease' localhost:${APTHTTPPORT}_dists_unstable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/unstable/main/Contents-i386.xz' localhost:${APTHTTPPORT}_dists_unstable_main_Contents-i386 0 " aptget update --print-uris
+}
+sed -i -e 's#deb\(-src\)\? http#deb\1 [target=Contents3,Contents2,Contents] http#' rootdir/etc/apt/sources.list.d/*
+sameupdateoutput
+sed -i -e 's#deb\(-src\)\? \[target=[^]]\+\] http#deb\1 [target=Contents2,Contents3,Contents] http#' rootdir/etc/apt/sources.list.d/*
+sameupdateoutput
+sed -i -e 's#deb\(-src\)\? \[target=[^]]\+\] http#deb\1 [target=Contents3,Contents,Contents2] http#' rootdir/etc/apt/sources.list.d/*
+sameupdateoutput
+sed -i -e 's#deb\(-src\)\? \[target=[^]]\+\] http#deb\1 [target=Contents,Contents3,Contents2] http#' rootdir/etc/apt/sources.list.d/*
+sameupdateoutput

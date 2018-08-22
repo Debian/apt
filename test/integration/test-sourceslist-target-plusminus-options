@@ -122,3 +122,7 @@ testtargets 'explicit + activate' 'Packages' 'Contents' 'Contents2'
 
 echo 'deb [Contents=yes,target+=Contents] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
 testtargets 'duplications are okay' 'Packages' 'Translations' 'Contents' 'Contents2'
+
+# we can't check if it really reorders here
+echo 'deb [target+=Contents2,Contents] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testtargets 'reordered fallback order' 'Packages' 'Translations' 'Contents' 'Contents2'
