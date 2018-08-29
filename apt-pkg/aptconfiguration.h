@@ -34,7 +34,7 @@ namespace Configuration {							/*{{{*/
 	 *  in the Dir::Bin group.
 	 *
 	 *  \param Cached saves the result so we need to calculated it only once
-	 *                this parameter should ony be used for testing purposes.
+	 *                this parameter should only be used for testing purposes.
 	 *
 	 *  \return a vector of the compression types in the preferred usage order
 	 */
@@ -57,9 +57,9 @@ namespace Configuration {							/*{{{*/
 	 *
 	 *  \param All return all codes or only codes for languages we want to use
 	 *  \param Cached saves the result so we need to calculated it only once
-	 *                this parameter should ony be used for testing purposes.
+	 *                this parameter should only be used for testing purposes.
 	 *  \param Locale don't get the locale from the system but use this one instead
-	 *                this parameter should ony be used for testing purposes.
+	 *                this parameter should only be used for testing purposes.
 	 *
 	 *  \return a vector of (all) Language Codes in the preferred usage order
 	 */
@@ -77,7 +77,7 @@ namespace Configuration {							/*{{{*/
 	/** \brief Returns a vector of Architectures we support
 	 *
 	 *  \param Cached saves the result so we need to calculated it only once
-	 *                this parameter should ony be used for testing purposes.
+	 *                this parameter should only be used for testing purposes.
 	 *
 	 *  \return a vector of Architectures in preferred order
 	 */
@@ -108,7 +108,7 @@ namespace Configuration {							/*{{{*/
 	/** \brief Return a vector of Compressors supported for data.tar's
 	 *
 	 *  \param Cached saves the result so we need to calculated it only once
-	 *                this parameter should ony be used for testing purposes.
+	 *                this parameter should only be used for testing purposes.
 	 *
 	 *  \return a vector of Compressors
 	 */

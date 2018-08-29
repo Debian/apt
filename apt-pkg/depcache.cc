@@ -413,7 +413,7 @@ bool pkgDepCache::CheckDep(DepIterator const &Dep,int const Type,PkgIterator &Re
 									/*}}}*/
 // DepCache::AddSizes - Add the packages sizes to the counters		/*{{{*/
 // ---------------------------------------------------------------------
-/* Call with Inverse = true to perform the inverse opration */
+/* Call with Inverse = true to perform the inverse operation */
 void pkgDepCache::AddSizes(const PkgIterator &Pkg, bool const Inverse)
 {
    StateCache &P = PkgState[Pkg->ID];

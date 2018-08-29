@@ -479,7 +479,7 @@ APT_IGNORE_DEPRECATED_POP
 		return FromTask(Cache, pattern, helper);
 	}
 
-	/** \brief returns all packages in the cache whose name matchs a given pattern
+	/** \brief returns all packages in the cache whose name matches a given pattern
 
 	    A simple helper responsible for executing a regular expression on all
 	    package names in the cache. Optional it prints a notice about the

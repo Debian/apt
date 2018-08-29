@@ -133,7 +133,7 @@ class pkgTagSection
     * @param MaxLength is the size of valid data in the stream pointed to by Start
     * @param Restart if enabled internal state will be cleared, otherwise it is
     *  assumed that now more data is available in the stream and the parsing will
-    *  start were it encountered insufficent data the last time.
+    *  start were it encountered insufficient data the last time.
     *
     * @return \b true if section end was found, \b false otherwise.
     *  Beware that internal state will be inconsistent if \b false is returned!

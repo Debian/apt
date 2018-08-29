@@ -249,7 +249,7 @@ bool pkgInitConfig(Configuration &Cnf)
    return good;
 }
 									/*}}}*/
-// pkgInitSystem - Initialize the _system calss				/*{{{*/
+// pkgInitSystem - Initialize the _system class				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool pkgInitSystem(Configuration &Cnf,pkgSystem *&Sys)

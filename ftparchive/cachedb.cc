@@ -401,7 +401,7 @@ bool CacheDB::LoadContents(bool const &GenOnly)
    return true;
 }
 									/*}}}*/
-// CacheDB::GetHashes - Get the hashs					/*{{{*/
+// CacheDB::GetHashes - Get the hashes					/*{{{*/
 static std::string bytes2hex(uint8_t *bytes, size_t length) {
    char buf[3];
    std::string space;
