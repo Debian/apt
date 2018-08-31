@@ -40,6 +40,10 @@ string ServerMethod::FailFile;
 int ServerMethod::FailFd = -1;
 time_t ServerMethod::FailTime = 0;
 
+// Number of successful requests in a pipeline needed to continue
+// pipelining after a connection reset.
+constexpr int PIPELINE_MIN_SUCCESSFUL_ANSWERS_TO_CONTINUE = 3;
+
 // ServerState::RunHeaders - Get the headers before the data		/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 if things are OK, 1 if an IO error occurred and 2 if a header
@@ -230,8 +234,11 @@ bool ServerState::HeaderLine(string Line)
 	 /* Some servers send error pages (as they are dynamically generated)
 	    for simplicity via a connection close instead of e.g. chunked,
 	    so assuming an always closing server only if we get a file + close */
-	 if (Result >= 200 && Result < 300)
+	 if (Result >= 200 && Result < 300 && PipelineAnswersReceived < PIPELINE_MIN_SUCCESSFUL_ANSWERS_TO_CONTINUE)
+	 {
 	    PipelineAllowed = false;
+	    PipelineAnswersReceived = 0;
+	 }
       }
       else if (stringcasecmp(Val,"keep-alive") == 0)
 	 Persistent = true;
@@ -512,7 +519,10 @@ int ServerMethod::Loop()
 
       // Reset the pipeline
       if (Server->IsOpen() == false)
+      {
 	 QueueBack = Queue;
+	 Server->PipelineAnswersReceived = 0;
+      }
 
       // Connnect to the host
       if (Server->Open() == false)
@@ -631,6 +641,10 @@ int ServerMethod::Loop()
 		     }
 		     BeforeI = I;
 		  }
+	       }
+	       if (Server->Pipeline == true)
+	       {
+		  Server->PipelineAnswersReceived++;
 	       }
 	       Res.TakeHashes(*resultHashes);
 	       URIDone(Res);
@@ -759,8 +773,8 @@ unsigned long long ServerMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
 }
 									/*}}}*/
 ServerMethod::ServerMethod(char const * const Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
-   aptMethod(Binary, Ver, Flags), Server(nullptr), File(NULL), PipelineDepth(10),
-   AllowRedirect(false), Debug(false)
+   aptMethod(Binary, Ver, Flags), Server(nullptr), File(NULL),
+   AllowRedirect(false), Debug(false), PipelineDepth(10)
 {
 }
 									/*}}}*/

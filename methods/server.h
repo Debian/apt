@@ -53,6 +53,7 @@ struct ServerState
    bool Persistent;
    bool PipelineAllowed;
    std::string Location;
+   unsigned long PipelineAnswersReceived;
 
    // This is a Persistent attribute of the server itself.
    bool Pipeline;
@@ -87,7 +88,7 @@ struct ServerState
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    virtual void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; TotalFileSize = 0; JunkSize = 0;
 		 StartPos = 0; Encoding = Closes; time(&Date); HaveContent = false;
-		 State = Header; Persistent = false; Pipeline = false; MaximumSize = 0; PipelineAllowed = true;};
+		 State = Header; Persistent = false; Pipeline = false; MaximumSize = 0; PipelineAllowed = true; PipelineAnswersReceived = 0;};
    virtual bool WriteResponse(std::string const &Data) = 0;
 
    /** \brief Transfer the data from the socket */
@@ -115,7 +116,6 @@ class ServerMethod : public aptMethod
    std::string NextURI;
    FileFd *File;
 
-   unsigned long PipelineDepth;
    bool AllowRedirect;
 
    // Find the biggest item in the fetch queue for the checking of the maximum
@@ -124,6 +124,7 @@ class ServerMethod : public aptMethod
 
    public:
    bool Debug;
+   unsigned long PipelineDepth;
 
    /** \brief Result of the header parsing */
    enum DealWithHeadersResult {
