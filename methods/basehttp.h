@@ -67,6 +67,7 @@ struct ServerState
    bool Persistent;
    bool PipelineAllowed;
    bool RangesAllowed;
+   unsigned long PipelineAnswersReceived;
 
    bool Pipeline;
    URI ServerName;
@@ -122,7 +123,6 @@ class BaseHttpMethod : public aptAuthConfMethod
    std::unique_ptr<ServerState> Server;
    std::string NextURI;
 
-   unsigned long PipelineDepth;
    bool AllowRedirect;
 
    // Find the biggest item in the fetch queue for the checking of the maximum
@@ -131,6 +131,7 @@ class BaseHttpMethod : public aptAuthConfMethod
 
    public:
    bool Debug;
+   unsigned long PipelineDepth;
 
    /** \brief Result of the header parsing */
    enum DealWithHeadersResult {
