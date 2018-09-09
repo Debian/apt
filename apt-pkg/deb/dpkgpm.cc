@@ -102,8 +102,8 @@ APT_PURE static unsigned int EnvironmentSize()				/*{{{*/
 class pkgDPkgPMPrivate							/*{{{*/
 {
 public:
-   pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
-			term_out(NULL), history_out(NULL),
+   pkgDPkgPMPrivate() : stdin_is_dev_null(false), status_fd_reached_end_of_file(false),
+			dpkgbuf_pos(0), term_out(NULL), history_out(NULL),
 			progress(NULL), tt_is_valid(false), master(-1),
 			slave(NULL), protect_slave_from_dying(-1),
 			direct_stdin(false)
@@ -114,6 +114,7 @@ public:
    {
    }
    bool stdin_is_dev_null;
+   bool status_fd_reached_end_of_file;
    // the buffer we use for the dpkg status-fd reading
    char dpkgbuf[1024];
    size_t dpkgbuf_pos;
@@ -958,11 +959,19 @@ void pkgDPkgPM::handleCrossUpgradeAction(string const &pkgname)		/*{{{*/
 // DPkgPM::DoDpkgStatusFd						/*{{{*/
 void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
 {
-   ssize_t const len = read(statusfd, &d->dpkgbuf[d->dpkgbuf_pos],
-	 (sizeof(d->dpkgbuf)/sizeof(d->dpkgbuf[0])) - d->dpkgbuf_pos);
-   if(len <= 0)
-      return;
-   d->dpkgbuf_pos += (len / sizeof(d->dpkgbuf[0]));
+   auto const remainingBuffer = (sizeof(d->dpkgbuf) / sizeof(d->dpkgbuf[0])) - d->dpkgbuf_pos;
+   if (likely(remainingBuffer > 0) && d->status_fd_reached_end_of_file == false)
+   {
+      auto const len = read(statusfd, &d->dpkgbuf[d->dpkgbuf_pos], remainingBuffer);
+      if (len < 0)
+	 return;
+      else if (len == 0 && d->dpkgbuf_pos == 0)
+      {
+	 d->status_fd_reached_end_of_file = true;
+	 return;
+      }
+      d->dpkgbuf_pos += (len / sizeof(d->dpkgbuf[0]));
+   }
 
    // process line by line from the buffer
    char *p = d->dpkgbuf, *q = nullptr;
@@ -2022,6 +2031,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       // we read from dpkg here
       int const _dpkgin = fd[0];
       close(fd[1]);                        // close the write end of the pipe
+      d->status_fd_reached_end_of_file = false;
 
       // apply ionice
       if (_config->FindB("DPkg::UseIoNice", false) == true)
@@ -2041,14 +2051,24 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       int Status = 0;
       int res;
       bool waitpid_failure = false;
-      while ((res=waitpid(Child,&Status, WNOHANG)) != Child) {
-	 if(res < 0) {
-	    // error handling, waitpid returned -1
-	    if (errno == EINTR)
-	       continue;
-	    waitpid_failure = true;
-	    break;
+      bool dpkg_finished = false;
+      do
+      {
+	 if (dpkg_finished == false)
+	 {
+	    if ((res = waitpid(Child, &Status, WNOHANG)) == Child)
+	       dpkg_finished = true;
+	    else if (res < 0)
+	    {
+	       // error handling, waitpid returned -1
+	       if (errno == EINTR)
+		  continue;
+	       waitpid_failure = true;
+	       break;
+	    }
 	 }
+	 if (dpkg_finished && d->status_fd_reached_end_of_file)
+	    break;
 
 	 // wait for input or output here
 	 FD_ZERO(&rfds);
@@ -2078,7 +2098,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    DoStdin(d->master);
 	 if(FD_ISSET(_dpkgin, &rfds))
 	    DoDpkgStatusFd(_dpkgin);
-      }
+
+      } while (true);
       close(_dpkgin);
 
       // Restore sig int/quit
