@@ -1154,16 +1154,14 @@ void pkgDPkgPM::BuildPackagesProgressMap()
 {
    // map the dpkg states to the operations that are performed
    // (this is sorted in the same way as Item::Ops)
-   static const std::array<std::array<DpkgState, 3>, 4> DpkgStatesOpMap = {{
+   static const std::array<std::array<DpkgState, 2>, 4> DpkgStatesOpMap = {{
       // Install operation
       {{
 	 {"half-installed", N_("Preparing %s")},
 	 {"unpacked", N_("Unpacking %s") },
-	 {nullptr, nullptr}
       }},
       // Configure operation
       {{
-	 {"unpacked",N_("Preparing to configure %s") },
 	 {"half-configured", N_("Configuring %s") },
 	 { "installed", N_("Installed %s")},
       }},
@@ -1171,13 +1169,11 @@ void pkgDPkgPM::BuildPackagesProgressMap()
       {{
 	 {"half-configured", N_("Preparing for removal of %s")},
 	 {"half-installed", N_("Removing %s")},
-	 {"config-files",  N_("Removed %s")},
       }},
       // Purge operation
       {{
 	 {"config-files", N_("Preparing to completely remove %s")},
 	 {"not-installed", N_("Completely removed %s")},
-	 {nullptr, nullptr}
       }},
    }};
    static_assert(Item::Purge == 3, "Enum item has unexpected index for mapping array");
@@ -1193,21 +1189,16 @@ void pkgDPkgPM::BuildPackagesProgressMap()
 
       string const name = I.Pkg.FullName();
       PackageOpsDone[name] = 0;
-      auto AddToPackageOps = std::back_inserter(PackageOps[name]);
-      if (I.Op == Item::Purge && I.Pkg->CurrentVer != 0)
-      {
-	 // purging a package which is installed first passes through remove states
-	 auto const DpkgOps = DpkgStatesOpMap[Item::Remove];
-	 std::copy(DpkgOps.begin(), DpkgOps.end(), AddToPackageOps);
+      auto AddToPackageOps = [&](decltype(I.Op) const Op) {
+	 auto const DpkgOps = DpkgStatesOpMap[Op];
+	 std::copy(DpkgOps.begin(), DpkgOps.end(), std::back_inserter(PackageOps[name]));
 	 PackagesTotal += DpkgOps.size();
-      }
-      auto const DpkgOps = DpkgStatesOpMap[I.Op];
-      std::copy_if(DpkgOps.begin(), DpkgOps.end(), AddToPackageOps, [&](DpkgState const &state) {
-	 if (state.state == nullptr)
-	    return false;
-	 ++PackagesTotal;
-	 return true;
-      });
+      };
+      // purging a package which is installed first passes through remove states
+      if (I.Op == Item::Purge && I.Pkg->CurrentVer != 0)
+	 AddToPackageOps(Item::Remove);
+      AddToPackageOps(I.Op);
+
       if ((I.Op == Item::Remove || I.Op == Item::Purge) && I.Pkg->CurrentVer != 0)
       {
 	 if (I.Pkg->CurrentState == pkgCache::State::UnPacked ||
@@ -1631,9 +1622,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    approvedStates.Remove(*Ver);
 	    Purges.erase(Ver);
 	    auto && RemOp = PackageOps[C.first->Pkg.FullName()];
-	    if (RemOp.size() == 5)
+	    if (RemOp.size() == 4)
 	    {
-	       RemOp.erase(std::next(RemOp.begin(), 3), RemOp.end());
+	       RemOp.erase(std::next(RemOp.begin(), 2), RemOp.end());
 	       PackagesTotal -= 2;
 	    }
 	    else

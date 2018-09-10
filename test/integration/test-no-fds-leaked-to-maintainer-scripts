@@ -55,7 +55,15 @@ checkinstall() {
 	tail -n +3 rootdir/var/log/apt/term.log | head -n -1 > terminal.log
 	testfileequal 'terminal.log' "$(cat terminal.output)"
 
-	testequal "startup archives unpack
+	testequalor2 "startup archives unpack
+install $PKGNAME <none> 1.0
+status half-installed $PKGNAME 1.0
+status unpacked $PKGNAME 1.0
+startup packages configure
+configure $PKGNAME 1.0 <none>
+status unpacked $PKGNAME 1.0
+status half-configured $PKGNAME 1.0
+status installed $PKGNAME 1.0" "startup archives unpack
 install $PKGNAME <none> 1.0
 status half-installed $PKGNAME 1.0
 status unpacked $PKGNAME 1.0
@@ -78,7 +86,18 @@ checkpurge() {
 	testfileequal 'terminal.log' "$(cat terminal.output)"
 
 	if dpkg --compare-versions "$(dpkg_version)" 'ge' '1.18.11'; then
-		testequal "startup packages remove
+		testequalor2 "startup packages remove
+status installed $PKGNAME 1.0
+remove $PKGNAME 1.0 <none>
+status half-configured $PKGNAME 1.0
+status half-installed $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+startup packages configure
+startup packages purge
+purge $PKGNAME 1.0 <none>
+status config-files $PKGNAME 1.0
+status not-installed $PKGNAME <none>
+startup packages configure" "startup packages remove
 status installed $PKGNAME 1.0
 remove $PKGNAME 1.0 <none>
 status half-configured $PKGNAME 1.0
@@ -96,7 +115,19 @@ status config-files $PKGNAME 1.0
 status not-installed $PKGNAME <none>
 startup packages configure" cut -f 3- -d' ' rootdir/var/log/dpkg.log
 	else
-		testequal "startup packages remove
+		testequalor2 "startup packages remove
+status installed $PKGNAME 1.0
+remove $PKGNAME 1.0 <none>
+status half-configured $PKGNAME 1.0
+status half-installed $PKGNAME 1.0
+status config-files $PKGNAME 1.0
+startup packages configure
+startup packages purge
+remove $PKGNAME 1.0 <none>
+purge $PKGNAME 1.0 <none>
+status config-files $PKGNAME 1.0
+status not-installed $PKGNAME <none>
+startup packages configure" "startup packages remove
 status installed $PKGNAME 1.0
 remove $PKGNAME 1.0 <none>
 status half-configured $PKGNAME 1.0
