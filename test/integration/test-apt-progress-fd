@@ -18,11 +18,11 @@ testsuccess aptget install testing=0.1 -y -o APT::Status-Fd=3
 testfileequal './apt-progress.log' 'dlstatus:1:0.0000:Retrieving file 1 of 1
 dlstatus:1:100.0000:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0.0000:Running dpkg
-pmstatus:testing:0.0000:Installing testing (amd64)
-pmstatus:testing:20.0000:Preparing testing (amd64)
-pmstatus:testing:40.0000:Unpacking testing (amd64)
+pmstatus:testing:0.0000:Preparing testing (amd64)
+pmstatus:testing:20.0000:Unpacking testing (amd64)
+pmstatus:testing:40.0000:Installing testing (amd64)
 pmstatus:dpkg-exec:40.0000:Running dpkg
-pmstatus:testing:40.0000:Configuring testing (amd64)
+pmstatus:testing:40.0000:Preparing to configure testing (amd64)
 pmstatus:testing:60.0000:Configuring testing (amd64)
 pmstatus:testing:80.0000:Installed testing (amd64)'
 
@@ -32,11 +32,11 @@ testsuccess aptget install testing=0.8.15 -y -o APT::Status-Fd=3
 testfileequal './apt-progress.log' 'dlstatus:1:0.0000:Retrieving file 1 of 1
 dlstatus:1:100.0000:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0.0000:Running dpkg
-pmstatus:testing:0.0000:Installing testing (amd64)
-pmstatus:testing:20.0000:Preparing testing (amd64)
-pmstatus:testing:40.0000:Unpacking testing (amd64)
+pmstatus:testing:0.0000:Preparing testing (amd64)
+pmstatus:testing:20.0000:Unpacking testing (amd64)
+pmstatus:testing:40.0000:Installing testing (amd64)
 pmstatus:dpkg-exec:40.0000:Running dpkg
-pmstatus:testing:40.0000:Configuring testing (amd64)
+pmstatus:testing:40.0000:Preparing to configure testing (amd64)
 pmstatus:testing:60.0000:Configuring testing (amd64)
 pmstatus:testing:80.0000:Installed testing (amd64)'
 
@@ -46,11 +46,11 @@ testsuccess aptget install testing=0.8.15 --reinstall -y -o APT::Status-Fd=3
 testfileequal './apt-progress.log' 'dlstatus:1:0.0000:Retrieving file 1 of 1
 dlstatus:1:100.0000:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0.0000:Running dpkg
-pmstatus:testing:0.0000:Installing testing (amd64)
-pmstatus:testing:20.0000:Preparing testing (amd64)
-pmstatus:testing:40.0000:Unpacking testing (amd64)
+pmstatus:testing:0.0000:Preparing testing (amd64)
+pmstatus:testing:20.0000:Unpacking testing (amd64)
+pmstatus:testing:40.0000:Installing testing (amd64)
 pmstatus:dpkg-exec:40.0000:Running dpkg
-pmstatus:testing:40.0000:Configuring testing (amd64)
+pmstatus:testing:40.0000:Preparing to configure testing (amd64)
 pmstatus:testing:60.0000:Configuring testing (amd64)
 pmstatus:testing:80.0000:Installed testing (amd64)'
 
@@ -58,8 +58,8 @@ pmstatus:testing:80.0000:Installed testing (amd64)'
 exec 3> apt-progress.log
 testsuccess aptget remove testing -y -o APT::Status-Fd=3
 testfileequal './apt-progress.log' 'pmstatus:dpkg-exec:0.0000:Running dpkg
-pmstatus:testing:0.0000:Removing testing (amd64)
-pmstatus:testing:33.3333:Preparing for removal of testing (amd64)
+pmstatus:testing:0.0000:Preparing for removal of testing (amd64)
+pmstatus:testing:33.3333:Removing testing (amd64)
 pmstatus:testing:66.6667:Removing testing (amd64)
 pmstatus:dpkg-exec:66.6667:Running dpkg'
 
@@ -69,11 +69,11 @@ testsuccess aptget install testing2:i386 -y -o APT::Status-Fd=3
 testfileequal './apt-progress.log' 'dlstatus:1:0.0000:Retrieving file 1 of 1
 dlstatus:1:100.0000:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0.0000:Running dpkg
-pmstatus:testing2:0.0000:Installing testing2 (i386)
-pmstatus:testing2:20.0000:Preparing testing2 (i386)
-pmstatus:testing2:40.0000:Unpacking testing2 (i386)
+pmstatus:testing2:0.0000:Preparing testing2 (i386)
+pmstatus:testing2:20.0000:Unpacking testing2 (i386)
+pmstatus:testing2:40.0000:Installing testing2 (i386)
 pmstatus:dpkg-exec:40.0000:Running dpkg
-pmstatus:testing2:40.0000:Configuring testing2 (i386)
+pmstatus:testing2:40.0000:Preparing to configure testing2 (i386)
 pmstatus:testing2:60.0000:Configuring testing2 (i386)
 pmstatus:testing2:80.0000:Installed testing2 (i386)'
 
