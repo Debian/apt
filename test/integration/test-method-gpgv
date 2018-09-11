@@ -10,7 +10,6 @@ configarchitecture 'i386'
 cat > faked-apt-key <<EOF
 #!/bin/sh
 set -e
-echo "FFOO"
 find_gpgv_status_fd() {
 	while [ -n "\$1" ]; do
 		if [ "\$1" = '--status-fd' ]; then
@@ -28,45 +27,47 @@ EOF
 chmod +x faked-apt-key
 
 testgpgv() {
-	echo "$3" > gpgv.output
+	echo "$4" > gpgv.output
 	msgtest "$1" "$2"
 	gpgvmethod >method.output 2>&1 || true
 	testsuccess --nomsg grep "^  $2\$" method.output
+	msgtest 'The reported signedby key is' "${3:-empty}"
+	testsuccess --nomsg grep "^  Signed-By:\s\+$3\$" method.output
 }
 
 testrun() {
-	testgpgv 'Good signed with long keyid' 'Good: GOODSIG 5A90D141DBAC8DAE' '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+	testgpgv 'Good signed with long keyid' 'Good: GOODSIG 5A90D141DBAC8DAE' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE!' '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 [GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
-	testgpgv 'Good signed with fingerprint' 'Good: GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE' '[GNUPG:] GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+	testgpgv 'Good signed with fingerprint' 'Good: GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE!' '[GNUPG:] GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 [GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
 
-	testgpgv 'Good subkey signed with long keyid' 'Good: GOODSIG 5B6896415D44C43E' '[GNUPG:] GOODSIG 5B6896415D44C43E Sebastian Subkey <subkey@example.org>
+	testgpgv 'Good subkey signed with long keyid' 'Good: GOODSIG 5B6896415D44C43E' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE, 4281DEDBD466EAE8C1F4157E5B6896415D44C43E!' '[GNUPG:] GOODSIG 5B6896415D44C43E Sebastian Subkey <subkey@example.org>
 [GNUPG:] VALIDSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E 2018-08-16 1534459673 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
-	testgpgv 'Good subkey signed with fingerprint' 'Good: GOODSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' '[GNUPG:] GOODSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E Sebastian Subkey <subkey@example.org>
+	testgpgv 'Good subkey signed with fingerprint' 'Good: GOODSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE, 4281DEDBD466EAE8C1F4157E5B6896415D44C43E!' '[GNUPG:] GOODSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E Sebastian Subkey <subkey@example.org>
 [GNUPG:] VALIDSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E 2018-08-16 1534459673 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
 
-	testgpgv 'Untrusted signed with long keyid' 'Worthless: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE' '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+	testgpgv 'Untrusted signed with long keyid' 'Worthless: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE' '' '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 [GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 1 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
 	testsuccess grep '^\s\+Good:\s\+$' method.output
-	testgpgv 'Untrusted signed with fingerprint' 'Worthless: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE' '[GNUPG:] GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+	testgpgv 'Untrusted signed with fingerprint' 'Worthless: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE' '' '[GNUPG:] GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 [GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 1 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
 	testsuccess grep '^\s\+Good:\s\+$' method.output
 
-	testgpgv 'Weak signed with long keyid' 'Good: GOODSIG 5A90D141DBAC8DAE' '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+	testgpgv 'Weak signed with long keyid' 'Good: GOODSIG 5A90D141DBAC8DAE' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE!' '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 [GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 2 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
 	testsuccess grep '^Message: Signature by key 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE uses weak digest algorithm (SHA1)$' method.output
-	testgpgv 'Weak signed with fingerprint' 'Good: GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE' '[GNUPG:] GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+	testgpgv 'Weak signed with fingerprint' 'Good: GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE!' '[GNUPG:] GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
 [GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 2 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
 	testsuccess grep '^Message: Signature by key 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE uses weak digest algorithm (SHA1)$' method.output
 
-	testgpgv 'No Pubkey with long keyid' 'NoPubKey: NO_PUBKEY E8525D47528144E2' '[GNUPG:] ERRSIG E8525D47528144E2 1 11 00 1472744666 9
+	testgpgv 'No Pubkey with long keyid' 'NoPubKey: NO_PUBKEY E8525D47528144E2' '' '[GNUPG:] ERRSIG E8525D47528144E2 1 11 00 1472744666 9
 [GNUPG:] NO_PUBKEY E8525D47528144E2'
-	testgpgv 'No Pubkey with fingerprint' 'NoPubKey: NO_PUBKEY DE66AECA9151AFA1877EC31DE8525D47528144E2' '[GNUPG:] ERRSIG DE66AECA9151AFA1877EC31DE8525D47528144E2 1 11 00 1472744666 9
+	testgpgv 'No Pubkey with fingerprint' 'NoPubKey: NO_PUBKEY DE66AECA9151AFA1877EC31DE8525D47528144E2' '' '[GNUPG:] ERRSIG DE66AECA9151AFA1877EC31DE8525D47528144E2 1 11 00 1472744666 9
 [GNUPG:] NO_PUBKEY DE66AECA9151AFA1877EC31DE8525D47528144E2'
 
-	testgpgv 'Expired key with long keyid' 'Worthless: EXPKEYSIG 4BC0A39C27CE74F9 Rex Expired <rex@example.org>' '[GNUPG:] EXPKEYSIG 4BC0A39C27CE74F9 Rex Expired <rex@example.org>
+	testgpgv 'Expired key with long keyid' 'Worthless: EXPKEYSIG 4BC0A39C27CE74F9 Rex Expired <rex@example.org>' '' '[GNUPG:] EXPKEYSIG 4BC0A39C27CE74F9 Rex Expired <rex@example.org>
 [GNUPG:] VALIDSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 2016-09-01 1472742629 0 4 0 1 11 00 891CC50E605796A0C6E733F74BC0A39C27CE74F9'
-	testgpgv 'Expired key with fingerprint' 'Worthless: EXPKEYSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 Rex Expired <rex@example.org>' '[GNUPG:] EXPKEYSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 Rex Expired <rex@example.org>
+	testgpgv 'Expired key with fingerprint' 'Worthless: EXPKEYSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 Rex Expired <rex@example.org>' '' '[GNUPG:] EXPKEYSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 Rex Expired <rex@example.org>
 [GNUPG:] VALIDSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 2016-09-01 1472742629 0 4 0 1 11 00 891CC50E605796A0C6E733F74BC0A39C27CE74F9'
 }
 
@@ -111,11 +112,11 @@ Signed-By: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE,/dev/null
 }
 testrun
 
-testgpgv 'Good signed with long keyid but not signed-by key' 'NoPubKey: GOODSIG 4BC0A39C27CE74F9' '[GNUPG:] GOODSIG 4BC0A39C27CE74F9 Rex Expired <rex@example.org>
+testgpgv 'Good signed with long keyid but not signed-by key' 'NoPubKey: GOODSIG 4BC0A39C27CE74F9' '' '[GNUPG:] GOODSIG 4BC0A39C27CE74F9 Rex Expired <rex@example.org>
 [GNUPG:] VALIDSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 2016-09-01 1472742625 0 4 0 1 11 00 891CC50E605796A0C6E733F74BC0A39C27CE74F9'
 testsuccess grep '^\s\+Good:\s\+$' method.output
 testsuccess grep 'verified because the public key is not available: GOODSIG' method.output
-testgpgv 'Good signed with fingerprint but not signed-by key' 'NoPubKey: GOODSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9' '[GNUPG:] GOODSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 Rex Expired <rex@example.org>
+testgpgv 'Good signed with fingerprint but not signed-by key' 'NoPubKey: GOODSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9' '' '[GNUPG:] GOODSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 Rex Expired <rex@example.org>
 [GNUPG:] VALIDSIG 891CC50E605796A0C6E733F74BC0A39C27CE74F9 2016-09-01 1472742625 0 4 0 1 11 00 891CC50E605796A0C6E733F74BC0A39C27CE74F9'
 testsuccess grep '^\s\+Good:\s\+$' method.output
 testsuccess grep 'verified because the public key is not available: GOODSIG' method.output
@@ -132,16 +133,37 @@ Filename: /dev/zero
 Signed-By: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE!
 ' | runapt "${METHODSDIR}/gpgv"
 }
-testgpgv 'Exact matched subkey signed with long keyid' 'Good: GOODSIG 5A90D141DBAC8DAE' '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Sebastian Subkey <subkey@example.org>
+testgpgv 'Exact matched subkey signed with long keyid' 'Good: GOODSIG 5A90D141DBAC8DAE' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE!' '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Sebastian Subkey <subkey@example.org>
 [GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2018-08-16 1534459673 0 4 0 1 11 00 4281DEDBD466EAE8C1F4157E5B6896415D44C43E'
-testgpgv 'Exact matched subkey signed with fingerprint' 'Good: GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE' '[GNUPG:] GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE Sebastian Subkey <subkey@example.org>
+testgpgv 'Exact matched subkey signed with fingerprint' 'Good: GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE!' '[GNUPG:] GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE Sebastian Subkey <subkey@example.org>
 [GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2018-08-16 1534459673 0 4 0 1 11 00 4281DEDBD466EAE8C1F4157E5B6896415D44C43E'
 
-testgpgv 'Exact unmatched subkey signed with long keyid' 'NoPubKey: GOODSIG 5B6896415D44C43E' '[GNUPG:] GOODSIG 5B6896415D44C43E Sebastian Subkey <subkey@example.org>
+testgpgv 'Exact unmatched subkey signed with long keyid' 'NoPubKey: GOODSIG 5B6896415D44C43E' '' '[GNUPG:] GOODSIG 5B6896415D44C43E Sebastian Subkey <subkey@example.org>
 [GNUPG:] VALIDSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E 2018-08-16 1534459673 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
 testsuccess grep '^\s\+Good:\s\+$' method.output
 testsuccess grep 'verified because the public key is not available: GOODSIG' method.output
-testgpgv 'Exact unmatched subkey signed with fingerprint' 'NoPubKey: GOODSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' '[GNUPG:] GOODSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E Sebastian Subkey <subkey@example.org>
+testgpgv 'Exact unmatched subkey signed with fingerprint' 'NoPubKey: GOODSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' '' '[GNUPG:] GOODSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E Sebastian Subkey <subkey@example.org>
 [GNUPG:] VALIDSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E 2018-08-16 1534459673 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
 testsuccess grep '^\s\+Good:\s\+$' method.output
 testsuccess grep 'verified because the public key is not available: GOODSIG' method.output
+
+insertpackage 'unstable' 'foo' 'all' '1'
+setupaptarchive --no-update
+
+echo '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Sebastian Subkey <subkey@example.org>
+[GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2018-08-16 1534459673 0 4 0 1 11 00 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' > gpgv.output
+testsuccess apt update -o Dir::Bin::apt-key="./faked-apt-key" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+rm -rf rootdir/var/lib/apt/lists
+
+echo '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Sebastian Subkey <subkey@example.org>' > gpgv.output
+testfailure apt update -o Dir::Bin::apt-key="./faked-apt-key" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+rm -rf rootdir/var/lib/apt/lists
+
+echo '[GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2018-08-16 1534459673 0 4 0 1 11 00 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' > gpgv.output
+testfailure apt update -o Dir::Bin::apt-key="./faked-apt-key" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+rm -rf rootdir/var/lib/apt/lists
+
+echo '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Sebastian Subkey <subkey@example.org>
+[GNUPG:] VALIDSIG 0000000000000000000000000000000000000000 2018-08-16 1534459673 0 4 0 1 11 00 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' > gpgv.output
+testfailure apt update -o Dir::Bin::apt-key="./faked-apt-key" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+rm -rf rootdir/var/lib/apt/lists
