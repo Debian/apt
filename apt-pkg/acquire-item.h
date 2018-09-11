@@ -451,8 +451,9 @@ class APT_HIDDEN pkgAcqMetaBase : public pkgAcqTransactionItem		/*{{{*/
     *
     *  \param Message The message block received from the fetch
     *  subprocess.
+    *  \param Cnf The method and its configuration which handled the request
     */
-   bool CheckAuthDone(std::string const &Message);
+   bool CheckAuthDone(std::string const &Message, pkgAcquire::MethodConfig const *const Cnf);
 
    /** Check if the current item should fail at this point */
    bool CheckStopAuthentication(pkgAcquire::Item * const I, const std::string &Message);
