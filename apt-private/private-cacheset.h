@@ -26,6 +26,7 @@ public:
    {}
    const pkgCache::DescFile * CachedDescFile() const { return descFile; }
    operator pkgCache::VerIterator() const { return iter; }
+   map_id_t ID() const { return iter->ID; }
 };
 
 struct VersionSortDescriptionLocality					/*{{{*/
@@ -36,17 +37,21 @@ struct VersionSortDescriptionLocality					/*{{{*/
       pkgCache::DescFile const *A = v_lhs.CachedDescFile();
       pkgCache::DescFile const *B = v_rhs.CachedDescFile();
 
-      if (A == nullptr && B == nullptr)
-	 return false;
-
       if (A == nullptr)
+      {
+	 if (B == nullptr)
+	    return v_lhs.ID() < v_rhs.ID();
 	 return true;
-
-      if (B == nullptr)
+      }
+      else if (B == nullptr)
 	 return false;
 
       if (A->File == B->File)
+      {
+	 if (A->Offset == B->Offset)
+	    return v_lhs.ID() < v_rhs.ID();
 	 return A->Offset < B->Offset;
+      }
 
       return A->File < B->File;
    }
