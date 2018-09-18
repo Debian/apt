@@ -28,6 +28,7 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <unordered_map>
 #include <vector>
 
 static std::string httpcodeToStr(int const httpcode)			/*{{{*/
@@ -88,13 +89,29 @@ static std::string httpcodeToStr(int const httpcode)			/*{{{*/
    return _config->Find(codeconf, code);
 }
 									/*}}}*/
-static bool chunkedTransferEncoding(std::list<std::string> const &headers) {
+static bool chunkedTransferEncoding(std::list<std::string> const &headers)/*{{{*/
+{
    if (std::find(headers.begin(), headers.end(), "Transfer-Encoding: chunked") != headers.end())
       return true;
    if (_config->FindB("aptwebserver::chunked-transfer-encoding", false) == true)
       return true;
    return false;
 }
+									/*}}}*/
+static bool contentTypeSet(std::list<std::string> const &headers)	/*{{{*/
+{
+   return std::any_of(headers.begin(), headers.end(), [](std::string const &h) { return APT::String::Startswith(h, "Content-Type:"); });
+}
+									/*}}}*/
+// contentTypeFromExtension						/*{{{*/
+static std::string contentTypeFromExtension(std::string const &ext)
+{
+   auto t = _config->Find(std::string("aptwebserver::content-type::by-extension::").append(ext));
+   if (APT::String::Startswith(t, "text/"))
+      return t.append("; charset=utf-8");
+   return t;
+}
+									/*}}}*/
 static void addFileHeaders(std::list<std::string> &headers, FileFd &data)/*{{{*/
 {
    if (chunkedTransferEncoding(headers) == false)
@@ -108,6 +125,20 @@ static void addFileHeaders(std::list<std::string> &headers, FileFd &data)/*{{{*/
       std::string lastmodified("Last-Modified: ");
       lastmodified.append(TimeRFC1123(data.ModificationTime(), false));
       headers.push_back(lastmodified);
+   }
+   if (_config->FindB("aptwebserver::content-type::guess", true) &&
+       data.FileSize() != 0 &&
+       contentTypeSet(headers) == false)
+   {
+      std::string const name = data.Name();
+      std::string ext = flExtension(name);
+      if (name.empty() == false && ext.empty() == false && name != ext)
+      {
+	 std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+	 auto const type = contentTypeFromExtension(ext);
+	 if (type.empty() == false)
+	    headers.push_back(std::string("Content-Type: ").append(type));
+      }
    }
 }
 									/*}}}*/
@@ -241,6 +272,10 @@ static void sendError(std::ostream &log, int const client, int const httpcode, s
 	 headers.push_back("Connection: close");
    }
    addDataHeaders(headers, response);
+
+   if (contentTypeSet(headers) == false)
+      headers.push_back("Content-Type: text/html; charset=utf-8");
+
    sendHead(log, client, httpcode, headers);
    if (content == true)
       sendData(client, headers, response);
@@ -286,6 +321,10 @@ static void sendRedirect(std::ostream &log, int const client, int const httpcode
    else
       location.append(uri);
    headers.push_back(location);
+
+   if (contentTypeSet(headers) == false)
+      headers.push_back("Content-Type: text/html; charset=utf-8");
+
    sendHead(log, client, httpcode, headers);
    if (content == true)
       sendData(client, headers, response);
@@ -371,6 +410,9 @@ static void sendDirectoryListing(std::ostream &log, int const client, std::strin
       listing << "<td>" << TimeRFC1123(fs.st_mtime, true) << "</td></tr>" << std::endl;
    }
    listing << "</table></body></html>" << std::endl;
+
+   if (contentTypeSet(headers) == false)
+      headers.push_back("Content-Type: text/html; charset=utf-8");
 
    std::string response(listing.str());
    addDataHeaders(headers, response);
@@ -581,6 +623,8 @@ static bool handleOnTheFlyReconfiguration(std::ostream &log, int const client,/*
    {
       std::string response = _config->Find(parts[2], parts[3]);
       addDataHeaders(headers, response);
+      if (contentTypeSet(headers) == false)
+	 headers.push_back("Content-Type: text/plain; charset=utf-8");
       sendHead(log, client, 200, headers);
       sendData(client, headers, response);
       return true;
@@ -591,6 +635,8 @@ static bool handleOnTheFlyReconfiguration(std::ostream &log, int const client,/*
       {
 	 std::string response = _config->Find(parts[2]);
 	 addDataHeaders(headers, response);
+	 if (contentTypeSet(headers) == false)
+	    headers.push_back("Content-Type: text/plain; charset=utf-8");
 	 sendHead(log, client, 200, headers);
 	 sendData(client, headers, response);
 	 return true;
@@ -833,6 +879,28 @@ static void * handleClient(int const client, size_t const id)		/*{{{*/
    return NULL;
 }
 									/*}}}*/
+static void loadMimeTypesFile(std::string const &filename)		/*{{{*/
+{
+   if (FileExists(filename) == false)
+      return;
+
+   std::string line;
+   FileFd mimetypes(filename, FileFd::ReadOnly);
+   while (mimetypes.ReadLine(line))
+   {
+      if (line.empty() || line[0] == '#' || line.find_first_not_of(" \t\r") == std::string::npos)
+	 continue;
+      std::transform(line.begin(), line.end(), line.begin(), [](char const c) { return c == ' ' ? '\t' : c; });
+      auto l = VectorizeString(line, '\t');
+      l.erase(std::remove_if(l.begin(), l.end(), [](std::string const &f) { return f.empty(); }), l.end());
+      if (l.size() < 2)
+	 continue;
+      for (size_t i = 1; i < l.size(); ++i)
+	 if (l[i].empty() == false)
+	    _config->CndSet(std::string("aptwebserver::content-type::by-extension::").append(l[i]).c_str(), l[0]);
+   }
+}
+									/*}}}*/
 
 int main(int const argc, const char * argv[])
 {
@@ -852,6 +920,22 @@ int main(int const argc, const char * argv[])
    {
       _error->DumpErrors();
       exit(1);
+   }
+
+   if (_config->FindB("aptwebserver::content-type::mime.types", true))
+   {
+      if (_config->FindB("aptwebserver::content-type::mime.types::apt", true))
+	 loadMimeTypesFile("/etc/apt/mime.types");
+
+      if (_config->FindB("aptwebserver::content-type::mime.types::home", true))
+      {
+	 auto const home = getenv("HOME");
+	 if (home != nullptr)
+	    loadMimeTypesFile(flCombine(home, ".mime.types"));
+      }
+
+      if (_config->FindB("aptwebserver::content-type::mime.types::etc", true))
+	 loadMimeTypesFile("/etc/mime.types");
    }
 
    // create socket, bind and listen to it {{{
