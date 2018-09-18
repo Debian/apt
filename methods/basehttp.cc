@@ -39,6 +39,10 @@ string BaseHttpMethod::FailFile;
 int BaseHttpMethod::FailFd = -1;
 time_t BaseHttpMethod::FailTime = 0;
 
+// Number of successful requests in a pipeline needed to continue
+// pipelining after a connection reset.
+constexpr int PIPELINE_MIN_SUCCESSFUL_ANSWERS_TO_CONTINUE = 3;
+
 // ServerState::RunHeaders - Get the headers before the data		/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 if things are OK, 1 if an IO error occurred and 2 if a header
@@ -215,8 +219,11 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 	 /* Some servers send error pages (as they are dynamically generated)
 	    for simplicity via a connection close instead of e.g. chunked,
 	    so assuming an always closing server only if we get a file + close */
-	 if (Result >= 200 && Result < 300)
+	 if (Result >= 200 && Result < 300 && Server->PipelineAnswersReceived < PIPELINE_MIN_SUCCESSFUL_ANSWERS_TO_CONTINUE)
+	 {
 	    Server->PipelineAllowed = false;
+	    Server->PipelineAnswersReceived = 0;
+	 }
       }
       else if (stringcasecmp(Val,"keep-alive") == 0)
 	 Server->Persistent = true;
@@ -267,6 +274,7 @@ void ServerState::Reset()						/*{{{*/
    Pipeline = false;
    PipelineAllowed = true;
    RangesAllowed = true;
+   PipelineAnswersReceived = 0;
 }
 									/*}}}*/
 
@@ -593,8 +601,10 @@ int BaseHttpMethod::Loop()
 	 Server->Close();
 
       // Reset the pipeline
-      if (Server->IsOpen() == false)
+      if (Server->IsOpen() == false) {
 	 QueueBack = Queue;
+	 Server->PipelineAnswersReceived = 0;
+      }
 
       // Connect to the host
       switch (Server->Open())
@@ -752,6 +762,10 @@ int BaseHttpMethod::Loop()
 		     BeforeI = I;
 		  }
 	       }
+	       if (Server->Pipeline == true)
+	       {
+		  Server->PipelineAnswersReceived++;
+	       }
 	       Res.TakeHashes(*resultHashes);
 	       URIDone(Res);
 	    }
@@ -861,9 +875,9 @@ unsigned long long BaseHttpMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
    return MaxSizeInQueue;
 }
 									/*}}}*/
-BaseHttpMethod::BaseHttpMethod(std::string &&Binary, char const * const Ver,unsigned long const Flags) :/*{{{*/
-   aptAuthConfMethod(std::move(Binary), Ver, Flags), Server(nullptr), PipelineDepth(10),
-   AllowRedirect(false), Debug(false)
+BaseHttpMethod::BaseHttpMethod(std::string &&Binary, char const *const Ver, unsigned long const Flags) /*{{{*/
+    : aptAuthConfMethod(std::move(Binary), Ver, Flags), Server(nullptr),
+      AllowRedirect(false), Debug(false), PipelineDepth(10)
 {
 }
 									/*}}}*/
