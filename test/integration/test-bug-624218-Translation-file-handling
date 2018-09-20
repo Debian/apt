@@ -6,24 +6,78 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'i386'
 
-buildsimplenativepackage 'coolstuff' 'all' '1.0' 'unstable'
+insertpackage 'unstable' 'unrelated' 'i386' '1'
+insertpackage 'unstable' 'ancientstuff' 'all' '1'
+insertpackage 'unstable' 'boringstuff' 'all' '1' '' '' 'shared short description'
+insertpackage 'unstable' 'coolstuff' 'all' '1'
+insertpackage 'unstable' 'dullstuff' 'all' '1' '' '' 'shared short description'
+insertpackage 'unstable' 'evilstuff' 'all' '1'
+insertpackage 'unstable' 'foostuff' 'all' '1' '' '' 'shared short description'
+insertpackage 'unstable' 'goodstuff' 'all' '1'
+insertpackage 'unstable' "longdesc" 'all' '1' '' '' "$(for i in $(seq 0 100); do printf '%s' 'lorem ipsum '; done)"
 
 setupaptarchive --no-update
-
 changetowebserver
+
+testsuccess aptget update
+PKGORDER='coolstuff foostuff coolstuff foostuff'
+msgtest 'Prepare expectation for' 'aptcache show'
+if aptcache show $PKGORDER | grep -v '^ ' > aptcacheshow.out 2>&1; then
+	msgpass
+else
+	cat aptcacheshow.out || true
+	msgfail
+fi
+testsuccessequal '4' grep -c '^Package: ' aptcacheshow.out
+msgtest 'Prepare expectation for' 'apt show'
+if apt show $PKGORDER | grep -v -e '^ ' -e '^[A-Z][a-z]\+-Size: ' > aptshow.out 2>&1; then
+	msgpass
+else
+	cat aptshow.out || true
+	msgfail
+fi
+testsuccessequal '4' grep -c '^Package: ' aptshow.out
 rm -rf rootdir/var/lib/apt/lists
+
+checkaptshow() {
+	testsuccess aptcache show $PKGORDER
+	sed -i -e 's#^Description: #Description-en: #' rootdir/tmp/testsuccess.output
+	testequal "$(cat aptcacheshow.out)
+" grep -v '^ ' rootdir/tmp/testsuccess.output
+
+	testsuccess apt show $PKGORDER
+	sed -i -e 's#^Description-en: #Description: #' rootdir/tmp/testsuccess.output
+	testequal "$(cat aptshow.out)
+" grep -v -e '^ ' -e '^[A-Z][a-z]\+-Size: ' rootdir/tmp/testsuccess.output
+
+	if [ -n "$(ls rootdir/var/lib/apt/lists/*Translation* 2>/dev/null)" ]; then
+		testsuccess find rootdir/var/lib/apt/lists/ -name '*Translation*' -delete
+
+		testsuccess aptcache show $PKGORDER
+		sed -i -e 's#^Description: #Description-en: #' rootdir/tmp/testsuccess.output
+		testequal "$(cat aptcacheshow.out)
+" grep -v '^ ' rootdir/tmp/testsuccess.output
+
+		testsuccess apt show $PKGORDER
+		sed -i -e 's#^Description-en: #Description: #' rootdir/tmp/testsuccess.output
+		testequal "$(cat aptshow.out)
+" grep -v -e '^ ' -e '^[A-Z][a-z]\+-Size: ' rootdir/tmp/testsuccess.output
+	fi
+}
 
 translationslisted() {
 	msgtest 'No download of non-existent locals' "$1"
 	export LC_ALL=""
 	testsuccess --nomsg aptget update -o Acquire::Languages=en
 	testfailure grep -q -e 'Translation-[^e][^n] ' rootdir/tmp/testsuccess.output
+	checkaptshow
 	rm -rf rootdir/var/lib/apt/lists
 
 	msgtest 'Download of existent locals' "$1"
 	testsuccess --nomsg aptget update
 	cp rootdir/tmp/testsuccess.output testsuccess.output
 	testsuccess grep -q -e 'Translation-en ' testsuccess.output
+	checkaptshow
 	rm -rf rootdir/var/lib/apt/lists
 
 	msgtest 'Download of en in LC_ALL=C' "$1"
@@ -31,6 +85,7 @@ translationslisted() {
 	testsuccess --nomsg aptget update
 	cp rootdir/tmp/testsuccess.output testsuccess.output
 	testsuccess grep -q -e 'Translation-en ' testsuccess.output
+	checkaptshow
 	rm -rf rootdir/var/lib/apt/lists
 	unset LC_ALL
 
@@ -38,21 +93,25 @@ translationslisted() {
 	testsuccess --nomsg aptget update -o Acquire::Languages=en
 	cp rootdir/tmp/testsuccess.output testsuccess.output
 	testsuccess grep -q -e 'Translation-en ' testsuccess.output
+	checkaptshow
 	rm -rf rootdir/var/lib/apt/lists
 
 	msgtest 'Download of nothing else in forced language' "$1"
 	testsuccess --nomsg aptget update -o Acquire::Languages=en
 	testfailure grep -q -e 'Translation-[^e][^n] ' rootdir/tmp/testsuccess.output
+	checkaptshow
 	rm -rf rootdir/var/lib/apt/lists
 
 	msgtest 'Download no Translation- if forced language is non-existent' "$1"
 	testsuccess --nomsg aptget update -o Acquire::Languages=ast_DE
 	testfailure grep -q -e 'Translation-' rootdir/tmp/testsuccess.output
+	checkaptshow
 	rm -rf rootdir/var/lib/apt/lists
 
 	msgtest 'Download of nothing if none is forced' "$1"
 	testsuccess --nomsg aptget update -o Acquire::Languages=none
 	testfailure grep -q -e 'Translation' rootdir/tmp/testsuccess.output
+	checkaptshow
 	rm -rf rootdir/var/lib/apt/lists
 }
 
@@ -66,26 +125,31 @@ echo 'Acquire::AllowInsecureRepositories "true";' >  rootdir/etc/apt/apt.conf.d/
 msgtest 'Download of en as forced language' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=en
 testsuccess grep -q -e 'Translation-en ' rootdir/tmp/testwarning.output
+checkaptshow
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of nothing else in forced language' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=en
 testfailure grep -q -e 'Translation-[^e][^n] ' rootdir/tmp/testwarning.output
+checkaptshow
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of ast_DE as forced language' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=ast_DE
 testsuccess grep -q -e 'Translation-ast_DE$' rootdir/tmp/testwarning.output
+checkaptshow
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of nothing else in forced language' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=ast_DE
 testfailure grep -q -e 'Translation-[^a][^s]' rootdir/tmp/testwarning.output
+checkaptshow
 rm -rf rootdir/var/lib/apt/lists
 
 msgtest 'Download of nothing if none is forced' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=none
 testfailure grep -q -e 'Translation' rootdir/tmp/testwarning.output
+checkaptshow
 rm -rf rootdir/var/lib/apt/lists
 
 mkdir -p rootdir/var/lib/apt/lists
@@ -94,6 +158,7 @@ touch rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_i18
 msgtest 'Download of builtin files' 'without Index'
 testwarning --nomsg aptget update
 testsuccess grep -q -e 'Translation-ast_DE' rootdir/tmp/testwarning.output
+checkaptshow
 rm -rf rootdir/var/lib/apt/lists
 
 mkdir -p rootdir/var/lib/apt/lists
@@ -102,4 +167,5 @@ touch rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_dists_unstable_main_i18
 msgtest 'Download of nothing (even builtin) if none is forced' 'without Index'
 testwarning --nomsg aptget update -o Acquire::Languages=none
 testfailure grep -q -e 'Translation' rootdir/tmp/testwarning.output
+checkaptshow
 rm -rf rootdir/var/lib/apt/lists
