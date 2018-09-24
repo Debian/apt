@@ -1329,7 +1329,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    {
       std::chrono::duration<double> Delta =
 	 std::chrono::seconds(NewTime.tv_sec - Time.tv_sec) +
-	 std::chrono::microseconds(NewTime.tv_sec - Time.tv_usec);
+	 std::chrono::microseconds(NewTime.tv_usec - Time.tv_usec);
 
       // Compute the CPS value
       if (Delta < std::chrono::milliseconds(10))
@@ -1423,7 +1423,7 @@ void pkgAcquireStatus::Stop()
 
    std::chrono::duration<double> Delta =
       std::chrono::seconds(NewTime.tv_sec - StartTime.tv_sec) +
-      std::chrono::microseconds(NewTime.tv_sec - StartTime.tv_usec);
+      std::chrono::microseconds(NewTime.tv_usec - StartTime.tv_usec);
 
    // Compute the CPS value
    if (Delta < std::chrono::milliseconds(10))
