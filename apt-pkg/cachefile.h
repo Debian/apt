@@ -37,8 +37,9 @@ class OpProgress;
 
 class pkgCacheFile
 {
+   struct Private;
    /** \brief dpointer placeholder (for later in case we need it) */
-   void * const d;
+   Private *const d;
    bool ExternOwner;
 
    protected:
