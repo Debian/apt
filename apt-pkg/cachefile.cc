@@ -36,12 +36,18 @@
 
 #include <apti18n.h>
 									/*}}}*/
+
+struct pkgCacheFile::Private
+{
+   bool WithLock = false;
+};
+
 // CacheFile::CacheFile - Constructor					/*{{{*/
-pkgCacheFile::pkgCacheFile() : d(NULL), ExternOwner(false), Map(NULL), Cache(NULL),
+pkgCacheFile::pkgCacheFile() : d(new Private()), ExternOwner(false), Map(NULL), Cache(NULL),
 				DCache(NULL), SrcList(NULL), Policy(NULL)
 {
 }
-pkgCacheFile::pkgCacheFile(pkgDepCache * const Owner) : d(NULL), ExternOwner(true),
+pkgCacheFile::pkgCacheFile(pkgDepCache * const Owner) : d(new Private()), ExternOwner(true),
    Map(&Owner->GetCache().GetMap()), Cache(&Owner->GetCache()),
    DCache(Owner), SrcList(NULL), Policy(NULL)
 {
@@ -60,8 +66,10 @@ pkgCacheFile::~pkgCacheFile()
    }
    delete Policy;
    delete SrcList;
-   if (ExternOwner == false)
+   if (d->WithLock == true)
       _system->UnLock(true);
+
+   delete d;
 }
 									/*}}}*/
 // CacheFile::BuildCaches - Open and build the cache files		/*{{{*/
@@ -98,8 +106,11 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
    }
 
    if (WithLock == true)
+   {
       if (_system->Lock() == false)
 	 return false;
+      d->WithLock = true;
+   }
 
    if (_error->PendingError() == true)
       return false;
@@ -338,7 +349,11 @@ void pkgCacheFile::Close()
       ExternOwner = false;
    delete Policy;
    delete SrcList;
-   _system->UnLock(true);
+   if (d->WithLock == true)
+   {
+      _system->UnLock(true);
+      d->WithLock = false;
+   }
 
    Map = NULL;
    DCache = NULL;
