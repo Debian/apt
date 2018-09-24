@@ -1043,6 +1043,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    auto const tv = *t;
 	    mytargets.erase(t);
 	    mytargets.emplace_back(tv);
+	    break;
 	 }
 	 if (Changed == false)
 	    break;

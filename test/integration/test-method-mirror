@@ -196,6 +196,7 @@ msgmsg 'The prefix for the mirrorlist is' 'passed on'
 echo 'Dir::Bin::Methods::foo+mirror+file "mirror";
 Dir::Bin::Methods::foo+mirror+http "mirror";
 Dir::Bin::Methods::foo+http "http";
+Dir::Bin::Methods::foo+https "https";
 ' > rootdir/etc/apt/apt.conf.d/99add-foo-method
 echo "http://localhost:${APTHTTPPORT}/redirectme
 " > aptarchive/mirror.txt
@@ -241,3 +242,14 @@ Building dependency tree...
 Reading state information...
 All packages are up to date." apt update
 testrundownload 'foo=2'
+
+echo "https://localhost:${APTHTTPSPORT}/
+http://localhost:${APTHTTPPORT}/redirectme" > aptarchive/mirror.txt
+rm -rf rootdir/var/lib/apt/lists
+sed -i -e "s# foo+# [signed-by=$(readlink -f ./keys/joesixpack.pub)] foo+#g" rootdir/etc/apt/sources.list.d/apt-test-unstable-deb*
+testsuccess apt update
+testrundownload 'foo=2'
+
+rm -rf rootdir/var/lib/apt/lists
+sed -i -e "s# \[signed-by=[^]]\+\] foo+# [signed-by=$(readlink -f ./keys/marvinparanoid.pub)] foo+#g" rootdir/etc/apt/sources.list.d/apt-test-unstable-deb*
+testfailure apt update

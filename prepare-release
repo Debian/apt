@@ -235,21 +235,33 @@ elif [ "$1" = 'spellcheckers' -o "$1" = 'lint' ]; then
 		echo '### codespell in source directories:'
 		codespell --enable-colors $(find . -mindepth 1 -maxdepth 1 -type d \! -name '.git' \! -name 'doc' \! -name 'po' \! -name 'build' \! -name 'test') \
 			| grep -v -e '^.*debian/changelog.*Troup.*==>.*Troupe.*$' \
+				-e '^.*debian/changelog.*readd.*==>.*readd.*$' \
+				-e '^.*debian/changelog.*Tim.*==>.*Time.*$' \
 				-e '^.*apt-pkg/contrib/fileutl\.cc.*creat.*==>.*create.*$' \
+				-e '^.*apt-pkg/pkgcache\.h.*mmaped.*==>.*mapped.*$' \
+				-e '^.*apt-pkg/pkgcachegen\.cc.*mmaped.*==>.*mapped.*$' \
+				-e '^.*apt-pkg/contrib/mmap\.h.*mmaped.*==>.*mapped.*$' \
+				-e '^.*cmdline/apt-key\.in.*dashs.*==>.*dashes.*$' \
 				-e '^.*methods/aptmethod\.h.*creat.*==>.*create.*$' \
 				-e '^.*dselect/install.*ans.*==>.*and.*$' \
+				-e '^.*ftparchive/writer\.h.*Delink.*==>.*Unlink.*$' \
+				-e '^.*ftparchive/writer\.cc.*De[Ll]ink.*==>.*[Uu]nlink.*$' \
 			|| true
 		echo '### codespell in testcases:'
 		codespell --enable-colors $(find test -type f \! -name 'status-*' \! -name 'Packages-*' \! -name '*.deb' \! -name '*.sec' \! -name '*.pub' \! -name '*.db') \
 			| grep -v -e '^.*test/libapt/file-helpers\.cc.*creat.*==>.*create.*$' \
 				-e '^.*test/libapt/tagfile_test\.cc.*tyes.*==>.*types.*$' \
 				-e '^.*test/libapt/strutil_test\.cc.*Fiel.*==>.*Feel.*$' \
+				-e '^.*test/libapt/cdromfindpackages_test\.cc.*Signatur.*==>.*Signature.*$' \
 				-e '^.*test/integration/skip-bug-601016-description-translation.*Paket.*==>.*Packet.*$' \
 				-e '^.*test/integration/skip-bug-601016-description-translation.*Wege.*==>.*Wedge.*$' \
+				-e '^.*test/integration/skip-bug-601016-description-translation.*Methoden.*==>.*Methods.*$' \
+				-e '^.*test/integration/test-apt-update-not-modified.*readd.*==>.*readd.*$' \
 			|| true
 		echo '### codespell in documentation:'
 		codespell --enable-colors doc/*.xml doc/*.txt doc/*.dbk doc/*.ent doc/*.cmake.in doc/xml.add doc/po4a.conf doc/examples doc/po/apt-doc.pot \
 			po/apt-all.pot README.* COPYING \
+			| grep -v -e '^.*po/apt-all\.pot.*DeLink.*==>.*unlink.*$' \
 			|| true
 	fi
 	if is_available 'lintian' 'spellintian'; then

@@ -5,7 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'i386' 'armel'
 
 insertpackage 'unstable' 'foo' 'all' '1.0'
 insertinstalledpackage 'bar' 'i386' '1.0'
@@ -17,6 +17,10 @@ insertinstalledpackage 'baz' 'all' '0.1'
 insertpackage 'testing' 'baz' 'all' '1.0'
 insertpackage 'unstable' 'baz' 'all' '2.0'
 
+insertinstalledpackage 'foreign' 'armel' '1.0' 'Multi-Arch: foreign'
+insertpackage 'unstable' 'foreign' 'i386,armel' '2.0' 'Multi-Arch: foreign'
+insertpackage 'unstable' 'lib' 'i386,armel' '2.0' 'Multi-Arch: same'
+
 setupaptarchive
 
 testsuccessequal "Listing...
@@ -24,7 +28,11 @@ bar/now 1.0 i386 [installed,local]
 baz/unstable 2.0 all [upgradable from: 0.1]
 dpkg/now 1.16.2+fake all [installed,local]
 foo/unstable 1.0 all
-foobar/unstable 2.0 i386 [upgradable from: 1.0]" apt list
+foobar/unstable 2.0 i386 [upgradable from: 1.0]
+foreign/unstable 2.0 armel [upgradable from: 1.0]
+foreign/unstable 2.0 i386
+lib/unstable 2.0 armel
+lib/unstable 2.0 i386" apt list
 
 testsuccessequal "Listing...
 foo/unstable 1.0 all
@@ -32,15 +40,17 @@ foobar/unstable 2.0 i386 [upgradable from: 1.0]" apt list "foo*"
 
 testsuccessequal "Listing...
 baz/unstable 2.0 all [upgradable from: 0.1]
-foobar/unstable 2.0 i386 [upgradable from: 1.0]" apt list --upgradable
+foobar/unstable 2.0 i386 [upgradable from: 1.0]
+foreign/unstable 2.0 armel [upgradable from: 1.0]" apt list --upgradable
 
 # FIXME: hm, hm - does it make sense to have this different? shouldn't
-#        we use "installed,upgradable" consitently?
+#        we use "installed,upgradable" consistently?
 testsuccessequal "Listing...
 bar/now 1.0 i386 [installed,local]
 baz/now 0.1 all [installed,upgradable to: 2.0]
 dpkg/now 1.16.2+fake all [installed,local]
-foobar/now 1.0 i386 [installed,upgradable to: 2.0]" apt list --installed
+foobar/now 1.0 i386 [installed,upgradable to: 2.0]
+foreign/now 1.0 armel [installed,upgradable to: 2.0]" apt list --installed
 
 testsuccessequal "Listing...
 bar/now 1.0 i386 [installed,local]
@@ -72,3 +82,12 @@ baz/now 0.1 all [installed,upgradable to: 2.0]
 # test format strings for machine parseable output
 testsuccessequal 'bar - 1.0 - 1.0
 baz - 0.1 - 2.0' apt list -qq bar baz  -o APT::Cmd::use-format=true  -o APT::Cmd::format="\${Package} - \${installed:Version} - \${candidate:Version}"
+
+
+insertinstalledpackage 'lib' 'i386,armel' '1.0' 'Multi-Arch: same'
+testsuccessequal 'Listing...
+baz/unstable 2.0 all [upgradable from: 0.1]
+foobar/unstable 2.0 i386 [upgradable from: 1.0]
+foreign/unstable 2.0 armel [upgradable from: 1.0]
+lib/unstable 2.0 armel [upgradable from: 1.0]
+lib/unstable 2.0 i386 [upgradable from: 1.0]' apt list --upgradeable

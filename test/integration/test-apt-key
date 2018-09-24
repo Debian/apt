@@ -192,7 +192,7 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 	${TESTSTATE} aptkey --fakeroot add "${KEYDIR}/marvin paránöid.pub.${EXT}"
 	testaptkeys 'Joe Sixpack' 'Marvin Paranoid'
 	cp -a "${ROOTDIR}/etc/apt/trusted.gpg" "${KEYDIR}/testcase-multikey.pub.gpg" # store for reuse
-	gpg --no-default-keyring --keyring "${KEYDIR}/testcase-multikey.pub.gpg" --armor --export > "${KEYDIR}/testcase-multikey.pub.asc"
+	aptkey --keyring "${KEYDIR}/testcase-multikey.pub.gpg" export > "${KEYDIR}/testcase-multikey.pub.asc"
 
 	msgtest 'Test key removal with' 'multi key in real file'
 	cleanplate

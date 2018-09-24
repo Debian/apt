@@ -94,7 +94,10 @@ struct Signer {
    std::string note;
 };
 static bool IsTheSameKey(std::string const &validsig, std::string const &goodsig) {
-   // VALIDSIG reports a keyid (40 = 24 + 16), GOODSIG is a longid (16) only
+   // VALIDSIG reports a fingerprint (40 = 24 + 16), GOODSIG can be longid (16) or
+   // fingerprint according to documentation in DETAILS.gz
+   if (goodsig.length() == 40 + strlen("GOODSIG "))
+      return validsig.compare(0, 40, goodsig, strlen("GOODSIG "), 40) == 0;
    return validsig.compare(24, 16, goodsig, strlen("GOODSIG "), 16) == 0;
 }
 
@@ -254,46 +257,32 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    if (keyIsID == true)
    {
       if (Debug == true)
-	 std::clog << "GoodSigs needs to be limited to keyid " << key << std::endl;
-      bool foundGood = false;
-      for (auto const &k: VectorizeString(key, ','))
+	 std::clog << "GoodSigs needs to be limited to keyid(s) " << key << std::endl;
+      auto const limitedTo = VectorizeString(key, ',');
+      std::vector<std::string> filteredGood;
+      for (auto &&good: GoodSigners)
       {
-	 if (std::find(ValidSigners.begin(), ValidSigners.end(), k) == ValidSigners.end())
-	    continue;
-	 // we look for GOODSIG here as well as an expired sig is a valid sig as well (but not a good one)
-	 std::string const goodfingerprint = "GOODSIG " + k;
-	 std::string const goodlongkeyid = "GOODSIG " + k.substr(24, 16);
-	 foundGood = std::find(GoodSigners.begin(), GoodSigners.end(), goodfingerprint) != GoodSigners.end();
 	 if (Debug == true)
-	    std::clog << "Key " << k << " is valid sig, is " << goodfingerprint << " also a good one? " << (foundGood ? "yes" : "no") << std::endl;
-	 std::string goodsig;
-	 if (foundGood == false)
+	    std::clog << "Key " << good << " is good sig, is it also a valid and allowed one? ";
+	 bool found = false;
+	 for (auto const &l : limitedTo)
 	 {
-	    foundGood = std::find(GoodSigners.begin(), GoodSigners.end(), goodlongkeyid) != GoodSigners.end();
-	    if (Debug == true)
-	       std::clog << "Key " << k << " is valid sig, is " << goodlongkeyid << " also a good one? " << (foundGood ? "yes" : "no") << std::endl;
-	    goodsig = goodlongkeyid;
+	    if (IsTheSameKey(l, good) == false)
+	       continue;
+	    // GOODSIG might be "just" a longid, so we check VALIDSIG which is always a fingerprint
+	    if (std::find(ValidSigners.begin(), ValidSigners.end(), l) == ValidSigners.end())
+	       continue;
+	    found = true;
+	    break;
 	 }
+	 if (Debug)
+	    std::clog << (found ? "yes" : "no") << "\n";
+	 if (found)
+	    filteredGood.emplace_back(std::move(good));
 	 else
-	    goodsig = goodfingerprint;
-	 if (foundGood == false)
-	    continue;
-	 std::copy(GoodSigners.begin(), GoodSigners.end(), std::back_insert_iterator<std::vector<std::string> >(NoPubKeySigners));
-	 GoodSigners.clear();
-	 GoodSigners.push_back(goodsig);
-	 NoPubKeySigners.erase(
-	    std::remove(NoPubKeySigners.begin(),
-	       std::remove(NoPubKeySigners.begin(), NoPubKeySigners.end(), goodfingerprint),
-	       goodlongkeyid),
-	    NoPubKeySigners.end()
-	 );
-	 break;
+	    NoPubKeySigners.emplace_back(std::move(good));
       }
-      if (foundGood == false)
-      {
-	 std::copy(GoodSigners.begin(), GoodSigners.end(), std::back_insert_iterator<std::vector<std::string> >(NoPubKeySigners));
-	 GoodSigners.clear();
-      }
+      GoodSigners = std::move(filteredGood);
    }
 
    int status;

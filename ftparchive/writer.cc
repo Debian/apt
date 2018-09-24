@@ -291,7 +291,7 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 			unsigned long long &DeLinkBytes,
 			unsigned long long const &FileSize)
 {
-   // See if this isn't an internaly prefix'd file name.
+   // See if this isn't an internally prefix'd file name.
    if (InternalPrefix.empty() == false &&
        InternalPrefix.length() < FileName.length() && 
        stringcmp(FileName.begin(),FileName.begin() + InternalPrefix.length(),

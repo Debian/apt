@@ -42,7 +42,7 @@ pkgRecords::Parser &LookupParser(pkgRecords &Recs, pkgCache::VerIterator const &
    return Recs.Lookup(Vf);
 }
 									/*}}}*/
-static APT_PURE char const *skipDescriptionFields(char const *DescP, size_t const Length) /*{{{*/
+static APT_PURE char const *skipDescription(char const *DescP, size_t const Length, bool fields) /*{{{*/
 {
    auto const backup = DescP;
    char const * const TagName = "\nDescription";
@@ -51,7 +51,7 @@ static APT_PURE char const *skipDescriptionFields(char const *DescP, size_t cons
    {
       if (DescP[1] == ' ')
 	 DescP += 2;
-      else if (strncmp((char*)DescP, TagName, TagLen) == 0)
+      else if (fields && strncmp((char *)DescP, TagName, TagLen) == 0)
 	 DescP += TagLen;
       else
 	 break;
@@ -78,19 +78,43 @@ static APT_PURE char const *findDescriptionField(char const *DescP, size_t const
    return DescP;
 }
 									/*}}}*/
+static APT_PURE char const *skipColonSpaces(char const *Buffer, size_t const Length) /*{{{*/
+{
+   // skipping withspace before and after the field-value separating colon
+   char const *const Start = Buffer;
+   for (; isspace(*Buffer) != 0 && Length - (Buffer - Start) > 0; ++Buffer)
+      ;
+   if (*Buffer != ':')
+      return nullptr;
+   ++Buffer;
+   for (; isspace(*Buffer) != 0 && Length - (Buffer - Start) > 0; ++Buffer)
+      ;
+   if (Length - (Buffer - Start) <= 0)
+      return nullptr;
+   return Buffer;
+}
+									/*}}}*/
 
 bool DisplayRecordV1(pkgCacheFile &, pkgRecords &Recs, /*{{{*/
-		     pkgCache::VerIterator const &V, pkgCache::VerFileIterator const &,
+		     pkgCache::VerIterator const &V, pkgCache::VerFileIterator const &Vf,
 		     char const *Buffer, size_t Length, std::ostream &out)
 {
-   if (unlikely(Length == 0))
+   if (unlikely(Length < 4))
       return false;
 
    auto const Desc = V.TranslatedDescription();
    if (Desc.end())
    {
-      // we have no translation output whatever we have got
-      return FileFd::Write(STDOUT_FILENO, Buffer, Length);
+      /* This handles the unusual case that we have no description whatsoever.
+	 The slightly more common case of only having a short-description embedded
+	 in the record could be handled here, but apt supports also having multiple
+	 descriptions embedded in the record, so we deal with that case later */
+      if (FileFd::Write(STDOUT_FILENO, Buffer, Length) == false)
+	 return false;
+      if (strncmp((Buffer + Length - 4), "\r\n\r\n", 4) != 0 &&
+	  strncmp((Buffer + Length - 2), "\n\n", 2) != 0)
+	 out << std::endl;
+      return true;
    }
 
    // Get a pointer to start of Description field
@@ -111,18 +135,41 @@ bool DisplayRecordV1(pkgCacheFile &, pkgRecords &Recs, /*{{{*/
    else
       snprintf(desctag, sizeof(desctag), "\nDescription-%s", langcode);
 
-   out << desctag + 1 << ": ";
+   out << desctag + 1 << ": " << std::flush;
    auto const Df = Desc.FileList();
    if (Df.end() == false)
    {
-      pkgRecords::Parser &P = Recs.Lookup(Df);
-      out << P.LongDesc();
+      if (Desc.FileList()->File == Vf->File)
+      {
+	 /* If we have the file already open look in the buffer for the
+	    description we want to display. Note that this might not be the
+	    only one we can encounter in this record */
+	 char const *Start = DescP;
+	 do
+	 {
+	    if (strncmp(Start, desctag + 1, strlen(desctag) - 1) != 0)
+	       continue;
+	    Start += strlen(desctag) - 1;
+	    Start = skipColonSpaces(Start, Length - (Start - Buffer));
+	    if (Start == nullptr)
+	       continue;
+	    char const *End = skipDescription(Start, Length - (Start - Buffer), false);
+	    if (likely(End != nullptr))
+	       FileFd::Write(STDOUT_FILENO, Start, End - (Start + 1));
+	    break;
+	 } while ((Start = findDescriptionField(Start, Length - (Start - Buffer))) != nullptr);
+      }
+      else
+      {
+	 pkgRecords::Parser &P = Recs.Lookup(Df);
+	 out << P.LongDesc();
+      }
    }
 
    out << std::endl << "Description-md5: " << Desc.md5() << std::endl;
 
    // Find the first field after the description (if there is any)
-   DescP = skipDescriptionFields(DescP, Length - (DescP - Buffer));
+   DescP = skipDescription(DescP, Length - (DescP - Buffer), true);
 
    // write the rest of the buffer, but skip mixed in Descriptions* fields
    while (DescP != nullptr)
@@ -150,7 +197,7 @@ bool DisplayRecordV1(pkgCacheFile &, pkgRecords &Recs, /*{{{*/
 	 ++End;
       }
       else
-	 DescP = skipDescriptionFields(End + strlen("Description"), Length - (End - Buffer));
+	 DescP = skipDescription(End + strlen("Description"), Length - (End - Buffer), true);
 
       size_t const length = End - Start;
       if (length != 0 && FileFd::Write(STDOUT_FILENO, Start, length) == false)

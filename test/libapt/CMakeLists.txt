@@ -1,3 +1,4 @@
+set(PROJECT_TEST_LIBRARIES apt-private apt-inst)
 find_path(GTEST_ROOT src/gtest.cc
    /usr/src/googletest/googletest
    /usr/src/gtest
@@ -31,13 +32,13 @@ if(GTEST_FOUND)
    # is expanded at CMake time, so you have to rerun cmake if you add or remove
    # a file (you can just run cmake . in the build directory)
    file(GLOB files gtest_runner.cc *-helpers.cc *_test.cc)
-   add_executable(libapt_test ${files})
-   target_include_directories(libapt_test PRIVATE ${GTEST_INCLUDE_DIRS})
-   target_link_libraries(libapt_test ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} apt-private apt-inst)
+   add_executable(lib${PROJECT_NAME}_test ${files})
+   target_include_directories(lib${PROJECT_NAME}_test PRIVATE ${GTEST_INCLUDE_DIRS})
+   target_link_libraries(lib${PROJECT_NAME}_test ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${PROJECT_TEST_LIBRARIES})
    if (GTEST_DEPENDENCIES)
-      add_dependencies(libapt_test ${GTEST_DEPENDENCIES})
+      add_dependencies(lib${PROJECT_NAME}_test ${GTEST_DEPENDENCIES})
    endif()
-   add_test(NAME AptTests
-            COMMAND libapt_test
+   add_test(NAME ${PROJECT_NAME}Tests
+            COMMAND lib${PROJECT_NAME}_test
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()

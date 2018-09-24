@@ -475,8 +475,11 @@ EOF
 	# prefer our apt binaries over the system apt binaries
 	export PATH="${BUILDDIRECTORY}:${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	export LC_ALL=C
-	unset LANGUAGE APT_CONFIG
-	unset GREP_OPTIONS DEB_BUILD_PROFILES
+	unset LANGUAGE COLUMNS NLSPATH
+	unset APT_CONFIG DPKG_ADMINDIR DPKG_COLORS
+	unset DEB_CHECK_COMMAND DEB_SIGN_KEYID DEB_BUILD_OPTIONS DEB_BUILD_PROFILES
+	unset DH_VERBOSE DH_QUIET DH_COMPAT DH_NO_ACT DH_OPTIONS DH_EXTRA_ADDONS
+	unset GREP_OPTIONS POSIXLY_CORRECT
 	unset http_proxy HTTP_PROXY https_proxy HTTPS_PROXY no_proxy
 
 	# Make gcov shut up

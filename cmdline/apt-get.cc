@@ -13,7 +13,7 @@
       update - Resyncronize the package files from their sources
       upgrade - Smart-Download the newest versions of all packages
       dselect-upgrade - Follows dselect's changes to the Status: field
-                       and installes new and removes old packages
+                       and installs new and removes old packages
       dist-upgrade - Powerful upgrader designed to handle the issues with
                     a new distribution.
       install - Download and install a given package (by name, not by .deb)
