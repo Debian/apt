@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-09-28 15:06+0200\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -1105,6 +1105,35 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Неуспех при анализирането на пакетен файл %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
+#, fuzzy, c-format
+#| msgid ""
+#| "Unable to lock the administration directory (%s), is another process "
+#| "using it?"
+msgid ""
+"Unable to acquire the dpkg frontend lock (%s), is another process using it?"
+msgstr ""
+"Неуспех при заключване на административната директория (%s). Може би се "
+"използва от друг процес?"
+
+#: apt-pkg/deb/debsystem.cc
+#, fuzzy, c-format
+#| msgid "Unable to lock the administration directory (%s), are you root?"
+msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
+msgstr ""
+"Неуспех при заключване на административната директория (%s). Може би липсват "
+"административни права?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+"Процесът dpkg е беше прекъснат. Проблемът трябва да се коригира чрез ръчно "
+"изпълнение на „%s“."
+
+#: apt-pkg/deb/debsystem.cc
 #, c-format
 msgid ""
 "Unable to lock the administration directory (%s), is another process using "
@@ -1119,16 +1148,6 @@ msgid "Unable to lock the administration directory (%s), are you root?"
 msgstr ""
 "Неуспех при заключване на административната директория (%s). Може би липсват "
 "административни права?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-"Процесът dpkg е беше прекъснат. Проблемът трябва да се коригира чрез ръчно "
-"изпълнение на „%s“."
 
 #: apt-pkg/deb/debsystem.cc
 msgid "Not locked"

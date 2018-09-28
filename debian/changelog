@@ -1,3 +1,19 @@
+apt (1.6.5) bionic; urgency=medium
+
+  [ David Kalnischkies ]
+  * Support records larger than 32kb in 'apt show' (Closes: #905527)
+    (LP: #1787120)
+
+  [ Julian Andres Klode ]
+  * Add support for dpkg frontend lock (Closes: #869546) (LP: #1781169)
+  * Set DPKG_FRONTEND_LOCKED as needed when doing selection changes
+  * http: Stop pipeline after close only if it was not filled before
+    (LP: #1794957)
+  * pkgCacheFile: Only unlock in destructor if locked before (LP: #1794053)
+  * Update libapt-pkg5.0 symbols for frontend locking
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Fri, 28 Sep 2018 15:06:34 +0200
+
 apt (1.6.4) unstable; urgency=critical
 
   [ David Kalnischkies ]

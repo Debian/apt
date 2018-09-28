@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-09-28 15:06+0200\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -1075,6 +1075,29 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "ไม่สามารถแจงแฟ้มแพกเกจ %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
+#, fuzzy, c-format
+#| msgid ""
+#| "Unable to lock the administration directory (%s), is another process "
+#| "using it?"
+msgid ""
+"Unable to acquire the dpkg frontend lock (%s), is another process using it?"
+msgstr "ไม่สามารถล็อคไดเรกทอรีดูแลระบบ (%s) มีโพรเซสอื่นใช้งานอยู่หรือเปล่า?"
+
+#: apt-pkg/deb/debsystem.cc
+#, fuzzy, c-format
+#| msgid "Unable to lock the administration directory (%s), are you root?"
+msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
+msgstr "ไม่สามารถล็อคไดเรกทอรีดูแลระบบ (%s) คุณเป็น root หรือเปล่า?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr "dpkg ถูกขัดจังหวะ คุณต้องเรียก '%s' เองเพื่อแก้ปัญหา"
+
+#: apt-pkg/deb/debsystem.cc
 #, c-format
 msgid ""
 "Unable to lock the administration directory (%s), is another process using "
@@ -1085,14 +1108,6 @@ msgstr "ไม่สามารถล็อคไดเรกทอรีดู
 #, c-format
 msgid "Unable to lock the administration directory (%s), are you root?"
 msgstr "ไม่สามารถล็อคไดเรกทอรีดูแลระบบ (%s) คุณเป็น root หรือเปล่า?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr "dpkg ถูกขัดจังหวะ คุณต้องเรียก '%s' เองเพื่อแก้ปัญหา"
 
 #: apt-pkg/deb/debsystem.cc
 msgid "Not locked"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-09-28 15:06+0200\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -1144,6 +1144,34 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Nem lehet a(z) %s csomagfájlt feldolgozni (%d)"
 
 #: apt-pkg/deb/debsystem.cc
+#, fuzzy, c-format
+#| msgid ""
+#| "Unable to lock the administration directory (%s), is another process "
+#| "using it?"
+msgid ""
+"Unable to acquire the dpkg frontend lock (%s), is another process using it?"
+msgstr ""
+"Az adminisztrációs könyvtár (%s) nem zárolható, lehet hogy másik folyamat "
+"használja?"
+
+#: apt-pkg/deb/debsystem.cc
+#, fuzzy, c-format
+#| msgid "Unable to lock the administration directory (%s), are you root?"
+msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
+msgstr ""
+"Az adminisztrációs könyvtár (%s) nem zárolható, rendszergazdaként próbálja?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+"A dpkg megszakadt, saját kezűleg kell futtatnia a(z) „%s” parancsot a "
+"probléma megoldásához. "
+
+#: apt-pkg/deb/debsystem.cc
 #, c-format
 msgid ""
 "Unable to lock the administration directory (%s), is another process using "
@@ -1157,16 +1185,6 @@ msgstr ""
 msgid "Unable to lock the administration directory (%s), are you root?"
 msgstr ""
 "Az adminisztrációs könyvtár (%s) nem zárolható, rendszergazdaként próbálja?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-"A dpkg megszakadt, saját kezűleg kell futtatnia a(z) „%s” parancsot a "
-"probléma megoldásához. "
 
 #: apt-pkg/deb/debsystem.cc
 msgid "Not locked"

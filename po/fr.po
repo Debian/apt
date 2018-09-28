@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-02-26 13:14+0100\n"
+"POT-Creation-Date: 2018-09-28 15:06+0200\n"
 "PO-Revision-Date: 2018-01-02 15:09+0100\n"
 "Last-Translator: Julien Patriarca <leatherface@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -1162,6 +1162,35 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Impossible de traiter le fichier %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
+#, fuzzy, c-format
+#| msgid ""
+#| "Unable to lock the administration directory (%s), is another process "
+#| "using it?"
+msgid ""
+"Unable to acquire the dpkg frontend lock (%s), is another process using it?"
+msgstr ""
+"Impossible de verrouiller le répertoire d'administration (%s). Il est "
+"possible qu'un autre processus l'utilise."
+
+#: apt-pkg/deb/debsystem.cc
+#, fuzzy, c-format
+#| msgid "Unable to lock the administration directory (%s), are you root?"
+msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
+msgstr ""
+"Impossible de verrouiller le répertoire d'administration (%s). Avez-vous les "
+"privilèges du superutilisateur ?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+"dpkg a été interrompu. Il est nécessaire d'utiliser « %s » pour corriger le "
+"problème."
+
+#: apt-pkg/deb/debsystem.cc
 #, c-format
 msgid ""
 "Unable to lock the administration directory (%s), is another process using "
@@ -1176,16 +1205,6 @@ msgid "Unable to lock the administration directory (%s), are you root?"
 msgstr ""
 "Impossible de verrouiller le répertoire d'administration (%s). Avez-vous les "
 "privilèges du superutilisateur ?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-"dpkg a été interrompu. Il est nécessaire d'utiliser « %s » pour corriger le "
-"problème."
 
 #: apt-pkg/deb/debsystem.cc
 msgid "Not locked"
