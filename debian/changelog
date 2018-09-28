@@ -1,3 +1,20 @@
+apt (1.2.28) xenial; urgency=medium
+
+  [ Julian Andres Klode ]
+  * apt.conf.autoremove: Add linux-cloud-tools to list (LP: #1698159)
+  * Add support for dpkg frontend lock (Closes: #869546) (LP: #1781169)
+  * Set DPKG_FRONTEND_LOCKED as needed when doing selection changes
+  * http: Stop pipeline after close only if it was not filled before
+    (LP: #1794957)
+  * pkgCacheFile: Only unlock in destructor if locked before (LP: #1794053)
+  * Update libapt-pkg5.0 symbols for frontend locking
+
+  [ David Kalnischkies ]
+  * Support records larger than 32kb in 'apt show' (Closes: #905527)
+    (LP: #1787120)
+
+ -- Julian Andres Klode <julian.klode@canonical.com>  Fri, 28 Sep 2018 15:18:29 +0200
+
 apt (1.2.27) xenial; urgency=medium
 
   [ David Kalnischkies ]
