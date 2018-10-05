@@ -24,6 +24,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/strutl.h>
 
@@ -101,6 +102,8 @@ bool RunScripts(const char *Cnf)
    // This is the child
    if (Child == 0)
    {
+      if (_system != nullptr && _system->IsLocked() == true && (stringcasecmp(Cnf, "dpkg::post-invoke") == 0 || stringcasecmp(Cnf, "dpkg::pre-invoke") == 0))
+	 setenv("DPKG_FRONTEND_LOCKED", "true", 1);
       if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
       {
          std::cerr << "Chrooting into " 
