@@ -1,0 +1,80 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'i386'
+
+insertinstalledpackage 'package1' 'i386' '1.0'
+insertinstalledpackage 'package2' 'i386' '1.0'
+insertinstalledpackage 'package3' 'i386' '1.0'
+insertinstalledpackage 'package4' 'i386' '1.0'
+insertinstalledpackage 'package5' 'i386' '1.0'
+insertinstalledpackage 'package6' 'i386' '1.0'
+buildsimplenativepackage 'foo' 'all' '1'
+
+setupaptarchive
+
+buildsimplenativepackage 'bar' 'all' '1'
+
+
+# Checks that the correct variable is set
+msgmsg 'Post-Invoke script has DPKG_FRONTEND_LOCKED set'
+testsuccess aptget  -q -y -o Dpkg::Post-Invoke::="echo DPKG_FRONTEND_LOCKED=\$DPKG_FRONTEND_LOCKED" remove package1
+cp rootdir/tmp/testsuccess.output install.output
+testsuccess grep DPKG_FRONTEND_LOCKED=true install.output
+
+msgmsg 'Pre-Invoke script has DPKG_FRONTEND_LOCKED set'
+testsuccess aptget  -q -y -o Dpkg::Pre-Invoke::="echo DPKG_FRONTEND_LOCKED=\$DPKG_FRONTEND_LOCKED" remove package2
+cp rootdir/tmp/testsuccess.output install.output
+testsuccess grep DPKG_FRONTEND_LOCKED=true install.output
+
+msgmsg 'Pre-Install-Pkgs script has DPKG_FRONTEND_LOCKED set'
+testsuccess aptget  -q -y -o DPkg::Pre-Install-Pkgs::="echo DPKG_FRONTEND_LOCKED=\$DPKG_FRONTEND_LOCKED" remove package3
+cp rootdir/tmp/testsuccess.output install.output
+testsuccess grep DPKG_FRONTEND_LOCKED=true install.output
+
+
+# Check that the frontend lock is hold by apt-get
+msgmsg 'Post-Invoke script runs while frontend is locked'
+testfailure aptget  -q -y -o Dpkg::Post-Invoke::="apt-get remove" remove package4
+cp rootdir/tmp/testfailure.output install.output
+testsuccess grep "E: Unable to acquire the dpkg frontend lock (${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/lock-frontend), is another process using it?" install.output
+testsuccess grep "E: Problem executing scripts DPkg::Post-Invoke 'apt-get remove'" install.output
+
+msgmsg 'Pre-Invoke script runs while frontend is locked'
+testfailure aptget  -q -y -o Dpkg::Pre-Invoke::="apt-get remove" remove package5
+cp rootdir/tmp/testfailure.output install.output
+testsuccess grep "E: Unable to acquire the dpkg frontend lock (${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/lock-frontend), is another process using it?" install.output
+testsuccess grep "E: Problem executing scripts DPkg::Pre-Invoke 'apt-get remove'" install.output
+
+msgmsg 'Pre-Install-Pkgs runs while frontend is locked'
+testfailure aptget  -q -y -o DPkg::Pre-Install-Pkgs::="apt-get remove" remove package6
+cp rootdir/tmp/testfailure.output install.output
+testsuccess grep "E: Unable to acquire the dpkg frontend lock (${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/lock-frontend), is another process using it?" install.output
+testsuccess grep "E: Sub-process apt-get remove returned an error code (100)" install.output
+testsuccess grep "Failure running script apt-get remove" install.output
+
+
+# Applied test case from DonKult
+msgmsg 'Applied case of frontend locking'
+cat > ./post-invoke <<EOF
+#!/bin/sh
+set -e
+#export DPKG_FRONTEND_LOCKED=true
+${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg -i ${TMPWORKINGDIRECTORY}/incoming/bar_1_all.deb
+EOF
+chmod +x ./post-invoke
+echo "dpkg::post-invoke:: \"${TMPWORKINGDIRECTORY}/post-invoke\";" > rootdir/etc/apt/apt.conf.d/01dpkgpostinvoke
+
+testdpkgnotinstalled 'foo' 'bar'
+testsuccess apt show foo
+testfailure apt show bar
+
+testsuccess apt install foo -s
+testdpkgnotinstalled 'foo' 'bar'
+
+testsuccess apt install foo
+testdpkginstalled 'foo' 'bar'
