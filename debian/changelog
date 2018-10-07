@@ -1,3 +1,23 @@
+apt (1.7.0) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Fix calculation of elapsed usec in downloads
+  * pkgCacheFile: Only unlock in destructor if locked before (LP: #1794053)
+  * Set DPKG_FRONTEND_LOCKED when running {pre,post}-invoke scripts.
+    Some post-invoke scripts install packages, which fails because
+    the environment variable is not set. This sets the variable for
+    all three kinds of scripts {pre,post-}invoke and pre-install-pkgs,
+    but we will only allow post-invoke at a later time.
+  * prepare-release: Fix last-modification detection for manpages
+
+  [ David Kalnischkies ]
+  * Show APT::Compressor example in apt.conf(5) (Closes: #909712)
+
+  [ Muhamed Huseinbašić ]
+  * apt-mark: showhold: typo-fix (package -> packages)
+
+ -- Julian Andres Klode <jak@debian.org>  Sun, 07 Oct 2018 07:56:02 +0200
+
 apt (1.7.0~rc2) unstable; urgency=medium
 
   [ David Kalnischkies ]
