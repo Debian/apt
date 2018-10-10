@@ -31,6 +31,21 @@
 #include <unordered_map>
 #include <vector>
 
+static std::string HTMLEncode(std::string encode)			/*{{{*/
+{
+   constexpr std::array<std::array<char const *,2>,6> htmlencode = {{
+      {{ "&", "&amp;" }},
+      {{ "<", "&lt;" }},
+      {{ ">", "&gt;" }},
+      {{ "\"", "&quot;" }},
+      {{ "'", "&#x27;" }},
+      {{ "/", "&#x2F;" }},
+   }};
+   for (auto &&h: htmlencode)
+      encode = SubstVar(encode, h[0], h[1]);
+   return encode;
+}
+									/*}}}*/
 static std::string httpcodeToStr(int const httpcode)			/*{{{*/
 {
    switch (httpcode)
@@ -250,22 +265,23 @@ static bool sendData(int const client, std::list<std::string> const &headers, st
 static void sendError(std::ostream &log, int const client, int const httpcode, std::string const &request,/*{{{*/
 	       bool const content, std::string const &error, std::list<std::string> &headers)
 {
+   auto const quotedCode = HTMLEncode(httpcodeToStr(httpcode));
    std::string response("<!doctype html><html><head><title>");
-   response.append(httpcodeToStr(httpcode)).append("</title><meta charset=\"utf-8\" /></head>");
-   response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1>");
+   response.append(quotedCode).append("</title><meta charset=\"utf-8\" /></head>");
+   response.append("<body><h1>").append(quotedCode).append("</h1>");
    if (httpcode != 200)
       response.append("<p><em>Error</em>: ");
    else
       response.append("<p><em>Success</em>: ");
    if (error.empty() == false)
-      response.append(error);
+      response.append(HTMLEncode(error));
    else
-      response.append(httpcodeToStr(httpcode));
+      response.append(quotedCode);
    if (httpcode != 200)
       response.append("</p>This error is a result of the request: <pre>");
    else
       response.append("The successfully executed operation was requested by: <pre>");
-   response.append(request).append("</pre></body></html>");
+   response.append(HTMLEncode(request)).append("</pre></body></html>");
    if (httpcode != 200)
    {
       if (_config->FindB("aptwebserver::closeOnError", false) == true)
@@ -290,12 +306,13 @@ static void sendRedirect(std::ostream &log, int const client, int const httpcode
 		  std::string const &uri, std::string const &request, bool content)
 {
    std::list<std::string> headers;
+   auto const quotedCode = HTMLEncode(httpcodeToStr(httpcode));
    std::string response("<!doctype html><html><head><title>");
-   response.append(httpcodeToStr(httpcode)).append("</title><meta charset=\"utf-8\" /></head>");
-   response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1");
-   response.append("<p>You should be redirected to <em>").append(uri).append("</em></p>");
+   response.append(quotedCode).append("</title><meta charset=\"utf-8\" /></head>");
+   response.append("<body><h1>").append(quotedCode).append("</h1");
+   response.append("<p>You should be redirected to <em>").append(HTMLEncode(uri)).append("</em></p>");
    response.append("This page is a result of the request: <pre>");
-   response.append(request).append("</pre></body></html>");
+   response.append(HTMLEncode(request)).append("</pre></body></html>");
    addDataHeaders(headers, response);
    std::string location("Location: ");
    if (strncmp(uri.c_str(), "http://", 7) != 0 && strncmp(uri.c_str(), "https://", 8) != 0)
@@ -380,13 +397,14 @@ static void sendDirectoryListing(std::ostream &log, int const client, std::strin
    }
 
    std::ostringstream listing;
-   listing << "<!doctype html><html><head><title>Index of " << dir << "</title><meta charset=\"utf-8\" />"
+   std::string const quotedDir = HTMLEncode(dir);
+   listing << "<!doctype html><html><head><title>Index of " << quotedDir << "</title><meta charset=\"utf-8\" />"
 	   << "<style type=\"text/css\"><!-- td {padding: 0.02em 0.5em 0.02em 0.5em;}"
 	   << "tr:nth-child(even){background-color:#dfdfdf;}"
 	   << "h1, td:nth-child(3){text-align:center;}"
 	   << "table {margin-left:auto;margin-right:auto;} --></style>"
 	   << "</head>" << std::endl
-	   << "<body><h1>Index of " << dir << "</h1>" << std::endl
+	   << "<body><h1>Index of " << quotedDir << "</h1>" << std::endl
 	   << "<table><tr><th>#</th><th>Name</th><th>Size</th><th>Last-Modified</th></tr>" << std::endl;
    if (dir != "./")
       listing << "<tr><td>d</td><td><a href=\"..\">Parent Directory</a></td><td>-</td><td>-</td></tr>";
@@ -395,19 +413,13 @@ static void sendDirectoryListing(std::ostream &log, int const client, std::strin
       std::string filename(dir);
       filename.append("/").append(namelist[i]->d_name);
       stat(filename.c_str(), &fs);
-      if (S_ISDIR(fs.st_mode))
-      {
-	 listing << "<tr><td>d</td>"
-		 << "<td><a href=\"" << namelist[i]->d_name << "/\">" << namelist[i]->d_name << "</a></td>"
-		 << "<td>-</td>";
-      }
-      else
-      {
-	 listing << "<tr><td>f</td>"
-		 << "<td><a href=\"" << namelist[i]->d_name << "\">" << namelist[i]->d_name << "</a></td>"
-		 << "<td>" << SizeToStr(fs.st_size) << "B</td>";
-      }
-      listing << "<td>" << TimeRFC1123(fs.st_mtime, true) << "</td></tr>" << std::endl;
+      std::string const quotedHref = QuoteString(namelist[i]->d_name, "\"\\/#?");
+      std::string const quotedName = HTMLEncode(namelist[i]->d_name);
+      bool const isDir = S_ISDIR(fs.st_mode);
+      listing << "<tr><td>" << (isDir ? 'd' : 'f') << "</td>"
+	 << "<td><a href=\"./" << quotedHref << (isDir ? "/" : "") <<"\">" << quotedName << "</a></td>"
+	 << "<td>" << (isDir ? "-" : SizeToStr(fs.st_size).append("B")) << "</td>"
+	 << "<td>" << TimeRFC1123(fs.st_mtime, true) << "</td></tr>\n";
    }
    listing << "</table></body></html>" << std::endl;
 
