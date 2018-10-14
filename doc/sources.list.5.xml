@@ -14,7 +14,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2018-02-27T00:00:00Z</date>
+   <date>2018-08-17T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -294,17 +294,22 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
 	  </para></listitem>
 
 	  <listitem><para><option>Signed-By</option> (<option>signed-by</option>)
-		is either an absolute path to a keyring file (has to be
-		accessible and readable for the <literal>_apt</literal> user,
-		so ensure everyone has read-permissions on the file) or one or
-		more fingerprints of keys either in the
-		<filename>trusted.gpg</filename> keyring or in the
-		keyrings in the <filename>trusted.gpg.d/</filename> directory
-		(see <command>apt-key fingerprint</command>). If the option is
-		set, only the key(s) in this keyring or only the keys with these
-		fingerprints are used for the &apt-secure; verification of this
-		repository. Defaults to the value of the option with the same name
-		if set in the previously acquired <filename>Release</filename> file.
+		is an option to require a repository to pass &apt-secure; verification
+		with a certain set of keys rather than all trusted keys apt has configured.
+		It is specified as a list of absolute paths to keyring files (have to be
+		accessible and readable for the <literal>_apt</literal> system user,
+		so ensure everyone has read-permissions on the file) and fingerprints
+		of keys to select from these keyrings. If no keyring files are specified
+		the default is the <filename>trusted.gpg</filename> keyring and
+		all keyrings in the <filename>trusted.gpg.d/</filename> directory
+		(see <command>apt-key fingerprint</command>). If no fingerprint is
+		specified all keys in the keyrings are selected. A fingerprint will
+		accept also all signatures by a subkey of this key, if this isn't
+		desired an exclamation mark (<literal>!</literal>) can be appended to
+		the fingerprint to disable this behaviour.
+		The option defaults to the value of the option with the same name
+		if set in the previously acquired <filename>Release</filename> file
+		of this repository (only fingerprints can be specified there through).
 		Otherwise all keys in the trusted keyrings are considered valid
 		signers for this repository.
 	  </para></listitem>

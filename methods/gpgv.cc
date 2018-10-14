@@ -20,6 +20,7 @@
 #include <array>
 #include <iostream>
 #include <iterator>
+#include <map>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -105,7 +106,8 @@ class GPGVMethod : public aptMethod
 {
    private:
    string VerifyGetSigners(const char *file, const char *outfile,
-				std::string const &key,
+				vector<string> const &keyFpts,
+				vector<string> const &keyFiles,
 				vector<string> &GoodSigners,
                                 vector<string> &BadSigners,
                                 vector<string> &WorthlessSigners,
@@ -145,7 +147,8 @@ static void PushEntryWithUID(std::vector<std::string> &Signers, char * const buf
    Signers.push_back(msg);
 }
 string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
-					 std::string const &key,
+					 vector<string> const &keyFpts,
+					 vector<string> const &keyFiles,
 					 vector<string> &GoodSigners,
 					 vector<string> &BadSigners,
 					 vector<string> &WorthlessSigners,
@@ -158,7 +161,6 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       std::clog << "inside VerifyGetSigners" << std::endl;
 
    int fd[2];
-   bool const keyIsID = (key.empty() == false && key[0] != '/');
 
    if (pipe(fd) < 0)
       return "Couldn't create pipe";
@@ -167,7 +169,15 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    if (pid < 0)
       return string("Couldn't spawn new process") + strerror(errno);
    else if (pid == 0)
-      ExecGPGV(outfile, file, 3, fd, (keyIsID ? "" : key));
+   {
+      std::ostringstream keys;
+      if (keyFiles.empty() == false)
+      {
+	 std::copy(keyFiles.begin(), keyFiles.end()-1, std::ostream_iterator<std::string>(keys, ","));
+	 keys << *keyFiles.rbegin();
+      }
+      ExecGPGV(outfile, file, 3, fd, keys.str());
+   }
    close(fd[1]);
 
    FILE *pipein = fdopen(fd[0], "r");
@@ -175,6 +185,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    // Loop over the output of apt-key (which really is gnupg), and check the signatures.
    std::vector<std::string> ValidSigners;
    std::vector<std::string> ErrSigners;
+   std::map<std::string, std::vector<std::string>> SubKeyMapping;
    size_t buffersize = 0;
    char *buffer = NULL;
    bool gotNODATA = false;
@@ -242,6 +253,9 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
          }
 
          ValidSigners.push_back(sig);
+
+	 if (tokens.size() > 9 && sig != tokens[9])
+	    SubKeyMapping[tokens[9]].emplace_back(sig);
       }
       else if (strncmp(buffer, APTKEYWARNING, sizeof(APTKEYWARNING)-1) == 0)
          Warning("%s", buffer + sizeof(APTKEYWARNING));
@@ -254,26 +268,52 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 
    // apt-key has a --keyid parameter, but this requires gpg, so we call it without it
    // and instead check after the fact which keyids where used for verification
-   if (keyIsID == true)
+   if (keyFpts.empty() == false)
    {
       if (Debug == true)
-	 std::clog << "GoodSigs needs to be limited to keyid(s) " << key << std::endl;
-      auto const limitedTo = VectorizeString(key, ',');
+      {
+	 std::clog << "GoodSigs needs to be limited to keyid(s): ";
+	 std::copy(keyFpts.begin(), keyFpts.end(), std::ostream_iterator<std::string>(std::clog, ", "));
+	 std::clog << "\n";
+      }
       std::vector<std::string> filteredGood;
       for (auto &&good: GoodSigners)
       {
 	 if (Debug == true)
 	    std::clog << "Key " << good << " is good sig, is it also a valid and allowed one? ";
 	 bool found = false;
-	 for (auto const &l : limitedTo)
+	 for (auto l : keyFpts)
 	 {
-	    if (IsTheSameKey(l, good) == false)
-	       continue;
-	    // GOODSIG might be "just" a longid, so we check VALIDSIG which is always a fingerprint
-	    if (std::find(ValidSigners.begin(), ValidSigners.end(), l) == ValidSigners.end())
-	       continue;
-	    found = true;
-	    break;
+	    bool exactKey = false;
+	    if (APT::String::Endswith(l, "!"))
+	    {
+	       exactKey = true;
+	       l.erase(l.length() - 1);
+	    }
+	    if (IsTheSameKey(l, good))
+	    {
+	       // GOODSIG might be "just" a longid, so we check VALIDSIG which is always a fingerprint
+	       if (std::find(ValidSigners.cbegin(), ValidSigners.cend(), l) == ValidSigners.cend())
+		  continue;
+	       found = true;
+	       break;
+	    }
+	    else if (exactKey == false)
+	    {
+	       auto const master = SubKeyMapping.find(l);
+	       if (master == SubKeyMapping.end())
+		  continue;
+	       for (auto const &sub : master->second)
+		  if (IsTheSameKey(sub, good))
+		  {
+		     if (std::find(ValidSigners.cbegin(), ValidSigners.cend(), sub) == ValidSigners.cend())
+			continue;
+		     found = true;
+		     break;
+		  }
+	       if (found)
+		  break;
+	    }
 	 }
 	 if (Debug)
 	    std::clog << (found ? "yes" : "no") << "\n";
@@ -325,7 +365,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    }
    else if (WEXITSTATUS(status) == 0)
    {
-      if (keyIsID)
+      if (keyFpts.empty() == false)
       {
 	 // gpgv will report success, but we want to enforce a certain keyring
 	 // so if we haven't found the key the valid we found is in fact invalid
@@ -351,7 +391,6 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 {
    URI const Get = Itm->Uri;
    string const Path = Get.Host + Get.Path; // To account for relative paths
-   std::string const key = LookupTag(Message, "Signed-By");
    vector<string> GoodSigners;
    vector<string> BadSigners;
    // a worthless signature is a expired or revoked one
@@ -363,8 +402,15 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    Res.Filename = Itm->DestFile;
    URIStart(Res);
 
+   std::vector<std::string> keyFpts, keyFiles;
+   for (auto &&key : VectorizeString(LookupTag(Message, "Signed-By"), ','))
+      if (key.empty() == false && key[0] == '/')
+	 keyFiles.emplace_back(std::move(key));
+      else
+	 keyFpts.emplace_back(std::move(key));
+
    // Run apt-key on file, extract contents and get the key ID of the signer
-   string const msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), key,
+   string const msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), keyFpts, keyFiles,
                                  GoodSigners, BadSigners, WorthlessSigners,
                                  SoonWorthlessSigners, NoPubKeySigners);
    if (_error->PendingError())
