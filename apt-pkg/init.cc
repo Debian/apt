@@ -207,7 +207,6 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Acquire::Changelogs::URI::Origin::Debian", "https://metadata.ftp-master.debian.org/changelogs/@CHANGEPATH@_changelog");
    Cnf.CndSet("Acquire::Changelogs::URI::Origin::Tanglu", "http://metadata.tanglu.org/changelogs/@CHANGEPATH@_changelog");
    Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ubuntu", "https://changelogs.ubuntu.com/changelogs/pool/@CHANGEPATH@/changelog");
-   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ultimedia", "http://packages.ultimediaos.com/changelogs/pool/@CHANGEPATH@/changelog.txt");
    Cnf.CndSet("Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu", true);
 
    // Read an alternate config file
