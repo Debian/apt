@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.7.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-10-07 07:56+0200\n"
+"POT-Creation-Date: 2018-10-30 22:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -914,6 +914,13 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
 msgid ""
+"The arguments are interpreted as binary and source package names.  See the "
+"<option>--only-source</option> option if you want to change that."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
 "Source packages are tracked separately from binary packages via "
 "<literal>deb-src</literal> lines in the &sources-list; file. This means that "
 "you will need to add such a line for each repository you want to get sources "
@@ -957,6 +964,13 @@ msgid ""
 "the dependencies are satisfied to build the package natively. If desired a "
 "host-architecture can be specified with the "
 "<option>--host-architecture</option> option instead."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"The arguments are interpreted as binary or source package names. See the "
+"<option>--only-source</option> option if you want to change that."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -5583,18 +5597,24 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
 msgid ""
-"<option>Signed-By</option> (<option>signed-by</option>)  is either an "
-"absolute path to a keyring file (has to be accessible and readable for the "
-"<literal>_apt</literal> user, so ensure everyone has read-permissions on the "
-"file) or one or more fingerprints of keys either in the "
-"<filename>trusted.gpg</filename> keyring or in the keyrings in the "
+"<option>Signed-By</option> (<option>signed-by</option>)  is an option to "
+"require a repository to pass &apt-secure; verification with a certain set of "
+"keys rather than all trusted keys apt has configured.  It is specified as a "
+"list of absolute paths to keyring files (have to be accessible and readable "
+"for the <literal>_apt</literal> system user, so ensure everyone has "
+"read-permissions on the file) and fingerprints of keys to select from these "
+"keyrings. If no keyring files are specified the default is the "
+"<filename>trusted.gpg</filename> keyring and all keyrings in the "
 "<filename>trusted.gpg.d/</filename> directory (see <command>apt-key "
-"fingerprint</command>). If the option is set, only the key(s) in this "
-"keyring or only the keys with these fingerprints are used for the "
-"&apt-secure; verification of this repository. Defaults to the value of the "
-"option with the same name if set in the previously acquired "
-"<filename>Release</filename> file.  Otherwise all keys in the trusted "
-"keyrings are considered valid signers for this repository."
+"fingerprint</command>). If no fingerprint is specified all keys in the "
+"keyrings are selected. A fingerprint will accept also all signatures by a "
+"subkey of this key, if this isn't desired an exclamation mark "
+"(<literal>!</literal>) can be appended to the fingerprint to disable this "
+"behaviour.  The option defaults to the value of the option with the same "
+"name if set in the previously acquired <filename>Release</filename> file of "
+"this repository (only fingerprints can be specified there through).  "
+"Otherwise all keys in the trusted keyrings are considered valid signers for "
+"this repository."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
