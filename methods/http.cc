@@ -711,11 +711,10 @@ ResultState HttpServerState::Die(RequestState &Req)
 	    _error->Errno("write", _("Error writing to the file"));
 	    return ResultState::TRANSIENT_ERROR;
 	 }
-
-	 // Done
-	 if (In.IsLimit() == true)
-	    return ResultState::SUCCESSFUL;
       }
+      // Done
+      if (In.IsLimit() == true)
+	 return ResultState::SUCCESSFUL;
    }
 
    // See if this is because the server finished the data stream
