@@ -1,3 +1,13 @@
+apt (1.8.0~alpha2) unstable; urgency=medium
+
+  * Revert "http: Fix handling of server connection closure"
+    This reverts commit fb3f36593563d09a8d1727cc7c6deb0b49823ca2. It
+    caused downloads to hang on long-lived connections on certain
+    servers.
+  * Drop debian/source/options, not needed anymore
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 13 Nov 2018 10:31:49 +0100
+
 apt (1.8.0~alpha1) unstable; urgency=medium
 
   [ Damyan Ivanov ]
