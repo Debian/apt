@@ -7,7 +7,27 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'amd64'
 
-msgtest "Check that a repository with signed-by and two components works"
+msgtest 'Check that a repository with' 'signed-by and two components works'
 echo 'deb [signed-by=CDE5618B8805FD6E202CE9C2D73C39E56580B386] https://people.debian.org/~jak/debian/ stable main contrib # Äffchen' > rootdir/etc/apt/sources.list
+testsuccess --nomsg aptcache policy
 
+msgtest 'Check that a repository with' 'two fingerprints work'
+echo 'deb [signed-by=CDE5618B8805FD6E202CE9C2D73C39E56580B386,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA] https://people.debian.org/~jak/debian/ stable main contrib # Äffchen' > rootdir/etc/apt/sources.list
+testsuccess --nomsg aptcache policy
+
+msgtest 'Check that a repository with' 'exact fingerprint works'
+echo 'deb [signed-by=CDE5618B8805FD6E202CE9C2D73C39E56580B386!] https://people.debian.org/~jak/debian/ stable main contrib # Äffchen' > rootdir/etc/apt/sources.list
+testsuccess --nomsg aptcache policy
+
+msgtest 'Check that a repository with' 'whitespaced fingerprints work'
+echo 'deb [signed-by=CDE5618B8805FD6E202CE9C2D73C39E56580B386!,,,,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA] https://people.debian.org/~jak/debian/ stable main contrib # Äffchen' > rootdir/etc/apt/sources.list
+cat > rootdir/etc/apt/sources.list.d/people.sources <<EOF
+Types: deb
+URIs: mirror+file:/var/lib/apt/mirror.lst
+Suites: stable testing
+Components: main contrib
+Architectures: amd64 i386
+Signed-By: CDE5618B8805FD6E202CE9C2D73C39E56580B386!       AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    ,  , BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+EOF
 testsuccess --nomsg aptcache policy

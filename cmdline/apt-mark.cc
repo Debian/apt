@@ -301,7 +301,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"purge",&DoSelection, nullptr},
       {"showauto",&ShowAuto, _("Print the list of automatically installed packages")},
       {"showmanual",&ShowAuto, _("Print the list of manually installed packages")},
-      {"showhold",&ShowSelection, _("Print the list of package on hold")}, {"showholds",&ShowSelection, nullptr},
+      {"showhold",&ShowSelection, _("Print the list of packages on hold")}, {"showholds",&ShowSelection, nullptr},
       {"showinstall",&ShowSelection, nullptr}, {"showinstalls",&ShowSelection, nullptr},
       {"showdeinstall",&ShowSelection, nullptr}, {"showdeinstalls",&ShowSelection, nullptr},
       {"showremove",&ShowSelection, nullptr}, {"showremoves",&ShowSelection, nullptr},

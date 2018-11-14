@@ -889,7 +889,7 @@ bool pkgOrderList::DepConfigure(DepIterator D)
 									/*}}}*/
 // OrderList::DepRemove - Removal ordering				/*{{{*/
 // ---------------------------------------------------------------------
-/* Checks all given dependencies if they are broken by the remove of a
+/* Checks all given dependencies if they are broken by the removal of a
    package and if so fix it by visiting another provider or or-group
    member to ensure that the dependee keeps working which is especially
    important for Immediate packages like e.g. those depending on an

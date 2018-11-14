@@ -233,22 +233,39 @@ runtest() {
 " aptcache show apt
 	installaptnew
 
-	msgmsg 'Cold archive signed by good keyring' 'Marvin Paranoid'
-	prepare "${PKGFILE}"
+	msgmsg 'Cold archive signed by bad keyring' 'Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
-	signreleasefiles 'Marvin Paranoid'
 	local MARVIN="$(readlink -f keys/marvinparanoid.pub)"
 	sed -i "s#^\(deb\(-src\)\?\) #\1 [signed-by=$MARVIN] #" rootdir/etc/apt/sources.list.d/*
+	updatewithwarnings '^W: .* NO_PUBKEY'
+
+	msgmsg 'Cold archive signed by good keyring' 'Marvin Paranoid'
+	prepare "${PKGFILE}"
+	signreleasefiles 'Marvin Paranoid'
+	rm -rf rootdir/var/lib/apt/lists
 	successfulaptgetupdate
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	installaptold
 
-	msgmsg 'Cold archive signed by bad keyring' 'Joe Sixpack'
+	msgmsg 'Cold archive signed by good keyrings' 'Marvin Paranoid, Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
-	signreleasefiles 'Joe Sixpack'
-	updatewithwarnings '^W: .* NO_PUBKEY'
-	sed -i "s#^\(deb\(-src\)\?\) \[signed-by=$MARVIN\] #\1 #" rootdir/etc/apt/sources.list.d/*
+	local SIXPACK="$(readlink -f keys/joesixpack.pub)"
+	sed -i "s# \[signed-by=[^]]\+\] # [signed-by=$MARVIN,$SIXPACK] #" rootdir/etc/apt/sources.list.d/*
+	successfulaptgetupdate
+	testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+	installaptold
+
+	msgmsg 'Cold archive signed by good keyrings' 'Joe Sixpack, Marvin Paranoid'
+	rm -rf rootdir/var/lib/apt/lists
+	local SIXPACK="$(readlink -f keys/joesixpack.pub)"
+	sed -i "s# \[signed-by=[^]]\+\] # [signed-by=$SIXPACK,$MARVIN] #" rootdir/etc/apt/sources.list.d/*
+	successfulaptgetupdate
+	testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+	installaptold
+	sed -i "s# \[signed-by=[^]]\+\] # #" rootdir/etc/apt/sources.list.d/*
 
 	local MARVIN="$(aptkey --keyring $MARVIN finger --with-colons | grep '^fpr' | cut -d':' -f 10)"
 	msgmsg 'Cold archive signed by bad keyid' 'Joe Sixpack'
@@ -342,6 +359,44 @@ Signed-By: ${MARVIN} ${MARVIN}, \\
 	testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt
 	installaptnew
+
+	cp -a keys/sebastiansubkey.pub rootdir/etc/apt/trusted.gpg.d/sebastiansubkey.gpg
+	local SEBASTIAN="$(aptkey --keyring keys/sebastiansubkey.pub finger --with-colons | grep -m 1 '^fpr' | cut -d':' -f 10)"
+	msgmsg 'Warm archive with subkey signing' 'Sebastian Subkey'
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	signreleasefiles 'Sebastian Subkey'
+	sed -i "/^Valid-Until: / a\
+Signed-By: ${SEBASTIAN}" rootdir/var/lib/apt/lists/*Release
+	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+	successfulaptgetupdate
+	testsuccessequal "$(cat "${PKGFILE}-new")
+" aptcache show apt
+	installaptnew
+
+	msgmsg 'Warm archive with wrong exact subkey signing' 'Sebastian Subkey'
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	sed -i "/^Valid-Until: / a\
+Signed-By: ${SEBASTIAN}!" rootdir/var/lib/apt/lists/*Release
+	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+	updatewithwarnings 'W: .* public key is not available: GOODSIG'
+	testsuccessequal "$(cat "${PKGFILE}")
+" aptcache show apt
+	installaptold
+
+	local SUBKEY="$(aptkey --keyring keys/sebastiansubkey.pub finger --with-colons | grep -m 2 '^fpr' | tail -n -1 | cut -d':' -f 10)"
+	msgmsg 'Warm archive with correct exact subkey signing' 'Sebastian Subkey'
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	sed -i "/^Valid-Until: / a\
+Signed-By: ${SUBKEY}!" rootdir/var/lib/apt/lists/*Release
+	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+	successfulaptgetupdate
+	testsuccessequal "$(cat "${PKGFILE}-new")
+" aptcache show apt
+	installaptnew
+	rm -f rootdir/etc/apt/trusted.gpg.d/sebastiansubkey.gpg
 }
 
 runtest2() {

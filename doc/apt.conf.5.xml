@@ -19,7 +19,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2018-09-20T00:00:00Z</date>
+   <date>2018-09-27T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -182,7 +182,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      would allow apt to download and uncompress as well as create and store
      files with the low-cost <literal>.reversed</literal> file extension which
      it will pass to the command <command>rev</command> without additional
-     commandline parameters for compression and uncompression:
+     commandline parameters for compression and uncompression:</para>
 <informalexample><programlisting>
 APT::Compressor::rev {
 	Name "rev";
@@ -193,7 +193,7 @@ APT::Compressor::rev {
 	Cost "10";
 };
 </programlisting></informalexample>
-     </para></listitem>
+     </listitem>
      </varlistentry>
 
      <varlistentry><term><option>Build-Profiles</option></term>
@@ -722,7 +722,7 @@ APT::Compressor::rev {
    <para>
       The <literal>Ignore-Files-Silently</literal> list can be used to specify
       which files APT should silently ignore while parsing the files in the
-      fragment directories. Per default a file which end with <literal>.disabled</literal>,
+      fragment directories. Per default a file which ends with <literal>.disabled</literal>,
       <literal>~</literal>, <literal>.bak</literal> or <literal>.dpkg-[a-z]+</literal>
       is silently ignored. As seen in the last default value these patterns can use regular
       expression syntax.

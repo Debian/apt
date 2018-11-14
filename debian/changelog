@@ -1,3 +1,63 @@
+apt (1.8.0~alpha2) unstable; urgency=medium
+
+  * Revert "http: Fix handling of server connection closure"
+    This reverts commit fb3f36593563d09a8d1727cc7c6deb0b49823ca2. It
+    caused downloads to hang on long-lived connections on certain
+    servers.
+  * Drop debian/source/options, not needed anymore
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 13 Nov 2018 10:31:49 +0100
+
+apt (1.8.0~alpha1) unstable; urgency=medium
+
+  [ Damyan Ivanov ]
+  * apt-get.8: mention --only-source in 'source' and 'build-dep' description
+
+  [ David Kalnischkies ]
+  * Support subkeys properly in Signed-By options
+  * Support multiple keyrings in sources.list Signed-By
+
+  [ Ben Hutchings ]
+  * Default to https: scheme for fetching Debian changelogs (Closes: #910941)
+
+  [ Julian Andres Klode ]
+  * NeverAutoRemove kernel meta packages (LP: #1787460)
+  * Break pre-gcc8 aptitude and apt (Closes: #911090)
+  * http: Fix handling of server connection closure (LP: #1801338)
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #912021)
+  * Dutch manpage translation update (Closes: #912022)
+
+  [ Chris Leick ]
+  * German manpage translation update
+  * Fix typos encountered while updating de translation
+
+  [ Petter Reinholdtsen ]
+  * Norwegian Bokmål program translation update (Closes: #912374)
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 12 Nov 2018 11:52:15 +0100
+
+apt (1.7.0) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Fix calculation of elapsed usec in downloads
+  * pkgCacheFile: Only unlock in destructor if locked before (LP: #1794053)
+  * Set DPKG_FRONTEND_LOCKED when running {pre,post}-invoke scripts.
+    Some post-invoke scripts install packages, which fails because
+    the environment variable is not set. This sets the variable for
+    all three kinds of scripts {pre,post-}invoke and pre-install-pkgs,
+    but we will only allow post-invoke at a later time.
+  * prepare-release: Fix last-modification detection for manpages
+
+  [ David Kalnischkies ]
+  * Show APT::Compressor example in apt.conf(5) (Closes: #909712)
+
+  [ Muhamed Huseinbašić ]
+  * apt-mark: showhold: typo-fix (package -> packages)
+
+ -- Julian Andres Klode <jak@debian.org>  Sun, 07 Oct 2018 07:56:02 +0200
+
 apt (1.7.0~rc2ubuntu1) cosmic; urgency=medium
 
   * Fix calculation of elapsed usec in downloads
@@ -6015,7 +6075,7 @@ apt (0.8.11) unstable; urgency=low
     - if --print-uris is used don't setup downloader as we don't need
       progress, lock nor the directories it would create otherwise
     - show dependencies of essential packages which are going to remove
-      only if they cause the remove of this essential (Closes: #601961)
+      only if they cause the removal of this essential (Closes: #601961)
     - keep not installed garbage packages uninstalled instead of showing
       in the autoremove section and installing those (Closes: #604222)
     - change pkg/release behavior to use the new SetCandidateRelease

@@ -18,8 +18,8 @@ setupaptarchive --no-update
 changetowebserver
 testsuccess aptget update
 
-testsuccessequal "'http://metadata.ftp-master.debian.org/changelogs/main/f/foo/foo_1.0_changelog' foo.changelog
-'http://metadata.ftp-master.debian.org/changelogs/main/libb/libbar/libbar_1.0_changelog' libbar.changelog" aptget changelog foo libbar --print-uris
+testsuccessequal "'https://metadata.ftp-master.debian.org/changelogs/main/f/foo/foo_1.0_changelog' foo.changelog
+'https://metadata.ftp-master.debian.org/changelogs/main/libb/libbar/libbar_1.0_changelog' libbar.changelog" aptget changelog foo libbar --print-uris
 
 releasechanger() {
 	# modifying the Release files in lists… bad stuff. Good that this is only a test…

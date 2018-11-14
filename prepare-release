@@ -81,10 +81,11 @@ if [ "$1" = 'pre-export' ]; then
 
 	# update the last-modification field of manpages based on git changes
 	grep --files-with-matches '<date>' doc/*.xml | while read file; do \
-		LASTMOD="$(date -d "@$(git log --format='%at' --max-count=1 --invert-grep --fixed-strings --grep 'review
+		LASTMOD="$(date -d "@$(git log -i --format='%at' --max-count=1 --invert-grep --fixed-strings --grep 'review
 typo
 release
-Git-Dch: Ignore' "$file")" '+%Y-%m-%dT00:00:00Z')"
+Git-Dch: Ignore
+Gbp-Dch: ignore' "$file")" '+%Y-%m-%dT00:00:00Z')"
 		sed -i -e "s#^\([ ]\+\)<date>.*</date>\$#\1<date>$LASTMOD</date>#" "$file"
 	done
 
