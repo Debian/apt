@@ -4,6 +4,8 @@ variables:
 
 test as root:
   stage: test
+  tags:
+    - julian
   script:
     - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
     - rm -f /etc/dpkg/dpkg.cfg.d/excludes
@@ -20,6 +22,8 @@ test as root:
 
 test as user:
   stage: test
+  tags:
+    - julian
   script:
     - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
     - rm -f /etc/dpkg/dpkg.cfg.d/excludes
