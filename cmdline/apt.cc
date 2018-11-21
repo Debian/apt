@@ -90,6 +90,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"source", &DoSource, nullptr},
       {"download", &DoDownload, nullptr},
       {"changelog", &DoChangelog, nullptr},
+      {"info", &ShowPackage, nullptr},
 
       {nullptr, nullptr, nullptr}
    };
