@@ -12,10 +12,10 @@
 # Lev Lamberov <dogsleg@debian.org>, 2018.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.6\n"
+"Project-Id-Version: apt 1.8.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2018-09-18 16:15+0200\n"
-"PO-Revision-Date: 2018-05-14 20:24+0300\n"
+"PO-Revision-Date: 2018-10-25 19:03+0300\n"
 "Last-Translator: Aleksej Shilin <rootlexx@mail.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
 "Language: ru\n"
@@ -1140,23 +1140,19 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Невозможно разобрать содержимое файла пакета %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Unable to lock the administration directory (%s), is another process "
-#| "using it?"
+#, c-format
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
 msgstr ""
-"Невозможно выполнить блокировку управляющего каталога (%s); он уже "
+"Невозможно получить блокировку внешнего интерфейса dpkg (%s); она уже "
 "используется другим процессом?"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid "Unable to lock the administration directory (%s), are you root?"
+#, c-format
 msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
 msgstr ""
-"Невозможно выполнить блокировку управляющего каталога (%s); у вас есть права "
-"суперпользователя?"
+"Невозможно получить блокировку внешнего интерфейса dpkg (%s); у вас есть "
+"права суперпользователя?"
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -2267,7 +2263,7 @@ msgstr "но %s уже установлен"
 #: apt-private/private-output.cc
 #, c-format
 msgid "but %s is to be installed"
-msgstr "но %s будет установлен"
+msgstr "но %s должен быть установлен"
 
 #: apt-private/private-output.cc
 msgid "but it is not installable"
