@@ -10,7 +10,7 @@
    This is the general utility functions for cache management. They provide
    a complete set of accessor functions for the cache. The cacheiterators
    header contains the STL-like iterators that can be used to easially
-   navigate the cache as well as seemlessly dereference the mmap'd 
+   navigate the cache as well as seamlessly dereference the mmap'd
    indexes. Use these always.
    
    The main class provides for ways to get package indexes and some

@@ -154,7 +154,7 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
       return;
 
    if (_config->FindB("Debug::pkgCacheGen", false))
-      std::clog << "Remaping from " << oldMap << " to " << newMap << std::endl;
+      std::clog << "Remapping from " << oldMap << " to " << newMap << std::endl;
 
    Cache.ReMap(false);
 

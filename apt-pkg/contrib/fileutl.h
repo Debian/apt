@@ -278,7 +278,7 @@ std::vector<std::string> Glob(std::string const &pattern, int flags=0);
 /** \brief Popen() implementation that execv() instead of using a shell
  *
  * \param Args the execv style command to run
- * \param FileFd is a referenz to the FileFd to use for input or output
+ * \param FileFd is a reference to the FileFd to use for input or output
  * \param Child a reference to the integer that stores the child pid
  *        Note that you must call ExecWait() or similar to cleanup
  * \param Mode is either FileFd::ReadOnly or FileFd::WriteOnly
