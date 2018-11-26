@@ -37,23 +37,23 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
    MatchAll = false;
    VerPrefixMatch = false;
    RelVerPrefixMatch = false;
-   
-   if (Type == None || Data.length() < 1)
+
+   if (Type == None || Data.empty())
       return;
-   
+
    // Cut up the version representation
    if (Type == Version)
    {
-      if (Data.end()[-1] == '*')
+      if (APT::String::Endswith(Data, "*"))
       {
 	 VerPrefixMatch = true;
-	 VerStr = string(Data,0,Data.length()-1);
+	 VerStr = Data.substr(0,Data.length()-1);
       }
       else
 	 VerStr = Data;
       return;
-   }   
-   
+   }
+
    if (Type == Release)
    {
       // All empty = match all
@@ -62,65 +62,49 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
 	 MatchAll = true;
 	 return;
       }
-      
+
       // Are we a simple specification?
-      string::const_iterator I = Data.begin();
-      for (; I != Data.end() && *I != '='; ++I);
-      if (I == Data.end())
+      if (Data.find('=') == std::string::npos)
       {
 	 // Temporary
 	 if (isdigit(Data[0]))
 	    RelVerStr = Data;
 	 else
 	    RelRelease = Data;
-
-	 if (RelVerStr.length() > 0 && RelVerStr.end()[-1] == '*')
+      }
+      else
+      {
+	 for (auto &&Fragment : VectorizeString(Data, ','))
 	 {
-	    RelVerPrefixMatch = true;
-	    RelVerStr = string(RelVerStr.begin(),RelVerStr.end()-1);
-	 }	 
-	 return;
-      }
-            
-      char Spec[300];
-      char *Fragments[20];
-      snprintf(Spec,sizeof(Spec),"%s",Data.c_str());
-      if (TokSplitString(',',Spec,Fragments,
-			 sizeof(Fragments)/sizeof(Fragments[0])) == false)
-      {
-	 Type = None;
-	 return;
-      }
-      
-      for (unsigned J = 0; Fragments[J] != 0; J++)
-      {
-	 if (strlen(Fragments[J]) < 3)
-	    continue;
+	    Fragment = APT::String::Strip(std::move(Fragment));
+	    if (Fragment.length() < 3)
+	       continue;
 
-	 if (stringcasecmp(Fragments[J],Fragments[J]+2,"v=") == 0)
-	    RelVerStr = Fragments[J]+2;
-	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"o=") == 0)
-	    RelOrigin = Fragments[J]+2;
-	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"a=") == 0)
-	    RelArchive = Fragments[J]+2;
-	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"n=") == 0)
-	    RelCodename = Fragments[J]+2;
-	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"l=") == 0)
-	    RelLabel = Fragments[J]+2;
-	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"c=") == 0)
-	    RelComponent = Fragments[J]+2;
-	 else if (stringcasecmp(Fragments[J],Fragments[J]+2,"b=") == 0)
-	    RelArchitecture = Fragments[J]+2;
+	    if (APT::String::Startswith(Fragment, "v="))
+	       RelVerStr = Fragment.substr(2);
+	    else if (APT::String::Startswith(Fragment, "o="))
+	       RelOrigin = Fragment.substr(2);
+	    else if (APT::String::Startswith(Fragment, "a="))
+	       RelArchive = Fragment.substr(2);
+	    else if (APT::String::Startswith(Fragment, "n="))
+	       RelCodename = Fragment.substr(2);
+	    else if (APT::String::Startswith(Fragment, "l="))
+	       RelLabel = Fragment.substr(2);
+	    else if (APT::String::Startswith(Fragment, "c="))
+	       RelComponent = Fragment.substr(2);
+	    else if (APT::String::Startswith(Fragment, "b="))
+	       RelArchitecture = Fragment.substr(2);
+	 }
       }
 
-      if (RelVerStr.end()[-1] == '*')
+      if (APT::String::Endswith(RelVerStr, "*"))
       {
 	 RelVerPrefixMatch = true;
-	 RelVerStr = string(RelVerStr.begin(),RelVerStr.end()-1);
-      }	 
+	 RelVerStr = RelVerStr.substr(0, RelVerStr.length() - 1);
+      }
       return;
    }
-   
+
    if (Type == Origin)
    {
       if (Data[0] == '"' && Data.length() >= 2 && Data.end()[-1] == '"')
@@ -128,7 +112,7 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
       else
 	 OrSite = Data;
       return;
-   }   
+   }
 }
 									/*}}}*/
 // VersionMatch::MatchVer - Match a version string with prefixing	/*{{{*/
@@ -286,5 +270,35 @@ bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
    }
 
    return false;
+}
+									/*}}}*/
+
+std::string pkgVersionMatch::GetMatchData(MatchType const Type, DataType const Datatype) const/*{{{*/
+{
+   if (Type == MatchType::Origin)
+   {
+      if (Datatype == DataType::ORIGIN)
+	 return OrSite;
+   }
+   else if (Type == MatchType::Version)
+   {
+      if (Datatype == DataType::VERSION)
+	 return VerStr;
+   }
+   else if (Type == MatchType::Release)
+   {
+      switch(Datatype)
+      {
+	 case DataType::ORIGIN: return RelOrigin;
+	 case DataType::VERSION: return RelVerStr;
+	 case DataType::RELEASE: return RelRelease;
+	 case DataType::CODENAME: return RelCodename;
+	 case DataType::ARCHIVE: return RelArchive;
+	 case DataType::LABEL: return RelLabel;
+	 case DataType::COMPONENT: return RelComponent;
+	 case DataType::ARCHITECTURE: return RelArchitecture;
+      }
+   }
+   return "";
 }
 									/*}}}*/

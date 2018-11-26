@@ -75,6 +75,9 @@ class pkgVersionMatch
    bool VersionMatches(pkgCache::VerIterator Ver);
 
    pkgVersionMatch(std::string Data,MatchType Type);
+
+   enum class DataType { ORIGIN, VERSION, RELEASE, CODENAME, ARCHIVE, LABEL, COMPONENT, ARCHITECTURE };
+   std::string GetMatchData(MatchType const Type, DataType const Datatype) const;
 };
 
 #endif
