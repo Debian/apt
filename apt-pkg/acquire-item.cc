@@ -1468,14 +1468,47 @@ bool pkgAcqMetaBase::CheckAuthDone(string const &Message, pkgAcquire::MethodConf
 {
    /* If we work with a recent version of our gpgv method, we expect that it tells us
       which key(s) have signed the file so stuff like CVE-2018-0501 is harder in the future */
-   if (Cnf->Version != "1.0" && LookupTag(Message, "Signed-By").empty())
+   auto const dropKeyrings = [](std::string const &k) { return k.empty() || k[0] == '/'; };
+   auto SignedBy = VectorizeString(LookupTag(Message, "Signed-By"), '\n');
+   SignedBy.erase(std::remove_if(std::begin(SignedBy), std::end(SignedBy), dropKeyrings), std::end(SignedBy));
+   auto const KeyMatches = [&](std::string const &k) {
+      if (APT::String::Endswith(k, "!"))
+	 return std::find(std::begin(SignedBy), std::end(SignedBy), k) != std::end(SignedBy);
+      else
+	 return std::find(std::begin(SignedBy), std::end(SignedBy), k) != std::end(SignedBy) ||
+	    std::find(std::begin(SignedBy), std::end(SignedBy), k + "!") != std::end(SignedBy);
+   };
+   if (Cnf->Version != "1.0")
    {
-      std::string errmsg;
-      strprintf(errmsg, "Internal Error: Signature on %s seems good, but expected details are missing! (%s)", Target.URI.c_str(), "Signed-By");
-      if (ErrorText.empty())
-	 ErrorText = errmsg;
-      Status = StatAuthError;
-      return _error->Error("%s", errmsg.c_str());
+      if (SignedBy.empty())
+      {
+	 std::string errmsg;
+	 strprintf(errmsg, "Internal Error: Signature on '%s' seems good, but expected details are missing! (%s)", Target.URI.c_str(), "Signed-By");
+	 if (ErrorText.empty())
+	    ErrorText = errmsg;
+	 Status = StatAuthError;
+	 return _error->Error("%s", errmsg.c_str());
+      }
+      auto ConfBy = VectorizeString(TransactionManager->MetaIndexParser->GetSignedBy(), ',');
+      ConfBy.erase(std::remove_if(std::begin(ConfBy), std::end(ConfBy), dropKeyrings), std::end(ConfBy));
+      if (ConfBy.empty() == false && std::none_of(std::begin(ConfBy), std::end(ConfBy), KeyMatches))
+      {
+	 std::string errmsg;
+	 {
+	    strprintf(errmsg, "Repository '%s' is not signed by a key as required by configuration! (%d)", Target.URI.c_str(), 1);
+	    std::ostringstream out;
+	    out << errmsg << "\nFile-Signed-By: ";
+	    std::copy(SignedBy.begin(), SignedBy.end(), std::ostream_iterator<std::string>(out, ","));
+	    out << "\nConf-Signed-By: ";
+	    std::copy(ConfBy.begin(), ConfBy.end(), std::ostream_iterator<std::string>(out, ","));
+	    out << "\n";
+	    errmsg = out.str();
+	 }
+	 if (ErrorText.empty())
+	    ErrorText = errmsg;
+	 Status = StatAuthError;
+	 return _error->Error("%s", errmsg.c_str());
+      }
    }
 
    // At this point, the gpgv method has succeeded, so there is a
