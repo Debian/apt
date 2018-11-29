@@ -67,7 +67,7 @@ static bool DoShell(CommandLine &CmdL)
 static bool DoDump(CommandLine &CmdL)
 {
    bool const empty = _config->FindB("APT::Config::Dump::EmptyValue", true);
-   std::string const format = _config->Find("APT::Config::Dump::Format", "%f \"%v\";\n");
+   std::string const format = _config->Find("APT::Config::Dump::Format", "%F \"%v\";\n");
    if (CmdL.FileSize() == 1)
       _config->Dump(cout, NULL, format.c_str(), empty);
    else

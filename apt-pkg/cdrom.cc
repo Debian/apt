@@ -438,7 +438,7 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
    
    /* Write out all of the configuration directives by walking the
       configuration tree */
-   Cnf.Dump(Out, NULL, "%f \"%v\";\n", false);
+   Cnf.Dump(Out, NULL, "%F \"%v\";\n", false);
 
    Out.close();
 

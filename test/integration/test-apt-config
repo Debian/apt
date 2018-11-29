@@ -34,3 +34,17 @@ testsuccessequal 'nodoc
 stage1' aptconfig dump --no-empty --format='%v%n' APT::Build-Profiles
 unset DEB_BUILD_PROFILES
 testempty aptconfig dump --no-empty --format='%v%n' APT::Build-Profiles
+
+cat > spaces.conf <<EOF
+Spaces::Test::"Foo Bar" "1 1";
+Spaces::Test2::" Bar Baz " "B B" {
+	A%20B "C C";
+	"B C" "A A";
+};
+EOF
+testsuccessequal 'Spaces::Test "";
+Spaces::Test::Foo%20Bar "1 1";
+Spaces::Test2 "";
+Spaces::Test2::%20Bar%20Baz%20 "B B";
+Spaces::Test2::%20Bar%20Baz%20::A%20B "C C";
+Spaces::Test2::%20Bar%20Baz%20::B%20C "A A";' aptconfig dump -c spaces.conf Spaces::Test Spaces::Test2
