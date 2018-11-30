@@ -15,6 +15,7 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/versionmatch.h>
 
 #include <algorithm>
 #include <map>
@@ -612,14 +613,39 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
       }
    }
 
-   /* as the Release file is parsed only after it was verified, the Signed-By field
-      does not effect the current, but the "next" Release file */
-   auto Sign = Section.FindS("Signed-By");
-   if (Sign.empty() == false)
+   // This value influences both, the current and the next Release file
+   if (SignedBy.empty())
    {
-      SignedBy = NormalizeSignedBy(Sign, false);
-      if (SignedBy.empty() && ErrorText != NULL)
-	 strprintf(*ErrorText, _("Invalid '%s' entry in Release file %s"), "Signed-By", Filename.c_str());
+      for (auto &&ConfBy : _config->FindVector("Acquire::Signed-By", "", true))
+      {
+	 if (unlikely(ConfBy.empty()))
+	    continue;
+	 pkgVersionMatch const vm{ConfBy, pkgVersionMatch::Release};
+	 auto const CompareField = [&](pkgVersionMatch::DataType const type, std::string const &data) {
+	    auto const mustbe = vm.GetMatchData(pkgVersionMatch::Release, type);
+	    if (mustbe.empty())
+	       return true;
+	    return pkgVersionMatch::ExpressionMatches(mustbe.c_str(), data.c_str());
+	 };
+	 if (CompareField(pkgVersionMatch::DataType::ORIGIN, GetOrigin()) == false ||
+	     CompareField(pkgVersionMatch::DataType::LABEL, GetLabel()) == false ||
+	     CompareField(pkgVersionMatch::DataType::VERSION, GetVersion()) == false ||
+	     CompareField(pkgVersionMatch::DataType::ARCHIVE, Suite) == false ||
+	     CompareField(pkgVersionMatch::DataType::CODENAME, Codename) == false)
+	    continue;
+	 SignedBy = NormalizeSignedBy(_config->Find(std::string("Acquire::Signed-By::").append(ConfBy)), true);
+	 break;
+      }
+   }
+   if (SignedBy.empty())
+   {
+      auto const Sign = Section.FindS("Signed-By");
+      if (Sign.empty() == false)
+      {
+	 SignedBy = NormalizeSignedBy(Sign, false);
+	 if (SignedBy.empty() && ErrorText != NULL)
+	    strprintf(*ErrorText, _("Invalid '%s' entry in Release file %s"), "Signed-By", Filename.c_str());
+      }
    }
 
    if (AuthPossible)

@@ -1,0 +1,98 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'earth' 'human' 'all' '1'
+
+getoriginfromsuite() { echo -n 'Earth'; }
+getlabelfromsuite() { echo -n 'BluePlanet'; }
+getcodenamefromsuite() { echo -n 'home'; }
+getreleaseversionfromsuite() { echo -n '1.0'; }
+setupaptarchive --no-update
+testsuccess apt update
+
+REPO="file://$(readlink -f './aptarchive')/dists/earth/InRelease"
+
+msgmsg 'Check is done after the fact' 'no valid-until'
+echo 'Acquire::Signed-By::"o=Earth" "34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE";' > rootdir/etc/apt/apt.conf.d/99signedby
+testsuccess apt update
+echo 'Acquire::Signed-By::"o=Earth" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";' > rootdir/etc/apt/apt.conf.d/99signedby
+testfailuremsg "E: Repository '$REPO' is not signed by a key as required by configuration! (2)" apt update
+echo 'Acquire::Signed-By::"o=Mars" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";' > rootdir/etc/apt/apt.conf.d/99signedby
+testsuccess apt update
+
+msgmsg 'Check is done via gpg method' 'good valid-until'
+sed -i -e "/^Date: / a\
+Valid-Until: $(date -ud '+1 week' '+%a, %d %b %Y %H:%M:%S %Z')" ./aptarchive/dists/earth/Release
+signreleasefiles
+echo 'Acquire::Signed-By::"o=Earth" "34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE";' > rootdir/etc/apt/apt.conf.d/99signedby
+testsuccess apt update
+echo 'Acquire::Signed-By::"o=Earth" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";' > rootdir/etc/apt/apt.conf.d/99signedby
+testwarning apt update
+testsuccess grep 'public key is not available: GOODSIG' rootdir/tmp/testwarning.output
+echo 'Acquire::Signed-By::"o=Mars" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";' > rootdir/etc/apt/apt.conf.d/99signedby
+testsuccess apt update
+
+msgmsg 'Check is done after the fact' 'bad valid-until'
+find rootdir/var/lib/apt/lists -name '*Release' -exec sed -i \
+	-e '/^Valid-Until: / d' -e "/^Date: / a\
+Valid-Until: $(date -ud '-1 weeks' '+%a, %d %b %Y %H:%M:%S %Z')" '{}' \;
+echo 'Acquire::Signed-By::"o=Earth" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";' > rootdir/etc/apt/apt.conf.d/99signedby
+testfailuremsg "E: Repository '$REPO' is not signed by a key as required by configuration! (2)" apt update
+echo 'Acquire::Signed-By::"o=Earth" "34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE";' > rootdir/etc/apt/apt.conf.d/99signedby
+testsuccess apt update
+
+msgmsg 'Check multi-entry order' 'fifo list'
+cat > rootdir/etc/apt/apt.conf.d/99signedby <<EOF
+Acquire::Signed-By {
+	"o=Earth,l=RedPlanet" "1111111111111111111111111111111111111111";
+	o=Earth,l=BluePlanet "34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE";
+	"o=Earth" "2222222222222222222222222222222222222222";
+};
+EOF
+testsuccess apt update
+
+msgmsg 'Check multi-entry order' 'multi-value'
+cat > rootdir/etc/apt/apt.conf.d/99signedby <<EOF
+Acquire::Signed-By {
+	"o=Earth,l=RedPlanet" "1111111111111111111111111111111111111111";
+	o=Earth,l=BluePlanet "1111111111111111111111111111111111111111,34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE!,2222222222222222222222222222222222222222";
+	"o=Earth" "2222222222222222222222222222222222222222";
+};
+EOF
+testsuccess apt update
+
+msgmsg 'Check multi-entry order' 'wildcard'
+cat > rootdir/etc/apt/apt.conf.d/99signedby <<EOF
+Acquire::Signed-By {
+	"o=Earth,l=Red*" "1111111111111111111111111111111111111111";
+	o=Earth,l=Blue* "34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE";
+	"o=Earth" "2222222222222222222222222222222222222222";
+};
+EOF
+testsuccess apt update
+
+msgmsg 'Check multi-entry order' 'regex'
+cat > rootdir/etc/apt/apt.conf.d/99signedby <<EOF
+Acquire::Signed-By {
+	"o=Mars,l=/Planet/" "1111111111111111111111111111111111111111";
+	o=Earth,l=/Planet/ "34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE";
+	"o=Earth" "2222222222222222222222222222222222222222";
+};
+EOF
+testsuccess apt update
+
+msgmsg 'Overridden by' 'sources.list'
+rm -rf rootdir/var/lib/apt/lists
+echo 'Acquire::Signed-By::"o=Earth" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";' > rootdir/etc/apt/apt.conf.d/99signedby
+testfailuremsg "E: Repository '$REPO' is not signed by a key as required by configuration! (2)" apt update
+sed -i "s#^\(deb\(-src\)\?\) #\1 [signed-by=34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE] #" rootdir/etc/apt/sources.list.d/*
+testsuccess apt update
+sed -i "s#^\(deb\(-src\)\?\) \[signed-by=34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE\] #\1 #" rootdir/etc/apt/sources.list.d/*
+testwarning apt update
+sed -i "s#^\(deb\(-src\)\?\) #\1 [signed-by=34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE] #" rootdir/etc/apt/sources.list.d/*
+testsuccess apt update
