@@ -1544,6 +1544,33 @@ bool pkgAcqMetaBase::CheckAuthDone(string const &Message, pkgAcquire::MethodConf
       return false;
    }
 
+   if (SignedBy.empty() == false)
+   {
+      /* It looks similar to the above, but this time the data comes from the
+         Release file we have just downloaded, not from the previous Release
+         file we had in storage. */
+      auto ConfBy = VectorizeString(TransactionManager->MetaIndexParser->GetSignedBy(), ',');
+      ConfBy.erase(std::remove_if(std::begin(ConfBy), std::end(ConfBy), dropKeyrings), std::end(ConfBy));
+      if (ConfBy.empty() == false && std::none_of(std::begin(ConfBy), std::end(ConfBy), KeyMatches))
+      {
+	 std::string errmsg;
+	 {
+	    strprintf(errmsg, "Repository '%s' is not signed by a key as required by configuration! (%d)", Target.URI.c_str(), 2);
+	    std::ostringstream out;
+	    out << errmsg << "\nFile-Signed-By: ";
+	    std::copy(SignedBy.begin(), SignedBy.end(), std::ostream_iterator<std::string>(out, ","));
+	    out << "\nConf-Signed-By: ";
+	    std::copy(ConfBy.begin(), ConfBy.end(), std::ostream_iterator<std::string>(out, ","));
+	    out << "\n";
+	    errmsg = out.str();
+	 }
+	 if (ErrorText.empty())
+	    ErrorText = errmsg;
+	 Status = StatAuthError;
+	 return _error->Error("%s", errmsg.c_str());
+      }
+   }
+
    if (!VerifyVendor(Message))
    {
       Status = StatAuthError;
