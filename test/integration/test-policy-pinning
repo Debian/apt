@@ -12,6 +12,7 @@ setupflataptarchive
 
 STATUS=$(readlink -f rootdir/var/lib/dpkg/status)
 APTARCHIVE=$(readlink -f aptarchive)
+tmppath=$(readlink -f .)
 
 testequalpolicy() {
 	local SP="$1"
@@ -261,3 +262,107 @@ aptgetupdate
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 500 0 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 990 0 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t stable
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 990 500 0 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t backports
+
+
+
+msgmsg "Check that short-max/min is a valid pin"
+currentpin() {
+echo "Package: *
+Pin: release n=backports
+Pin-Priority: $1
+" > rootdir/etc/apt/preferences
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: ${2}
+  Version table:
+     2.0~bpo2 0
+       ${3:-$1} file:${tmppath}/aptarchive/ backports/main i386 Packages
+ *** 2.0~bpo1 0
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 0
+        500 file:${tmppath}/aptarchive/ stable/main i386 Packages" aptcache policy coolstuff
+}
+
+currentpin '32767' '2.0~bpo2'
+currentpin '-32768' '2.0~bpo1' '-32767'
+currentpin '-32767' '2.0~bpo1' '-32767'
+
+
+msgmsg "Check for override pins"
+
+msgmsg "Normal pins: First one wins"
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 990
+
+Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 991
+" > rootdir/etc/apt/preferences
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: 2.0~bpo2
+  Package pin: 2.0~bpo2
+  Version table:
+     2.0~bpo2 990
+        100 file:${tmppath}/aptarchive/ backports/main i386 Packages
+ *** 2.0~bpo1 990
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 990
+        500 file:${tmppath}/aptarchive/ stable/main i386 Packages" aptcache policy coolstuff
+
+msgmsg "Never pins: Never wins over package-specific"
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 990
+
+Package: *
+Pin: release n=backports
+Pin-Priority: never
+" > rootdir/etc/apt/preferences
+
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: 2.0~bpo1
+  Package pin: 2.0~bpo2
+  Version table:
+     2.0~bpo2 990
+       -32768 file:${tmppath}/aptarchive/ backports/main i386 Packages
+ *** 2.0~bpo1 990
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 990
+        500 file:${tmppath}/aptarchive/ stable/main i386 Packages" aptcache policy coolstuff
+
+msgmsg "Never pins: Never wins over other"
+echo "Package: *
+Pin: release n=backports
+Pin-Priority: 990
+
+Package: *
+Pin: release n=backports
+Pin-Priority: never
+" > rootdir/etc/apt/preferences
+
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: 2.0~bpo1
+  Version table:
+     2.0~bpo2 0
+       -32768 file:${tmppath}/aptarchive/ backports/main i386 Packages
+ *** 2.0~bpo1 0
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 0
+        500 file:${tmppath}/aptarchive/ stable/main i386 Packages" aptcache policy coolstuff
+
+
+
+
+msgmsg "Check for package-specific never pin"
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: never
+" > rootdir/etc/apt/preferences
+
+testfailureequal "Reading package lists...
+E: ${tmppath}/rootdir/etc/apt/preferences: The special 'Pin-Priority: never' can only be used for 'Package: *' records" \
+ aptget install -s coolstuff -o PinPriority=0

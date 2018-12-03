@@ -1148,6 +1148,19 @@ testfailure() {
 	fi
 }
 
+testsuccessequal() {
+       local CMP="$1"
+       shift
+       testsuccess "$@"
+       testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "$CMP"
+}
+testfailureequal() {
+       local CMP="$1"
+       shift
+       testfailure "$@"
+       testfileequal "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output" "$CMP"
+}
+
 testwebserverlaststatuscode() {
 	local DOWNLOG='rootdir/tmp/webserverstatus-testfile.log'
 	local STATUS='rootdir/tmp/webserverstatus-statusfile.log'

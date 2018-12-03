@@ -18,7 +18,8 @@
    500         = Default package files
    100         = The status file and ButAutomaticUpgrades sources
    0 -> 100    = NotAutomatic sources like experimental
-   -inf -> 0   = Never selected   
+   -inf -> 0   = Never selected
+   –32768      = Never selected, overrides everything else
    
    ##################################################################### */
 									/*}}}*/
@@ -49,6 +50,8 @@
 									/*}}}*/
 
 using namespace std;
+
+static const short NEVER_PIN = std::numeric_limits<short>::min();
 
 // Policy::Init - Startup and bind to a cache				/*{{{*/
 // ---------------------------------------------------------------------
@@ -115,7 +118,7 @@ bool pkgPolicy::InitDefaults()
       pkgVersionMatch Match(I->Data,I->Type);
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
       {
-	 if (Match.FileMatch(F) == true && Fixed[F->ID] == false)
+	 if (Match.FileMatch(F) == true && (Fixed[F->ID] == false || I->Priority == NEVER_PIN))
 	 {
 	    if (I->Priority != 0 && I->Priority > 0)
 	       Cur = I->Priority;
@@ -162,6 +165,24 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
    if (Max < 0)
       return Pkg.CurrentVer();
 
+   // If the package specific-pin refers to a version that is only available from
+   // never sources, ignore it.
+   if (!Pref.end())
+   {
+      bool AllNever = true;
+      for (pkgCache::VerFileIterator VF = Pref.FileList(); VF.end() == false; ++VF)
+      {
+	 if ((VF.File()->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
+	    continue;
+
+	 if (PFPriority[VF.File()->ID] != NEVER_PIN)
+	    AllNever = false;
+      }
+
+      if (AllNever)
+	 Pref = pkgCache::VerIterator(*Pkg.Cache());
+   }
+
    /* Falling through to the default version.. Setting Max to zero
       effectively excludes everything <= 0 which are the non-automatic
       priorities.. The status file is given a prio of 100 which will exclude
@@ -194,7 +215,12 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
 	     instVer == false)
 	    continue;
 
+
 	 signed Prio = PFPriority[VF.File()->ID];
+
+	 // A package file pinned to NEVER_PIN can never be a candidate.
+	 if (Prio == NEVER_PIN && instVer == false)
+	    continue;
 	 if (Prio > Max)
 	 {
 	    Pref = Ver;
@@ -446,7 +472,19 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
       }
       for (; Word != End && isspace(*Word) != 0; Word++);
 
-      short int priority = Tags.FindI("Pin-Priority", 0);
+      std::string sPriority = Tags.FindS("Pin-Priority");
+      short int priority = sPriority == "never" ? NEVER_PIN : Tags.FindI("Pin-Priority", 0);
+
+      if (sPriority == "never" && not Name.empty())
+	 return _error->Error(_("%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"), File.c_str(), "never");
+
+      // Silently clamp the never pin to never pin + 1
+      if (priority == NEVER_PIN && sPriority != "never")
+	 priority = NEVER_PIN + 1;
+
+      if (priority == 0 && Tags.FindS("Pin-Priority") == "never") {
+	 priority = NEVER_PIN;
+      }
       if (priority == 0)
       {
          _error->Warning(_("No priority (or zero) specified for pin"));
