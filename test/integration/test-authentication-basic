@@ -53,7 +53,8 @@ Conf foo (1 unstable [all])' aptget install foo -s
 }
 
 authfile() {
-	local AUTHCONF='rootdir/etc/apt/auth.conf'
+	local AUTHCONF="${2:-rootdir/etc/apt/auth.conf}"
+	mkdir -p "$(dirname "$AUTHCONF")"
 	rm -f "$AUTHCONF"
 	printf '%s' "$1" > "$AUTHCONF"
 	chmod 600 "$AUTHCONF"
@@ -85,6 +86,16 @@ machine localhost
 login star@irc
 password hunter2'
 	testauthsuccess "$1"
+
+	# delete file, make sure it fails; add auth.conf.d snippet, works again.
+	rm rootdir/etc/apt/auth.conf
+	testauthfailure "$1"
+
+	authfile  'machine localhost
+login star@irc
+password hunter2' rootdir/etc/apt/auth.conf.d/myauth.conf
+	testauthsuccess "$1"
+	rm rootdir/etc/apt/auth.conf.d/myauth.conf
 }
 
 msgmsg 'server basic auth'

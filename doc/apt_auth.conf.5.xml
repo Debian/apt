@@ -36,7 +36,8 @@ needed to connect to a proxy or to download data from a repository on the other
 hand shouldn't always be accessible by everyone and can hence not be placed in a
 file with world-readable file permissions.</para>
 
-<para>The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be used to store
+<para>The APT auth.conf file <filename>/etc/apt/auth.conf</filename>, and .conf files inside
+<filename>/etc/apt/auth.conf.d</filename> can be used to store
 login information in a netrc-like format with restrictive file permissions.</para>
 </refsect1>
 
@@ -118,6 +119,10 @@ you need multiple they should all have a path specified in the
      <varlistentry><term><filename>/etc/apt/auth.conf</filename></term>
 	<listitem><para>Login information for APT sources and proxies in a netrc-like format.
 	Configuration Item: <literal>Dir::Etc::netrc</literal>.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><filename>/etc/apt/auth.conf.d/*.conf</filename></term>
+	<listitem><para>Login information for APT sources and proxies in a netrc-like format.
+	Configuration Item: <literal>Dir::Etc::netrcparts</literal>.</para></listitem>
      </varlistentry>
   </variablelist>
 </refsect1>
