@@ -151,6 +151,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Etc::sourceparts","sources.list.d");
    Cnf.CndSet("Dir::Etc::main","apt.conf");
    Cnf.CndSet("Dir::Etc::netrc", "auth.conf");
+   Cnf.CndSet("Dir::Etc::netrcparts", "auth.conf.d");
    Cnf.CndSet("Dir::Etc::parts","apt.conf.d");
    Cnf.CndSet("Dir::Etc::preferences","preferences");
    Cnf.CndSet("Dir::Etc::preferencesparts","preferences.d");
