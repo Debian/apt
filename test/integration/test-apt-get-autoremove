@@ -219,5 +219,20 @@ Remv foo-multi2-2 [1]
 Remv foo-plus-1 [1]
 Remv foo-plus-2 [1]' apt autoremove -s
 
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  foo-multi1-1* foo-multi1-2* foo-multi2-1* foo-multi2-2* foo-plus-1*
+  foo-plus-2*
+0 upgraded, 0 newly installed, 6 to remove and 0 not upgraded.
+Purg foo-multi1-1 [1]
+Purg foo-multi1-2 [1]
+Purg foo-multi2-1 [1]
+Purg foo-multi2-2 [1]
+Purg foo-plus-1 [1]
+Purg foo-plus-2 [1]' apt autopurge -s
+
 testdpkgstatus 'pi' '1' 'unrelated'
 testsuccess apt purge unrelated -y

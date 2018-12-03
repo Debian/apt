@@ -176,7 +176,7 @@ static bool addArgumentsAPTHelper(std::vector<CommandLine::Args> &Args, char con
 static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
-	    "dselect-upgrade", "autoremove", "full-upgrade"))
+	    "dselect-upgrade", "autoremove", "autopurge", "full-upgrade"))
    {
       addArg(0, "show-progress", "DpkgPM::Progress", 0);
       addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
@@ -240,7 +240,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "color", "APT::Moo::Color", 0);
 
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
-	    "dselect-upgrade", "autoremove", "auto-remove", "clean", "autoclean", "auto-clean", "check",
+	    "dselect-upgrade", "autoremove", "auto-remove", "autopurge", "clean", "autoclean", "auto-clean", "check",
 	    "build-dep", "full-upgrade", "source"))
    {
       addArg('s', "simulate", "APT::Get::Simulate", 0);
