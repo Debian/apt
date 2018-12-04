@@ -183,6 +183,7 @@ class FileFd
 
    private:
    FileFdPrivate * d;
+   APT_HIDDEN FileFd(const FileFd &);
    APT_HIDDEN FileFd & operator=(const FileFd &);
    APT_HIDDEN bool OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor);
 
