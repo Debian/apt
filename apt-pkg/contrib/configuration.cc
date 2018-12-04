@@ -728,7 +728,7 @@ bool Configuration::ExistsAny(const char *Name) const
 /* Dump the entire configuration space */
 void Configuration::Dump(ostream& str)
 {
-   Dump(str, NULL, "%f \"%v\";\n", true);
+   Dump(str, NULL, "%F \"%v\";\n", true);
 }
 void Configuration::Dump(ostream& str, char const * const root,
 			 char const * const formatstr, bool const emptyValue)
