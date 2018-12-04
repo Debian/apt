@@ -1,15 +1,15 @@
 # Italian translation of apt
-# Copyright (C) 2002-2010, 2011, 2012, 2013, 2014, 2015, 2017 The Free Software Foundation, Inc.
+# Copyright (C) 2002-2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018 The Free Software Foundation, Inc.
 # This file is distributed under the same license as the apt package.
 # Samuele Giovanni Tonon <samu@debian.org>, 2002.
-# Milo Casagrande <milo@milo.name>, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2017.
+# Milo Casagrande <milo@milo.name>, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.6~alpha5\n"
+"Project-Id-Version: apt 1.6.y\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2018-09-28 15:06+0200\n"
-"PO-Revision-Date: 2017-11-27 13:57+0100\n"
+"PO-Revision-Date: 2018-12-04 09:41+0100\n"
 "Last-Translator: Milo Casagrande <milo@milo.name>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 2.1.1\n"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -357,16 +357,13 @@ msgstr ""
 #. the time until the file will be valid - formatted in the same way as in
 #. the download progress display (e.g. 7d 3h 42min 1s)
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Release file for %s is expired (invalid since %s). Updates for this "
-#| "repository will not be applied."
+#, c-format
 msgid ""
 "Release file for %s is not valid yet (invalid for another %s). Updates for "
 "this repository will not be applied."
 msgstr ""
-"Il file Release per %s è scaduto (non valido dal %s). Gli aggiornamenti per "
-"questo repository non verranno applicati."
+"Il file Release per %s non è ancora valido (non valido per %s). Gli "
+"aggiornamenti per questo repository non verranno applicati."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1156,23 +1153,19 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Impossibile analizzare il file di pacchetto %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Unable to lock the administration directory (%s), is another process "
-#| "using it?"
+#, c-format
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
 msgstr ""
-"Impossibile acquisire il blocco sulla directory di amministrazione (%s). Un "
-"altro processo potrebbe tenerla occupata."
+"Impossibile acquisire il blocco sul frontend dpkg (%s). Un altro processo "
+"potrebbe tenerlo occupato."
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid "Unable to lock the administration directory (%s), are you root?"
+#, c-format
 msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
 msgstr ""
-"Impossibile acquisire il blocco sulla directory di amministrazione (%s). È "
-"necessario essere root."
+"Impossibile acquisire il blocco sul frontend dpkg (%s). È necessario essere "
+"root."
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -3053,7 +3046,7 @@ msgstr "Attende che il sistema sia online"
 
 #: cmdline/apt-helper.cc
 msgid "drop privileges before running given command"
-msgstr ""
+msgstr "Rilascia i privilegi prima di eseguire il comando fornito"
 
 #: cmdline/apt-internal-planner.cc
 msgid ""
@@ -3703,10 +3696,9 @@ msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
 
 #: methods/connect.cc
-#, fuzzy, c-format
-#| msgid "Connecting to %s (%s)"
+#, c-format
 msgid "Connected to %s (%s)"
-msgstr "Connessione a %s (%s)"
+msgstr "Connessi a %s (%s)"
 
 #: methods/connect.cc methods/http.cc
 #, c-format
@@ -4007,22 +3999,3 @@ msgstr "Connessione chiusa prematuramente"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "File vuoti non possono essere archivi validi"
-
-#~ msgid "No mirror file '%s' found "
-#~ msgstr "Nessun file mirror \"%s\" trovato "
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "Impossibile leggere il file mirror \"%s\""
-
-#~ msgid "No entry found in mirror file '%s'"
-#~ msgstr "Nessuna voce trovata nel file mirror \"%s\""
-
-#~ msgid "[Mirror: %s]"
-#~ msgstr "[Mirror: %s]"
-
-# (ndt) sarebbe da controllare se veramente possono esistere più file indice
-#~ msgid ""
-#~ "The package index files are corrupted. No Filename: field for package %s."
-#~ msgstr ""
-#~ "I file indice del pacchetto sono danneggiati. Manca il campo \"Filename:"
-#~ "\" per il pacchetto %s."
