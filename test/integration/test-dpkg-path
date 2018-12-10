@@ -1,0 +1,35 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'native'
+configdpkgnoopchroot
+
+# create a bunch of test pkgs
+createtestpkg() {
+	setupsimplenativepackage "testpkg-$1" 'native' '1.0' 'unstable'
+	BUILDDIR="incoming/testpkg-$1-1.0"
+	echo '#!/bin/sh
+echo PATH=$PATH' > "${BUILDDIR}/debian/preinst"
+	buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
+	rm -rf "$BUILDDIR"
+}
+
+createtestpkg 'one'
+createtestpkg 'two'
+
+setupaptarchive
+
+
+# Inherit from environment
+testsuccess aptget install testpkg-one -y -o DPkg::Path=""
+cp rootdir/tmp/testsuccess.output apt.log
+testsuccess grep "PATH=$PATH" apt.log
+
+# Set a custom value
+testsuccess aptget install testpkg-two -y -o DPkg::Path="foobar:$PATH"
+cp rootdir/tmp/testsuccess.output apt.log
+testsuccess grep "PATH=foobar:$PATH" apt.log

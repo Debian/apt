@@ -482,6 +482,9 @@ EOF
 	unset GREP_OPTIONS POSIXLY_CORRECT
 	unset http_proxy HTTP_PROXY https_proxy HTTPS_PROXY no_proxy
 
+	# Make dpkg inherit testing path
+	echo 'DPkg::Path "";\n' >> aptconfig.conf
+
 	# Make gcov shut up
 	export GCOV_ERROR_FILE=/dev/null
 
