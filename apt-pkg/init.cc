@@ -208,6 +208,9 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ubuntu", "https://changelogs.ubuntu.com/changelogs/pool/@CHANGEPATH@/changelog");
    Cnf.CndSet("Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu", true);
 
+
+   Cnf.CndSet("DPkg::Path", "/usr/sbin:/usr/bin:/sbin:/bin");
+
    // Read an alternate config file
    _error->PushToStack();
    const char *Cfg = getenv("APT_CONFIG");

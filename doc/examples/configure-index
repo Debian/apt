@@ -461,6 +461,10 @@ DPkg
    // Probably don't want to use force-downgrade..
    Options {"--force-overwrite";"--force-downgrade";}
 
+   // Defaults to /usr/sbin:/usr/bin:/sbin:/bin, might be set to empty
+   // string to inherit from environment
+   Path "<STRING>";
+
    // Auto re-mounting of a readonly /usr
    Pre-Invoke {"mount -o remount,rw /usr";};
    Post-Invoke {"mount -o remount,ro /usr";};
