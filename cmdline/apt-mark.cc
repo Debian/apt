@@ -125,6 +125,127 @@ static bool DoMarkAuto(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// helper for Install-Recommends-Sections and Never-MarkAuto-Sections	/*{{{*/
+static bool
+ConfigValueInSubTree(const char *SubTree, const char *needle)
+{
+   // copied from depcache.cc
+   Configuration::Item const *Opts;
+   Opts = _config->Tree(SubTree);
+   if (Opts != 0 && Opts->Child != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 if (strcmp(needle, Opts->Value.c_str()) == 0)
+	    return true;
+      }
+   }
+   return false;
+}
+									/*}}}*/
+/* DoMinimize - minimize manually installed	{{{*/
+/* Traverses dependencies of meta packages and marks them as manually
+ * installed. */
+static bool DoMinimize(CommandLine &CmdL)
+{
+
+   pkgCacheFile CacheFile;
+   pkgDepCache *const DepCache = CacheFile.GetDepCache();
+   if (unlikely(DepCache == nullptr))
+      return false;
+
+   if (CmdL.FileList[1] != nullptr)
+      return _error->Error(_("%s does not take any arguments"), "apt-mark minimize-manual");
+
+   auto Debug = _config->FindB("Debug::AptMark::Minimize", false);
+   auto is_root = [&DepCache](pkgCache::PkgIterator const &pkg) {
+      auto ver = pkg.CurrentVer();
+      return ver.end() == false && ((*DepCache)[pkg].Flags & pkgCache::Flag::Auto) == 0 &&
+	     ver->Section != 0 &&
+	     ConfigValueInSubTree("APT::Never-MarkAuto-Sections", ver.Section());
+   };
+
+   APT::PackageSet roots;
+   for (auto Pkg = DepCache->PkgBegin(); Pkg.end() == false; ++Pkg)
+   {
+      if (is_root(Pkg))
+      {
+	 if (Debug)
+	    std::clog << "Found root " << Pkg.Name() << std::endl;
+	 roots.insert(Pkg);
+      }
+   }
+
+   APT::PackageSet workset(roots);
+   APT::PackageSet seen;
+   APT::PackageSet changed;
+
+   pkgDepCache::ActionGroup group(*DepCache);
+
+   while (workset.empty() == false)
+   {
+      if (Debug)
+	 std::clog << "Iteration\n";
+
+      APT::PackageSet workset2;
+      for (auto &Pkg : workset)
+      {
+	 if (seen.find(Pkg) != seen.end())
+	    continue;
+
+	 seen.insert(Pkg);
+
+	 if (Debug)
+	    std::cerr << "    Visiting " << Pkg.FullName(true) << "\n";
+	 if (roots.find(Pkg) == roots.end() && ((*DepCache)[Pkg].Flags & pkgCache::Flag::Auto) == 0)
+	 {
+	    DepCache->MarkAuto(Pkg, true);
+	    changed.insert(Pkg);
+	 }
+
+	 // Visit dependencies, add them to next working set
+	 for (auto Dep = Pkg.CurrentVer().DependsList(); !Dep.end(); ++Dep)
+	 {
+	    if (DepCache->IsImportantDep(Dep) == false)
+	       continue;
+	    std::unique_ptr<pkgCache::Version *[]> targets(Dep.AllTargets());
+	    for (int i = 0; targets[i] != nullptr; i++)
+	    {
+	       pkgCache::VerIterator Tgt(*DepCache, targets[i]);
+	       if (Tgt.ParentPkg()->CurrentVer != 0 && Tgt.ParentPkg().CurrentVer()->ID == Tgt->ID)
+		  workset2.insert(Tgt.ParentPkg());
+	    }
+	 }
+      }
+
+      workset = std::move(workset2);
+   }
+
+   if (changed.empty()) {
+      cout << _("No changes necessary") << endl;
+      return true;
+   }
+
+   ShowList(c1out, _("The following packages will be marked as automatically installed:"), changed,
+	    [](const pkgCache::PkgIterator &) { return true; },
+	    &PrettyFullName,
+	    &PrettyFullName);
+
+   if (_config->FindB("APT::Mark::Simulate", false) == false)
+   {
+      if (YnPrompt(_("Do you want to continue?"), false) == false)
+	 return true;
+
+      return DepCache->writeStateFile(NULL);
+   }
+
+   return true;
+}
+									/*}}}*/
+
 /* ShowAuto - show automatically installed packages (sorted)		{{{*/
 static bool ShowAuto(CommandLine &CmdL)
 {
@@ -293,6 +414,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
    return {
       {"auto",&DoAuto, _("Mark the given packages as automatically installed")},
       {"manual",&DoAuto, _("Mark the given packages as manually installed")},
+      {"minimize-manual", &DoMinimize, _("Mark all dependencies of meta packages as automatically installed.")},
       {"hold",&DoSelection, _("Mark a package as held back")},
       {"unhold",&DoSelection, _("Unset a package set as held back")},
       {"install",&DoSelection, nullptr},
