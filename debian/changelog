@@ -1,3 +1,35 @@
+apt (1.8.0~alpha3) unstable; urgency=medium
+
+  [ Manuel A. Fernandez Montecelo ]
+  * Remove "Ultimedia" config for Acquire::Changelogs
+  * Remove "Tanglu" config for Acquire::Changelogs and as vendor
+
+  [ Julian Andres Klode ]
+  * Adjust libapt-pkg Breaks aptitude to << 0.8.9
+  * Print useful error on "apt changelog" without arguments
+  * test-pdiff-usage: make transaction failure test case more robust
+  * Provide a "autopurge" shortcut.
+    Thanks to Michael Vogt for the initial work
+  * Override FileFd copy constructor to prevent copying
+  * Add support for /etc/apt/auth.conf.d/*.conf (netrcparts)
+  * Set PATH=/usr/sbin:/usr/bin:/sbin:/bin when running dpkg
+
+  [ David Kalnischkies ]
+  * Allow setting Referer header for http method
+  * Use quoted tagnames in config dumps
+
+  [ Алексей Шилин ]
+  * Russian program translation update (Closes: #914096)
+
+  [ Balint Reczey ]
+  * Set LC_ALL=C.UTF-8 for unattended-upgrades environment when parsing its --help
+    (LP: #1806076)
+
+  [ Milo Casagrande ]
+  * [l10n] Update Italian translation
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 18 Dec 2018 15:02:11 +0100
+
 apt (1.8.0~alpha2) unstable; urgency=medium
 
   * Revert "http: Fix handling of server connection closure"
