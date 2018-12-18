@@ -315,15 +315,16 @@ testsuccessequal "coolstuff:
   Installed: 2.0~bpo1
   Candidate: $2
   Version table:
-     2.0~bpo2 $1
-       $1 file:${tmppath}/aptarchive backports/main all Packages
+     2.0~bpo2 ${3:-$1}
+       ${3:-$1} file:${tmppath}/aptarchive backports/main all Packages
  *** 2.0~bpo1 100
         100 ${tmppath}/rootdir/var/lib/dpkg/status
      1.0 500
         500 file:${tmppath}/aptarchive stable/main all Packages" apt policy coolstuff
 }
 currentpin '32767' '2.0~bpo2'
-currentpin '-32768' '2.0~bpo1'
+currentpin '-32768' '2.0~bpo1' '-32767'
+currentpin '-32767' '2.0~bpo1' '-32767'
 
 # Check for 0
 echo "Package: coolstuff
@@ -359,3 +360,61 @@ testsuccessequal "coolstuff:
         100 ${tmppath}/rootdir/var/lib/dpkg/status
      1.0 500
         500 file:${tmppath}/aptarchive stable/main all Packages" aptcache policy coolstuff
+
+
+# Check for override pins
+
+# Normal pins: First one wins
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 990
+
+Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 991
+" > rootdir/etc/apt/preferences
+
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: 2.0~bpo2
+  Version table:
+     2.0~bpo2 990
+        100 file:${tmppath}/aptarchive backports/main all Packages
+ *** 2.0~bpo1 100
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 500
+        500 file:${tmppath}/aptarchive stable/main all Packages" aptcache policy coolstuff
+
+
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: 990
+
+Package: *
+Pin: release n=backports
+Pin-Priority: never
+" > rootdir/etc/apt/preferences
+
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: 2.0~bpo1
+  Version table:
+     2.0~bpo2 -32768
+       -32768 file:${tmppath}/aptarchive backports/main all Packages
+ *** 2.0~bpo1 100
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 500
+        500 file:${tmppath}/aptarchive stable/main all Packages" aptcache policy coolstuff
+
+
+
+
+# Check for 0
+echo "Package: coolstuff
+Pin: release n=backports
+Pin-Priority: never
+" > rootdir/etc/apt/preferences
+
+testfailureequal "Reading package lists...
+E: ${tmppath}/rootdir/etc/apt/preferences: The special 'Pin-Priority: never' can only be used for 'Package: *' records" \
+ aptget install -s coolstuff -o PinPriority=0

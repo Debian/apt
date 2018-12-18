@@ -38,6 +38,8 @@
 
 using namespace std;
 
+constexpr short NEVER_PIN = std::numeric_limits<short>::min();
+
 // Policy::Init - Startup and bind to a cache				/*{{{*/
 // ---------------------------------------------------------------------
 /* Set the defaults for operation. The default mode with no loaded policy
@@ -107,7 +109,7 @@ bool pkgPolicy::InitDefaults()
       pkgVersionMatch Match(I->Data,I->Type);
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
       {
-	 if (Fixed[F->ID] == false && Match.FileMatch(F) == true)
+	 if ((Fixed[F->ID] == false || I->Priority == NEVER_PIN) && PFPriority[F->ID] != NEVER_PIN && Match.FileMatch(F) == true)
 	 {
 	    PFPriority[F->ID] = I->Priority;
 
@@ -271,7 +273,14 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, bool ConsiderFiles)
 {
    if (VerPins[Ver->ID].Type != pkgVersionMatch::None)
-      return VerPins[Ver->ID].Priority;
+   {
+      // If all sources are never pins, the never pin wins.
+      if (VerPins[Ver->ID].Priority == NEVER_PIN)
+	 return NEVER_PIN;
+      for (pkgCache::VerFileIterator file = Ver.FileList(); file.end() == false; file++)
+	 if (GetPriority(file.File()) != NEVER_PIN)
+	    return VerPins[Ver->ID].Priority;
+   }
    if (!ConsiderFiles)
       return 0;
 
@@ -388,9 +397,17 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
       for (; Word != End && isspace(*Word) != 0; Word++);
 
       _error->PushToStack();
-      int const priority = Tags.FindI("Pin-Priority", 0);
+      std::string sPriority = Tags.FindS("Pin-Priority");
+      int priority = sPriority == "never" ? NEVER_PIN : Tags.FindI("Pin-Priority", 0);
       bool const newError = _error->PendingError();
       _error->MergeWithStack();
+
+      if (sPriority == "never" && not Name.empty())
+	 return _error->Error(_("%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"), File.c_str(), "never");
+
+      // Silently clamp the never pin to never pin + 1
+      if (priority == NEVER_PIN && sPriority != "never")
+	 priority = NEVER_PIN + 1;
       if (priority < std::numeric_limits<short>::min() ||
           priority > std::numeric_limits<short>::max() ||
 	  newError) {
