@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 1.7.0\n"
+"Project-Id-Version: apt-doc 1.8.0~alpha2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
-"PO-Revision-Date: 2018-10-09 20:51+0200\n"
+"POT-Creation-Date: 2018-10-30 22:06+0100\n"
+"PO-Revision-Date: 2018-11-19 20:54+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -1291,6 +1291,8 @@ msgid ""
 "The arguments are interpreted as binary and source package names.  See the "
 "<option>--only-source</option> option if you want to change that."
 msgstr ""
+"De argumenten worden beschouwd als namen van binaire en broncodepakketen. "
+"Zie de optie <option>--only-source</option> indien u dit wenst te wijzigen."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1373,6 +1375,8 @@ msgid ""
 "The arguments are interpreted as binary or source package names. See the "
 "<option>--only-source</option> option if you want to change that."
 msgstr ""
+"De argumenten worden beschouwd als namen van binaire en broncodepakketen. "
+"Zie de optie <option>--only-source</option> indien u dit wenst te wijzigen."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -5629,14 +5633,6 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
 msgid ""
-"This is a string that defines the <envar>PATH</envar> environment variable "
-"used when running dpkg. It may be set to any valid value of that environment "
-"variable; or the empty string, in which case the variable is not changed."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml
-msgid ""
 "This is a list of shell commands to run before/after invoking &dpkg;.  Like "
 "<literal>options</literal> this must be specified in list notation. The "
 "commands are invoked in order using <filename>/bin/sh</filename>; should any "
@@ -8191,7 +8187,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
 #| msgid ""
 #| "<option>Signed-By</option> (<option>signed-by</option>)  is either an "
 #| "absolute path to a keyring file (has to be accessible and readable for "
@@ -8224,19 +8219,28 @@ msgid ""
 "(only fingerprints can be specified there through).  Otherwise all keys in "
 "the trusted keyrings are considered valid signers for this repository."
 msgstr ""
-"<option>Signed-By</option> (<option>signed-by</option>) is ofwel een "
-"absoluut pad naar een sleutelbosbestand (moet toegankelijk zijn voor en te "
-"lezen door gebruiker <literal>_apt</literal>; zorg er dus voor dat iedereen "
-"leesrechten heeft voor het bestand), ofwel een of meer vingerafdrukken van "
-"sleutels uit de sleutelbos <filename>trusted.gpg</filename> of uit de "
-"sleutelbossen in de map <filename>trusted.gpg.d/</filename> (zie "
-"<command>apt-key fingerprint</command>). Indien de optie ingesteld werd, "
-"worden enkel de sleutel(s) uit die sleutelbos of enkel de sleutels met deze "
-"vingerafdrukken gebruikt voor de verificatie van die pakketbron door &apt-"
-"secure;. Heeft standaard de waarde van de optie met dezelfde naam indien die "
-"ingesteld staat in het vooraf opgehaalde bestand <filename>Release</"
-"filename>. Anders worden alle sleutels uit de betrouwbare sleutelbossen als "
-"geldige ondertekenaars van deze pakketbron aanzien."
+"<option>Signed-By</option> (<option>signed-by</option>) is een optie die van "
+"een pakketbron vereist dat de verificatie door &apt-secure; gebeurt aan de "
+"hand van een bepaalde set sleutels in plaats van aan de hand van alle "
+"betrouwbare sleutels die in de configuratie van apt staan. Deze optie wordt "
+"opgegeven als een lijst van absolute paden naar sleutelbosbestanden (moeten "
+"toegankelijk zijn voor en te lezen door de systeemgebruiker <literal>_apt</"
+"literal>; zorg er dus voor dat iedereen leesrechten heeft op het bestand) en "
+"naar de vingerafdrukken van uit die sleutelbossen te selecteren sleutels. "
+"Indien geen sleutelbosbestanden opgegeven werden, geldt als standaard de "
+"sleutelbos <filename>trusted.gpg</filename> en alle sleutelbossen uit de map "
+"<filename>trusted.gpg.d/</filename> (zie <command>apt-key fingerprint</"
+"command>). Indien geen vingerafdruk opgegeven werd, worden alle sleutels uit "
+"de sleutelbossen geselecteerd. Een vingerafdruk aanvaardt ook alle "
+"handtekeningen die met een subsleutel van deze sleutel gemaakt werden. "
+"Indien dit niet het gewenste gedrag is, kan aan de vingerafdruk een "
+"uitroepteken (<literal>!</literal>) toegevoegd worden waardoor dit gedrag "
+"uitgezet wordt. Standaard krijgt de optie de waarde van de optie met "
+"dezelfde naam wanneer die ingesteld staat in het vooraf uit deze pakketbron "
+"opgehaald bestand <filename>Release</filename> (door middel hiervan kunnen "
+"enkel vingerafdrukken opgegeven worden). Anders worden alle sleutels uit de "
+"betrouwbare sleutelbossen als geldige ondertekenaars van deze pakketbron "
+"aanzien."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -10018,15 +10022,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be "
-#| "used to store login information in a netrc-like format with restrictive "
-#| "file permissions."
 msgid ""
-"The APT auth.conf file <filename>/etc/apt/auth.conf</filename>, and .conf "
-"files inside <filename>/etc/apt/auth.conf.d</filename> can be used to store "
-"login information in a netrc-like format with restrictive file permissions."
+"The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be used "
+"to store login information in a netrc-like format with restrictive file "
+"permissions."
 msgstr ""
 "Het bestand auth.conf van APT, <filename>/etc/apt/auth.conf</filename>, met "
 "restrictieve bestandspermissies, kan gebruikt worden om er login-informatie "
@@ -10235,26 +10234,6 @@ msgstr "<filename>/etc/apt/auth.conf</filename>"
 msgid ""
 "Login information for APT sources and proxies in a netrc-like format.  "
 "Configuration Item: <literal>Dir::Etc::netrc</literal>."
-msgstr ""
-"Inloginformatie voor APT-bronnen en -proxy's in a netrc-achtige indeling.  "
-"Configuratie-item: <literal>Dir::Etc::netrc</literal>."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid "<filename>/etc/apt/auth.conf</filename>"
-msgid "<filename>/etc/apt/auth.conf.d/*.conf</filename>"
-msgstr "<filename>/etc/apt/auth.conf</filename>"
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Login information for APT sources and proxies in a netrc-like format.  "
-#| "Configuration Item: <literal>Dir::Etc::netrc</literal>."
-msgid ""
-"Login information for APT sources and proxies in a netrc-like format.  "
-"Configuration Item: <literal>Dir::Etc::netrcparts</literal>."
 msgstr ""
 "Inloginformatie voor APT-bronnen en -proxy's in a netrc-achtige indeling.  "
 "Configuratie-item: <literal>Dir::Etc::netrc</literal>."
