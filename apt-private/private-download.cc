@@ -248,7 +248,7 @@ bool DoChangelog(CommandLine &CmdL)
    APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
 		CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
    if (verset.empty() == true)
-      return false;
+      return _error->Error(_("No packages found"));
 
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
    bool const printOnly = _config->FindB("APT::Get::Print-URIs", false);

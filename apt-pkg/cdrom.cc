@@ -438,7 +438,7 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
    
    /* Write out all of the configuration directives by walking the
       configuration tree */
-   Cnf.Dump(Out, NULL, "%f \"%v\";\n", false);
+   Cnf.Dump(Out, NULL, "%F \"%v\";\n", false);
 
    Out.close();
 
@@ -721,7 +721,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    DropRepeats(List,"Packages");
    DropRepeats(SourceList,"Sources");
    // FIXME: We ignore stat() errors here as we usually have only one of those in use
-   // This has little potencial to drop 'valid' stat() errors as we know that one of these
+   // This has little potential to drop 'valid' stat() errors as we know that one of these
    // files need to exist, but it would be better if we would check it here
    _error->PushToStack();
    DropRepeats(SigList,"Release.gpg");

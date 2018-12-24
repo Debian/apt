@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-11-12 11:52+0100\n"
+"POT-Creation-Date: 2018-12-18 15:02+0100\n"
 "PO-Revision-Date: 2017-01-06 04:50+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -5297,6 +5297,14 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
 msgid ""
+"This is a string that defines the <envar>PATH</envar> environment variable "
+"used when running dpkg. It may be set to any valid value of that environment "
+"variable; or the empty string, in which case the variable is not changed."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
 "This is a list of shell commands to run before/after invoking &dpkg;.  Like "
 "<literal>options</literal> this must be specified in list notation. The "
 "commands are invoked in order using <filename>/bin/sh</filename>; should any "
@@ -9415,11 +9423,20 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "The APT preferences file <filename>/etc/apt/preferences</filename> and "
+#| "the fragment files in the <filename>/etc/apt/preferences.d/</filename> "
+#| "folder can be used to control which versions of packages will be selected "
+#| "for installation."
 msgid ""
-"The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be used "
-"to store login information in a netrc-like format with restrictive file "
-"permissions."
+"The APT auth.conf file <filename>/etc/apt/auth.conf</filename>, and .conf "
+"files inside <filename>/etc/apt/auth.conf.d</filename> can be used to store "
+"login information in a netrc-like format with restrictive file permissions."
 msgstr ""
+"APT プリファレンスファイル <filename>/etc/apt/preferences</filename> と "
+"<filename>/etc/apt/preferences.d/</filename> フォルダにある断片ファイルは、イ"
+"ンストールするパッケージのバージョンを制御するのに使用します。"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt_auth.conf.5.xml
@@ -9584,6 +9601,24 @@ msgstr ""
 msgid ""
 "Login information for APT sources and proxies in a netrc-like format.  "
 "Configuration Item: <literal>Dir::Etc::netrc</literal>."
+msgstr ""
+"更新・インストールするパッケージのバージョンをすべて表示します。設定項目: "
+"<literal>APT::Get::Show-Versions</literal>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt_auth.conf.5.xml
+msgid "<filename>/etc/apt/auth.conf.d/*.conf</filename>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "Show full versions for upgraded and installed packages.  Configuration "
+#| "Item: <literal>APT::Get::Show-Versions</literal>."
+msgid ""
+"Login information for APT sources and proxies in a netrc-like format.  "
+"Configuration Item: <literal>Dir::Etc::netrcparts</literal>."
 msgstr ""
 "更新・インストールするパッケージのバージョンをすべて表示します。設定項目: "
 "<literal>APT::Get::Show-Versions</literal>"

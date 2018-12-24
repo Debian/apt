@@ -1,3 +1,35 @@
+apt (1.8.0~alpha3) unstable; urgency=medium
+
+  [ Manuel A. Fernandez Montecelo ]
+  * Remove "Ultimedia" config for Acquire::Changelogs
+  * Remove "Tanglu" config for Acquire::Changelogs and as vendor
+
+  [ Julian Andres Klode ]
+  * Adjust libapt-pkg Breaks aptitude to << 0.8.9
+  * Print useful error on "apt changelog" without arguments
+  * test-pdiff-usage: make transaction failure test case more robust
+  * Provide a "autopurge" shortcut.
+    Thanks to Michael Vogt for the initial work
+  * Override FileFd copy constructor to prevent copying
+  * Add support for /etc/apt/auth.conf.d/*.conf (netrcparts)
+  * Set PATH=/usr/sbin:/usr/bin:/sbin:/bin when running dpkg
+
+  [ David Kalnischkies ]
+  * Allow setting Referer header for http method
+  * Use quoted tagnames in config dumps
+
+  [ Алексей Шилин ]
+  * Russian program translation update (Closes: #914096)
+
+  [ Balint Reczey ]
+  * Set LC_ALL=C.UTF-8 for unattended-upgrades environment when parsing its --help
+    (LP: #1806076)
+
+  [ Milo Casagrande ]
+  * [l10n] Update Italian translation
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 18 Dec 2018 15:02:11 +0100
+
 apt (1.8.0~alpha2ubuntu1) disco; urgency=medium
 
   * Adjust libapt-pkg Breaks aptitude to << 0.8.9
@@ -2907,7 +2939,7 @@ apt (1.0.9) unstable; urgency=high
 
   * SECURITY UPDATE:
     - incorrect invalidating of unauthenticated data (CVE-2014-0488)
-    - incorect verification of 304 reply (CVE-2014-0487)
+    - incorrect verification of 304 reply (CVE-2014-0487)
     - incorrect verification of Acquire::Gzip indexes (CVE-2014-0489)
 
  -- Michael Vogt <mvo@debian.org>  Mon, 15 Sep 2014 08:34:46 +0200
@@ -3814,7 +3846,7 @@ apt (0.9.9.4) unstable; urgency=low
 
   [ David Kalnischkies ]
   * pick up Translation-* even if only compressed available (Closes: 717665)
-  * request absolute URIs from proxies again (0.9.9.3 regession)
+  * request absolute URIs from proxies again (0.9.9.3 regression)
     (Closes: 717891)
   
   [ Michael vogt ]
@@ -8229,7 +8261,7 @@ apt (0.7.12) unstable; urgency=low
       that can be used to sign the archive signing keys. This should
       make key-rollover easier.
   * apt-pkg/deb/dpkgpm.cc:
-    - merged patch from Kees Cook to fix anoying upper-case display
+    - merged patch from Kees Cook to fix annoying upper-case display
       on amd64 in sbuild
   * apt-pkg/algorithms.cc: 
     - add APT::Update::Post-Invoke-Success script slot
@@ -9329,7 +9361,7 @@ apt (0.6.33) hoary; urgency=low
     - patch-1: cosmetic changes (whitespace, "Apt::GPGV->APT::GPGV")
     - patch-2: (doc) documentation for gpgv
     - patch-3: (doc) new config variables added configure-index
-    - patch-4: pkgAcquire::Run() pulse intervall can be configured
+    - patch-4: pkgAcquire::Run() pulse interval can be configured
     - patch-5: fix for apt-get update removing Release.gpg files (#6865)
     - patch-6: change the path scoring in apt-cdrom, prefer paths without
       symlinks

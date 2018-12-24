@@ -270,6 +270,7 @@ Acquire
     No-Store "false";    // Prevent the cache from storing archives
     Dl-Limit "<INT>"; // Kb/sec maximum download rate
     User-Agent "Debian APT-HTTP/1.3";
+    Referer "<STRING>"; // Set the HTTP Referer [sic!] header to given value
   };
 
   // HTTPS method configuration: uses the http
@@ -398,6 +399,7 @@ Dir "<DIR>"
   Etc "<DIR>" {
      Main "<FILE>";
      Netrc "<FILE>";
+     NetrcParts "<DIR>";
      Parts "<DIR>";
      Preferences "<FILE>";
      PreferencesParts "<DIR>";
@@ -459,6 +461,10 @@ DPkg
 
    // Probably don't want to use force-downgrade..
    Options {"--force-overwrite";"--force-downgrade";}
+
+   // Defaults to /usr/sbin:/usr/bin:/sbin:/bin, might be set to empty
+   // string to inherit from environment
+   Path "<STRING>";
 
    // Auto re-mounting of a readonly /usr
    Pre-Invoke {"mount -o remount,rw /usr";};

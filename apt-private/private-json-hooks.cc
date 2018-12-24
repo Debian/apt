@@ -176,7 +176,7 @@ class APT_HIDDEN JsonWriter
 };
 
 /**
- * @brief Wrtie a VerIterator to a JsonWriter
+ * @brief Write a VerIterator to a JsonWriter
  */
 static void verIterToJson(JsonWriter &writer, CacheFile &Cache, pkgCache::VerIterator const &Ver)
 {

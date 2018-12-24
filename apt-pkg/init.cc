@@ -150,6 +150,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Etc::sourceparts","sources.list.d");
    Cnf.CndSet("Dir::Etc::main","apt.conf");
    Cnf.CndSet("Dir::Etc::netrc", "auth.conf");
+   Cnf.CndSet("Dir::Etc::netrcparts", "auth.conf.d");
    Cnf.CndSet("Dir::Etc::parts","apt.conf.d");
    Cnf.CndSet("Dir::Etc::preferences","preferences");
    Cnf.CndSet("Dir::Etc::preferencesparts","preferences.d");
@@ -205,10 +206,11 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Acquire::IndexTargets::deb-src::Sources::Optional", false);
 
    Cnf.CndSet("Acquire::Changelogs::URI::Origin::Debian", "https://metadata.ftp-master.debian.org/changelogs/@CHANGEPATH@_changelog");
-   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Tanglu", "http://metadata.tanglu.org/changelogs/@CHANGEPATH@_changelog");
    Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ubuntu", "https://changelogs.ubuntu.com/changelogs/pool/@CHANGEPATH@/changelog");
-   Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ultimedia", "http://packages.ultimediaos.com/changelogs/pool/@CHANGEPATH@/changelog.txt");
    Cnf.CndSet("Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu", true);
+
+
+   Cnf.CndSet("DPkg::Path", "/usr/sbin:/usr/bin:/sbin:/bin");
 
    // Read an alternate config file
    _error->PushToStack();

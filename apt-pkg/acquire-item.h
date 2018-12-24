@@ -571,7 +571,7 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
    virtual ~pkgAcqMetaSig();
 };
 									/*}}}*/
-/** \brief An item repsonsible for downloading clearsigned metaindexes	{{{*/
+/** \brief An item responsible for downloading clearsigned metaindexes	{{{*/
 class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
 {
    void * const d;

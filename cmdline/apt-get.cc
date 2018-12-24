@@ -409,6 +409,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"purge", &DoInstall, _("Remove packages and config files")},
       {"autoremove", &DoInstall, _("Remove automatically all unused packages")},
       {"auto-remove", &DoInstall, nullptr},
+      {"autopurge",&DoInstall, nullptr},
       {"markauto", &DoMarkAuto, nullptr},
       {"unmarkauto", &DoMarkAuto, nullptr},
       {"dist-upgrade", &DoDistUpgrade, _("Distribution upgrade, see apt-get(8)")},

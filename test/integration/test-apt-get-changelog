@@ -132,3 +132,8 @@ testfilestats 'dpkg.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAU
 head -n 3 dpkg.changelog > dpkg.change
 testfileequal 'dpkg.change' "$(apthelper cat-file 'rootdir/usr/share/doc/dpkg/changelog' | head -n 3)"
 rm -f dpkg.change dpkg.changelog
+
+# no package specified
+testfailureequal 'E: No packages found'  aptget changelog
+testfailureequal 'E: Unable to locate package clclclclc
+E: No packages found'  aptget changelog clclclclc

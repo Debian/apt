@@ -28,8 +28,24 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <unordered_map>
 #include <vector>
 
+static std::string HTMLEncode(std::string encode)			/*{{{*/
+{
+   constexpr std::array<std::array<char const *,2>,6> htmlencode = {{
+      {{ "&", "&amp;" }},
+      {{ "<", "&lt;" }},
+      {{ ">", "&gt;" }},
+      {{ "\"", "&quot;" }},
+      {{ "'", "&#x27;" }},
+      {{ "/", "&#x2F;" }},
+   }};
+   for (auto &&h: htmlencode)
+      encode = SubstVar(encode, h[0], h[1]);
+   return encode;
+}
+									/*}}}*/
 static std::string httpcodeToStr(int const httpcode)			/*{{{*/
 {
    switch (httpcode)
@@ -88,13 +104,29 @@ static std::string httpcodeToStr(int const httpcode)			/*{{{*/
    return _config->Find(codeconf, code);
 }
 									/*}}}*/
-static bool chunkedTransferEncoding(std::list<std::string> const &headers) {
+static bool chunkedTransferEncoding(std::list<std::string> const &headers)/*{{{*/
+{
    if (std::find(headers.begin(), headers.end(), "Transfer-Encoding: chunked") != headers.end())
       return true;
    if (_config->FindB("aptwebserver::chunked-transfer-encoding", false) == true)
       return true;
    return false;
 }
+									/*}}}*/
+static bool contentTypeSet(std::list<std::string> const &headers)	/*{{{*/
+{
+   return std::any_of(headers.begin(), headers.end(), [](std::string const &h) { return APT::String::Startswith(h, "Content-Type:"); });
+}
+									/*}}}*/
+// contentTypeFromExtension						/*{{{*/
+static std::string contentTypeFromExtension(std::string const &ext)
+{
+   auto t = _config->Find(std::string("aptwebserver::content-type::by-extension::").append(ext));
+   if (APT::String::Startswith(t, "text/"))
+      return t.append("; charset=utf-8");
+   return t;
+}
+									/*}}}*/
 static void addFileHeaders(std::list<std::string> &headers, FileFd &data)/*{{{*/
 {
    if (chunkedTransferEncoding(headers) == false)
@@ -108,6 +140,20 @@ static void addFileHeaders(std::list<std::string> &headers, FileFd &data)/*{{{*/
       std::string lastmodified("Last-Modified: ");
       lastmodified.append(TimeRFC1123(data.ModificationTime(), false));
       headers.push_back(lastmodified);
+   }
+   if (_config->FindB("aptwebserver::content-type::guess", true) &&
+       data.FileSize() != 0 &&
+       contentTypeSet(headers) == false)
+   {
+      std::string const name = data.Name();
+      std::string ext = flExtension(name);
+      if (name.empty() == false && ext.empty() == false && name != ext)
+      {
+	 std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+	 auto const type = contentTypeFromExtension(ext);
+	 if (type.empty() == false)
+	    headers.push_back(std::string("Content-Type: ").append(type));
+      }
    }
 }
 									/*}}}*/
@@ -219,28 +265,33 @@ static bool sendData(int const client, std::list<std::string> const &headers, st
 static void sendError(std::ostream &log, int const client, int const httpcode, std::string const &request,/*{{{*/
 	       bool const content, std::string const &error, std::list<std::string> &headers)
 {
+   auto const quotedCode = HTMLEncode(httpcodeToStr(httpcode));
    std::string response("<!doctype html><html><head><title>");
-   response.append(httpcodeToStr(httpcode)).append("</title><meta charset=\"utf-8\" /></head>");
-   response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1>");
+   response.append(quotedCode).append("</title><meta charset=\"utf-8\" /></head>");
+   response.append("<body><h1>").append(quotedCode).append("</h1>");
    if (httpcode != 200)
       response.append("<p><em>Error</em>: ");
    else
       response.append("<p><em>Success</em>: ");
    if (error.empty() == false)
-      response.append(error);
+      response.append(HTMLEncode(error));
    else
-      response.append(httpcodeToStr(httpcode));
+      response.append(quotedCode);
    if (httpcode != 200)
       response.append("</p>This error is a result of the request: <pre>");
    else
       response.append("The successfully executed operation was requested by: <pre>");
-   response.append(request).append("</pre></body></html>");
+   response.append(HTMLEncode(request)).append("</pre></body></html>");
    if (httpcode != 200)
    {
       if (_config->FindB("aptwebserver::closeOnError", false) == true)
 	 headers.push_back("Connection: close");
    }
    addDataHeaders(headers, response);
+
+   if (contentTypeSet(headers) == false)
+      headers.push_back("Content-Type: text/html; charset=utf-8");
+
    sendHead(log, client, httpcode, headers);
    if (content == true)
       sendData(client, headers, response);
@@ -255,12 +306,13 @@ static void sendRedirect(std::ostream &log, int const client, int const httpcode
 		  std::string const &uri, std::string const &request, bool content)
 {
    std::list<std::string> headers;
+   auto const quotedCode = HTMLEncode(httpcodeToStr(httpcode));
    std::string response("<!doctype html><html><head><title>");
-   response.append(httpcodeToStr(httpcode)).append("</title><meta charset=\"utf-8\" /></head>");
-   response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1");
-   response.append("<p>You should be redirected to <em>").append(uri).append("</em></p>");
+   response.append(quotedCode).append("</title><meta charset=\"utf-8\" /></head>");
+   response.append("<body><h1>").append(quotedCode).append("</h1");
+   response.append("<p>You should be redirected to <em>").append(HTMLEncode(uri)).append("</em></p>");
    response.append("This page is a result of the request: <pre>");
-   response.append(request).append("</pre></body></html>");
+   response.append(HTMLEncode(request)).append("</pre></body></html>");
    addDataHeaders(headers, response);
    std::string location("Location: ");
    if (strncmp(uri.c_str(), "http://", 7) != 0 && strncmp(uri.c_str(), "https://", 8) != 0)
@@ -286,6 +338,10 @@ static void sendRedirect(std::ostream &log, int const client, int const httpcode
    else
       location.append(uri);
    headers.push_back(location);
+
+   if (contentTypeSet(headers) == false)
+      headers.push_back("Content-Type: text/html; charset=utf-8");
+
    sendHead(log, client, httpcode, headers);
    if (content == true)
       sendData(client, headers, response);
@@ -341,13 +397,14 @@ static void sendDirectoryListing(std::ostream &log, int const client, std::strin
    }
 
    std::ostringstream listing;
-   listing << "<!doctype html><html><head><title>Index of " << dir << "</title><meta charset=\"utf-8\" />"
+   std::string const quotedDir = HTMLEncode(dir);
+   listing << "<!doctype html><html><head><title>Index of " << quotedDir << "</title><meta charset=\"utf-8\" />"
 	   << "<style type=\"text/css\"><!-- td {padding: 0.02em 0.5em 0.02em 0.5em;}"
 	   << "tr:nth-child(even){background-color:#dfdfdf;}"
 	   << "h1, td:nth-child(3){text-align:center;}"
 	   << "table {margin-left:auto;margin-right:auto;} --></style>"
 	   << "</head>" << std::endl
-	   << "<body><h1>Index of " << dir << "</h1>" << std::endl
+	   << "<body><h1>Index of " << quotedDir << "</h1>" << std::endl
 	   << "<table><tr><th>#</th><th>Name</th><th>Size</th><th>Last-Modified</th></tr>" << std::endl;
    if (dir != "./")
       listing << "<tr><td>d</td><td><a href=\"..\">Parent Directory</a></td><td>-</td><td>-</td></tr>";
@@ -356,21 +413,18 @@ static void sendDirectoryListing(std::ostream &log, int const client, std::strin
       std::string filename(dir);
       filename.append("/").append(namelist[i]->d_name);
       stat(filename.c_str(), &fs);
-      if (S_ISDIR(fs.st_mode))
-      {
-	 listing << "<tr><td>d</td>"
-		 << "<td><a href=\"" << namelist[i]->d_name << "/\">" << namelist[i]->d_name << "</a></td>"
-		 << "<td>-</td>";
-      }
-      else
-      {
-	 listing << "<tr><td>f</td>"
-		 << "<td><a href=\"" << namelist[i]->d_name << "\">" << namelist[i]->d_name << "</a></td>"
-		 << "<td>" << SizeToStr(fs.st_size) << "B</td>";
-      }
-      listing << "<td>" << TimeRFC1123(fs.st_mtime, true) << "</td></tr>" << std::endl;
+      std::string const quotedHref = QuoteString(namelist[i]->d_name, "\"\\/#?");
+      std::string const quotedName = HTMLEncode(namelist[i]->d_name);
+      bool const isDir = S_ISDIR(fs.st_mode);
+      listing << "<tr><td>" << (isDir ? 'd' : 'f') << "</td>"
+	 << "<td><a href=\"./" << quotedHref << (isDir ? "/" : "") <<"\">" << quotedName << "</a></td>"
+	 << "<td>" << (isDir ? "-" : SizeToStr(fs.st_size).append("B")) << "</td>"
+	 << "<td>" << TimeRFC1123(fs.st_mtime, true) << "</td></tr>\n";
    }
    listing << "</table></body></html>" << std::endl;
+
+   if (contentTypeSet(headers) == false)
+      headers.push_back("Content-Type: text/html; charset=utf-8");
 
    std::string response(listing.str());
    addDataHeaders(headers, response);
@@ -581,6 +635,8 @@ static bool handleOnTheFlyReconfiguration(std::ostream &log, int const client,/*
    {
       std::string response = _config->Find(parts[2], parts[3]);
       addDataHeaders(headers, response);
+      if (contentTypeSet(headers) == false)
+	 headers.push_back("Content-Type: text/plain; charset=utf-8");
       sendHead(log, client, 200, headers);
       sendData(client, headers, response);
       return true;
@@ -591,6 +647,8 @@ static bool handleOnTheFlyReconfiguration(std::ostream &log, int const client,/*
       {
 	 std::string response = _config->Find(parts[2]);
 	 addDataHeaders(headers, response);
+	 if (contentTypeSet(headers) == false)
+	    headers.push_back("Content-Type: text/plain; charset=utf-8");
 	 sendHead(log, client, 200, headers);
 	 sendData(client, headers, response);
 	 return true;
@@ -689,9 +747,16 @@ static void * handleClient(int const client, size_t const id)		/*{{{*/
 	       }
 	       if (regexec(pattern, filename.c_str(), 0, 0, 0) == 0)
 	       {
-		  filename = _config->Find("aptwebserver::overwrite::" + I->Tag + "::filename", filename);
-		  if (filename[0] == '/')
+		  filename = _config->Find("aptwebserver::overwrite::" + I->Tag + "::filename", flNotDir(filename));
+		  if (filename.find("/") == std::string::npos)
+		  {
+		     auto directory = _config->Find("aptwebserver::overwrite::" + I->Tag + "::directory", flNotFile(filename));
+		     filename = flCombine(directory, filename);
+		  }
+		  if (filename.empty() == false && filename[0] == '/')
 		     filename.erase(0,1);
+		  if (filename.empty())
+		     filename = "./";
 		  regfree(pattern);
 		  break;
 	       }
@@ -833,6 +898,28 @@ static void * handleClient(int const client, size_t const id)		/*{{{*/
    return NULL;
 }
 									/*}}}*/
+static void loadMimeTypesFile(std::string const &filename)		/*{{{*/
+{
+   if (FileExists(filename) == false)
+      return;
+
+   std::string line;
+   FileFd mimetypes(filename, FileFd::ReadOnly);
+   while (mimetypes.ReadLine(line))
+   {
+      if (line.empty() || line[0] == '#' || line.find_first_not_of(" \t\r") == std::string::npos)
+	 continue;
+      std::transform(line.begin(), line.end(), line.begin(), [](char const c) { return c == ' ' ? '\t' : c; });
+      auto l = VectorizeString(line, '\t');
+      l.erase(std::remove_if(l.begin(), l.end(), [](std::string const &f) { return f.empty(); }), l.end());
+      if (l.size() < 2)
+	 continue;
+      for (size_t i = 1; i < l.size(); ++i)
+	 if (l[i].empty() == false)
+	    _config->CndSet(std::string("aptwebserver::content-type::by-extension::").append(l[i]).c_str(), l[0]);
+   }
+}
+									/*}}}*/
 
 int main(int const argc, const char * argv[])
 {
@@ -852,6 +939,22 @@ int main(int const argc, const char * argv[])
    {
       _error->DumpErrors();
       exit(1);
+   }
+
+   if (_config->FindB("aptwebserver::content-type::mime.types", true))
+   {
+      if (_config->FindB("aptwebserver::content-type::mime.types::apt", true))
+	 loadMimeTypesFile("/etc/apt/mime.types");
+
+      if (_config->FindB("aptwebserver::content-type::mime.types::home", true))
+      {
+	 auto const home = getenv("HOME");
+	 if (home != nullptr)
+	    loadMimeTypesFile(flCombine(home, ".mime.types"));
+      }
+
+      if (_config->FindB("aptwebserver::content-type::mime.types::etc", true))
+	 loadMimeTypesFile("/etc/mime.types");
    }
 
    // create socket, bind and listen to it {{{

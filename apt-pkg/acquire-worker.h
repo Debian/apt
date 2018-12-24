@@ -3,9 +3,9 @@
 /* ######################################################################
 
    Acquire Worker - Worker process manager
-   
-   Each worker class is associated with exaclty one subprocess.
-   
+
+   Each worker class is associated with exactly one subprocess.
+
    ##################################################################### */
 									/*}}}*/
 

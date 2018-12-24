@@ -772,7 +772,7 @@ std::string LookupTag(const std::string &Message, const char *TagC, const char *
 // StringToBool - Converts a string into a boolean			/*{{{*/
 // ---------------------------------------------------------------------
 /* This inspects the string to see if it is true or if it is false and
-   then returns the result. Several varients on true/false are checked. */
+   then returns the result. Several variants on true/false are checked. */
 int StringToBool(const string &Text,int Default)
 {
    char *ParseEnd;

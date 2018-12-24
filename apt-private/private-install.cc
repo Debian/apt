@@ -599,6 +599,12 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
       _config->Set("APT::Get::AutomaticRemove", "true");
       fallback = MOD_REMOVE;
    }
+   else if (strcasecmp(CmdL.FileList[0], "autopurge") == 0)
+   {
+      _config->Set("APT::Get::AutomaticRemove", "true");
+      _config->Set("APT::Get::Purge", true);
+      fallback = MOD_REMOVE;
+   }
 
    std::list<APT::VersionSet::Modifier> mods;
    mods.push_back(APT::VersionSet::Modifier(MOD_INSTALL, "+",

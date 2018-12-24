@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <locale>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -471,8 +472,9 @@ protected:
 };
 class aptAuthConfMethod : public aptMethod
 {
-   FileFd authconf;
-public:
+   std::vector<std::unique_ptr<FileFd>> authconfs;
+
+   public:
    virtual bool Configuration(std::string Message) APT_OVERRIDE
    {
       if (pkgAcqMethod::Configuration(Message) == false)
@@ -481,14 +483,25 @@ public:
       std::string const conf = std::string("Binary::") + Binary;
       _config->MoveSubTree(conf.c_str(), NULL);
 
+      // ignore errors with opening the auth file as it doesn't need to exist
+      _error->PushToStack();
       auto const netrc = _config->FindFile("Dir::Etc::netrc");
       if (netrc.empty() == false)
       {
-	 // ignore errors with opening the auth file as it doesn't need to exist
-	 _error->PushToStack();
-	 authconf.Open(netrc, FileFd::ReadOnly);
-	 _error->RevertToStack();
+	 authconfs.emplace_back(new FileFd());
+	 authconfs.back()->Open(netrc, FileFd::ReadOnly);
       }
+
+      auto const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
+      if (netrcparts.empty() == false)
+      {
+	 for (auto const &netrc : GetListOfFilesInDir(netrcparts, "conf", true, true))
+	 {
+	    authconfs.emplace_back(new FileFd());
+	    authconfs.back()->Open(netrc, FileFd::ReadOnly);
+	 }
+      }
+      _error->RevertToStack();
 
       DropPrivsOrDie();
 
@@ -500,13 +513,25 @@ public:
 
    bool MaybeAddAuthTo(URI &uri)
    {
+      bool result = true;
+
       if (uri.User.empty() == false || uri.Password.empty() == false)
 	 return true;
-      if (authconf.IsOpen() == false)
-	 return true;
-      if (authconf.Seek(0) == false)
-	 return false;
-      return MaybeAddAuth(authconf, uri);
+
+      for (auto &authconf : authconfs)
+      {
+	 if (authconf->IsOpen() == false)
+	    continue;
+	 if (authconf->Seek(0) == false)
+	 {
+	    result = false;
+	    continue;
+	 }
+
+	 result &= MaybeAddAuth(*authconf, uri);
+      }
+
+      return result;
    }
 
    aptAuthConfMethod(std::string &&Binary, char const *const Ver, unsigned long const Flags) APT_NONNULL(3)

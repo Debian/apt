@@ -96,7 +96,7 @@ string CDROMMethod::GetID(string Name)
 									/*}}}*/
 // CDROMMethod::AutoDetectAndMount                                      /*{{{*/
 // ---------------------------------------------------------------------
-/* Modifies class varaiable CDROM to the mountpoint */
+/* Modifies class variable CDROM to the mountpoint */
 bool CDROMMethod::AutoDetectAndMount(const URI Get, string &NewID)
 {
    vector<struct CdromDevice> v = UdevCdroms.Scan();
