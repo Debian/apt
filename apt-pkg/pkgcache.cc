@@ -231,10 +231,54 @@ map_id_t pkgCache::sHash(const char *Str) const
    return Hash % HeaderP->GetHashTableSize();
 }
 
+#if defined(__GNUC__)
+
+#if defined(__x86_64__)
+__attribute__((target("sse4.2"))) static int hash32(int crc32, const unsigned char *input, size_t size)
+{
+   if (input == nullptr)
+      return 0;
+
+   crc32 ^= 0xffffffffU;
+   while (size >= 8) {
+      crc32 = __builtin_ia32_crc32di(crc32, *(uint64_t *)input);
+      input += 8;
+      size -= 8;
+   }
+
+   if (size >= 4) {
+      crc32 = __builtin_ia32_crc32si(crc32, *(uint32_t *)input);
+      input += 4;
+      size -= 4;
+   }
+
+   if (size >= 2) {
+      crc32 = __builtin_ia32_crc32hi(crc32, *(uint16_t *)input);
+      input += 2;
+      size -= 2;
+   }
+
+   if (size >= 1) {
+      crc32 = __builtin_ia32_crc32qi(crc32, *(uint8_t *)input);
+      input += 1;
+      size -= 1;
+   }
+   crc32 ^= 0xffffffffU;
+   return crc32;
+}
+#endif
+
+__attribute__((target("default")))
+#endif
+static int hash32(int crc32, const unsigned char *input, size_t size)
+{
+   return adler32(crc32, input, size);
+}
+
 uint32_t pkgCache::CacheHash()
 {
    pkgCache::Header header = {};
-   uLong adler = adler32(0L, Z_NULL, 0);
+   uLong adler = hash32(0L, Z_NULL, 0);
 
    if (Map.Size() < sizeof(header))
       return adler;
@@ -243,14 +287,14 @@ uint32_t pkgCache::CacheHash()
    header.Dirty = false;
    header.CacheFileSize = 0;
 
-   adler = adler32(adler,
-		   reinterpret_cast<const unsigned char *>(&header),
-		   sizeof(header));
+   adler = hash32(adler,
+		  reinterpret_cast<const unsigned char *>(&header),
+		  sizeof(header));
 
    if (Map.Size() > sizeof(header)) {
-      adler = adler32(adler,
-		      static_cast<const unsigned char *>(GetMap().Data()) + sizeof(header),
-		      GetMap().Size() - sizeof(header));
+      adler = hash32(adler,
+		     static_cast<const unsigned char *>(GetMap().Data()) + sizeof(header),
+		     GetMap().Size() - sizeof(header));
    }
 
    return adler;
