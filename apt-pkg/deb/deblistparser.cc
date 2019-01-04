@@ -61,6 +61,7 @@ debListParser::debListParser(FileFd *File) :
    else
       forceEssential.emplace_back("apt");
    forceImportant = _config->FindVector("pkgCacheGen::ForceImportant");
+   myArch = _config->Find("APT::Architecture");
 }
 									/*}}}*/
 // ListParser::Package - Return the package name			/*{{{*/
@@ -621,12 +622,11 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    // We don't want to confuse library users which can't handle MultiArch
    if (StripMultiArch == true) {
-      string const arch = _config->Find("APT::Architecture");
       size_t const found = Package.rfind(':');
       if (found != StringView::npos &&
 	  (Package.substr(found) == ":any" ||
 	   Package.substr(found) == ":native" ||
-	   Package.substr(found +1) == arch))
+	   Package.substr(found +1) == Arch))
 	 Package = Package.substr(0,found);
    }
 
@@ -848,7 +848,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
       StringView Version;
       unsigned int Op;
 
-      Start = ParseDepends(Start, Stop, Package, Version, Op, false, false, false);
+      Start = ParseDepends(Start, Stop, Package, Version, Op, false, false, false, myArch);
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %zu",static_cast<size_t>(Key)); // TODO
       size_t const found = Package.rfind(':');

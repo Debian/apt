@@ -45,6 +45,7 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    std::vector<std::string> forceEssential;
    std::vector<std::string> forceImportant;
    std::string MD5Buffer;
+   std::string myArch;
 
    protected:
    pkgTagFile Tags;
