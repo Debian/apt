@@ -231,10 +231,10 @@ map_id_t pkgCache::sHash(const char *Str) const
    return Hash % HeaderP->GetHashTableSize();
 }
 
-#if defined(__GNUC__)
+#if defined(__GNUC__) && defined(__x86_64__) && defined(__ELF__)
 
 #if defined(__x86_64__)
-__attribute__((target("sse4.2"))) static int hash32(int crc32, const unsigned char *input, size_t size)
+__attribute__((target("sse4.2"))) static uint32_t hash32(uint32_t crc32, const unsigned char *input, size_t size)
 {
    if (input == nullptr)
       return 0;
@@ -270,7 +270,7 @@ __attribute__((target("sse4.2"))) static int hash32(int crc32, const unsigned ch
 
 __attribute__((target("default")))
 #endif
-static int hash32(int crc32, const unsigned char *input, size_t size)
+static uint32_t hash32(uint32_t crc32, const unsigned char *input, size_t size)
 {
    return adler32(crc32, input, size);
 }
