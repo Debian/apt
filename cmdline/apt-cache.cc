@@ -182,7 +182,7 @@ static void ShowHashTableStats(std::string Type,
 static bool Stats(CommandLine &CmdL)
 {
    if (CmdL.FileSize() > 1) {
-      _error->Error(_("apt-cache stats does not take any arguments"));
+      _error->Error(_("%s does not take any arguments"), "apt-cache stats");
       return false;
    }
 
