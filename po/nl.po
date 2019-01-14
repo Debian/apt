@@ -1,19 +1,19 @@
 # Dutch po-file for apt
-# Copyright (C) 2002-2011 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the apt package.
+#
 # Guus Sliepen <guus@sliepen.warande.net>, 2002.
 # Jochem Berends <j@jochem.net>, 2002.
 # Wannes Soenen <wannes@wannes.cjb.net>, 2002.
 # Frans Pop <elendil@planet.nl>, 2010.
-# Jeroen Schot <schot@a-eskwadraat.nl>, 2011. 
-# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2014, 2016, 2017.
+# Jeroen Schot <schot@a-eskwadraat.nl>, 2011.
+# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2014, 2016, 2017, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.5\n"
+"Project-Id-Version: apt 1.7.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-09-28 15:06+0200\n"
-"PO-Revision-Date: 2017-09-29 22:22+0200\n"
+"POT-Creation-Date: 2019-01-14 14:35+0100\n"
+"PO-Revision-Date: 2018-10-09 16:26+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -363,16 +363,13 @@ msgstr ""
 #. the time until the file will be valid - formatted in the same way as in
 #. the download progress display (e.g. 7d 3h 42min 1s)
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Release file for %s is expired (invalid since %s). Updates for this "
-#| "repository will not be applied."
+#, c-format
 msgid ""
 "Release file for %s is not valid yet (invalid for another %s). Updates for "
 "this repository will not be applied."
 msgstr ""
-"Het Release-bestand voor %s is vervallen (ongeldig sinds %s). Bijwerkingen "
-"voor deze pakketbron zullen niet uitgevoerd worden."
+"Het Release-bestand voor %s is nog niet geldig (nog ongeldig gedurende %s). "
+"Bijwerkingen voor deze pakketbron zullen niet uitgevoerd worden."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -472,12 +469,12 @@ msgstr ""
 #: apt-pkg/acquire.cc apt-pkg/cdrom.cc
 #, c-format
 msgid "List directory %s is missing."
-msgstr "Lijstmap %s is afwezig."
+msgstr "Lijstmap %s ontbreekt."
 
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Archives directory %s is missing."
-msgstr "Archiefmap %s is afwezig."
+msgstr "Archiefmap %s ontbreekt."
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -949,12 +946,12 @@ msgstr "Kon de bestandsindicator %d niet openen"
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "read, still have %llu to read but none left"
-msgstr "lezen; moet er nog %lu lezen, maar er schieten er geen meer over"
+msgstr "lezen; moet er nog %llu lezen, maar er schieten er geen meer over"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr "schrijven; de laatste %lu konden niet weggeschreven worden"
+msgstr "schrijven; de laatste %llu konden niet weggeschreven worden"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -1156,21 +1153,19 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Kon pakketbestand %s niet ontleden (%d)"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Unable to lock the administration directory (%s), is another process "
-#| "using it?"
+#, c-format
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
 msgstr ""
-"Kan de beheersmap (%s) niet vergrendelen. Is deze in gebruik door een ander "
-"proces?"
+"Kan de vergrendeling voor het dpkg-frontend (%s) niet verkrijgen. Gebruikt "
+"een ander proces dit?"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid "Unable to lock the administration directory (%s), are you root?"
+#, c-format
 msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
-msgstr "Kan de beheersmap (%s) niet vergrendelen. Heeft u beheerdersrechten?"
+msgstr ""
+"Kan de vergrendeling voor het dpkg-frontend (%s) niet verkrijgen. Heeft u "
+"beheerdersrechten?"
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -3044,6 +3039,7 @@ msgstr "wacht tot het systeem online is"
 #: cmdline/apt-helper.cc
 msgid "drop privileges before running given command"
 msgstr ""
+"laat bijzondere rechten vallen voordat het gegeven commando uitgevoerd wordt"
 
 #: cmdline/apt-internal-planner.cc
 msgid ""
@@ -3688,10 +3684,9 @@ msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
 
 #: methods/connect.cc
-#, fuzzy, c-format
-#| msgid "Connecting to %s (%s)"
+#, c-format
 msgid "Connected to %s (%s)"
-msgstr "Er wordt verbinding gemaakt met %s (%s)"
+msgstr "Verbonden met %s (%s)"
 
 #: methods/connect.cc methods/http.cc
 #, c-format
@@ -3715,12 +3710,12 @@ msgstr "Mislukt"
 #: methods/connect.cc
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
-msgstr "Kon niet verbinden met %s:%s (%s)."
+msgstr "Kon geen verbinding maken met %s:%s (%s)."
 
 #: methods/connect.cc
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Kon niet verbinden met %s:%s (%s); de verbinding verliep"
+msgstr "Kon geen verbinding maken met %s:%s (%s); de verbinding verliep"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
@@ -3992,6 +3987,12 @@ msgstr "Verbinding werd voortijdig afgebroken"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Lege bestanden kunnen geen geldige archieven zijn"
+
+#~ msgid "Your '%s' file changed, please run 'apt-get update'.\n"
+#~ msgstr "Uw bestand '%s' is gewijzigd. Voer 'apt-get update' uit.\n"
+
+#~ msgid "Print the list of packages on hold"
+#~ msgstr "Toon de lijst van te handhaven pakketten"
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."

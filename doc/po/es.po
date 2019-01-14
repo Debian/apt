@@ -38,7 +38,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-04-15 21:57+0200\n"
+"POT-Creation-Date: 2019-01-14 14:35+0100\n"
 "PO-Revision-Date: 2014-07-04 01:31+0200\n"
 "Last-Translator: Omar Campagne <ocampagne@gmail.com>\n"
 "Language-Team: Debian l10n Spanish <debian-l10n-spanish@lists.debian.org>\n"
@@ -9609,11 +9609,21 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "The APT preferences file <filename>/etc/apt/preferences</filename> and "
+#| "the fragment files in the <filename>/etc/apt/preferences.d/</filename> "
+#| "folder can be used to control which versions of packages will be selected "
+#| "for installation."
 msgid ""
-"The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be used "
-"to store login information in a netrc-like format with restrictive file "
-"permissions."
+"The APT auth.conf file <filename>/etc/apt/auth.conf</filename>, and .conf "
+"files inside <filename>/etc/apt/auth.conf.d</filename> can be used to store "
+"login information in a netrc-like format with restrictive file permissions."
 msgstr ""
+"El fichero de preferencias de APT <filename>/etc/apt/preferences</filename> "
+"y los segmentos de fichero dentro del directorio <filename>/etc/apt/"
+"preferences.d/</filename> se pueden usar para controlar las versiones de los "
+"paquetes seleccionados para su instalación."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt_auth.conf.5.xml
@@ -9780,6 +9790,26 @@ msgstr "<filename>/etc/apt/trustdb.gpg</filename>"
 msgid ""
 "Login information for APT sources and proxies in a netrc-like format.  "
 "Configuration Item: <literal>Dir::Etc::netrc</literal>."
+msgstr ""
+"Muestra las versiones completas para los paquetes actualizados e instalados. "
+"Opción de configuración: <literal>APT::Get::Show-Versions</literal>."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid "<filename>/etc/apt/trustdb.gpg</filename>"
+msgid "<filename>/etc/apt/auth.conf.d/*.conf</filename>"
+msgstr "<filename>/etc/apt/trustdb.gpg</filename>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "Show full versions for upgraded and installed packages.  Configuration "
+#| "Item: <literal>APT::Get::Show-Versions</literal>."
+msgid ""
+"Login information for APT sources and proxies in a netrc-like format.  "
+"Configuration Item: <literal>Dir::Etc::netrcparts</literal>."
 msgstr ""
 "Muestra las versiones completas para los paquetes actualizados e instalados. "
 "Opción de configuración: <literal>APT::Get::Show-Versions</literal>."
@@ -12048,6 +12078,34 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 #: offline.dbk
 msgid "Which will use the already fetched archives on the disc."
 msgstr "Esto utiliza los archivos del disco previamente obtenidos."
+
+#~ msgid ""
+#~ "The special type <literal>uncompressed</literal> can be used to give "
+#~ "uncompressed files a preference, but note that most archives don't "
+#~ "provide uncompressed files so this is mostly only usable for local "
+#~ "mirrors."
+#~ msgstr ""
+#~ "El tipo especial <literal>uncompressed</literal> se puede utilizar para "
+#~ "establecer una preferencia por los ficheros descomprimidos, pero tenga en "
+#~ "cuenta que la mayoría de archivos no proporcionan ficheros "
+#~ "descomprimidos, así que habitualmente esto solo sirve con réplicas "
+#~ "locales."
+
+#~ msgid ""
+#~ "The <literal>Ignore-Files-Silently</literal> list can be used to specify "
+#~ "which files APT should silently ignore while parsing the files in the "
+#~ "fragment directories. Per default a file which ends with <literal>."
+#~ "disabled</literal>, <literal>~</literal>, <literal>.bak</literal> or "
+#~ "<literal>.dpkg-[a-z]+</literal> is silently ignored. As seen in the last "
+#~ "default value these patterns can use regular expression syntax."
+#~ msgstr ""
+#~ "La lista <literal>Ignore-Files-Silently</literal> se puede usar para "
+#~ "definir qué fichero debería ignorar APT silenciosamente al analizar "
+#~ "ficheros en los directorios de fragmentos. Por omisión, se ignora "
+#~ "silenciosamente un fichero que termina con <literal>.disabled</literal>, "
+#~ "<literal>~</literal>, <literal>.bak</literal> o <literal>.dpkg-[a-z]+</"
+#~ "literal>. Como se puede ver con el último valor predeterminado, estos "
+#~ "patrones pueden usar la sintaxis de expresiones regulares."
 
 #~ msgid ""
 #~ "<literal>http::Proxy</literal> sets the default proxy to use for HTTP "

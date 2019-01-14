@@ -5,20 +5,22 @@
 # Carlos Z.F. Liu <carlosliu@users.sourceforge.net>, 2004, 2006.
 # Aron Xu <happyaron.xu@gmail.com>, 2009, 2010.
 # Mo Zhou <cdluminate@gmail.com>, 2014, 2015, 2016, 2017.
+# Boyuan Yang <073plan@gmail.com>, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.5.x\n"
+"Project-Id-Version: apt 1.7.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-09-28 15:06+0200\n"
-"PO-Revision-Date: 2017-10-08 11:00+0000\n"
+"POT-Creation-Date: 2019-01-14 14:35+0100\n"
+"PO-Revision-Date: 2018-07-13 18:16+0800\n"
 "Last-Translator: Mo Zhou <cdluminate@gmail.com>\n"
-"Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
+"Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.0.8\n"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -324,7 +326,7 @@ msgstr ""
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
-msgstr "鉴于仓库 '%2$s' 提供的安全信息强度太低，跳过配置文件 '%1$s' 的获取。"
+msgstr "鉴于仓库 '%2$s' 提供的安全信息强度太低，跳过配置文件 '%1$s' 的获取"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -335,21 +337,17 @@ msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
-"%s 的 Release 文件已经过期(invalid since %s)。该仓库的更新将不会被应用。"
+"%s 的 Release 文件已经过期(自 %s 起处于无效状态)。该仓库的更新将不会应用。"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time until the file will be valid - formatted in the same way as in
 #. the download progress display (e.g. 7d 3h 42min 1s)
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Release file for %s is expired (invalid since %s). Updates for this "
-#| "repository will not be applied."
+#, c-format
 msgid ""
 "Release file for %s is not valid yet (invalid for another %s). Updates for "
 "this repository will not be applied."
-msgstr ""
-"%s 的 Release 文件已经过期(invalid since %s)。该仓库的更新将不会被应用。"
+msgstr "%s 的 Release 文件已经过期(已经过期了 %s)。该仓库的更新将不会应用。"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -425,12 +423,12 @@ msgstr "无法找到获取软件包的渠道 %s 所需的驱动程序。"
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "Is the package %s installed?"
-msgstr "请检查是否安装了 %s 软件包"
+msgstr "是否安装了 %s 软件包？"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "Method %s did not start correctly"
-msgstr "获取软件包的渠道 %s 所需的驱动程序没有正常启动。"
+msgstr "获取软件包的渠道 %s 所需的驱动程序没有正常启动"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -475,7 +473,7 @@ msgstr "%s 的 Clean (清理)不被支持"
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "正在下载第 %li 个文件，共 %li 个(还剩 %s 个)"
+msgstr "正在下载第 %li 个文件，共 %li 个(还剩 %s)"
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -625,8 +623,8 @@ msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
 msgstr ""
-"无法确定任何包文件的位置，可能这不是一张 Debian 盘片或者是选择了错误的硬件构"
-"架。"
+"无法确定任何包文件的位置，可能这不是一张 Debian 盘片，或者是选择了错误的硬件"
+"架构？"
 
 #: apt-pkg/cdrom.cc
 #, c-format
@@ -689,7 +687,7 @@ msgstr "不能理解命令行选项 “%c” [来自 %s] 与其他选项的搭�
 msgid ""
 "Command line option %s is not understood in combination with the other "
 "options"
-msgstr "不能理解命令行选项 “%s” 与其他选项的搭配。"
+msgstr "不能理解命令行选项 “%s” 与其他选项的搭配"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -699,12 +697,12 @@ msgstr "命令行选项 %s 不是布尔值"
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
 msgid "Option %s requires an argument."
-msgstr "选项 %s 要求有一个参数"
+msgstr "选项 %s 要求有一个参数。"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "选项 %s：配置项后必须包含有形如“=<变量>”的具体指定"
+msgstr "选项 %s：配置项后必须包含有形如“=<变量>”的具体指定。"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -719,7 +717,7 @@ msgstr "选项“%s”太长"
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
 msgid "Sense %s is not understood, try true or false."
-msgstr "不能识别参数 %s，请用 true 或 false"
+msgstr "不能识别参数 %s，请用 true 或 false。"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -734,7 +732,7 @@ msgstr "无法识别的类型缩写：“%c”"
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
-msgstr "语法错误 %s:%u：配置小节没有以名字开头"
+msgstr "语法错误 %s:%u：配置小节没有以名字开头。"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -831,7 +829,7 @@ msgstr "等待子进程 %s 的退出，但是它并不存在"
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
-msgstr "子进程 %s 发生了段错误"
+msgstr "子进程 %s 发生了段错误。"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -1167,7 +1165,7 @@ msgstr "目录 %s 缺失"
 #: apt-pkg/deb/dpkgpm.cc apt-pkg/edsp.cc
 #, c-format
 msgid "Could not open file '%s'"
-msgstr "无法打开文件 %s"
+msgstr "无法打开文件“%s”"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
@@ -1705,7 +1703,7 @@ msgstr "[已安装]"
 
 #: apt-private/private-cacheset.cc
 msgid " [Not candidate version]"
-msgstr " [无候选]"
+msgstr " [无候选版本]"
 
 #: apt-private/private-cacheset.cc
 msgid "You should explicitly select one to install."
@@ -2094,7 +2092,7 @@ msgid ""
 "      Keep also in mind that locking is deactivated,\n"
 "      so don't depend on the relevance to the real current situation!\n"
 msgstr ""
-"注意：这只是模拟！\n"
+"注意：这只是一次模拟！\n"
 "　　　%s 需要 root 特权进行实际的执行。\n"
 "　　　同时请记住此时并未锁定，所以请勿完全相信当前的情况！\n"
 
@@ -2773,7 +2771,7 @@ msgstr "卸载所有自动安装且不再使用的软件包"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
-msgstr "发布版升级，见 apt-get(8)"
+msgstr "发行版升级，见 apt-get(8)"
 
 #: cmdline/apt-get.cc
 msgid "Follow dselect selections"
@@ -2805,7 +2803,7 @@ msgstr "下载指定的二进制包到当前目录"
 
 #: cmdline/apt-get.cc
 msgid "Download and display the changelog for the given package"
-msgstr "下载指定软件包，并显示其changelog"
+msgstr "下载指定软件包，并显示其变更日志（changelog）"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -2845,7 +2843,7 @@ msgstr "将 URI 指定的文件下载到目标路径"
 
 #: cmdline/apt-helper.cc
 msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr "查阅一个 SRV 记录 (如： _http._tcp.ftp.debian.org)"
+msgstr "查询一个 SRV 记录 (如： _http._tcp.ftp.debian.org)"
 
 #: cmdline/apt-helper.cc
 msgid "concatenate files, with automatic decompression"
@@ -2861,7 +2859,7 @@ msgstr "等待系统上线"
 
 #: cmdline/apt-helper.cc
 msgid "drop privileges before running given command"
-msgstr ""
+msgstr "运行给定命令前先降低权限"
 
 #: cmdline/apt-internal-planner.cc
 msgid ""
@@ -3477,10 +3475,9 @@ msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
 
 #: methods/connect.cc
-#, fuzzy, c-format
-#| msgid "Connecting to %s (%s)"
+#, c-format
 msgid "Connected to %s (%s)"
-msgstr "正在连接 %s (%s)"
+msgstr "已连接到 %s (%s)"
 
 #: methods/connect.cc methods/http.cc
 #, c-format
@@ -3768,6 +3765,14 @@ msgstr "连接被永久关闭"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "空文件不是有效归档"
+
+#, fuzzy
+#~| msgid "Your '%s' file changed, please run 'apt-get update'."
+#~ msgid "Your '%s' file changed, please run 'apt-get update'.\n"
+#~ msgstr "您的 %s 文件有过改动，请执行 ‘apt-get update’。"
+
+#~ msgid "Print the list of packages on hold"
+#~ msgstr "列出设为保留的软件包"
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."

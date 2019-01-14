@@ -7,13 +7,13 @@
 # Klaus Ade Johnstad <klaus@skolelinux.no>, 2004.
 # Bjorn Steensrud <bjornst@powertech.no>, 2004.
 # Hans Fredrik Nordhaug <hans@nordhaug.priv.no>, 2003, 2005-2010.
-# Petter Reinholdtsen <pere@hungry.com>, 2016.
+# Petter Reinholdtsen <pere@hungry.com>, 2016, 2018.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-09-28 15:06+0200\n"
-"PO-Revision-Date: 2016-06-11 22:38+0200\n"
+"POT-Creation-Date: 2019-01-14 14:35+0100\n"
+"PO-Revision-Date: 2018-10-30 20:53+0100\n"
 "Last-Translator: Petter Reinholdtsen <pere@hungry.com>\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
 "Language: nb\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Lokalize 2.0\n"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -49,9 +49,9 @@ msgid "Failed to read the archive headers"
 msgstr "Klarte ikke å lese arkivhodene"
 
 #: apt-inst/contrib/extracttar.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot find a configured compressor for '%s'"
-msgstr "Klarte ikke finne autentiseringsoppføring for: %s"
+msgstr "Klarte ikke finne oppsatt kompressor for «%s»"
 
 #: apt-inst/contrib/extracttar.cc
 msgid "Corrupted archive"
@@ -198,6 +198,8 @@ msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
 "disabled by default."
 msgstr ""
+"Oppdatering fra et slikt depot kan ikke gjøres på sikkert vis, og er derfor "
+"avskrudd som standard."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -210,6 +212,8 @@ msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
+"Se manualsiden apt-secure(8) for detaljer om oppretting av depote og "
+"brukeroppsett."
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -254,6 +258,8 @@ msgstr "Hashsummen stemmer ikke"
 #: apt-pkg/acquire-item.cc
 msgid "Insufficient information available to perform this download securely"
 msgstr ""
+"Utilstrekkelig informasjon tilgjengelig for å utføre denne nedlastingen på "
+"sikkert vis."
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -353,12 +359,12 @@ msgstr "Konflikt mellom distribusjoner: %s (forventet %s men fant %s)"
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
-msgstr ""
+msgstr "Depot «%s» endret sin «%s»-verdi fra «%s» til «%s»."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
-msgstr ""
+msgstr "Depot «%s» endret sin standardprioritet for %s fra %hi til %hi."
 
 #. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
 #: apt-pkg/acquire-item.cc
@@ -366,6 +372,7 @@ msgstr ""
 msgid ""
 "More information about this can be found online in the Release notes at: %s"
 msgstr ""
+"Mer informasjon om dette kan finnes på nettet i utgivelsesnotatene på: %s"
 
 #. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
 #: apt-pkg/acquire-item.cc
@@ -374,6 +381,8 @@ msgid ""
 "This must be accepted explicitly before updates for this repository can be "
 "applied. See %s manpage for details."
 msgstr ""
+"Dette må eksplisitt aksepteres før oppdateringer fra dette depoet kan tas i "
+"bruk.  Se manualsiden %s for detaljer."
 
 #: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
 #, c-format
@@ -392,7 +401,7 @@ msgstr ""
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
-msgstr ""
+msgstr "Klarte ikke finne kilde for å laste ned versjon «%s» av «%s»"
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
@@ -403,12 +412,12 @@ msgstr "Kobler til %s (%s)"
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "The method '%s' is explicitly disabled via configuration."
-msgstr ""
+msgstr "Metoden «%s» er eksplisitt avskrudd via oppsettet."
 
 #: apt-pkg/acquire-worker.cc methods/connect.cc
 #, c-format
 msgid "If you meant to use Tor remember to use %s instead of %s."
-msgstr ""
+msgstr "Hvis du mente å bruke Tor, husk å bruke %s i stedet for %s."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -416,9 +425,9 @@ msgid "The method driver %s could not be found."
 msgstr "Finner ikke metode-driveren %s."
 
 #: apt-pkg/acquire-worker.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Is the package %s installed?"
-msgstr "Sjekk om pakken «dpkg-dev» er installert.\n"
+msgstr "Er pakken «%s» installert?"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -449,7 +458,7 @@ msgstr "Klarte ikke låse mappa %s"
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "No sandbox user '%s' on the system, can not drop privileges"
-msgstr ""
+msgstr "Mangler sandkassebruker «%s» på systemet, kan ikke droppe privileger"
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -530,12 +539,12 @@ msgstr "Klarte ikke å finne oppgave «%s»"
 #: apt-pkg/cacheset.cc
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
-msgstr "Klarte ikke finne noen pakken med regex «%s»"
+msgstr "Klarte ikke finne noen pakke med regex «%s»"
 
 #: apt-pkg/cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find any package by glob '%s'"
-msgstr "Klarte ikke finne noen pakken med regex «%s»"
+msgstr "Klarte ikke finne noen pakke med glob «%s»"
 
 #: apt-pkg/cacheset.cc apt-private/private-show.cc
 #, c-format
@@ -885,14 +894,14 @@ msgid "Could not open file descriptor %d"
 msgstr "Klarte ikke åpne fildeskriptor %d"
 
 #: apt-pkg/contrib/fileutl.cc
-#, fuzzy, c-format
+#, c-format
 msgid "read, still have %llu to read but none left"
-msgstr "lese, har fremdeles %lu igjen å lese, men ingen igjen"
+msgstr "lese, har fremdeles %llu igjen å lese, men ingen igjen"
 
 #: apt-pkg/contrib/fileutl.cc
-#, fuzzy, c-format
+#, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr "skrive, har fremdeles %lu igjen å skrive, men klarte ikke å"
+msgstr "skrive, har fremdeles %llu igjen å skrive, men klarte ikke å"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -990,9 +999,9 @@ msgstr "..."
 
 #. Print the spinner
 #: apt-pkg/contrib/progress.cc
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... %u%%"
-msgstr "%c%s ... Ferdig"
+msgstr "%c%s ... %u%%"
 
 #. TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc
@@ -1374,7 +1383,7 @@ msgstr "Klarer ikke bestemme en passende pakkesystemtype"
 #: apt-pkg/install-progress.cc
 #, c-format
 msgid "Progress: [%3li%%]"
-msgstr ""
+msgstr "Fremgang: [%3li%%]"
 
 #. send status information that we are about to fork dpkg
 #: apt-pkg/install-progress.cc
@@ -3019,9 +3028,8 @@ msgid ""
 msgstr ""
 
 #: cmdline/apt-mark.cc
-#, fuzzy
 msgid "Mark the given packages as automatically installed"
-msgstr "%s satt til automatisk installasjon.\n"
+msgstr "Marker den angitte pakken som automatisk installert"
 
 #: cmdline/apt-mark.cc
 #, fuzzy
@@ -3843,6 +3851,12 @@ msgstr "Forbindelsen ble uventet stengt"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomme filer kan ikke være gyldige arkiver"
+
+#~ msgid "Your '%s' file changed, please run 'apt-get update'.\n"
+#~ msgstr "'%s'-filen din ble endret, vær så snill å kjør 'apt-get update'.\n"
+
+#~ msgid "Print the list of packages on hold"
+#~ msgstr "Skriv listen med pakker som holdes tilbake"
 
 #~ msgid ""
 #~ "The package index files are corrupted. No Filename: field for package %s."
