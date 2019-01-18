@@ -424,6 +424,12 @@ void pkgAcqMethod::Status(const char *Format,...)
  * the worker will enqueue again later on to the right queue */
 void pkgAcqMethod::Redirect(const string &NewURI)
 {
+   if (NewURI.find_first_not_of(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~") != std::string::npos)
+   {
+      _error->Error("SECURITY: URL redirect target contains control characters, rejecting.");
+      Fail();
+      return;
+   }
    std::cout << "103 Redirect\nURI: " << Queue->Uri << "\n"
 	     << "New-URI: " << NewURI << "\n"
 	     << "\n" << std::flush;
