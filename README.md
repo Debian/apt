@@ -9,19 +9,20 @@ package managers can depend upon.
 
 Included tools are:
 
-* apt-get for retrieval of packages and information about them
+* **apt-get** for retrieval of packages and information about them
   from authenticated sources and for installation, upgrade and
   removal of packages together with their dependencies
-* apt-cache for querying available information about installed
+* **apt-cache** for querying available information about installed
   as well as installable packages
-* apt-cdrom to use removable media as a source for packages
-* apt-config as an interface to the configuration settings
-* apt-key as an interface to manage authentication keys
-* apt-extracttemplates to be used by debconf to prompt for configuration
-  questions before installation.
-* apt-ftparchive creates Packages and other index files
+* **apt-cdrom** to use removable media as a source for packages
+* **apt-config** as an interface to the configuration settings
+* **apt-key** as an interface to manage authentication keys
+* **apt-extracttemplates** to be used by debconf to prompt for configuration
+  questions before installation
+* **apt-ftparchive** creates Packages and other index files
   needed to publish an archive of debian packages
-* apt-sortpkgs is a Packages/Sources file normalizer.
+* **apt-sortpkgs** is a Packages/Sources file normalizer
+* **apt** is a high-level commandline interface for better interactive usage
 
 The libraries libapt-pkg and libapt-inst are also maintained as part of this project,
 alongside various additional binaries like the acquire-methods used by them.
