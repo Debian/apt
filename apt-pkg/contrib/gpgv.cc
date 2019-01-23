@@ -27,6 +27,28 @@
 
 #include <apti18n.h>
 									/*}}}*/
+
+static bool GetLineErrno(std::unique_ptr<char, decltype(&free)> &buffer, size_t *n, FILE *stream, std::string const &InFile, bool acceptEoF = false)/*{{{*/
+{
+   errno = 0;
+   auto lineptr = buffer.release();
+   auto const result = getline(&lineptr, n, stream);
+   buffer.reset(lineptr);
+   if (errno != 0)
+      return _error->Errno("getline", "Could not read from %s", InFile.c_str());
+   if (result == -1)
+   {
+      if (acceptEoF)
+	 return false;
+      return _error->Error("Splitting of clearsigned file %s failed as it doesn't contain all expected parts", InFile.c_str());
+   }
+   // We remove all whitespaces including newline here as
+   // a) gpgv ignores them for signature
+   // b) we can write out a \n in code later instead of dealing with \r\n or not
+   _strrstrip(buffer.get());
+   return true;
+}
+									/*}}}*/
 static char * GenerateTemporaryFileTemplate(const char *basename)	/*{{{*/
 {
    std::string out;
@@ -176,6 +198,48 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 
    if (releaseSignature == DETACHED)
    {
+      std::unique_ptr<FILE, decltype(&fclose)> detached{fopen(FileGPG.c_str(), "r"), &fclose};
+      if (detached.get() == nullptr)
+      {
+	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' could not be opened", FileGPG.c_str());
+	 local_exit(EINTERNAL);
+      }
+      std::unique_ptr<char, decltype(&free)> buf{nullptr, &free};
+      size_t buf_size = 0;
+      bool open_signature = false;
+      bool found_badcontent = false;
+      size_t found_signatures = 0;
+      while (GetLineErrno(buf, &buf_size, detached.get(), FileGPG, true))
+      {
+	 if (open_signature && strcmp(buf.get(), "-----END PGP SIGNATURE-----") == 0)
+	    open_signature = false;
+	 else if (open_signature == false && strcmp(buf.get(), "-----BEGIN PGP SIGNATURE-----") == 0)
+	 {
+	    open_signature = true;
+	    ++found_signatures;
+	 }
+	 else if (open_signature == false)
+	    found_badcontent = true;
+      }
+      if (found_signatures == 0 && statusfd != -1)
+      {
+	 // This is not an attack attempt but a file even gpgv would complain about
+	 // likely the result of a paywall which is covered by the gpgv method
+	 auto const errtag = "[GNUPG:] NODATA\n";
+	 FileFd::Write(fd[1], errtag, strlen(errtag));
+	 local_exit(113);
+      }
+      else if (found_badcontent)
+      {
+	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains lines not belonging to a signature", FileGPG.c_str());
+	 local_exit(112);
+      }
+      if (open_signature == true)
+      {
+	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains unclosed signatures", FileGPG.c_str());
+	 local_exit(112);
+      }
+
       Args.push_back(FileGPG.c_str());
       Args.push_back(File.c_str());
    }
@@ -290,26 +354,6 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 }
 									/*}}}*/
 // SplitClearSignedFile - split message into data/signature		/*{{{*/
-static bool GetLineErrno(std::unique_ptr<char, decltype(&free)> &buffer, size_t *n, FILE *stream, std::string const &InFile, bool acceptEoF = false)
-{
-   errno = 0;
-   auto lineptr = buffer.release();
-   auto const result = getline(&lineptr, n, stream);
-   buffer.reset(lineptr);
-   if (errno != 0)
-      return _error->Errno("getline", "Could not read from %s", InFile.c_str());
-   if (result == -1)
-   {
-      if (acceptEoF)
-	 return false;
-      return _error->Error("Splitting of clearsigned file %s failed as it doesn't contain all expected parts", InFile.c_str());
-   }
-   // We remove all whitespaces including newline here as
-   // a) gpgv ignores them for signature
-   // b) we can write out a \n in code later instead of dealing with \r\n or not
-   _strrstrip(buffer.get());
-   return true;
-}
 bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
       std::vector<std::string> * const ContentHeader, FileFd * const SignatureFile)
 {
