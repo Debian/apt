@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.7.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-01-23 16:49+0100\n"
 "PO-Revision-Date: 2018-10-09 16:26+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -2065,7 +2065,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Afbreken."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Wilt u doorgaan?"
 
@@ -2636,7 +2636,7 @@ msgstr[1] ""
 msgid "All packages are up to date."
 msgstr "Alle pakketten zijn up-to-date."
 
-#: cmdline/apt-cache.cc
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
 #, c-format
 msgid "%s does not take any arguments"
 msgstr "De opdracht '%s' aanvaardt geen argumenten"
@@ -3074,6 +3074,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s was reeds ingesteld als automatisch geïnstalleerd.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "De volgende NIEUWE pakketten zullen geïnstalleerd worden:"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s was reeds ingesteld als te handhaven.\n"
@@ -3136,6 +3146,12 @@ msgstr "Markeer het vermelde pakket als automatisch geïnstalleerd"
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as manually installed"
 msgstr "Markeer het vermelde pakket als manueel geïnstalleerd"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "Markeer het vermelde pakket als automatisch geïnstalleerd"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"

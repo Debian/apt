@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-01-23 16:49+0100\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -1991,7 +1991,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Hủy bỏ."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Bạn có muốn tiếp tục không?"
 
@@ -2535,7 +2535,7 @@ msgstr[0] ""
 msgid "All packages are up to date."
 msgstr "Mọi gói đã được cập nhật."
 
-#: cmdline/apt-cache.cc
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
 #, fuzzy, c-format
 msgid "%s does not take any arguments"
 msgstr "Lệnh cập nhật không chấp nhận đối số"
@@ -2977,6 +2977,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s đã sẵn được đặt thành cài đặt tự động rồi.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "Những gói MỚI sau sẽ được CÀI ĐẶT:"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s đã sẵn được đặt là giữ lại.\n"
@@ -3040,6 +3050,12 @@ msgstr "Đánh dấu các gói đưa ra là được cài đặt tự động"
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as manually installed"
 msgstr "Đánh dấu các gói đưa ra là được cài đặt bằng tay"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "Đánh dấu các gói đưa ra là được cài đặt tự động"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"

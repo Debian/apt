@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-01-23 16:49+0100\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -1951,7 +1951,7 @@ msgstr ""
 msgid "Abort."
 msgstr "중단."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "계속 하시겠습니까?"
 
@@ -2490,7 +2490,7 @@ msgstr[0] ""
 msgid "All packages are up to date."
 msgstr ""
 
-#: cmdline/apt-cache.cc
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
 #, fuzzy, c-format
 msgid "%s does not take any arguments"
 msgstr "update 명령은 인수를 받지 않습니다"
@@ -2906,6 +2906,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s 패키지는 이미 자동설치로 지정되어 있습니다.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "다음 새 패키지를 설치할 것입니다:"
+
+#: cmdline/apt-mark.cc
 #, fuzzy, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s 패키지는 이미 최신 버전입니다.\n"
@@ -2963,6 +2973,11 @@ msgstr "%s 패키지는 수동설치로 지정합니다.\n"
 #, fuzzy
 msgid "Mark the given packages as manually installed"
 msgstr "'dpkg-dev' 패키지가 설치되었는지를 확인하십시오.\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "%s 패키지는 수동설치로 지정합니다.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"

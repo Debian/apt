@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.8.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-11-12 11:52+0100\n"
+"POT-Creation-Date: 2019-01-23 16:49+0100\n"
 "PO-Revision-Date: 2018-11-26 17:47+0100\n"
 "Last-Translator: Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -169,8 +169,7 @@ msgstr ""
 "     <listitem><para>Fichier de configuration ; indique le fichier de configuration à utiliser. \n"
 "     Le programme lira le fichier de configuration par défaut puis le fichier indiqué ici. \n"
 "     Si les réglages de configuration doivent être établis avant l'analyse des fichiers\n"
-"     de configuration par défaut, un fichier peut être indiqué avec la variable d'environnement <envar>APT_CONFIG</envar>."
-"     Veuillez consulter &apt-conf; pour des informations sur la syntaxe d'utilisation.\n"
+"     de configuration par défaut, un fichier peut être indiqué avec la variable d'environnement <envar>APT_CONFIG</envar>.     Veuillez consulter &apt-conf; pour des informations sur la syntaxe d'utilisation.\n"
 "     </para>\n"
 "     </listitem>\n"
 "     </varlistentry>\n"
@@ -3081,6 +3080,24 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
+#, fuzzy
+#| msgid ""
+#| "<literal>auto</literal> is used to mark a package as being automatically "
+#| "installed, which will cause the package to be removed when no more "
+#| "manually installed packages depend on this package."
+msgid ""
+"<literal>minimize-manual</literal> is used to mark (transitive) dependencies "
+"of metapackages as automatically installed.  This can be used after an "
+"installation for example, to minimize the number of manually installed "
+"packages; or continuously on systems managed by system configuration "
+"metapackages."
+msgstr ""
+"<literal>auto</literal> permet de marquer un paquet comme ayant été installé "
+"automatiquement. Un tel paquet sera supprimé automatiquement dès que plus "
+"aucun paquet installé manuellement ne dépend de lui."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-mark.8.xml
 msgid ""
 "<literal>showauto</literal> is used to print a list of automatically "
 "installed packages with each package on a new line.  All automatically "
@@ -3412,9 +3429,9 @@ msgid ""
 "propagate malicious software to all users downloading packages from that "
 "host."
 msgstr ""
-"<literal>Attaque par compromission d'un miroir sur le réseau</literal>. "
-"Sans vérification de signature, quelqu'un de malveillant peut compromettre "
-"un miroir et modifier les fichiers. Ainsi tous ceux qui téléchargent les "
+"<literal>Attaque par compromission d'un miroir sur le réseau</literal>. Sans "
+"vérification de signature, quelqu'un de malveillant peut compromettre un "
+"miroir et modifier les fichiers. Ainsi tous ceux qui téléchargent les "
 "paquets de ce miroir propagent du code malveillant."
 
 #. type: Content of: <refentry><refsect1><para>
@@ -5536,6 +5553,14 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
 msgid ""
+"This is a string that defines the <envar>PATH</envar> environment variable "
+"used when running dpkg. It may be set to any valid value of that environment "
+"variable; or the empty string, in which case the variable is not changed."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
 "This is a list of shell commands to run before/after invoking &dpkg;.  Like "
 "<literal>options</literal> this must be specified in list notation. The "
 "commands are invoked in order using <filename>/bin/sh</filename>; should any "
@@ -5974,8 +5999,8 @@ msgstr ""
 "<literal>MarkInstall</literal> suivi de <literal>nom-paquet &lt;a.b.c -&gt; "
 "d.e.f | x.y.z&gt; (section)</literal> où <literal>a.b.c</literal> est la "
 "version actuelle du paquet, <literal>d.e.f</literal> la version devant être "
-"installée et <literal>x.y.z</literal> une version plus récente qui n'est "
-"pas prévue pour être installée (à cause d'un score plus faible). Ces deux "
+"installée et <literal>x.y.z</literal> une version plus récente qui n'est pas "
+"prévue pour être installée (à cause d'un score plus faible). Ces deux "
 "derniers éléments peuvent ne pas être mentionnés s'ils ne sont pas "
 "pertinents où lorsque ils sont identiques à la version installée. "
 "<literal>section</literal> est le nom de la section où figure le paquet."
@@ -6644,9 +6669,9 @@ msgstr ""
 "APT gére également l'épinglage (« pinning ») avec des expressions &glob; et "
 "des expressions régulières entourées par des barres obliques. Par exemple, "
 "l'exemple qui suit affecte une priorité de 500 à tous les paquets "
-"d'experimental dont le nom commence par gnome (en tant qu'expression de "
-"type &glob;) ou contient le mot kde (sous format d'une expression régulière "
-"POSIX étendue, entourée de barres obliques)."
+"d'experimental dont le nom commence par gnome (en tant qu'expression de type "
+"&glob;) ou contient le mot kde (sous format d'une expression régulière POSIX "
+"étendue, entourée de barres obliques)."
 
 #. type: Content of: <refentry><refsect1><refsect2><programlisting>
 #: apt_preferences.5.xml
@@ -6974,8 +6999,8 @@ msgstr ""
 "Le fichier <filename>Release</filename> se trouve normalement dans le "
 "répertoire <filename>.../dists/<replaceable>nom-distribution</replaceable></"
 "filename>, par exemple, <filename>.../dists/stable/Release</filename>, ou "
-"<filename>.../dists/&debian-stable-codename;/Release</filename>. Il "
-"consiste en une seule entrée composée de plusieurs lignes qui s'applique à "
+"<filename>.../dists/&debian-stable-codename;/Release</filename>. Il consiste "
+"en une seule entrée composée de plusieurs lignes qui s'applique à "
 "<emphasis>tous</emphasis> les paquets situés dans les répertoires sous le "
 "répertoire parent. Contrairement au fichier <filename>Packages</filename>, "
 "presque toutes les lignes du fichier <filename>Release</filename> sont "
@@ -9240,9 +9265,9 @@ msgstr ""
 "utilisé sans actualisation. Quand cette limite est franchie, le « mtime » du "
 "fichier « Contents » est mis à jour. Cela peut arriver quand un fichier est "
 "modifié sans que cela modifie le fichier « Contents » (modification par "
-"« override » par exemple). Un délai est permis dans l'espoir que de "
-"nouveaux « .deb » seront installés, exigeant un nouveau « Contents ». Par "
-"défaut ce nombre vaut 10, l'unité étant le jour."
+"« override » par exemple). Un délai est permis dans l'espoir que de nouveaux "
+"« .deb » seront installés, exigeant un nouveau « Contents ». Par défaut ce "
+"nombre vaut 10, l'unité étant le jour."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
@@ -9832,14 +9857,19 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be "
+#| "used to store login information in a netrc-like format with restrictive "
+#| "file permissions."
 msgid ""
-"The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be used "
-"to store login information in a netrc-like format with restrictive file "
-"permissions."
+"The APT auth.conf file <filename>/etc/apt/auth.conf</filename>, and .conf "
+"files inside <filename>/etc/apt/auth.conf.d</filename> can be used to store "
+"login information in a netrc-like format with restrictive file permissions."
 msgstr ""
-"Le fichier auth.conf d'APT <filename>/etc/apt/auth.conf</filename> peut "
-"être utilisé pour stocker les informations de connexion dans un format "
-"detype netrc avec des droits d'accès restreints"
+"Le fichier auth.conf d'APT <filename>/etc/apt/auth.conf</filename> peut être "
+"utilisé pour stocker les informations de connexion dans un format detype "
+"netrc avec des droits d'accès restreints"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt_auth.conf.5.xml
@@ -10042,6 +10072,27 @@ msgstr "<filename>/etc/apt/auth.conf</filename>"
 msgid ""
 "Login information for APT sources and proxies in a netrc-like format.  "
 "Configuration Item: <literal>Dir::Etc::netrc</literal>."
+msgstr ""
+"Informations de connexion pour les sources et les mandataires d'APT dans un "
+"format de type netrc. Élément de configuration : <literal>Dir::Etc::netrc</"
+"literal>."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid "<filename>/etc/apt/auth.conf</filename>"
+msgid "<filename>/etc/apt/auth.conf.d/*.conf</filename>"
+msgstr "<filename>/etc/apt/auth.conf</filename>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "Login information for APT sources and proxies in a netrc-like format.  "
+#| "Configuration Item: <literal>Dir::Etc::netrc</literal>."
+msgid ""
+"Login information for APT sources and proxies in a netrc-like format.  "
+"Configuration Item: <literal>Dir::Etc::netrcparts</literal>."
 msgstr ""
 "Informations de connexion pour les sources et les mandataires d'APT dans un "
 "format de type netrc. Élément de configuration : <literal>Dir::Etc::netrc</"
@@ -10545,6 +10596,7 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: apt-transport-https.1.xml
+#, no-wrap
 msgid ""
 "Acquire::https {\n"
 "\tProxy::example.org \"DIRECT\";\n"

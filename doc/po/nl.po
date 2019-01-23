@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.8.0~alpha2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-10-30 22:06+0100\n"
+"POT-Creation-Date: 2019-01-23 16:49+0100\n"
 "PO-Revision-Date: 2018-11-19 20:54+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -3157,6 +3157,25 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
+#, fuzzy
+#| msgid ""
+#| "<literal>auto</literal> is used to mark a package as being automatically "
+#| "installed, which will cause the package to be removed when no more "
+#| "manually installed packages depend on this package."
+msgid ""
+"<literal>minimize-manual</literal> is used to mark (transitive) dependencies "
+"of metapackages as automatically installed.  This can be used after an "
+"installation for example, to minimize the number of manually installed "
+"packages; or continuously on systems managed by system configuration "
+"metapackages."
+msgstr ""
+"<literal>auto</literal> wordt gebruikt om een pakket als automatisch "
+"geïnstalleerd te markeren. Dit zal tot gevolg hebben dat dit pakket "
+"verwijderd wordt als er geen handmatig geïnstalleerde pakketten meer zijn "
+"die dat pakket nodig hebben."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-mark.8.xml
 msgid ""
 "<literal>showauto</literal> is used to print a list of automatically "
 "installed packages with each package on a new line.  All automatically "
@@ -5629,6 +5648,14 @@ msgstr ""
 "Dit is een lijst van aan &dpkg; door te geven opties. De lijstnotatie moet "
 "gebruikt worden om de opties op te geven en elk lijstitem wordt als een "
 "apart argument aan &dpkg; doorgegeven."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"This is a string that defines the <envar>PATH</envar> environment variable "
+"used when running dpkg. It may be set to any valid value of that environment "
+"variable; or the empty string, in which case the variable is not changed."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -8187,19 +8214,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#| msgid ""
-#| "<option>Signed-By</option> (<option>signed-by</option>)  is either an "
-#| "absolute path to a keyring file (has to be accessible and readable for "
-#| "the <literal>_apt</literal> user, so ensure everyone has read-permissions "
-#| "on the file) or one or more fingerprints of keys either in the "
-#| "<filename>trusted.gpg</filename> keyring or in the keyrings in the "
-#| "<filename>trusted.gpg.d/</filename> directory (see <command>apt-key "
-#| "fingerprint</command>). If the option is set, only the key(s) in this "
-#| "keyring or only the keys with these fingerprints are used for the &apt-"
-#| "secure; verification of this repository. Defaults to the value of the "
-#| "option with the same name if set in the previously acquired "
-#| "<filename>Release</filename> file.  Otherwise all keys in the trusted "
-#| "keyrings are considered valid signers for this repository."
 msgid ""
 "<option>Signed-By</option> (<option>signed-by</option>)  is an option to "
 "require a repository to pass &apt-secure; verification with a certain set of "
@@ -10022,10 +10036,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be "
+#| "used to store login information in a netrc-like format with restrictive "
+#| "file permissions."
 msgid ""
-"The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be used "
-"to store login information in a netrc-like format with restrictive file "
-"permissions."
+"The APT auth.conf file <filename>/etc/apt/auth.conf</filename>, and .conf "
+"files inside <filename>/etc/apt/auth.conf.d</filename> can be used to store "
+"login information in a netrc-like format with restrictive file permissions."
 msgstr ""
 "Het bestand auth.conf van APT, <filename>/etc/apt/auth.conf</filename>, met "
 "restrictieve bestandspermissies, kan gebruikt worden om er login-informatie "
@@ -10234,6 +10253,26 @@ msgstr "<filename>/etc/apt/auth.conf</filename>"
 msgid ""
 "Login information for APT sources and proxies in a netrc-like format.  "
 "Configuration Item: <literal>Dir::Etc::netrc</literal>."
+msgstr ""
+"Inloginformatie voor APT-bronnen en -proxy's in a netrc-achtige indeling.  "
+"Configuratie-item: <literal>Dir::Etc::netrc</literal>."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid "<filename>/etc/apt/auth.conf</filename>"
+msgid "<filename>/etc/apt/auth.conf.d/*.conf</filename>"
+msgstr "<filename>/etc/apt/auth.conf</filename>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "Login information for APT sources and proxies in a netrc-like format.  "
+#| "Configuration Item: <literal>Dir::Etc::netrc</literal>."
+msgid ""
+"Login information for APT sources and proxies in a netrc-like format.  "
+"Configuration Item: <literal>Dir::Etc::netrcparts</literal>."
 msgstr ""
 "Inloginformatie voor APT-bronnen en -proxy's in a netrc-achtige indeling.  "
 "Configuratie-item: <literal>Dir::Etc::netrc</literal>."

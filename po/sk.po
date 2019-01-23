@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-01-23 16:49+0100\n"
 "PO-Revision-Date: 2012-06-28 20:49+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -1975,7 +1975,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Prerušené."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Chcete pokračovať?"
 
@@ -2544,7 +2544,7 @@ msgstr[2] ""
 msgid "All packages are up to date."
 msgstr ""
 
-#: cmdline/apt-cache.cc
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
 #, fuzzy, c-format
 msgid "%s does not take any arguments"
 msgstr "Príkaz update neprijíma žiadne argumenty"
@@ -2964,6 +2964,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s už bol označený ako automaticky nainštalovaný.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "Nainštalujú sa nasledovné NOVÉ balíky:"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s bol už nastavený na podržanie.\n"
@@ -3025,6 +3035,12 @@ msgstr "Označí uvedené balíky ako automaticky nainštalované"
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as manually installed"
 msgstr "Označí uvedené balíky ako manuálne nainštalované"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "Označí uvedené balíky ako automaticky nainštalované"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"

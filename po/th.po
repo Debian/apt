@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-01-23 16:49+0100\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -1941,7 +1941,7 @@ msgstr ""
 msgid "Abort."
 msgstr "เลิกทำ"
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "คุณต้องการจะดำเนินการต่อไปหรือไม่?"
 
@@ -2478,7 +2478,7 @@ msgstr[0] ""
 msgid "All packages are up to date."
 msgstr "ปรับรุ่นทุกแพกเกจเป็นรุ่นล่าสุดแล้ว"
 
-#: cmdline/apt-cache.cc
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
 #, fuzzy, c-format
 msgid "%s does not take any arguments"
 msgstr "คำสั่ง update ไม่รับอาร์กิวเมนต์เพิ่ม"
@@ -2903,6 +2903,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s ถูกกำหนดให้เป็นการติดตั้งแบบอัตโนมัติอยู่ก่อนแล้ว\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "จะติดตั้งแพกเกจ *ใหม่* ต่อไปนี้:"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s ถูกกำหนดให้คงรุ่นอยู่ก่อนแล้ว\n"
@@ -2963,6 +2973,12 @@ msgstr "ทำเครื่องหมายแพกเกจที่กำ
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as manually installed"
 msgstr "ทำเครื่องหมายแพกเกจที่กำหนดให้เป็นการติดตั้งแบบเลือกเอง"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "ทำเครื่องหมายแพกเกจที่กำหนดให้เป็นการติดตั้งแบบอัตโนมัติ"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"

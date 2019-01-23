@@ -1,3 +1,42 @@
+apt (1.8.0~beta1) unstable; urgency=medium
+
+  [ anatoly techtonik ]
+  * README.md: Document that apt is also included
+  * apt.cc: Add "apt info" alias for muscle memory
+
+  [ Jean-Pierre Giraud ]
+  * French manpages translation update (Closes: #915952)
+
+  [ Frans Spiesschaert ]
+  * Dutch manpages translation update (Closes: #916358)
+
+  [ Julian Andres Klode ]
+  * cache hash: Use sse4.2 CRC32c on x86-64 where available
+  * configuration: Compare size first during lookup
+  * debListParser: Avoid native arch lookup in ParseDepends
+  * hash32: Tighten to multiversion to x86-64 ELF and use uint32_t
+  * apt-mark: Introduce minimize-manual
+  * doc/apt-verbatim.ent: Point ubuntu-codename to disco (LP: #1812696)
+  * CI: Use debian:buster as test base image
+  * doc/apt-verbatim.ent: Debian buster is stable
+  * SECURITY UPDATE: content injection in http method (CVE-2019-3462)
+    (LP: #1812353)
+  * debian/control: Drop libcurl4-gnutls-dev build dependency
+
+  [ Mo Zhou ]
+  * zh_CN.po: Update Simplified Chinese programs translation.
+
+  [ Khem Raj ]
+  * Remove `register` keyword
+
+  [ Vasya Novikov ]
+  * bash completion: add keys
+
+  [ David Kalnischkies ]
+  * Communicate back which key(s) were used for signing
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 23 Jan 2019 16:49:34 +0100
+
 apt (1.8.0~alpha3.1) unstable; urgency=emergency
 
   * SECURITY UPDATE: content injection in http method (CVE-2019-3462)

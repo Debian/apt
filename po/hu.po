@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-01-23 16:49+0100\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -2042,7 +2042,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Megszakítva."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Folytatni akarja?"
 
@@ -2605,7 +2605,7 @@ msgstr[1] ""
 msgid "All packages are up to date."
 msgstr "Minden csomag naprakész."
 
-#: cmdline/apt-cache.cc
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
 #, c-format
 msgid "%s does not take any arguments"
 msgstr "Az %s parancsnak nincsenek argumentumai"
@@ -3030,6 +3030,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s már meg van jelölve automatikusan telepítettként.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "Az alábbi ÚJ csomagok lesznek telepítve:"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s már be van állítva visszatartásra.\n"
@@ -3091,6 +3101,12 @@ msgstr "Az adott csomagok megjelölése automatikusan telepítettként"
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as manually installed"
 msgstr "Az adott csomagok megjelölése kézzel telepítettként"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "Az adott csomagok megjelölése automatikusan telepítettként"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
