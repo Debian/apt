@@ -190,19 +190,16 @@ TEST(OpenMaybeClearSignedFileTest,TwoSimpleSignedFile)
 "-----END PGP SIGNATURE-----");
    EXPECT_TRUE(_error->empty());
    EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_TRUE(OpenMaybeClearSignedFile(tempfile, fd));
+   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
    if (tempfile.empty() == false)
       unlink(tempfile.c_str());
    EXPECT_FALSE(_error->empty());
-   EXPECT_TRUE(fd.IsOpen());
-   char buffer[100];
-   EXPECT_TRUE(fd.ReadLine(buffer, sizeof(buffer)));
-   EXPECT_STREQ(buffer, "Test");
-   EXPECT_TRUE(fd.Eof());
-   ASSERT_FALSE(_error->empty());
+   EXPECT_FALSE(fd.IsOpen());
 
+   // technically they are signed, but we just want one message
+   EXPECT_TRUE(_error->PendingError());
    std::string msg;
-   _error->PopMessage(msg);
+   EXPECT_TRUE(_error->PopMessage(msg));
    EXPECT_EQ("Clearsigned file '" + tempfile + "' contains unsigned lines.", msg);
 }
 
@@ -244,19 +241,15 @@ TEST(OpenMaybeClearSignedFileTest,GarbageTop)
 "-----END PGP SIGNATURE-----\n");
    EXPECT_FALSE(StartsWithGPGClearTextSignature(tempfile));
    EXPECT_TRUE(_error->empty());
-   EXPECT_TRUE(OpenMaybeClearSignedFile(tempfile, fd));
+   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
    if (tempfile.empty() == false)
       unlink(tempfile.c_str());
-   EXPECT_TRUE(fd.IsOpen());
-   char buffer[100];
-   EXPECT_TRUE(fd.ReadLine(buffer, sizeof(buffer)));
-   EXPECT_STREQ(buffer, "Test");
-   EXPECT_TRUE(fd.Eof());
+   EXPECT_FALSE(fd.IsOpen());
    ASSERT_FALSE(_error->empty());
-   ASSERT_FALSE(_error->PendingError());
+   ASSERT_TRUE(_error->PendingError());
 
    std::string msg;
-   _error->PopMessage(msg);
+   EXPECT_TRUE(_error->PopMessage(msg));
    EXPECT_EQ("Clearsigned file '" + tempfile + "' does not start with a signed message block.", msg);
 }
 
@@ -313,19 +306,15 @@ TEST(OpenMaybeClearSignedFileTest,GarbageBottom)
 "Garbage");
    EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
    EXPECT_TRUE(_error->empty());
-   EXPECT_TRUE(OpenMaybeClearSignedFile(tempfile, fd));
+   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
    if (tempfile.empty() == false)
       unlink(tempfile.c_str());
-   EXPECT_TRUE(fd.IsOpen());
-   char buffer[100];
-   EXPECT_TRUE(fd.ReadLine(buffer, sizeof(buffer)));
-   EXPECT_STREQ(buffer, "Test");
-   EXPECT_TRUE(fd.Eof());
+   EXPECT_FALSE(fd.IsOpen());
    ASSERT_FALSE(_error->empty());
-   ASSERT_FALSE(_error->PendingError());
+   ASSERT_TRUE(_error->PendingError());
 
    std::string msg;
-   _error->PopMessage(msg);
+   EXPECT_TRUE(_error->PopMessage(msg));
    EXPECT_EQ("Clearsigned file '" + tempfile + "' contains unsigned lines.", msg);
 }
 
@@ -347,7 +336,7 @@ TEST(OpenMaybeClearSignedFileTest,BogusNoSig)
 
    std::string msg;
    _error->PopMessage(msg);
-   EXPECT_EQ("Splitting of file " + tempfile + " failed as it doesn't contain all expected parts 0 1 0", msg);
+   EXPECT_EQ("Splitting of clearsigned file " + tempfile + " failed as it doesn't contain all expected parts", msg);
 }
 
 TEST(OpenMaybeClearSignedFileTest,BogusSigStart)

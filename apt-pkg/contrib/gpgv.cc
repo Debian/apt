@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -289,139 +290,131 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 }
 									/*}}}*/
 // SplitClearSignedFile - split message into data/signature		/*{{{*/
-static int GetLineErrno(char **lineptr, size_t *n, FILE *stream, std::string const &InFile)
+static bool GetLineErrno(std::unique_ptr<char, decltype(&free)> &buffer, size_t *n, FILE *stream, std::string const &InFile, bool acceptEoF = false)
 {
-   int result;
-
    errno = 0;
-   result = getline(lineptr, n, stream);
+   auto lineptr = buffer.release();
+   auto const result = getline(&lineptr, n, stream);
+   buffer.reset(lineptr);
    if (errno != 0)
+      return _error->Errno("getline", "Could not read from %s", InFile.c_str());
+   if (result == -1)
    {
-      _error->Errno("getline", "Could not read from %s", InFile.c_str());
-      return -1;
+      if (acceptEoF)
+	 return false;
+      return _error->Error("Splitting of clearsigned file %s failed as it doesn't contain all expected parts", InFile.c_str());
    }
-
-   return result;
+   // We remove all whitespaces including newline here as
+   // a) gpgv ignores them for signature
+   // b) we can write out a \n in code later instead of dealing with \r\n or not
+   _strrstrip(buffer.get());
+   return true;
 }
 bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
       std::vector<std::string> * const ContentHeader, FileFd * const SignatureFile)
 {
-   FILE *in = fopen(InFile.c_str(), "r");
-   if (in == NULL)
+   std::unique_ptr<FILE, decltype(&fclose)> in{fopen(InFile.c_str(), "r"), &fclose};
+   if (in.get() == nullptr)
       return _error->Errno("fopen", "can not open %s", InFile.c_str());
 
-   bool found_message_start = false;
-   bool found_message_end = false;
-   bool skip_until_empty_line = false;
-   bool found_signature = false;
-   bool first_line = true;
-   bool signed_message_not_on_first_line = false;
-   bool found_garbage = false;
-
-   char *buf = NULL;
-   size_t buf_size = 0;
-   _error->PushToStack();
-   while (GetLineErrno(&buf, &buf_size, in, InFile) != -1)
+   struct ScopedErrors
    {
-      _strrstrip(buf);
-      if (found_message_start == false)
-      {
-	 if (strcmp(buf, "-----BEGIN PGP SIGNED MESSAGE-----") == 0)
-	 {
-	    found_message_start = true;
-	    skip_until_empty_line = true;
-	 }
-	 else
-	    signed_message_not_on_first_line = found_garbage = true;
-      }
-      else if (skip_until_empty_line == true)
-      {
-	 if (strlen(buf) == 0)
-	    skip_until_empty_line = false;
-	 // save "Hash" Armor Headers, others aren't allowed
-	 else if (ContentHeader != NULL && strncmp(buf, "Hash: ", strlen("Hash: ")) == 0)
-	    ContentHeader->push_back(buf);
-      }
-      else if (found_signature == false)
-      {
-	 if (strcmp(buf, "-----BEGIN PGP SIGNATURE-----") == 0)
-	 {
-	    found_signature = true;
-	    found_message_end = true;
-	    if (SignatureFile != NULL)
-	    {
-	       SignatureFile->Write(buf, strlen(buf));
-	       SignatureFile->Write("\n", 1);
-	    }
-	 }
-	 else if (found_message_end == false) // we are in the message block
-	 {
-	    // we don't have any fields which need dash-escaped,
-	    // but implementations are free to encode all lines …
-	    char const * dashfree = buf;
-	    if (strncmp(dashfree, "- ", 2) == 0)
-	       dashfree += 2;
-	    if(first_line == true) // first line does not need a newline
-	       first_line = false;
-	    else if (ContentFile != NULL)
-	       ContentFile->Write("\n", 1);
-	    else
-	       continue;
-	    if (ContentFile != NULL)
-	       ContentFile->Write(dashfree, strlen(dashfree));
-	 }
-	 else
-	    found_garbage = true;
-      }
-      else if (found_signature == true)
-      {
-	 if (SignatureFile != NULL)
-	 {
-	    SignatureFile->Write(buf, strlen(buf));
-	    SignatureFile->Write("\n", 1);
-	 }
-	 if (strcmp(buf, "-----END PGP SIGNATURE-----") == 0)
-	    found_signature = false; // look for other signatures
-      }
-      // all the rest is whitespace, unsigned garbage or additional message blocks we ignore
-      else
-	 found_garbage = true;
-   }
-   fclose(in);
-   if (buf != NULL)
-      free(buf);
+      ScopedErrors() { _error->PushToStack(); }
+      ~ScopedErrors() { _error->MergeWithStack(); }
+   } scoped;
+   std::unique_ptr<char, decltype(&free)> buf{nullptr, &free};
+   size_t buf_size = 0;
 
-   // Flush the files. Errors will be checked below.
+   // start of the message
+   if (GetLineErrno(buf, &buf_size, in.get(), InFile) == false)
+      return false; // empty or read error
+   if (strcmp(buf.get(), "-----BEGIN PGP SIGNED MESSAGE-----") != 0)
+   {
+      // this might be an unsigned file we don't want to report errors for,
+      // but still finish unsuccessful none the less.
+      while (GetLineErrno(buf, &buf_size, in.get(), InFile, true))
+	 if (strcmp(buf.get(), "-----BEGIN PGP SIGNED MESSAGE-----") == 0)
+	    return _error->Error("Clearsigned file '%s' does not start with a signed message block.", InFile.c_str());
+
+      return false;
+   }
+
+   // save "Hash" Armor Headers
+   while (true)
+   {
+      if (GetLineErrno(buf, &buf_size, in.get(), InFile) == false)
+	 return false;
+      if (*buf == '\0')
+	 break; // empty line ends the Armor Headers
+      if (ContentHeader != NULL && strncmp(buf.get(), "Hash: ", strlen("Hash: ")) == 0)
+	 ContentHeader->push_back(buf.get());
+   }
+
+   // the message itself
+   bool first_line = true;
+   bool good_write = true;
+   while (true)
+   {
+      if (good_write == false || GetLineErrno(buf, &buf_size, in.get(), InFile) == false)
+	 return false;
+
+      if (strcmp(buf.get(), "-----BEGIN PGP SIGNATURE-----") == 0)
+      {
+	 if (SignatureFile != nullptr)
+	 {
+	    good_write &= SignatureFile->Write(buf.get(), strlen(buf.get()));
+	    good_write &= SignatureFile->Write("\n", 1);
+	 }
+	 break;
+      }
+
+      // we don't have any fields which need dash-escaped,
+      // but implementations are free to encode all lines …
+      char const *dashfree = buf.get();
+      if (strncmp(dashfree, "- ", 2) == 0)
+	 dashfree += 2;
+      if (first_line == true) // first line does not need a newline
+	 first_line = false;
+      else if (ContentFile != nullptr)
+	 good_write &= ContentFile->Write("\n", 1);
+      if (ContentFile != nullptr)
+	 good_write &= ContentFile->Write(dashfree, strlen(dashfree));
+   }
+
+   // collect all signatures
+   bool open_signature = true;
+   while (true)
+   {
+      if (good_write == false)
+	 return false;
+      if (GetLineErrno(buf, &buf_size, in.get(), InFile, true) == false)
+	 break;
+
+      if (open_signature && strcmp(buf.get(), "-----END PGP SIGNATURE-----") == 0)
+	 open_signature = false;
+      else if (open_signature == false && strcmp(buf.get(), "-----BEGIN PGP SIGNATURE-----") == 0)
+	 open_signature = true;
+      else if (open_signature == false)
+	 return _error->Error("Clearsigned file '%s' contains unsigned lines.", InFile.c_str());
+
+      if (SignatureFile != nullptr)
+      {
+	 good_write &= SignatureFile->Write(buf.get(), strlen(buf.get()));
+	 good_write &= SignatureFile->Write("\n", 1);
+      }
+   }
+   if (open_signature == true)
+      return _error->Error("Signature in file %s wasn't closed", InFile.c_str());
+
+   // Flush the files
    if (SignatureFile != nullptr)
       SignatureFile->Flush();
    if (ContentFile != nullptr)
       ContentFile->Flush();
 
-   if (found_message_start)
-   {
-      if (signed_message_not_on_first_line)
-	 _error->Warning("Clearsigned file '%s' does not start with a signed message block.", InFile.c_str());
-      else if (found_garbage)
-	 _error->Warning("Clearsigned file '%s' contains unsigned lines.", InFile.c_str());
-   }
-
-   // An error occurred during reading - propagate it up
-   bool const hasErrored = _error->PendingError();
-   _error->MergeWithStack();
-   if (hasErrored)
+   // Catch-all for "unhandled" read/sync errors
+   if (_error->PendingError())
       return false;
-
-   if (found_signature == true)
-      return _error->Error("Signature in file %s wasn't closed", InFile.c_str());
-
-   // if we haven't found any of them, this an unsigned file,
-   // so don't generate an error, but splitting was unsuccessful none-the-less
-   if (first_line == true && found_message_start == false && found_message_end == false)
-      return false;
-   // otherwise one missing indicates a syntax error
-   else if (first_line == true || found_message_start == false || found_message_end == false)
-     return _error->Error("Splitting of file %s failed as it doesn't contain all expected parts %i %i %i", InFile.c_str(), first_line, found_message_start, found_message_end);
-
    return true;
 }
 									/*}}}*/
