@@ -229,29 +229,13 @@ static bool ShowHelp(CommandLine &)					/*{{{*/
 /* */
 static string WriteFile(const char *package, const char *prefix, const char *data)
 {
-	char fn[512];
-
-        std::string tempdir = GetTempDir();
-	snprintf(fn, sizeof(fn), "%s/%s.%s.XXXXXX",
-                 _config->Find("APT::ExtractTemplates::TempDir", 
-                               tempdir.c_str()).c_str(),
-                 package, prefix);
-	FileFd f;
-	if (data == NULL)
-		data = "";
-        int fd = mkstemp(fn);
-        if (fd < 0) {
-		_error->Errno("ofstream::ofstream",_("Unable to mkstemp %s"),fn);
-                return string();
-        }
-	if (!f.OpenDescriptor(fd, FileFd::WriteOnly, FileFd::None, true))
-	{
-		_error->Errno("ofstream::ofstream",_("Unable to write to %s"),fn);
-		return string();
-	}
-	f.Write(data, strlen(data));
-	f.Close();
-	return fn;
+   FileFd f;
+   std::string tplname;
+   strprintf(tplname, "%s.%s", package, prefix);
+   GetTempFile(tplname, false, &f);
+   if (data != nullptr)
+      f.Write(data, strlen(data));
+   return f.Name();
 }
 									/*}}}*/
 // WriteConfig - write out the config data from a debian package file	/*{{{*/
@@ -288,6 +272,10 @@ static bool Go(CommandLine &CmdL)
 	string debconfver = DebFile::GetInstalledVer("debconf");
 	if (debconfver.empty() == true)
 		return _error->Error( _("Cannot get debconf version. Is debconf installed?"));
+
+	auto const tmpdir = _config->Find("APT::ExtractTemplates::TempDir");
+	if (tmpdir.empty() == false)
+	   setenv("TMPDIR", tmpdir.c_str(), 1);
 
 	// Process each package passsed in
 	for (unsigned int I = 0; I != CmdL.FileSize(); I++)

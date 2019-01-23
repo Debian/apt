@@ -49,14 +49,6 @@ static bool GetLineErrno(std::unique_ptr<char, decltype(&free)> &buffer, size_t 
    return true;
 }
 									/*}}}*/
-static char * GenerateTemporaryFileTemplate(const char *basename)	/*{{{*/
-{
-   std::string out;
-   std::string tmpdir = GetTempDir();
-   strprintf(out,  "%s/%s.XXXXXX", tmpdir.c_str(), basename);
-   return strdup(out.c_str());
-}
-									/*}}}*/
 // ExecGPGV - returns the command needed for verify			/*{{{*/
 // ---------------------------------------------------------------------
 /* Generating the commandline for calling gpg is somehow complicated as
@@ -171,29 +163,33 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    }
 
    enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
-   char * sig = NULL;
-   char * data = NULL;
-   char * conf = nullptr;
+   std::unique_ptr<char, decltype(&free)> sig{nullptr, &free};
+   std::unique_ptr<char, decltype(&free)> data{nullptr, &free};
+   std::unique_ptr<char, decltype(&free)> conf{nullptr, &free};
 
    // Dump the configuration so apt-key picks up the correct Dir values
    {
-      conf = GenerateTemporaryFileTemplate("apt.conf");
+      {
+	 std::string tmpfile;
+	 strprintf(tmpfile, "%s/apt.conf.XXXXXX", GetTempDir().c_str());
+	 conf.reset(strdup(tmpfile.c_str()));
+      }
       if (conf == nullptr) {
 	 apt_error(std::cerr, statusfd, fd, "Couldn't create tempfile names for passing config to apt-key");
 	 local_exit(EINTERNAL);
       }
-      int confFd = mkstemp(conf);
+      int confFd = mkstemp(conf.get());
       if (confFd == -1) {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't create temporary file %s for passing config to apt-key", conf);
+	 apt_error(std::cerr, statusfd, fd, "Couldn't create temporary file %s for passing config to apt-key", conf.get());
 	 local_exit(EINTERNAL);
       }
-      local_exit.files.push_back(conf);
+      local_exit.files.push_back(conf.get());
 
-      std::ofstream confStream(conf);
+      std::ofstream confStream(conf.get());
       close(confFd);
       _config->Dump(confStream);
       confStream.close();
-      setenv("APT_CONFIG", conf, 1);
+      setenv("APT_CONFIG", conf.get(), 1);
    }
 
    if (releaseSignature == DETACHED)
@@ -245,30 +241,16 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    }
    else // clear-signed file
    {
-      sig = GenerateTemporaryFileTemplate("apt.sig");
-      data = GenerateTemporaryFileTemplate("apt.data");
-      if (sig == NULL || data == NULL)
-      {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't create tempfile names for splitting up %s", File.c_str());
-	 local_exit(EINTERNAL);
-      }
-
-      int const sigFd = mkstemp(sig);
-      int const dataFd = mkstemp(data);
-      if (dataFd != -1)
-	 local_exit.files.push_back(data);
-      if (sigFd != -1)
-	 local_exit.files.push_back(sig);
-      if (sigFd == -1 || dataFd == -1)
-      {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't create tempfiles for splitting up %s", File.c_str());
-	 local_exit(EINTERNAL);
-      }
-
       FileFd signature;
-      signature.OpenDescriptor(sigFd, FileFd::WriteOnly, true);
+      if (GetTempFile("apt.sig", false, &signature) == nullptr)
+	 local_exit(EINTERNAL);
+      sig.reset(strdup(signature.Name().c_str()));
+      local_exit.files.push_back(sig.get());
       FileFd message;
-      message.OpenDescriptor(dataFd, FileFd::WriteOnly, true);
+      if (GetTempFile("apt.data", false, &message) == nullptr)
+	 local_exit(EINTERNAL);
+      data.reset(strdup(message.Name().c_str()));
+      local_exit.files.push_back(data.get());
 
       if (signature.Failed() == true || message.Failed() == true ||
 	    SplitClearSignedFile(File, &message, nullptr, &signature) == false)
@@ -276,8 +258,8 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 apt_error(std::cerr, statusfd, fd, "Splitting up %s into data and signature failed", File.c_str());
 	 local_exit(112);
       }
-      Args.push_back(sig);
-      Args.push_back(data);
+      Args.push_back(sig.get());
+      Args.push_back(data.get());
    }
 
    Args.push_back(NULL);
@@ -464,18 +446,8 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 									/*}}}*/
 bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &MessageFile) /*{{{*/
 {
-   char * const message = GenerateTemporaryFileTemplate("fileutl.message");
-   int const messageFd = mkstemp(message);
-   if (messageFd == -1)
-   {
-      free(message);
-      return _error->Errno("mkstemp", "Couldn't create temporary file to work with %s", ClearSignedFileName.c_str());
-   }
-   // we have the fd, that's enough for us
-   unlink(message);
-   free(message);
-
-   MessageFile.OpenDescriptor(messageFd, FileFd::ReadWrite | FileFd::BufferedWrite, true);
+   if (GetTempFile("clearsigned.message", true, &MessageFile) == nullptr)
+      return false;
    if (MessageFile.Failed() == true)
       return _error->Error("Couldn't open temporary file to work with %s", ClearSignedFileName.c_str());
 

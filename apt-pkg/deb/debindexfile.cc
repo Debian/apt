@@ -315,13 +315,10 @@ const pkgIndexFile::Type *debStringPackageIndex::GetType() const
 debStringPackageIndex::debStringPackageIndex(std::string const &content) :
    pkgDebianIndexRealFile("", false), d(NULL)
 {
-   char fn[1024];
-   std::string const tempdir = GetTempDir();
-   snprintf(fn, sizeof(fn), "%s/%s.XXXXXX", tempdir.c_str(), "apt-tmp-index");
-   int const fd = mkstemp(fn);
-   File = fn;
-   FileFd::Write(fd, content.data(), content.length());
-   close(fd);
+   FileFd fd;
+   GetTempFile("apt-tmp-index", false, &fd);
+   fd.Write(content.data(), content.length());
+   File = fd.Name();
 }
 debStringPackageIndex::~debStringPackageIndex()
 {
