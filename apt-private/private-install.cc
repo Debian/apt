@@ -586,7 +586,9 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
       Fix.reset(new pkgProblemResolver(Cache));
 
    unsigned short fallback = MOD_INSTALL;
-   if (strcasecmp(CmdL.FileList[0],"remove") == 0)
+   if (strcasecmp(CmdL.FileList[0], "reinstall") == 0)
+      _config->Set("APT::Get::ReInstall", "true");
+   else if (strcasecmp(CmdL.FileList[0],"remove") == 0)
       fallback = MOD_REMOVE;
    else if (strcasecmp(CmdL.FileList[0], "purge") == 0)
    {
