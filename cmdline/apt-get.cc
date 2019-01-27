@@ -405,6 +405,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"update", &DoUpdate, _("Retrieve new lists of packages")},
       {"upgrade", &DoUpgrade, _("Perform an upgrade")},
       {"install", &DoInstall, _("Install new packages (pkg is libc6 not libc6.deb)")},
+      {"reinstall", &DoInstall, _("Reinstall packages (pkg is libc6 not libc6.deb)")},
       {"remove", &DoInstall, _("Remove packages")},
       {"purge", &DoInstall, _("Remove packages and config files")},
       {"autoremove", &DoInstall, _("Remove automatically all unused packages")},
