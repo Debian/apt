@@ -28,6 +28,20 @@
 #include <apti18n.h>
 									/*}}}*/
 
+// a "normal" find_last_not_of returns npos if not found
+static int find_last_not_of_length(char * const buffer, APT::StringView const bad)
+{
+   if (buffer == nullptr)
+      return 0;
+   int result = strlen(buffer) - 1;
+   while (result >= 0)
+   {
+      if (std::find(bad.begin(), bad.end(), buffer[result]) == bad.end())
+	 break;
+      --result;
+   }
+   return result + 1;
+}
 static bool GetLineErrno(std::unique_ptr<char, decltype(&free)> &buffer, size_t *n, FILE *stream, std::string const &InFile, bool acceptEoF = false)/*{{{*/
 {
    errno = 0;
@@ -42,10 +56,12 @@ static bool GetLineErrno(std::unique_ptr<char, decltype(&free)> &buffer, size_t 
 	 return false;
       return _error->Error("Splitting of clearsigned file %s failed as it doesn't contain all expected parts", InFile.c_str());
    }
-   // We remove all whitespaces including newline here as
-   // a) gpgv ignores them for signature
-   // b) we can write out a \n in code later instead of dealing with \r\n or not
-   _strrstrip(buffer.get());
+   // a) remove newline characters, so we can work consistently with lines
+   auto line_length = find_last_not_of_length(buffer.get(), "\n\r");
+   buffer.get()[line_length] = '\0';
+   // b) remove trailing whitespaces as defined by rfc4880 §7.1
+   line_length = find_last_not_of_length(buffer.get(), " \t");
+   buffer.get()[line_length] = '\0';
    return true;
 }
 									/*}}}*/
