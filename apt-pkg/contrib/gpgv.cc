@@ -28,41 +28,103 @@
 #include <apti18n.h>
 									/*}}}*/
 
-// a "normal" find_last_not_of returns npos if not found
-static int find_last_not_of_length(char * const buffer, APT::StringView const bad)
+// syntactic sugar to wrap a raw pointer with a custom deleter in a std::unique_ptr
+static std::unique_ptr<char, decltype(&free)> make_unique_char(void *const str = nullptr)
 {
-   if (buffer == nullptr)
-      return 0;
-   int result = strlen(buffer) - 1;
-   while (result >= 0)
-   {
-      if (std::find(bad.begin(), bad.end(), buffer[result]) == bad.end())
-	 break;
-      --result;
-   }
-   return result + 1;
+   return {static_cast<char *>(str), &free};
 }
-static bool GetLineErrno(std::unique_ptr<char, decltype(&free)> &buffer, size_t *n, FILE *stream, std::string const &InFile, bool acceptEoF = false)/*{{{*/
+static std::unique_ptr<FILE, decltype(&fclose)> make_unique_FILE(std::string const &filename, char const *const mode)
 {
-   errno = 0;
-   auto lineptr = buffer.release();
-   auto const result = getline(&lineptr, n, stream);
-   buffer.reset(lineptr);
-   if (errno != 0)
-      return _error->Errno("getline", "Could not read from %s", InFile.c_str());
-   if (result == -1)
+   return {fopen(filename.c_str(), mode), &fclose};
+}
+
+class LineBuffer							/*{{{*/
+{
+   char *buffer = nullptr;
+   size_t buffer_size = 0;
+   int line_length = 0;
+   // a "normal" find_last_not_of returns npos if not found
+   int find_last_not_of_length(APT::StringView const bad) const
    {
-      if (acceptEoF)
-	 return false;
-      return _error->Error("Splitting of clearsigned file %s failed as it doesn't contain all expected parts", InFile.c_str());
+      if (empty())
+	 return 0;
+      int result = line_length - 1;
+      while (result >= 0)
+      {
+	 if (std::find(bad.begin(), bad.end(), buffer[result]) == bad.end())
+	    break;
+	 --result;
+      }
+      return result + 1;
    }
-   // a) remove newline characters, so we can work consistently with lines
-   auto line_length = find_last_not_of_length(buffer.get(), "\n\r");
-   buffer.get()[line_length] = '\0';
-   // b) remove trailing whitespaces as defined by rfc4880 §7.1
-   line_length = find_last_not_of_length(buffer.get(), " \t");
-   buffer.get()[line_length] = '\0';
-   return true;
+
+   public:
+   bool empty() const noexcept
+   {
+      return line_length <= 0;
+   }
+   APT::StringView view() const noexcept
+   {
+      return {buffer, static_cast<size_t>(line_length)};
+   }
+   std::string str() const noexcept
+   {
+      if (empty())
+	 return {};
+      return {buffer, static_cast<std::string::size_type>(line_length)};
+   }
+   bool starts_with(APT::StringView const start) const
+   {
+      auto const line = view();
+      if (line.length() < start.length())
+	 return false;
+      return line.compare(0, start.length(), start) == 0;
+   }
+   bool writeTo(FileFd *const to, bool const prefixNL = false, bool const postfixNL = true, size_t offset = 0) const
+   {
+      if (to == nullptr)
+	 return true;
+      if (prefixNL)
+	 to->Write("\n", 1);
+      if (postfixNL)
+      {
+	 buffer[line_length] = '\n';
+	 bool const result = to->Write(buffer + offset, line_length + 1 - offset);
+	 buffer[line_length] = '\0';
+	 return result;
+      }
+      return to->Write(buffer + offset, line_length - offset);
+   }
+
+   bool readFrom(FILE *stream, std::string const &InFile, bool acceptEoF = false)
+   {
+      errno = 0;
+      line_length = getline(&buffer, &buffer_size, stream);
+      if (errno != 0)
+	 return _error->Errno("getline", "Could not read from %s", InFile.c_str());
+      if (line_length == -1)
+      {
+	 if (acceptEoF)
+	    return false;
+	 return _error->Error("Splitting of clearsigned file %s failed as it doesn't contain all expected parts", InFile.c_str());
+      }
+      // a) remove newline characters, so we can work consistently with lines
+      line_length = find_last_not_of_length("\n\r");
+      // b) remove trailing whitespaces as defined by rfc4880 §7.1
+      line_length = find_last_not_of_length(" \t");
+      buffer[line_length] = '\0';
+      return true;
+   }
+
+   ~LineBuffer() { free(buffer); }
+};
+static bool operator==(LineBuffer const &buf, APT::StringView const exp) noexcept
+{
+   return buf.view() == exp;
+}
+static bool operator!=(LineBuffer const &buf, APT::StringView const exp) noexcept
+{
+   return buf.view() != exp;
 }
 									/*}}}*/
 // ExecGPGV - returns the command needed for verify			/*{{{*/
@@ -78,11 +140,10 @@ static bool GetLineErrno(std::unique_ptr<char, decltype(&free)> &buffer, size_t 
 */
 static bool iovprintf(std::ostream &out, const char *format,
 		      va_list &args, ssize_t &size) {
-   char *S = (char*)malloc(size);
-   ssize_t const n = vsnprintf(S, size, format, args);
+   auto S = make_unique_char(malloc(size));
+   ssize_t const n = vsnprintf(S.get(), size, format, args);
    if (n > -1 && n < size) {
-      out << S;
-      free(S);
+      out << S.get();
       return true;
    } else {
       if (n > -1)
@@ -90,7 +151,6 @@ static bool iovprintf(std::ostream &out, const char *format,
       else
 	 size *= 2;
    }
-   free(S);
    return false;
 }
 static void APT_PRINTF(4) apt_error(std::ostream &outterm, int const statusfd, int fd[2], const char *format, ...)
@@ -179,9 +239,9 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    }
 
    enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
-   std::unique_ptr<char, decltype(&free)> sig{nullptr, &free};
-   std::unique_ptr<char, decltype(&free)> data{nullptr, &free};
-   std::unique_ptr<char, decltype(&free)> conf{nullptr, &free};
+   auto sig = make_unique_char();
+   auto data = make_unique_char();
+   auto conf = make_unique_char();
 
    // Dump the configuration so apt-key picks up the correct Dir values
    {
@@ -210,28 +270,33 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 
    if (releaseSignature == DETACHED)
    {
-      std::unique_ptr<FILE, decltype(&fclose)> detached{fopen(FileGPG.c_str(), "r"), &fclose};
+      auto detached = make_unique_FILE(FileGPG, "r");
       if (detached.get() == nullptr)
       {
 	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' could not be opened", FileGPG.c_str());
 	 local_exit(EINTERNAL);
       }
-      std::unique_ptr<char, decltype(&free)> buf{nullptr, &free};
-      size_t buf_size = 0;
+      LineBuffer buf;
       bool open_signature = false;
       bool found_badcontent = false;
       size_t found_signatures = 0;
-      while (GetLineErrno(buf, &buf_size, detached.get(), FileGPG, true))
+      while (buf.readFrom(detached.get(), FileGPG, true))
       {
-	 if (open_signature && strcmp(buf.get(), "-----END PGP SIGNATURE-----") == 0)
+	 if (open_signature == true && buf == "-----END PGP SIGNATURE-----")
 	    open_signature = false;
-	 else if (open_signature == false && strcmp(buf.get(), "-----BEGIN PGP SIGNATURE-----") == 0)
+	 else if (open_signature == false && buf == "-----BEGIN PGP SIGNATURE-----")
 	 {
 	    open_signature = true;
 	    ++found_signatures;
+	    if (found_badcontent)
+	       break;
 	 }
 	 else if (open_signature == false)
+	 {
 	    found_badcontent = true;
+	    if (found_signatures != 0)
+	       break;
+	 }
       }
       if (found_signatures == 0 && statusfd != -1)
       {
@@ -355,7 +420,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
       std::vector<std::string> * const ContentHeader, FileFd * const SignatureFile)
 {
-   std::unique_ptr<FILE, decltype(&fclose)> in{fopen(InFile.c_str(), "r"), &fclose};
+   auto in = make_unique_FILE(InFile, "r");
    if (in.get() == nullptr)
       return _error->Errno("fopen", "can not open %s", InFile.c_str());
 
@@ -364,18 +429,17 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
       ScopedErrors() { _error->PushToStack(); }
       ~ScopedErrors() { _error->MergeWithStack(); }
    } scoped;
-   std::unique_ptr<char, decltype(&free)> buf{nullptr, &free};
-   size_t buf_size = 0;
+   LineBuffer buf;
 
    // start of the message
-   if (GetLineErrno(buf, &buf_size, in.get(), InFile) == false)
+   if (buf.readFrom(in.get(), InFile) == false)
       return false; // empty or read error
-   if (strcmp(buf.get(), "-----BEGIN PGP SIGNED MESSAGE-----") != 0)
+   if (buf != "-----BEGIN PGP SIGNED MESSAGE-----")
    {
       // this might be an unsigned file we don't want to report errors for,
       // but still finish unsuccessful none the less.
-      while (GetLineErrno(buf, &buf_size, in.get(), InFile, true))
-	 if (strcmp(buf.get(), "-----BEGIN PGP SIGNED MESSAGE-----") == 0)
+      while (buf.readFrom(in.get(), InFile, true))
+	 if (buf == "-----BEGIN PGP SIGNED MESSAGE-----")
 	    return _error->Error("Clearsigned file '%s' does not start with a signed message block.", InFile.c_str());
 
       return false;
@@ -384,66 +448,52 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
    // save "Hash" Armor Headers
    while (true)
    {
-      if (GetLineErrno(buf, &buf_size, in.get(), InFile) == false)
+      if (buf.readFrom(in.get(), InFile) == false)
 	 return false;
-      if (*buf == '\0')
+      if (buf.empty())
 	 break; // empty line ends the Armor Headers
-      if (ContentHeader != NULL && strncmp(buf.get(), "Hash: ", strlen("Hash: ")) == 0)
-	 ContentHeader->push_back(buf.get());
+      if (ContentHeader != nullptr && buf.starts_with("Hash: "))
+	 ContentHeader->push_back(buf.str());
    }
 
    // the message itself
    bool first_line = true;
-   bool good_write = true;
    while (true)
    {
-      if (good_write == false || GetLineErrno(buf, &buf_size, in.get(), InFile) == false)
+      if (buf.readFrom(in.get(), InFile) == false)
 	 return false;
 
-      if (strcmp(buf.get(), "-----BEGIN PGP SIGNATURE-----") == 0)
+      if (buf == "-----BEGIN PGP SIGNATURE-----")
       {
-	 if (SignatureFile != nullptr)
-	 {
-	    good_write &= SignatureFile->Write(buf.get(), strlen(buf.get()));
-	    good_write &= SignatureFile->Write("\n", 1);
-	 }
+	 if (buf.writeTo(SignatureFile) == false)
+	    return false;
 	 break;
       }
 
-      // we don't have any fields which need dash-escaped,
-      // but implementations are free to encode all lines …
-      char const *dashfree = buf.get();
-      if (strncmp(dashfree, "- ", 2) == 0)
-	 dashfree += 2;
-      if (first_line == true) // first line does not need a newline
-	 first_line = false;
-      else if (ContentFile != nullptr)
-	 good_write &= ContentFile->Write("\n", 1);
-      if (ContentFile != nullptr)
-	 good_write &= ContentFile->Write(dashfree, strlen(dashfree));
+      // we don't have any fields which need to be dash-escaped,
+      // but implementations are free to escape all lines …
+      auto offset = buf.starts_with("- ") ? 2 : 0;
+      if (buf.writeTo(ContentFile, first_line == false, false, offset) == false)
+	 return false;
+      first_line = false;
    }
 
    // collect all signatures
    bool open_signature = true;
    while (true)
    {
-      if (good_write == false)
-	 return false;
-      if (GetLineErrno(buf, &buf_size, in.get(), InFile, true) == false)
+      if (buf.readFrom(in.get(), InFile, true) == false)
 	 break;
 
-      if (open_signature && strcmp(buf.get(), "-----END PGP SIGNATURE-----") == 0)
+      if (open_signature == true && buf == "-----END PGP SIGNATURE-----")
 	 open_signature = false;
-      else if (open_signature == false && strcmp(buf.get(), "-----BEGIN PGP SIGNATURE-----") == 0)
+      else if (open_signature == false && buf == "-----BEGIN PGP SIGNATURE-----")
 	 open_signature = true;
       else if (open_signature == false)
 	 return _error->Error("Clearsigned file '%s' contains unsigned lines.", InFile.c_str());
 
-      if (SignatureFile != nullptr)
-      {
-	 good_write &= SignatureFile->Write(buf.get(), strlen(buf.get()));
-	 good_write &= SignatureFile->Write("\n", 1);
-      }
+      if (buf.writeTo(SignatureFile) == false)
+	 return false;
    }
    if (open_signature == true)
       return _error->Error("Signature in file %s wasn't closed", InFile.c_str());
