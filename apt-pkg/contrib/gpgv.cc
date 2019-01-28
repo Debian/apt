@@ -297,6 +297,14 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	    if (found_signatures != 0)
 	       break;
 	 }
+	 else if (buf.starts_with("-"))
+	 {
+	    // the used Radix-64 is not using dash for any value, so a valid line can't
+	    // start with one. Header keys could, but no existent one does and seems unlikely.
+	    // Instead it smells a lot like a header the parser didn't recognize.
+	    apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains unexpected line starting with a dash", FileGPG.c_str());
+	    local_exit(112);
+	 }
       }
       if (found_signatures == 0 && statusfd != -1)
       {
@@ -452,6 +460,10 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	 return false;
       if (buf.empty())
 	 break; // empty line ends the Armor Headers
+      if (buf.starts_with("-"))
+	 // § 6.2 says unknown keys should be reported to the user. We don't go that far,
+	 // but we assume that there will never be a header key starting with a dash
+	 return _error->Error("Clearsigned file '%s' contains unexpected line starting with a dash (%s)", InFile.c_str(), "armor");
       if (ContentHeader != nullptr && buf.starts_with("Hash: "))
 	 ContentHeader->push_back(buf.str());
    }
@@ -463,17 +475,28 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
       if (buf.readFrom(in.get(), InFile) == false)
 	 return false;
 
-      if (buf == "-----BEGIN PGP SIGNATURE-----")
+      if (buf.starts_with("-"))
       {
-	 if (buf.writeTo(SignatureFile) == false)
-	    return false;
-	 break;
+	 if (buf == "-----BEGIN PGP SIGNATURE-----")
+	 {
+	    if (buf.writeTo(SignatureFile) == false)
+	       return false;
+	    break;
+	 }
+	 else if (buf.starts_with("- "))
+	 {
+	    // we don't have any fields which need to be dash-escaped,
+	    // but implementations are free to escape all lines …
+	    if (buf.writeTo(ContentFile, first_line == false, false, 2) == false)
+	       return false;
+	 }
+	 else
+	    // § 7.1 says a client should warn, but we don't really work with files which
+	    // should contain lines starting with a dash, so it is a lot more likely that
+	    // this is an attempt to trick our parser vs. gpgv parser into ignoring a header
+	    return _error->Error("Clearsigned file '%s' contains unexpected line starting with a dash (%s)", InFile.c_str(), "msg");
       }
-
-      // we don't have any fields which need to be dash-escaped,
-      // but implementations are free to escape all lines …
-      auto offset = buf.starts_with("- ") ? 2 : 0;
-      if (buf.writeTo(ContentFile, first_line == false, false, offset) == false)
+      else if (buf.writeTo(ContentFile, first_line == false, false) == false)
 	 return false;
       first_line = false;
    }
@@ -491,6 +514,11 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	 open_signature = true;
       else if (open_signature == false)
 	 return _error->Error("Clearsigned file '%s' contains unsigned lines.", InFile.c_str());
+      else if (buf.starts_with("-"))
+	 // the used Radix-64 is not using dash for any value, so a valid line can't
+	 // start with one. Header keys could, but no existent one does and seems unlikely.
+	 // Instead it smells a lot like a header the parser didn't recognize.
+	 return _error->Error("Clearsigned file '%s' contains unexpected line starting with a dash (%s)", InFile.c_str(), "sig");
 
       if (buf.writeTo(SignatureFile) == false)
 	 return false;
