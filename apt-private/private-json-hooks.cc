@@ -387,7 +387,7 @@ bool RunJsonHook(std::string const &option, std::string const &method, const cha
 
       if (size < 0)
       {
-	 if (errno != ECONNRESET)
+	 if (errno != ECONNRESET && errno != EPIPE)
 	    _error->Error("Could not read response to hello message from hook %s: %s", Opts->Value.c_str(), strerror(errno));
 	 goto out;
       }
