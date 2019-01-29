@@ -164,7 +164,7 @@ static void APT_PRINTF(4) apt_error(std::ostream &outterm, int const statusfd, i
       va_start(args,format);
       ret = iovprintf(out, format, args, size);
       va_end(args);
-      if (ret == true)
+      if (ret)
 	 break;
    }
    if (statusfd != -1)
@@ -172,8 +172,8 @@ static void APT_PRINTF(4) apt_error(std::ostream &outterm, int const statusfd, i
       auto const errtag = "[APTKEY:] ERROR ";
       outstr << '\n';
       auto const errtext = outstr.str();
-      if (FileFd::Write(fd[1], errtag, strlen(errtag)) == false ||
-	    FileFd::Write(fd[1], errtext.data(), errtext.size()) == false)
+      if (not FileFd::Write(fd[1], errtag, strlen(errtag)) ||
+	    not FileFd::Write(fd[1], errtext.data(), errtext.size()))
 	 outterm << errtext << std::flush;
    }
 }
@@ -232,7 +232,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       Opts = Opts->Child;
       for (; Opts != 0; Opts = Opts->Next)
       {
-	 if (Opts->Value.empty() == true)
+	 if (Opts->Value.empty())
 	    continue;
 	 Args.push_back(Opts->Value.c_str());
       }
@@ -282,28 +282,34 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       size_t found_signatures = 0;
       while (buf.readFrom(detached.get(), FileGPG, true))
       {
-	 if (open_signature == true && buf == "-----END PGP SIGNATURE-----")
-	    open_signature = false;
-	 else if (open_signature == false && buf == "-----BEGIN PGP SIGNATURE-----")
+	 if (open_signature)
 	 {
-	    open_signature = true;
-	    ++found_signatures;
-	    if (found_badcontent)
-	       break;
+	    if (buf == "-----END PGP SIGNATURE-----")
+	       open_signature = false;
+	    else if (buf.starts_with("-"))
+	    {
+	       // the used Radix-64 is not using dash for any value, so a valid line can't
+	       // start with one. Header keys could, but no existent one does and seems unlikely.
+	       // Instead it smells a lot like a header the parser didn't recognize.
+	       apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains unexpected line starting with a dash", FileGPG.c_str());
+	       local_exit(112);
+	    }
 	 }
-	 else if (open_signature == false)
+	 else //if (not open_signature)
 	 {
-	    found_badcontent = true;
-	    if (found_signatures != 0)
-	       break;
-	 }
-	 else if (buf.starts_with("-"))
-	 {
-	    // the used Radix-64 is not using dash for any value, so a valid line can't
-	    // start with one. Header keys could, but no existent one does and seems unlikely.
-	    // Instead it smells a lot like a header the parser didn't recognize.
-	    apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains unexpected line starting with a dash", FileGPG.c_str());
-	    local_exit(112);
+	    if (buf == "-----BEGIN PGP SIGNATURE-----")
+	    {
+	       open_signature = true;
+	       ++found_signatures;
+	       if (found_badcontent)
+		  break;
+	    }
+	    else
+	    {
+	       found_badcontent = true;
+	       if (found_signatures != 0)
+		  break;
+	    }
 	 }
       }
       if (found_signatures == 0 && statusfd != -1)
@@ -319,7 +325,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains lines not belonging to a signature", FileGPG.c_str());
 	 local_exit(112);
       }
-      if (open_signature == true)
+      if (open_signature)
       {
 	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains unclosed signatures", FileGPG.c_str());
 	 local_exit(112);
@@ -341,8 +347,8 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       data.reset(strdup(message.Name().c_str()));
       local_exit.files.push_back(data.get());
 
-      if (signature.Failed() == true || message.Failed() == true ||
-	    SplitClearSignedFile(File, &message, nullptr, &signature) == false)
+      if (signature.Failed() || message.Failed() ||
+	  not SplitClearSignedFile(File, &message, nullptr, &signature))
       {
 	 apt_error(std::cerr, statusfd, fd, "Splitting up %s into data and signature failed", File.c_str());
 	 local_exit(112);
@@ -353,7 +359,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 
    Args.push_back(NULL);
 
-   if (Debug == true)
+   if (Debug)
    {
       std::clog << "Preparing to exec: ";
       for (std::vector<const char *>::const_iterator a = Args.begin(); *a != NULL; ++a)
@@ -406,7 +412,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    }
 
    // check if it exit'ed normally …
-   if (WIFEXITED(Status) == false)
+   if (not WIFEXITED(Status))
    {
       apt_error(std::cerr, statusfd, fd, _("Sub-process %s exited unexpectedly"), "apt-key");
       local_exit(EINTERNAL);
@@ -440,7 +446,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
    LineBuffer buf;
 
    // start of the message
-   if (buf.readFrom(in.get(), InFile) == false)
+   if (not buf.readFrom(in.get(), InFile))
       return false; // empty or read error
    if (buf != "-----BEGIN PGP SIGNED MESSAGE-----")
    {
@@ -456,7 +462,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
    // save "Hash" Armor Headers
    while (true)
    {
-      if (buf.readFrom(in.get(), InFile) == false)
+      if (not buf.readFrom(in.get(), InFile))
 	 return false;
       if (buf.empty())
 	 break; // empty line ends the Armor Headers
@@ -472,14 +478,14 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
    bool first_line = true;
    while (true)
    {
-      if (buf.readFrom(in.get(), InFile) == false)
+      if (not buf.readFrom(in.get(), InFile))
 	 return false;
 
       if (buf.starts_with("-"))
       {
 	 if (buf == "-----BEGIN PGP SIGNATURE-----")
 	 {
-	    if (buf.writeTo(SignatureFile) == false)
+	    if (not buf.writeTo(SignatureFile))
 	       return false;
 	    break;
 	 }
@@ -487,7 +493,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	 {
 	    // we don't have any fields which need to be dash-escaped,
 	    // but implementations are free to escape all lines …
-	    if (buf.writeTo(ContentFile, first_line == false, false, 2) == false)
+	    if (not buf.writeTo(ContentFile, not first_line, false, 2))
 	       return false;
 	 }
 	 else
@@ -496,7 +502,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	    // this is an attempt to trick our parser vs. gpgv parser into ignoring a header
 	    return _error->Error("Clearsigned file '%s' contains unexpected line starting with a dash (%s)", InFile.c_str(), "msg");
       }
-      else if (buf.writeTo(ContentFile, first_line == false, false) == false)
+      else if (not buf.writeTo(ContentFile, not first_line, false))
 	 return false;
       first_line = false;
    }
@@ -505,25 +511,31 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
    bool open_signature = true;
    while (true)
    {
-      if (buf.readFrom(in.get(), InFile, true) == false)
+      if (not buf.readFrom(in.get(), InFile, true))
 	 break;
 
-      if (open_signature == true && buf == "-----END PGP SIGNATURE-----")
-	 open_signature = false;
-      else if (open_signature == false && buf == "-----BEGIN PGP SIGNATURE-----")
-	 open_signature = true;
-      else if (open_signature == false)
-	 return _error->Error("Clearsigned file '%s' contains unsigned lines.", InFile.c_str());
-      else if (buf.starts_with("-"))
-	 // the used Radix-64 is not using dash for any value, so a valid line can't
-	 // start with one. Header keys could, but no existent one does and seems unlikely.
-	 // Instead it smells a lot like a header the parser didn't recognize.
-	 return _error->Error("Clearsigned file '%s' contains unexpected line starting with a dash (%s)", InFile.c_str(), "sig");
+      if (open_signature)
+      {
+	 if (buf == "-----END PGP SIGNATURE-----")
+	    open_signature = false;
+	 else if (buf.starts_with("-"))
+	    // the used Radix-64 is not using dash for any value, so a valid line can't
+	    // start with one. Header keys could, but no existent one does and seems unlikely.
+	    // Instead it smells a lot like a header the parser didn't recognize.
+	    return _error->Error("Clearsigned file '%s' contains unexpected line starting with a dash (%s)", InFile.c_str(), "sig");
+      }
+      else //if (not open_signature)
+      {
+	 if (buf == "-----BEGIN PGP SIGNATURE-----")
+	    open_signature = true;
+	 else
+	    return _error->Error("Clearsigned file '%s' contains unsigned lines.", InFile.c_str());
+      }
 
-      if (buf.writeTo(SignatureFile) == false)
+      if (not buf.writeTo(SignatureFile))
 	 return false;
    }
-   if (open_signature == true)
+   if (open_signature)
       return _error->Error("Signature in file %s wasn't closed", InFile.c_str());
 
    // Flush the files
@@ -542,18 +554,18 @@ bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &Me
 {
    if (GetTempFile("clearsigned.message", true, &MessageFile) == nullptr)
       return false;
-   if (MessageFile.Failed() == true)
+   if (MessageFile.Failed())
       return _error->Error("Couldn't open temporary file to work with %s", ClearSignedFileName.c_str());
 
    _error->PushToStack();
    bool const splitDone = SplitClearSignedFile(ClearSignedFileName, &MessageFile, NULL, NULL);
    bool const errorDone = _error->PendingError();
    _error->MergeWithStack();
-   if (splitDone == false)
+   if (not splitDone)
    {
       MessageFile.Close();
 
-      if (errorDone == true)
+      if (errorDone)
 	 return false;
 
       // we deal with an unsigned file
@@ -561,10 +573,10 @@ bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &Me
    }
    else // clear-signed
    {
-      if (MessageFile.Seek(0) == false)
+      if (not MessageFile.Seek(0))
 	 return _error->Errno("lseek", "Unable to seek back in message for file %s", ClearSignedFileName.c_str());
    }
 
-   return MessageFile.Failed() == false;
+   return not MessageFile.Failed();
 }
 									/*}}}*/
