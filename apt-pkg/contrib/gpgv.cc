@@ -46,40 +46,17 @@ class LineBuffer							/*{{{*/
    // a "normal" find_last_not_of returns npos if not found
    int find_last_not_of_length(APT::StringView const bad) const
    {
-      if (empty())
-	 return 0;
-      int result = line_length - 1;
-      while (result >= 0)
-      {
-	 if (std::find(bad.begin(), bad.end(), buffer[result]) == bad.end())
-	    break;
-	 --result;
-      }
-      return result + 1;
+      for (int result = line_length - 1; result >= 0; --result)
+	 if (bad.find(buffer[result]) == APT::StringView::npos)
+	    return result + 1;
+      return 0;
    }
 
    public:
-   bool empty() const noexcept
-   {
-      return line_length <= 0;
-   }
-   APT::StringView view() const noexcept
-   {
-      return {buffer, static_cast<size_t>(line_length)};
-   }
-   std::string str() const noexcept
-   {
-      if (empty())
-	 return {};
-      return {buffer, static_cast<std::string::size_type>(line_length)};
-   }
-   bool starts_with(APT::StringView const start) const
-   {
-      auto const line = view();
-      if (line.length() < start.length())
-	 return false;
-      return line.compare(0, start.length(), start) == 0;
-   }
+   bool empty() const noexcept { return view().empty(); }
+   APT::StringView view() const noexcept { return {buffer, static_cast<size_t>(line_length)}; }
+   bool starts_with(APT::StringView const start) const { return view().substr(0, start.size()) == start; }
+
    bool writeTo(FileFd *const to, bool const prefixNL = false, bool const postfixNL = true, size_t offset = 0) const
    {
       if (to == nullptr)
@@ -471,7 +448,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	 // but we assume that there will never be a header key starting with a dash
 	 return _error->Error("Clearsigned file '%s' contains unexpected line starting with a dash (%s)", InFile.c_str(), "armor");
       if (ContentHeader != nullptr && buf.starts_with("Hash: "))
-	 ContentHeader->push_back(buf.str());
+	 ContentHeader->push_back(buf.view().to_string());
    }
 
    // the message itself
