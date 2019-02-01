@@ -26,6 +26,7 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/netrc.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/sourcelist.h>
@@ -3374,12 +3375,15 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
 
    StoreFilename.clear();
    std::set<string> targetComponents, targetCodenames, targetSuites;
+   std::vector<std::unique_ptr<FileFd>> authconfs;
    for (auto Vf = Version.FileList(); Vf.end() == false; ++Vf)
    {
       auto const PkgF = Vf.File();
       if (unlikely(PkgF.end()))
 	 continue;
       if (PkgF.Flagged(pkgCache::Flag::NotSource))
+	 continue;
+      if (PkgF.Flagged(pkgCache::Flag::PackagesRequireAuthorization) && !IsAuthorized(PkgF, authconfs))
 	 continue;
       pkgIndexFile *Index;
       if (Sources->FindIndex(PkgF, Index) == false)
