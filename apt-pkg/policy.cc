@@ -23,6 +23,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/netrc.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/versionmatch.h>
 #include <apt-pkg/version.h>
@@ -87,7 +88,7 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(nullptr), VerPins(nullptr),
 // ---------------------------------------------------------------------
 /* */
 bool pkgPolicy::InitDefaults()
-{   
+{
    // Initialize the priorities based on the status of the package file
    for (pkgCache::PkgFileIterator I = Cache->FileBegin(); I != Cache->FileEnd(); ++I)
    {
@@ -98,6 +99,8 @@ bool pkgPolicy::InitDefaults()
 	 PFPriority[I->ID] = 100;
       else if (I.Flagged(pkgCache::Flag::NotAutomatic))
 	 PFPriority[I->ID] = 1;
+      if (I.Flagged(pkgCache::Flag::PackagesRequireAuthorization) && !IsAuthorized(I))
+	 PFPriority[I->ID] = NEVER_PIN;
    }
 
    // Apply the defaults..

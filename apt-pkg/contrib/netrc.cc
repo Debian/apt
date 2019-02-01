@@ -14,6 +14,8 @@
 #include <config.h>
 
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
 #include <iostream>
@@ -200,6 +202,39 @@ void maybe_add_auth (URI &Uri, string NetRCFile)
       free(hostpath);
     }
   }
+}
+
+/* Check if we are authorized. */
+bool IsAuthorized(pkgCache::PkgFileIterator const I)
+{
+  std::vector<std::string> authconfs;
+   if (authconfs.empty())
+   {
+      _error->PushToStack();
+      auto const netrc = _config->FindFile("Dir::Etc::netrc");
+      if (not netrc.empty())
+	 authconfs.push_back(netrc);
+
+      auto const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
+      if (not netrcparts.empty())
+      {
+	 for (auto const &netrc : GetListOfFilesInDir(netrcparts, "conf", true, true))
+	    authconfs.push_back(netrc);
+      }
+      _error->RevertToStack();
+   }
+
+   // FIXME: Use the full base url
+   URI uri(std::string("http://") + I.Site() + "/");
+   for (auto &authconf : authconfs)
+   {
+      maybe_add_auth(uri, authconf);
+
+      if (not uri.User.empty() || not uri.Password.empty())
+	 return true;
+   }
+
+   return false;
 }
 
 #ifdef DEBUG

@@ -14,9 +14,12 @@
 #ifndef NETRC_H
 #define NETRC_H
 
+#include <memory>
 #include <string>
+#include <vector>
 
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/strutl.h>
@@ -28,4 +31,5 @@
 class URI;
 
 void maybe_add_auth (URI &Uri, std::string NetRCFile);
+bool IsAuthorized(pkgCache::PkgFileIterator const I) APT_HIDDEN;
 #endif

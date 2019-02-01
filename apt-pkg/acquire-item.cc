@@ -27,6 +27,7 @@
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/netrc.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgrecords.h>
@@ -2951,6 +2952,8 @@ bool pkgAcqArchive::QueueNext()
       pkgCache::PkgFileIterator const PkgF = Vf.File();
       // Ignore not source sources
       if (PkgF.Flagged(pkgCache::Flag::NotSource))
+	 continue;
+      if (PkgF.Flagged(pkgCache::Flag::PackagesRequireAuthorization) && !IsAuthorized(PkgF))
 	 continue;
 
       // Try to cross match against the source list
