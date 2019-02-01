@@ -907,6 +907,7 @@ bool debReleaseIndex::Merge(pkgCacheGenerator &Gen,OpProgress * /*Prog*/) const/
    #undef APT_INRELEASE
    Section.FindFlag("NotAutomatic", File->Flags, pkgCache::Flag::NotAutomatic);
    Section.FindFlag("ButAutomaticUpgrades", File->Flags, pkgCache::Flag::ButAutomaticUpgrades);
+   Section.FindFlag("Packages-Require-Authorization", File->Flags, pkgCache::Flag::PackagesRequireAuthorization);
 
    return true;
 }
