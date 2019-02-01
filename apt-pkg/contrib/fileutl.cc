@@ -3114,7 +3114,7 @@ FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * co
    snprintf(fn, sizeof(fn), "%s/%s.XXXXXX",
             tempdir.c_str(), Prefix.c_str());
    int const fd = mkstemp(fn);
-   if(ImmediateUnlink)
+   if (ImmediateUnlink)
       unlink(fn);
    if (fd < 0)
    {
@@ -3130,6 +3130,8 @@ FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * co
 	 delete Fd;
       return nullptr;
    }
+   if (ImmediateUnlink == false)
+      Fd->SetFileName(fn);
    return Fd;
 }
 									/*}}}*/

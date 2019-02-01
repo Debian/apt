@@ -44,6 +44,13 @@ Description: Some bar var
 	testfileequal "$TEMPLATE" "$TEMPLATE_STR"
 	CONFIG=$(cut -f4 -d' ' $OUT)
 	testfileequal "$CONFIG" "$CONFIG_STR"
+	msgtest 'No extra files or directories in extraction directory'
+	if [ "$(find ./extracttemplates-out | wc -l)" = '3' ]; then
+		msgpass
+	else
+		msgfail
+		ls -l ./extracttemplates-out
+	fi
 
 	# ensure that the format of the output string has the right number of dots
 	for s in "$CONFIG" "$TEMPLATE"; do

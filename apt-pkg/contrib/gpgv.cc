@@ -20,18 +20,94 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
-static char * GenerateTemporaryFileTemplate(const char *basename)	/*{{{*/
+
+// syntactic sugar to wrap a raw pointer with a custom deleter in a std::unique_ptr
+static std::unique_ptr<char, decltype(&free)> make_unique_char(void *const str = nullptr)
 {
-   std::string out;
-   std::string tmpdir = GetTempDir();
-   strprintf(out,  "%s/%s.XXXXXX", tmpdir.c_str(), basename);
-   return strdup(out.c_str());
+   return {static_cast<char *>(str), &free};
+}
+static std::unique_ptr<FILE, decltype(&fclose)> make_unique_FILE(std::string const &filename, char const *const mode)
+{
+   return {fopen(filename.c_str(), mode), &fclose};
+}
+
+class LineBuffer							/*{{{*/
+{
+   char *buffer = nullptr;
+   size_t buffer_size = 0;
+   int line_length = 0;
+   // a "normal" find_last_not_of returns npos if not found
+   int find_last_not_of_length(APT::StringView const bad) const
+   {
+      for (int result = line_length - 1; result >= 0; --result)
+	 if (bad.find(buffer[result]) == APT::StringView::npos)
+	    return result + 1;
+      return 0;
+   }
+
+   public:
+   bool empty() const noexcept { return view().empty(); }
+   APT::StringView view() const noexcept { return {buffer, static_cast<size_t>(line_length)}; }
+   bool starts_with(APT::StringView const start) const { return view().substr(0, start.size()) == start; }
+
+   bool writeTo(FileFd *const to, size_t offset = 0) const
+   {
+      if (to == nullptr)
+	 return true;
+      return to->Write(buffer + offset, line_length - offset);
+   }
+   bool writeLineTo(FileFd *const to) const
+    {
+       if (to == nullptr)
+         return true;
+       buffer[line_length] = '\n';
+       bool const result = to->Write(buffer, line_length + 1);
+       buffer[line_length] = '\0';
+       return result;
+    }
+   bool writeNewLineIf(FileFd *const to, bool const condition) const
+   {
+      if (not condition || to == nullptr)
+	 return true;
+      return to->Write("\n", 1);
+   }
+
+   bool readFrom(FILE *stream, std::string const &InFile, bool acceptEoF = false)
+   {
+      errno = 0;
+      line_length = getline(&buffer, &buffer_size, stream);
+      if (errno != 0)
+	 return _error->Errno("getline", "Could not read from %s", InFile.c_str());
+      if (line_length == -1)
+      {
+	 if (acceptEoF)
+	    return false;
+	 return _error->Error("Splitting of clearsigned file %s failed as it doesn't contain all expected parts", InFile.c_str());
+      }
+      // a) remove newline characters, so we can work consistently with lines
+      line_length = find_last_not_of_length("\n\r");
+      // b) remove trailing whitespaces as defined by rfc4880 §7.1
+      line_length = find_last_not_of_length(" \t");
+      buffer[line_length] = '\0';
+      return true;
+   }
+
+   ~LineBuffer() { free(buffer); }
+};
+static bool operator==(LineBuffer const &buf, APT::StringView const exp) noexcept
+{
+   return buf.view() == exp;
+}
+static bool operator!=(LineBuffer const &buf, APT::StringView const exp) noexcept
+{
+   return buf.view() != exp;
 }
 									/*}}}*/
 // ExecGPGV - returns the command needed for verify			/*{{{*/
@@ -47,11 +123,10 @@ static char * GenerateTemporaryFileTemplate(const char *basename)	/*{{{*/
 */
 static bool iovprintf(std::ostream &out, const char *format,
 		      va_list &args, ssize_t &size) {
-   char *S = (char*)malloc(size);
-   ssize_t const n = vsnprintf(S, size, format, args);
+   auto S = make_unique_char(malloc(size));
+   ssize_t const n = vsnprintf(S.get(), size, format, args);
    if (n > -1 && n < size) {
-      out << S;
-      free(S);
+      out << S.get();
       return true;
    } else {
       if (n > -1)
@@ -59,7 +134,6 @@ static bool iovprintf(std::ostream &out, const char *format,
       else
 	 size *= 2;
    }
-   free(S);
    return false;
 }
 static void APT_PRINTF(4) apt_error(std::ostream &outterm, int const statusfd, int fd[2], const char *format, ...)
@@ -73,7 +147,7 @@ static void APT_PRINTF(4) apt_error(std::ostream &outterm, int const statusfd, i
       va_start(args,format);
       ret = iovprintf(out, format, args, size);
       va_end(args);
-      if (ret == true)
+      if (ret)
 	 break;
    }
    if (statusfd != -1)
@@ -81,8 +155,8 @@ static void APT_PRINTF(4) apt_error(std::ostream &outterm, int const statusfd, i
       auto const errtag = "[APTKEY:] ERROR ";
       outstr << '\n';
       auto const errtext = outstr.str();
-      if (FileFd::Write(fd[1], errtag, strlen(errtag)) == false ||
-	    FileFd::Write(fd[1], errtext.data(), errtext.size()) == false)
+      if (not FileFd::Write(fd[1], errtag, strlen(errtag)) ||
+	    not FileFd::Write(fd[1], errtext.data(), errtext.size()))
 	 outterm << errtext << std::flush;
    }
 }
@@ -141,83 +215,134 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       Opts = Opts->Child;
       for (; Opts != 0; Opts = Opts->Next)
       {
-	 if (Opts->Value.empty() == true)
+	 if (Opts->Value.empty())
 	    continue;
 	 Args.push_back(Opts->Value.c_str());
       }
    }
 
    enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
-   char * sig = NULL;
-   char * data = NULL;
-   char * conf = nullptr;
+   auto sig = make_unique_char();
+   auto data = make_unique_char();
+   auto conf = make_unique_char();
 
    // Dump the configuration so apt-key picks up the correct Dir values
    {
-      conf = GenerateTemporaryFileTemplate("apt.conf");
+      {
+	 std::string tmpfile;
+	 strprintf(tmpfile, "%s/apt.conf.XXXXXX", GetTempDir().c_str());
+	 conf.reset(strdup(tmpfile.c_str()));
+      }
       if (conf == nullptr) {
 	 apt_error(std::cerr, statusfd, fd, "Couldn't create tempfile names for passing config to apt-key");
 	 local_exit(EINTERNAL);
       }
-      int confFd = mkstemp(conf);
+      int confFd = mkstemp(conf.get());
       if (confFd == -1) {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't create temporary file %s for passing config to apt-key", conf);
+	 apt_error(std::cerr, statusfd, fd, "Couldn't create temporary file %s for passing config to apt-key", conf.get());
 	 local_exit(EINTERNAL);
       }
-      local_exit.files.push_back(conf);
+      local_exit.files.push_back(conf.get());
 
-      std::ofstream confStream(conf);
+      std::ofstream confStream(conf.get());
       close(confFd);
       _config->Dump(confStream);
       confStream.close();
-      setenv("APT_CONFIG", conf, 1);
+      setenv("APT_CONFIG", conf.get(), 1);
    }
 
    if (releaseSignature == DETACHED)
    {
+      auto detached = make_unique_FILE(FileGPG, "r");
+      if (detached.get() == nullptr)
+      {
+	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' could not be opened", FileGPG.c_str());
+	 local_exit(EINTERNAL);
+      }
+      LineBuffer buf;
+      bool open_signature = false;
+      bool found_badcontent = false;
+      size_t found_signatures = 0;
+      while (buf.readFrom(detached.get(), FileGPG, true))
+      {
+	 if (open_signature)
+	 {
+	    if (buf == "-----END PGP SIGNATURE-----")
+	       open_signature = false;
+	    else if (buf.starts_with("-"))
+	    {
+	       // the used Radix-64 is not using dash for any value, so a valid line can't
+	       // start with one. Header keys could, but no existent one does and seems unlikely.
+	       // Instead it smells a lot like a header the parser didn't recognize.
+	       apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains unexpected line starting with a dash", FileGPG.c_str());
+	       local_exit(112);
+	    }
+	 }
+	 else //if (not open_signature)
+	 {
+	    if (buf == "-----BEGIN PGP SIGNATURE-----")
+	    {
+	       open_signature = true;
+	       ++found_signatures;
+	       if (found_badcontent)
+		  break;
+	    }
+	    else
+	    {
+	       found_badcontent = true;
+	       if (found_signatures != 0)
+		  break;
+	    }
+	 }
+      }
+      if (found_signatures == 0 && statusfd != -1)
+      {
+	 // This is not an attack attempt but a file even gpgv would complain about
+	 // likely the result of a paywall which is covered by the gpgv method
+	 auto const errtag = "[GNUPG:] NODATA\n";
+	 FileFd::Write(fd[1], errtag, strlen(errtag));
+	 local_exit(113);
+      }
+      else if (found_badcontent)
+      {
+	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains lines not belonging to a signature", FileGPG.c_str());
+	 local_exit(112);
+      }
+      if (open_signature)
+      {
+	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains unclosed signatures", FileGPG.c_str());
+	 local_exit(112);
+      }
+
       Args.push_back(FileGPG.c_str());
       Args.push_back(File.c_str());
    }
    else // clear-signed file
    {
-      sig = GenerateTemporaryFileTemplate("apt.sig");
-      data = GenerateTemporaryFileTemplate("apt.data");
-      if (sig == NULL || data == NULL)
-      {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't create tempfile names for splitting up %s", File.c_str());
-	 local_exit(EINTERNAL);
-      }
-
-      int const sigFd = mkstemp(sig);
-      int const dataFd = mkstemp(data);
-      if (dataFd != -1)
-	 local_exit.files.push_back(data);
-      if (sigFd != -1)
-	 local_exit.files.push_back(sig);
-      if (sigFd == -1 || dataFd == -1)
-      {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't create tempfiles for splitting up %s", File.c_str());
-	 local_exit(EINTERNAL);
-      }
-
       FileFd signature;
-      signature.OpenDescriptor(sigFd, FileFd::WriteOnly, true);
+      if (GetTempFile("apt.sig", false, &signature) == nullptr)
+	 local_exit(EINTERNAL);
+      sig.reset(strdup(signature.Name().c_str()));
+      local_exit.files.push_back(sig.get());
       FileFd message;
-      message.OpenDescriptor(dataFd, FileFd::WriteOnly, true);
+      if (GetTempFile("apt.data", false, &message) == nullptr)
+	 local_exit(EINTERNAL);
+      data.reset(strdup(message.Name().c_str()));
+      local_exit.files.push_back(data.get());
 
-      if (signature.Failed() == true || message.Failed() == true ||
-	    SplitClearSignedFile(File, &message, nullptr, &signature) == false)
+      if (signature.Failed() || message.Failed() ||
+	  not SplitClearSignedFile(File, &message, nullptr, &signature))
       {
 	 apt_error(std::cerr, statusfd, fd, "Splitting up %s into data and signature failed", File.c_str());
 	 local_exit(112);
       }
-      Args.push_back(sig);
-      Args.push_back(data);
+      Args.push_back(sig.get());
+      Args.push_back(data.get());
    }
 
    Args.push_back(NULL);
 
-   if (Debug == true)
+   if (Debug)
    {
       std::clog << "Preparing to exec: ";
       for (std::vector<const char *>::const_iterator a = Args.begin(); *a != NULL; ++a)
@@ -270,7 +395,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    }
 
    // check if it exit'ed normally …
-   if (WIFEXITED(Status) == false)
+   if (not WIFEXITED(Status))
    {
       apt_error(std::cerr, statusfd, fd, _("Sub-process %s exited unexpectedly"), "apt-key");
       local_exit(EINTERNAL);
@@ -289,168 +414,141 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 }
 									/*}}}*/
 // SplitClearSignedFile - split message into data/signature		/*{{{*/
-static int GetLineErrno(char **lineptr, size_t *n, FILE *stream, std::string const &InFile)
-{
-   int result;
-
-   errno = 0;
-   result = getline(lineptr, n, stream);
-   if (errno != 0)
-   {
-      _error->Errno("getline", "Could not read from %s", InFile.c_str());
-      return -1;
-   }
-
-   return result;
-}
 bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
       std::vector<std::string> * const ContentHeader, FileFd * const SignatureFile)
 {
-   FILE *in = fopen(InFile.c_str(), "r");
-   if (in == NULL)
+   auto in = make_unique_FILE(InFile, "r");
+   if (in.get() == nullptr)
       return _error->Errno("fopen", "can not open %s", InFile.c_str());
 
-   bool found_message_start = false;
-   bool found_message_end = false;
-   bool skip_until_empty_line = false;
-   bool found_signature = false;
-   bool first_line = true;
-   bool signed_message_not_on_first_line = false;
-   bool found_garbage = false;
-
-   char *buf = NULL;
-   size_t buf_size = 0;
-   _error->PushToStack();
-   while (GetLineErrno(&buf, &buf_size, in, InFile) != -1)
+   struct ScopedErrors
    {
-      _strrstrip(buf);
-      if (found_message_start == false)
-      {
-	 if (strcmp(buf, "-----BEGIN PGP SIGNED MESSAGE-----") == 0)
-	 {
-	    found_message_start = true;
-	    skip_until_empty_line = true;
-	 }
-	 else
-	    signed_message_not_on_first_line = found_garbage = true;
-      }
-      else if (skip_until_empty_line == true)
-      {
-	 if (strlen(buf) == 0)
-	    skip_until_empty_line = false;
-	 // save "Hash" Armor Headers, others aren't allowed
-	 else if (ContentHeader != NULL && strncmp(buf, "Hash: ", strlen("Hash: ")) == 0)
-	    ContentHeader->push_back(buf);
-      }
-      else if (found_signature == false)
-      {
-	 if (strcmp(buf, "-----BEGIN PGP SIGNATURE-----") == 0)
-	 {
-	    found_signature = true;
-	    found_message_end = true;
-	    if (SignatureFile != NULL)
-	    {
-	       SignatureFile->Write(buf, strlen(buf));
-	       SignatureFile->Write("\n", 1);
-	    }
-	 }
-	 else if (found_message_end == false) // we are in the message block
-	 {
-	    // we don't have any fields which need dash-escaped,
-	    // but implementations are free to encode all lines …
-	    char const * dashfree = buf;
-	    if (strncmp(dashfree, "- ", 2) == 0)
-	       dashfree += 2;
-	    if(first_line == true) // first line does not need a newline
-	       first_line = false;
-	    else if (ContentFile != NULL)
-	       ContentFile->Write("\n", 1);
-	    else
-	       continue;
-	    if (ContentFile != NULL)
-	       ContentFile->Write(dashfree, strlen(dashfree));
-	 }
-	 else
-	    found_garbage = true;
-      }
-      else if (found_signature == true)
-      {
-	 if (SignatureFile != NULL)
-	 {
-	    SignatureFile->Write(buf, strlen(buf));
-	    SignatureFile->Write("\n", 1);
-	 }
-	 if (strcmp(buf, "-----END PGP SIGNATURE-----") == 0)
-	    found_signature = false; // look for other signatures
-      }
-      // all the rest is whitespace, unsigned garbage or additional message blocks we ignore
-      else
-	 found_garbage = true;
-   }
-   fclose(in);
-   if (buf != NULL)
-      free(buf);
+      ScopedErrors() { _error->PushToStack(); }
+      ~ScopedErrors() { _error->MergeWithStack(); }
+   } scoped;
+   LineBuffer buf;
 
-   // Flush the files. Errors will be checked below.
+   // start of the message
+   if (not buf.readFrom(in.get(), InFile))
+      return false; // empty or read error
+   if (buf != "-----BEGIN PGP SIGNED MESSAGE-----")
+   {
+      // this might be an unsigned file we don't want to report errors for,
+      // but still finish unsuccessful none the less.
+      while (buf.readFrom(in.get(), InFile, true))
+	 if (buf == "-----BEGIN PGP SIGNED MESSAGE-----")
+	    return _error->Error("Clearsigned file '%s' does not start with a signed message block.", InFile.c_str());
+
+      return false;
+   }
+
+   // save "Hash" Armor Headers
+   while (true)
+   {
+      if (not buf.readFrom(in.get(), InFile))
+	 return false;
+      if (buf.empty())
+	 break; // empty line ends the Armor Headers
+      if (buf.starts_with("-"))
+	 // § 6.2 says unknown keys should be reported to the user. We don't go that far,
+	 // but we assume that there will never be a header key starting with a dash
+	 return _error->Error("Clearsigned file '%s' contains unexpected line starting with a dash (%s)", InFile.c_str(), "armor");
+      if (ContentHeader != nullptr && buf.starts_with("Hash: "))
+	 ContentHeader->push_back(buf.view().to_string());
+   }
+
+   // the message itself
+   bool first_line = true;
+   while (true)
+   {
+      if (not buf.readFrom(in.get(), InFile))
+	 return false;
+
+      if (buf.starts_with("-"))
+      {
+	 if (buf == "-----BEGIN PGP SIGNATURE-----")
+	 {
+	    if (not buf.writeLineTo(SignatureFile))
+	       return false;
+	    break;
+	 }
+	 else if (buf.starts_with("- "))
+	 {
+	    // we don't have any fields which need to be dash-escaped,
+	    // but implementations are free to escape all lines …
+	    if (not buf.writeNewLineIf(ContentFile, not first_line) || not buf.writeTo(ContentFile, 2))
+	       return false;
+	 }
+	 else
+	    // § 7.1 says a client should warn, but we don't really work with files which
+	    // should contain lines starting with a dash, so it is a lot more likely that
+	    // this is an attempt to trick our parser vs. gpgv parser into ignoring a header
+	    return _error->Error("Clearsigned file '%s' contains unexpected line starting with a dash (%s)", InFile.c_str(), "msg");
+      }
+      else if (not buf.writeNewLineIf(ContentFile, not first_line) || not buf.writeTo(ContentFile))
+	 return false;
+      first_line = false;
+   }
+
+   // collect all signatures
+   bool open_signature = true;
+   while (true)
+   {
+      if (not buf.readFrom(in.get(), InFile, true))
+	 break;
+
+      if (open_signature)
+      {
+	 if (buf == "-----END PGP SIGNATURE-----")
+	    open_signature = false;
+	 else if (buf.starts_with("-"))
+	    // the used Radix-64 is not using dash for any value, so a valid line can't
+	    // start with one. Header keys could, but no existent one does and seems unlikely.
+	    // Instead it smells a lot like a header the parser didn't recognize.
+	    return _error->Error("Clearsigned file '%s' contains unexpected line starting with a dash (%s)", InFile.c_str(), "sig");
+      }
+      else //if (not open_signature)
+      {
+	 if (buf == "-----BEGIN PGP SIGNATURE-----")
+	    open_signature = true;
+	 else
+	    return _error->Error("Clearsigned file '%s' contains unsigned lines.", InFile.c_str());
+      }
+
+      if (not buf.writeLineTo(SignatureFile))
+	 return false;
+   }
+   if (open_signature)
+      return _error->Error("Signature in file %s wasn't closed", InFile.c_str());
+
+   // Flush the files
    if (SignatureFile != nullptr)
       SignatureFile->Flush();
    if (ContentFile != nullptr)
       ContentFile->Flush();
 
-   if (found_message_start)
-   {
-      if (signed_message_not_on_first_line)
-	 _error->Warning("Clearsigned file '%s' does not start with a signed message block.", InFile.c_str());
-      else if (found_garbage)
-	 _error->Warning("Clearsigned file '%s' contains unsigned lines.", InFile.c_str());
-   }
-
-   // An error occurred during reading - propagate it up
-   bool const hasErrored = _error->PendingError();
-   _error->MergeWithStack();
-   if (hasErrored)
+   // Catch-all for "unhandled" read/sync errors
+   if (_error->PendingError())
       return false;
-
-   if (found_signature == true)
-      return _error->Error("Signature in file %s wasn't closed", InFile.c_str());
-
-   // if we haven't found any of them, this an unsigned file,
-   // so don't generate an error, but splitting was unsuccessful none-the-less
-   if (first_line == true && found_message_start == false && found_message_end == false)
-      return false;
-   // otherwise one missing indicates a syntax error
-   else if (first_line == true || found_message_start == false || found_message_end == false)
-     return _error->Error("Splitting of file %s failed as it doesn't contain all expected parts %i %i %i", InFile.c_str(), first_line, found_message_start, found_message_end);
-
    return true;
 }
 									/*}}}*/
 bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &MessageFile) /*{{{*/
 {
-   char * const message = GenerateTemporaryFileTemplate("fileutl.message");
-   int const messageFd = mkstemp(message);
-   if (messageFd == -1)
-   {
-      free(message);
-      return _error->Errno("mkstemp", "Couldn't create temporary file to work with %s", ClearSignedFileName.c_str());
-   }
-   // we have the fd, that's enough for us
-   unlink(message);
-   free(message);
-
-   MessageFile.OpenDescriptor(messageFd, FileFd::ReadWrite | FileFd::BufferedWrite, true);
-   if (MessageFile.Failed() == true)
+   if (GetTempFile("clearsigned.message", true, &MessageFile) == nullptr)
+      return false;
+   if (MessageFile.Failed())
       return _error->Error("Couldn't open temporary file to work with %s", ClearSignedFileName.c_str());
 
    _error->PushToStack();
    bool const splitDone = SplitClearSignedFile(ClearSignedFileName, &MessageFile, NULL, NULL);
    bool const errorDone = _error->PendingError();
    _error->MergeWithStack();
-   if (splitDone == false)
+   if (not splitDone)
    {
       MessageFile.Close();
 
-      if (errorDone == true)
+      if (errorDone)
 	 return false;
 
       // we deal with an unsigned file
@@ -458,10 +556,10 @@ bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &Me
    }
    else // clear-signed
    {
-      if (MessageFile.Seek(0) == false)
+      if (not MessageFile.Seek(0))
 	 return _error->Errno("lseek", "Unable to seek back in message for file %s", ClearSignedFileName.c_str());
    }
 
-   return MessageFile.Failed() == false;
+   return not MessageFile.Failed();
 }
 									/*}}}*/
