@@ -182,9 +182,11 @@ class pkgCache								/*{{{*/
 	 LocalSource=(1<<1), /*!< local sources can't and will not be verified by hashes */
 	 NoPackages=(1<<2), /*!< the file includes no package records itself, but additions like Translations */
       };
-      enum ReleaseFileFlags {
-	 NotAutomatic=(1<<0), /*!< archive has a default pin of 1 */
-	 ButAutomaticUpgrades=(1<<1), /*!< (together with the previous) archive has a default pin of 100 */
+      enum ReleaseFileFlags
+      {
+	 NotAutomatic = (1 << 0),		  /*!< archive has a default pin of 1 */
+	 ButAutomaticUpgrades = (1 << 1),	 /*!< (together with the previous) archive has a default pin of 100 */
+	 PackagesRequireAuthorization = (1 << 2), /*!< (together with the previous) archive has a default pin of 100 */
       };
       enum ProvidesFlags {
 	 MultiArchImplicit=pkgCache::Dep::MultiArchImplicit, /*!< generated internally, not spelled out in the index */

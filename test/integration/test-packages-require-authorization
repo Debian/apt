@@ -1,0 +1,61 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'cool' 'amd64' '1.0'
+
+export APT_DONT_SIGN='InRelease'
+setupaptarchive --no-update
+changetowebserver
+
+echo 'Packages-Require-Authorization: yes' >> aptarchive/dists/unstable/Release
+signreleasefiles
+
+testsuccess aptget update
+testsuccessequal "Package files:
+ 100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+     release a=now
+-32768 http://localhost:${APTHTTPPORT} unstable/main amd64 Packages
+     release a=unstable,n=sid,c=main,b=amd64
+     origin localhost
+Pinned packages:" aptcache policy
+
+mkdir rootdir/etc/apt/auth.conf.d
+cat > rootdir/etc/apt/auth.conf.d/myauth.conf  << EOF
+machine localhost
+login username
+password usersPassword
+EOF
+
+
+testsuccessequal "Package files:
+ 100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+     release a=now
+ 500 http://localhost:${APTHTTPPORT} unstable/main amd64 Packages
+     release a=unstable,n=sid,c=main,b=amd64
+     origin localhost
+Pinned packages:" aptcache policy
+
+
+cat > rootdir/etc/apt/preferences.d/myauth.pref  << EOF
+Package: *
+Pin: origin localhost
+Pin-Priority: 990
+
+Package: cool
+Pin: origin localhost
+Pin-Priority: 990
+EOF
+
+testsuccessequal "Package files:
+ 100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+     release a=now
+ 990 http://localhost:${APTHTTPPORT} unstable/main amd64 Packages
+     release a=unstable,n=sid,c=main,b=amd64
+     origin localhost
+Pinned packages:
+     cool -> 1.0 with priority 990" aptcache policy
