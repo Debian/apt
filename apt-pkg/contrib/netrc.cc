@@ -14,6 +14,8 @@
 #include <config.h>
 
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
 #include <iostream>
@@ -212,6 +214,40 @@ void maybe_add_auth (URI &Uri, string NetRCFile)
       free(hostpath);
     }
   }
+}
+
+/* Check if we are authorized. */
+bool IsAuthorized(pkgCache::PkgFileIterator const I)
+{
+  std::vector<std::string> authconfs;
+   if (authconfs.empty())
+   {
+      _error->PushToStack();
+      std::string const netrc = _config->FindFile("Dir::Etc::netrc");
+      if (not netrc.empty())
+	 authconfs.push_back(netrc);
+
+      std::string const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
+      if (not netrcparts.empty())
+      {
+	std::vector<std::string> files = GetListOfFilesInDir(netrcparts, "conf", true, true);
+	 for (std::vector<std::string>::const_iterator i = files.begin(); i != files.end(); i++)
+	    authconfs.push_back(*i);
+      }
+      _error->RevertToStack();
+   }
+
+   // FIXME: Use the full base url
+   URI uri(std::string("http://") + I.Site() + "/");
+   for (std::vector<std::string>::const_iterator i = authconfs.begin(); i != authconfs.end(); i++)
+   {
+      maybe_add_auth(uri, *i);
+
+      if (not uri.User.empty() || not uri.Password.empty())
+	 return true;
+   }
+
+   return false;
 }
 
 #ifdef DEBUG

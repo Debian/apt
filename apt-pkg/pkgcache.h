@@ -149,7 +149,7 @@ class pkgCache								/*{{{*/
    struct Flag
    {
       enum PkgFlags {Auto=(1<<0),Essential=(1<<3),Important=(1<<4)};
-      enum PkgFFlags {NotSource=(1<<0),NotAutomatic=(1<<1),ButAutomaticUpgrades=(1<<2)};
+      enum PkgFFlags {NotSource=(1<<0),NotAutomatic=(1<<1),ButAutomaticUpgrades=(1<<2), PackagesRequireAuthorization = (1 << 3)};
    };
    
    protected:

@@ -28,6 +28,7 @@
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/netrc.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/pkgrecords.h>
@@ -1997,6 +1998,8 @@ bool pkgAcqArchive::QueueNext()
    {
       // Ignore not source sources
       if ((Vf.File()->Flags & pkgCache::Flag::NotSource) != 0)
+	 continue;
+      if ((Vf.File()->Flags & pkgCache::Flag::PackagesRequireAuthorization) == pkgCache::Flag::PackagesRequireAuthorization && !IsAuthorized(Vf.File()))
 	 continue;
 
       // Try to cross match against the source list

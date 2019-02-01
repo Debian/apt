@@ -926,6 +926,7 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
    #undef APT_INRELEASE
    Section.FindFlag("NotAutomatic", FileI->Flags, pkgCache::Flag::NotAutomatic);
    Section.FindFlag("ButAutomaticUpgrades", FileI->Flags, pkgCache::Flag::ButAutomaticUpgrades);
+   Section.FindFlag("Packages-Require-Authorization", FileI->Flags, pkgCache::Flag::PackagesRequireAuthorization);
 
    return !_error->PendingError();
 }
