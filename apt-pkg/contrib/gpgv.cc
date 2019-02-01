@@ -57,20 +57,26 @@ class LineBuffer							/*{{{*/
    APT::StringView view() const noexcept { return {buffer, static_cast<size_t>(line_length)}; }
    bool starts_with(APT::StringView const start) const { return view().substr(0, start.size()) == start; }
 
-   bool writeTo(FileFd *const to, bool const prefixNL = false, bool const postfixNL = true, size_t offset = 0) const
+   bool writeTo(FileFd *const to, size_t offset = 0) const
    {
       if (to == nullptr)
 	 return true;
-      if (prefixNL)
-	 to->Write("\n", 1);
-      if (postfixNL)
-      {
-	 buffer[line_length] = '\n';
-	 bool const result = to->Write(buffer + offset, line_length + 1 - offset);
-	 buffer[line_length] = '\0';
-	 return result;
-      }
       return to->Write(buffer + offset, line_length - offset);
+   }
+   bool writeLineTo(FileFd *const to) const
+    {
+       if (to == nullptr)
+         return true;
+       buffer[line_length] = '\n';
+       bool const result = to->Write(buffer, line_length + 1);
+       buffer[line_length] = '\0';
+       return result;
+    }
+   bool writeNewLineIf(FileFd *const to, bool const condition) const
+   {
+      if (not condition || to == nullptr)
+	 return true;
+      return to->Write("\n", 1);
    }
 
    bool readFrom(FILE *stream, std::string const &InFile, bool acceptEoF = false)
@@ -462,7 +468,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
       {
 	 if (buf == "-----BEGIN PGP SIGNATURE-----")
 	 {
-	    if (not buf.writeTo(SignatureFile))
+	    if (not buf.writeLineTo(SignatureFile))
 	       return false;
 	    break;
 	 }
@@ -470,7 +476,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	 {
 	    // we don't have any fields which need to be dash-escaped,
 	    // but implementations are free to escape all lines …
-	    if (not buf.writeTo(ContentFile, not first_line, false, 2))
+	    if (not buf.writeNewLineIf(ContentFile, not first_line) || not buf.writeTo(ContentFile, 2))
 	       return false;
 	 }
 	 else
@@ -479,7 +485,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	    // this is an attempt to trick our parser vs. gpgv parser into ignoring a header
 	    return _error->Error("Clearsigned file '%s' contains unexpected line starting with a dash (%s)", InFile.c_str(), "msg");
       }
-      else if (not buf.writeTo(ContentFile, not first_line, false))
+      else if (not buf.writeNewLineIf(ContentFile, not first_line) || not buf.writeTo(ContentFile))
 	 return false;
       first_line = false;
    }
@@ -509,7 +515,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	    return _error->Error("Clearsigned file '%s' contains unsigned lines.", InFile.c_str());
       }
 
-      if (not buf.writeTo(SignatureFile))
+      if (not buf.writeLineTo(SignatureFile))
 	 return false;
    }
    if (open_signature)
