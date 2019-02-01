@@ -3123,7 +3123,7 @@ FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * co
 	 delete Fd;
       return nullptr;
    }
-   if (!Fd->OpenDescriptor(fd, FileFd::ReadWrite | FileFd::BufferedWrite, FileFd::None, true))
+   if (!Fd->OpenDescriptor(fd, FileFd::ReadWrite, FileFd::None, true))
    {
       _error->Errno("GetTempFile",_("Unable to write to %s"),fn);
       if (TmpFd == nullptr)
