@@ -14,6 +14,8 @@ BASE='# some comment
 # that contains a : as well
 #Types: meep
 
+# a free-standing comment appears
+
 Types: deb
 #Types: deb-src
 URIs: http://ftp.debian.org/debian
@@ -291,3 +293,69 @@ testsuccessequal --nomsg "'http://ftp.debian.org/debian/dists/stable/InRelease' 
 'http://ftp.debian.org/debian2/dists/sid/non-free/binary-powerpc/Packages.xz' ftp.debian.org_debian2_dists_sid_non-free_binary-powerpc_Packages 0 
 'http://ftp.debian.org/debian2/dists/sid/non-free/binary-all/Packages.xz' ftp.debian.org_debian2_dists_sid_non-free_binary-all_Packages 0 
 'http://ftp.debian.org/debian2/dists/sid/non-free/i18n/Translation-en.xz' ftp.debian.org_debian2_dists_sid_non-free_i18n_Translation-en 0 " aptget update --print-uris
+
+EXPECTEDUK="'http://ftp.uk.debian.org/debian/dists/stretch/InRelease' ftp.uk.debian.org_debian_dists_stretch_InRelease 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/main/source/Sources.xz' ftp.uk.debian.org_debian_dists_stretch_main_source_Sources 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/contrib/source/Sources.xz' ftp.uk.debian.org_debian_dists_stretch_contrib_source_Sources 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/non-free/source/Sources.xz' ftp.uk.debian.org_debian_dists_stretch_non-free_source_Sources 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/main/binary-i386/Packages.xz' ftp.uk.debian.org_debian_dists_stretch_main_binary-i386_Packages 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/main/binary-all/Packages.xz' ftp.uk.debian.org_debian_dists_stretch_main_binary-all_Packages 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/main/i18n/Translation-en.xz' ftp.uk.debian.org_debian_dists_stretch_main_i18n_Translation-en 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/contrib/binary-i386/Packages.xz' ftp.uk.debian.org_debian_dists_stretch_contrib_binary-i386_Packages 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/contrib/binary-all/Packages.xz' ftp.uk.debian.org_debian_dists_stretch_contrib_binary-all_Packages 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/contrib/i18n/Translation-en.xz' ftp.uk.debian.org_debian_dists_stretch_contrib_i18n_Translation-en 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/non-free/binary-i386/Packages.xz' ftp.uk.debian.org_debian_dists_stretch_non-free_binary-i386_Packages 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/non-free/binary-all/Packages.xz' ftp.uk.debian.org_debian_dists_stretch_non-free_binary-all_Packages 0 
+'http://ftp.uk.debian.org/debian/dists/stretch/non-free/i18n/Translation-en.xz' ftp.uk.debian.org_debian_dists_stretch_non-free_i18n_Translation-en 0 "
+
+msgcleantest 'Test deb822 sources.list file comments' 'top'
+cat > $SOURCES <<EOF
+#NOTE: Most preferred source listed first!
+
+
+#=== NEW MULTI-LINE FORMAT ===============
+Types:          deb deb-src
+URIs:http://ftp.uk.debian.org/debian/
+Suites:         stretch
+Components:     main contrib non-free
+EOF
+testsuccessequal --nomsg "$EXPECTEDUK" aptget update --print-uris
+
+msgcleantest 'Test deb822 sources.list file comments' 'bottom'
+cat > $SOURCES <<EOF
+Types:          deb deb-src
+URIs:http://ftp.uk.debian.org/debian/
+Suites:         stretch
+Components:     main contrib non-free
+#=== NEW MULTI-LINE FORMAT ===============
+
+
+#NOTE: Most preferred source listed first!
+EOF
+testsuccessequal --nomsg "$EXPECTEDUK" aptget update --print-uris
+
+msgcleantest 'Test deb822 sources.list file comments' 'both'
+cat > $SOURCES <<EOF
+#=== NEW MULTI-LINE FORMAT ===============
+
+
+#NOTE: Most preferred source listed first!
+Types:          deb deb-src
+URIs:http://ftp.uk.debian.org/debian/
+Suites:         stretch
+Components:     main contrib non-free
+#=== NEW MULTI-LINE FORMAT ===============
+
+
+#NOTE: Most preferred source listed first!
+EOF
+testsuccessequal --nomsg "$EXPECTEDUK" aptget update --print-uris
+
+
+msgcleantest 'Test deb822 sources.list file comments' 'empty'
+cat > $SOURCES <<EOF
+#=== NEW MULTI-LINE FORMAT ===============
+
+
+EOF
+testempty aptget update --print-uris
