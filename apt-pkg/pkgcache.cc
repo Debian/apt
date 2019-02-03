@@ -231,15 +231,16 @@ map_id_t pkgCache::sHash(const char *Str) const
    return Hash % HeaderP->GetHashTableSize();
 }
 
-#if defined(__GNUC__) && defined(__x86_64__) && defined(__ELF__)
+#if defined(HAVE_FMV_SSE42_AND_CRC32)
 
-#if defined(__x86_64__)
+#ifdef HAVE_FMV_SSE42_AND_CRC32
 __attribute__((target("sse4.2"))) static uint32_t hash32(uint32_t crc32, const unsigned char *input, size_t size)
 {
    if (input == nullptr)
       return 0;
 
    crc32 ^= 0xffffffffU;
+#ifdef HAVE_FMV_SSE42_AND_CRC32DI
    while (size >= 8) {
       crc32 = __builtin_ia32_crc32di(crc32, *(uint64_t *)input);
       input += 8;
@@ -247,6 +248,9 @@ __attribute__((target("sse4.2"))) static uint32_t hash32(uint32_t crc32, const u
    }
 
    if (size >= 4) {
+#else
+   while (size >= 4) {
+#endif
       crc32 = __builtin_ia32_crc32si(crc32, *(uint32_t *)input);
       input += 4;
       size -= 4;
