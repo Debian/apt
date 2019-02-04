@@ -37,9 +37,7 @@
 #include <iosfwd>
 #include <iterator>
 #include <string>
-#ifdef APT_PKG_EXPOSE_STRING_VIEW
 #include <apt-pkg/string_view.h>
-#endif
 
 #include <string.h>
 
@@ -118,11 +116,7 @@ class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 
 	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;}
 	inline PkgIterator PackageList() const;
-	PkgIterator FindPkg(std::string Arch = "any") const;
-#ifdef APT_PKG_EXPOSE_STRING_VIEW
-	APT_HIDDEN PkgIterator FindPkg(APT::StringView Arch = APT::StringView("any", 3)) const;
-	APT_HIDDEN PkgIterator FindPkg(const char *Arch) const;
-#endif
+	PkgIterator FindPkg(APT::StringView Arch = APT::StringView("any", 3)) const;
 	/** \brief find the package with the "best" architecture
 
 	    The best architecture is either the "native" or the first

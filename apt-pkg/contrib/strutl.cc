@@ -1202,11 +1202,6 @@ static int HexDigit(int c)
 // Hex2Num - Convert a long hex number into a buffer			/*{{{*/
 // ---------------------------------------------------------------------
 /* The length of the buffer must be exactly 1/2 the length of the string. */
-bool Hex2Num(const string &Str,unsigned char *Num,unsigned int Length)
-{
-   return Hex2Num(APT::StringView(Str), Num, Length);
-}
-
 bool Hex2Num(const APT::StringView Str,unsigned char *Num,unsigned int Length)
 {
    if (Str.length() != Length*2)

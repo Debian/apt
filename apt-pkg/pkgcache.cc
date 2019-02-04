@@ -213,21 +213,6 @@ map_id_t pkgCache::sHash(StringView Str) const
       Hash = 33 * Hash + tolower_ascii_unsafe(*I);
    return Hash % HeaderP->GetHashTableSize();
 }
-map_id_t pkgCache::sHash(const string &Str) const
-{
-   uint32_t Hash = 5381;
-   for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
-      Hash = 33 * Hash + tolower_ascii_unsafe((signed char)*I);
-   return Hash % HeaderP->GetHashTableSize();
-}
-
-map_id_t pkgCache::sHash(const char *Str) const
-{
-   uint32_t Hash = 5381;
-   for (const char *I = Str; *I != 0; ++I)
-      Hash = 33 * Hash + tolower_ascii_unsafe((signed char)*I);
-   return Hash % HeaderP->GetHashTableSize();
-}
 
 #if defined(HAVE_FMV_SSE42_AND_CRC32)
 
@@ -305,10 +290,6 @@ uint32_t pkgCache::CacheHash()
 // Cache::FindPkg - Locate a package by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
-   return FindPkg(StringView(Name));
-}
-
 pkgCache::PkgIterator pkgCache::FindPkg(StringView Name) {
 	auto const found = Name.rfind(':');
 	if (found == string::npos)
@@ -325,10 +306,6 @@ pkgCache::PkgIterator pkgCache::FindPkg(StringView Name) {
 // Cache::FindPkg - Locate a package by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string const &Arch) {
-   return FindPkg(StringView(Name), StringView(Arch));
-}
-
 pkgCache::PkgIterator pkgCache::FindPkg(StringView Name, StringView Arch) {
 	/* We make a detour via the GrpIterator here as
 	   on a multi-arch environment a group is easier to
@@ -343,10 +320,6 @@ pkgCache::PkgIterator pkgCache::FindPkg(StringView Name, StringView Arch) {
 // Cache::FindGrp - Locate a group by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns End-Pointer on error, pointer to the group otherwise */
-pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
-   return FindGrp(StringView(Name));
-}
-
 pkgCache::GrpIterator pkgCache::FindGrp(StringView Name) {
 	if (unlikely(Name.empty() == true))
 		return GrpIterator(*this,0);
@@ -416,12 +389,6 @@ const char *pkgCache::Priority(unsigned char Prio)
 // GrpIterator::FindPkg - Locate a package by arch			/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns an End-Pointer on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
-   return FindPkg(StringView(Arch));
-}
-pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(const char *Arch) const {
-   return FindPkg(StringView(Arch));
-}
 pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(StringView Arch) const {
 	if (unlikely(IsGood() == false || S->FirstPackage == 0))
 		return PkgIterator(*Owner, 0);

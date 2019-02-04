@@ -1,6 +1,3 @@
-#if !(defined APT_PKG_EXPOSE_STRING_VIEW)
-	#define APT_PKG_EXPOSE_STRING_VIEW
-#endif
 
 #include <config.h>
 #include <apt-pkg/string_view.h>

@@ -20,9 +20,7 @@
 #include <limits>
 #include <string>
 #include <vector>
-#ifdef APT_PKG_EXPOSE_STRING_VIEW
 #include <apt-pkg/string_view.h>
-#endif
 #include <stddef.h>
 #include <time.h>
 
@@ -100,10 +98,7 @@ bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base = 0)
 bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base = 0);
 bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len);
 bool Base256ToNum(const char *Str,unsigned long long &Res,unsigned int Len);
-bool Hex2Num(const std::string &Str,unsigned char *Num,unsigned int Length);
-#ifdef APT_PKG_EXPOSE_STRING_VIEW
-APT_HIDDEN bool Hex2Num(const APT::StringView Str,unsigned char *Num,unsigned int Length);
-#endif
+bool Hex2Num(const APT::StringView Str,unsigned char *Num,unsigned int Length);
 // input changing string split
 bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);

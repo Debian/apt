@@ -9,7 +9,7 @@
  * (at your option) any later version.
  */
 
-#if !defined(APT_STRINGVIEW_H) && defined(APT_PKG_EXPOSE_STRING_VIEW)
+#if !defined(APT_STRINGVIEW_H)
 #define APT_STRINGVIEW_H
 #include <apt-pkg/macros.h>
 #include <string>
@@ -24,7 +24,7 @@ namespace APT {
  * used by APT. It is not meant to be used in programs, only inside the
  * library for performance critical paths.
  */
-class APT_HIDDEN StringView {
+class StringView {
     const char *data_;
     size_t size_;
 
