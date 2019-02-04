@@ -210,6 +210,12 @@ FileFd* GetTempFile(std::string const &Prefix = "",
                     bool ImmediateUnlink = true,
 		    FileFd * const TmpFd = NULL);
 
+// FIXME: GetTempFile should always return a buffered file
+FileFd* GetTempFile(std::string const &Prefix,
+                    bool ImmediateUnlink ,
+		    FileFd * const TmpFd,
+          bool Buffered) APT_HIDDEN;
+
 /** \brief Ensure the existence of the given Path
  *
  *  \param Parent directory of the Path directory - a trailing

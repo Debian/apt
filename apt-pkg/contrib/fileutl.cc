@@ -3107,6 +3107,10 @@ std::string GetTempDir(std::string const &User)
 									/*}}}*/
 FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * const TmpFd)	/*{{{*/
 {
+   return GetTempFile(Prefix, ImmediateUnlink, TmpFd, false);
+}
+FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * const TmpFd, bool Buffered)
+{
    char fn[512];
    FileFd * const Fd = TmpFd == nullptr ? new FileFd() : TmpFd;
 
@@ -3123,7 +3127,7 @@ FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * co
 	 delete Fd;
       return nullptr;
    }
-   if (!Fd->OpenDescriptor(fd, FileFd::ReadWrite, FileFd::None, true))
+   if (!Fd->OpenDescriptor(fd, FileFd::ReadWrite | (Buffered ? FileFd::BufferedWrite : 0), FileFd::None, true))
    {
       _error->Errno("GetTempFile",_("Unable to write to %s"),fn);
       if (TmpFd == nullptr)

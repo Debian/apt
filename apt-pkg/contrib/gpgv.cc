@@ -535,7 +535,8 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 									/*}}}*/
 bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &MessageFile) /*{{{*/
 {
-   if (GetTempFile("clearsigned.message", true, &MessageFile) == nullptr)
+   // Buffered file
+   if (GetTempFile("clearsigned.message", true, &MessageFile, true) == nullptr)
       return false;
    if (MessageFile.Failed())
       return _error->Error("Couldn't open temporary file to work with %s", ClearSignedFileName.c_str());
