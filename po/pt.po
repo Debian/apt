@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2012-06-29 15:45+0100\n"
 "Last-Translator: Miguel Figueiredo <elmig@debianpt.org>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -403,6 +403,13 @@ msgstr "Não conseguiu encontrar uma fonte para obter a versão '%s' de '%s'"
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Changlog para %s (%s)"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -928,12 +935,12 @@ msgstr "Problema ao renomear o ficheiro %s para %s"
 msgid "Problem syncing the file"
 msgstr "Problema sincronizando o ficheiro"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Não foi possível fazer stat %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Não conseguiu escrever para %s"
@@ -1585,6 +1592,12 @@ msgstr "Registo inválido no ficheiro de preferências %s, sem cabeçalho Packag
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "Não foi possível entender o tipo de marca (pin) %s"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2842,6 +2855,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Instalar novos pacotes (o pacote é libc6 e não libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Instalar novos pacotes (o pacote é libc6 e não libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Remover pacotes"
 
@@ -3137,6 +3156,11 @@ msgstr ""
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "Pacotes Marcados:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "Pacotes Marcados:"
 
 #: cmdline/apt.cc

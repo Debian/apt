@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -403,6 +403,13 @@ msgstr "Ni mogoče najti vira za prejem različice '%s' paketa '%s'"
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Dnevnik sprememb za %s (%s)"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -908,12 +915,12 @@ msgstr "Težava med preimenovanje datoteke %s v %s"
 msgid "Problem syncing the file"
 msgstr "Težava med usklajevanjem datoteke"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Ni mogoče določiti %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Ni mogoče pisati na %s"
@@ -1548,6 +1555,12 @@ msgstr "Neveljaven zapis v datoteki možnosti %s, ni glave paketa"
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "Ni mogoče razumeti vrste bucike %s"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2812,6 +2825,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Namesti nove pakete (paket je libc6, ne libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Namesti nove pakete (paket je libc6, ne libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Odstrani pakete"
 
@@ -3109,6 +3128,11 @@ msgstr ""
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "Pripeti paketi:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "Pripeti paketi:"
 
 #: cmdline/apt.cc

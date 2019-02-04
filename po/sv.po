@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -407,6 +407,13 @@ msgstr "Kan inte hitta en källa för att hämta version ”%s” av ”%s”"
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Ändringslogg för %s (%s)"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -924,12 +931,12 @@ msgstr "Problem med att byta namn på filen %s till %s"
 msgid "Problem syncing the file"
 msgstr "Problem med att synkronisera filen"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Kunde inte anropa mkstemp för %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Kunde inte skriva till %s"
@@ -1571,6 +1578,12 @@ msgstr "Ogiltig post i konfigurationsfilen %s, ”Package”-rubriken saknas"
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "Förstod inte nåltypen %s"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2831,6 +2844,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Installera nya paket (paket är libc6, inte libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Installera nya paket (paket är libc6, inte libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Ta bort paket"
 
@@ -3130,6 +3149,12 @@ msgstr "visa detaljer för paket"
 #. package stuff
 #: cmdline/apt.cc
 msgid "install packages"
+msgstr "installera paket"
+
+#: cmdline/apt.cc
+#, fuzzy
+#| msgid "install packages"
+msgid "reinstall packages"
 msgstr "installera paket"
 
 #: cmdline/apt.cc

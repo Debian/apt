@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2018-10-30 20:53+0100\n"
 "Last-Translator: Petter Reinholdtsen <pere@hungry.com>\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
@@ -408,6 +408,13 @@ msgstr "Klarte ikke finne kilde for å laste ned versjon «%s» av «%s»"
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Kobler til %s (%s)"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -915,12 +922,12 @@ msgstr "Problem ved endring av navn på fila %s til %s"
 msgid "Problem syncing the file"
 msgstr "Problem ved oppdatering av fila"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Klarte ikke å få statusen på %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Kan ikke skrive til %s"
@@ -1547,6 +1554,12 @@ msgstr "Ugyldig oppslag i foretrekksfila %s, manglende pakkehode"
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "Forsto ikke spikring av typen %s"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2810,6 +2823,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Installér nye pakker (Pakke er «foo», ikke «foo.deb»)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Installér nye pakker (Pakke er «foo», ikke «foo.deb»)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Fjern pakker"
 
@@ -3104,6 +3123,11 @@ msgstr "vis pakkedetaljer"
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "Låste pakker:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "Låste pakker:"
 
 #: cmdline/apt.cc

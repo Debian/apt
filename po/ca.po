@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2016-12-05 21:09+0100\n"
 "Last-Translator: Oriol Debian <oriol.debian@gmail.com>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -429,6 +429,13 @@ msgstr "No es troba una font per baixar la versió «%s» de «%s»"
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "El registre de canvis no està disponible per a %s=%s"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -959,12 +966,12 @@ msgstr "Ha hagut un problema en reanomenar el fitxer %s a %s"
 msgid "Problem syncing the file"
 msgstr "Ha hagut un problema en sincronitzar el fitxer"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "No es pot crear el fitxer temporal %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "No es pot escriure en %s"
@@ -1616,6 +1623,12 @@ msgstr "Registre no vàlid al fitxer de preferències %s, paquet sense capçaler
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "No s'ha entès el pin de tipus %s"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2918,6 +2931,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Instal·la nous paquets (el paquet és libc6, no libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Instal·la nous paquets (el paquet és libc6, no libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Suprimeix paquets"
 
@@ -3219,6 +3238,12 @@ msgstr "mostra detalls del paquet"
 #. package stuff
 #: cmdline/apt.cc
 msgid "install packages"
+msgstr "instal·la paquets"
+
+#: cmdline/apt.cc
+#, fuzzy
+#| msgid "install packages"
+msgid "reinstall packages"
 msgstr "instal·la paquets"
 
 #: cmdline/apt.cc

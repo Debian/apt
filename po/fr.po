@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2019-01-21 09:19+0100\n"
 "Last-Translator: Julien Patriarca <leatherface@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -359,9 +359,6 @@ msgstr ""
 #. the download progress display (e.g. 7d 3h 42min 1s)
 #: apt-pkg/acquire-item.cc
 #, c-format
-#| msgid ""
-#| "Release file for %s is expired (invalid since %s). Updates for this "
-#| "repository will not be applied."
 msgid ""
 "Release file for %s is not valid yet (invalid for another %s). Updates for "
 "this repository will not be applied."
@@ -430,6 +427,13 @@ msgstr ""
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Journal des modifications indisponible pour %s=%s"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -973,12 +977,12 @@ msgstr "Problème de renommage du fichier %s en %s"
 msgid "Problem syncing the file"
 msgstr "Problème de synchronisation du fichier"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Impossible d'appliquer mkstemp pour %s."
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Impossible d'écrire sur %s"
@@ -1164,9 +1168,6 @@ msgstr "Impossible de traiter le fichier %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
 #, c-format
-#| msgid ""
-#| "Unable to lock the administration directory (%s), is another process "
-#| "using it?"
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
 msgstr ""
@@ -1175,7 +1176,6 @@ msgstr ""
 
 #: apt-pkg/deb/debsystem.cc
 #, c-format
-#| msgid "Unable to lock the administration directory (%s), are you root?"
 msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
 msgstr ""
 "Impossible d'obtenir le verrou de dpkg (%s). Avez-vous les droits du "
@@ -1646,6 +1646,12 @@ msgstr "Type d'épinglage %s inconnu"
 
 #: apt-pkg/policy.cc
 #, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
+
+#: apt-pkg/policy.cc
+#, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
 "%s : la valeur %s est en dehors de la plage de priorités d'épinglage valide "
@@ -2102,7 +2108,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Annulation."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Souhaitez-vous continuer ?"
 
@@ -2689,8 +2695,10 @@ msgstr[1] ""
 msgid "All packages are up to date."
 msgstr "Tous les paquets sont à jour."
 
-#: cmdline/apt-cache.cc
-msgid "apt-cache stats does not take any arguments"
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
+#, fuzzy, c-format
+#| msgid "apt-cache stats does not take any arguments"
+msgid "%s does not take any arguments"
 msgstr "La commande apt-cache ne prend pas de paramètre"
 
 #: cmdline/apt-cache.cc
@@ -2986,6 +2994,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Installe de nouveaux paquets (pkg1 est libc6 et non libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Installe de nouveaux paquets (pkg1 est libc6 et non libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Supprime des paquets"
 
@@ -3142,6 +3156,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s était déjà marqué comme installé automatiquement.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "Les NOUVEAUX paquets suivants seront installés :"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s était déjà marqué comme figé (« hold »).\n"
@@ -3205,6 +3229,12 @@ msgstr "Marquer les paquets indiqués comme installés automatiquement"
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as manually installed"
 msgstr "Marquer les paquets indiqués comme installés manuellement"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "Marquer les paquets indiqués comme installés automatiquement"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3280,6 +3310,12 @@ msgstr "affiche les détails du paquet"
 #. package stuff
 #: cmdline/apt.cc
 msgid "install packages"
+msgstr "installes les paquets"
+
+#: cmdline/apt.cc
+#, fuzzy
+#| msgid "install packages"
+msgid "reinstall packages"
 msgstr "installes les paquets"
 
 #: cmdline/apt.cc

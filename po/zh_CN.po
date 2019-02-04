@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.7.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2019-01-12 00:00+0000\n"
 "Last-Translator: Mo Zhou <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
@@ -404,6 +404,13 @@ msgstr "没有源可以用来下载 %s 版本的 %s"
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s=%s 的 Changelog 不可用"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -904,12 +911,12 @@ msgstr "重命名文件 %s 为 %s 出错"
 msgid "Problem syncing the file"
 msgstr "同步文件出错"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "无法建立临时文件(mkstemp) %s "
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "无法写入 %s"
@@ -1517,6 +1524,12 @@ msgstr "首选项文件 %s 中发现有无效的记录，无 Package 字段头"
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "无法识别锁定的类型 %s"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2743,6 +2756,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "安装新的软件包(注：软件包名称是 libc6 而非 libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "安装新的软件包(注：软件包名称是 libc6 而非 libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "卸载软件包"
 
@@ -3034,6 +3053,12 @@ msgstr "显示软件包细节"
 #. package stuff
 #: cmdline/apt.cc
 msgid "install packages"
+msgstr "安装软件包"
+
+#: cmdline/apt.cc
+#, fuzzy
+#| msgid "install packages"
+msgid "reinstall packages"
 msgstr "安装软件包"
 
 #: cmdline/apt.cc

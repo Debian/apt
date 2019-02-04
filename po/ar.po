@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2006-10-20 21:28+0300\n"
 "Last-Translator: Ossama M. Khayat <okhayat@yahoo.com>\n"
 "Language-Team: Arabic <support@arabeyes.org>\n"
@@ -394,6 +394,13 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "الاتصال بـ%s (%s)"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -886,12 +893,12 @@ msgstr "مشكلة في مزامنة الملف"
 msgid "Problem syncing the file"
 msgstr "مشكلة في مزامنة الملف"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "تعذر إنشاء %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "تعذرت الكتابة إلى %s"
@@ -1494,6 +1501,12 @@ msgstr ""
 #: apt-pkg/policy.cc
 #, c-format
 msgid "Did not understand pin type %s"
+msgstr ""
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
 msgstr ""
 
 #: apt-pkg/policy.cc
@@ -2688,6 +2701,10 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr ""
 
 #: cmdline/apt-get.cc
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr ""
+
+#: cmdline/apt-get.cc
 #, fuzzy
 msgid "Remove packages"
 msgstr "حزم معطوبة"
@@ -2961,6 +2978,11 @@ msgstr ""
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "الحزم المُدبّسة:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "الحزم المُدبّسة:"
 
 #: cmdline/apt.cc

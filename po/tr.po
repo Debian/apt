@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2018-01-03 16:32+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -430,6 +430,13 @@ msgstr "'%2$s' paketinin '%1$s' sürümü hiçbir kaynakta bulunamadı"
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s=%s için değişim günlüğü mevcut değil"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -948,12 +955,12 @@ msgstr "%s dosyası %s olarak yeniden adlandırılamadı"
 msgid "Problem syncing the file"
 msgstr "Dosya eşitlenirken sorun çıktı"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "mkstemp %s başarısız oldu"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "%s dosyasına yazılamıyor"
@@ -1588,6 +1595,12 @@ msgstr "%s tercihler dosyasında geçersiz kayıt, Paket başlığı yok"
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "İğne türü %s anlaşılamadı"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2878,6 +2891,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Yeni paket kur (paket libc6.deb değil libc6 şeklinde olmalıdır)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Yeni paket kur (paket libc6.deb değil libc6 şeklinde olmalıdır)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Paket(leri) kaldır"
 
@@ -3175,6 +3194,12 @@ msgstr "Paket ayrıntılarını görüntüle"
 #. package stuff
 #: cmdline/apt.cc
 msgid "install packages"
+msgstr "paket kur"
+
+#: cmdline/apt.cc
+#, fuzzy
+#| msgid "install packages"
+msgid "reinstall packages"
 msgstr "paket kur"
 
 #: cmdline/apt.cc

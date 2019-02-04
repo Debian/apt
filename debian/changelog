@@ -1,3 +1,38 @@
+apt (1.8.0~rc1) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * Fail instead of warn for unsigned lines in InRelease
+  * Fail on non-signature lines in Release.gpg
+  * Merge and reuse tmp file handling across the board
+  * Explicitly remove the whitespaces defined by RFC
+  * Refuse files with lines unexpectedly starting with a dash
+  * Drop buffered writing from clearsigned message extraction
+  * Step over empty sections in TagFiles with comments
+    (Closes: #920317, #921037)
+
+  [ Josh Triplett ]
+  * Add a "reinstall" command as an alias for "install --reinstall".
+
+  [ Michael Vogt ]
+  * private-json-hooks.cc: deal with EPIPE (LP: #1814543)
+
+  [ Julian Andres Klode ]
+  * Verify data being sent by methods in SendMessage()
+  * Disable deprecated methods (ftp, rsh, ssh) by default
+  * Introduce experimental 'never' pinning for sources
+  * Add a Packages-Require-Authorization Release file field
+  * gpgv: Use buffered writes for splitting clearsigned files
+  * Detect function multiversioning and sse4.2/crc32, enables i386
+  * Use std::to_string() for HashStringList::FileSize() getter
+
+  [ Алексей Шилин ]
+  * Russian program translation update (Closes: #921011)
+
+  [ Baptiste Jammet ]
+  * French program translation update (Closes: #921008)
+
+ -- Julian Andres Klode <julian.klode@canonical.com>  Mon, 04 Feb 2019 15:32:27 +0100
+
 apt (1.8.0~beta1) unstable; urgency=medium
 
   [ anatoly techtonik ]

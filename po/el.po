@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2008-08-26 18:25+0300\n"
 "Last-Translator: Θανάσης Νάτσης <natsisthanasis@gmail.com>\n"
 "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
@@ -401,6 +401,13 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Changelog για %s (%s)"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -909,12 +916,12 @@ msgstr "Πρόβλημα κατά τον συγχρονισμό του αρχε�
 msgid "Problem syncing the file"
 msgstr "Πρόβλημα κατά τον συγχρονισμό του αρχείου"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Αδύνατη η εύρεση της κατάστασης του %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Αδύνατη η εγγραφή στο %s"
@@ -1526,6 +1533,12 @@ msgstr "Μη έγκυρη εγγραφή στο αρχείο προτιμήσε�
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "Αδύνατη η κατανόηση του τύπου καθήλωσης %s"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2772,6 +2785,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Εγκατάσταση νέων πακέτων (χωρίς την επέκταση .deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Εγκατάσταση νέων πακέτων (χωρίς την επέκταση .deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Αφαίρεση πακέτων"
 
@@ -3067,6 +3086,11 @@ msgstr ""
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "Καθηλωμένα Πακέτα:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "Καθηλωμένα Πακέτα:"
 
 #: cmdline/apt.cc

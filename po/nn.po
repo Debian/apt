@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2005-02-14 23:30+0100\n"
 "Last-Translator: Havard Korsvoll <korsvoll@skulelinux.no>\n"
 "Language-Team: Norwegian nynorsk <i18n-nn@lister.ping.uio.no>\n"
@@ -395,6 +395,13 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Koplar til %s (%s)"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -894,12 +901,12 @@ msgstr "Problem ved synkronisering av fila"
 msgid "Problem syncing the file"
 msgstr "Problem ved synkronisering av fila"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Klarte ikkje få status til %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Klarte ikkje skriva til %s"
@@ -1509,6 +1516,12 @@ msgstr "Ugyldig oppslag i innstillingsfila, manglar pakkehovud"
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "Skjønar ikkje spikringstypen %s"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2746,6 +2759,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Installer nye pakkar (bruk pakkenamn, ikkje filnamn (foo.deb))."
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Installer nye pakkar (bruk pakkenamn, ikkje filnamn (foo.deb))."
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Fjern pakkar."
 
@@ -3039,6 +3058,11 @@ msgstr ""
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "Spikra pakkar:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "Spikra pakkar:"
 
 #: cmdline/apt.cc

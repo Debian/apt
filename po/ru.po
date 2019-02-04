@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.8.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2019-01-29 21:20+0300\n"
 "Last-Translator: Aleksej Shilin <rootlexx@mail.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -428,6 +428,13 @@ msgstr "Невозможно найти источник для загрузки
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Журнал изменений для %s=%s недоступен"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -957,12 +964,12 @@ msgstr "Проблема при переименовании файла %s в %s
 msgid "Problem syncing the file"
 msgstr "Проблема при синхронизации файла"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Невозможно выполнить mkstemp %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Невозможно записать в %s"
@@ -1608,6 +1615,12 @@ msgstr "Неверная запись в файле предпочтений %s:
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "Неизвестный тип привязки %s"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2910,6 +2923,14 @@ msgstr ""
 "deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr ""
+"установить новые пакеты (указывается имя пакета libc6, а не имя файла libc6."
+"deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "удалить пакеты"
 
@@ -3205,6 +3226,12 @@ msgstr "показать дополнительные данные о пакет
 #. package stuff
 #: cmdline/apt.cc
 msgid "install packages"
+msgstr "установить пакеты"
+
+#: cmdline/apt.cc
+#, fuzzy
+#| msgid "install packages"
+msgid "reinstall packages"
 msgstr "установить пакеты"
 
 #: cmdline/apt.cc

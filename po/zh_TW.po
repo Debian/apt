@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.X\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -394,6 +394,13 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "正和 %s (%s) 連線"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -888,12 +895,12 @@ msgstr "在同步檔案時發生問題"
 msgid "Problem syncing the file"
 msgstr "在同步檔案時發生問題"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "無法取得 %s 的狀態"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "無法寫入 %s"
@@ -1500,6 +1507,12 @@ msgstr "個人設定檔中有些不正確資料，沒有以 Package 開頭"
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "無法分析鎖定類型 %s"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2716,6 +2729,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "安裝新套件（套件名稱是 libc6 而不是 libc6.deb）"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "安裝新套件（套件名稱是 libc6 而不是 libc6.deb）"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "移除套件"
 
@@ -3008,6 +3027,11 @@ msgstr ""
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "鎖定的套件："
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "鎖定的套件："
 
 #: cmdline/apt.cc

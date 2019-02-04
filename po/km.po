@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-23 16:49+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2006-10-10 09:48+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -396,6 +396,13 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "កំពុង​តភ្ជាប់​ទៅ​កាន់​ %s (%s)"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -891,12 +898,12 @@ msgstr "មានបញ្ហា​ក្នុង​ការធ្វើ​ស
 msgid "Problem syncing the file"
 msgstr "មានបញ្ហា​ក្នុង​ការធ្វើ​សមកាលកម្មឯកសារ​"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "មិន​អាច​ថ្លែង %s បានឡើយ"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "មិន​អាច​សរសេរ​ទៅ %s"
@@ -1505,6 +1512,12 @@ msgstr "កំណត់ត្រា​មិនត្រឹមត្រូវ​
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "មិន​បាន​យល់​ពី​ប្រភេទ​ម្ជុល %s ឡើយ"
+
+#: apt-pkg/policy.cc
+#, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -2732,6 +2745,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "ដំឡើង​កញ្ចប់​ថ្មី (pkg គឺ libc6 មិនមែន libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "ដំឡើង​កញ្ចប់​ថ្មី (pkg គឺ libc6 មិនមែន libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "យក​កញ្ចប់​ចេញ"
 
@@ -3025,6 +3044,11 @@ msgstr ""
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "កញ្ចប់​ដែល​បាន​ខ្ទាស់ ៖"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "កញ្ចប់​ដែល​បាន​ខ្ទាស់ ៖"
 
 #: cmdline/apt.cc
