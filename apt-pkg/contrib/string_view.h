@@ -128,5 +128,7 @@ static inline int StringViewCompareFast(StringView a, StringView b) {
 
 inline bool operator ==(const char *other, APT::StringView that);
 inline bool operator ==(const char *other, APT::StringView that) { return that.operator==(other); }
+inline bool operator ==(std::string const &other, APT::StringView that);
+inline bool operator ==(std::string const &other, APT::StringView that) { return that.operator==(other); }
 
 #endif
