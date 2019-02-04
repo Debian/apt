@@ -560,19 +560,6 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
    return NeedsNothing;
 }
 									/*}}}*/
-// PkgIterator::CandVersion - Returns the candidate version string	/*{{{*/
-// ---------------------------------------------------------------------
-/* Return string representing of the candidate version. */
-const char *
-pkgCache::PkgIterator::CandVersion() const
-{
-  //TargetVer is empty, so don't use it.
-  VerIterator version = pkgPolicy(Owner).GetCandidateVer(*this);
-  if (version.IsGood())
-    return version.VerStr();
-  return 0;
-}
-									/*}}}*/
 // PkgIterator::CurVersion - Returns the current version string		/*{{{*/
 // ---------------------------------------------------------------------
 /* Return string representing of the current version. */
@@ -598,15 +585,10 @@ operator<<(std::ostream& out, pkgCache::PkgIterator Pkg)
       return out << "invalid package";
 
    string current = string(Pkg.CurVersion() == 0 ? "none" : Pkg.CurVersion());
-APT_IGNORE_DEPRECATED_PUSH
-   string candidate = string(Pkg.CandVersion() == 0 ? "none" : Pkg.CandVersion());
-APT_IGNORE_DEPRECATED_POP
    string newest = string(Pkg.VersionList().end() ? "none" : Pkg.VersionList().VerStr());
 
    out << Pkg.Name() << " [ " << Pkg.Arch() << " ] < " << current;
-   if (current != candidate)
-      out << " -> " << candidate;
-   if ( newest != "none" && candidate != newest)
+   if ( newest != "none")
       out << " | " << newest;
    if (Pkg->VersionList == 0)
       out << " > ( none )";
@@ -1007,16 +989,6 @@ const char * pkgCache::VerIterator::MultiArchType() const
    return "none";
 }
 									/*}}}*/
-// RlsFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/
-// ---------------------------------------------------------------------
-/* This stats the file and compares its stats with the ones that were
-   stored during generation. Date checks should probably also be
-   included here. */
-bool pkgCache::RlsFileIterator::IsOk()
-{
-   return true;
-}
-									/*}}}*/
 // RlsFileIterator::RelStr - Return the release string			/*{{{*/
 string pkgCache::RlsFileIterator::RelStr()
 {
@@ -1032,16 +1004,6 @@ string pkgCache::RlsFileIterator::RelStr()
    if (Label() != 0)
       Res = Res + (Res.empty() == true?"l=":",l=")  + Label();
    return Res;
-}
-									/*}}}*/
-// PkgFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/
-// ---------------------------------------------------------------------
-/* This stats the file and compares its stats with the ones that were
-   stored during generation. Date checks should probably also be
-   included here. */
-bool pkgCache::PkgFileIterator::IsOk()
-{
-   return true;
 }
 									/*}}}*/
 string pkgCache::PkgFileIterator::RelStr()				/*{{{*/
