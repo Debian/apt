@@ -125,7 +125,6 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
 // Cache::pkgCache - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-APT_IGNORE_DEPRECATED_PUSH
 pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map), VS(nullptr), d(NULL)
 {
    // call getArchitectures() with cached=false to ensure that the 
@@ -135,7 +134,6 @@ pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map), VS(nullptr), d(NULL)
    if (DoMap == true)
       ReMap();
 }
-APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // Cache::ReMap - Reopen the cache file					/*{{{*/
 // ---------------------------------------------------------------------

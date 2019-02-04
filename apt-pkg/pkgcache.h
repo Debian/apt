@@ -220,7 +220,6 @@ class pkgCache								/*{{{*/
    Provides *ProvideP;
    Dependency *DepP;
    DependencyData *DepDataP;
-   APT_DEPRECATED_MSG("Not used anymore in cache generation and without a replacement") StringItem *StringItemP;
    char *StrP;
 
    virtual bool ReMap(bool const &Errorchecks = true);
@@ -438,11 +437,6 @@ struct pkgCache::Group
 */
 struct pkgCache::Package
 {
-   /** \brief Name of the package
-    * Note that the access method Name() will remain. It is just this data member
-    * deprecated as this information is already stored and available via the
-    * associated Group – so it is wasting precious binary cache space */
-   APT_DEPRECATED_MSG("Use the .Name() method instead of accessing the member directly") map_stringitem_t Name;
    /** \brief Architecture of the package */
    map_stringitem_t Arch;
    /** \brief Base of a singly linked list of versions
@@ -607,7 +601,6 @@ struct pkgCache::DescFile
     The version list is always sorted from highest version to lowest
     version by the generator. Equal version numbers are either merged
     or handled as separate versions based on the Hash value. */
-APT_IGNORE_DEPRECATED_PUSH
 struct pkgCache::Version
 {
    /** \brief complete version string */
@@ -629,9 +622,6 @@ struct pkgCache::Version
 		       Allowed = (1<<3), /*!< other packages are allowed to depend on thispkg:any */
 		       AllForeign = All | Foreign,
 		       AllAllowed = All | Allowed };
-
-   /** \brief deprecated variant of No */
-   static const APT_DEPRECATED_MSG("The default value of the Multi-Arch field is no, not none") VerMultiArch None = No;
 
    /** \brief stores the MultiArch capabilities of this version
 
@@ -675,7 +665,6 @@ struct pkgCache::Version
    /** \brief parsed priority value */
    map_number_t Priority;
 };
-APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // Description structure						/*{{{*/
 /** \brief datamember of a linked list of available description for a version */
@@ -768,15 +757,6 @@ struct pkgCache::Provides
    map_pointer_t NextProvides;     // Provides
    /** \brief next provides (based of version) */
    map_pointer_t NextPkgProv;      // Provides
-};
-									/*}}}*/
-// UNUSED StringItem structure						/*{{{*/
-struct APT_DEPRECATED_MSG("No longer used in cache generation without a replacement") pkgCache::StringItem
-{
-   /** \brief string this refers to */
-   map_ptrloc String;        // StringItem
-   /** \brief Next link in the chain */
-   map_ptrloc NextItem;      // StringItem
 };
 									/*}}}*/
 

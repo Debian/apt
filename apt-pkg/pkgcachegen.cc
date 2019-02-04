@@ -600,9 +600,6 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
    Pkg = pkgCache::PkgIterator(Cache,Cache.PkgP + Package);
 
    // Set the name, arch and the ID
-   APT_IGNORE_DEPRECATED_PUSH
-   Pkg->Name = Grp->Name;
-   APT_IGNORE_DEPRECATED_POP
    Pkg->Group = Grp.Index();
    // all is mapped to the native architecture
    map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : StoreString(MIXED, Arch);
