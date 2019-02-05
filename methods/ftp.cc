@@ -994,6 +994,23 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    Res.IMSHit = false;
 
    maybe_add_auth (Get, _config->FindFile("Dir::Etc::netrc"));
+   if(Get.User.empty() || Get.Password.empty())
+   {
+      std::string const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
+      if (not netrcparts.empty())
+      {
+	 _error->PushToStack();
+	 std::vector<std::string> files = GetListOfFilesInDir(netrcparts, "conf", true, true);
+	 for (std::vector<std::string>::const_iterator netrc = files.begin(); netrc != files.end(); netrc++)
+	 {
+	    maybe_add_auth (Get, *netrc);
+	    if (Get.User.empty() == false || Get.Password.empty() == false)
+	       break;
+	 }
+	 _error->RevertToStack();
+      }
+   }
+
 
    // Connect to the server
    if (Server == 0 || Server->Comp(Get) == false)

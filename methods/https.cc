@@ -177,6 +177,22 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    SetupProxy();
 
    maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
+   if(Uri.User.empty() || Uri.Password.empty())
+   {
+      std::string const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
+      if (not netrcparts.empty())
+      {
+	 _error->PushToStack();
+	 std::vector<std::string> files = GetListOfFilesInDir(netrcparts, "conf", true, true);
+	 for (std::vector<std::string>::const_iterator netrc = files.begin(); netrc != files.end(); netrc++)
+	 {
+	    maybe_add_auth (Uri, *netrc);
+	    if (Uri.User.empty() == false || Uri.Password.empty() == false)
+	       break;
+	 }
+	 _error->RevertToStack();
+      }
+   }
 
    // callbacks
    curl_easy_setopt(curl, CURLOPT_URL, static_cast<string>(Uri).c_str());

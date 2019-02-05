@@ -758,7 +758,25 @@ void HttpMethod::SendReq(FetchItem *Itm)
       Req += string("Proxy-Authorization: Basic ") + 
           Base64Encode(Server->Proxy.User + ":" + Server->Proxy.Password) + "\r\n";
 
+
    maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
+   if(Uri.User.empty() || Uri.Password.empty())
+   {
+      std::string const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
+      if (not netrcparts.empty())
+      {
+	 _error->PushToStack();
+	 std::vector<std::string> files = GetListOfFilesInDir(netrcparts, "conf", true, true);
+	 for (std::vector<std::string>::const_iterator netrc = files.begin(); netrc != files.end(); netrc++)
+	 {
+	    maybe_add_auth (Uri, *netrc);
+	    if (Uri.User.empty() == false || Uri.Password.empty() == false)
+	       break;
+	 }
+	 _error->RevertToStack();
+      }
+   }
+
    if (Uri.User.empty() == false || Uri.Password.empty() == false)
    {
       Req += string("Authorization: Basic ") + 
