@@ -339,11 +339,18 @@ protected:
 	    constexpr const char *str1 = "\n **** Seccomp prevented execution of syscall ";
 	    constexpr const char *str2 = " on architecture ";
 	    constexpr const char *str3 = " ****\n";
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-result"
+#endif
 	    write(2, str1, strlen(str1));
 	    write(2, buffer, sizeof(buffer));
 	    write(2, str2, strlen(str2));
 	    write(2, COMMON_ARCH, strlen(COMMON_ARCH));
 	    write(2, str3, strlen(str3));
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 	    _exit(31);
 	 };
 	 action.sa_flags = SA_SIGINFO;
