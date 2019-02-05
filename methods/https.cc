@@ -240,6 +240,21 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    SetupProxy();
 
    maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
+   if(Uri.User.empty() || Uri.Password.empty())
+   {
+      auto const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
+      if (not netrcparts.empty())
+      {
+	 _error->PushToStack();
+	 for (auto const &netrc : GetListOfFilesInDir(netrcparts, "conf", true, true))
+	 {
+	    maybe_add_auth (Uri, netrc);
+	    if (Uri.User.empty() == false || Uri.Password.empty() == false)
+	       break;
+	 }
+	 _error->RevertToStack();
+      }
+   }
 
    // The "+" is encoded as a workaround for a amazon S3 bug
    // see LP bugs #1003633 and #1086997. (taken from http method)

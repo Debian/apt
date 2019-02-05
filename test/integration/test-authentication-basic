@@ -13,6 +13,7 @@ setupaptarchive --no-update
 changetohttpswebserver --authorization="$(printf '%s' 'star@irc:hunter2' | base64 )"
 
 echo 'See, when YOU type hunter2, it shows to us as *******' > aptarchive/bash
+echo 'Debug::Acquire::netrc "true";' > rootdir/etc/apt/apt.conf.d/netrcdebug.conf
 
 testauthfailure() {
 	testfailure apthelper download-file "${1}/bash" ./downloaded/bash
@@ -48,7 +49,8 @@ Conf foo (1 unstable [all])' aptget install foo -s
 }
 
 authfile() {
-	local AUTHCONF='rootdir/etc/apt/auth.conf'
+	local AUTHCONF="${2:-rootdir/etc/apt/auth.conf}"
+	mkdir -p "$(dirname "$AUTHCONF")"
 	rm -f "$AUTHCONF"
 	printf '%s' "$1" > "$AUTHCONF"
 	chmod 600 "$AUTHCONF"
@@ -80,6 +82,16 @@ machine localhost
 login star@irc
 password hunter2'
 	testauthsuccess "$1"
+
+	# delete file, make sure it fails; add auth.conf.d snippet, works again.
+	rm rootdir/etc/apt/auth.conf
+	testauthfailure "$1"
+
+	authfile  'machine localhost
+login star@irc
+password hunter2' rootdir/etc/apt/auth.conf.d/myauth.conf
+	testauthsuccess "$1"
+	rm rootdir/etc/apt/auth.conf.d/myauth.conf
 }
 
 msgmsg 'server basic auth'
@@ -94,7 +106,9 @@ rewritesourceslist "http://localhost:${APTHTTPPORT}"
 
 msgmsg 'proxy to server basic auth'
 webserverconfig 'aptwebserver::request::absolute' 'uri'
-export http_proxy="http://localhost:${APTHTTPPORT}"
+# using ip instead of localhost avoids picking up the auth for the repo
+# for the proxy as well as we serve them both over the same server…
+export http_proxy="http://127.0.0.1:${APTHTTPPORT}"
 runtest "http://localhost:${APTHTTPPORT}"
 unset http_proxy
 

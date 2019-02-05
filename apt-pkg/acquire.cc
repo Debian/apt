@@ -87,6 +87,16 @@ void pkgAcquire::Initialize()
 	 if(AuthConf.empty() == false && RealFileExists(AuthConf) &&
 	       chown(AuthConf.c_str(), pw->pw_uid, gr->gr_gid) != 0)
 	    _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of file %s failed", SandboxUser.c_str(), AuthConf.c_str());
+
+	 std::string const AuthParts = _config->FindDir("Dir::Etc::netrcparts");
+	 if (AuthParts.empty() == false && DirectoryExists(AuthParts))
+	 {
+	    for (auto const &AuthConf : GetListOfFilesInDir(AuthParts, "conf", true, true))
+	    {
+	       if (RealFileExists(AuthConf) && chown(AuthConf.c_str(), pw->pw_uid, gr->gr_gid) != 0)
+		  _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of file %s failed", SandboxUser.c_str(), AuthConf.c_str());
+	    }
+	 }
       }
    }
 }

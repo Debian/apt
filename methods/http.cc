@@ -748,7 +748,24 @@ void HttpMethod::SendReq(FetchItem *Itm)
       Req << "Proxy-Authorization: Basic "
 	 << Base64Encode(Server->Proxy.User + ":" + Server->Proxy.Password) << "\r\n";
 
+
    maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
+   if(Uri.User.empty() || Uri.Password.empty())
+   {
+      auto const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
+      if (not netrcparts.empty())
+      {
+	 _error->PushToStack();
+	 for (auto const &netrc : GetListOfFilesInDir(netrcparts, "conf", true, true))
+	 {
+	    maybe_add_auth (Uri, netrc);
+	    if (Uri.User.empty() == false || Uri.Password.empty() == false)
+	       break;
+	 }
+	 _error->RevertToStack();
+      }
+   }
+
    if (Uri.User.empty() == false || Uri.Password.empty() == false)
       Req << "Authorization: Basic "
 	 << Base64Encode(Uri.User + ":" + Uri.Password) << "\r\n";

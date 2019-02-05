@@ -1018,6 +1018,22 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    Res.IMSHit = false;
 
    maybe_add_auth (Get, _config->FindFile("Dir::Etc::netrc"));
+   if(Get.User.empty() || Get.Password.empty())
+   {
+      auto const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
+      if (not netrcparts.empty())
+      {
+	 _error->PushToStack();
+	 for (auto const &netrc : GetListOfFilesInDir(netrcparts, "conf", true, true))
+	 {
+	    maybe_add_auth (Get, netrc);
+	    if (Get.User.empty() == false || Get.Password.empty() == false)
+	       break;
+	 }
+	 _error->RevertToStack();
+      }
+   }
+
 
    // Connect to the server
    if (Server == 0 || Server->Comp(Get) == false)
