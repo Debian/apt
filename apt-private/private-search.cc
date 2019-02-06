@@ -31,9 +31,13 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL))
+      return false;
+
    pkgDepCache::Policy *Plcy = CacheFile.GetPolicy();
    pkgRecords records(CacheFile);
-   if (unlikely(Cache == NULL || Plcy == NULL))
+
+   if (unlikely(Plcy == NULL))
       return false;
 
    const char **patterns;

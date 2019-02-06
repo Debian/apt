@@ -140,6 +140,8 @@ bool pkgCacheFile::BuildPolicy(OpProgress * /*Progress*/)
 /* */
 bool pkgCacheFile::BuildDepCache(OpProgress *Progress)
 {
+   if (BuildCaches(Progress, false) == false)
+      return false;
    if (DCache != NULL)
       return true;
 
