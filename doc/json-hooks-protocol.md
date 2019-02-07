@@ -105,7 +105,7 @@ install. Each package has the following attributes:
   - *id*: An unsigned integer
   - *version*: The version as a string
   - *architecture*: Architecture of the version
-  - *pin*: The pin priority
+  - *pin*: The pin priority (optional)
 
 #### Example
 
