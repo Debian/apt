@@ -59,7 +59,7 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
    CurrentFile = 0;
    memset(UniqHash,0,sizeof(UniqHash));
    
-   if (_error->PendingError() == true)
+   if (_error->PendingError() == true || Map.validData() == false)
       return;
 
    if (Map.Size() == 0)
@@ -1181,6 +1181,8 @@ static bool CheckValidity(const string &CacheFile,
    // Map it
    FileFd CacheF(CacheFile,FileFd::ReadOnly);
    SPtr<MMap> Map = new MMap(CacheF,0);
+   if (unlikely(Map->validData() == false))
+       return false;
    pkgCache Cache(Map);
    if (_error->PendingError() == true || Map->Size() == 0)
    {
@@ -1425,7 +1427,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       CacheF = new FileFd(CacheFile,FileFd::WriteAtomic);
       fchmod(CacheF->Fd(),0644);
       Map = CreateDynamicMMap(CacheF, MMap::Public);
-      if (_error->PendingError() == true)
+      if (_error->PendingError() == true || Map->validData() == false)
       {
 	 delete CacheF.UnGuard();
 	 delete Map.UnGuard();
@@ -1450,6 +1452,8 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    {
       // Just build it in memory..
       Map = CreateDynamicMMap(NULL);
+      if (unlikely(Map->validData() == false))
+          return false;
       if (Debug == true)
 	 std::clog << "Open memory Map (not filebased)" << std::endl;
    }
@@ -1556,6 +1560,8 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
       return false;
 
    SPtr<DynamicMMap> Map = CreateDynamicMMap(NULL);
+   if (unlikely(Map->validData() == false))
+       return false;
    unsigned long CurrentSize = 0;
    unsigned long TotalSize = 0;
    
