@@ -464,7 +464,7 @@ static bool parseFirstLine(std::ostream &log, int const client, std::string cons
       closeConnection = strcasecmp(LookupTag(request, "Connection", "Keep-Alive").c_str(), "close") == 0;
    else
    {
-      sendError(log, client, 500, request, sendContent, "Not a HTTP/1.{0,1} request", headers);
+      sendError(log, client, 500, request, sendContent, "Not an HTTP/1.{0,1} request", headers);
       return false;
    }
 

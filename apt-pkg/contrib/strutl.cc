@@ -989,7 +989,7 @@ static time_t timegm(struct tm *t)
 }
 #endif
 									/*}}}*/
-// RFC1123StrToTime - Converts a HTTP1.1 full date strings into a time_t	/*{{{*/
+// RFC1123StrToTime - Converts an HTTP1.1 full date strings into a time_t	/*{{{*/
 // ---------------------------------------------------------------------
 /* tries to parses a full date as specified in RFC7231 §7.1.1.1
    with one exception: HTTP/1.1 valid dates need to have GMT as timezone.
