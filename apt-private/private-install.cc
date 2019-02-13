@@ -79,6 +79,8 @@ bool CheckNothingBroken(CacheFile &Cache)				/*{{{*/
    happen and then calls the download routines */
 bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 {
+   if (not RunScripts("APT::Install::Pre-Invoke"))
+      return false;
    if (_config->FindB("APT::Get::Purge",false) == true)
    {
       pkgCache::PkgIterator I = Cache->PkgBegin();
@@ -120,7 +122,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 
    if (Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
        Cache->BadCount() == 0)
-      return true;
+      return RunScripts("APT::Install::Post-Invoke-Success");
 
    // No remove flag
    if (Cache->DelCount() != 0 && _config->FindB("APT::Get::Remove",true) == false)
@@ -391,6 +393,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
          RemoveFile("Keep-Downloaded-Packages=false", (*I)->DestFile);
       }
    }
+
+   if (not RunScripts("APT::Install::Post-Invoke-Success"))
+      return false;
 
    return true;
 }
