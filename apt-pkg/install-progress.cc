@@ -41,7 +41,7 @@ PackageManager* PackageManagerProgressFactory()
       progress = new APT::Progress::PackageManagerProgressFd(status_fd);
    else if(_config->FindB("Dpkg::Progress-Fancy", false) == true)
       progress = new APT::Progress::PackageManagerFancy();
-   else if (_config->FindB("Dpkg::Progress", 
+   else if (_config->FindB("Dpkg::Progress",
                            _config->FindB("DpkgPM::Progress", false)) == true)
       progress = new APT::Progress::PackageManagerText();
    else
@@ -75,7 +75,7 @@ void PackageManagerProgressFd::WriteToStatusFd(std::string s)
 {
    if(OutStatusFd <= 0)
       return;
-   FileFd::Write(OutStatusFd, s.c_str(), s.size());   
+   FileFd::Write(OutStatusFd, s.c_str(), s.size());
 }
 
 static std::string GetProgressFdString(char const * const status,
@@ -97,7 +97,7 @@ void PackageManagerProgressFd::StartDpkg()
 
    // FIXME: use SetCloseExec here once it taught about throwing
    //        exceptions instead of doing _exit(100) on failure
-   fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC); 
+   fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC);
 
    // send status information that we are about to fork dpkg
    WriteToStatusFd(GetProgressFdString("pmstatus", "dpkg-exec", StepsDone, StepsTotal, _("Running dpkg")));
@@ -126,7 +126,7 @@ void PackageManagerProgressFd::ConffilePrompt(std::string PackageName,
 }
 
 
-bool PackageManagerProgressFd::StatusChanged(std::string PackageName, 
+bool PackageManagerProgressFd::StatusChanged(std::string PackageName,
                                              unsigned int xStepsDone,
                                              unsigned int xTotalSteps,
                                              std::string pkg_action)
@@ -156,7 +156,7 @@ PackageManagerProgressDeb822Fd::~PackageManagerProgressDeb822Fd() {}
 
 void PackageManagerProgressDeb822Fd::WriteToStatusFd(std::string s)
 {
-   FileFd::Write(OutStatusFd, s.c_str(), s.size());   
+   FileFd::Write(OutStatusFd, s.c_str(), s.size());
 }
 
 static std::string GetProgressDeb822String(char const * const status,
@@ -179,7 +179,7 @@ void PackageManagerProgressDeb822Fd::StartDpkg()
 {
    // FIXME: use SetCloseExec here once it taught about throwing
    //        exceptions instead of doing _exit(100) on failure
-   fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC); 
+   fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC);
 
    WriteToStatusFd(GetProgressDeb822String("progress", nullptr, StepsDone, StepsTotal, _("Running dpkg")));
 }
@@ -205,7 +205,7 @@ void PackageManagerProgressDeb822Fd::ConffilePrompt(std::string PackageName,
 }
 
 
-bool PackageManagerProgressDeb822Fd::StatusChanged(std::string PackageName, 
+bool PackageManagerProgressDeb822Fd::StatusChanged(std::string PackageName,
                                              unsigned int xStepsDone,
                                              unsigned int xTotalSteps,
                                              std::string message)
@@ -269,15 +269,15 @@ void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
      // scroll down a bit to avoid visual glitch when the screen
      // area shrinks by one row
      std::cout << "\n";
-         
+
      // save cursor
-     std::cout << "\0337";
-         
+     std::cout << "\033[s";
+
      // set scroll region (this will place the cursor in the top left)
      std::cout << "\033[0;" << std::to_string(nr_rows - 1) << "r";
-            
+
      // restore cursor but ensure its inside the scrolling area
-     std::cout << "\0338";
+     std::cout << "\033[u";
      static const char *move_cursor_up = "\033[1A";
      std::cout << move_cursor_up;
 
@@ -323,7 +323,7 @@ void PackageManagerFancy::Stop()
    child_pty = -1;
 }
 
-std::string 
+std::string
 PackageManagerFancy::GetTextProgressStr(float Percent, int OutputSize)
 {
    std::string output;
@@ -338,7 +338,7 @@ PackageManagerFancy::GetTextProgressStr(float Percent, int OutputSize)
    return output;
 }
 
-bool PackageManagerFancy::StatusChanged(std::string PackageName, 
+bool PackageManagerFancy::StatusChanged(std::string PackageName,
                                         unsigned int StepsDone,
                                         unsigned int TotalSteps,
                                         std::string HumanReadableAction)
@@ -355,8 +355,8 @@ bool PackageManagerFancy::DrawStatusLine()
    if (unlikely(size.rows < 1 || size.columns < 1))
       return false;
 
-   static std::string save_cursor = "\0337";
-   static std::string restore_cursor = "\0338";
+   static std::string save_cursor = "\033[s";
+   static std::string restore_cursor = "\033[u";
 
    // green
    static std::string set_bg_color = DeQuoteString(
@@ -384,7 +384,7 @@ bool PackageManagerFancy::DrawStatusLine()
       int padding = 4;
       auto const progressbar_size = size.columns - padding - progress_str.size();
       auto const current_percent = percentage / 100.0f;
-      std::cout << " " 
+      std::cout << " "
                 << GetTextProgressStr(current_percent, progressbar_size)
                 << " ";
       std::flush(std::cout);
@@ -399,7 +399,7 @@ bool PackageManagerFancy::DrawStatusLine()
    return true;
 }
 
-bool PackageManagerText::StatusChanged(std::string PackageName, 
+bool PackageManagerText::StatusChanged(std::string PackageName,
                                        unsigned int StepsDone,
                                        unsigned int TotalSteps,
                                        std::string HumanReadableAction)
@@ -409,7 +409,7 @@ bool PackageManagerText::StatusChanged(std::string PackageName,
 
    std::cout << progress_str << "\r\n";
    std::flush(std::cout);
-                   
+
    last_reported_progress = percentage;
 
    return true;
