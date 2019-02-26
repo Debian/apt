@@ -3014,19 +3014,6 @@ bool FileFd::FileFdError(const char *Description,...) {
    return false;
 }
 									/*}}}*/
-gzFile FileFd::gzFd() {							/*{{{*/
-#ifdef HAVE_ZLIB
-   GzipFileFdPrivate * const gzipd = dynamic_cast<GzipFileFdPrivate*>(d);
-   if (gzipd == nullptr)
-      return nullptr;
-   else
-      return gzipd->gz;
-#else
-   return nullptr;
-#endif
-}
-									/*}}}*/
-
 // Glob - wrapper around "glob()"					/*{{{*/
 std::vector<std::string> Glob(std::string const &pattern, int flags)
 {

@@ -133,20 +133,6 @@ class FileFd
    unsigned long long FileSize();
    time_t ModificationTime();
 
-   /* You want to use 'unsigned long long' if you are talking about a file
-      to be able to support large files (>2 or >4 GB) properly.
-      This shouldn't happen all to often for the indexes, but deb's might be…
-      And as the auto-conversation converts a 'unsigned long *' to a 'bool'
-      instead of 'unsigned long long *' we need to provide this explicitly -
-      otherwise applications magically start to fail… */
-   bool Read(void *To,unsigned long long Size,unsigned long *Actual) APT_DEPRECATED_MSG("The Actual variable you pass in should be an unsigned long long")
-   {
-	unsigned long long R;
-	bool const T = Read(To, Size, &R);
-	*Actual = R;
-	return T;
-   }
-
    bool Open(std::string FileName,unsigned int const Mode,CompressMode Compress,unsigned long const AccessMode = 0666);
    bool Open(std::string FileName,unsigned int const Mode,APT::Configuration::Compressor const &compressor,unsigned long const AccessMode = 0666);
    inline bool Open(std::string const &FileName,unsigned int const Mode, unsigned long const AccessMode = 0666) {
@@ -163,7 +149,6 @@ class FileFd
    // Simple manipulators
    inline int Fd() {return iFd;};
    inline void Fd(int fd) { OpenDescriptor(fd, ReadWrite);};
-   gzFile gzFd() APT_DEPRECATED_MSG("Implementation detail, do not use to be able to support bzip2, xz and co") APT_PURE;
 
    inline bool IsOpen() {return iFd >= 0;};
    inline bool Failed() {return (Flags & Fail) == Fail;};
