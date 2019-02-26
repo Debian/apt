@@ -353,20 +353,6 @@ class pkgAcquire
     */
    unsigned long long PartialPresent();
 
-   /** \brief Delayed constructor
-    *
-    *  \param Progress indicator associated with this download or
-    *  \b NULL for none.  This object is not owned by the
-    *  download process and will not be deleted when the pkgAcquire
-    *  object is destroyed.  Naturally, it should live for at least as
-    *  long as the pkgAcquire object does.
-    *  \param Lock defines a lock file that should be acquired to ensure
-    *  only one Acquire class is in action at the time or an empty string
-    *  if no lock file should be used. If set also all needed directories
-    *  will be created.
-    */
-   APT_DEPRECATED_MSG("Use constructors, .SetLog and .GetLock as needed") bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "");
-
    void SetLog(pkgAcquireStatus *Progress) { Log = Progress; }
 
    /** \brief acquire lock and perform directory setup
