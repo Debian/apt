@@ -301,10 +301,6 @@ bool pkgDPkgPM::Remove(PkgIterator Pkg,bool Purge)
 // ---------------------------------------------------------------------
 /* This is part of the helper script communication interface, it sends
    very complete information down to the other end of the pipe.*/
-bool pkgDPkgPM::SendV2Pkgs(FILE *F)
-{
-   return SendPkgsInfo(F, 2);
-}
 bool pkgDPkgPM::SendPkgsInfo(FILE * const F, unsigned int const &Version)
 {
    // This version of APT supports only v3, so don't sent higher versions

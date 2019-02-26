@@ -93,7 +93,6 @@ class pkgDPkgPM : public pkgPackageManager
 
    // Helpers
    bool RunScriptsWithPkgs(const char *Cnf);
-   APT_DEPRECATED_MSG("Use SendPkgInfo with the version as parameter instead") bool SendV2Pkgs(FILE *F);
    bool SendPkgsInfo(FILE * const F, unsigned int const &Version);
    void WriteHistoryTag(std::string const &tag, std::string value);
    std::string ExpandShortPackageName(pkgDepCache &Cache,
