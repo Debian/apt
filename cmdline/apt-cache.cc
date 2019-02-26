@@ -33,7 +33,6 @@
 #include <apt-pkg/policy.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
-#include <apt-pkg/sptr.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>

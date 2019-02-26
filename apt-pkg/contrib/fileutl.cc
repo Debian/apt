@@ -25,7 +25,6 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/sptr.h>
 #include <apt-pkg/strutl.h>
 
 #include <cstdio>
