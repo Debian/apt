@@ -76,10 +76,6 @@ ExtractTar::~ExtractTar()
 }
 									/*}}}*/
 // ExtractTar::Done - Reap the gzip sub process				/*{{{*/
-bool ExtractTar::Done(bool)
-{
-   return Done();
-}
 bool ExtractTar::Done()
 {
    return InFd.Close();
