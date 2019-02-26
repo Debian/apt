@@ -146,36 +146,6 @@ const char *pkgSrcRecords::Parser::BuildDepType(unsigned char const &Type)
    return fields[Type];
 }
 									/*}}}*/
-bool pkgSrcRecords::Parser::Files2(std::vector<pkgSrcRecords::File2> &F2)/*{{{*/
-{
-   debSrcRecordParser * const deb = dynamic_cast<debSrcRecordParser*>(this);
-   if (deb != NULL)
-      return deb->Files2(F2);
-
-   std::vector<pkgSrcRecords::File> F;
-   if (Files(F) == false)
-      return false;
-   for (std::vector<pkgSrcRecords::File>::const_iterator f = F.begin(); f != F.end(); ++f)
-   {
-      pkgSrcRecords::File2 f2;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-      f2.MD5Hash = f->MD5Hash;
-      f2.Size = f->Size;
-      f2.Hashes.push_back(HashString("MD5Sum", f->MD5Hash));
-      f2.FileSize = f->Size;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
-      f2.Path = f->Path;
-      f2.Type = f->Type;
-      F2.push_back(f2);
-   }
-   return true;
-}
-									/*}}}*/
 
 
 pkgSrcRecords::Parser::Parser(const pkgIndexFile *Index) : d(NULL), iIndex(Index) {}

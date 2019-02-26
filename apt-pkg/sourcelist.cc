@@ -571,8 +571,8 @@ bool pkgSourceList::AddVolatileFile(std::string const &File, std::vector<std::st
    else if (ext == "changes")
    {
       debDscRecordParser changes(File, nullptr);
-      std::vector<pkgSrcRecords::File2> fileslst;
-      if (changes.Files2(fileslst) == false || fileslst.empty())
+      std::vector<pkgSrcRecords::File> fileslst;
+      if (changes.Files(fileslst) == false || fileslst.empty())
 	 return false;
       auto const basedir = flNotFile(File);
       for (auto && file: fileslst)

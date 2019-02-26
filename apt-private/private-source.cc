@@ -383,14 +383,14 @@ bool DoSource(CommandLine &CmdL)
       }
 
       // Back track
-      std::vector<pkgSrcRecords::File2> Lst;
-      if (Last->Files2(Lst) == false) {
+      std::vector<pkgSrcRecords::File> Lst;
+      if (Last->Files(Lst) == false) {
 	 return false;
       }
 
       DscFile curDsc;
       // Load them into the fetcher
-      for (std::vector<pkgSrcRecords::File2>::const_iterator I = Lst.begin();
+      for (std::vector<pkgSrcRecords::File>::const_iterator I = Lst.begin();
 	    I != Lst.end(); ++I)
       {
 	 // Try to guess what sort of file it is we are getting.
