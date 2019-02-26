@@ -127,25 +127,6 @@ static bool SetupAPTPartialDirectory(std::string const &grand, std::string const
 
    return true;
 }
-bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
-{
-   Log = Progress;
-   if (Lock.empty())
-   {
-      string const listDir = _config->FindDir("Dir::State::lists");
-      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "partial", 0700) == false)
-	 return _error->Errno("Acquire", _("List directory %s is missing."), (listDir + "partial").c_str());
-      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "auxfiles", 0755) == false)
-      {
-	 // not being able to create lists/auxfiles isn't critical as we will use a tmpdir then
-      }
-      string const archivesDir = _config->FindDir("Dir::Cache::Archives");
-      if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir, "partial", 0700) == false)
-	 return _error->Errno("Acquire", _("Archives directory %s is missing."), (archivesDir + "partial").c_str());
-      return true;
-   }
-   return GetLock(Lock);
-}
 bool pkgAcquire::GetLock(std::string const &Lock)
 {
    if (Lock.empty() == true)
@@ -1444,9 +1425,8 @@ void pkgAcquireStatus::Fetched(unsigned long long Size,unsigned long long Resume
 									/*}}}*/
 bool pkgAcquireStatus::ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes)/*{{{*/
 {
-   auto const virt = dynamic_cast<pkgAcquireStatus2*>(this);
-   if (virt != nullptr)
-      return virt->ReleaseInfoChanges(LastRelease, CurrentRelease, std::move(Changes));
+   (void) LastRelease;
+   (void) CurrentRelease;
    return ReleaseInfoChangesAsGlobalErrors(std::move(Changes));
 }
 									/*}}}*/
@@ -1464,12 +1444,6 @@ bool pkgAcquireStatus::ReleaseInfoChangesAsGlobalErrors(std::vector<ReleaseInfoC
    return AllOkay;
 }
 									/*}}}*/
-bool pkgAcquireStatus2::ReleaseInfoChanges(metaIndex const * const, metaIndex const * const, std::vector<ReleaseInfoChange> &&Changes)
-{
-   return ReleaseInfoChangesAsGlobalErrors(std::move(Changes));
-}
-pkgAcquireStatus2::pkgAcquireStatus2() : pkgAcquireStatus() {}
-pkgAcquireStatus2::~pkgAcquireStatus2() {}
 
 
 pkgAcquire::UriIterator::UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), CurItem(0)

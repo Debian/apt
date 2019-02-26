@@ -353,20 +353,6 @@ class pkgAcquire
     */
    unsigned long long PartialPresent();
 
-   /** \brief Delayed constructor
-    *
-    *  \param Progress indicator associated with this download or
-    *  \b NULL for none.  This object is not owned by the
-    *  download process and will not be deleted when the pkgAcquire
-    *  object is destroyed.  Naturally, it should live for at least as
-    *  long as the pkgAcquire object does.
-    *  \param Lock defines a lock file that should be acquired to ensure
-    *  only one Acquire class is in action at the time or an empty string
-    *  if no lock file should be used. If set also all needed directories
-    *  will be created.
-    */
-   APT_DEPRECATED_MSG("Use constructors, .SetLog and .GetLock as needed") bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "");
-
    void SetLog(pkgAcquireStatus *Progress) { Log = Progress; }
 
    /** \brief acquire lock and perform directory setup
@@ -819,17 +805,13 @@ class pkgAcquireStatus
     *  success it will print for each change the message attached to it via GlobalError either as an
     *  error (if DefaultAction == false) or as a notice otherwise.
     *
-    *  \b Note: To keep ABI compatibility for now this method isn't marked as
-    *  virtual, but you can derive your class from #pkgAcquireStatus2 which has it
-    *  marked as virtual. TODO on next ABI break: merge both classes.
-    *
     *  @param LastRelease can be used to extract further information from the previous Release file
     *  @param CurrentRelease can be used to extract further information from the current Release file
     *  @param Changes is an array of changes alongside explanatory messages
     *                 which should be presented in some way to the user.
     *  @return \b true if all changes are accepted by user, otherwise or if user can't be asked \b false
     */
-   bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes);
+   virtual bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes);
    APT_HIDDEN static bool ReleaseInfoChangesAsGlobalErrors(std::vector<ReleaseInfoChange> &&Changes);
 
    /** \brief Invoked when an item is confirmed to be up-to-date.
@@ -871,14 +853,6 @@ class pkgAcquireStatus
    /** \brief Initialize all counters to 0 and the time to the current time. */
    pkgAcquireStatus();
    virtual ~pkgAcquireStatus();
-};
-class pkgAcquireStatus2: public pkgAcquireStatus
-{
-public:
-   virtual bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes);
-
-   pkgAcquireStatus2();
-   virtual ~pkgAcquireStatus2();
 };
 									/*}}}*/
 /** @} */

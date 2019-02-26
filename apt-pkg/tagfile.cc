@@ -473,14 +473,12 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
 // pkgTagSection::pkgTagSection - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-APT_IGNORE_DEPRECATED_PUSH
 pkgTagSection::pkgTagSection()
    : Section(0), d(new pkgTagSectionPrivate()), Stop(0)
 {
    memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
    memset(&BetaIndexes, 0, sizeof(BetaIndexes));
 }
-APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/
 bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const Restart)
@@ -538,14 +536,12 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	    } else {
 	       if (BetaIndexes[lastTagHash] != 0)
 		  lastTagData.NextInBucket = BetaIndexes[lastTagHash];
-	       APT_IGNORE_DEPRECATED_PUSH
 	       BetaIndexes[lastTagHash] = TagCount;
-	       APT_IGNORE_DEPRECATED_POP
 	    }
 	    d->Tags.push_back(lastTagData);
 	 }
 
-	 APT_IGNORE_DEPRECATED(++TagCount;)
+	 ++TagCount;
 	 lastTagData = pkgTagSectionPrivate::TagData(Stop - Section);
 	 // find the colon separating tag and value
 	 char const * Colon = (char const *) memchr(Stop, ':', End - Stop);
@@ -590,7 +586,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	    } else {
 	       if (BetaIndexes[lastTagHash] != 0)
 		  lastTagData.NextInBucket = BetaIndexes[lastTagHash];
-	       APT_IGNORE_DEPRECATED(BetaIndexes[lastTagHash] = TagCount;)
+	       BetaIndexes[lastTagHash] = TagCount;
 	    }
 	    d->Tags.push_back(lastTagData);
 	 }
@@ -1065,146 +1061,6 @@ bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::v
 }
 									/*}}}*/
 
-void pkgUserTagSection::TrimRecord(bool /*BeforeRecord*/, const char* &End)/*{{{*/
-{
-   for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r' || Stop[0] == '#'); Stop++)
-      if (Stop[0] == '#')
-	 Stop = (const char*) memchr(Stop,'\n',End-Stop);
-}
-									/*}}}*/
-
 #include "tagfile-order.c"
-
-// TFRewrite - Rewrite a control record					/*{{{*/
-// ---------------------------------------------------------------------
-/* This writes the control record to stdout rewriting it as necessary. The
-   override map item specificies the rewriting rules to follow. This also
-   takes the time to sort the feild list. */
-APT_IGNORE_DEPRECATED_PUSH
-bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
-	       TFRewriteData *Rewrite)
-{
-   unsigned char Visited[256];   // Bit 1 is Order, Bit 2 is Rewrite
-   for (unsigned I = 0; I != 256; I++)
-      Visited[I] = 0;
-
-   // Set new tag up as necessary.
-   for (unsigned int J = 0; Rewrite != 0 && Rewrite[J].Tag != 0; J++)
-   {
-      if (Rewrite[J].NewTag == 0)
-	 Rewrite[J].NewTag = Rewrite[J].Tag;
-   }
-   
-   // Write all of the tags, in order.
-   if (Order != NULL)
-   {
-      for (unsigned int I = 0; Order[I] != 0; I++)
-      {
-         bool Rewritten = false;
-         
-         // See if this is a field that needs to be rewritten
-         for (unsigned int J = 0; Rewrite != 0 && Rewrite[J].Tag != 0; J++)
-         {
-            if (strcasecmp(Rewrite[J].Tag,Order[I]) == 0)
-            {
-               Visited[J] |= 2;
-               if (Rewrite[J].Rewrite != 0 && Rewrite[J].Rewrite[0] != 0)
-               {
-                  if (isspace_ascii(Rewrite[J].Rewrite[0]))
-                     fprintf(Output,"%s:%s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
-                  else
-                     fprintf(Output,"%s: %s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
-               }
-               Rewritten = true;
-               break;
-            }
-         }
-	    
-         // See if it is in the fragment
-         unsigned Pos;
-         if (Tags.Find(StringView(Order[I]),Pos) == false)
-            continue;
-         Visited[Pos] |= 1;
-
-         if (Rewritten == true)
-            continue;
-      
-         /* Write out this element, taking a moment to rewrite the tag
-            in case of changes of case. */
-         const char *Start;
-         const char *Stop;
-         Tags.Get(Start,Stop,Pos);
-      
-         if (fputs(Order[I],Output) < 0)
-            return _error->Errno("fputs","IO Error to output");
-         Start += strlen(Order[I]);
-         if (fwrite(Start,Stop - Start,1,Output) != 1)
-            return _error->Errno("fwrite","IO Error to output");
-         if (Stop[-1] != '\n')
-            fprintf(Output,"\n");
-      }
-   }
-
-   // Now write all the old tags that were missed.
-   for (unsigned int I = 0; I != Tags.Count(); I++)
-   {
-      if ((Visited[I] & 1) == 1)
-	 continue;
-
-      const char *Start;
-      const char *Stop;
-      Tags.Get(Start,Stop,I);
-      const char *End = Start;
-      for (; End < Stop && *End != ':'; End++);
-
-      // See if this is a field that needs to be rewritten
-      bool Rewritten = false;
-      for (unsigned int J = 0; Rewrite != 0 && Rewrite[J].Tag != 0; J++)
-      {
-	 if (stringcasecmp(Start,End,Rewrite[J].Tag) == 0)
-	 {
-	    Visited[J] |= 2;
-	    if (Rewrite[J].Rewrite != 0 && Rewrite[J].Rewrite[0] != 0)
-	    {
-	       if (isspace_ascii(Rewrite[J].Rewrite[0]))
-		  fprintf(Output,"%s:%s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
-	       else
-		  fprintf(Output,"%s: %s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
-	    }
-	    
-	    Rewritten = true;
-	    break;
-	 }
-      }      
-      
-      if (Rewritten == true)
-	 continue;
-      
-      // Write out this element
-      if (fwrite(Start,Stop - Start,1,Output) != 1)
-	 return _error->Errno("fwrite","IO Error to output");
-      if (Stop[-1] != '\n')
-	 fprintf(Output,"\n");
-   }
-   
-   // Now write all the rewrites that were missed
-   for (unsigned int J = 0; Rewrite != 0 && Rewrite[J].Tag != 0; J++)
-   {
-      if ((Visited[J] & 2) == 2)
-	 continue;
-      
-      if (Rewrite[J].Rewrite != 0 && Rewrite[J].Rewrite[0] != 0)
-      {
-	 if (isspace_ascii(Rewrite[J].Rewrite[0]))
-	    fprintf(Output,"%s:%s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
-	 else
-	    fprintf(Output,"%s: %s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
-      }      
-   }
-      
-   return true;
-}
-APT_IGNORE_DEPRECATED_POP
-									/*}}}*/
 
 pkgTagSection::~pkgTagSection() { delete d; }

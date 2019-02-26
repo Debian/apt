@@ -30,16 +30,12 @@ class metaIndexPrivate;
 class metaIndex
 {
 public:
-   APT_IGNORE_DEPRECATED_PUSH
    struct checkSum
    {
       std::string MetaKeyFilename;
       HashStringList Hashes;
       unsigned long long Size;
-
-      APT_DEPRECATED_MSG("Use the HashStringList member Hashes instead of a hardcoded HashString") HashString Hash;
    };
-   APT_IGNORE_DEPRECATED_POP
 
    enum APT_HIDDEN TriState {
       TRI_YES, TRI_DONTCARE, TRI_NO, TRI_UNSET

@@ -93,7 +93,6 @@ class pkgDPkgPM : public pkgPackageManager
 
    // Helpers
    bool RunScriptsWithPkgs(const char *Cnf);
-   APT_DEPRECATED_MSG("Use SendPkgInfo with the version as parameter instead") bool SendV2Pkgs(FILE *F);
    bool SendPkgsInfo(FILE * const F, unsigned int const &Version);
    void WriteHistoryTag(std::string const &tag, std::string value);
    std::string ExpandShortPackageName(pkgDepCache &Cache,
@@ -127,7 +126,6 @@ class pkgDPkgPM : public pkgPackageManager
    virtual bool Remove(PkgIterator Pkg,bool Purge = false) APT_OVERRIDE;
 
    virtual bool Go(APT::Progress::PackageManager *progress) APT_OVERRIDE;
-   APT_DEPRECATED_MSG("Use overload with explicit progress manager") virtual bool Go(int StatusFd=-1) APT_OVERRIDE;
 
    virtual void Reset() APT_OVERRIDE;
    

@@ -33,7 +33,7 @@
 // ---------------------------------------------------------------------
 /* */
 AcqTextStatus::AcqTextStatus(std::ostream &out, unsigned int &ScreenWidth,unsigned int const Quiet) :
-    pkgAcquireStatus2(), out(out), ScreenWidth(ScreenWidth), LastLineLength(0), ID(0), Quiet(Quiet)
+    pkgAcquireStatus(), out(out), ScreenWidth(ScreenWidth), LastLineLength(0), ID(0), Quiet(Quiet)
 {
    // testcases use it to disable pulses without disabling other user messages
    if (Quiet == 0 && _config->FindB("quiet::NoUpdate", false) == true)
@@ -335,10 +335,10 @@ bool AcqTextStatus::ReleaseInfoChanges(metaIndex const * const L, metaIndex cons
 {
    if (Quiet >= 2 || isatty(STDOUT_FILENO) != 1 || isatty(STDIN_FILENO) != 1 ||
 	 _config->FindB("APT::Get::Update::InteractiveReleaseInfoChanges", false) == false)
-      return pkgAcquireStatus2::ReleaseInfoChanges(nullptr, nullptr, std::move(Changes));
+      return pkgAcquireStatus::ReleaseInfoChanges(nullptr, nullptr, std::move(Changes));
 
    _error->PushToStack();
-   auto const confirmed = pkgAcquireStatus2::ReleaseInfoChanges(L, N, std::move(Changes));
+   auto const confirmed = pkgAcquireStatus::ReleaseInfoChanges(L, N, std::move(Changes));
    if (confirmed == true)
    {
       _error->MergeWithStack();

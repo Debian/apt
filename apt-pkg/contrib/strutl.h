@@ -66,7 +66,6 @@ std::string TimeToStr(unsigned long Sec);
 std::string Base64Encode(const std::string &Str);
 std::string OutputInDepth(const unsigned long Depth, const char* Separator="  ");
 std::string URItoFileName(const std::string &URI);
-APT_DEPRECATED_MSG("Specify if GMT is required or a numeric timezone can be used") std::string TimeRFC1123(time_t Date);
 /** returns a datetime string as needed by HTTP/1.1 and Debian files.
  *
  * Note: The date will always be represented in a UTC timezone
@@ -94,7 +93,6 @@ std::string TimeRFC1123(time_t Date, bool const NumericTimezone);
  */
 bool RFC1123StrToTime(const char* const str,time_t &time) APT_MUSTCHECK;
 bool FTPMDTMStrToTime(const char* const str,time_t &time) APT_MUSTCHECK;
-APT_DEPRECATED_MSG("Use RFC1123StrToTime or FTPMDTMStrToTime as needed instead") bool StrToTime(const std::string &Val,time_t &Result);
 std::string LookupTag(const std::string &Message,const char *Tag,const char *Default = 0);
 int StringToBool(const std::string &Text,int Default = -1);
 bool ReadMessages(int Fd, std::vector<std::string> &List);

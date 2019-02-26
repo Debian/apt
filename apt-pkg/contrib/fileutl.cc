@@ -25,7 +25,6 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/sptr.h>
 #include <apt-pkg/strutl.h>
 
 #include <cstdio>
@@ -3015,19 +3014,6 @@ bool FileFd::FileFdError(const char *Description,...) {
    return false;
 }
 									/*}}}*/
-gzFile FileFd::gzFd() {							/*{{{*/
-#ifdef HAVE_ZLIB
-   GzipFileFdPrivate * const gzipd = dynamic_cast<GzipFileFdPrivate*>(d);
-   if (gzipd == nullptr)
-      return nullptr;
-   else
-      return gzipd->gz;
-#else
-   return nullptr;
-#endif
-}
-									/*}}}*/
-
 // Glob - wrapper around "glob()"					/*{{{*/
 std::vector<std::string> Glob(std::string const &pattern, int flags)
 {
@@ -3148,16 +3134,6 @@ bool Rename(std::string From, std::string To)				/*{{{*/
       return false;
    }
    return true;
-}
-									/*}}}*/
-bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)/*{{{*/
-{
-   return Popen(Args, Fd, Child, Mode, true);
-}
-									/*}}}*/
-bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr)/*{{{*/
-{
-   return Popen(Args, Fd, Child, Mode, CaptureStderr, false);
 }
 									/*}}}*/
 bool Popen(const char *Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr, bool Sandbox) /*{{{*/

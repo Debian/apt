@@ -600,9 +600,6 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
    Pkg = pkgCache::PkgIterator(Cache,Cache.PkgP + Package);
 
    // Set the name, arch and the ID
-   APT_IGNORE_DEPRECATED_PUSH
-   Pkg->Name = Grp->Name;
-   APT_IGNORE_DEPRECATED_POP
    Pkg->Group = Grp.Index();
    // all is mapped to the native architecture
    map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : StoreString(MIXED, Arch);
@@ -1644,9 +1641,6 @@ static bool loadBackMMapFromFile(std::unique_ptr<pkgCacheGenerator> &Gen,
    Gen.reset(new pkgCacheGenerator(Map.get(),Progress));
    return Gen->Start();
 }
-bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
-			MMap **OutMap, bool AllowMem)
-   { return pkgCacheGenerator::MakeStatusCache(List, &Progress, OutMap, AllowMem); }
 bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap,bool)
 {
@@ -1809,8 +1803,6 @@ public:
    ScopedErrorMerge() { _error->PushToStack(); }
    ~ScopedErrorMerge() { _error->MergeWithStack(); }
 };
-bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
-   { return pkgCacheGenerator::MakeOnlyStatusCache(&Progress, OutMap); }
 bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap)
 {
    std::vector<pkgIndexFile *> Files;

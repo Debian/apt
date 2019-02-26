@@ -147,8 +147,6 @@ class pkgProblemResolver						/*{{{*/
    bool ResolveByKeep(OpProgress * const Progress = NULL);
    APT_HIDDEN bool ResolveByKeepInternal();
 
-   APT_DEPRECATED_MSG("NOOP as MarkInstall enforces not overriding FromUser markings") void InstallProtect();
-
    explicit pkgProblemResolver(pkgDepCache *Cache);
    virtual ~pkgProblemResolver();
 };

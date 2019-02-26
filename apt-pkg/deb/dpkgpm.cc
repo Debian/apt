@@ -301,10 +301,6 @@ bool pkgDPkgPM::Remove(PkgIterator Pkg,bool Purge)
 // ---------------------------------------------------------------------
 /* This is part of the helper script communication interface, it sends
    very complete information down to the other end of the pipe.*/
-bool pkgDPkgPM::SendV2Pkgs(FILE *F)
-{
-   return SendPkgsInfo(F, 2);
-}
 bool pkgDPkgPM::SendPkgsInfo(FILE * const F, unsigned int const &Version)
 {
    // This version of APT supports only v3, so don't sent higher versions
@@ -1223,17 +1219,6 @@ void pkgDPkgPM::BuildPackagesProgressMap()
    ++PackagesTotal;
 }
                                                                         /*}}}*/
-bool pkgDPkgPM::Go(int StatusFd)					/*{{{*/
-{
-   APT::Progress::PackageManager *progress = NULL;
-   if (StatusFd == -1)
-      progress = APT::Progress::PackageManagerProgressFactory();
-   else
-      progress = new APT::Progress::PackageManagerProgressFd(StatusFd);
-
-   return Go(progress);
-}
-									/*}}}*/
 void pkgDPkgPM::StartPtyMagic()						/*{{{*/
 {
    if (_config->FindB("Dpkg::Use-Pty", true) == false)

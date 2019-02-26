@@ -165,9 +165,9 @@
 // reverse-dependencies of libapt-pkg against the new SONAME.
 // Non-ABI-Breaks should only increase RELEASE number.
 // See also buildlib/libversion.mak
-#define APT_PKG_MAJOR 5
+#define APT_PKG_MAJOR 6
 #define APT_PKG_MINOR 0
-#define APT_PKG_RELEASE 2
+#define APT_PKG_RELEASE 0
 #define APT_PKG_ABI ((APT_PKG_MAJOR * 100) + APT_PKG_MINOR)
 
 #endif

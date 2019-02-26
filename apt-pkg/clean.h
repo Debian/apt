@@ -25,8 +25,9 @@ class pkgArchiveCleaner
    void * const d;
 
    protected:
-
-   APT_DEPRECATED_MSG("Use pkgArchiveCleaner2 to avoid CWD expectations and chdir") virtual void Erase(const char * /*File*/,std::string /*Pkg*/,std::string /*Ver*/,struct stat & /*St*/) {};
+   virtual void Erase(int const dirfd, char const * const File,
+	 std::string const &Pkg,std::string const &Ver,
+	 struct stat const &St) = 0;
 
    public:
 
@@ -35,15 +36,6 @@ class pkgArchiveCleaner
    pkgArchiveCleaner();
    virtual ~pkgArchiveCleaner();
 };
-// TODO: merge classes and "erase" the old way
-class pkgArchiveCleaner2: public pkgArchiveCleaner
-{
-   friend class pkgArchiveCleaner;
-protected:
-   using pkgArchiveCleaner::Erase;
-   virtual void Erase(int const dirfd, char const * const File,
-	 std::string const &Pkg,std::string const &Ver,
-	 struct stat const &St) = 0;
-};
+
 
 #endif

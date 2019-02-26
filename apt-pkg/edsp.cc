@@ -73,52 +73,6 @@ template<typename... Data> static bool WriteOkay(FileFd &output, Data&&... data)
 }
 									/*}}}*/
 // WriteScenarioVersion							/*{{{*/
-static void WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::PkgIterator const &Pkg,
-				pkgCache::VerIterator const &Ver)
-{
-   fprintf(output, "Package: %s\n", Pkg.Name());
-   fprintf(output, "Source: %s\n", Ver.SourcePkgName());
-   fprintf(output, "Architecture: %s\n", Ver.Arch());
-   fprintf(output, "Version: %s\n", Ver.VerStr());
-   fprintf(output, "Source-Version: %s\n", Ver.SourceVerStr());
-   if (Pkg.CurrentVer() == Ver)
-      fprintf(output, "Installed: yes\n");
-   if (Pkg->SelectedState == pkgCache::State::Hold ||
-       (Cache[Pkg].Keep() == true && Cache[Pkg].Protect() == true))
-      fprintf(output, "Hold: yes\n");
-   fprintf(output, "APT-ID: %d\n", Ver->ID);
-   if (PrioMap[Ver->Priority] != nullptr)
-      fprintf(output, "Priority: %s\n", PrioMap[Ver->Priority]);
-   if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
-      fprintf(output, "Essential: yes\n");
-   if (Ver->Section != 0)
-      fprintf(output, "Section: %s\n", Ver.Section());
-   if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
-      fprintf(output, "Multi-Arch: allowed\n");
-   else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
-      fprintf(output, "Multi-Arch: foreign\n");
-   else if ((Ver->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
-      fprintf(output, "Multi-Arch: same\n");
-   std::set<string> Releases;
-   for (pkgCache::VerFileIterator I = Ver.FileList(); I.end() == false; ++I) {
-      pkgCache::PkgFileIterator File = I.File();
-      if (File.Flagged(pkgCache::Flag::NotSource) == false) {
-	 string Release = File.RelStr();
-	 if (!Release.empty())
-	    Releases.insert(Release);
-      }
-   }
-   if (!Releases.empty()) {
-       fprintf(output, "APT-Release:\n");
-       for (std::set<string>::iterator R = Releases.begin(); R != Releases.end(); ++R)
-	   fprintf(output, " %s\n", R->c_str());
-   }
-   fprintf(output, "APT-Pin: %d\n", Cache.GetPolicy().GetPriority(Ver));
-   if (Cache.GetCandidateVersion(Pkg) == Ver)
-      fprintf(output, "APT-Candidate: yes\n");
-   if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
-      fprintf(output, "APT-Automatic: yes\n");
-}
 static bool WriteScenarioVersion(FileFd &output, pkgCache::PkgIterator const &Pkg,
 				pkgCache::VerIterator const &Ver)
 {
@@ -138,44 +92,6 @@ static bool WriteScenarioVersion(FileFd &output, pkgCache::PkgIterator const &Pk
 }
 									/*}}}*/
 // WriteScenarioDependency						/*{{{*/
-static void WriteScenarioDependency( FILE* output, pkgCache::VerIterator const &Ver)
-{
-   std::array<std::string, _count(DepMap)> dependencies;
-   bool orGroup = false;
-   for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
-   {
-      if (Dep.IsImplicit() == true)
-	 continue;
-      if (orGroup == false)
-	 dependencies[Dep->Type].append(", ");
-      dependencies[Dep->Type].append(Dep.TargetPkg().Name());
-      if (Dep->Version != 0)
-	 dependencies[Dep->Type].append(" (").append(pkgCache::CompTypeDeb(Dep->CompareOp)).append(" ").append(Dep.TargetVer()).append(")");
-      if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
-      {
-	 dependencies[Dep->Type].append(" | ");
-	 orGroup = true;
-      }
-      else
-	 orGroup = false;
-   }
-   for (size_t i = 1; i < dependencies.size(); ++i)
-      if (dependencies[i].empty() == false)
-	 fprintf(output, "%s: %s\n", DepMap[i], dependencies[i].c_str()+2);
-   string provides;
-   for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
-   {
-      if (Prv.IsMultiArchImplicit() == true)
-	 continue;
-      if (provides.empty() == false)
-	 provides.append(", ");
-      provides.append(Prv.Name());
-      if (Prv->ProvideVersion != 0)
-	 provides.append(" (= ").append(Prv.ProvideVersion()).append(")");
-   }
-   if (provides.empty() == false)
-      fprintf(output, "Provides: %s\n", provides.c_str());
-}
 static bool WriteScenarioDependency(FileFd &output, pkgCache::VerIterator const &Ver, bool const OnlyCritical)
 {
    std::array<std::string, _count(DepMap)> dependencies;
@@ -220,61 +136,6 @@ static bool WriteScenarioDependency(FileFd &output, pkgCache::VerIterator const 
 }
 									/*}}}*/
 // WriteScenarioLimitedDependency					/*{{{*/
-static void WriteScenarioLimitedDependency(FILE* output,
-					  pkgCache::VerIterator const &Ver,
-					  APT::PackageSet const &pkgset)
-{
-   std::array<std::string, _count(DepMap)> dependencies;
-   bool orGroup = false;
-   for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
-   {
-      if (Dep.IsImplicit() == true)
-	 continue;
-      if (orGroup == false)
-      {
-	 if (pkgset.find(Dep.TargetPkg()) == pkgset.end())
-	    continue;
-	 if (dependencies[Dep->Type].empty() == false)
-	    dependencies[Dep->Type].append(", ");
-      }
-      else if (pkgset.find(Dep.TargetPkg()) == pkgset.end())
-      {
-	 if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
-	    continue;
-	 dependencies[Dep->Type].erase(dependencies[Dep->Type].end()-3, dependencies[Dep->Type].end());
-	 orGroup = false;
-	 continue;
-      }
-      dependencies[Dep->Type].append(Dep.TargetPkg().Name());
-      if (Dep->Version != 0)
-	 dependencies[Dep->Type].append(" (").append(pkgCache::CompTypeDeb(Dep->CompareOp)).append(" ").append(Dep.TargetVer()).append(")");
-      if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
-      {
-	 dependencies[Dep->Type].append(" | ");
-	 orGroup = true;
-      }
-      else
-	 orGroup = false;
-   }
-   for (size_t i = 1; i < dependencies.size(); ++i)
-      if (dependencies[i].empty() == false)
-	 fprintf(output, "%s: %s\n", DepMap[i], dependencies[i].c_str());
-   string provides;
-   for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
-   {
-      if (Prv.IsMultiArchImplicit() == true)
-	 continue;
-      if (pkgset.find(Prv.ParentPkg()) == pkgset.end())
-	 continue;
-      if (provides.empty() == false)
-	 provides.append(", ");
-      provides.append(Prv.Name());
-      if (Prv->ProvideVersion != 0)
-	 provides.append(" (= ").append(Prv.ProvideVersion()).append(")");
-   }
-   if (provides.empty() == false)
-      fprintf(output, "Provides: %s\n", provides.c_str());
-}
 static bool WriteScenarioLimitedDependency(FileFd &output,
 					  pkgCache::VerIterator const &Ver,
 					  std::vector<bool> const &pkgset,
@@ -391,30 +252,6 @@ static bool WriteScenarioEDSPVersion(pkgDepCache &Cache, FileFd &output, pkgCach
 }
 									/*}}}*/
 // EDSP::WriteScenario - to the given file descriptor			/*{{{*/
-bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress)
-{
-   if (Progress != NULL)
-      Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
-   decltype(Cache.Head().VersionCount) p = 0;
-   std::vector<std::string> archs = APT::Configuration::getArchitectures();
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
-   {
-      std::string const arch = Pkg.Arch();
-      if (std::find(archs.begin(), archs.end(), arch) == archs.end())
-	 continue;
-      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver, ++p)
-      {
-	 if (SkipUnavailableVersions(Cache, Pkg, Ver))
-	    continue;
-	 WriteScenarioVersion(Cache, output, Pkg, Ver);
-	 WriteScenarioDependency(output, Ver);
-	 fprintf(output, "\n");
-	 if (Progress != NULL && p % 100 == 0)
-	    Progress->Progress(p);
-      }
-   }
-   return true;
-}
 bool EDSP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress *Progress)
 {
    if (Progress != NULL)
@@ -443,28 +280,6 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress *Progres
 }
 									/*}}}*/
 // EDSP::WriteLimitedScenario - to the given file descriptor		/*{{{*/
-bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
-				APT::PackageSet const &pkgset,
-				OpProgress *Progress)
-{
-   if (Progress != NULL)
-      Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
-   decltype(Cache.Head().PackageCount) p = 0;
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg, ++p)
-      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
-      {
-	 if (SkipUnavailableVersions(Cache, Pkg, Ver))
-	    continue;
-	 WriteScenarioVersion(Cache, output, Pkg, Ver);
-	 WriteScenarioLimitedDependency(output, Ver, pkgset);
-	 fprintf(output, "\n");
-	 if (Progress != NULL && p % 100 == 0)
-	    Progress->Progress(p);
-      }
-   if (Progress != NULL)
-      Progress->Done();
-   return true;
-}
 bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
 				std::vector<bool> const &pkgset,
 				OpProgress *Progress)
@@ -495,60 +310,6 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
 }
 									/*}}}*/
 // EDSP::WriteRequest - to the given file descriptor			/*{{{*/
-bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
-			bool const DistUpgrade, bool const AutoRemove,
-			OpProgress *Progress)
-{
-   if (Progress != NULL)
-      Progress->SubProgress(Cache.Head().PackageCount, _("Send request to solver"));
-   decltype(Cache.Head().PackageCount) p = 0;
-   string del, inst;
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg, ++p)
-   {
-      if (Progress != NULL && p % 100 == 0)
-         Progress->Progress(p);
-      string* req;
-      pkgDepCache::StateCache &P = Cache[Pkg];
-      if (P.Delete() == true)
-	 req = &del;
-      else if (P.NewInstall() == true || P.Upgrade() == true || P.ReInstall() == true ||
-	       (P.Mode == pkgDepCache::ModeKeep && (P.iFlags & pkgDepCache::Protected) == pkgDepCache::Protected))
-	 req = &inst;
-      else
-	 continue;
-      req->append(" ").append(Pkg.FullName());
-   }
-   fprintf(output, "Request: EDSP 0.5\n");
-
-   const char *arch = _config->Find("APT::Architecture").c_str();
-   std::vector<string> archs = APT::Configuration::getArchitectures();
-   fprintf(output, "Architecture: %s\n", arch);
-   fprintf(output, "Architectures:");
-   for (std::vector<string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
-       fprintf(output, " %s", a->c_str());
-   fprintf(output, "\n");
-
-   if (del.empty() == false)
-      fprintf(output, "Remove: %s\n", del.c_str()+1);
-   if (inst.empty() == false)
-      fprintf(output, "Install: %s\n", inst.c_str()+1);
-   if (Upgrade == true)
-      fprintf(output, "Upgrade: yes\n");
-   if (DistUpgrade == true)
-      fprintf(output, "Dist-Upgrade: yes\n");
-   if (AutoRemove == true)
-      fprintf(output, "Autoremove: yes\n");
-   auto const solver = _config->Find("APT::Solver", "internal");
-   fprintf(output, "Solver: %s\n", solver.c_str());
-   auto const solverconf = std::string("APT::Solver::") + solver + "::";
-   if (_config->FindB(solverconf + "Strict-Pinning", _config->FindB("APT::Solver::Strict-Pinning", true)) == false)
-      fprintf(output, "Strict-Pinning: no\n");
-   auto const solverpref = _config->Find(solverconf + "Preferences", _config->Find("APT::Solver::Preferences", ""));
-   if (solverpref.empty() == false)
-      fprintf(output, "Preferences: %s\n", solverpref.c_str());
-   fprintf(output, "\n");
-   return true;
-}
 bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output,
 			unsigned int const flags,
 			OpProgress *Progress)
@@ -822,33 +583,7 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
       }
    }
    return false;
-}
-bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
-			std::list<std::string> &remove, bool &upgrade,
-			bool &distUpgrade, bool &autoRemove)
-{
-   unsigned int flags;
-   auto const ret = ReadRequest(input, install, remove, flags);
-   autoRemove = (flags & Request::AUTOREMOVE);
-   if (flags & Request::UPGRADE_ALL)
-   {
-      if (flags & (Request::FORBID_NEW_INSTALL | Request::FORBID_REMOVE))
-      {
-	 upgrade = true;
-	 distUpgrade = false;
-      } else {
-	 upgrade = false;
-	 distUpgrade = false;
-      }
-   }
-   else
-   {
-      upgrade = false;
-      distUpgrade = false;
-   }
-   return ret;
-}
-									/*}}}*/
+}									/*}}}*/
 // EDSP::ApplyRequest - first stanza from the given file descriptor	/*{{{*/
 bool EDSP::ApplyRequest(std::list<std::string> const &install,
 			 std::list<std::string> const &remove,
@@ -875,37 +610,6 @@ bool EDSP::ApplyRequest(std::list<std::string> const &install,
 }
 									/*}}}*/
 // EDSP::WriteSolutionStanza - to the given file descriptor		/*{{{*/
-bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
-{
-   bool const Debug = _config->FindB("Debug::EDSP::WriteSolution", false);
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
-   {
-      if (Cache[Pkg].Delete() == true)
-      {
-	 fprintf(output, "Remove: %d\n", _system->GetVersionMapping(Pkg.CurrentVer()->ID));
-	 if (Debug == true)
-	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Pkg.CurrentVer().VerStr());
-      }
-      else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
-      {
-	 pkgCache::VerIterator const CandVer = Cache.GetCandidateVersion(Pkg);
-	 fprintf(output, "Install: %d\n", _system->GetVersionMapping(CandVer->ID));
-	 if (Debug == true)
-	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), CandVer.VerStr());
-      }
-      else if (Cache[Pkg].Garbage == true)
-      {
-	 fprintf(output, "Autoremove: %d\n", _system->GetVersionMapping(Pkg.CurrentVer()->ID));
-	 if (Debug == true)
-	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Pkg.CurrentVer().VerStr());
-      }
-      else
-	 continue;
-      fprintf(output, "\n");
-   }
-
-   return true;
-}
 bool EDSP::WriteSolutionStanza(FileFd &output, char const * const Type, pkgCache::VerIterator const &Ver)
 {
    bool Okay = output.Failed() == false;
@@ -916,13 +620,6 @@ bool EDSP::WriteSolutionStanza(FileFd &output, char const * const Type, pkgCache
 }
 									/*}}}*/
 // EDSP::WriteProgess - pulse to the given file descriptor		/*{{{*/
-bool EDSP::WriteProgress(unsigned short const percent, const char* const message, FILE* output) {
-	fprintf(output, "Progress: %s\n", TimeRFC1123(time(NULL), true).c_str());
-	fprintf(output, "Percentage: %d\n", percent);
-	fprintf(output, "Message: %s\n\n", message);
-	fflush(output);
-	return true;
-}
 bool EDSP::WriteProgress(unsigned short const percent, const char* const message, FileFd &output) {
 	return WriteOkay(output, "Progress: ", TimeRFC1123(time(NULL), true), "\n",
 	      "Percentage: ", percent, "\n",
@@ -933,11 +630,6 @@ bool EDSP::WriteProgress(unsigned short const percent, const char* const message
 static std::string formatMessage(std::string const &msg)
 {
 	return SubstVar(SubstVar(APT::String::Strip(msg), "\n\n", "\n.\n"), "\n", "\n ");
-}
-bool EDSP::WriteError(char const * const uuid, std::string const &message, FILE* output) {
-	fprintf(output, "Error: %s\n", uuid);
-	fprintf(output, "Message: %s\n\n", formatMessage(message).c_str());
-	return true;
 }
 bool EDSP::WriteError(char const * const uuid, std::string const &message, FileFd &output) {
 	return WriteOkay(output, "Error: ", uuid, "\n",
@@ -1020,11 +712,6 @@ static pid_t ExecuteExternal(char const* const type, char const * const binary, 
 pid_t EDSP::ExecuteSolver(const char* const solver, int * const solver_in, int * const solver_out, bool) {
 	return ExecuteExternal("solver", solver, "Dir::Bin::Solvers", solver_in, solver_out);
 }
-bool EDSP::ExecuteSolver(const char* const solver, int *solver_in, int *solver_out) {
-   if (ExecuteSolver(solver, solver_in, solver_out, true) == 0)
-      return false;
-   return true;
-}
 									/*}}}*/
 static bool CreateDumpFile(char const * const id, char const * const type, FileFd &output)/*{{{*/
 {
@@ -1086,20 +773,7 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 	if (ExecWait(solver_pid, solver))
 		return ret;
 	return false;
-}
-bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
-			 bool const upgrade, bool const distUpgrade,
-			 bool const autoRemove, OpProgress *Progress) {
-   unsigned int flags = 0;
-   if (autoRemove)
-      flags |= Request::AUTOREMOVE;
-   if (upgrade)
-      flags |= Request::UPGRADE_ALL | Request::FORBID_REMOVE | Request::FORBID_NEW_INSTALL;
-   if (distUpgrade)
-      flags |= Request::UPGRADE_ALL;
-   return ResolveExternal(solver, Cache, flags, Progress);
-}
-									/*}}}*/
+}									/*}}}*/
 
 bool EIPP::OrderInstall(char const * const solver, pkgPackageManager * const PM,	/*{{{*/
 			 unsigned int const flags, OpProgress * const Progress)

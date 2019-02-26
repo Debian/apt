@@ -806,10 +806,6 @@ int StringToBool(const string &Text,int Default)
 // ---------------------------------------------------------------------
 /* This converts a time_t into a string time representation that is
    year 2000 compliant and timezone neutral */
-string TimeRFC1123(time_t Date)
-{
-   return TimeRFC1123(Date, false);
-}
 string TimeRFC1123(time_t Date, bool const NumericTimezone)
 {
    struct tm Conv;
@@ -1096,57 +1092,6 @@ bool FTPMDTMStrToTime(const char* const str,time_t &time)
       return false;
 
    time = timegm(&Tm);
-   return true;
-}
-									/*}}}*/
-// StrToTime - Converts a string into a time_t				/*{{{*/
-// ---------------------------------------------------------------------
-/* This handles all 3 popular time formats including RFC 1123, RFC 1036
-   and the C library asctime format. It requires the GNU library function
-   'timegm' to convert a struct tm in UTC to a time_t. For some bizzar
-   reason the C library does not provide any such function :< This also
-   handles the weird, but unambiguous FTP time format*/
-bool StrToTime(const string &Val,time_t &Result)
-{
-   struct tm Tm;
-   char Month[10];
-
-   // Skip the day of the week
-   const char *I = strchr(Val.c_str(), ' ');
-
-   // Handle RFC 1123 time
-   Month[0] = 0;
-   if (sscanf(I," %2d %3s %4d %2d:%2d:%2d GMT",&Tm.tm_mday,Month,&Tm.tm_year,
-	      &Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) != 6)
-   {
-      // Handle RFC 1036 time
-      if (sscanf(I," %2d-%3s-%3d %2d:%2d:%2d GMT",&Tm.tm_mday,Month,
-		 &Tm.tm_year,&Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) == 6)
-	 Tm.tm_year += 1900;
-      else
-      {
-	 // asctime format
-	 if (sscanf(I," %3s %2d %2d:%2d:%2d %4d",Month,&Tm.tm_mday,
-		    &Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec,&Tm.tm_year) != 6)
-	 {
-	    // 'ftp' time
-	    if (sscanf(Val.c_str(),"%4d%2d%2d%2d%2d%2d",&Tm.tm_year,&Tm.tm_mon,
-		       &Tm.tm_mday,&Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) != 6)
-	       return false;
-	    Tm.tm_mon--;
-	 }	 
-      }
-   }
-   
-   Tm.tm_isdst = 0;
-   if (Month[0] != 0)
-      Tm.tm_mon = MonthConv(Month);
-   else
-      Tm.tm_mon = 0; // we don't have a month, so pick something
-   Tm.tm_year -= 1900;
-   
-   // Convert to local time and then to GMT
-   Result = timegm(&Tm);
    return true;
 }
 									/*}}}*/

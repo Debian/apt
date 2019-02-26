@@ -2,7 +2,7 @@
 include_directories(${PROJECT_BINARY_DIR}/include/apt-pkg)
 
 # Set the version of the library
-set(MAJOR 2.0)
+set(MAJOR 3.0)
 set(MINOR 0)
 set(APT_INST_MAJOR ${MAJOR} PARENT_SCOPE)
 

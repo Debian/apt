@@ -640,16 +640,6 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
    return true;
 }
 									/*}}}*/
-// SigVerify::RunGPGV - deprecated wrapper calling ExecGPGV		/*{{{*/
-APT_NORETURN bool SigVerify::RunGPGV(std::string const &File, std::string const &FileOut,
-      int const &statusfd, int fd[2]) {
-   ExecGPGV(File, FileOut, statusfd, fd);
-}
-APT_NORETURN bool SigVerify::RunGPGV(std::string const &File, std::string const &FileOut,
-      int const &statusfd) {
-   ExecGPGV(File, FileOut, statusfd);
-}
-									/*}}}*/
 bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 				vector<string> &List, pkgCdromStatus *log)
 {

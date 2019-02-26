@@ -116,11 +116,6 @@ class SigVerify								/*{{{*/
    bool CopyAndVerify(std::string CDROM,std::string Name,std::vector<std::string> &SigList,
 		      std::vector<std::string> PkgList,std::vector<std::string> SrcList);
 
-   APT_DEPRECATED_MSG("Use ExecGPGV instead") static bool RunGPGV(std::string const &File, std::string const &FileOut,
-		       int const &statusfd, int fd[2]);
-   APT_DEPRECATED_MSG("Use ExecGPGV instead") static bool RunGPGV(std::string const &File, std::string const &FileOut,
-			      int const &statusfd = -1);
-
    SigVerify();
    virtual ~SigVerify();
 };
