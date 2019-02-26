@@ -510,9 +510,6 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
             Sum->MetaKeyFilename = Name;
             Sum->Size = Size;
 	    Sum->Hashes.FileSize(Size);
-	    APT_IGNORE_DEPRECATED_PUSH
-	    Sum->Hash = hs;
-	    APT_IGNORE_DEPRECATED_POP
 	    Entries[Name] = Sum;
          }
          Entries[Name]->Hashes.push_back(hs);
