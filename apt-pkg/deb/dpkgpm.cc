@@ -1223,17 +1223,6 @@ void pkgDPkgPM::BuildPackagesProgressMap()
    ++PackagesTotal;
 }
                                                                         /*}}}*/
-bool pkgDPkgPM::Go(int StatusFd)					/*{{{*/
-{
-   APT::Progress::PackageManager *progress = NULL;
-   if (StatusFd == -1)
-      progress = APT::Progress::PackageManagerProgressFactory();
-   else
-      progress = new APT::Progress::PackageManagerProgressFd(StatusFd);
-
-   return Go(progress);
-}
-									/*}}}*/
 void pkgDPkgPM::StartPtyMagic()						/*{{{*/
 {
    if (_config->FindB("Dpkg::Use-Pty", true) == false)

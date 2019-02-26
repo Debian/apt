@@ -632,10 +632,6 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 // PM::EarlyRemove - Perform removal of packages before their time	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is called to deal with conflicts arising from unpacking */
-bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
-{
-   return EarlyRemove(Pkg, NULL);
-}
 bool pkgPackageManager::EarlyRemove(PkgIterator Pkg, DepIterator const * const Dep)
 {
    if (List->IsNow(Pkg) == false)
@@ -1128,19 +1124,6 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	 
    return Completed;
 }
-// PM::DoInstallPostFork - compat /*{{{*/
-// ---------------------------------------------------------------------
-									/*}}}*/
-pkgPackageManager::OrderResult
-pkgPackageManager::DoInstallPostFork(int statusFd)
-{
-   APT::Progress::PackageManager *progress = new
-      APT::Progress::PackageManagerProgressFd(statusFd);
-   pkgPackageManager::OrderResult res = DoInstallPostFork(progress);
-   delete progress;
-   return res;
-}
-									/*}}}*/
 // PM::DoInstallPostFork - Does install part that happens after the fork /*{{{*/
 // ---------------------------------------------------------------------
 pkgPackageManager::OrderResult 
@@ -1157,19 +1140,6 @@ pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
    
    return Res;
 }
-									/*}}}*/	
-// PM::DoInstall - Does the installation				/*{{{*/
-// ---------------------------------------------------------------------
-/* compat */
-pkgPackageManager::OrderResult 
-pkgPackageManager::DoInstall(int statusFd)
-{
-    APT::Progress::PackageManager *progress = new
-       APT::Progress::PackageManagerProgressFd(statusFd);
-    OrderResult res = DoInstall(progress);
-    delete progress;
-    return res;
- }
 									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
