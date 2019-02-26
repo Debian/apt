@@ -131,7 +131,6 @@ class pkgSourceList
    void AddVolatileFile(pkgIndexFile * const File);
    bool AddVolatileFile(std::string const &File);
    bool AddVolatileFile(std::string const &File, std::vector<std::string> * const VolatileCmdL);
-   APT_DEPRECATED_MSG("Use the overload with string-vector") void AddVolatileFiles(CommandLine &CmdL, std::vector<const char*> * const VolatileCmdL);
    void AddVolatileFiles(CommandLine &CmdL, std::vector<std::string> * const VolatileCmdL);
 
    /** @return list of files registered with #AddVolatileFile */
