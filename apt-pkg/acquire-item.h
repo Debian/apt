@@ -102,11 +102,6 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
    /** \brief How much of the object was already fetched. */
    unsigned long long PartialSize;
 
-   /** \brief If not \b NULL, contains the name of a subprocess that
-    *  is operating on this object (for instance, "gzip" or "gpgv").
-    */
-   APT_DEPRECATED_MSG("Use the std::string member ActiveSubprocess instead") const char *Mode;
-
    /** \brief contains the name of the subprocess that is operating on this object
     * (for instance, "gzip", "rred" or "gpgv"). This is obsoleting #Mode from above
     * as it can manage the lifetime of included string properly. */
@@ -283,15 +278,6 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
 
    /** \return \b true if this object is being fetched from a trusted source. */
    virtual bool IsTrusted() const;
-
-   /** \brief Report mirror problem
-    *
-    *  This allows reporting mirror failures back to a centralized
-    *  server. The apt-report-mirror-failure script is called for this
-    *
-    *  \param FailCode A short failure string that is send
-    */
-   APT_DEPRECATED_MSG("Item::Failed does this for you") void ReportMirrorFailure(std::string const &FailCode);
 
    /** \brief Set the name of the current active subprocess
     *
@@ -983,18 +969,6 @@ class pkgAcqArchive : public pkgAcquire::Item
     */
    std::string &StoreFilename;
 
-   /** \brief The next file for this version to try to download. */
-   APT_DEPRECATED_MSG("Unused member")
-   pkgCache::VerFileIterator Vf;
-
-   /** \brief How many (more) times to try to find a new source from
-    *  which to download this package version if it fails.
-    *
-    *  Set from Acquire::Retries.
-    */
-   APT_DEPRECATED_MSG("Unused member. See pkgAcqItem::Retries.")
-   unsigned int Retries;
-
    /** \brief \b true if this version file is being downloaded from a
     *  trusted source.
     */
@@ -1166,12 +1140,6 @@ private:
 class pkgAcqFile : public pkgAcquire::Item
 {
    void * const d;
-
-   /** \brief How many times to retry the download, set from
-    *  Acquire::Retries.
-    */
-   APT_DEPRECATED_MSG("Unused member. See pkgAcqItem::Retries.")
-   unsigned int Retries;
 
    /** \brief Should this file be considered a index file */
    bool IsIndexFile;
