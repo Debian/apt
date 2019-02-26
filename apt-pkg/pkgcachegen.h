@@ -245,8 +245,4 @@ class APT_HIDDEN pkgCacheListParser
 };
 									/*}}}*/
 
-APT_DEPRECATED_MSG("Use pkgCacheGenerator::MakeStatusCache instead") bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
-			MMap **OutMap = 0,bool AllowMem = false);
-APT_DEPRECATED_MSG("Use pkgCacheGenerator::MakeOnlyStatusCache instead") bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap);
-
 #endif

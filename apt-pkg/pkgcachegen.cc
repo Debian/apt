@@ -1641,9 +1641,6 @@ static bool loadBackMMapFromFile(std::unique_ptr<pkgCacheGenerator> &Gen,
    Gen.reset(new pkgCacheGenerator(Map.get(),Progress));
    return Gen->Start();
 }
-bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
-			MMap **OutMap, bool AllowMem)
-   { return pkgCacheGenerator::MakeStatusCache(List, &Progress, OutMap, AllowMem); }
 bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap,bool)
 {
@@ -1806,8 +1803,6 @@ public:
    ScopedErrorMerge() { _error->PushToStack(); }
    ~ScopedErrorMerge() { _error->MergeWithStack(); }
 };
-bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
-   { return pkgCacheGenerator::MakeOnlyStatusCache(&Progress, OutMap); }
 bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap)
 {
    std::vector<pkgIndexFile *> Files;
