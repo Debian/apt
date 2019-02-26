@@ -142,15 +142,6 @@ bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
    return false;
 }
 
-void maybe_add_auth(URI &Uri, std::string NetRCFile)
-{
-   if (FileExists(NetRCFile) == false)
-      return;
-   FileFd fd;
-   if (fd.Open(NetRCFile, FileFd::ReadOnly))
-      MaybeAddAuth(fd, Uri);
-}
-
 /* Check if we are authorized. */
 bool IsAuthorized(pkgCache::PkgFileIterator const I, std::vector<std::unique_ptr<FileFd>> &authconfs)
 {

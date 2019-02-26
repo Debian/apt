@@ -32,8 +32,6 @@
 class URI;
 class FileFd;
 
-APT_DEPRECATED_MSG("Use FileFd-based MaybeAddAuth instead")
-void maybe_add_auth(URI &Uri, std::string NetRCFile);
 bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri);
 bool IsAuthorized(pkgCache::PkgFileIterator const I, std::vector<std::unique_ptr<FileFd>> &authconfs) APT_HIDDEN;
 #endif
