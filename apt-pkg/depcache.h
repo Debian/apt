@@ -243,7 +243,6 @@ class pkgDepCache : protected pkgCache::Namespace
       unsigned char DepState;          // DepState Flags
 
       // Update of candidate version
-      APT_DEPRECATED_MSG("Use the method of the same name in contrib/strutl.h instead if you must") const char *StripEpoch(const char *Ver) APT_PURE;
       void Update(PkgIterator Pkg,pkgCache &Cache);
       
       // Various test members for the current status of the package
@@ -363,9 +362,6 @@ class pkgDepCache : protected pkgCache::Namespace
 
    inline pkgCache &GetCache() {return *Cache;};
    inline pkgVersioningSystem &VS() {return *Cache->VS;};
-
-   // Policy implementation
-   APT_DEPRECATED_MSG("Confusingly named method which returns the candidate as chosen by policy (NOT as chosen via .SetCandidateVersion!). You probably want to use .GetCandidateVersion instead.") inline VerIterator GetCandidateVer(PkgIterator const &Pkg) {return /* GetCandidateVersion(Pkg); but for API compat: */ LocalPolicy->GetCandidateVer(Pkg);};
 
    inline bool IsImportantDep(DepIterator Dep) const {return LocalPolicy->IsImportantDep(Dep);};
    inline Policy &GetPolicy() {return *LocalPolicy;};
