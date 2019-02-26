@@ -187,11 +187,6 @@ class pkgTagSection
 };
 
 
-class APT_DEPRECATED_MSG("Use pkgTagFile with the SUPPORT_COMMENTS flag instead") pkgUserTagSection : public pkgTagSection
-{
-   virtual void TrimRecord(bool BeforeRecord, const char* &End) APT_OVERRIDE;
-};
-
 /** \class pkgTagFile reads and prepares a deb822 formatted file for parsing
  * via #pkgTagSection. The default mode tries to be as fast as possible and
  * assumes perfectly valid (machine generated) files like Packages. Support
@@ -226,16 +221,5 @@ public:
 
 extern const char **TFRewritePackageOrder;
 extern const char **TFRewriteSourceOrder;
-
-APT_IGNORE_DEPRECATED_PUSH
-struct APT_DEPRECATED_MSG("Use pkgTagSection::Tag and pkgTagSection::Write() instead") TFRewriteData
-{
-   const char *Tag;
-   const char *Rewrite;
-   const char *NewTag;
-};
-APT_DEPRECATED_MSG("Use pkgTagSection::Tag and pkgTagSection::Write() instead") bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
-	       TFRewriteData *Rewrite);
-APT_IGNORE_DEPRECATED_POP
 
 #endif
