@@ -3136,16 +3136,6 @@ bool Rename(std::string From, std::string To)				/*{{{*/
    return true;
 }
 									/*}}}*/
-bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)/*{{{*/
-{
-   return Popen(Args, Fd, Child, Mode, true);
-}
-									/*}}}*/
-bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr)/*{{{*/
-{
-   return Popen(Args, Fd, Child, Mode, CaptureStderr, false);
-}
-									/*}}}*/
 bool Popen(const char *Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr, bool Sandbox) /*{{{*/
 {
    int fd;

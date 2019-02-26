@@ -279,9 +279,7 @@ std::vector<std::string> Glob(std::string const &pattern, int flags=0);
  * \param Sandbox True if this should run sandboxed
  * \return true on success, false on failure with _error set
  */
-bool Popen(const char *Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr, bool Sandbox) APT_HIDDEN;
-bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr);
-bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode);
+bool Popen(const char *Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr = true, bool Sandbox = false);
 
 APT_HIDDEN bool OpenConfigurationFileFd(std::string const &File, FileFd &Fd);
 
