@@ -819,17 +819,13 @@ class pkgAcquireStatus
     *  success it will print for each change the message attached to it via GlobalError either as an
     *  error (if DefaultAction == false) or as a notice otherwise.
     *
-    *  \b Note: To keep ABI compatibility for now this method isn't marked as
-    *  virtual, but you can derive your class from #pkgAcquireStatus2 which has it
-    *  marked as virtual. TODO on next ABI break: merge both classes.
-    *
     *  @param LastRelease can be used to extract further information from the previous Release file
     *  @param CurrentRelease can be used to extract further information from the current Release file
     *  @param Changes is an array of changes alongside explanatory messages
     *                 which should be presented in some way to the user.
     *  @return \b true if all changes are accepted by user, otherwise or if user can't be asked \b false
     */
-   bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes);
+   virtual bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes);
    APT_HIDDEN static bool ReleaseInfoChangesAsGlobalErrors(std::vector<ReleaseInfoChange> &&Changes);
 
    /** \brief Invoked when an item is confirmed to be up-to-date.
@@ -871,14 +867,6 @@ class pkgAcquireStatus
    /** \brief Initialize all counters to 0 and the time to the current time. */
    pkgAcquireStatus();
    virtual ~pkgAcquireStatus();
-};
-class pkgAcquireStatus2: public pkgAcquireStatus
-{
-public:
-   virtual bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes);
-
-   pkgAcquireStatus2();
-   virtual ~pkgAcquireStatus2();
 };
 									/*}}}*/
 /** @} */

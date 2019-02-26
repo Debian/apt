@@ -1444,9 +1444,8 @@ void pkgAcquireStatus::Fetched(unsigned long long Size,unsigned long long Resume
 									/*}}}*/
 bool pkgAcquireStatus::ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes)/*{{{*/
 {
-   auto const virt = dynamic_cast<pkgAcquireStatus2*>(this);
-   if (virt != nullptr)
-      return virt->ReleaseInfoChanges(LastRelease, CurrentRelease, std::move(Changes));
+   (void) LastRelease;
+   (void) CurrentRelease;
    return ReleaseInfoChangesAsGlobalErrors(std::move(Changes));
 }
 									/*}}}*/
@@ -1464,12 +1463,6 @@ bool pkgAcquireStatus::ReleaseInfoChangesAsGlobalErrors(std::vector<ReleaseInfoC
    return AllOkay;
 }
 									/*}}}*/
-bool pkgAcquireStatus2::ReleaseInfoChanges(metaIndex const * const, metaIndex const * const, std::vector<ReleaseInfoChange> &&Changes)
-{
-   return ReleaseInfoChangesAsGlobalErrors(std::move(Changes));
-}
-pkgAcquireStatus2::pkgAcquireStatus2() : pkgAcquireStatus() {}
-pkgAcquireStatus2::~pkgAcquireStatus2() {}
 
 
 pkgAcquire::UriIterator::UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), CurItem(0)

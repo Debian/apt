@@ -15,7 +15,7 @@
 #include <iostream>
 #include <string>
 
-class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus2
+class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus
 {
    std::ostream &out;
    unsigned int &ScreenWidth;
