@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'foo' 'all' '1'
+
+buildaptarchive
+setupdistsaptarchive
+
+for RELEASE in $(find aptarchive -name 'Release'); do
+	# note the missing --armor
+	dosigning "keys/joesixpack" --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
+done
+
+testfailure apt show foo
+testfailure aptget update
+testsuccess grep 'W: .* Detached signature file .* is in unsupported binary format' rootdir/tmp/testfailure.output
+testfailure apt show foo
