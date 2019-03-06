@@ -139,7 +139,7 @@ bool DoUpdate(CommandLine &CmdL)
       else
          ioprintf(c1out, msg, upgradable);
 
-      RunScripts("APT::Update-Post-Invoke-Stats");
+      RunScripts("APT::Update::Post-Invoke-Stats");
    }
 
    return true;
