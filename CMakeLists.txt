@@ -237,6 +237,7 @@ endif()
 # Create our directories.
 install_empty_directories(
   ${CONF_DIR}/apt.conf.d
+  ${CONF_DIR}/auth.conf.d
   ${CONF_DIR}/preferences.d
   ${CONF_DIR}/sources.list.d
   ${CONF_DIR}/trusted.gpg.d
