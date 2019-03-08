@@ -4,19 +4,21 @@
 # Matt Bonner <mateubonet@yahoo.com>, 2003.
 # Jordi Mallach <jordi@debian.org>, 2004, 2005, 2006, 2008, 2009, 2011, 2012.
 # Agustí Grau <fletxa@gmail.com>, 2010.
+# Oriol Debian <oriol.debian@gmail.com>, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.9.7.6\n"
+"Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-03-01 11:47+0000\n"
-"PO-Revision-Date: 2012-10-19 13:30+0200\n"
-"Last-Translator: Jordi Mallach <jordi@debian.org>\n"
+"POT-Creation-Date: 2019-03-08 15:58+0000\n"
+"PO-Revision-Date: 2016-12-05 21:09+0100\n"
+"Last-Translator: Oriol Debian <oriol.debian@gmail.com>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 2.0\n"
 
 #: cmdline/apt-cache.cc:149
 #, c-format
@@ -138,7 +140,7 @@ msgstr "(no trobat)"
 
 #: cmdline/apt-cache.cc:1586
 msgid "  Installed: "
-msgstr "  Instaŀlat: "
+msgstr "  Instal·lat: "
 
 #: cmdline/apt-cache.cc:1587
 msgid "  Candidate: "
@@ -260,6 +262,11 @@ msgid ""
 "See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
 "mount point."
 msgstr ""
+"No s'ha pogut detectar cap CD-ROM automàticament o mitjançant el punt de "
+"muntatge predeterminat.\n"
+"Pot intentar l'opció --cdrom per establir el punt de muntatge del CD-ROM.\n"
+"Vegi «man apt-cdrom» para més informació sobre l'autodetecció i el punt de "
+"muntatge del CD-ROM."
 
 #: cmdline/apt-cdrom.cc:182
 msgid "Repeat this process for the rest of the CDs in your set."
@@ -298,19 +305,19 @@ msgstr ""
 "  -o=? Estableix una opció de conf arbitrària, p. ex. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-get.cc:244
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package for architecture '%s'"
-msgstr "No s'ha pogut trobar el paquet a través de l'expressió regular «%s»"
+msgstr "No s'ha pogut trobar el paquet per l'arquitectura «%s»"
 
 #: cmdline/apt-get.cc:326
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package '%s' with version '%s'"
-msgstr "No s'ha pogut trobar el paquet a través de l'expressió regular «%s»"
+msgstr "No s'ha pogut trobar el paquet «%s» amb versió «%s»"
 
 #: cmdline/apt-get.cc:329
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package '%s' with release '%s'"
-msgstr "No s'ha pogut trobar el paquet a través de l'expressió regular «%s»"
+msgstr "No s'ha pogut trobar el paquet «%s» amb publicació «%s»"
 
 #: cmdline/apt-get.cc:366
 #, c-format
@@ -318,9 +325,9 @@ msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "S'està agafant «%s» com a paquet font en lloc de '%s'\n"
 
 #: cmdline/apt-get.cc:422
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find version '%s' of package '%s'"
-msgstr "Descarta la versió «%s» no disponible del paquet «%s»"
+msgstr "No s'ha pogut trobar la versió «%s» del paquet «%s»"
 
 #: cmdline/apt-get.cc:453
 #, c-format
@@ -330,12 +337,12 @@ msgstr "No s'ha pogut trobar el paquet %s"
 #: cmdline/apt-get.cc:458 cmdline/apt-mark.cc:81
 #, c-format
 msgid "%s set to manually installed.\n"
-msgstr "S'ha marcat %s com instaŀlat manualment.\n"
+msgstr "S'ha marcat %s com instal·lat manualment.\n"
 
 #: cmdline/apt-get.cc:460 cmdline/apt-mark.cc:83
 #, c-format
 msgid "%s set to automatically installed.\n"
-msgstr "S'ha marcat %s com instaŀlat automàticament.\n"
+msgstr "S'ha marcat %s com instal·lat automàticament.\n"
 
 #: cmdline/apt-get.cc:468 cmdline/apt-mark.cc:127
 msgid ""
@@ -442,7 +449,7 @@ msgstr "L'ordre de desempaquetar «%s» ha fallat.\n"
 #: cmdline/apt-get.cc:962
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Comproveu si el paquet «dpkgdev» està instaŀlat.\n"
+msgstr "Comproveu si el paquet «dpkgdev» està instal·lat.\n"
 
 #: cmdline/apt-get.cc:990
 #, c-format
@@ -638,13 +645,12 @@ msgstr ""
 "                       Aquest APT té superpoders bovins.\n"
 
 #: cmdline/apt-helper.cc:35
-#, fuzzy
 msgid "Must specify at least one pair url/filename"
-msgstr "Haureu d'especificar un paquet de codi font per a baixar"
+msgstr "Haureu d'especificar com a mínim un parell de url/nom_de_fitxer"
 
 #: cmdline/apt-helper.cc:52
 msgid "Download Failed"
-msgstr ""
+msgstr "Ha fallat la baixada"
 
 #: cmdline/apt-helper.cc:65
 msgid ""
@@ -662,17 +668,17 @@ msgstr ""
 #: cmdline/apt-mark.cc:68
 #, c-format
 msgid "%s can not be marked as it is not installed.\n"
-msgstr "%s no es pot marcar perquè no està instaŀlat.\n"
+msgstr "%s no es pot marcar perquè no està instal·lat.\n"
 
 #: cmdline/apt-mark.cc:74
 #, c-format
 msgid "%s was already set to manually installed.\n"
-msgstr "%s ja estava marcat com instaŀlat manualment.\n"
+msgstr "%s ja estava marcat com instal·lat manualment.\n"
 
 #: cmdline/apt-mark.cc:76
 #, c-format
 msgid "%s was already set to automatically installed.\n"
-msgstr "%s ja estava marcat com instaŀlat automàticament.\n"
+msgstr "%s ja estava marcat com instal·lat automàticament.\n"
 
 #: cmdline/apt-mark.cc:241
 #, c-format
@@ -836,7 +842,7 @@ msgstr ""
 #: methods/ftp.cc:280
 #, c-format
 msgid "Login script command '%s' failed, server said: %s"
-msgstr "L'ordre «%s» de l'script d'accés ha fallat, el servidor ha dit: %s"
+msgstr "L'ordre «%s» del guió d'accés ha fallat, el servidor ha dit: %s"
 
 #: methods/ftp.cc:306
 #, c-format
@@ -1002,9 +1008,9 @@ msgid "Temporary failure resolving '%s'"
 msgstr "S'ha produït un error temporal en resoldre «%s»"
 
 #: methods/connect.cc:209
-#, fuzzy, c-format
+#, c-format
 msgid "System error resolving '%s:%s'"
-msgstr "Ha passat alguna cosa estranya en resoldre «%s:%s» (%i - %s)"
+msgstr "Hi ha hagut un error de sistema en resoldre «%s:%s»"
 
 #: methods/connect.cc:211
 #, c-format
@@ -1021,7 +1027,7 @@ msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 "Error intern: La signatura és correcta, però no s'ha pogut determinar "
-"l'emprempta digital de la clau!"
+"l'empremta digital de la clau!"
 
 #: methods/gpgv.cc:172
 msgid "At least one invalid signature was encountered."
@@ -1040,6 +1046,8 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
+"El fitxer signat en clar no és vàlid, s'ha obtingut «%s». Comprovi si la "
+"xarxa requereix autenticació."
 
 #: methods/gpgv.cc:184
 msgid "Unknown error executing gpgv"
@@ -1132,7 +1140,7 @@ msgstr "Error intern"
 
 #: apt-private/private-list.cc:131
 msgid "Listing"
-msgstr ""
+msgstr "Llistant"
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1243,7 +1251,7 @@ msgstr "No es poden corregir els paquets que falten."
 
 #: apt-private/private-install.cc:331
 msgid "Aborting install."
-msgstr "S'està avortant la instaŀlació."
+msgstr "S'està avortant la instal·lació."
 
 #: apt-private/private-install.cc:367
 msgid ""
@@ -1256,7 +1264,7 @@ msgstr[0] ""
 "El següent paquet ha desaparegut del vostre sistema ja\n"
 "que tots els fitxers s'han sobreescrit per altres paquets:"
 msgstr[1] ""
-"Els següents paquets han desaparegut del vostre sistema ja\n"
+"El següents paquets han desaparegut del vostre sistema ja\n"
 "que tots els fitxers s'han sobreescrit per altres paquets:"
 
 #: apt-private/private-install.cc:371
@@ -1302,9 +1310,9 @@ msgid_plural ""
 "The following packages were automatically installed and are no longer "
 "required:"
 msgstr[0] ""
-"El paquet següent s'ha instaŀlat automàticament i ja no serà necessari:"
+"El paquet següent s'ha instal·lat automàticament i ja no serà necessari:"
 msgstr[1] ""
-"Els paquets següents s'han instaŀlat automàticament i ja no són necessaris:"
+"El paquets següents s'han instal·lat automàticament i ja no serà necessaris:"
 
 #: apt-private/private-install.cc:521
 #, c-format
@@ -1312,9 +1320,9 @@ msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] ""
-"El paquet %lu es va instaŀlar automàticament i ja no és necessari:\n"
+"El paquet %lu es va instal·lar automàticament i ja no és necessari:\n"
 msgstr[1] ""
-"Els paquets %lu es van s'instaŀlar automàticament i ja no són necessaris:\n"
+"Els paquets %lu es van instal·lar automàticament i ja no són necessaris:\n"
 
 #: apt-private/private-install.cc:523
 msgid "Use 'apt-get autoremove' to remove it."
@@ -1341,7 +1349,7 @@ msgid ""
 "distribution that some required packages have not yet been created\n"
 "or been moved out of Incoming."
 msgstr ""
-"No s'han pogut instaŀlar alguns paquets. Això pot ser degut a que heu\n"
+"No s'han pogut instal·lar alguns paquets. Això pot ser degut a que heu\n"
 "demanat una situació impossible o que esteu emprant la distribució\n"
 "«unstable» i alguns paquets requerits encara no han estat creats o bé\n"
 "encara no els hi han introduït des d'«Incoming»."
@@ -1376,7 +1384,7 @@ msgstr "No s'ha pogut autenticar alguns paquets"
 
 #: apt-private/private-download.cc:50
 msgid "Install these packages without verification?"
-msgstr "Voleu instaŀlar aquests paquets sense verificar-los?"
+msgstr "Voleu instal·lar aquests paquets sense verificar-los?"
 
 #: apt-private/private-download.cc:91 apt-pkg/update.cc:77
 #, c-format
@@ -1386,40 +1394,37 @@ msgstr "No s'ha pogut obtenir %s  %s\n"
 #: apt-private/private-output.cc:81 apt-private/private-show.cc:84
 #: apt-private/private-show.cc:89
 msgid "unknown"
-msgstr ""
+msgstr "desconegut"
 
 #: apt-private/private-output.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "[installed,upgradable to: %s]"
-msgstr " [Instaŀlat]"
+msgstr "[Instal·lat, actualitzable a: %s]"
 
 #: apt-private/private-output.cc:211
-#, fuzzy
 msgid "[installed,local]"
-msgstr " [Instaŀlat]"
+msgstr "[instal·lat,local]"
 
 #: apt-private/private-output.cc:214
 msgid "[installed,auto-removable]"
-msgstr ""
+msgstr "[instal·lat, auto-eliminable]"
 
 #: apt-private/private-output.cc:216
-#, fuzzy
 msgid "[installed,automatic]"
-msgstr " [Instaŀlat]"
+msgstr "[instal·lat,automàtic]"
 
 #: apt-private/private-output.cc:218
-#, fuzzy
 msgid "[installed]"
-msgstr " [Instaŀlat]"
+msgstr "[instal·lat]"
 
 #: apt-private/private-output.cc:222
 #, c-format
 msgid "[upgradable from: %s]"
-msgstr ""
+msgstr "[actualitzable des de: %s]"
 
 #: apt-private/private-output.cc:226
 msgid "[residual-config]"
-msgstr ""
+msgstr "[configuració-residual]"
 
 #: apt-private/private-output.cc:326
 msgid "The following packages have unmet dependencies:"
@@ -1428,16 +1433,16 @@ msgstr "Els següents paquets tenen dependències sense satisfer:"
 #: apt-private/private-output.cc:416
 #, c-format
 msgid "but %s is installed"
-msgstr "però està instaŀlat %s"
+msgstr "però està instal·lat %s"
 
 #: apt-private/private-output.cc:418
 #, c-format
 msgid "but %s is to be installed"
-msgstr "però s'instaŀlarà %s"
+msgstr "però s'instal·larà %s"
 
 #: apt-private/private-output.cc:425
 msgid "but it is not installable"
-msgstr "però no és instaŀlable"
+msgstr "però no és instal·lable"
 
 #: apt-private/private-output.cc:427
 msgid "but it is a virtual package"
@@ -1445,11 +1450,11 @@ msgstr "però és un paquet virtual"
 
 #: apt-private/private-output.cc:430
 msgid "but it is not installed"
-msgstr "però no està instaŀlat"
+msgstr "però no està instal·lat"
 
 #: apt-private/private-output.cc:430
 msgid "but it is not going to be installed"
-msgstr "però no serà instaŀlat"
+msgstr "però no serà instal·lat"
 
 #: apt-private/private-output.cc:435
 msgid " or"
@@ -1457,7 +1462,7 @@ msgstr " o"
 
 #: apt-private/private-output.cc:464
 msgid "The following NEW packages will be installed:"
-msgstr "S'instaŀlaran els paquets NOUS següents:"
+msgstr "S'instal·laran els paquets NOUS següents:"
 
 #: apt-private/private-output.cc:490
 msgid "The following packages will be REMOVED:"
@@ -1495,12 +1500,12 @@ msgstr ""
 #: apt-private/private-output.cc:668
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu actualitzats, %lu nous a instaŀlar, "
+msgstr "%lu actualitzats, %lu nous a instal·lar, "
 
 #: apt-private/private-output.cc:672
 #, c-format
 msgid "%lu reinstalled, "
-msgstr "%lu reinstaŀlats, "
+msgstr "%lu reinstal·lats, "
 
 #: apt-private/private-output.cc:674
 #, c-format
@@ -1515,7 +1520,7 @@ msgstr "%lu a suprimir i %lu no actualitzats.\n"
 #: apt-private/private-output.cc:680
 #, c-format
 msgid "%lu not fully installed or removed.\n"
-msgstr "%lu no instaŀlats o suprimits completament.\n"
+msgstr "%lu no instal·lats o suprimits completament.\n"
 
 #. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
 #. e.g. "Do you want to continue? [Y/n] "
@@ -1578,7 +1583,7 @@ msgstr "Dependències sense satisfer. Proveu-ho emprant -f."
 
 #: apt-private/private-cacheset.cc:35 apt-private/private-search.cc:51
 msgid "Sorting"
-msgstr ""
+msgstr "Ordenant"
 
 #: apt-private/private-update.cc:31
 msgid "The update command takes no arguments"
@@ -1599,19 +1604,20 @@ msgstr "Fet"
 
 #: apt-private/private-search.cc:55
 msgid "Full Text Search"
-msgstr ""
+msgstr "Buscar en tot el text"
 
 #: apt-private/private-show.cc:156
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
 msgid_plural ""
 "There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
+msgstr[0] "Hi ha %i registre addicional. Utilitzi l'opció «-a» per veure'l."
 msgstr[1] ""
+"Hi han %i registres addicionals. Utilitzi l'opció «-a» per veure'ls."
 
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
-msgstr ""
+msgstr "no és un paquet real (virtual)"
 
 #: apt-private/private-main.cc:23
 msgid ""
@@ -1626,14 +1632,14 @@ msgstr ""
 "      per tant, no es depèn de la situació actual real."
 
 #: apt-private/private-sources.cc:58
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to parse %s. Edit again? "
-msgstr "No s'ha pogut canviar el nom de %s a %s"
+msgstr "No s'ha pogut analitzar %s. Vol tornar-lo a editar? "
 
 #: apt-private/private-sources.cc:70
 #, c-format
 msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr ""
+msgstr "El fitxer «%s» ha canviat, executi «apt-get update»."
 
 #: apt-private/acqprogress.cc:66
 msgid "Hit "
@@ -1706,9 +1712,9 @@ msgid "Can not read mirror file '%s'"
 msgstr "No es pot llegir el fitxer rèplica «%s»"
 
 #: methods/mirror.cc:315
-#, fuzzy, c-format
+#, c-format
 msgid "No entry found in mirror file '%s'"
-msgstr "No es pot llegir el fitxer rèplica «%s»"
+msgstr "No s'ha trobat l'entrada en el fitxer de rèplica «%s»"
 
 #: methods/mirror.cc:445
 #, c-format
@@ -1739,7 +1745,8 @@ msgstr "Voleu suprimir els paquets .deb baixats prèviament?"
 #: dselect/install:102
 msgid "Some errors occurred while unpacking. Packages that were installed"
 msgstr ""
-"S'han produït alguns errors en desempaquetar. Els paquets que s'han instaŀlat"
+"S'han produït alguns errors en desempaquetar. Els paquets que s'han "
+"instal·lat"
 
 #: dselect/install:103
 msgid "will be configured. This may result in duplicate errors"
@@ -1756,7 +1763,7 @@ msgid ""
 "above this message are important. Please fix them and run [I]nstall again"
 msgstr ""
 "anteriors a aquest missatge són importants. Corregiu-los i torneu a executar "
-"[I]nstaŀla una altra vegada"
+"[I]nstal·la una altra vegada"
 
 #: dselect/update:30
 msgid "Merging available information"
@@ -1787,9 +1794,9 @@ msgstr ""
 "  -o=? Estableix una opció de conf arbitrària, p.e. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-extracttemplates.cc:254
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to mkstemp %s"
-msgstr "No es pot veure l'estat de %s"
+msgstr "No es pot crear el fitxer temporal %s"
 
 #: cmdline/apt-extracttemplates.cc:259 apt-pkg/pkgcachegen.cc:1402
 #, c-format
@@ -1798,7 +1805,7 @@ msgstr "No es pot escriure en %s"
 
 #: cmdline/apt-extracttemplates.cc:300
 msgid "Cannot get debconf version. Is debconf installed?"
-msgstr "No es pot determinar la versió de debconf. Està instaŀlat debconf?"
+msgstr "No es pot determinar la versió de debconf. Està instal·lat debconf?"
 
 #: ftparchive/apt-ftparchive.cc:180 ftparchive/apt-ftparchive.cc:358
 msgid "Package extension list is too long"
@@ -2048,9 +2055,9 @@ msgstr "No es pot obrir %s"
 #. skip spaces
 #. find end of word
 #: ftparchive/override.cc:68
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu (%s)"
-msgstr "Línia predominant %s malformada %llu núm 1"
+msgstr "Hi ha una sobreescriptura mal formada %s en la línia %llu (%s)"
 
 #: ftparchive/override.cc:127 ftparchive/override.cc:201
 #, c-format
@@ -2222,7 +2229,7 @@ msgstr "DropNode crida a un node que encara està enllaçat"
 
 #: apt-inst/filelist.cc:412
 msgid "Failed to locate the hash element!"
-msgstr "No s'ha trobat l'element diseminat!"
+msgstr "No s'ha trobat l'element disseminat!"
 
 #: apt-inst/filelist.cc:459
 msgid "Failed to allocate diversion"
@@ -2453,7 +2460,7 @@ msgstr "Error sintàctic %s:%u: Hi ha masses fitxers include niats"
 #: apt-pkg/contrib/configuration.cc:888 apt-pkg/contrib/configuration.cc:893
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
-msgstr "Error sintàctic %s:%u: Inclusió des d'aquí"
+msgstr "Error sintàctic %s:%u: Inclòs des d'aquí"
 
 #: apt-pkg/contrib/configuration.cc:897
 #, c-format
@@ -2551,7 +2558,7 @@ msgstr "No s'ha pogut fer «stat» del cdrom"
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr ""
-"No s'empren blocats per a llegir el fitxer de blocat de sols lectura %s"
+"No s'empren bloquejos per a llegir el fitxer de blocat de sols lectura %s"
 
 #: apt-pkg/contrib/fileutl.cc:198
 #, c-format
@@ -2561,7 +2568,7 @@ msgstr "No es pot resoldre el fitxer de blocat %s"
 #: apt-pkg/contrib/fileutl.cc:221
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
-msgstr "No s'empren blocats per al fitxer de blocat %s de muntar nfs"
+msgstr "No s'empren bloquejos per al fitxer de blocat %s de muntar nfs"
 
 #: apt-pkg/contrib/fileutl.cc:226
 #, c-format
@@ -2872,9 +2879,9 @@ msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "El tipus «%s» no és conegut en la línia %u de la llista de fonts %s"
 
 #: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
+#, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "El tipus «%s» no és conegut en la línia %u de la llista de fonts %s"
+msgstr "Es desconeix el tipus «%s» en la línia %u de la llista de fonts %s"
 
 #: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:977
 #, c-format
@@ -2897,7 +2904,7 @@ msgid ""
 "package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
 "you really want to do it, activate the APT::Force-LoopBreak option."
 msgstr ""
-"Aquesta instaŀlació requereix suprimir temporalment el paquet essencial %s "
+"Aquesta instal·lació requereix suprimir temporalment el paquet essencial %s "
 "per qüestió d'un bucle de Conflictes/Pre-dependències. Això sol ser una cosa "
 "dolenta, però si realment desitgeu fer-la, activeu l'opció APT::Force-"
 "LoopBreak."
@@ -2912,7 +2919,7 @@ msgstr "El tipus de fitxer índex «%s» no està suportat"
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
-"El paquet %s necessita ser reinstaŀlat, però no se li pot trobar un arxiu."
+"El paquet %s necessita ser reinstal·lat, però no se li pot trobar un arxiu."
 
 #: apt-pkg/algorithms.cc:1083
 msgid ""
@@ -2961,9 +2968,9 @@ msgid "The method driver %s could not be found."
 msgstr "No s'ha pogut trobar el mètode de control %s."
 
 #: apt-pkg/acquire-worker.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Is the package %s installed?"
-msgstr "Comproveu si el paquet «dpkgdev» està instaŀlat.\n"
+msgstr "Està instal·lat el paquet %s?"
 
 #: apt-pkg/acquire-worker.cc:169
 #, c-format
@@ -3110,9 +3117,8 @@ msgid "Size mismatch"
 msgstr "La mida no concorda"
 
 #: apt-pkg/acquire-item.cc:174
-#, fuzzy
 msgid "Invalid file format"
-msgstr "Operació no vàlida %s"
+msgstr "El format de fitxer no és vàlid"
 
 #: apt-pkg/acquire-item.cc:1633
 #, c-format
@@ -3182,8 +3188,8 @@ msgstr "No es troba una font per baixar la versió «%s» de «%s»"
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
-"L'índex dels fitxers en el paquet està corromput. Fitxer no existent: camp "
-"per al paquet %s."
+"L'índex dels fitxers en el paquet està corromput. El fitxer no existeix: "
+"camp per al paquet %s."
 
 #: apt-pkg/indexrecords.cc:78
 #, c-format
@@ -3251,7 +3257,7 @@ msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and "
 "%zu signatures\n"
 msgstr ""
-"S'han trobat %zu índexos de paquets, %zu índexos de fonts, %zu indexos de "
+"S'han trobat %zu índexos de paquets, %zu índexos de fonts, %zu índex de "
 "traduccions i %zu signatures\n"
 
 #: apt-pkg/cdrom.cc:733
@@ -3345,9 +3351,9 @@ msgid "Couldn't find any package by regex '%s'"
 msgstr "No s'ha pogut trobar el paquet a través de l'expressió regular «%s»"
 
 #: apt-pkg/cacheset.cc:613
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find any package by glob '%s'"
-msgstr "No s'ha pogut trobar el paquet a través de l'expressió regular «%s»"
+msgstr "No s'ha pogut trobar cap paquet a través de l'expressió regular «%s»"
 
 #: apt-pkg/cacheset.cc:624
 #, c-format
@@ -3362,7 +3368,7 @@ msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr ""
-"No s'han pogut seleccionar la versió instaŀlada ni la candidata del paquet "
+"No s'han pogut seleccionar la versió instal·lada ni la candidata del paquet "
 "«%s» ja que no estan disponibles cap de les dues"
 
 #: apt-pkg/cacheset.cc:645
@@ -3383,8 +3389,8 @@ msgstr ""
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
-"No s'ha pogut seleccionar la versió instaŀlada del paquet %s ja que no està "
-"instaŀlada"
+"No s'ha pogut seleccionar la versió instal·lada del paquet %s ja que no està "
+"instal·lada"
 
 #: apt-pkg/edsp.cc:50 apt-pkg/edsp.cc:70
 msgid "Send scenario to solver"
@@ -3426,7 +3432,7 @@ msgstr ""
 #: apt-pkg/deb/dpkgpm.cc:95
 #, c-format
 msgid "Installing %s"
-msgstr "S'està instaŀlant %s"
+msgstr "S'està instal·lant %s"
 
 #: apt-pkg/deb/dpkgpm.cc:96 apt-pkg/deb/dpkgpm.cc:996
 #, c-format
@@ -3451,7 +3457,7 @@ msgstr "S'està anotant la desaparició de %s"
 #: apt-pkg/deb/dpkgpm.cc:100
 #, c-format
 msgid "Running post-installation trigger %s"
-msgstr "S'està executant l'activador de postinstaŀlació %s"
+msgstr "S'està executant l'activador de postinstal·lació %s"
 
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc:827
@@ -3482,7 +3488,7 @@ msgstr "S'està preparant per a configurar el paquet %s"
 #: apt-pkg/deb/dpkgpm.cc:997
 #, c-format
 msgid "Installed %s"
-msgstr "S'ha instaŀlat el paquet %s"
+msgstr "S'ha instal·lat el paquet %s"
 
 #: apt-pkg/deb/dpkgpm.cc:1002
 #, c-format
@@ -3509,13 +3515,13 @@ msgid "ioctl(TIOCGWINSZ) failed"
 msgstr ""
 
 #: apt-pkg/deb/dpkgpm.cc:1068 apt-pkg/deb/dpkgpm.cc:1089
-#, fuzzy, c-format
+#, c-format
 msgid "Can not write log (%s)"
-msgstr "No es pot escriure en %s"
+msgstr "No es pot escriure en el fitxer de registre (%s)"
 
 #: apt-pkg/deb/dpkgpm.cc:1068
 msgid "Is /dev/pts mounted?"
-msgstr ""
+msgstr "Comprovi que «/dev/pts» està muntat"
 
 #: apt-pkg/deb/dpkgpm.cc:1089
 msgid "Is stdout a terminal?"
@@ -3540,7 +3546,7 @@ msgid ""
 "error from a previous failure."
 msgstr ""
 "No s'ha escrit cap informe perquè el missatge d'error indica que és un error "
-"consequent de una fallida anterior."
+"de seguiment de una fallida anterior."
 
 #: apt-pkg/deb/dpkgpm.cc:1642
 msgid ""
@@ -3559,13 +3565,12 @@ msgstr ""
 "falta de memòria"
 
 #: apt-pkg/deb/dpkgpm.cc:1656 apt-pkg/deb/dpkgpm.cc:1662
-#, fuzzy
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
 msgstr ""
-"No s'ha escrit cap informe perquè el missatge d'error indica una fallida per "
-"disc ple"
+"No s'ha escrit cap informe perquè el missatge d'error indica una fallida en "
+"el sistema local"
 
 #: apt-pkg/deb/dpkgpm.cc:1684
 msgid ""

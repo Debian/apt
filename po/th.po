@@ -1,16 +1,16 @@
 # Thai translation of apt.
-# Copyright (C) 2007-2012 Free Software Foundation, Inc.
+# Copyright (C) 2007-2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the apt package.
-# Theppiak Karoonboonyanan <thep@linux.thai.net>, 2007-2008, 2012.
+# Theppiak Karoonboonyanan <thep@debian.org>, 2007-2008, 2012, 2014.
 # Arthit Suriyawongkul <arthit@gmail.com>, 2008.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt\n"
+"Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-03-01 11:47+0000\n"
-"PO-Revision-Date: 2012-10-27 22:44+0700\n"
-"Last-Translator: Theppitak Karoonboonyanan <thep@linux.thai.net>\n"
+"POT-Creation-Date: 2019-03-08 15:58+0000\n"
+"PO-Revision-Date: 2014-12-12 13:00+0700\n"
+"Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
 "Language: th\n"
 "MIME-Version: 1.0\n"
@@ -254,6 +254,9 @@ msgid ""
 "See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
 "mount point."
 msgstr ""
+"การตรวจซีดีรอมอัตโนมัติไม่พบซีดีรอมใดที่จุดเมานท์ปริยาย\n"
+"คุณอาจลองใช้ตัวเลือก --cdrom เพื่อกำหนดจุดเมานท์ของซีดีรอมได้\n"
+"อ่านข้อมูลเพิ่มเติมเกี่ยวกับการตรวจซีดีรอมอัตโนมัติและจุดเมานท์ได้จาก 'man apt-cdrom'"
 
 #: cmdline/apt-cdrom.cc:182
 msgid "Repeat this process for the rest of the CDs in your set."
@@ -292,19 +295,19 @@ msgstr ""
 "  -o=? กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
 
 #: cmdline/apt-get.cc:244
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package for architecture '%s'"
-msgstr "ไม่พบแพกเกจที่ตรงกับนิพจน์เรกิวลาร์ '%s'"
+msgstr "ไม่พบแพกเกจสำหรับสถาปัตยกรรม '%s'"
 
 #: cmdline/apt-get.cc:326
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package '%s' with version '%s'"
-msgstr "ไม่พบแพกเกจที่ตรงกับนิพจน์เรกิวลาร์ '%s'"
+msgstr "ไม่พบแพกเกจ '%s' ที่มีรุ่นเป็น '%s'"
 
 #: cmdline/apt-get.cc:329
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package '%s' with release '%s'"
-msgstr "ไม่พบแพกเกจที่ตรงกับนิพจน์เรกิวลาร์ '%s'"
+msgstr "ไม่พบแพกเกจ '%s' ที่มีชุดจัดแจกเป็น '%s'"
 
 #: cmdline/apt-get.cc:366
 #, c-format
@@ -312,9 +315,9 @@ msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "จะเลือก '%s' เป็นแพกเกจซอร์สแทน '%s'\n"
 
 #: cmdline/apt-get.cc:422
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find version '%s' of package '%s'"
-msgstr "จะละเลยรุ่น '%s' ที่ไม่มีอยู่ของแพกเกจ '%s'"
+msgstr "ไม่พบรุ่น '%s' ของแพกเกจ '%s'"
 
 #: cmdline/apt-get.cc:453
 #, c-format
@@ -610,13 +613,12 @@ msgstr ""
 "                       APT นี้มีพลังของ Super Cow\n"
 
 #: cmdline/apt-helper.cc:35
-#, fuzzy
 msgid "Must specify at least one pair url/filename"
-msgstr "ต้องระบุแพกเกจอย่างน้อยหนึ่งแพกเกจที่จะดาวน์โหลดซอร์สโค้ด"
+msgstr "ต้องระบุคู่ URL, ชื่อแฟ้ม อย่างน้อยหนึ่งคู่"
 
 #: cmdline/apt-helper.cc:52
 msgid "Download Failed"
-msgstr ""
+msgstr "ดาวน์โหลดไม่สำเร็จ"
 
 #: cmdline/apt-helper.cc:65
 msgid ""
@@ -985,12 +987,12 @@ msgstr "ไม่สามารถเปิดหาที่อยู่ '%s'"
 #: methods/connect.cc:205
 #, c-format
 msgid "Temporary failure resolving '%s'"
-msgstr "เกิดข้อผิดพลาดชั่วคราวขณะเปิดหาที่อยู่ '%s'"
+msgstr "เกิดความล้มเหลวชั่วคราวขณะเปิดหาที่อยู่ '%s'"
 
 #: methods/connect.cc:209
-#, fuzzy, c-format
+#, c-format
 msgid "System error resolving '%s:%s'"
-msgstr "เกิดปัญหาร้ายแรงบางอย่างขณะเปิดหาที่อยู่ '%s:%s' (%i - %s)"
+msgstr "เกิดข้อผิดพลาดในระบบขณะเปิดหาที่อยู่ '%s:%s'"
 
 #: methods/connect.cc:211
 #, c-format
@@ -1022,6 +1024,8 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
+"แฟ้มที่เซ็นกำกับครอบข้อความมีเนื้อหาไม่ถูกต้อง ได้รับผลลัพธ์ "
+"'%s' (เครือข่ายต้องยืนยันตัวบุคคลหรือไม่?)"
 
 #: methods/gpgv.cc:184
 msgid "Unknown error executing gpgv"
@@ -1111,7 +1115,7 @@ msgstr "ข้อผิดพลาดภายใน"
 
 #: apt-private/private-list.cc:131
 msgid "Listing"
-msgstr ""
+msgstr "กำลังแสดงรายชื่อ"
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1347,40 +1351,37 @@ msgstr "ไม่สามารถดาวน์โหลด %s  %s\n"
 #: apt-private/private-output.cc:81 apt-private/private-show.cc:84
 #: apt-private/private-show.cc:89
 msgid "unknown"
-msgstr ""
+msgstr "ไม่ทราบ"
 
 #: apt-private/private-output.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "[installed,upgradable to: %s]"
-msgstr " [ติดตั้งอยู่]"
+msgstr "[ติดตั้งอยู่,สามารถปรับรุ่นเป็น: %s]"
 
 #: apt-private/private-output.cc:211
-#, fuzzy
 msgid "[installed,local]"
-msgstr " [ติดตั้งอยู่]"
+msgstr "[ติดตั้งอยู่,ในเครื่อง]"
 
 #: apt-private/private-output.cc:214
 msgid "[installed,auto-removable]"
-msgstr ""
+msgstr "[ติดตั้งอยู่,ถอดถอนอัตโนมัติได้]"
 
 #: apt-private/private-output.cc:216
-#, fuzzy
 msgid "[installed,automatic]"
-msgstr " [ติดตั้งอยู่]"
+msgstr "[ติดตั้งอยู่,อัตโนมัติ]"
 
 #: apt-private/private-output.cc:218
-#, fuzzy
 msgid "[installed]"
-msgstr " [ติดตั้งอยู่]"
+msgstr "[ติดตั้งอยู่]"
 
 #: apt-private/private-output.cc:222
 #, c-format
 msgid "[upgradable from: %s]"
-msgstr ""
+msgstr "[สามารถปรับรุ่นจาก: %s]"
 
 #: apt-private/private-output.cc:226
 msgid "[residual-config]"
-msgstr ""
+msgstr "[ค่าตั้งตกค้าง]"
 
 #: apt-private/private-output.cc:326
 msgid "The following packages have unmet dependencies:"
@@ -1406,7 +1407,7 @@ msgstr "แต่แพกเกจนี้เป็นแพกเกจเส
 
 #: apt-private/private-output.cc:430
 msgid "but it is not installed"
-msgstr "แต่ได้ติดตั้งไว้"
+msgstr "แต่ไม่ได้ติดตั้งไว้"
 
 #: apt-private/private-output.cc:430
 msgid "but it is not going to be installed"
@@ -1484,7 +1485,7 @@ msgstr "ติดตั้งหรือถอดถอนไม่ครบ %l
 #. YESEXPR/NOEXPR defined in your l10n.
 #: apt-private/private-output.cc:702
 msgid "[Y/n]"
-msgstr ""
+msgstr "[Y/n]"
 
 #. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
 #. e.g. "Should this file be removed? [y/N] "
@@ -1492,17 +1493,17 @@ msgstr ""
 #. YESEXPR/NOEXPR defined in your l10n.
 #: apt-private/private-output.cc:708
 msgid "[y/N]"
-msgstr ""
+msgstr "[y/N]"
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
 #: apt-private/private-output.cc:719
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
 #: apt-private/private-output.cc:725
 msgid "N"
-msgstr ""
+msgstr "N"
 
 #: apt-private/private-output.cc:747 apt-pkg/cachefilter.cc:35
 #, c-format
@@ -1539,7 +1540,7 @@ msgstr "รายการแพกเกจที่ต้องใช้ไม
 
 #: apt-private/private-cacheset.cc:35 apt-private/private-search.cc:51
 msgid "Sorting"
-msgstr ""
+msgstr "กำลังเรียงลำดับ"
 
 #: apt-private/private-update.cc:31
 msgid "The update command takes no arguments"
@@ -1550,9 +1551,8 @@ msgid "Calculating upgrade... "
 msgstr "กำลังคำนวณการปรับรุ่น... "
 
 #: apt-private/private-upgrade.cc:30
-#, fuzzy
 msgid "Internal error, Upgrade broke stuff"
-msgstr "เกิดข้อผิดพลาดภายใน: AllUpgrade ทำความเสียหาย"
+msgstr "เกิดข้อผิดพลาดภายใน: การปรับรุ่นทำความเสียหาย"
 
 #: apt-private/private-upgrade.cc:32
 msgid "Done"
@@ -1560,18 +1560,18 @@ msgstr "เสร็จแล้ว"
 
 #: apt-private/private-search.cc:55
 msgid "Full Text Search"
-msgstr ""
+msgstr "ค้นทั่วทั้งเนื้อความ"
 
 #: apt-private/private-show.cc:156
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
 msgid_plural ""
 "There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
+msgstr[0] "มีอีก %i ระเบียน กรุณาใช้ตัวเลือก '-a' หากต้องการดูเพิ่ม"
 
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
-msgstr ""
+msgstr "ไม่ใช่แพกเกจจริง (เสมือน)"
 
 #: apt-private/private-main.cc:23
 msgid ""
@@ -1586,14 +1586,14 @@ msgstr ""
 "         ดังนั้น อย่าถือผลลัพธ์นี้ว่าตรงกับสภาพความเป็นจริงของระบบ!"
 
 #: apt-private/private-sources.cc:58
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to parse %s. Edit again? "
-msgstr "ไม่สามารถเปลี่ยนชื่อ %s ไปเป็น %s"
+msgstr "แจง %s ไม่สำเร็จ จะแก้ไขอีกครั้งหรือไม่? "
 
 #: apt-private/private-sources.cc:70
 #, c-format
 msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr ""
+msgstr "แฟ้ม '%s' ของคุณมีการเปลี่ยนแปลง กรุณาเรียก 'apt-get update'"
 
 #: apt-private/acqprogress.cc:66
 msgid "Hit "
@@ -1666,9 +1666,9 @@ msgid "Can not read mirror file '%s'"
 msgstr "ไม่สามารถอ่านแฟ้มแหล่งสำเนา '%s'"
 
 #: methods/mirror.cc:315
-#, fuzzy, c-format
+#, c-format
 msgid "No entry found in mirror file '%s'"
-msgstr "ไม่สามารถอ่านแฟ้มแหล่งสำเนา '%s'"
+msgstr "ไม่พบรายการในแฟ้มแหล่งสำเนา '%s'"
 
 #: methods/mirror.cc:445
 #, c-format
@@ -1742,9 +1742,9 @@ msgstr ""
 "  -o=?  กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
 
 #: cmdline/apt-extracttemplates.cc:254
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to mkstemp %s"
-msgstr "ไม่สามารถ stat %s"
+msgstr "ไม่สามารถ mkstemp %s"
 
 #: cmdline/apt-extracttemplates.cc:259 apt-pkg/pkgcachegen.cc:1402
 #, c-format
@@ -1997,9 +1997,9 @@ msgstr "ไม่สามารถเปิด %s"
 #. skip spaces
 #. find end of word
 #: ftparchive/override.cc:68
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu (%s)"
-msgstr "แฟ้ม override %s ผิดรูปแบบที่บรรทัด %llu #1"
+msgstr "แฟ้ม override %s ผิดรูปแบบที่บรรทัด %llu (%s)"
 
 #: ftparchive/override.cc:127 ftparchive/override.cc:201
 #, c-format
@@ -2175,7 +2175,7 @@ msgstr "หาสมาชิกในตารางแฮชไม่สำเ
 
 #: apt-inst/filelist.cc:459
 msgid "Failed to allocate diversion"
-msgstr "จองเนื้อที่สำหรับ diversion ไม่สำเร็จ"
+msgstr "จองเนื้อที่สำหรับการเบนแฟ้มไม่สำเร็จ"
 
 #: apt-inst/filelist.cc:464
 msgid "Internal error in AddDiversion"
@@ -2184,12 +2184,12 @@ msgstr "ข้อผิดพลาดภายในที่ AddDiversion"
 #: apt-inst/filelist.cc:477
 #, c-format
 msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
-msgstr "พยายามเขียนทับ diversion: %s -> %s กับ %s/%s"
+msgstr "พยายามเขียนทับการเบนแฟ้ม: %s -> %s กับ %s/%s"
 
 #: apt-inst/filelist.cc:506
 #, c-format
 msgid "Double add of diversion %s -> %s"
-msgstr "เพิ่ม diversion %s -> %s ซ้ำสอง"
+msgstr "เพิ่มการเบนแฟ้ม %s -> %s ซ้ำสอง"
 
 #: apt-inst/filelist.cc:549
 #, c-format
@@ -2224,11 +2224,11 @@ msgstr "ไดเรกทอรี %s ถูก divert"
 #: apt-inst/extract.cc:152
 #, c-format
 msgid "The package is trying to write to the diversion target %s/%s"
-msgstr "แพกเกจนี้พยายามเขียนลงปลายทางของ diversion %s/%s"
+msgstr "แพกเกจนี้พยายามเขียนลงปลายทางของการเบนแฟ้ม %s/%s"
 
 #: apt-inst/extract.cc:162 apt-inst/extract.cc:306
 msgid "The diversion path is too long"
-msgstr "พาธของ diversion ยาวเกินไป"
+msgstr "พาธของการเบนแฟ้มยาวเกินไป"
 
 #: apt-inst/extract.cc:249
 #, c-format
@@ -2427,13 +2427,13 @@ msgstr "%c%s... เสร็จแล้ว"
 
 #: apt-pkg/contrib/progress.cc:181
 msgid "..."
-msgstr ""
+msgstr "..."
 
 #. Print the spinner
 #: apt-pkg/contrib/progress.cc:197
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... %u%%"
-msgstr "%c%s... เสร็จแล้ว"
+msgstr "%c%s... %u%%"
 
 #: apt-pkg/contrib/cmndline.cc:121
 #, c-format
@@ -2732,9 +2732,9 @@ msgid "Unable to parse package file %s (2)"
 msgstr "ไม่สามารถแจงแฟ้มแพกเกจ %s (2)"
 
 #: apt-pkg/sourcelist.cc:127
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "บรรทัด %lu ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (ขณะแจง URI)"
+msgstr "วรรคที่ %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s ผิดรูปแบบ (ขณะแจง URI)"
 
 #: apt-pkg/sourcelist.cc:170
 #, c-format
@@ -2807,9 +2807,9 @@ msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "ไม่รู้จักชนิด '%s' ที่บรรทัด %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s"
 
 #: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
+#, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "ไม่รู้จักชนิด '%s' ที่บรรทัด %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s"
+msgstr "ไม่รู้จักชนิด '%s' ที่วรรคที่ %u ในแฟ้มรายชื่อแหล่งแพกเกจ %s"
 
 #: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:977
 #, c-format
@@ -2893,9 +2893,9 @@ msgid "The method driver %s could not be found."
 msgstr "ไม่พบไดรเวอร์สำหรับวิธีการ %s"
 
 #: apt-pkg/acquire-worker.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Is the package %s installed?"
-msgstr "กรุณาตรวจสอบว่าได้ติดตั้งแพกเกจ 'dpkg-dev' แล้ว\n"
+msgstr "ได้ติดตั้งแพกเกจ %s ไว้หรือไม่?"
 
 #: apt-pkg/acquire-worker.cc:169
 #, c-format
@@ -3031,9 +3031,8 @@ msgid "Size mismatch"
 msgstr "ขนาดไม่ตรงกัน"
 
 #: apt-pkg/acquire-item.cc:174
-#, fuzzy
 msgid "Invalid file format"
-msgstr "ไม่รู้จักคำสั่ง %s"
+msgstr "รูปแบบของแฟ้มไม่ถูกต้อง"
 
 #: apt-pkg/acquire-item.cc:1633
 #, c-format
@@ -3256,9 +3255,9 @@ msgid "Couldn't find any package by regex '%s'"
 msgstr "ไม่พบแพกเกจที่ตรงกับนิพจน์เรกิวลาร์ '%s'"
 
 #: apt-pkg/cacheset.cc:613
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find any package by glob '%s'"
-msgstr "ไม่พบแพกเกจที่ตรงกับนิพจน์เรกิวลาร์ '%s'"
+msgstr "ไม่พบแพกเกจที่ตรงกับ glob '%s'"
 
 #: apt-pkg/cacheset.cc:624
 #, c-format
@@ -3311,7 +3310,7 @@ msgstr "เรียกกลไกการแก้ปัญหาภายน
 #: apt-pkg/install-progress.cc:57
 #, c-format
 msgid "Progress: [%3i%%]"
-msgstr ""
+msgstr "ความคืบหน้า: [%3i%%]"
 
 #: apt-pkg/install-progress.cc:91 apt-pkg/install-progress.cc:174
 msgid "Running dpkg"
@@ -3406,20 +3405,20 @@ msgstr "ถอดถอน %s อย่างสมบูรณ์แล้ว"
 
 #: apt-pkg/deb/dpkgpm.cc:1065
 msgid "ioctl(TIOCGWINSZ) failed"
-msgstr ""
+msgstr "ioctl(TIOCGWINSZ) ล้มเหลว"
 
 #: apt-pkg/deb/dpkgpm.cc:1068 apt-pkg/deb/dpkgpm.cc:1089
-#, fuzzy, c-format
+#, c-format
 msgid "Can not write log (%s)"
-msgstr "ไม่สามารถเขียนลงแฟ้ม %s"
+msgstr "ไม่สามารถเขียนปูม (%s)"
 
 #: apt-pkg/deb/dpkgpm.cc:1068
 msgid "Is /dev/pts mounted?"
-msgstr ""
+msgstr "ได้เมานท์ /dev/pts ไว้หรือไม่?"
 
 #: apt-pkg/deb/dpkgpm.cc:1089
 msgid "Is stdout a terminal?"
-msgstr ""
+msgstr "stdout เป็นเทอร์มินัลหรือไม่?"
 
 #: apt-pkg/deb/dpkgpm.cc:1567
 msgid "Operation was interrupted before it could finish"
@@ -3454,11 +3453,11 @@ msgid ""
 msgstr "ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเกิดจากหน่วยความจำเต็ม"
 
 #: apt-pkg/deb/dpkgpm.cc:1656 apt-pkg/deb/dpkgpm.cc:1662
-#, fuzzy
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
-msgstr "ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเกิดจากดิสก์เต็ม"
+msgstr ""
+"ไม่มีการเขียนรายงาน apport เพราะข้อความข้อผิดพลาดระบุว่าเกิดจากปัญหาของระบบในเครื่อง"
 
 #: apt-pkg/deb/dpkgpm.cc:1684
 msgid ""

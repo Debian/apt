@@ -2,24 +2,22 @@
 # Hungarian messages
 #
 # PASZTOR Gyorgy <pasztor@linux.gyakg.u-szeged.hu>, 2002.
-# Gabor Kelemen <kelemeng at gnome dot hu>, 2004, 2005, 2011, 2012.
+# Gabor Kelemen <kelemeng at gnome dot hu>, 2004, 2005, 2011, 2012, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt trunk\n"
+"Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-03-01 11:47+0000\n"
-"PO-Revision-Date: 2012-06-25 17:09+0200\n"
-"Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
-"Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
+"POT-Creation-Date: 2019-03-08 15:58+0000\n"
+"PO-Revision-Date: 2016-04-10 19:46+0200\n"
+"Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
+"Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
-"X-Launchpad-Export-Date: 2011-12-27 15:00+0000\n"
-"X-Generator: KBabel 1.11.4\n"
-"X-Poedit-Country: HUNGARY\n"
-"X-Poedit-Language: Hungarian\n"
+"X-Launchpad-Export-Date: 2016-04-10 19:31+0000\n"
+"X-Generator: Lokalize 1.5\n"
 
 #: cmdline/apt-cache.cc:149
 #, c-format
@@ -259,6 +257,11 @@ msgid ""
 "See 'man apt-cdrom' for more information about the CD-ROM auto-detection and "
 "mount point."
 msgstr ""
+"Nem ismerhető fel automatikusan, vagy nem található CD-ROM az "
+"alapértelmezett csatolási pont használatával.\n"
+"Megpróbálhatja a --cdrom kapcsolóval beállítani a CD-ROM csatolási pontját.\n"
+"A CD-ROM automatikus felismerésével és csatolási pontjával kapcsolatos "
+"információkért lásd a „man apt-cdrom” parancsot."
 
 #: cmdline/apt-cdrom.cc:182
 msgid "Repeat this process for the rest of the CDs in your set."
@@ -296,19 +299,19 @@ msgstr ""
 "  -o=? Beállít egy tetszőleges konfigurációs opciót, pl -o dir::cache=/tmp\n"
 
 #: cmdline/apt-get.cc:244
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package for architecture '%s'"
-msgstr "Nem található csomag a(z) „%s” reguláris kifejezéssel"
+msgstr "Nem található csomag a(z) „%s” architektúrához"
 
 #: cmdline/apt-get.cc:326
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package '%s' with version '%s'"
-msgstr "Nem található csomag a(z) „%s” reguláris kifejezéssel"
+msgstr "Nem található „%s” csomag „%s” verzióval"
 
 #: cmdline/apt-get.cc:329
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find a package '%s' with release '%s'"
-msgstr "Nem található csomag a(z) „%s” reguláris kifejezéssel"
+msgstr "Nem található „%s” csomag „%s” kiadással"
 
 #: cmdline/apt-get.cc:366
 #, c-format
@@ -316,10 +319,9 @@ msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "„%s” kiválasztása forráscsomagként „%s” helyett\n"
 
 #: cmdline/apt-get.cc:422
-#, fuzzy, c-format
+#, c-format
 msgid "Can not find version '%s' of package '%s'"
-msgstr ""
-"A(z) „%2$s” csomag el nem érhető „%1$s” verziójának figyelmen kívül hagyása"
+msgstr "A(z) „%2$s” csomag „%1$s” verziója nem érhető el"
 
 #: cmdline/apt-get.cc:453
 #, c-format
@@ -631,14 +633,12 @@ msgstr ""
 "                       Ez az APT a SzuperTehén Hatalmával rendelkezik.\n"
 
 #: cmdline/apt-helper.cc:35
-#, fuzzy
 msgid "Must specify at least one pair url/filename"
-msgstr ""
-"Legalább egy csomagot meg kell adni, amelynek a forrását le kell tölteni"
+msgstr "Legalább egy pár URL-t/fájlnevet meg kell adni"
 
 #: cmdline/apt-helper.cc:52
 msgid "Download Failed"
-msgstr ""
+msgstr "A letöltés meghiúsult"
 
 #: cmdline/apt-helper.cc:65
 msgid ""
@@ -671,12 +671,12 @@ msgstr "%s már meg van jelölve automatikusan telepítettként.\n"
 #: cmdline/apt-mark.cc:241
 #, c-format
 msgid "%s was already set on hold.\n"
-msgstr "%s már be van állítva visszafogásra.\n"
+msgstr "%s már be van állítva visszatartásra.\n"
 
 #: cmdline/apt-mark.cc:243
 #, c-format
 msgid "%s was already not hold.\n"
-msgstr "%s eddig sem volt visszafogva.\n"
+msgstr "%s eddig sem volt visszatartva.\n"
 
 #: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
 #: apt-pkg/contrib/fileutl.cc:830 apt-pkg/contrib/gpgv.cc:219
@@ -688,12 +688,12 @@ msgstr "Nem található a(z) %s, a várakozás után sem"
 #: cmdline/apt-mark.cc:273 cmdline/apt-mark.cc:322
 #, c-format
 msgid "%s set on hold.\n"
-msgstr "%s beállítva visszafogásra.\n"
+msgstr "%s beállítva visszatartásra.\n"
 
 #: cmdline/apt-mark.cc:275 cmdline/apt-mark.cc:327
 #, c-format
 msgid "Canceled hold on %s.\n"
-msgstr "Visszafogás törölve ezen: %s.\n"
+msgstr "Visszatartás törölve ezen: %s.\n"
 
 #: cmdline/apt-mark.cc:345
 msgid "Executing dpkg failed. Are you root?"
@@ -1020,9 +1020,9 @@ msgid "Temporary failure resolving '%s'"
 msgstr "Átmeneti hiba „%s” feloldása közben"
 
 #: methods/connect.cc:209
-#, fuzzy, c-format
+#, c-format
 msgid "System error resolving '%s:%s'"
-msgstr "Hiba történt „%s:%s” feloldásakor (%i - %s)"
+msgstr "Rendszerhiba „%s:%s” feloldásakor"
 
 #: methods/connect.cc:211
 #, c-format
@@ -1055,6 +1055,8 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
+"A digitálisan aláírt fájl nem érvényes, érkezett: „%s” (igényel a hálózat "
+"hitelesítést?)"
 
 #: methods/gpgv.cc:184
 msgid "Unknown error executing gpgv"
@@ -1146,7 +1148,7 @@ msgstr "Belső hiba"
 
 #: apt-private/private-list.cc:131
 msgid "Listing"
-msgstr ""
+msgstr "Felsorolás"
 
 #: apt-private/private-install.cc:83
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1394,40 +1396,37 @@ msgstr "Sikertelen letöltés: %s  %s\n"
 #: apt-private/private-output.cc:81 apt-private/private-show.cc:84
 #: apt-private/private-show.cc:89
 msgid "unknown"
-msgstr ""
+msgstr "ismeretlen"
 
 #: apt-private/private-output.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "[installed,upgradable to: %s]"
-msgstr " [Telepítve]"
+msgstr "[telepítve, frissíthető erre: %s]"
 
 #: apt-private/private-output.cc:211
-#, fuzzy
 msgid "[installed,local]"
-msgstr " [Telepítve]"
+msgstr "[telepítve, helyi]"
 
 #: apt-private/private-output.cc:214
 msgid "[installed,auto-removable]"
-msgstr ""
+msgstr "[telepítve, auto-eltávolítható]"
 
 #: apt-private/private-output.cc:216
-#, fuzzy
 msgid "[installed,automatic]"
-msgstr " [Telepítve]"
+msgstr "[telepítve, automatikus]"
 
 #: apt-private/private-output.cc:218
-#, fuzzy
 msgid "[installed]"
-msgstr " [Telepítve]"
+msgstr "[telepítve]"
 
 #: apt-private/private-output.cc:222
 #, c-format
 msgid "[upgradable from: %s]"
-msgstr ""
+msgstr "[frissíthető erről: %s]"
 
 #: apt-private/private-output.cc:226
 msgid "[residual-config]"
-msgstr ""
+msgstr "[megmaradt konfig]"
 
 #: apt-private/private-output.cc:326
 msgid "The following packages have unmet dependencies:"
@@ -1485,7 +1484,7 @@ msgstr "Az alábbi csomagok VISSZAFEJLESZTÉSRE kerülnek:"
 
 #: apt-private/private-output.cc:574
 msgid "The following held packages will be changed:"
-msgstr "Az alábbi visszafogott csomagokat cserélem:"
+msgstr "A következő visszatartott csomagok cseréje:"
 
 #: apt-private/private-output.cc:629
 #, c-format
@@ -1586,7 +1585,7 @@ msgstr "Teljesítetlen függőségek. Próbálja a -f használatával."
 
 #: apt-private/private-cacheset.cc:35 apt-private/private-search.cc:51
 msgid "Sorting"
-msgstr ""
+msgstr "Rendezés"
 
 #: apt-private/private-update.cc:31
 msgid "The update command takes no arguments"
@@ -1607,7 +1606,7 @@ msgstr "Kész"
 
 #: apt-private/private-search.cc:55
 msgid "Full Text Search"
-msgstr ""
+msgstr "Keresés a teljes szövegben"
 
 #: apt-private/private-show.cc:156
 #, c-format
@@ -1615,11 +1614,13 @@ msgid "There is %i additional record. Please use the '-a' switch to see it"
 msgid_plural ""
 "There are %i additional records. Please use the '-a' switch to see them."
 msgstr[0] ""
+"%i további rekord van. A megjelenítéséhez használja a „-a” kapcsolót"
 msgstr[1] ""
+"%i további rekord van. A megjelenítésükhöz használja a „-a” kapcsolót"
 
 #: apt-private/private-show.cc:163
 msgid "not a real package (virtual)"
-msgstr ""
+msgstr "nem valódi csomag (virtuális)"
 
 #: apt-private/private-main.cc:23
 msgid ""
@@ -1634,14 +1635,14 @@ msgstr ""
 "      így ne számítson a jelenlegi helyzet valósságára!"
 
 #: apt-private/private-sources.cc:58
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to parse %s. Edit again? "
-msgstr "„%s” átnevezése sikertelen erre: %s"
+msgstr "%s feldolgozása sikertelen. Újra szerkeszti? "
 
 #: apt-private/private-sources.cc:70
 #, c-format
 msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr ""
+msgstr "A(z) „%s” fájl megváltozott, adja ki az „apt-get update” parancsot."
 
 #: apt-private/acqprogress.cc:66
 msgid "Hit "
@@ -1714,9 +1715,9 @@ msgid "Can not read mirror file '%s'"
 msgstr "A(z) „%s” tükörfájl nem olvasható"
 
 #: methods/mirror.cc:315
-#, fuzzy, c-format
+#, c-format
 msgid "No entry found in mirror file '%s'"
-msgstr "A(z) „%s” tükörfájl nem olvasható"
+msgstr "Nem található bejegyzés a(z) „%s” tükörfájlban"
 
 #: methods/mirror.cc:445
 #, c-format
@@ -1793,9 +1794,9 @@ msgstr ""
 "  -o=? Beállít egy tetszőleges konfigurációs opciót, pl -o dir::cache=/tmp\n"
 
 #: cmdline/apt-extracttemplates.cc:254
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to mkstemp %s"
-msgstr "%s nem érhető el"
+msgstr "Az mkstemp %s meghiúsult"
 
 #: cmdline/apt-extracttemplates.cc:259 apt-pkg/pkgcachegen.cc:1402
 #, c-format
@@ -2055,9 +2056,9 @@ msgstr "%s megnyitása sikertelen"
 #. skip spaces
 #. find end of word
 #: ftparchive/override.cc:68
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu (%s)"
-msgstr "%s felülbírálás deformált a(z) %llu. sorában #1"
+msgstr "%s felülbírálás deformált a(z) %llu. sorában (%s)"
 
 #: ftparchive/override.cc:127 ftparchive/override.cc:201
 #, c-format
@@ -2492,13 +2493,13 @@ msgstr "%c%s... Kész"
 
 #: apt-pkg/contrib/progress.cc:181
 msgid "..."
-msgstr ""
+msgstr "..."
 
 #. Print the spinner
 #: apt-pkg/contrib/progress.cc:197
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... %u%%"
-msgstr "%c%s... Kész"
+msgstr "%c%s... %u%%"
 
 #: apt-pkg/contrib/cmndline.cc:121
 #, c-format
@@ -2888,9 +2889,9 @@ msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "„%1$s” típus nem ismert a(z) %3$s forráslista %2$u. sorában"
 
 #: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
+#, c-format
 msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "„%1$s” típus nem ismert a(z) %3$s forráslista %2$u. sorában"
+msgstr "„%1$s” típus nem ismert a(z) %3$s forráslista %2$u. utasításában"
 
 #: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:977
 #, c-format
@@ -2934,7 +2935,7 @@ msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
 msgstr ""
-"Hiba, a pkgProblemResolver::Resolve töréseket generált, ezt visszafogott "
+"Hiba, a pkgProblemResolver::Resolve töréseket generált, ezt visszatartott "
 "csomagok okozhatják."
 
 #: apt-pkg/algorithms.cc:1085
@@ -2974,9 +2975,9 @@ msgid "The method driver %s could not be found."
 msgstr "A(z) %s metódusvezérlő nem található."
 
 #: apt-pkg/acquire-worker.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Is the package %s installed?"
-msgstr "Ellenőrizze, hogy a „dpkg-dev” csomag telepítve van-e.\n"
+msgstr "A(z) „%s” csomag telepítve van?"
 
 #: apt-pkg/acquire-worker.cc:169
 #, c-format
@@ -3121,9 +3122,8 @@ msgid "Size mismatch"
 msgstr "A méret nem megfelelő"
 
 #: apt-pkg/acquire-item.cc:174
-#, fuzzy
 msgid "Invalid file format"
-msgstr "%s érvénytelen művelet"
+msgstr "Érvénytelen fájlformátum"
 
 #: apt-pkg/acquire-item.cc:1633
 #, c-format
@@ -3298,7 +3298,7 @@ msgstr "Új forráslista írása\n"
 
 #: apt-pkg/cdrom.cc:851
 msgid "Source list entries for this disc are:\n"
-msgstr "A lemezhez tartozó forráslistabejegyzések a következők:\n"
+msgstr "A lemezhez tartozó forráslista-bejegyzések a következők:\n"
 
 #: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:773
 #, c-format
@@ -3351,9 +3351,9 @@ msgid "Couldn't find any package by regex '%s'"
 msgstr "Nem található csomag a(z) „%s” reguláris kifejezéssel"
 
 #: apt-pkg/cacheset.cc:613
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find any package by glob '%s'"
-msgstr "Nem található csomag a(z) „%s” reguláris kifejezéssel"
+msgstr "Nem található csomag a(z) „%s” glob kifejezéssel"
 
 #: apt-pkg/cacheset.cc:624
 #, c-format
@@ -3410,7 +3410,7 @@ msgstr "Külső solver végrehajtása"
 #: apt-pkg/install-progress.cc:57
 #, c-format
 msgid "Progress: [%3i%%]"
-msgstr ""
+msgstr "Haladás: [%3i%%]"
 
 #: apt-pkg/install-progress.cc:91 apt-pkg/install-progress.cc:174
 msgid "Running dpkg"
@@ -3510,13 +3510,13 @@ msgid "ioctl(TIOCGWINSZ) failed"
 msgstr ""
 
 #: apt-pkg/deb/dpkgpm.cc:1068 apt-pkg/deb/dpkgpm.cc:1089
-#, fuzzy, c-format
+#, c-format
 msgid "Can not write log (%s)"
-msgstr "Nem lehet írni ebbe: %s"
+msgstr "Nem lehet a naplót írni (%s)"
 
 #: apt-pkg/deb/dpkgpm.cc:1068
 msgid "Is /dev/pts mounted?"
-msgstr ""
+msgstr "A /dev/pts csatolva van?"
 
 #: apt-pkg/deb/dpkgpm.cc:1089
 msgid "Is stdout a terminal?"
