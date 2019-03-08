@@ -8,14 +8,14 @@
 # Dmitry Astapov <adept@despammed.com>, 2004.
 # Yuri Kozlov <kozlov.y@gmail.com>, 2004, 2005, 2006, 2007, 2008.
 # Yuri Kozlov <yuray@komyakino.ru>, 2009, 2010, 2012, 2015, 2016.
-# Aleksej Shilin <rootlexx@mail.ru>, 2017, 2018.
 # Lev Lamberov <dogsleg@debian.org>, 2018.
+# Aleksej Shilin <rootlexx@mail.ru>, 2017, 2018, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.8.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2019-03-01 10:02+0100\n"
-"PO-Revision-Date: 2018-10-25 19:03+0300\n"
+"PO-Revision-Date: 2019-02-10 11:50+0300\n"
 "Last-Translator: Aleksej Shilin <rootlexx@mail.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
 "Language: ru\n"
@@ -67,17 +67,17 @@ msgstr "Неправильная контрольная сумма Tar — ар�
 #: apt-inst/contrib/extracttar.cc
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
-msgstr "Неизвестный заголовок в архиве TAR. Тип %u, элемент %s"
+msgstr "Неизвестный тип %u, элемент %s в заголовке TAR"
 
 #: apt-inst/deb/debfile.cc
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr "Это неправильный DEB-архив: отсутствует составная часть «%s»"
+msgstr "Это неправильный DEB-архив: отсутствует элемент «%s»"
 
 #: apt-inst/deb/debfile.cc
 #, c-format
 msgid "Internal error, could not locate member %s"
-msgstr "Внутренняя ошибка: не удалось найти составную часть %s"
+msgstr "Внутренняя ошибка: не удалось найти элемент %s"
 
 #: apt-inst/deb/debfile.cc
 msgid "Unparsable control file"
@@ -86,7 +86,7 @@ msgstr "Не удалось разобрать содержимое файла c
 #: apt-inst/dirstream.cc
 #, c-format
 msgid "Failed to write file %s"
-msgstr "Не удалось записать в файл %s"
+msgstr "Не удалось записать файл %s"
 
 #: apt-inst/dirstream.cc
 #, c-format
@@ -144,7 +144,7 @@ msgstr "Путь слишком длинный"
 #: apt-inst/extract.cc
 #, c-format
 msgid "Overwrite package match with no version for %s"
-msgstr "Файлы заменяются содержимым пакета %s без версии"
+msgstr "У пакета %s, файлы которого заменяются, отсутствует версия"
 
 #: apt-inst/extract.cc
 #, c-format
@@ -217,7 +217,7 @@ msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
-"Информацию о создании репозитория и настройке пользователя смотрите в "
+"Информацию о создании репозитория и настройках пользователя смотрите в "
 "справочной странице apt-secure(8)."
 
 #: apt-pkg/acquire-item.cc
@@ -290,7 +290,7 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
-"Некорректный подписанный файл: получено «%s» (возможно, в сети требуется "
+"Подписанный файл некорректен: получено «%s» (возможно, в сети требуется "
 "аутентификация?)"
 
 #: apt-pkg/acquire-item.cc
@@ -662,8 +662,8 @@ msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
 msgstr ""
-"Не удалось найти ни одного файла пакетов; возможно, это не диск Debian или с "
-"не той архитектурой?"
+"Не удалось найти ни одного файла пакетов; возможно, это не диск Debian или "
+"не с той архитектурой?"
 
 #: apt-pkg/cdrom.cc
 #, c-format
@@ -769,7 +769,7 @@ msgstr "Неверная операция %s"
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
-msgstr "Неизвестная аббревиатура типа: «%c»"
+msgstr "Неизвестное сокращение типа: «%c»"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -1621,6 +1621,8 @@ msgstr "Неизвестный тип привязки %s"
 msgid ""
 "%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
 msgstr ""
+"%s: специальная привязка «Pin-Priority: %s» может использоваться только для "
+"записей вида «Package: *»"
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -1764,8 +1766,7 @@ msgstr " Готово"
 #: apt-private/private-cachefile.cc apt-private/private-install.cc
 msgid "You might want to run 'apt --fix-broken install' to correct these."
 msgstr ""
-"Возможно, для исправления этих ошибок вы захотите воспользоваться «apt --fix-"
-"broken install»."
+"Вы можете запустить «apt --fix-broken install» для исправления этих ошибок."
 
 #: apt-private/private-cachefile.cc apt-private/private-install.cc
 msgid ""
@@ -1872,7 +1873,7 @@ msgid ""
 msgstr ""
 "Параметры настройки и синтаксис описаны в apt.conf(5).\n"
 "Информацию о том, как настроить источники, можно найти в sources.list(5).\n"
-"Выбор пакетов и версий описывается через apt_preferences(5).\n"
+"Выбор пакетов и версий описывается в apt_preferences(5).\n"
 "Информация о безопасности доступна в apt-secure(8).\n"
 
 #: apt-private/private-cmndline.cc
@@ -3197,7 +3198,7 @@ msgstr ""
 #. query
 #: cmdline/apt.cc
 msgid "list packages based on package names"
-msgstr "показать список пакетов из указанных имён пакетов"
+msgstr "показать список пакетов на основе указанных имён"
 
 #: cmdline/apt.cc
 msgid "search in package descriptions"

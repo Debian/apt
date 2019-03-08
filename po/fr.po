@@ -4,13 +4,14 @@
 #
 # Pierre Machard <pmachard@tuxfamily.org>, 2002,2003,2004.
 # Christian Perrier <bubulle@debian.org>, 2004-2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013.
-# Julien Patriarca <leatherface@debian.org>, 2013, 2017, 2018
+# Julien Patriarca <leatherface@debian.org>, 2013, 2017, 2018.
+# Baptiste Jammet <baptiste@mailoo.org>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2019-03-01 10:02+0100\n"
-"PO-Revision-Date: 2018-01-02 15:09+0100\n"
+"PO-Revision-Date: 2019-01-21 09:19+0100\n"
 "Last-Translator: Julien Patriarca <leatherface@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "Language: fr\n"
@@ -22,7 +23,7 @@ msgstr ""
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive signature"
-msgstr "Signature d'archive invalide"
+msgstr "Signature d'archive non valable"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Error reading archive member header"
@@ -35,7 +36,7 @@ msgstr "En-tête du membre d'archive %s non valable"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Invalid archive member header"
-msgstr "En-tête du membre d'archive non-valable"
+msgstr "En-tête du membre d'archive non valable"
 
 #: apt-inst/contrib/arfile.cc
 msgid "Archive is too short"
@@ -66,7 +67,7 @@ msgstr "Type d'en-tête %u inconnu pour TAR, partie %s"
 #: apt-inst/deb/debfile.cc
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr "Ce n'est pas une archive DEB valide, partie « %s » manquante"
+msgstr "Ce n'est pas une archive DEB valable, partie « %s » manquante"
 
 #: apt-inst/deb/debfile.cc
 #, c-format
@@ -196,7 +197,7 @@ msgid ""
 "disabled by default."
 msgstr ""
 "Les mises à jour depuis un tel dépôt ne peuvent s'effectuer de manière "
-"sécurisée, et sont donc désactivées par défaut"
+"sécurisée, et sont donc désactivées par défaut."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -273,7 +274,7 @@ msgstr "Taille incohérente"
 
 #: apt-pkg/acquire-item.cc
 msgid "Invalid file format"
-msgstr "Format de fichier invalide"
+msgstr "Format de fichier non valable"
 
 #: apt-pkg/acquire-item.cc
 msgid "Signature error"
@@ -321,7 +322,7 @@ msgid ""
 "architecture '%s'"
 msgstr ""
 "Le fichier configuré « %s » ne sera pas pris en compte car le dépôt « %s » "
-"ne supporte pas l'architecture « %s »"
+"ne prend pas en charge l'architecture « %s »"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -350,23 +351,20 @@ msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
-"Le fichier « Release » pour %s a expiré (invalide depuis %s). Les mises à "
+"Le fichier « Release » pour %s est périmé (invalide depuis %s). Les mises à "
 "jour depuis ce dépôt ne s'effectueront pas."
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time until the file will be valid - formatted in the same way as in
 #. the download progress display (e.g. 7d 3h 42min 1s)
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Release file for %s is expired (invalid since %s). Updates for this "
-#| "repository will not be applied."
+#, c-format
 msgid ""
 "Release file for %s is not valid yet (invalid for another %s). Updates for "
 "this repository will not be applied."
 msgstr ""
-"Le fichier « Release » pour %s a expiré (invalide depuis %s). Les mises à "
-"jour depuis ce dépôt ne s'effectueront pas."
+"Le fichier « Release » pour %s n'est pas encore valable (invalide pendant "
+"encore %s). Les mises à jour depuis ce dépôt ne s'effectueront pas."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -439,7 +437,7 @@ msgstr "La méthode « %s » est volontairement désactivée par configuration
 #, c-format
 msgid "If you meant to use Tor remember to use %s instead of %s."
 msgstr ""
-".Si vous souhaitiez utiliser Tor veuillez alors utiliser « %s » plutôt que "
+".Si vous souhaitiez utiliser Tor, veuillez alors utiliser « %s » plutôt que "
 "« %s »."
 
 #: apt-pkg/acquire-worker.cc
@@ -731,8 +729,8 @@ msgid ""
 "Command line option '%c' [from %s] is not understood in combination with the "
 "other options."
 msgstr ""
-"L'option « %c » de la ligne de commande [%s] est inconnue quand elle est "
-"utilisée avec d'autres options."
+"L'option « %c » de la ligne de commande [%s] n'est pas reconnue quand elle "
+"est utilisée avec d'autres options."
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -771,7 +769,9 @@ msgstr "L'option « %s » est trop longue"
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
 msgid "Sense %s is not understood, try true or false."
-msgstr "La signification %s n'est pas comprise, veuillez essayer vrai ou faux."
+msgstr ""
+"La signification %s n'est pas comprise, veuillez essayer « true » ou "
+"« false »."
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -890,7 +890,7 @@ msgstr ""
 #: cmdline/apt-dump-solver.cc
 #, c-format
 msgid "Waited for %s but it wasn't there"
-msgstr "A attendu %s mais il n'était pas présent"
+msgstr "A attendu %s, mais il n'était pas présent"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -989,7 +989,7 @@ msgstr "Impossible de mapper un fichier vide en mémoire"
 #: apt-pkg/contrib/mmap.cc
 #, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr "Impossible de réaliser un mapping de %llu octets en mémoire"
+msgstr "Impossible de réaliser un mappage de %llu octets en mémoire"
 
 #: apt-pkg/contrib/mmap.cc
 #, c-format
@@ -1007,7 +1007,7 @@ msgstr "Impossible de synchroniser la « mmap »"
 #: apt-pkg/contrib/mmap.cc
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
-msgstr "Impossible de réaliser un mapping de %lu octets en mémoire"
+msgstr "Impossible de réaliser un mappage de %lu octets en mémoire"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Failed to truncate file"
@@ -1162,23 +1162,19 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Impossible de traiter le fichier %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Unable to lock the administration directory (%s), is another process "
-#| "using it?"
+#, c-format
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
 msgstr ""
-"Impossible de verrouiller le répertoire d'administration (%s). Il est "
-"possible qu'un autre processus l'utilise."
+"Impossible d'obtenir le verrou de dpkg (%s). Il est possible qu'un autre "
+"processus l'utilise."
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid "Unable to lock the administration directory (%s), are you root?"
+#, c-format
 msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
 msgstr ""
-"Impossible de verrouiller le répertoire d'administration (%s). Avez-vous les "
-"privilèges du superutilisateur ?"
+"Impossible d'obtenir le verrou de dpkg (%s). Avez-vous les droits du "
+"superutilisateur ?"
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -1204,7 +1200,7 @@ msgstr ""
 msgid "Unable to lock the administration directory (%s), are you root?"
 msgstr ""
 "Impossible de verrouiller le répertoire d'administration (%s). Avez-vous les "
-"privilèges du superutilisateur ?"
+"droits du superutilisateur ?"
 
 #: apt-pkg/deb/debsystem.cc
 msgid "Not locked"
@@ -1449,7 +1445,7 @@ msgstr "Somme de contrôle de hachage incohérente pour %s"
 #: apt-pkg/init.cc
 #, c-format
 msgid "Packaging system '%s' is not supported"
-msgstr "Le système de paquet « %s » n'est pas supporté"
+msgstr "Le système de paquet « %s » n'est pas pris en charge"
 
 #: apt-pkg/init.cc
 msgid "Unable to determine a suitable packaging system type"
@@ -1507,7 +1503,7 @@ msgstr "Le fichier de cache des paquets a une version incompatible"
 #: apt-pkg/pkgcache.cc
 #, c-format
 msgid "This APT does not support the versioning system '%s'"
-msgstr "Cet APT ne supporte pas le système de version « %s »"
+msgstr "Cet APT ne prend pas en charge le système de version « %s »"
 
 #: apt-pkg/pkgcache.cc
 #, c-format
@@ -1658,8 +1654,8 @@ msgstr ""
 #, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
-"%s : la valeur %s est dehors de la plage de priorités d'épinglage valide (%d "
-"à %d)"
+"%s : la valeur %s est en dehors de la plage de priorités d'épinglage valide "
+"(%d à %d)"
 
 #: apt-pkg/policy.cc
 msgid "No priority (or zero) specified for pin"
@@ -1724,28 +1720,28 @@ msgstr "Calcul de la mise à jour"
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Hit:%lu %s"
-msgstr "Atteint:%lu %s"
+msgstr "Atteint :%lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files processed in 'apt-get update'
 #. Potentially replaced later by "Hit:", "Ign:" or "Err:" if something (bad) happens
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Get:%lu %s"
-msgstr "Réception de:%lu %s"
+msgstr "Réception de :%lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
 #. which failed to download, but the error is ignored (compare "Err:")
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Ign:%lu %s"
-msgstr "Ign:%lu %s"
+msgstr "Ign :%lu %s"
 
 #. TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
 #. which failed to download and the error is critical (compare "Ign:")
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Err:%lu %s"
-msgstr "Err:%lu %s"
+msgstr "Err :%lu %s"
 
 #: apt-private/acqprogress.cc
 #, c-format
@@ -1773,7 +1769,7 @@ msgid ""
 "repository?"
 msgstr ""
 "Souhaitez-vous accepter ces modifications et continuer à mettre à jour "
-"depuis ce dépôt ?"
+"depuis ce dépôt ?"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -1891,7 +1887,7 @@ msgstr "Note : sélection de « %s » au lieu de « %s »\n"
 
 #: apt-private/private-cmndline.cc
 msgid "Most used commands:"
-msgstr "Commandes les plus utilisées :"
+msgstr "Commandes les plus utilisées :"
 
 #: apt-private/private-cmndline.cc
 #, c-format
@@ -1940,7 +1936,7 @@ msgstr "Aucun paquet n'a été trouvé"
 
 #: apt-private/private-download.cc
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "ATTENTION : les paquets suivants n'ont pas été authentifiés !"
+msgstr "ATTENTION : les paquets suivants n'ont pas été authentifiés !"
 
 #: apt-private/private-download.cc
 msgid "Authentication warning overridden.\n"
@@ -1952,7 +1948,7 @@ msgstr "Certains paquets n'ont pas pu être authentifiés"
 
 #: apt-private/private-download.cc
 msgid "Install these packages without verification?"
-msgstr "Faut-il installer ces paquets sans vérification ?"
+msgstr "Faut-il installer ces paquets sans vérification ?"
 
 #: apt-private/private-download.cc
 msgid ""
@@ -2021,7 +2017,7 @@ msgstr "Erreur interne, « InstallPackages » appelé avec des paquets cassés
 #: apt-private/private-install.cc
 msgid "Packages need to be removed but remove is disabled."
 msgstr ""
-"Les paquets doivent être enlevés mais la désinstallation est désactivée."
+"Les paquets doivent être enlevés, mais la désinstallation est désactivée."
 
 #: apt-private/private-install.cc
 msgid ""
@@ -2086,8 +2082,8 @@ msgstr "Après cette opération, %so d'espace disque seront libérés.\n"
 #: apt-private/private-install.cc
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr ""
-"L'option --trivial-only a été indiquée mais il ne s'agit pas d'une opération "
-"triviale."
+"L'option --trivial-only a été indiquée, mais il ne s'agit pas d'une "
+"opération triviale."
 
 # The space before the exclamation mark must not be a non-breaking space; this
 # sentence is supposed to be typed by a user who cannot see the difference.
@@ -2792,8 +2788,8 @@ msgstr ""
 "\tapt-cache [options] show pkg1 [pkg2 ...]\n"
 "\n"
 "apt-cache recherche et affiche les informations disponibles à propos\n"
-"des paquets installés et installables. Il fonctionne exclusivement sur \n"
-"les données trouvées dans le cache local grâce à la commande « update »\n"
+"des paquets installés et installables. Il fonctionne exclusivement sur\n"
+"les données trouvées dans le cache local grâce à la commande « update »\n"
 "d'apt-get par exemple. Les informations affichées peuvent cependant être\n"
 "obsolètes si la dernière mise à jour est trop ancienne, mais en revanche\n"
 "apt-cache fonctionne indépendamment de la disponibilité des sources\n"
@@ -3010,7 +3006,7 @@ msgstr "Supprime des paquets et leurs fichiers de configuration"
 
 #: cmdline/apt-get.cc cmdline/apt.cc
 msgid "Remove automatically all unused packages"
-msgstr "Supprime automatiquement les dépendances inutilisés"
+msgstr "Supprime automatiquement les dépendances inutilisées"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
@@ -3065,7 +3061,7 @@ msgstr "Le téléchargement a échoué"
 #: cmdline/apt-helper.cc
 #, c-format
 msgid "GetSrvRec failed for %s"
-msgstr "GetSrvRec a échouté pour %s"
+msgstr "GetSrvRec a échoué pour %s"
 
 #: cmdline/apt-helper.cc
 msgid ""
@@ -3080,7 +3076,7 @@ msgstr ""
 "        apt-helper [options] cat-file fichier ...\n"
 "        apt-helper [options] download-file uri target-path\n"
 "\n"
-"apt-helper embarque un grand nombre de commandes que les scripts pour \n"
+"apt-helper embarque un grand nombre de commandes que les scripts pour\n"
 "l'interpréteur de commandes peuvent utiliser\n"
 "par exemple, la même configuration de proxy ou d'acquisition qu'APT "
 "utiliserait.\n"
@@ -3101,7 +3097,7 @@ msgstr "Concaténer des fichiers, avec décompression automatique"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
-msgstr "détecter la configuration proxy en utilisant apt.conf"
+msgstr "Détecter la configuration proxy en utilisant apt.conf"
 
 #: cmdline/apt-helper.cc
 msgid "wait for system to be online"
@@ -3109,7 +3105,7 @@ msgstr "En attente de la connexion du système"
 
 #: cmdline/apt-helper.cc
 msgid "drop privileges before running given command"
-msgstr ""
+msgstr "Se débarrasser des privilèges avant d'exécuter la commande donnée"
 
 #: cmdline/apt-internal-planner.cc
 msgid ""
@@ -3169,8 +3165,7 @@ msgstr "%s était déjà marqué comme non figé.\n"
 #: cmdline/apt-mark.cc
 msgid "Executing dpkg failed. Are you root?"
 msgstr ""
-"Échec de l'exécution de dpkg. Possédez-vous les privilèges du "
-"superutilisateur ?"
+"Échec de l'exécution de dpkg. Possédez-vous les droits du superutilisateur ?"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -3256,7 +3251,7 @@ msgid ""
 msgstr ""
 "Usage : apt-sortpkgs [options] fichier1 [fichier2 ...]\n"
 "\n"
-"apt-sortpgks est un outil simple permettant de trier les informations à \n"
+"apt-sortpgks est un outil simple permettant de trier les informations à\n"
 "propos d'un paquet. Par défaut, il trie par information de paquets "
 "binaires,\n"
 "mais l'option -s peut être utilisée pour passer au tri par paquet source.\n"
@@ -3679,7 +3674,7 @@ msgstr "Le serveur http a envoyé un en-tête « Content-Range » invalide"
 
 #: methods/basehttp.cc
 msgid "This HTTP server has broken range support"
-msgstr "Ce serveur http possède un support des limites non-valide"
+msgstr "Ce serveur http possède une gestion des limites non-valide"
 
 #: methods/basehttp.cc
 msgid "Unknown date format"
