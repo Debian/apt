@@ -4,21 +4,23 @@
 # Tchaikov <tchaikov@sjtu.org>, 2005, 2007.
 # Carlos Z.F. Liu <carlosliu@users.sourceforge.net>, 2004, 2006.
 # Aron Xu <happyaron.xu@gmail.com>, 2009, 2010.
-# Zhou Mo <cdluminate@gmail.com>, 2014, 2015, 2016.
+# Mo Zhou <cdluminate@gmail.com>, 2014, 2015, 2016, 2017, 2019.
+# Boyuan Yang <073plan@gmail.com>, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.2.x\n"
+"Project-Id-Version: apt 1.7.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2018-10-09 10:36+0000\n"
-"PO-Revision-Date: 2016-08-20 13:00+0000\n"
-"Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
-"Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
+"PO-Revision-Date: 2019-01-12 00:00+0000\n"
+"Last-Translator: Mo Zhou <cdluminate@gmail.com>\n"
+"Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.0.8\n"
 
 #. TRANSLATOR: Very short word to be displayed before unchanged files in 'apt-get update'
 #: apt-private/acqprogress.cc
@@ -125,7 +127,7 @@ msgstr "[已安装]"
 
 #: apt-private/private-cacheset.cc
 msgid " [Not candidate version]"
-msgstr " [无候选]"
+msgstr " [无候选版本]"
 
 #: apt-private/private-cacheset.cc
 msgid "You should explicitly select one to install."
@@ -1190,7 +1192,7 @@ msgstr "卸载所有自动安装且不再使用的软件包"
 
 #: cmdline/apt-get.cc
 msgid "Distribution upgrade, see apt-get(8)"
-msgstr "发布版升级，见 apt-get(8)"
+msgstr "发行版升级，见 apt-get(8)"
 
 #: cmdline/apt-get.cc
 msgid "Follow dselect selections"
@@ -1222,7 +1224,7 @@ msgstr "下载指定的二进制包到当前目录"
 
 #: cmdline/apt-get.cc
 msgid "Download and display the changelog for the given package"
-msgstr "下载指定软件包，并显示其changelog"
+msgstr "下载指定软件包，并显示其变更日志（changelog）"
 
 #: cmdline/apt-helper.cc
 msgid "Need one URL as argument"
@@ -1262,7 +1264,7 @@ msgstr "将 URI 指定的文件下载到目标路径"
 
 #: cmdline/apt-helper.cc
 msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr "查阅一个 SRV 记录 (如： _http._tcp.ftp.debian.org)"
+msgstr "查询一个 SRV 记录 (如： _http._tcp.ftp.debian.org)"
 
 #: cmdline/apt-helper.cc
 msgid "concatenate files, with automatic decompression"
@@ -2449,7 +2451,7 @@ msgstr "GPG 错误：%s: %s"
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
-msgstr "鉴于仓库 '%2$s' 不支持 '%3$s' 体系结构，跳过配置文件 '%1$s' 的捕获。"
+msgstr "鉴于仓库 '%2$s' 不支持 '%3$s' 体系结构，跳过配置文件 '%1$s' 的获取。"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2464,7 +2466,7 @@ msgstr ""
 msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
-msgstr "鉴于仓库 '%2$s' 提供的安全信息强度太低，跳过配置文件 '%1$s' 的acquire."
+msgstr "鉴于仓库 '%2$s' 提供的安全信息强度太低，跳过配置文件 '%1$s' 的获取"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -2475,7 +2477,7 @@ msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
-"%s 的 Release 文件已经过期(invalid since %s)。该仓库的更新将不会被应用。"
+"%s 的 Release 文件已经过期(自 %s 起处于无效状态)。该仓库的更新将不会应用。"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2545,12 +2547,12 @@ msgstr "无法找到获取软件包的渠道 %s 所需的驱动程序。"
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "Is the package %s installed?"
-msgstr "请检查是否安装了 %s 软件包"
+msgstr "是否安装了 %s 软件包？"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "Method %s did not start correctly"
-msgstr "获取软件包的渠道 %s 所需的驱动程序没有正常启动。"
+msgstr "获取软件包的渠道 %s 所需的驱动程序没有正常启动"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -2595,7 +2597,7 @@ msgstr "%s 的 Clean (清理)不被支持"
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "正在下载第 %li 个文件，共 %li 个(还剩 %s 个)"
+msgstr "正在下载第 %li 个文件，共 %li 个(还剩 %s)"
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -2735,8 +2737,8 @@ msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
 msgstr ""
-"无法确定任何包文件的位置，可能这不是一张 Debian 盘片或者是选择了错误的硬件构"
-"架。"
+"无法确定任何包文件的位置，可能这不是一张 Debian 盘片，或者是选择了错误的硬件"
+"架构？"
 
 #: apt-pkg/cdrom.cc
 #, c-format
@@ -2794,7 +2796,7 @@ msgstr "不能理解命令行选项 “%c” [来自 %s] 与其他选项的搭�
 msgid ""
 "Command line option %s is not understood in combination with the other "
 "options"
-msgstr "不能理解命令行选项 “%s” 与其他选项的搭配。"
+msgstr "不能理解命令行选项 “%s” 与其他选项的搭配"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -2804,12 +2806,12 @@ msgstr "命令行选项 %s 不是布尔值"
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
 msgid "Option %s requires an argument."
-msgstr "选项 %s 要求有一个参数"
+msgstr "选项 %s 要求有一个参数。"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "选项 %s：配置项后必须包含有形如“=<变量>”的具体指定"
+msgstr "选项 %s：配置项后必须包含有形如“=<变量>”的具体指定。"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -2824,7 +2826,7 @@ msgstr "选项“%s”太长"
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
 msgid "Sense %s is not understood, try true or false."
-msgstr "不能识别参数 %s，请用 true 或 false"
+msgstr "不能识别参数 %s，请用 true 或 false。"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -2844,7 +2846,7 @@ msgstr "正在打开配置文件 %s"
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
-msgstr "语法错误 %s:%u：配置小节没有以名字开头"
+msgstr "语法错误 %s:%u：配置小节没有以名字开头。"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -2940,7 +2942,7 @@ msgstr "等待子进程 %s 的退出，但是它并不存在"
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
-msgstr "子进程 %s 发生了段错误"
+msgstr "子进程 %s 发生了段错误。"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -3174,15 +3176,15 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "无法解析软件包文件 %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
-msgstr "无法锁定管理目录(%s)，是否有其他进程正占用它？"
+msgstr "无法获取 dpkg 前端锁 (%s)，是否有其他进程正占用它？"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
-msgstr "无法对状态列表目录加锁(%s)，请查看您是否正以 root 用户运行？"
+msgstr "无法获取 dpkg 前端锁 (%s)，请查看您是否正以 root 用户运行？"
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -3247,7 +3249,7 @@ msgstr "目录 %s 缺失"
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
 msgid "Could not open file '%s'"
-msgstr "无法打开文件 %s"
+msgstr "无法打开文件“%s”"
 
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
