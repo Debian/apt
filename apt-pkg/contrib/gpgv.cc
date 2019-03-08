@@ -297,10 +297,24 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       }
       if (found_signatures == 0 && statusfd != -1)
       {
-	 // This is not an attack attempt but a file even gpgv would complain about
-	 // likely the result of a paywall which is covered by the gpgv method
 	 auto const errtag = "[GNUPG:] NODATA\n";
 	 FileFd::Write(fd[1], errtag, strlen(errtag));
+	 // guess if this is a binary signature, we never officially supported them,
+	 // but silently accepted them via passing them unchecked to gpgv
+	 if (found_badcontent)
+	 {
+	    rewind(detached.get());
+	    auto ptag = fgetc(detached.get());
+	    // §4.2 says that the first bit is always set and gpg seems to generate
+	    // only old format which is indicated by the second bit not set
+	    if (ptag != EOF && (ptag & 0x80) != 0 && (ptag & 0x40) == 0)
+	    {
+	       apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' is in unsupported binary format", FileGPG.c_str());
+	       local_exit(112);
+	    }
+	 }
+	 // This is not an attack attempt but a file even gpgv would complain about
+	 // likely the result of a paywall which is covered by the gpgv method
 	 local_exit(113);
       }
       else if (found_badcontent)
