@@ -4,7 +4,7 @@ include_directories(${PROJECT_BINARY_DIR}/include/apt-pkg)
 add_definitions("-DAPT_PKG_EXPOSE_STRING_VIEW")
 
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/apt-pkg/)
-execute_process(COMMAND ${PERL_EXECUTABLE} ${PROJECT_SOURCE_DIR}/triehash/triehash.pl
+execute_process(COMMAND ${TRIEHASH_EXECUTABLE}
                         --ignore-case
                          --header ${PROJECT_BINARY_DIR}/include/apt-pkg/tagfile-keys.h
                          --code ${CMAKE_CURRENT_BINARY_DIR}/tagfile-keys.cc

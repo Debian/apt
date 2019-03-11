@@ -38,6 +38,8 @@ find_package(Iconv REQUIRED)
 
 find_package(Perl REQUIRED)
 
+find_program(TRIEHASH_EXECUTABLE NAMES triehash)
+
 if(USE_NLS)
   find_package(Intl REQUIRED)
   link_libraries(${Intl_LIBRARIES})
