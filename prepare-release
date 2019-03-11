@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 cd "$(readlink -f $(dirname $0))"
@@ -341,6 +341,23 @@ elif [ "$1" = 'spellcheckers' -o "$1" = 'lint' ]; then
 				-e '^I: po/es.po: duplicate-header-field X-POFile-SpellExtra$' \
 			|| true
 	fi
+elif [ "$1" = "merge-translations" ]; then
+	if [ -z "$2" ]; then
+		echo "Usage:\t$0 $1 <branch to merge from>" >&2
+		exit 1
+	fi
+	for i in {doc/,}po/*.po ; do
+		# 1. concatenate the translations, picking new translations
+		# 2. merge the translations so we only have matching translations left
+		# 3. remove any newly introduced obsolete translations (only in $2)
+		# 4. concatenate again to restore "old" obsolete translations
+		# 5. write output
+		msgcat --use-first <(git show $2:$i) $i \
+			| msgmerge --no-fuzzy --previous - $i \
+			| msgattrib --no-obsolete -  \
+			| msgcat --use-first - $i \
+			| sponge $i
+	done
 else
 	echo >&1 "Usage:\t$0 pre-export
 \t$0 pre-build
@@ -373,6 +390,10 @@ runs all tests and generates a html report in the end.
 
 »spellcheckers« runs »codespell« and »spellintian« on the appropiate files and
 filters out obvious false positives.
+
+\t$0 merge-translations branch
+
+Merge translations from the given branch.
 "
 
 fi
