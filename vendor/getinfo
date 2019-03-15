@@ -6,7 +6,7 @@ BASEDIR="$(readlink -f "$(dirname $0)")"
 getcurrent() {
 	# search for an exact match to use the correct sources.list example
 	cd $BASEDIR
-	DISTROS="$(find . -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 2)"
+	DISTROS="$(find . -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 2 | LC_ALL=C sort)"
 	for DISTRO in $DISTROS; do
 		if dpkg-vendor --is $DISTRO; then
 			echo $DISTRO
@@ -28,7 +28,7 @@ getcurrent() {
 
 	# Do the ubuntu/debian dance we talked about
 	if dpkg-vendor --derives-from ubuntu; then
-		echo $DISTRO
+		echo ubuntu
 		return 0
 	fi
 
