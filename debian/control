@@ -37,6 +37,7 @@ Package: apt
 Architecture: any
 Depends: adduser,
          gpgv | gpgv2 | gpgv1,
+         libapt-pkg6.0 (>= ${binary:Version}),
          ${apt:keyring},
          ${misc:Depends},
          ${shlibs:Depends}
@@ -143,7 +144,10 @@ Description: documentation for APT development
 
 Package: apt-utils
 Architecture: any
-Depends: apt (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Depends: apt (= ${binary:Version}),
+         libapt-inst3.0 (>= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
 Description: package management related utility programs
  This package contains some less used commandline utilities related
  to package management with APT.
