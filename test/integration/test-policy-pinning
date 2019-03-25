@@ -354,7 +354,21 @@ testsuccessequal "coolstuff:
      1.0 0
         500 file:${tmppath}/aptarchive/ stable/main i386 Packages" aptcache policy coolstuff
 
-
+msgmsg "Check that local-only versions can be pinned correctly (LP: #1821308)"
+echo "Package: coolstuff
+Pin: version 2.0~bpo1
+Pin-Priority: 1000" > rootdir/etc/apt/preferences
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: 2.0~bpo1
+  Package pin: 2.0~bpo1
+  Version table:
+     2.0~bpo2 1000
+        100 file:${tmppath}/aptarchive/ backports/main i386 Packages
+ *** 2.0~bpo1 1000
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 1000
+        500 file:${tmppath}/aptarchive/ stable/main i386 Packages" aptcache policy coolstuff
 
 
 msgmsg "Check for package-specific never pin"

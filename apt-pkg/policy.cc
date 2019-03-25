@@ -172,17 +172,20 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
    // never sources, ignore it.
    if (!Pref.end())
    {
+      bool IsAvailable = false;
       bool AllNever = true;
       for (pkgCache::VerFileIterator VF = Pref.FileList(); VF.end() == false; ++VF)
       {
 	 if ((VF.File()->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
 	    continue;
 
+	 IsAvailable = true;
+
 	 if (PFPriority[VF.File()->ID] != NEVER_PIN)
 	    AllNever = false;
       }
 
-      if (AllNever)
+      if (IsAvailable && AllNever)
 	 Pref = pkgCache::VerIterator(*Pkg.Cache());
    }
 
