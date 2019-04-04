@@ -12,6 +12,8 @@ set(APT_INST_MAJOR ${MAJOR} PARENT_SCOPE)
 file(GLOB_RECURSE library "*.cc")
 file(GLOB_RECURSE headers "*.h")
 
+configure_file(apt-inst.pc.in ${CMAKE_CURRENT_BINARY_DIR}/apt-inst.pc @ONLY)
+
 # Create a library using the C++ files
 add_library(apt-inst SHARED ${library})
 
@@ -25,4 +27,5 @@ add_version_script(apt-inst)
 # Install the library and the headers
 install(TARGETS apt-inst LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/apt-pkg)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/apt-inst.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 flatify(${PROJECT_BINARY_DIR}/include/apt-pkg/ "${headers}")
