@@ -29,8 +29,8 @@ alongside various additional binaries like the acquire-methods used by them.
 Bindings for Python ([python-apt](https://tracker.debian.org/pkg/python-apt)) and
 Perl ([libapt-pkg-perl](https://tracker.debian.org/pkg/libapt-pkg-perl)) are available as separated projects.
 
-Discussion happens mostly on [the mailinglist](mailto:deity@lists.debian.org) ([archive](https://lists.debian.org/deity/)) and on [IRC](irc://irc.oftc.net/debian-apt).
-Our bugtracker as well as a general overview can be found at the [Debian Tracker page](https://tracker.debian.org/pkg/apt).
+Discussion happens mostly on [the mailing list](mailto:deity@lists.debian.org) ([archive](https://lists.debian.org/deity/)) and on [IRC](irc://irc.oftc.net/debian-apt).
+Our bug tracker as well as a general overview can be found at the [Debian Tracker page](https://tracker.debian.org/pkg/apt).
 
 
 Contributing
@@ -84,12 +84,12 @@ as well as the manpages and other documentation shipped with APT.
 ### Bug triage
 
 Software tools like APT which are used by thousands of users every
-day have a steady flow of incoming bugreports. Not all of them are really
+day have a steady flow of incoming bug reports. Not all of them are really
 bugs in APT: It can be packaging bugs like failing maintainer scripts a
 user reports against apt, because apt was the command he executed leading
 to this failure or various wishlist items for new features. Given enough time
 also the occasional duplicate enters the system.
-Our bugtracker is therefore full with open bugreports which are waiting for you! ;)
+Our bug tracker is therefore full with open bug reports which are waiting for you! ;)
 
 Testing
 -------
@@ -106,7 +106,7 @@ configuration file.
 
 ### Integration tests
 
-There is an extensive integration testsuite available which can be run via:
+There is an extensive integration test suite available which can be run via:
 
 	$ ./test/integration/run-tests
 
@@ -151,7 +151,7 @@ triager easily, it is beneficial to ask the reporter for the
 `/var/lib/dpkg/status` file, which includes the packages installed on the
 system and in which version. Such a file can then be used via the option
 `dir::state::status`. Beware of different architecture settings!
-Bugreports usually include this information in the template. Assuming you
+Bug reports usually include this information in the template. Assuming you
 already have the `Packages` files for the architecture (see `sources.list`
 manpage for the `arch=` option) you can change to a different architecture
 with a config file like:
@@ -207,8 +207,8 @@ Additional documentation
 Many more things could and should be said about APT and its usage but are more
 targeted at developers of related programs or only of special interest.
 
-* [Protocol specification of APTs communication with external dependency solvers (EDSP)](./doc/external-dependency-solver-protocol.md)
-* [Protocol specification of APTs communication with external installation planners (EIPP)](./doc/external-installation-planner-protocol.md)
+* [Protocol specification of APT's communication with external dependency solvers (EDSP)](./doc/external-dependency-solver-protocol.md)
+* [Protocol specification of APT's communication with external installation planners (EIPP)](./doc/external-installation-planner-protocol.md)
 * [Howto use and configure APT to acquire additional files in 'update' operations](./doc/acquire-additional-files.md)
 * [Download and package installation progress reporting details](./doc/progress-reporting.md)
 * [Remarks on DNS SRV record support in APT](./doc/srv-records-support.md)
