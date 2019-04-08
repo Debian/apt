@@ -7,13 +7,13 @@
 # Jérôme Marant, 2000.
 # Philippe Batailler, 2005.
 # Christian Perrier <bubulle@debian.org>, 2009, 2010, 2011, 2012, 2013.
-# Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>, 2014, 2017, 2018.
+# Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>, 2014, 2017-2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.8.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-02-04 15:34+0100\n"
-"PO-Revision-Date: 2018-11-26 17:47+0100\n"
+"POT-Creation-Date: 2019-05-21 14:38+0200\n"
+"PO-Revision-Date: 2019-05-01 17:00+0100\n"
 "Last-Translator: Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "Language: fr\n"
@@ -1174,16 +1174,12 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "A new <literal>list</literal> command is available similar to "
-#| "<literal>dpkg --list</literal>."
 msgid ""
 "<literal>reinstall</literal> is an alias for <literal>install --reinstall</"
 "literal>."
 msgstr ""
-"Une nouvelle commande <literal>list</literal> est disponible, semblable à la "
-"commande <literal>dpkg --list</literal>."
+"<literal>reinstall</literal> est un alias de la commande <literal>install --"
+"reinstall</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -3093,11 +3089,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>auto</literal> is used to mark a package as being automatically "
-#| "installed, which will cause the package to be removed when no more "
-#| "manually installed packages depend on this package."
 msgid ""
 "<literal>minimize-manual</literal> is used to mark (transitive) dependencies "
 "of metapackages as automatically installed.  This can be used after an "
@@ -3105,9 +3096,11 @@ msgid ""
 "packages; or continuously on systems managed by system configuration "
 "metapackages."
 msgstr ""
-"<literal>auto</literal> permet de marquer un paquet comme ayant été installé "
-"automatiquement. Un tel paquet sera supprimé automatiquement dès que plus "
-"aucun paquet installé manuellement ne dépend de lui."
+"<literal>minimize-manual</literal> permet de marquer les dépendances "
+"(transitives) de métapaquets comme ayant été installées automatiquement. "
+"Cela peut être utilisé par exemple après une installation pour réduire le "
+"nombre de paquets installés manuellement, ou de façon permanente sur des "
+"systèmes gérés par des métapaquets de configuration système."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
@@ -5570,6 +5563,10 @@ msgid ""
 "used when running dpkg. It may be set to any valid value of that environment "
 "variable; or the empty string, in which case the variable is not changed."
 msgstr ""
+"Il s'agit d'une chaîne qui définit la variable d'environnement <envar>PATH</"
+"envar> utilisée lors de l'exécution de dpkg. Elle peut être définie à "
+"n'importe quelle valeur valable pour cette variable d'environnement ou être "
+"une chaîne vide, dans ce cas la variable n'est pas modifiée."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -9870,19 +9867,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be "
-#| "used to store login information in a netrc-like format with restrictive "
-#| "file permissions."
 msgid ""
 "The APT auth.conf file <filename>/etc/apt/auth.conf</filename>, and .conf "
 "files inside <filename>/etc/apt/auth.conf.d</filename> can be used to store "
 "login information in a netrc-like format with restrictive file permissions."
 msgstr ""
-"Le fichier auth.conf d'APT <filename>/etc/apt/auth.conf</filename> peut être "
-"utilisé pour stocker les informations de connexion dans un format detype "
-"netrc avec des droits d'accès restreints"
+"Le fichier auth.conf d'APT <filename>/etc/apt/auth.conf</filename> ainsi que "
+"les fichiers .conf dans <filename>/etc/apt/auth.conf.d</filename> peuvent "
+"être utilisés pour stocker les informations de connexion dans un format de "
+"type netrc avec des droits d'accès restreints."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt_auth.conf.5.xml
@@ -10092,24 +10085,18 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid "<filename>/etc/apt/auth.conf</filename>"
 msgid "<filename>/etc/apt/auth.conf.d/*.conf</filename>"
-msgstr "<filename>/etc/apt/auth.conf</filename>"
+msgstr "<filename>/etc/apt/auth.conf.d/*.conf</filename>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Login information for APT sources and proxies in a netrc-like format.  "
-#| "Configuration Item: <literal>Dir::Etc::netrc</literal>."
 msgid ""
 "Login information for APT sources and proxies in a netrc-like format.  "
 "Configuration Item: <literal>Dir::Etc::netrcparts</literal>."
 msgstr ""
 "Informations de connexion pour les sources et les mandataires d'APT dans un "
-"format de type netrc. Élément de configuration : <literal>Dir::Etc::netrc</"
-"literal>."
+"format de type netrc. Élément de configuration : <literal>Dir::Etc::"
+"netrcparts</literal>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
