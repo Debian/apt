@@ -262,7 +262,7 @@ static std::vector<struct addrinfo *> OrderAddresses(struct addrinfo *CurHost)
 	 allAddrs.push_back(*otherIter++);
    }
 
-   return std::move(allAddrs);
+   return allAddrs;
 }
 									/*}}}*/
 // Check for errors and report them					/*{{{*/
