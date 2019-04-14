@@ -69,7 +69,7 @@ public:
    {
       bool const good;
       size_t length;
-      FileChunk(bool const pgood, size_t const plength) : good(pgood), length(plength) {}
+      FileChunk(bool const pgood, size_t const plength) noexcept : good(pgood), length(plength) {}
    };
    std::list<FileChunk> chunks;
 
