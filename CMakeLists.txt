@@ -117,6 +117,11 @@ if (UDEV_FOUND)
   set(HAVE_UDEV 1)
 endif()
 
+find_package(Systemd)
+if (SYSTEMD_FOUND)
+  set(HAVE_SYSTEMD 1)
+endif()
+
 find_package(Seccomp)
 if (SECCOMP_FOUND)
   set(HAVE_SECCOMP 1)

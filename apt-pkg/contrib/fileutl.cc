@@ -70,6 +70,9 @@
 #ifdef HAVE_ZSTD
 #include <zstd.h>
 #endif
+#ifdef HAVE_SYSTEMD
+#include <systemd/sd-bus.h>
+#endif
 #include <endian.h>
 #include <stdint.h>
 
@@ -3367,5 +3370,50 @@ bool OpenConfigurationFileFd(std::string const &File, FileFd &Fd) /*{{{*/
       return false;
    Fd.SetFileName(File);
    return true;
+}
+									/*}}}*/
+int Inhibit(const char *what, const char *who, const char *why, const char *mode) /*{{{*/
+{
+#ifdef HAVE_SYSTEMD
+   sd_bus_error error = SD_BUS_ERROR_NULL;
+   sd_bus_message *m = NULL;
+   sd_bus *bus = NULL;
+   int fd;
+   int r;
+
+   r = sd_bus_open_system(&bus);
+   if (r < 0)
+      goto out;
+
+   r = sd_bus_call_method(bus,
+			  "org.freedesktop.login1",
+			  "/org/freedesktop/login1",
+			  "org.freedesktop.login1.Manager",
+			  "Inhibit",
+			  &error,
+			  &m,
+			  "ssss",
+			  what,
+			  who,
+			  why,
+			  mode);
+   if (r < 0)
+      goto out;
+
+   r = sd_bus_message_read(m, "h", &fd);
+   if (r < 0)
+      goto out;
+
+   // We received a file descriptor, return it - systemd will close the read fd
+   // on free, so let's duplicate it here.
+   r = dup(fd);
+out:
+   sd_bus_error_free(&error);
+   sd_bus_message_unref(m);
+   sd_bus_unref(bus);
+   return r;
+#else
+   return -ENOTSUP;
+#endif
 }
 									/*}}}*/

@@ -1448,6 +1448,21 @@ bool pkgDPkgPM::ExpandPendingCalls(std::vector<Item> &List, pkgDepCache &Cache)
 }
 bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 {
+   struct Inhibitor
+   {
+      int Fd = -1;
+      Inhibitor()
+      {
+	 if (_config->FindB("DPkg::Inhibit-Shutdown", true))
+	    Fd = Inhibit("shutdown", "APT", "APT is installing or removing packages", "block");
+      }
+      ~Inhibitor()
+      {
+	 if (Fd > 0)
+	    close(Fd);
+      }
+   } inhibitor;
+
    // explicitly remove&configure everything for hookscripts and progress building
    // we need them only temporarily through, so keep the length and erase afterwards
    decltype(List)::const_iterator::difference_type explicitIdx =
