@@ -12,7 +12,7 @@ include ../buildlib/defaults.mak
 # The library name and version (indirectly used from init.h)
 include ../buildlib/libversion.mak
 
-CPPFLAGS+=-DAPT_PKG_EXPOSE_STRING_VIEW
+CPPFLAGS+=-DAPT_PKG_EXPOSE_STRING_VIEW $(SYSTEMD_CFLAGS)
 LIBRARY=apt-pkg
 MAJOR=$(LIBAPTPKG_MAJOR)
 MINOR=$(LIBAPTPKG_RELEASE)
@@ -28,6 +28,9 @@ SLIBS+= -llzma
 endif
 ifeq ($(HAVE_LZ4),yes)
 SLIBS+= -llz4
+endif
+ifeq ($(HAVE_SYSTEMD),yes)
+SLIBS+= $(SYSTEMD_LIBS)
 endif
 APT_DOMAIN:=libapt-pkg$(LIBAPTPKG_MAJOR)
 

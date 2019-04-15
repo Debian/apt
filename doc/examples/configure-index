@@ -418,6 +418,9 @@ DPkg
    // controls if apt will apport on the first dpkg error or if it 
    // tries to install as many packages as possible
    StopOnError "true";
+
+   // Set a shutdown block inhibitor on systemd systems while running dpkg
+   Inhibit-Shutdown "<BOOL>";
 }
 
 /* Options you can set to see some debugging text They correspond to names

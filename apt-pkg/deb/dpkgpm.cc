@@ -1232,6 +1232,22 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       return (I.Pkg->Flags & pkgCache::Flag::Essential) != 0;
    };
 
+   struct Inhibitor
+   {
+      int Fd = -1;
+      Inhibitor()
+      {
+	 if (_config->FindB("DPkg::Inhibit-Shutdown", true))
+	    Fd = Inhibit("shutdown", "APT", "APT is installing or removing packages", "block");
+      }
+      ~Inhibitor()
+      {
+	 if (Fd > 0)
+	    close(Fd);
+      }
+   } inhibitor;
+
+
    pkgPackageManager::SigINTStop = false;
    d->progress = progress;
 
