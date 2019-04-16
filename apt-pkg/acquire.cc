@@ -396,6 +396,7 @@ string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
    if (Config->SingleInstance == true || QueueMode == QueueAccess)
       return U.Access;
 
+   int Limit = 10;
    string AccessSchema = U.Access + ':';
    string FullQueueName;
 
@@ -414,15 +415,15 @@ string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
 #ifdef _SC_NPROCESSORS_ONLN
       long cpuCount = sysconf(_SC_NPROCESSORS_ONLN) * 2;
 #else
-      long cpuCount = 10;
+      long cpuCount = Limit;
 #endif
-      cpuCount = _config->FindI("Acquire::QueueHost::Limit", cpuCount);
+      Limit = _config->FindI("Acquire::QueueHost::Limit", cpuCount);
 
-      if (cpuCount <= 0 || existing < cpuCount)
+      if (Limit <= 0 || existing < Limit)
 	 strprintf(FullQueueName, "%s%ld", AccessSchema.c_str(), existing);
       else
       {
-	 long const randomQueue = random() % cpuCount;
+	 long const randomQueue = random() % Limit;
 	 strprintf(FullQueueName, "%s%ld", AccessSchema.c_str(), randomQueue);
       }
 
@@ -430,6 +431,7 @@ string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
          clog << "Chose random queue " << FullQueueName << " for " << Uri << endl;
    } else
    {
+      Limit = _config->FindI("Acquire::QueueHost::Limit", Limit);
       FullQueueName = AccessSchema + U.Host;
    }
    unsigned int Instances = 0, SchemaLength = AccessSchema.length();
@@ -448,7 +450,7 @@ string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
       clog << "Found " << Instances << " instances of " << U.Access << endl;
    }
 
-   if (Instances >= static_cast<decltype(Instances)>(_config->FindI("Acquire::QueueHost::Limit",10)))
+   if (Instances >= static_cast<decltype(Instances)>(Limit))
       return U.Access;
 
    return FullQueueName;
