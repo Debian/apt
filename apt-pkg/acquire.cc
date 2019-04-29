@@ -1284,13 +1284,13 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    {
       if (I->CurrentItem != 0 && I->CurrentItem->Owner->Complete == false)
       {
-	 CurrentBytes += I->CurrentSize;
-	 ResumeSize += I->ResumePoint;
+	 CurrentBytes += I->CurrentItem->CurrentSize;
+	 ResumeSize += I->CurrentItem->ResumePoint;
 
 	 // Files with unknown size always have 100% completion
 	 if (I->CurrentItem->Owner->FileSize == 0 &&
 	     I->CurrentItem->Owner->Complete == false)
-	    TotalBytes += I->CurrentSize;
+	    TotalBytes += I->CurrentItem->CurrentSize;
       }
    }
    

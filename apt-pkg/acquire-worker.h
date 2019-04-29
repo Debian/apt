@@ -251,21 +251,6 @@ class pkgAcquire::Worker : public WeakPointable
     */
    std::string Status;
 
-   /** \brief How many bytes of the file have been downloaded.  Zero
-    *  if the current progress of the file cannot be determined.
-    */
-   unsigned long long CurrentSize;
-
-   /** \brief The total number of bytes to be downloaded.  Zero if the
-    *  total size of the final is unknown.
-    */
-   unsigned long long TotalSize;
-
-   /** \brief How much of the file was already downloaded prior to
-    *  starting this worker.
-    */
-   unsigned long long ResumePoint;
-   
    /** \brief Tell the subprocess to download the given item.
     *
     *  \param Item the item to queue up.

@@ -221,21 +221,21 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 	 enum {Long = 0,Medium,Short} Mode = Medium;
 	 // Add the current progress
 	 if (Mode == Long)
-	    S << " " << std::to_string(I->CurrentSize);
+	    S << " " << std::to_string(I->CurrentItem->CurrentSize);
 	 else
 	 {
-	    if (Mode == Medium || I->TotalSize == 0)
-	       S << " " << SizeToStr(I->CurrentSize) << "B";
+	    if (Mode == Medium || I->CurrentItem->TotalSize == 0)
+	       S << " " << SizeToStr(I->CurrentItem->CurrentSize) << "B";
 	 }
 
 	 // Add the total size and percent
-	 if (I->TotalSize > 0 && I->CurrentItem->Owner->Complete == false)
+	 if (I->CurrentItem->TotalSize > 0 && I->CurrentItem->Owner->Complete == false)
 	 {
 	    if (Mode == Short)
-	       ioprintf(S, " %.0f%%", (I->CurrentSize*100.0)/I->TotalSize);
+	       ioprintf(S, " %.0f%%", (I->CurrentItem->CurrentSize*100.0)/I->CurrentItem->TotalSize);
 	    else
-	       ioprintf(S, "/%sB %.0f%%", SizeToStr(I->TotalSize).c_str(),
-		     (I->CurrentSize*100.0)/I->TotalSize);
+	       ioprintf(S, "/%sB %.0f%%", SizeToStr(I->CurrentItem->TotalSize).c_str(),
+		     (I->CurrentItem->CurrentSize*100.0)/I->CurrentItem->TotalSize);
 	 }
 	 S << "]";
       }

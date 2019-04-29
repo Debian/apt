@@ -44,7 +44,7 @@ using namespace std;
 // Worker::Worker - Constructor for Queue startup			/*{{{*/
 pkgAcquire::Worker::Worker(Queue *Q, MethodConfig *Cnf, pkgAcquireStatus *log) :
    d(NULL), OwnerQ(Q), Log(log), Config(Cnf), Access(Cnf->Access),
-   CurrentItem(nullptr), CurrentSize(0), TotalSize(0)
+   CurrentItem(nullptr)
 {
    Construct();
 }
@@ -369,12 +369,12 @@ bool pkgAcquire::Worker::RunMessages()
 	    }
 
 	    CurrentItem = Itm;
-	    CurrentSize = 0;
-	    TotalSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
-	    ResumePoint = strtoull(LookupTag(Message,"Resume-Point","0").c_str(), NULL, 10);
+	    Itm->CurrentSize = 0;
+	    Itm->TotalSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
+	    Itm->ResumePoint = strtoull(LookupTag(Message,"Resume-Point","0").c_str(), NULL, 10);
 	    for (auto const Owner: Itm->Owners)
 	    {
-	       Owner->Start(Message, TotalSize);
+	       Owner->Start(Message, Itm->TotalSize);
 	       // Display update before completion
 	       if (Log != nullptr)
 	       {
@@ -918,7 +918,7 @@ void pkgAcquire::Worker::Pulse()
    struct stat Buf;
    if (stat(CurrentItem->Owner->DestFile.c_str(),&Buf) != 0)
       return;
-   CurrentSize = Buf.st_size;
+   CurrentItem->CurrentSize = Buf.st_size;
 }
 									/*}}}*/
 // Worker::ItemDone - Called when the current item is finished		/*{{{*/
@@ -926,9 +926,7 @@ void pkgAcquire::Worker::Pulse()
 /* */
 void pkgAcquire::Worker::ItemDone()
 {
-   CurrentItem = 0;
-   CurrentSize = 0;
-   TotalSize = 0;
+   CurrentItem = nullptr;
    Status = string();
 }
 									/*}}}*/

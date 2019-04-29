@@ -425,6 +425,21 @@ class pkgAcquire::Queue
       /** \brief The underlying items interested in the download */
       std::vector<Item*> Owners;
 
+      /** \brief How many bytes of the file have been downloaded.  Zero
+       *  if the current progress of the file cannot be determined.
+       */
+      unsigned long long CurrentSize = 0;
+
+      /** \brief The total number of bytes to be downloaded.  Zero if the
+       *  total size of the final is unknown.
+       */
+      unsigned long long TotalSize = 0;
+
+      /** \brief How much of the file was already downloaded prior to
+       *  starting this worker.
+       */
+      unsigned long long ResumePoint = 0;
+
       typedef std::vector<Item*>::const_iterator owner_iterator;
 
       /** \brief Assign the ItemDesc portion of this QItem from
