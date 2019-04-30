@@ -31,7 +31,7 @@
 class APT_HIDDEN ScopedGetLock {
 public:
    int fd;
-   ScopedGetLock(std::string const &filename) : fd(GetLock(filename)) {}
+   explicit ScopedGetLock(std::string const &filename) : fd(GetLock(filename)) {}
    ~ScopedGetLock() { close(fd); }
 };
 bool EditSources(CommandLine &CmdL)

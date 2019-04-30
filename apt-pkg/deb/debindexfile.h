@@ -44,7 +44,7 @@ public:
 
    virtual pkgCacheListParser * CreateListParser(FileFd &Pkg) APT_OVERRIDE;
 
-   debStatusIndex(std::string const &File);
+   explicit debStatusIndex(std::string const &File);
    virtual ~debStatusIndex();
 };
 
@@ -83,7 +83,7 @@ public:
    // Interface for the Cache Generator
    virtual bool HasPackages() const APT_OVERRIDE;
 
-   debTranslationsIndex(IndexTarget const &Target);
+   explicit debTranslationsIndex(IndexTarget const &Target);
    virtual ~debTranslationsIndex();
 };
 
@@ -141,7 +141,7 @@ public:
 
    // Interface for acquire
 
-   debDebPkgFileIndex(std::string const &DebFile);
+   explicit debDebPkgFileIndex(std::string const &DebFile);
    virtual ~debDebPkgFileIndex();
 
    //FIXME: use proper virtual-handling on next ABI break
@@ -162,7 +162,7 @@ public:
    virtual pkgSrcRecords::Parser *CreateSrcParser() const APT_OVERRIDE;
    virtual bool HasPackages() const APT_OVERRIDE {return false;};
 
-   debDscFileIndex(std::string const &DscFile);
+   explicit debDscFileIndex(std::string const &DscFile);
    virtual ~debDscFileIndex();
 };
 
@@ -191,7 +191,7 @@ public:
    // Abort if the file does not exist.
    virtual bool Exists() const APT_OVERRIDE {return true;};
 
-   debStringPackageIndex(std::string const &content);
+   explicit debStringPackageIndex(std::string const &content);
    virtual ~debStringPackageIndex();
 };
 #endif

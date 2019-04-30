@@ -121,7 +121,7 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 
    APT_PUBLIC static const char *ConvertRelation(const char *I,unsigned int &Op);
 
-   debListParser(FileFd *File);
+   explicit debListParser(FileFd *File);
    virtual ~debListParser();
 };
 
@@ -145,7 +145,7 @@ class APT_HIDDEN debTranslationsParser : public debListParser
    virtual APT::StringView Version() APT_OVERRIDE { return ""; }
 #endif
 
-   debTranslationsParser(FileFd *File)
+   explicit debTranslationsParser(FileFd *File)
       : debListParser(File) {};
 };
 
@@ -153,7 +153,7 @@ class APT_HIDDEN debStatusListParser : public debListParser
 {
  public:
    virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);
-   debStatusListParser(FileFd *File)
+   explicit debStatusListParser(FileFd *File)
       : debListParser(File) {};
 };
 #endif

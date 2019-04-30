@@ -119,7 +119,7 @@ class Configuration
    void Dump(std::ostream& str, char const * const root,
 	     char const * const format, bool const emptyValue);
 
-   Configuration(const Item *Root);
+   explicit Configuration(const Item *Root);
    Configuration();
    ~Configuration();
 
@@ -130,7 +130,7 @@ class Configuration
      APT_HIDDEN void clearPatterns();
 
    public:
-     MatchAgainstConfig(char const * Config);
+     explicit MatchAgainstConfig(char const * Config);
      virtual ~MatchAgainstConfig();
 
      /** \brief Returns \b true for a string matching one of the patterns */

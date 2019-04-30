@@ -74,7 +74,7 @@ class MMap
    bool Sync(unsigned long Start,unsigned long Stop);
    
    MMap(FileFd &F,unsigned long Flags);
-   MMap(unsigned long Flags);
+   explicit MMap(unsigned long Flags);
    virtual ~MMap();
 };
 

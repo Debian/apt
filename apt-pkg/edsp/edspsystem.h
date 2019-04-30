@@ -37,7 +37,7 @@ public:
    virtual bool FindIndex(pkgCache::PkgFileIterator File,
 			  pkgIndexFile *&Found) const APT_OVERRIDE;
 
-   edspLikeSystem(char const * const Label);
+   explicit edspLikeSystem(char const * const Label);
    virtual ~edspLikeSystem();
 };
 

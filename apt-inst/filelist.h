@@ -97,7 +97,7 @@ class pkgFLCache
    bool AddConfFile(const char *Name,const char *NameEnd,
 		    PkgIterator const &Owner,const unsigned char *Sum);
 
-   pkgFLCache(DynamicMMap &Map);
+   explicit pkgFLCache(DynamicMMap &Map);
 //   ~pkgFLCache();
 };
 
@@ -288,7 +288,7 @@ class pkgFLCache::NodeIterator
    Package *RealPackage() const;
 
    NodeIterator() : Nde(0), Type(NdeHash), Owner(0) {};
-   NodeIterator(pkgFLCache &Owner) : Nde(Owner.NodeP), Type(NdeHash), Owner(&Owner) {}
+   explicit NodeIterator(pkgFLCache &Owner) : Nde(Owner.NodeP), Type(NdeHash), Owner(&Owner) {}
    NodeIterator(pkgFLCache &Owner,Node *Trg) : Nde(Trg), Type(NdeHash), Owner(&Owner) {}
    NodeIterator(pkgFLCache &Owner,Node *Trg,Package *) : Nde(Trg), Type(NdePkg), Owner(&Owner) {}
 };

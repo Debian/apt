@@ -44,7 +44,7 @@ class ARArchive
    const Member *FindMember(const char *Name) const;
    inline Member *Members() { return List; }
    
-   ARArchive(FileFd &File);
+   explicit ARArchive(FileFd &File);
    ~ARArchive();
 };
 

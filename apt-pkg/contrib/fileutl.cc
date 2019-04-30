@@ -1944,7 +1944,7 @@ class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {				/*{{{*/
       bool eof;
       bool compressing;
 
-      LZMAFILE(FileFd * const fd) : file(nullptr), filefd(fd), eof(false), compressing(false) { buffer[0] = '\0'; }
+      explicit LZMAFILE(FileFd * const fd) : file(nullptr), filefd(fd), eof(false), compressing(false) { buffer[0] = '\0'; }
       ~LZMAFILE()
       {
 	 if (compressing == true && filefd->Failed() == false)
