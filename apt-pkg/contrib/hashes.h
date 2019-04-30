@@ -47,7 +47,7 @@ class HashString
 
  public:
    HashString(std::string Type, std::string Hash);
-   HashString(std::string StringedHashString);  // init from str as "type:hash"
+   explicit HashString(std::string StringedHashString);  // init from str as "type:hash"
    HashString();
 
    // get hash type used
@@ -163,11 +163,11 @@ class HashStringList
    HashStringList() {}
 
    // simplifying API-compatibility constructors
-   HashStringList(std::string const &hash) {
+   explicit HashStringList(std::string const &hash) {
       if (hash.empty() == false)
 	 list.push_back(HashString(hash));
    }
-   HashStringList(char const * const hash) {
+   explicit HashStringList(char const * const hash) {
       if (hash != NULL && hash[0] != '\0')
 	 list.push_back(HashString(hash));
    }
@@ -210,9 +210,9 @@ class Hashes
     * which hashes to generate. */
    Hashes();
    /** @param Hashes bitflag composed of #SupportedHashes */
-   Hashes(unsigned int const Hashes);
+   explicit Hashes(unsigned int const Hashes);
    /** @param Hashes is a list of hashes */
-   Hashes(HashStringList const &Hashes);
+   explicit Hashes(HashStringList const &Hashes);
    virtual ~Hashes();
 };
 

@@ -56,7 +56,7 @@ class debDebFile
    const ARArchive::Member *GotoMember(const char *Name);
    inline FileFd &GetFile() {return File;};
    
-   debDebFile(FileFd &File);
+   explicit debDebFile(FileFd &File);
 };
 
 class debDebFile::ControlExtract : public pkgDirStream
@@ -87,7 +87,7 @@ class debDebFile::MemControlExtract : public pkgDirStream
    bool TakeControl(const void *Data,unsigned long long Size);
 
    MemControlExtract() : IsControl(false), Control(0), Length(0), Member("control") {};
-   MemControlExtract(std::string Member) : IsControl(false), Control(0), Length(0), Member(Member) {};
+   explicit MemControlExtract(std::string Member) : IsControl(false), Control(0), Length(0), Member(Member) {};
    ~MemControlExtract() {delete [] Control;};   
 };
 									/*}}}*/

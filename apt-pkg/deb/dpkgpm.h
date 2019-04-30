@@ -131,7 +131,7 @@ class pkgDPkgPM : public pkgPackageManager
    
    public:
 
-   pkgDPkgPM(pkgDepCache *Cache);
+   explicit pkgDPkgPM(pkgDepCache *Cache);
    virtual ~pkgDPkgPM();
 
    APT_HIDDEN static bool ExpandPendingCalls(std::vector<Item> &List, pkgDepCache &Cache);

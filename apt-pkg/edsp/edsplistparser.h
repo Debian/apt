@@ -35,7 +35,7 @@ class APT_HIDDEN edspLikeListParser : public debListParser
    virtual APT::StringView Description_md5() APT_OVERRIDE;
    virtual unsigned short VersionHash() APT_OVERRIDE;
 
-   edspLikeListParser(FileFd *File);
+   explicit edspLikeListParser(FileFd *File);
    virtual ~edspLikeListParser();
 };
 
@@ -48,7 +48,7 @@ protected:
    virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver) APT_OVERRIDE;
 
 public:
-   edspListParser(FileFd *File);
+   explicit edspListParser(FileFd *File);
    virtual ~edspListParser();
 };
 
@@ -58,7 +58,7 @@ protected:
    virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver) APT_OVERRIDE;
 
 public:
-   eippListParser(FileFd *File);
+   explicit eippListParser(FileFd *File);
    virtual ~eippListParser();
 };
 #endif

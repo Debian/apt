@@ -85,7 +85,7 @@ class APT_HIDDEN debDebFileRecordParser : public debRecordParserBase
  public:
    virtual std::string FileName() APT_OVERRIDE;
 
-   debDebFileRecordParser(std::string FileName);
+   explicit debDebFileRecordParser(std::string FileName);
    virtual ~debDebFileRecordParser();
 };
 

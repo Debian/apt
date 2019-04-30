@@ -109,7 +109,7 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
    std::vector<std::string> SupportedComponents;
    std::map<std::string, std::string> const ReleaseOptions;
 
-   debReleaseIndexPrivate(std::map<std::string, std::string> const &Options) : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0), CheckDate(metaIndex::TRI_UNSET), DateMaxFuture(0), NotBefore(0), ReleaseOptions(Options) {}
+   explicit debReleaseIndexPrivate(std::map<std::string, std::string> const &Options) : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0), CheckDate(metaIndex::TRI_UNSET), DateMaxFuture(0), NotBefore(0), ReleaseOptions(Options) {}
 };
 									/*}}}*/
 // ReleaseIndex::MetaIndex* - display helpers				/*{{{*/

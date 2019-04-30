@@ -18,6 +18,8 @@ class VerIteratorWithCaching
    const pkgCache::VerIterator iter;
    const pkgCache::DescFile * descFile;
 public:
+
+   // cppcheck-suppress noExplicitConstructor
    VerIteratorWithCaching(const pkgCache::VerIterator& iter) :
       iter(iter),
       descFile(iter->DescriptionList != 0

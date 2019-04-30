@@ -175,7 +175,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
 {
    FetchResult Res;
 
-   URI Get = Itm->Uri;
+   URI Get(Itm->Uri);
    string File = Get.Path;
    Debug = DebugEnabled();
 

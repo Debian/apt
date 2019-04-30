@@ -79,7 +79,7 @@ class APT_HIDDEN JsonWriter
    }
 
    public:
-   JsonWriter(std::ostream &os) : os(os) { old_locale = os.imbue(std::locale::classic()); }
+   explicit JsonWriter(std::ostream &os) : os(os) { old_locale = os.imbue(std::locale::classic()); }
    ~JsonWriter() { os.imbue(old_locale); }
    JsonWriter &beginArray()
    {

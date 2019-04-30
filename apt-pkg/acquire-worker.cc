@@ -766,7 +766,7 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    Message += "URI: " + Item->URI;
    Message += "\nFilename: " + Item->Owner->DestFile;
 
-   URI URL = Item->URI;
+   URI URL(Item->URI);
    // FIXME: We should not hard code proxy protocols here.
    if (URL.Access == "http" || URL.Access == "https")
    {

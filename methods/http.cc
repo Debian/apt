@@ -892,7 +892,7 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
 /* This places the http request in the outbound buffer */
 void HttpMethod::SendReq(FetchItem *Itm)
 {
-   URI Uri = Itm->Uri;
+   URI Uri(Itm->Uri);
    {
       auto const plus = Binary.find('+');
       if (plus != std::string::npos)

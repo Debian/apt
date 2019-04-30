@@ -63,7 +63,7 @@ static bool OpenFileWithCompressorByName(FileFd &fileFd, std::string const &File
 									/*}}}*/
 bool StoreMethod::Fetch(FetchItem *Itm)					/*{{{*/
 {
-   URI Get = Itm->Uri;
+   URI Get(Itm->Uri);
    std::string Path = Get.Host + Get.Path; // To account for relative paths
    
    FetchResult Res;

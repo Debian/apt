@@ -433,7 +433,7 @@ void RSHMethod::SigTerm(int)
 /* */
 bool RSHMethod::Fetch(FetchItem *Itm)
 {
-   URI Get = Itm->Uri;
+   URI Get(Itm->Uri);
    const char *File = Get.Path.c_str();
    FetchResult Res;
    Res.Filename = Itm->DestFile;

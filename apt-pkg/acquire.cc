@@ -637,7 +637,7 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
 
       // if its the source file (e.g. local sources) we might be lucky
       // by dropping the dropping only for some methods.
-      URI const source = (*I)->DescURI();
+      URI const source((*I)->DescURI());
       if (source.Access == "file" || source.Access == "copy")
       {
 	 std::string const conf = "Binary::" + source.Access + "::APT::Sandbox::User";
