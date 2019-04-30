@@ -63,14 +63,36 @@ static bool DoDownloadFile(CommandLine &CmdL)				/*{{{*/
    {
       std::string download_uri = CmdL.FileList[fileind + 1];
       std::string targetfile = CmdL.FileList[fileind + 2];
-      std::string hash;
-      if (CmdL.FileSize() > fileind + 3)
-	 hash = CmdL.FileList[fileind + 3];
+      HashStringList hashes;
+
+      fileind += 2;
+
+      // An empty string counts as a hash for compatability reasons
+      if (CmdL.FileSize() > fileind + 1 && *CmdL.FileList[fileind + 1] == '\0')
+	 fileind++;
+
+      /* Let's start looking for hashes */
+      for (auto i = fileind + 1; CmdL.FileSize() > i; i++)
+      {
+	 bool isAHash = false;
+
+	 for (auto HashP = HashString::SupportedHashes(); *HashP != nullptr; HashP++)
+	 {
+	    if (APT::String::Startswith(CmdL.FileList[i], *HashP))
+	       isAHash = true;
+	 }
+
+	 if (!isAHash)
+	    break;
+
+	 hashes.push_back(HashString(CmdL.FileList[i]));
+	 fileind++;
+      }
+
       // we use download_uri as descr and targetfile as short-descr
-      new pkgAcqFile(&Fetcher, download_uri, hash, 0, download_uri, targetfile,
-	    "dest-dir-ignored", targetfile);
+      new pkgAcqFile(&Fetcher, download_uri, hashes, 0, download_uri, targetfile,
+		     "dest-dir-ignored", targetfile);
       targetfiles.push_back(targetfile);
-      fileind += 3;
    }
 
    bool Failed = false;
