@@ -218,8 +218,8 @@ class URI
    static std::string SiteOnly(const std::string &URI);
    static std::string ArchiveOnly(const std::string &URI);
    static std::string NoUserPassword(const std::string &URI);
-   
-   URI(std::string Path) {CopyFrom(Path);}
+
+   explicit URI(std::string Path) { CopyFrom(Path); }
    URI() : Port(0) {}
 };
 

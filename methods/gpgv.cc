@@ -419,7 +419,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 
 bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 {
-   URI const Get = Itm->Uri;
+   URI const Get(Itm->Uri);
    string const Path = Get.Host + Get.Path; // To account for relative paths
    SignersStorage Signers;
 
