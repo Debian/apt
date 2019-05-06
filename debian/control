@@ -94,19 +94,6 @@ Description: package management runtime library
     http(s), rsh as well as an interface to add more transports like
     tor+http(s) (apt-transport-tor).
 
-Package: libapt-inst3.0
-Architecture: any
-Multi-Arch: same
-Priority: optional
-Pre-Depends: ${misc:Pre-Depends}
-Depends: ${misc:Depends}, ${shlibs:Depends}
-Section: libs
-Provides: libapt-inst (= ${binary:Version})
-Description: deb package format runtime library
- This library provides methods to query and extract information
- from deb packages. This includes the control data and the package
- file content.
-
 Package: apt-doc
 Architecture: all
 Priority: optional
@@ -121,8 +108,7 @@ Architecture: any
 Multi-Arch: same
 Priority: optional
 Pre-Depends: ${misc:Pre-Depends}
-Depends: libapt-inst (= ${binary:Version}),
-         libapt-pkg (= ${binary:Version}),
+Depends: libapt-pkg (= ${binary:Version}),
          zlib1g-dev,
          ${misc:Depends}
 Section: libdevel
@@ -146,7 +132,6 @@ Description: documentation for APT development
 Package: apt-utils
 Architecture: any
 Depends: apt (= ${binary:Version}),
-         libapt-inst3.0 (>= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Description: package management related utility programs
