@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2016-12-05 21:09+0100\n"
 "Last-Translator: Oriol Debian <oriol.debian@gmail.com>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -429,6 +429,13 @@ msgstr "No es troba una font per baixar la versió «%s» de «%s»"
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "El registre de canvis no està disponible per a %s=%s"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -959,12 +966,12 @@ msgstr "Ha hagut un problema en reanomenar el fitxer %s a %s"
 msgid "Problem syncing the file"
 msgstr "Ha hagut un problema en sincronitzar el fitxer"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "No es pot crear el fitxer temporal %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "No es pot escriure en %s"
@@ -1619,6 +1626,12 @@ msgstr "No s'ha entès el pin de tipus %s"
 
 #: apt-pkg/policy.cc
 #, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
+
+#: apt-pkg/policy.cc
+#, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
 "%s: El valor %s està fora del rang de les prioritats de pin vàlid (%d a %d)"
@@ -2060,7 +2073,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Avortat."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Voleu continuar?"
 
@@ -2628,9 +2641,10 @@ msgstr[1] ""
 msgid "All packages are up to date."
 msgstr "Tots els paquets estan actualitzats."
 
-#: cmdline/apt-cache.cc
-msgid "apt-cache stats does not take any arguments"
-msgstr "apt-cache stats no pren cap argument"
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s does not take any arguments"
+msgstr "%s no pren cap argument"
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -2917,6 +2931,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Instal·la nous paquets (el paquet és libc6, no libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Instal·la nous paquets (el paquet és libc6, no libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Suprimeix paquets"
 
@@ -3066,6 +3086,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s ja estava marcat com instal·lat automàticament.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "S'instal·laran els paquets NOUS següents:"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s ja estava retingut.\n"
@@ -3128,6 +3158,12 @@ msgstr "Marca els paquets proporcionats com instal·lables automàticament"
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as manually installed"
 msgstr "Marca els paquets proporcionats com instal·lables manualment"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "Marca els paquets proporcionats com instal·lables automàticament"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3202,6 +3238,12 @@ msgstr "mostra detalls del paquet"
 #. package stuff
 #: cmdline/apt.cc
 msgid "install packages"
+msgstr "instal·la paquets"
+
+#: cmdline/apt.cc
+#, fuzzy
+#| msgid "install packages"
+msgid "reinstall packages"
 msgstr "instal·la paquets"
 
 #: cmdline/apt.cc

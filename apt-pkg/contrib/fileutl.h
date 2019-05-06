@@ -210,6 +210,12 @@ FileFd* GetTempFile(std::string const &Prefix = "",
                     bool ImmediateUnlink = true,
 		    FileFd * const TmpFd = NULL);
 
+// FIXME: GetTempFile should always return a buffered file
+FileFd* GetTempFile(std::string const &Prefix,
+                    bool ImmediateUnlink ,
+		    FileFd * const TmpFd,
+          bool Buffered) APT_HIDDEN;
+
 /** \brief Ensure the existence of the given Path
  *
  *  \param Parent directory of the Path directory - a trailing
@@ -293,5 +299,7 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, 
 bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode);
 
 APT_HIDDEN bool OpenConfigurationFileFd(std::string const &File, FileFd &Fd);
+
+APT_HIDDEN int Inhibit(const char *what, const char *who, const char *why, const char *mode);
 
 #endif

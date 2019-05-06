@@ -4,15 +4,15 @@
 # Tchaikov <tchaikov@sjtu.org>, 2005, 2007.
 # Carlos Z.F. Liu <carlosliu@users.sourceforge.net>, 2004, 2006.
 # Aron Xu <happyaron.xu@gmail.com>, 2009, 2010.
-# Mo Zhou <cdluminate@gmail.com>, 2014, 2015, 2016, 2017.
+# Mo Zhou <cdluminate@gmail.com>, 2014, 2015, 2016, 2017, 2019.
 # Boyuan Yang <073plan@gmail.com>, 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.7.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
-"PO-Revision-Date: 2018-07-13 18:16+0800\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
+"PO-Revision-Date: 2019-01-12 00:00+0000\n"
 "Last-Translator: Mo Zhou <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
 "Language: zh_CN\n"
@@ -404,6 +404,13 @@ msgstr "没有源可以用来下载 %s 版本的 %s"
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s=%s 的 Changelog 不可用"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -904,12 +911,12 @@ msgstr "重命名文件 %s 为 %s 出错"
 msgid "Problem syncing the file"
 msgstr "同步文件出错"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "无法建立临时文件(mkstemp) %s "
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "无法写入 %s"
@@ -1080,19 +1087,15 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "无法解析软件包文件 %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Unable to lock the administration directory (%s), is another process "
-#| "using it?"
+#, c-format
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
-msgstr "无法锁定管理目录(%s)，是否有其他进程正占用它？"
+msgstr "无法获取 dpkg 前端锁 (%s)，是否有其他进程正占用它？"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid "Unable to lock the administration directory (%s), are you root?"
+#, c-format
 msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
-msgstr "无法对状态列表目录加锁(%s)，请查看您是否正以 root 用户运行？"
+msgstr "无法获取 dpkg 前端锁 (%s)，请查看您是否正以 root 用户运行？"
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -1524,6 +1527,12 @@ msgstr "无法识别锁定的类型 %s"
 
 #: apt-pkg/policy.cc
 #, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
+
+#: apt-pkg/policy.cc
+#, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr "%s: 值 %s 超出锁定优先级有效范围 (%d 到 %d)"
 
@@ -1945,7 +1954,7 @@ msgstr ""
 msgid "Abort."
 msgstr "中止。"
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "您希望继续执行吗？"
 
@@ -2444,10 +2453,9 @@ msgid "Failed to parse %s. Edit again? "
 msgstr "解析 %s 失败。请重新编辑之后再试。"
 
 #: apt-private/private-sources.cc
-#, fuzzy, c-format
-#| msgid "Your '%s' file changed, please run 'apt-get update'."
+#, c-format
 msgid "Your '%s' file changed, please run 'apt-get update'.\n"
-msgstr "您的 %s 文件有过改动，请执行 ‘apt-get update’。"
+msgstr "您的 %s 文件有过改动，请执行 ‘apt-get update’。\n"
 
 #: apt-private/private-unmet.cc
 #, c-format
@@ -2478,9 +2486,10 @@ msgstr[0] ""
 msgid "All packages are up to date."
 msgstr "所有软件包均为最新。"
 
-#: cmdline/apt-cache.cc
-msgid "apt-cache stats does not take any arguments"
-msgstr "apt-cache stats 命令不需要参数"
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s does not take any arguments"
+msgstr "%s 命令不需要参数"
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -2747,6 +2756,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "安装新的软件包(注：软件包名称是 libc6 而非 libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "安装新的软件包(注：软件包名称是 libc6 而非 libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "卸载软件包"
 
@@ -2892,6 +2907,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s 已经被设置为自动安装。\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "下列【新】软件包将被安装："
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s 已经设置为保留。\n"
@@ -2951,6 +2976,12 @@ msgstr "标记指定软件包为自动安装"
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as manually installed"
 msgstr "标记指定软件包为手动安装"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "标记指定软件包为自动安装"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3022,6 +3053,12 @@ msgstr "显示软件包细节"
 #. package stuff
 #: cmdline/apt.cc
 msgid "install packages"
+msgstr "安装软件包"
+
+#: cmdline/apt.cc
+#, fuzzy
+#| msgid "install packages"
+msgid "reinstall packages"
 msgstr "安装软件包"
 
 #: cmdline/apt.cc

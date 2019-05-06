@@ -207,9 +207,7 @@ unsigned long long HashStringList::FileSize() const			/*{{{*/
 									/*}}}*/
 bool HashStringList::FileSize(unsigned long long const Size)		/*{{{*/
 {
-   std::string size;
-   strprintf(size, "%llu", Size);
-   return push_back(HashString("Checksum-FileSize", size));
+   return push_back(HashString("Checksum-FileSize", std::to_string(Size)));
 }
 									/*}}}*/
 bool HashStringList::supported(char const * const type)			/*{{{*/

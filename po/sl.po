@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -403,6 +403,13 @@ msgstr "Ni mogoče najti vira za prejem različice '%s' paketa '%s'"
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Dnevnik sprememb za %s (%s)"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -908,12 +915,12 @@ msgstr "Težava med preimenovanje datoteke %s v %s"
 msgid "Problem syncing the file"
 msgstr "Težava med usklajevanjem datoteke"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Ni mogoče določiti %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Ni mogoče pisati na %s"
@@ -1551,6 +1558,12 @@ msgstr "Ni mogoče razumeti vrste bucike %s"
 
 #: apt-pkg/policy.cc
 #, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
+
+#: apt-pkg/policy.cc
+#, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
 
@@ -1975,7 +1988,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Prekini."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Ali želite nadaljevati?"
 
@@ -2549,9 +2562,9 @@ msgstr[3] ""
 msgid "All packages are up to date."
 msgstr ""
 
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "apt-cache stats does not take any arguments"
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s does not take any arguments"
 msgstr "Ukaz update ne sprejema argumentov"
 
 #: cmdline/apt-cache.cc
@@ -2812,6 +2825,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Namesti nove pakete (paket je libc6, ne libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Namesti nove pakete (paket je libc6, ne libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Odstrani pakete"
 
@@ -2970,6 +2989,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "paket %s je bil že nastavljen kot samodejno nameščen.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "Naslednji NOVI paketi bodo nameščeni:"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "paket %s je bil že nastavljen kot na čakanju.\n"
@@ -3030,6 +3059,12 @@ msgstr "Označi dane pakete kot samodejno nameščene"
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as manually installed"
 msgstr "Označi dane pakete kot ročno nameščene"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "Označi dane pakete kot samodejno nameščene"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3093,6 +3128,11 @@ msgstr ""
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "Pripeti paketi:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "Pripeti paketi:"
 
 #: cmdline/apt.cc

@@ -252,7 +252,7 @@ Configuration::Item *Configuration::Lookup(Item *Head,const char *S,
    if (Len != 0)
    {
       for (; I != 0; Last = &I->Next, I = I->Next)
-	 if ((Res = stringcasecmp(I->Tag,S,S + Len)) == 0)
+	 if (Len == I->Tag.length() && (Res = stringcasecmp(I->Tag,S,S + Len)) == 0)
 	    break;
    }
    else

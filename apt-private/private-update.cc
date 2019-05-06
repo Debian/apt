@@ -138,6 +138,8 @@ bool DoUpdate(CommandLine &CmdL)
          c1out << _("All packages are up to date.") << std::endl;
       else
          ioprintf(c1out, msg, upgradable);
+
+      RunScripts("APT::Update::Post-Invoke-Stats");
    }
 
    return true;

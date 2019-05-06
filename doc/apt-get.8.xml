@@ -14,7 +14,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2018-10-14T00:00:00Z</date>
+   <date>2019-01-27T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -141,6 +141,10 @@
      removed). Note that matching is done by substring so 'lo.*' matches 'how-lo'
      and 'lowest'. If this is undesired, anchor the regular expression
      with a '^' or '$' character, or create a more specific regular expression.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>reinstall</option></term>
+     <listitem><para><literal>reinstall</literal> is an alias for <literal>install --reinstall</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>remove</option></term>
@@ -352,7 +356,7 @@
                    <term><option>--assume-yes</option></term>
      <listitem><para>Automatic yes to prompts; assume "yes" as answer to all prompts and run
      non-interactively. If an undesirable situation, such as changing a held
-     package, trying to install a unauthenticated package or removing an essential package 
+     package, trying to install an unauthenticated package or removing an essential package 
      occurs then <literal>apt-get</literal> will abort. 
      Configuration Item: <literal>APT::Get::Assume-Yes</literal>.</para></listitem>
      </varlistentry>
@@ -409,7 +413,7 @@
      <varlistentry><term><option>--with-new-pkgs</option></term>
      <listitem><para>Allow installing new packages when used in
      conjunction with <literal>upgrade</literal>.  This is useful if
-     the update of a installed package requires new dependencies to be
+     the update of an installed package requires new dependencies to be
      installed. Instead of holding the package back <literal>upgrade</literal>
      will upgrade the package and install the new dependencies. Note that
      <literal>upgrade</literal> with this option will never remove packages,

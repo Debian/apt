@@ -25,6 +25,7 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/netrc.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/sourcelist.h>
@@ -1464,8 +1465,20 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
    return true;
 }
 									/*}}}*/
-bool pkgAcqMetaBase::CheckAuthDone(string const &Message)		/*{{{*/
+bool pkgAcqMetaBase::CheckAuthDone(string const &Message, pkgAcquire::MethodConfig const *const Cnf) /*{{{*/
 {
+   /* If we work with a recent version of our gpgv method, we expect that it tells us
+      which key(s) have signed the file so stuff like CVE-2018-0501 is harder in the future */
+   if (Cnf->Version != "1.0" && LookupTag(Message, "Signed-By").empty())
+   {
+      std::string errmsg;
+      strprintf(errmsg, "Internal Error: Signature on %s seems good, but expected details are missing! (%s)", Target.URI.c_str(), "Signed-By");
+      if (ErrorText.empty())
+	 ErrorText = errmsg;
+      Status = StatAuthError;
+      return _error->Error("%s", errmsg.c_str());
+   }
+
    // At this point, the gpgv method has succeeded, so there is a
    // valid signature from a key in the trusted keyring.  We
    // perform additional verification of its contents, and use them
@@ -1946,7 +1959,7 @@ void pkgAcqMetaClearSig::Done(std::string const &Message,
          QueueForSignatureVerify(this, DestFile, DestFile);
       return;
    }
-   else if(CheckAuthDone(Message) == true)
+   else if (CheckAuthDone(Message, Cnf) == true)
    {
       if (TransactionManager->IMSHit == false)
 	 TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
@@ -2190,7 +2203,7 @@ void pkgAcqMetaSig::Done(string const &Message, HashStringList const &Hashes,
       }
       return;
    }
-   else if(MetaIndex->CheckAuthDone(Message) == true)
+   else if (MetaIndex->CheckAuthDone(Message, Cfg) == true)
    {
       auto const Releasegpg = GetFinalFilename();
       auto const Release = MetaIndex->GetFinalFilename();
@@ -3382,12 +3395,15 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
 
    StoreFilename.clear();
    std::set<string> targetComponents, targetCodenames, targetSuites;
+   std::vector<std::unique_ptr<FileFd>> authconfs;
    for (auto Vf = Version.FileList(); Vf.end() == false; ++Vf)
    {
       auto const PkgF = Vf.File();
       if (unlikely(PkgF.end()))
 	 continue;
       if (PkgF.Flagged(pkgCache::Flag::NotSource))
+	 continue;
+      if (PkgF.Flagged(pkgCache::Flag::PackagesRequireAuthorization) && !IsAuthorized(PkgF, authconfs))
 	 continue;
       pkgIndexFile *Index;
       if (Sources->FindIndex(PkgF, Index) == false)

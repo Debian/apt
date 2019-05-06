@@ -18,6 +18,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/netrc.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/strutl.h>
@@ -37,6 +38,8 @@
 									/*}}}*/
 
 using namespace std;
+
+constexpr short NEVER_PIN = std::numeric_limits<short>::min();
 
 // Policy::Init - Startup and bind to a cache				/*{{{*/
 // ---------------------------------------------------------------------
@@ -85,7 +88,8 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(nullptr), VerPins(nullptr),
 // ---------------------------------------------------------------------
 /* */
 bool pkgPolicy::InitDefaults()
-{   
+{
+   std::vector<std::unique_ptr<FileFd>> authconfs;
    // Initialize the priorities based on the status of the package file
    for (pkgCache::PkgFileIterator I = Cache->FileBegin(); I != Cache->FileEnd(); ++I)
    {
@@ -96,6 +100,8 @@ bool pkgPolicy::InitDefaults()
 	 PFPriority[I->ID] = 100;
       else if (I.Flagged(pkgCache::Flag::NotAutomatic))
 	 PFPriority[I->ID] = 1;
+      if (I.Flagged(pkgCache::Flag::PackagesRequireAuthorization) && !IsAuthorized(I, authconfs))
+	 PFPriority[I->ID] = NEVER_PIN;
    }
 
    // Apply the defaults..
@@ -107,7 +113,7 @@ bool pkgPolicy::InitDefaults()
       pkgVersionMatch Match(I->Data,I->Type);
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
       {
-	 if (Fixed[F->ID] == false && Match.FileMatch(F) == true)
+	 if ((Fixed[F->ID] == false || I->Priority == NEVER_PIN) && PFPriority[F->ID] != NEVER_PIN && Match.FileMatch(F) == true)
 	 {
 	    PFPriority[F->ID] = I->Priority;
 
@@ -271,7 +277,14 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, bool ConsiderFiles)
 {
    if (VerPins[Ver->ID].Type != pkgVersionMatch::None)
-      return VerPins[Ver->ID].Priority;
+   {
+      // If all sources are never pins, the never pin wins.
+      if (VerPins[Ver->ID].Priority == NEVER_PIN)
+	 return NEVER_PIN;
+      for (pkgCache::VerFileIterator file = Ver.FileList(); file.end() == false; file++)
+	 if (GetPriority(file.File()) != NEVER_PIN)
+	    return VerPins[Ver->ID].Priority;
+   }
    if (!ConsiderFiles)
       return 0;
 
@@ -388,9 +401,17 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
       for (; Word != End && isspace(*Word) != 0; Word++);
 
       _error->PushToStack();
-      int const priority = Tags.FindI("Pin-Priority", 0);
+      std::string sPriority = Tags.FindS("Pin-Priority");
+      int priority = sPriority == "never" ? NEVER_PIN : Tags.FindI("Pin-Priority", 0);
       bool const newError = _error->PendingError();
       _error->MergeWithStack();
+
+      if (sPriority == "never" && not Name.empty())
+	 return _error->Error(_("%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"), File.c_str(), "never");
+
+      // Silently clamp the never pin to never pin + 1
+      if (priority == NEVER_PIN && sPriority != "never")
+	 priority = NEVER_PIN + 1;
       if (priority < std::numeric_limits<short>::min() ||
           priority > std::numeric_limits<short>::max() ||
 	  newError) {

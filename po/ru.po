@@ -8,14 +8,14 @@
 # Dmitry Astapov <adept@despammed.com>, 2004.
 # Yuri Kozlov <kozlov.y@gmail.com>, 2004, 2005, 2006, 2007, 2008.
 # Yuri Kozlov <yuray@komyakino.ru>, 2009, 2010, 2012, 2015, 2016.
-# Aleksej Shilin <rootlexx@mail.ru>, 2017, 2018.
 # Lev Lamberov <dogsleg@debian.org>, 2018.
+# Aleksej Shilin <rootlexx@mail.ru>, 2017, 2018, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.8.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
-"PO-Revision-Date: 2018-10-25 19:03+0300\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
+"PO-Revision-Date: 2019-02-10 11:50+0300\n"
 "Last-Translator: Aleksej Shilin <rootlexx@mail.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
 "Language: ru\n"
@@ -67,17 +67,17 @@ msgstr "Неправильная контрольная сумма Tar — ар�
 #: apt-inst/contrib/extracttar.cc
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
-msgstr "Неизвестный заголовок в архиве TAR. Тип %u, элемент %s"
+msgstr "Неизвестный тип %u, элемент %s в заголовке TAR"
 
 #: apt-inst/deb/debfile.cc
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr "Это неправильный DEB-архив: отсутствует составная часть «%s»"
+msgstr "Это неправильный DEB-архив: отсутствует элемент «%s»"
 
 #: apt-inst/deb/debfile.cc
 #, c-format
 msgid "Internal error, could not locate member %s"
-msgstr "Внутренняя ошибка: не удалось найти составную часть %s"
+msgstr "Внутренняя ошибка: не удалось найти элемент %s"
 
 #: apt-inst/deb/debfile.cc
 msgid "Unparsable control file"
@@ -86,7 +86,7 @@ msgstr "Не удалось разобрать содержимое файла c
 #: apt-inst/dirstream.cc
 #, c-format
 msgid "Failed to write file %s"
-msgstr "Не удалось записать в файл %s"
+msgstr "Не удалось записать файл %s"
 
 #: apt-inst/dirstream.cc
 #, c-format
@@ -144,7 +144,7 @@ msgstr "Путь слишком длинный"
 #: apt-inst/extract.cc
 #, c-format
 msgid "Overwrite package match with no version for %s"
-msgstr "Файлы заменяются содержимым пакета %s без версии"
+msgstr "У пакета %s, файлы которого заменяются, отсутствует версия"
 
 #: apt-inst/extract.cc
 #, c-format
@@ -217,7 +217,7 @@ msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
-"Информацию о создании репозитория и настройке пользователя смотрите в "
+"Информацию о создании репозитория и настройках пользователя смотрите в "
 "справочной странице apt-secure(8)."
 
 #: apt-pkg/acquire-item.cc
@@ -290,7 +290,7 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
-"Некорректный подписанный файл: получено «%s» (возможно, в сети требуется "
+"Подписанный файл некорректен: получено «%s» (возможно, в сети требуется "
 "аутентификация?)"
 
 #: apt-pkg/acquire-item.cc
@@ -428,6 +428,16 @@ msgstr "Невозможно найти источник для загрузки
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Журнал изменений для %s=%s недоступен"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
+"Метод «%s» не поддерживается и по умолчанию отключён. Рассмотрите "
+"возможность перехода на использование http(s). Чтобы включить его снова, "
+"установите параметр Dir::Bin::Methods::%s в значение «%s»."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -660,8 +670,8 @@ msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
 msgstr ""
-"Не удалось найти ни одного файла пакетов; возможно, это не диск Debian или с "
-"не той архитектурой?"
+"Не удалось найти ни одного файла пакетов; возможно, это не диск Debian или "
+"не с той архитектурой?"
 
 #: apt-pkg/cdrom.cc
 #, c-format
@@ -767,7 +777,7 @@ msgstr "Неверная операция %s"
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
-msgstr "Неизвестная аббревиатура типа: «%c»"
+msgstr "Неизвестное сокращение типа: «%c»"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -957,12 +967,12 @@ msgstr "Проблема при переименовании файла %s в %s
 msgid "Problem syncing the file"
 msgstr "Проблема при синхронизации файла"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Невозможно выполнить mkstemp %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Невозможно записать в %s"
@@ -1611,6 +1621,14 @@ msgstr "Неизвестный тип привязки %s"
 
 #: apt-pkg/policy.cc
 #, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
+"%s: специальная привязка «Pin-Priority: %s» может использоваться только для "
+"записей вида «Package: *»"
+
+#: apt-pkg/policy.cc
+#, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
 "%s: значение %s находится вне диапазона корректных приоритетов привязки (с "
@@ -1751,8 +1769,7 @@ msgstr " Готово"
 #: apt-private/private-cachefile.cc apt-private/private-install.cc
 msgid "You might want to run 'apt --fix-broken install' to correct these."
 msgstr ""
-"Возможно, для исправления этих ошибок вы захотите воспользоваться «apt --fix-"
-"broken install»."
+"Вы можете запустить «apt --fix-broken install» для исправления этих ошибок."
 
 #: apt-private/private-cachefile.cc apt-private/private-install.cc
 msgid ""
@@ -1859,7 +1876,7 @@ msgid ""
 msgstr ""
 "Параметры настройки и синтаксис описаны в apt.conf(5).\n"
 "Информацию о том, как настроить источники, можно найти в sources.list(5).\n"
-"Выбор пакетов и версий описывается через apt_preferences(5).\n"
+"Выбор пакетов и версий описывается в apt_preferences(5).\n"
 "Информация о безопасности доступна в apt-secure(8).\n"
 
 #: apt-private/private-cmndline.cc
@@ -2056,7 +2073,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Прервано."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Хотите продолжить?"
 
@@ -2624,9 +2641,10 @@ msgstr[2] ""
 msgid "All packages are up to date."
 msgstr "Все пакеты имеют последние версии."
 
-#: cmdline/apt-cache.cc
-msgid "apt-cache stats does not take any arguments"
-msgstr "Команде apt-cache stats не нужны аргументы"
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s does not take any arguments"
+msgstr "Команде %s не нужны аргументы"
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -2909,6 +2927,12 @@ msgstr ""
 "deb)"
 
 #: cmdline/apt-get.cc
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr ""
+"переустановить пакеты (указывается имя пакета libc6, а не имя файла libc6."
+"deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "удалить пакеты"
 
@@ -3056,6 +3080,14 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s уже помечен как установленный автоматически.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr "Никаких изменений не требуется"
+
+#: cmdline/apt-mark.cc
+msgid "The following packages will be marked as automatically installed:"
+msgstr "Следующие пакеты будут помечены как установленные автоматически:"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s уже помечен как зафиксированный.\n"
@@ -3120,6 +3152,10 @@ msgid "Mark the given packages as manually installed"
 msgstr "пометить указанные пакеты как установленные вручную"
 
 #: cmdline/apt-mark.cc
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "пометить все зависимости метапакетов как установленные автоматически"
+
+#: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
 msgstr "пометить пакет как зафиксированный"
 
@@ -3179,7 +3215,7 @@ msgstr ""
 #. query
 #: cmdline/apt.cc
 msgid "list packages based on package names"
-msgstr "показать список пакетов из указанных имён пакетов"
+msgstr "показать список пакетов на основе указанных имён"
 
 #: cmdline/apt.cc
 msgid "search in package descriptions"
@@ -3193,6 +3229,10 @@ msgstr "показать дополнительные данные о пакет
 #: cmdline/apt.cc
 msgid "install packages"
 msgstr "установить пакеты"
+
+#: cmdline/apt.cc
+msgid "reinstall packages"
+msgstr "переустановить пакеты"
 
 #: cmdline/apt.cc
 msgid "remove packages"

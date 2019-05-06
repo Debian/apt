@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -392,6 +392,13 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s (%s)་ལུ་མཐུད་དོ།"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -890,12 +897,12 @@ msgstr "ཡིག་སྣོད་མཉམ་བྱུང་འབདཝ་ད
 msgid "Problem syncing the file"
 msgstr "ཡིག་སྣོད་མཉམ་བྱུང་འབདཝ་ད་དཀའ་ངལ།"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "%s་འདི་ལུ་ངོ་བཤུས་འབད་མ་ཚུགས།"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr " %sལུ་འབྲི་མ་ཚུགས།"
@@ -1510,6 +1517,12 @@ msgstr "ངོ་རྟགས་ཨང་གི་དབྱེ་བ་ %s འ�
 
 #: apt-pkg/policy.cc
 #, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
+
+#: apt-pkg/policy.cc
+#, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
 
@@ -1938,7 +1951,7 @@ msgstr ""
 msgid "Abort."
 msgstr "བར་བཤོལ་འབད།"
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 #, fuzzy
 msgid "Do you want to continue?"
 msgstr "ཁྱོན་ཀྱི་འཕྲོ་མཐུད་ནི་འབད་ནི་ཨིན་ན་"
@@ -2479,9 +2492,9 @@ msgstr[1] ""
 msgid "All packages are up to date."
 msgstr ""
 
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "apt-cache stats does not take any arguments"
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s does not take any arguments"
 msgstr "དུས་མཐུན་བཟོ་བའི་བརྡ་བཀོད་འདི་གིས་སྒྲུབ་རྟགས་ཚུ་མི་འབག་འབད།"
 
 #: cmdline/apt-cache.cc
@@ -2746,6 +2759,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "འདི་གིས་ ཐུམ་སྒྲིལ་(pkg is libc6 not libc6.deb)གསརཔ་་ཚུ་གཞི་བཙུགས་འབདཝ་ཨིན།"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "འདི་གིས་ ཐུམ་སྒྲིལ་(pkg is libc6 not libc6.deb)གསརཔ་་ཚུ་གཞི་བཙུགས་འབདཝ་ཨིན།"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "འདི་གིས་ ཐུམ་སྒྲིལ་ཚུ་རྩ་བསྐྲད་གཏངམ་ཨིན།"
 
@@ -2902,6 +2921,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "འོག་གི་ཐུམ་སྒྲིས་གསརཔ་འདི་ཚུ་ཁཞི་བཙུགས་འབད་འོང་:"
+
+#: cmdline/apt-mark.cc
 #, fuzzy, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s ་འདི་ཧེ་མ་ལས་རང་འཐོན་རིམ་གསར་ཤོས་ཅིག་ཨིན།\n"
@@ -2959,6 +2988,11 @@ msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུག�
 #, fuzzy
 msgid "Mark the given packages as manually installed"
 msgstr "'dpkg-dev'་ཐུམ་སྒྲིལ་དེ་གཞི་བཙུགས་འབད་ཡོད་པ་ཅིན་ཨེབ་གཏང་འབད།\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3024,6 +3058,11 @@ msgstr ""
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "ཁབ་གཟེར་བཏབ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "ཁབ་གཟེར་བཏབ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ:"
 
 #: cmdline/apt.cc

@@ -232,6 +232,8 @@ TEST(TagFileTest, Comments)
    FileFd fd;
    createTemporaryFile("commentfile", fd, NULL, "# Leading comments should be ignored.\n"
 "\n"
+"# A wild second comment appears!\n"
+"\n"
 "Source: foo\n"
 "#Package: foo\n"
 "Section: bar\n"

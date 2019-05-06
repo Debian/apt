@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2009-05-17 00:41+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
@@ -392,6 +392,13 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Konektatzen -> %s.(%s)"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -893,12 +900,12 @@ msgstr "Arazoa fitxategia sinkronizatzean"
 msgid "Problem syncing the file"
 msgstr "Arazoa fitxategia sinkronizatzean"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Ezin da daturik lortu %s(e)tik"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "%s : ezin da idatzi"
@@ -1511,6 +1518,12 @@ msgstr "Ez da ulertu %s orratz-mota (pin)"
 
 #: apt-pkg/policy.cc
 #, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
+
+#: apt-pkg/policy.cc
+#, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
 
@@ -1935,7 +1948,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Abortatu."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Aurrera jarraitu nahi al duzu?"
 
@@ -2483,9 +2496,9 @@ msgstr[1] ""
 msgid "All packages are up to date."
 msgstr ""
 
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "apt-cache stats does not take any arguments"
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s does not take any arguments"
 msgstr "Eguneratzeko komandoak ez du argumenturik hartzen"
 
 #: cmdline/apt-cache.cc
@@ -2748,6 +2761,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Instalatu pakete berriak (paketea libc6 da, eta ez libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Instalatu pakete berriak (paketea libc6 da, eta ez libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Kendu paketeak"
 
@@ -2903,6 +2922,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s eskuz instalatua bezala ezarri.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "Ondorengo pakete BERRIAK instalatuko dira:"
+
+#: cmdline/apt-mark.cc
 #, fuzzy, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s bertsiorik berriena da jada.\n"
@@ -2960,6 +2989,11 @@ msgstr "%s eskuz instalatua bezala ezarri.\n"
 #, fuzzy
 msgid "Mark the given packages as manually installed"
 msgstr "Egiaztatu 'dpkg-dev' paketea instalaturik dagoen.\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "%s eskuz instalatua bezala ezarri.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3025,6 +3059,11 @@ msgstr ""
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "Pin duten Paketeak:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "Pin duten Paketeak:"
 
 #: cmdline/apt.cc

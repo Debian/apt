@@ -103,6 +103,8 @@ static void RemoveDownloadNeedingItemsFromFetcher(pkgAcquire &Fetcher, bool &Tra
 }
 bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 {
+   if (not RunScripts("APT::Install::Pre-Invoke"))
+      return false;
    if (_config->FindB("APT::Get::Purge", false) == true)
       for (pkgCache::PkgIterator I = Cache->PkgBegin(); I.end() == false; ++I)
 	 if (Cache[I].Delete() == true && Cache[I].Purge() == false)
@@ -178,7 +180,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 
    if (Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
        Cache->BadCount() == 0)
-      return true;
+      return RunScripts("APT::Install::Post-Invoke-Success");
 
    // No remove flag
    if (Cache->DelCount() != 0 && _config->FindB("APT::Get::Remove",true) == false)
@@ -392,6 +394,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       }
    }
 
+   if (not RunScripts("APT::Install::Post-Invoke-Success"))
+      return false;
+
    return true;
 }
 									/*}}}*/
@@ -586,7 +591,9 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
       Fix.reset(new pkgProblemResolver(Cache));
 
    unsigned short fallback = MOD_INSTALL;
-   if (strcasecmp(CmdL.FileList[0],"remove") == 0)
+   if (strcasecmp(CmdL.FileList[0], "reinstall") == 0)
+      _config->Set("APT::Get::ReInstall", "true");
+   else if (strcasecmp(CmdL.FileList[0],"remove") == 0)
       fallback = MOD_REMOVE;
    else if (strcasecmp(CmdL.FileList[0], "purge") == 0)
    {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -427,6 +427,13 @@ msgstr "Nem található forrás a(z) „%2$s” „%1$s” verziójának letölt
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Nem érhető el változásnapló ehhez: %s=%s"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -952,12 +959,12 @@ msgstr "Hiba a(z) %s fájl átnevezésekor erre: %s"
 msgid "Problem syncing the file"
 msgstr "Hiba a fájl szinkronizálásakor"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Az mkstemp %s meghiúsult"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Nem lehet írni ebbe: %s"
@@ -1608,6 +1615,12 @@ msgstr "A(z) %s rögzítéstípus nem értelmezhető"
 
 #: apt-pkg/policy.cc
 #, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
+
+#: apt-pkg/policy.cc
+#, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
 "%s: A(z) %s érték kívül esik az érvényes rögzítési prioritások tartományán "
@@ -2042,7 +2055,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Megszakítva."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Folytatni akarja?"
 
@@ -2605,9 +2618,10 @@ msgstr[1] ""
 msgid "All packages are up to date."
 msgstr "Minden csomag naprakész."
 
-#: cmdline/apt-cache.cc
-msgid "apt-cache stats does not take any arguments"
-msgstr "Az apt-cache stats parancsnak nincsenek argumentumai"
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s does not take any arguments"
+msgstr "Az %s parancsnak nincsenek argumentumai"
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -2881,6 +2895,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Új csomagok telepítése (csomag a libc6 és nem a libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Új csomagok telepítése (csomag a libc6 és nem a libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Csomagok eltávolítása"
 
@@ -3029,6 +3049,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s már meg van jelölve automatikusan telepítettként.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "Az alábbi ÚJ csomagok lesznek telepítve:"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s már be van állítva visszatartásra.\n"
@@ -3090,6 +3120,12 @@ msgstr "Az adott csomagok megjelölése automatikusan telepítettként"
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as manually installed"
 msgstr "Az adott csomagok megjelölése kézzel telepítettként"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "Az adott csomagok megjelölése automatikusan telepítettként"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3164,6 +3200,12 @@ msgstr "csomagrészletek megjelenítése"
 #. package stuff
 #: cmdline/apt.cc
 msgid "install packages"
+msgstr "csomagok telepítése"
+
+#: cmdline/apt.cc
+#, fuzzy
+#| msgid "install packages"
+msgid "reinstall packages"
 msgstr "csomagok telepítése"
 
 #: cmdline/apt.cc

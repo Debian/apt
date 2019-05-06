@@ -250,8 +250,12 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
       d->chunks.erase(d->chunks.begin(), first);
    }
 
-   Tag.Trim();
-   return true;
+   if ((d->Flags & pkgTagFile::SUPPORT_COMMENTS) == 0 || Tag.Count() != 0)
+   {
+      Tag.Trim();
+      return true;
+   }
+   return Step(Tag);
 }
 									/*}}}*/
 // TagFile::Fill - Top up the buffer					/*{{{*/

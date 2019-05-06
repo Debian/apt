@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2018-01-03 16:32+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -430,6 +430,13 @@ msgstr "'%2$s' paketinin '%1$s' sürümü hiçbir kaynakta bulunamadı"
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s=%s için değişim günlüğü mevcut değil"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -948,12 +955,12 @@ msgstr "%s dosyası %s olarak yeniden adlandırılamadı"
 msgid "Problem syncing the file"
 msgstr "Dosya eşitlenirken sorun çıktı"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "mkstemp %s başarısız oldu"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "%s dosyasına yazılamıyor"
@@ -1591,6 +1598,12 @@ msgstr "İğne türü %s anlaşılamadı"
 
 #: apt-pkg/policy.cc
 #, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
+
+#: apt-pkg/policy.cc
+#, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr "%s: %s değeri geçerli iğne önceliği aralığının dışında (%d - %d arası)"
 
@@ -2034,7 +2047,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Vazgeç."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Devam etmek istiyor musunuz?"
 
@@ -2597,9 +2610,10 @@ msgstr[1] ""
 msgid "All packages are up to date."
 msgstr "Tüm paketler güncel."
 
-#: cmdline/apt-cache.cc
-msgid "apt-cache stats does not take any arguments"
-msgstr "apt-cache stats komutu argüman almaz"
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
+#, c-format
+msgid "%s does not take any arguments"
+msgstr "%s komutu argüman almaz"
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -2877,6 +2891,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Yeni paket kur (paket libc6.deb değil libc6 şeklinde olmalıdır)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Yeni paket kur (paket libc6.deb değil libc6 şeklinde olmalıdır)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Paket(leri) kaldır"
 
@@ -3024,6 +3044,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s zaten otomatik kurulmuş olarak ayarlı.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "Aşağıdaki YENİ paketler kurulacak:"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s zaten tutulacak şekilde ayarlanmış.\n"
@@ -3086,6 +3116,12 @@ msgstr "Belirtilen paketleri otomatik kurulmuş olarak işaretle"
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as manually installed"
 msgstr "Belirtilen paketleri elle kurulmuş olarak işaretle"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "Belirtilen paketleri otomatik kurulmuş olarak işaretle"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3158,6 +3194,12 @@ msgstr "Paket ayrıntılarını görüntüle"
 #. package stuff
 #: cmdline/apt.cc
 msgid "install packages"
+msgstr "paket kur"
+
+#: cmdline/apt.cc
+#, fuzzy
+#| msgid "install packages"
+msgid "reinstall packages"
 msgstr "paket kur"
 
 #: cmdline/apt.cc

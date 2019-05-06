@@ -175,7 +175,7 @@ static bool addArgumentsAPTHelper(std::vector<CommandLine::Args> &Args, char con
 									/*}}}*/
 static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
-   if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
+   if (CmdMatches("install", "reinstall", "remove", "purge", "upgrade", "dist-upgrade",
 	    "dselect-upgrade", "autoremove", "autopurge", "full-upgrade"))
    {
       addArg(0, "show-progress", "DpkgPM::Progress", 0);
@@ -239,7 +239,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    else if (CmdMatches("moo"))
       addArg(0, "color", "APT::Moo::Color", 0);
 
-   if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
+   if (CmdMatches("install", "reinstall", "remove", "purge", "upgrade", "dist-upgrade",
 	    "dselect-upgrade", "autoremove", "auto-remove", "autopurge", "clean", "autoclean", "auto-clean", "check",
 	    "build-dep", "full-upgrade", "source"))
    {
@@ -287,11 +287,11 @@ static bool addArgumentsAPTMark(std::vector<CommandLine::Args> &Args, char const
 {
    if (CmdMatches("auto", "manual", "hold", "unhold", "showauto",
 	    "showmanual", "showhold", "showholds",
-	    "markauto", "unmarkauto"))
+	    "markauto", "unmarkauto", "minimize-manual"))
    {
       addArg('f',"file","Dir::State::extended_states",CommandLine::HasArg);
    }
-   else if (CmdMatches("install", "remove", "deinstall", "purge",
+   else if (CmdMatches("install", "reinstall", "remove", "deinstall", "purge",
 	    "showinstall", "showinstalls", "showremove", "showremoves",
 	    "showdeinstall", "showdeinstalls", "showpurge", "showpurges"))
       ;
@@ -303,7 +303,14 @@ static bool addArgumentsAPTMark(std::vector<CommandLine::Args> &Args, char const
       addArg('v',"verbose","APT::MarkAuto::Verbose",0);
    }
 
-   if (Cmd != nullptr && strncmp(Cmd, "show", strlen("show")) != 0)
+   if (CmdMatches("minimize-manual"))
+   {
+      addArg('y',"yes","APT::Get::Assume-Yes",0);
+      addArg('y',"assume-yes","APT::Get::Assume-Yes",0);
+      addArg(0,"assume-no","APT::Get::Assume-No",0);
+   }
+
+   if (CmdMatches("minimize-manual") || (Cmd != nullptr && strncmp(Cmd, "show", strlen("show")) != 0))
    {
       addArg('s',"simulate","APT::Mark::Simulate",0);
       addArg('s',"just-print","APT::Mark::Simulate",0);

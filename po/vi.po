@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -407,6 +407,13 @@ msgstr "Không tìm thấy nguồn cho việc tải về phiên bản “%s” o
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Changelog cho %s (%s)"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -916,12 +923,12 @@ msgstr "Gặp vấn đề khi đổi tên tập tin %s thành %s"
 msgid "Problem syncing the file"
 msgstr "Gặp vấn đề khi đồng bộ hóa tập tin"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
 msgstr "Không thể tạo tập tin tạm (hàm mkstemp) %s"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Không thể ghi vào %s"
@@ -1565,6 +1572,12 @@ msgstr "Không hiểu kiểu ghim %s"
 
 #: apt-pkg/policy.cc
 #, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
+
+#: apt-pkg/policy.cc
+#, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
 
@@ -1991,7 +2004,7 @@ msgstr ""
 msgid "Abort."
 msgstr "Hủy bỏ."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
 msgstr "Bạn có muốn tiếp tục không?"
 
@@ -2535,9 +2548,9 @@ msgstr[0] ""
 msgid "All packages are up to date."
 msgstr "Mọi gói đã được cập nhật."
 
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "apt-cache stats does not take any arguments"
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s does not take any arguments"
 msgstr "Lệnh cập nhật không chấp nhận đối số"
 
 #: cmdline/apt-cache.cc
@@ -2816,6 +2829,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Cài đặt gói mới (gói có dạng libc6 không phải libc6.deb)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "Cài đặt gói mới (gói có dạng libc6 không phải libc6.deb)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "Gỡ bỏ gói phần mềm"
 
@@ -2977,6 +2996,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s đã sẵn được đặt thành cài đặt tự động rồi.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "Những gói MỚI sau sẽ được CÀI ĐẶT:"
+
+#: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s đã sẵn được đặt là giữ lại.\n"
@@ -3042,6 +3071,12 @@ msgid "Mark the given packages as manually installed"
 msgstr "Đánh dấu các gói đưa ra là được cài đặt bằng tay"
 
 #: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "Mark the given packages as automatically installed"
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "Đánh dấu các gói đưa ra là được cài đặt tự động"
+
+#: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
 msgstr "Đánh dấu một gói là giữ lại"
 
@@ -3101,6 +3136,12 @@ msgstr "hiển thị thông tin chi tiết về gói"
 #. package stuff
 #: cmdline/apt.cc
 msgid "install packages"
+msgstr "cài đặt các gói"
+
+#: cmdline/apt.cc
+#, fuzzy
+#| msgid "install packages"
+msgid "reinstall packages"
 msgstr "cài đặt các gói"
 
 #: cmdline/apt.cc

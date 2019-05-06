@@ -1,3 +1,147 @@
+apt (1.8.1) unstable; urgency=medium
+
+  * Add test case for local-only packages pinned to never
+  * Prevent shutdown while running dpkg (LP: #1820886)
+  * Add linux-{buildinfo,image-unsigned,source} versioned kernel pkgs
+    (LP: #1821640)
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 06 May 2019 10:41:52 +0200
+
+apt (1.8.0) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * Add explicit message for unsupported binary signature (Closes: #921685)
+
+  [ Milo Casagrande ]
+  * [l10n] Update Italian translation
+
+  [ Julian Andres Klode ]
+  * Fix name of APT::Update::Post-Invoke-Stats (was ...Update-Post...)
+  * CMake: Install auth.conf.d directory (LP: #1818996)
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #923728)
+  * Dutch manpages translation update (Closes: #923834)
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 08 Mar 2019 09:41:20 +0100
+
+apt (1.8.0~rc4) unstable; urgency=medium
+
+  * update: Provide APT::Update-Post-Invoke-Stats script hook point
+    (LP: #1815760)
+  * Introduce APT::Install::Pre-Invoke / Post-Invoke-Success (LP: #1815761)
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 26 Feb 2019 08:32:01 +0100
+
+apt (1.8.0~rc3) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * aptmethod.h: Do not have gcc warning about ignoring write() result
+  * Fix issues in previous two debian/changelog entries
+  * json-hooks-protocol: The "pin" field is optional
+  * debian/gbp.conf: Set debian-branch to 1.8.y
+  * Install translated apt_auth and apt-transport-* manpages
+
+  [ Алексей Шилин ]
+  * Russian program translation update.
+    Thanks to Vladimir Zhbanov <vzhbanov@gmail.com> (Closes: #921830)
+
+  [ Jakub Wilk ]
+  * Fix various typos in the documentation
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #921934)
+  * Dutch manpages translation update (Closes: #921941)
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 11 Feb 2019 09:33:46 +0100
+
+apt (1.8.0~rc2) unstable; urgency=medium
+
+  * Correctly handle feature detection for sse4.2 and crc32
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 04 Feb 2019 18:15:07 +0100
+
+apt (1.8.0~rc1) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * Fail instead of warn for unsigned lines in InRelease
+  * Fail on non-signature lines in Release.gpg
+  * Merge and reuse tmp file handling across the board
+  * Explicitly remove the whitespaces defined by RFC
+  * Refuse files with lines unexpectedly starting with a dash
+  * Drop buffered writing from clearsigned message extraction
+  * Step over empty sections in TagFiles with comments
+    (Closes: #920317, #921037)
+
+  [ Josh Triplett ]
+  * Add a "reinstall" command as an alias for "install --reinstall".
+
+  [ Michael Vogt ]
+  * private-json-hooks.cc: deal with EPIPE (LP: #1814543)
+
+  [ Julian Andres Klode ]
+  * Verify data being sent by methods in SendMessage()
+  * Disable deprecated methods (ftp, rsh, ssh) by default
+  * Introduce experimental 'never' pinning for sources
+  * Add a Packages-Require-Authorization Release file field
+  * gpgv: Use buffered writes for splitting clearsigned files
+  * Detect function multiversioning and sse4.2/crc32, enables i386
+  * Use std::to_string() for HashStringList::FileSize() getter
+
+  [ Алексей Шилин ]
+  * Russian program translation update (Closes: #921011)
+
+  [ Baptiste Jammet ]
+  * French program translation update (Closes: #921008)
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 04 Feb 2019 15:32:27 +0100
+
+apt (1.8.0~beta1) unstable; urgency=medium
+
+  [ anatoly techtonik ]
+  * README.md: Document that apt is also included
+  * apt.cc: Add "apt info" alias for muscle memory
+
+  [ Jean-Pierre Giraud ]
+  * French manpages translation update (Closes: #915952)
+
+  [ Frans Spiesschaert ]
+  * Dutch manpages translation update (Closes: #916358)
+
+  [ Julian Andres Klode ]
+  * cache hash: Use sse4.2 CRC32c on x86-64 where available
+  * configuration: Compare size first during lookup
+  * debListParser: Avoid native arch lookup in ParseDepends
+  * hash32: Tighten to multiversion to x86-64 ELF and use uint32_t
+  * apt-mark: Introduce minimize-manual
+  * doc/apt-verbatim.ent: Point ubuntu-codename to disco (LP: #1812696)
+  * CI: Use debian:buster as test base image
+  * doc/apt-verbatim.ent: Debian buster is stable
+  * SECURITY UPDATE: content injection in http method (CVE-2019-3462)
+    (LP: #1812353)
+  * debian/control: Drop libcurl4-gnutls-dev build dependency
+
+  [ Mo Zhou ]
+  * zh_CN.po: Update Simplified Chinese programs translation.
+
+  [ Khem Raj ]
+  * Remove `register` keyword
+
+  [ Vasya Novikov ]
+  * bash completion: add keys
+
+  [ David Kalnischkies ]
+  * Communicate back which key(s) were used for signing
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 23 Jan 2019 16:49:34 +0100
+
+apt (1.8.0~alpha3.1) unstable; urgency=emergency
+
+  * SECURITY UPDATE: content injection in http method (CVE-2019-3462)
+    (LP: #1812353)
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 22 Jan 2019 19:52:38 +0100
+
 apt (1.8.0~alpha3) unstable; urgency=medium
 
   [ Manuel A. Fernandez Montecelo ]

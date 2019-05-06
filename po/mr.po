@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2008-11-20 23:27+0530\n"
 "Last-Translator: Sampada <sampadanakhare@gmail.com>\n"
 "Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -392,6 +392,13 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s (%s) ला जोडत आहे"
+
+#: apt-pkg/acquire-worker.cc
+#, c-format
+msgid ""
+"The method '%s' is unsupported and disabled by default. Consider switching "
+"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
+msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -889,12 +896,12 @@ msgstr "संचिकेची syncing समस्या"
 msgid "Problem syncing the file"
 msgstr "संचिकेची syncing समस्या"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, fuzzy, c-format
 msgid "Unable to mkstemp %s"
 msgstr "%s स्टॅट करण्यास असमर्थ"
 
-#: apt-pkg/contrib/fileutl.cc cmdline/apt-extracttemplates.cc
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
 msgstr "%s मध्ये लिहिण्यास असमर्थ "
@@ -1508,6 +1515,12 @@ msgstr "%s पिनचा प्रकार समजलेला नाही
 
 #: apt-pkg/policy.cc
 #, c-format
+msgid ""
+"%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
+msgstr ""
+
+#: apt-pkg/policy.cc
+#, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
 
@@ -1931,7 +1944,7 @@ msgstr ""
 msgid "Abort."
 msgstr "व्यत्यय/बंद करा."
 
-#: apt-private/private-install.cc
+#: apt-private/private-install.cc cmdline/apt-mark.cc
 #, fuzzy
 msgid "Do you want to continue?"
 msgstr "तुम्हाला पुढे जायचे आहे [Y/n]? "
@@ -2469,9 +2482,9 @@ msgstr[1] ""
 msgid "All packages are up to date."
 msgstr ""
 
-#: cmdline/apt-cache.cc
-#, fuzzy
-msgid "apt-cache stats does not take any arguments"
+#: cmdline/apt-cache.cc cmdline/apt-mark.cc
+#, fuzzy, c-format
+msgid "%s does not take any arguments"
 msgstr "सुधारित आवृत्तीचा विधान आर्ग्युमेंटस घेऊ    शकत नाही."
 
 #: cmdline/apt-cache.cc
@@ -2729,6 +2742,12 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "नवीन पॅकेजेस संस्थापित करा(pkg हे libc6 आहे आणि libc6.deb नव्हे)"
 
 #: cmdline/apt-get.cc
+#, fuzzy
+#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
+msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
+msgstr "नवीन पॅकेजेस संस्थापित करा(pkg हे libc6 आहे आणि libc6.deb नव्हे)"
+
+#: cmdline/apt-get.cc
 msgid "Remove packages"
 msgstr "पॅकेजेस कायमची काढा"
 
@@ -2884,6 +2903,16 @@ msgid "%s was already set to automatically installed.\n"
 msgstr "%s  स्वहस्ते संस्थापित करायचे आहे.\n"
 
 #: cmdline/apt-mark.cc
+msgid "No changes necessary"
+msgstr ""
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+#| msgid "The following NEW packages will be installed:"
+msgid "The following packages will be marked as automatically installed:"
+msgstr "खालील नविन पॅकेजेस संस्थापित होतील:"
+
+#: cmdline/apt-mark.cc
 #, fuzzy, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s ही आधीच नविन आवृत्ती आहे.\n"
@@ -2941,6 +2970,11 @@ msgstr "%s  स्वहस्ते संस्थापित करायच
 #, fuzzy
 msgid "Mark the given packages as manually installed"
 msgstr "'dpkg-dev' पॅकेज संस्थापित केले आहे का ते पडताळून पहा.\n"
+
+#: cmdline/apt-mark.cc
+#, fuzzy
+msgid "Mark all dependencies of meta packages as automatically installed."
+msgstr "%s  स्वहस्ते संस्थापित करायचे आहे.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3006,6 +3040,11 @@ msgstr ""
 #: cmdline/apt.cc
 #, fuzzy
 msgid "install packages"
+msgstr "एकत्रित पॅकेजेस:"
+
+#: cmdline/apt.cc
+#, fuzzy
+msgid "reinstall packages"
 msgstr "एकत्रित पॅकेजेस:"
 
 #: cmdline/apt.cc

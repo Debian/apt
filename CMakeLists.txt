@@ -115,6 +115,11 @@ if (UDEV_FOUND)
   set(HAVE_UDEV 1)
 endif()
 
+find_package(Systemd)
+if (SYSTEMD_FOUND)
+  set(HAVE_SYSTEMD 1)
+endif()
+
 find_package(Seccomp)
 if (SECCOMP_FOUND)
   set(HAVE_SECCOMP 1)
@@ -180,10 +185,15 @@ else()
     set(RESOLV_LIBRARIES -lresolv)
 endif()
 
+# Check multiversioning
+include(CheckCxxTarget)
+check_cxx_target(HAVE_FMV_SSE42_AND_CRC32 "sse4.2" "__builtin_ia32_crc32si(0, 1llu);")
+check_cxx_target(HAVE_FMV_SSE42_AND_CRC32DI "sse4.2" "__builtin_ia32_crc32di(0, 1llu);")
+
 # Configure some variables like package, version and architecture.
 set(PACKAGE ${PROJECT_NAME})
 set(PACKAGE_MAIL "APT Development Team <deity@lists.debian.org>")
-set(PACKAGE_VERSION "1.8.0~alpha3")
+set(PACKAGE_VERSION "1.8.1")
 
 if (NOT DEFINED DPKG_DATADIR)
   execute_process(COMMAND ${PERL_EXECUTABLE} -MDpkg -e "print $Dpkg::DATADIR;"
@@ -238,6 +248,7 @@ endif()
 # Create our directories.
 install_empty_directories(
   ${CONF_DIR}/apt.conf.d
+  ${CONF_DIR}/auth.conf.d
   ${CONF_DIR}/preferences.d
   ${CONF_DIR}/sources.list.d
   ${CONF_DIR}/trusted.gpg.d

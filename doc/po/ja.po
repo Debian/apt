@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2018-12-18 15:02+0100\n"
+"POT-Creation-Date: 2019-02-04 15:34+0100\n"
 "PO-Revision-Date: 2017-01-06 04:50+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -1195,6 +1195,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
+#, fuzzy
+#| msgid "the <literal>Archive:</literal> or <literal>Suite:</literal> line"
+msgid ""
+"<literal>reinstall</literal> is an alias for <literal>install --reinstall</"
+"literal>."
+msgstr "<literal>Archive:</literal> 行や <literal>Suite:</literal> 行"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
 msgid ""
 "<literal>remove</literal> is identical to <literal>install</literal> except "
 "that packages are removed instead of installed. Note that removing a package "
@@ -1575,7 +1584,7 @@ msgstr ""
 msgid ""
 "Automatic yes to prompts; assume \"yes\" as answer to all prompts and run "
 "non-interactively. If an undesirable situation, such as changing a held "
-"package, trying to install a unauthenticated package or removing an "
+"package, trying to install an unauthenticated package or removing an "
 "essential package occurs then <literal>apt-get</literal> will abort.  "
 "Configuration Item: <literal>APT::Get::Assume-Yes</literal>."
 msgstr ""
@@ -1668,7 +1677,7 @@ msgstr ""
 #: apt-get.8.xml
 msgid ""
 "Allow installing new packages when used in conjunction with "
-"<literal>upgrade</literal>.  This is useful if the update of a installed "
+"<literal>upgrade</literal>.  This is useful if the update of an installed "
 "package requires new dependencies to be installed. Instead of holding the "
 "package back <literal>upgrade</literal> will upgrade the package and install "
 "the new dependencies. Note that <literal>upgrade</literal> with this option "
@@ -2990,6 +2999,24 @@ msgstr ""
 "<literal>manual</literal> は、パッケージを手動インストール済みとマークしま"
 "す。このパッケージに依存するほかのパッケージがなくなっても、このパッケージを"
 "自動的に削除するのを防ぎます。"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-mark.8.xml
+#, fuzzy
+#| msgid ""
+#| "<literal>auto</literal> is used to mark a package as being automatically "
+#| "installed, which will cause the package to be removed when no more "
+#| "manually installed packages depend on this package."
+msgid ""
+"<literal>minimize-manual</literal> is used to mark (transitive) dependencies "
+"of metapackages as automatically installed.  This can be used after an "
+"installation for example, to minimize the number of manually installed "
+"packages; or continuously on systems managed by system configuration "
+"metapackages."
+msgstr ""
+"<literal>auto</literal> は、パッケージを自動インストール済みとマークします。"
+"このパッケージに依存する手動でインストールされたパッケージがなくなると、この"
+"パッケージを削除します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
@@ -10755,7 +10782,7 @@ msgstr ""
 #: guide.dbk
 msgid ""
 "The <emphasis>Sources</emphasis> setup starts by asking for the base of the "
-"Debian archive, defaulting to a HTTP mirror. Next it asks for the "
+"Debian archive, defaulting to an HTTP mirror. Next it asks for the "
 "distribution to get."
 msgstr ""
 "<emphasis>ソース</emphasis>の準備は基礎となる Debian アーカイブの質問から始ま"

@@ -63,6 +63,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 
       // package stuff
       {"install", &DoInstall, _("install packages")},
+      {"reinstall", &DoInstall, _("reinstall packages")},
       {"remove", &DoInstall, _("remove packages")},
       {"autoremove", &DoInstall, _("Remove automatically all unused packages")},
       {"auto-remove", &DoInstall, nullptr},
@@ -91,6 +92,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"source", &DoSource, nullptr},
       {"download", &DoDownload, nullptr},
       {"changelog", &DoChangelog, nullptr},
+      {"info", &ShowPackage, nullptr},
 
       {nullptr, nullptr, nullptr}
    };
