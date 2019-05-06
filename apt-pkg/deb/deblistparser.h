@@ -77,35 +77,18 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 
    virtual bool Step() APT_OVERRIDE;
 
-   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
-	 std::string &Package,std::string &Ver,unsigned int &Op);
-   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
-	 std::string &Package,std::string &Ver,unsigned int &Op,
-	 bool const &ParseArchFlags);
-   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
-	 std::string &Package,std::string &Ver,unsigned int &Op,
-	 bool const &ParseArchFlags, bool const &StripMultiArch);
-   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
-	 std::string &Package,std::string &Ver,unsigned int &Op,
-	 bool const &ParseArchFlags, bool const &StripMultiArch,
-	 bool const &ParseRestrictionsList);
-   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
-	 std::string &Package,std::string &Ver,unsigned int &Op,
-	 bool const &ParseArchFlags, bool const &StripMultiArch,
-	 bool const &ParseRestrictionsList,
-	 std::string const &Arch);
+   APT_PUBLIC static const char *ParseDepends(const char *Start, const char *Stop,
+					      std::string &Package, std::string &Ver, unsigned int &Op,
+					      bool const &ParseArchFlags = false, bool const &StripMultiArch = true,
+					      bool const &ParseRestrictionsList = false,
+					      std::string const &Arch = "");
 
-   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
-	 APT::StringView &Package,
-    APT::StringView &Ver,unsigned int &Op,
-	 bool const ParseArchFlags = false, bool StripMultiArch = true,
-	 bool const ParseRestrictionsList = false);
-   APT_PUBLIC static const char *ParseDepends(const char *Start,const char *Stop,
-	 APT::StringView &Package,
-	 APT::StringView &Ver,unsigned int &Op,
-	 bool const ParseArchFlags, bool StripMultiArch,
-	 bool const ParseRestrictionsList,
-	 std::string const &Arch);
+   APT_PUBLIC static const char *ParseDepends(const char *Start, const char *Stop,
+					      APT::StringView &Package,
+					      APT::StringView &Ver, unsigned int &Op,
+					      bool const ParseArchFlags = false, bool StripMultiArch = true,
+					      bool const ParseRestrictionsList = false,
+					      std::string Arch = "");
 
    APT_PUBLIC static const char *ConvertRelation(const char *I,unsigned int &Op);
 

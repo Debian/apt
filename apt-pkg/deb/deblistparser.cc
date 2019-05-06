@@ -546,28 +546,6 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
 /* This parses the dependency elements out of a standard string in place,
    bit by bit. */
 const char *debListParser::ParseDepends(const char *Start,const char *Stop,
-               std::string &Package,std::string &Ver,unsigned int &Op)
-   { return ParseDepends(Start, Stop, Package, Ver, Op, false, true, false); }
-const char *debListParser::ParseDepends(const char *Start,const char *Stop,
-               std::string &Package,std::string &Ver,unsigned int &Op,
-               bool const &ParseArchFlags)
-   { return ParseDepends(Start, Stop, Package, Ver, Op, ParseArchFlags, true, false); }
-const char *debListParser::ParseDepends(const char *Start,const char *Stop,
-               std::string &Package,std::string &Ver,unsigned int &Op,
-               bool const &ParseArchFlags, bool const &StripMultiArch)
-   { return ParseDepends(Start, Stop, Package, Ver, Op, ParseArchFlags, StripMultiArch, false); }
-const char *debListParser::ParseDepends(const char *Start,const char *Stop,
-					string &Package,string &Ver,
-					unsigned int &Op, bool const &ParseArchFlags,
-					bool const &StripMultiArch,
-					bool const &ParseRestrictionsList)
-{
-   return debListParser::ParseDepends(Start, Stop, Package, Ver, Op, ParseArchFlags,
-                                      StripMultiArch, ParseRestrictionsList,
-                                      _config->Find("APT::Architecture"));
-}
-
-const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 					string &Package,string &Ver,
 					unsigned int &Op, bool const &ParseArchFlags,
 					bool const &StripMultiArch,
@@ -584,23 +562,15 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    return res;
 }
-const char *debListParser::ParseDepends(const char *Start,const char *Stop,
-					StringView &Package,StringView &Ver,
-					unsigned int &Op, bool ParseArchFlags,
-					bool StripMultiArch,
-					bool ParseRestrictionsList)
-{
-   return debListParser::ParseDepends(Start, Stop, Package, Ver, Op, ParseArchFlags,
-                                      StripMultiArch, ParseRestrictionsList,
-                                      _config->Find("APT::Architecture"));
-}
 
-const char *debListParser::ParseDepends(const char *Start,const char *Stop,
-					StringView &Package,StringView &Ver,
+const char *debListParser::ParseDepends(const char *Start, const char *Stop,
+					StringView &Package, StringView &Ver,
 					unsigned int &Op, bool ParseArchFlags,
 					bool StripMultiArch,
-					bool ParseRestrictionsList, string const &Arch)
+					bool ParseRestrictionsList, string Arch)
 {
+   if (Arch.empty())
+      Arch = _config->Find("APT::Architecture");
    // Strip off leading space
    for (;Start != Stop && isspace_ascii(*Start) != 0; ++Start);
    
