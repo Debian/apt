@@ -231,33 +231,6 @@ bool CacheSetHelper::PackageFromFnmatch(PackageContainerInterface * const pci,
 	return true;
 }
 									/*}}}*/
-// PackageFromName - Returns the package defined  by this string	/*{{{*/
-pkgCache::PkgIterator CacheSetHelper::PackageFromName(pkgCacheFile &Cache,
-			std::string const &str) {
-	std::string pkg = str;
-	size_t archfound = pkg.find_last_of(':');
-	std::string arch;
-	if (archfound != std::string::npos) {
-		arch = pkg.substr(archfound+1);
-		pkg.erase(archfound);
-	}
-
-	if (Cache.GetPkgCache() == 0)
-		return pkgCache::PkgIterator(Cache, 0);
-
-	pkgCache::PkgIterator Pkg(Cache, 0);
-	if (arch.empty() == true) {
-		pkgCache::GrpIterator Grp = Cache.GetPkgCache()->FindGrp(pkg);
-		if (Grp.end() == false)
-			Pkg = Grp.FindPreferredPkg();
-	} else
-		Pkg = Cache.GetPkgCache()->FindPkg(pkg, arch);
-
-	if (Pkg.end() == true)
-		return canNotFindPkgName(Cache, str);
-	return Pkg;
-}
-									/*}}}*/
 // PackageFromPackageName - Returns the package defined  by this string /*{{{*/
 bool CacheSetHelper::PackageFromPackageName(PackageContainerInterface * const pci, pkgCacheFile &Cache,
 			std::string pkg) {

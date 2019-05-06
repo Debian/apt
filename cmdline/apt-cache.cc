@@ -595,8 +595,8 @@ static bool XVcg(CommandLine &CmdL)
    // Load the list of packages from the command line into the show list
    APT::CacheSetHelper helper(true, GlobalError::NOTICE);
    std::list<APT::CacheSetHelper::PkgModifier> mods;
-   mods.push_back(APT::CacheSetHelper::PkgModifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
-   mods.push_back(APT::CacheSetHelper::PkgModifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
+   mods.push_back(APT::CacheSetHelper::PkgModifier(0, ",", APT::CacheSetHelper::PkgModifier::POSTFIX));
+   mods.push_back(APT::CacheSetHelper::PkgModifier(1, "^", APT::CacheSetHelper::PkgModifier::POSTFIX));
    std::map<unsigned short, APT::PackageSet> pkgsets =
 		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0, helper);
 
@@ -808,8 +808,8 @@ static bool Dotty(CommandLine &CmdL)
    // Load the list of packages from the command line into the show list
    APT::CacheSetHelper helper(true, GlobalError::NOTICE);
    std::list<APT::CacheSetHelper::PkgModifier> mods;
-   mods.push_back(APT::CacheSetHelper::PkgModifier(0, ",", APT::PackageSet::Modifier::POSTFIX));
-   mods.push_back(APT::CacheSetHelper::PkgModifier(1, "^", APT::PackageSet::Modifier::POSTFIX));
+   mods.push_back(APT::CacheSetHelper::PkgModifier(0, ",", APT::CacheSetHelper::PkgModifier::POSTFIX));
+   mods.push_back(APT::CacheSetHelper::PkgModifier(1, "^", APT::CacheSetHelper::PkgModifier::POSTFIX));
    std::map<unsigned short, APT::PackageSet> pkgsets =
 		APT::PackageSet::GroupedFromCommandLine(CacheFile, CmdL.FileList + 1, mods, 0, helper);
 
