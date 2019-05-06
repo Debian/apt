@@ -31,18 +31,11 @@ apt_add_translation_domain(
     EXCLUDE_LANGUAGES ${languages_excluded}
 )
 
-apt_add_translation_domain(
-    DOMAIN libapt-inst${APT_INST_MAJOR}
-    TARGETS apt-inst
-    EXCLUDE_LANGUAGES ${languages_excluded}
-)
-
 apt_add_update_po(
     TEMPLATE
         apt-all
     DOMAINS
         libapt-pkg${APT_PKG_MAJOR}
-        libapt-inst${APT_INST_MAJOR}
         apt
         apt-utils
     EXCLUDE_LANGUAGES

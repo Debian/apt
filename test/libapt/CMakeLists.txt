@@ -1,4 +1,4 @@
-set(PROJECT_TEST_LIBRARIES apt-private apt-inst)
+set(PROJECT_TEST_LIBRARIES apt-private)
 find_path(GTEST_ROOT src/gtest.cc
    /usr/src/googletest/googletest
    /usr/src/gtest
