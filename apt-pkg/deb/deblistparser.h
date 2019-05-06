@@ -152,7 +152,7 @@ class APT_HIDDEN debTranslationsParser : public debListParser
 class APT_HIDDEN debStatusListParser : public debListParser
 {
  public:
-   virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);
+   virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver) APT_OVERRIDE;
    explicit debStatusListParser(FileFd *File)
       : debListParser(File) {};
 };

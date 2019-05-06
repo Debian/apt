@@ -27,6 +27,8 @@ if(GTEST_FOUND)
    # so disable the offending warnings while compiling tests for now
    add_optional_compile_options(Wno-undef)
    add_optional_compile_options(Wno-ctor-dtor-privacy)
+   # Do not force override for gtest, gtest is missing override specifiers
+   add_optional_compile_options(Wno-suggest-override)
 
    # Definition of the C++ files used to build the test binary - note that this
    # is expanded at CMake time, so you have to rerun cmake if you add or remove
