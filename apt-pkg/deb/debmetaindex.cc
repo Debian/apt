@@ -59,7 +59,7 @@ static std::string NormalizeSignedBy(std::string SignedBy, bool const SupportFil
    // but fingerprints are harder to fake than the others and this option is set once,
    // not interactively all the time so easy to type is not really a concern.
    std::transform(SignedBy.begin(), SignedBy.end(), SignedBy.begin(), [](char const c) {
-      return (isspace(c) == 0) ? c : ',';
+      return (isspace_ascii(c) == 0) ? c : ',';
    });
    auto fingers = VectorizeString(SignedBy, ',');
    auto const isAnEmptyString = [](std::string const &s) { return s.empty(); };
