@@ -55,7 +55,7 @@ run:
 
 	cmake .
 
-Then you can use make as you normally would (pass -j <count> to perform <count>
+Then you can use make as you normally would (pass `-j <count>` to perform `<count>`
 jobs in parallel).
 
 You can also use the Ninja generator of cmake, to do that pass
