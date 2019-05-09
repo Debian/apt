@@ -109,6 +109,15 @@
      </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>satisfy</option> (&apt-get;)</term>
+     <listitem><para><option>satisfy</option> satisfies dependency strings, as
+	  used in Build-Depends. It also handles conflicts, by prefixing an argument
+	  with <literal>"Conflicts: "</literal>.
+     </para><para>Example: <literal>apt satisfy "foo, bar (>= 1.0)" "Conflicts: baz, fuzz"</literal>
+     </para></listitem>
+     </varlistentry>
+
+
      <varlistentry><term><option>search</option> (&apt-cache;)</term>
      <listitem><para><option>search</option> can be used to search for the given
 	   &regex; term(s) in the list of available packages and display

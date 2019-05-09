@@ -416,6 +416,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"full-upgrade", &DoDistUpgrade, nullptr},
       {"dselect-upgrade", &DoDSelectUpgrade, _("Follow dselect selections")},
       {"build-dep", &DoBuildDep, _("Configure build-dependencies for source packages")},
+      {"satisfy", &DoBuildDep, _("Satisfy dependency strings")},
       {"clean", &DoClean, _("Erase downloaded archive files")},
       {"autoclean", &DoAutoClean, _("Erase old downloaded archive files")},
       {"auto-clean", &DoAutoClean, nullptr},
