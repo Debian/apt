@@ -13,19 +13,19 @@ Included tools are:
   from authenticated sources and for installation, upgrade and
   removal of packages together with their dependencies
 * **apt-cache** for querying available information about installed
-  as well as installable packages
+  as well as available packages
 * **apt-cdrom** to use removable media as a source for packages
 * **apt-config** as an interface to the configuration settings
 * **apt-key** as an interface to manage authentication keys
 * **apt-extracttemplates** to be used by debconf to prompt for configuration
   questions before installation
 * **apt-ftparchive** creates Packages and other index files
-  needed to publish an archive of debian packages
+  needed to publish an archive of deb packages
 * **apt-sortpkgs** is a Packages/Sources file normalizer
 * **apt** is a high-level command-line interface for better interactive usage
 
 The libraries libapt-pkg and libapt-inst are also maintained as part of this project,
-alongside various additional binaries like the acquire-methods used by them.
+alongside various additional binaries like the acquire methods used by them.
 Bindings for Python ([python-apt](https://tracker.debian.org/pkg/python-apt)) and
 Perl ([libapt-pkg-perl](https://tracker.debian.org/pkg/libapt-pkg-perl)) are available as separated projects.
 
@@ -46,7 +46,7 @@ are encouraged to do as well.
 
 ### Coding
 
-APT uses cmake. To start building, you need to run
+APT uses CMake. To start building, you need to run
 
 	cmake <path to source directory>
 
@@ -58,7 +58,7 @@ run:
 Then you can use make as you normally would (pass `-j <count>` to perform `<count>`
 jobs in parallel).
 
-You can also use the Ninja generator of cmake, to do that pass
+You can also use the Ninja generator of CMake, to do that pass
 	-G Ninja
 to the cmake invocation, and then use ninja instead of make.
 
@@ -73,22 +73,22 @@ Your editor can surely help you with this, for vim the settings would be
 ### Translations
 
 While we welcome contributions here, we highly encourage you to contact the [Debian Internationalization (i18n) team](https://wiki.debian.org/Teams/I18n).
-Various language teams have formed which can help you creating, maintaining
-and improving a translation, while we could only do a basic syntax check of the
+Various language teams have formed which can help you create, maintain
+and improve a translation, while we could only do a basic syntax check of the
 file format…
 
-Further more, Translating APT is split into two independent parts:
+Further more, translating APT is split into two independent parts:
 The program translation, meaning the messages printed by the tools,
-as well as the manpages and other documentation shipped with APT.
+as well as the manual pages and other documentation shipped with APT.
 
 ### Bug triage
 
-Software tools like APT which are used by thousands of users every
-day have a steady flow of incoming bug reports. Not all of them are really
-bugs in APT: It can be packaging bugs like failing maintainer scripts a
-user reports against apt, because apt was the command he executed leading
-to this failure or various wishlist items for new features. Given enough time
-also the occasional duplicate enters the system.
+Software tools like APT, which are used by thousands of users every
+day, have a steady flow of incoming bug reports. Not all of them are really
+bugs in APT: It can be packaging bugs, like failing maintainer scripts, that a
+user reports against apt, because apt was the command he executed that lead
+to this failure; or various wishlist items for new features. Given enough time
+the occasional duplicate enters the system as well.
 Our bug tracker is therefore full with open bug reports which are waiting for you! ;)
 
 Testing
@@ -111,7 +111,7 @@ There is an extensive integration test suite available which can be run via:
 	$ ./test/integration/run-tests
 
 Each test can also be run individually as well. The tests are very noisy by
-default, especially so while running all of them it might be beneficial to
+default, especially so while running all of them; it might be beneficial to
 enabling quiet (`-q`) or very quiet (`-qq`) mode. The tests can also be run in
 parallel via `-j X` where `X` is the number of jobs to run.
 
@@ -137,24 +137,24 @@ Debugging
 ---------
 
 APT does many things, so there is no central debug mode which could be
-activated. It uses instead various configuration options to activate debug output
+activated. Instead, it uses various configuration options to activate debug output
 in certain areas. The following describes some common scenarios and generally
 useful options, but is in no way exhaustive.
 
-Note that you should *NEVER* use these settings as root to avoid accidents.
+Note that, to avoid accidents, you should *NEVER* use these settings as root.
 Simulation mode (`-s`) is usually sufficient to help you run apt as a non-root user.
 
 ### Using different state files
 
-If a dependency solver bug is reported, but can't be reproduced by the
-triager easily, it is beneficial to ask the reporter for the
-`/var/lib/dpkg/status` file, which includes the packages installed on the
+If a dependency solver bug is reported, but can't easily be reproduced by the
+triager, it is beneficial to ask the reporter for the
+`/var/lib/dpkg/status` file which includes the packages installed on the
 system and in which version. Such a file can then be used via the option
 `dir::state::status`. Beware of different architecture settings!
 Bug reports usually include this information in the template. Assuming you
 already have the `Packages` files for the architecture (see `sources.list`
 manpage for the `arch=` option) you can change to a different architecture
-with a config file like:
+with a configuration file like:
 
 	APT::Architecture "arch1";
 	#clear APT::Architectures;
