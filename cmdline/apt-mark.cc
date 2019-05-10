@@ -365,7 +365,7 @@ static bool ShowSelection(CommandLine &CmdL)				/*{{{*/
    else if (strncasecmp(CmdL.FileList[0], "showdeinstall", strlen("showdeinstall")) == 0 ||
 	 strncasecmp(CmdL.FileList[0], "showremove", strlen("showremove")) == 0)
       selector = pkgCache::State::DeInstall;
-   else if (strncasecmp(CmdL.FileList[0], "showhold", strlen("showhold")) == 0)
+   else if (strncasecmp(CmdL.FileList[0], "showhold", strlen("showhold")) == 0 || strncasecmp(CmdL.FileList[0], "showheld", strlen("showheld")) == 0)
       selector = pkgCache::State::Hold;
    else //if (strcasecmp(CmdL.FileList[0], "showinstall", strlen("showinstall")) == 0)
       selector = pkgCache::State::Install;
@@ -423,7 +423,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"purge",&DoSelection, nullptr},
       {"showauto",&ShowAuto, _("Print the list of automatically installed packages")},
       {"showmanual",&ShowAuto, _("Print the list of manually installed packages")},
-      {"showhold",&ShowSelection, _("Print the list of packages on hold")}, {"showholds",&ShowSelection, nullptr},
+      {"showhold",&ShowSelection, _("Print the list of packages on hold")}, {"showholds",&ShowSelection, nullptr}, {"showheld",&ShowSelection, nullptr},
       {"showinstall",&ShowSelection, nullptr}, {"showinstalls",&ShowSelection, nullptr},
       {"showdeinstall",&ShowSelection, nullptr}, {"showdeinstalls",&ShowSelection, nullptr},
       {"showremove",&ShowSelection, nullptr}, {"showremoves",&ShowSelection, nullptr},

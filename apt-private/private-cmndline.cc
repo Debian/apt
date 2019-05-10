@@ -286,7 +286,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
 static bool addArgumentsAPTMark(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("auto", "manual", "hold", "unhold", "showauto",
-	    "showmanual", "showhold", "showholds",
+	    "showmanual", "showhold", "showholds", "showheld",
 	    "markauto", "unmarkauto", "minimize-manual"))
    {
       addArg('f',"file","Dir::State::extended_states",CommandLine::HasArg);
