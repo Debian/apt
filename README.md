@@ -1,8 +1,8 @@
 APT
 ===
 
-apt is the main commandline package manager for Debian and its derivatives.
-It provides commandline tools for searching and managing as well as querying
+apt is the main command-line package manager for Debian and its derivatives.
+It provides command-line tools for searching and managing as well as querying
 information about packages as well as low-level access to all features
 provided by the libapt-pkg and libapt-inst libraries which higher-level
 package managers can depend upon.
@@ -22,7 +22,7 @@ Included tools are:
 * **apt-ftparchive** creates Packages and other index files
   needed to publish an archive of debian packages
 * **apt-sortpkgs** is a Packages/Sources file normalizer
-* **apt** is a high-level commandline interface for better interactive usage
+* **apt** is a high-level command-line interface for better interactive usage
 
 The libraries libapt-pkg and libapt-inst are also maintained as part of this project,
 alongside various additional binaries like the acquire-methods used by them.
@@ -101,7 +101,7 @@ automatically inserts an rpath so the binaries find the correct libraries.
 
 Note that you have to invoke CMake with the right install prefix set (e.g.
 `-DCMAKE_INSTALL_PREFIX=/usr`) to have your build find and use the right files
-by default or alternatively set the locations at runtime via an `APT_CONFIG`
+by default or alternatively set the locations at run-time via an `APT_CONFIG`
 configuration file.
 
 ### Integration tests
@@ -121,7 +121,7 @@ run them on [Travis CI](https://travis-ci.org/) and
 [Shippable](https://shippable.com/) as well as via autopkgtests e.g. on
 [Debian Continuous Integration](https://ci.debian.net/packages/a/apt/).
 
-A testcase here is a shellscript embedded in a framework creating an environment in which
+A test case here is a shell script embedded in a framework creating an environment in which
 apt tools can be used naturally without root-rights to test every aspect of its behavior
 itself as well as in conjunction with dpkg and other tools while working with packages.
 
@@ -137,7 +137,7 @@ Debugging
 ---------
 
 APT does many things, so there is no central debug mode which could be
-activated. It uses instead various config-options to activate debug output
+activated. It uses instead various configuration options to activate debug output
 in certain areas. The following describes some common scenarios and generally
 useful options, but is in no way exhaustive.
 
@@ -174,7 +174,7 @@ and marked for installation, keep back or removal. Option `Debug::pkgDepCache::M
 shows this. This also decides which packages are to be installed to satisfy dependencies,
 which can be seen by `Debug::pkgDepCache::AutoInstall`. After this is done, we might
 be in a situation in which two packages want to be installed, but only on of them can be.
-It is the job of the pkgProblemResolver to decide which of two packages 'wins' and can
+It is the job of the `pkgProblemResolver` to decide which of two packages 'wins' and can
 therefore decide what has to happen. You can see the contenders as well as their fight and
 the resulting resolution with `Debug::pkgProblemResolver`.
 
@@ -184,8 +184,8 @@ Various binaries (called 'methods') are tasked with downloading files. The Acqui
 talks to them via simple text protocol. Depending on which side you want to see, either
 `Debug::pkgAcquire::Worker` or `Debug::Acquire::http` (or similar) will show the messages.
 
-The integration tests use a simple self-built webserver which also logs. If you find that
-the http(s) methods do not behave like they should be try to implement this behavior in the
+The integration tests use a simple self-built web server (`webserver`) which also logs. If you find that
+the http(s) methods do not behave like they should be try to implement this behavior in
 webserver for simpler and more controlled testing.
 
 ### Installation order
@@ -209,7 +209,7 @@ targeted at developers of related programs or only of special interest.
 
 * [Protocol specification of APT's communication with external dependency solvers (EDSP)](./doc/external-dependency-solver-protocol.md)
 * [Protocol specification of APT's communication with external installation planners (EIPP)](./doc/external-installation-planner-protocol.md)
-* [Howto use and configure APT to acquire additional files in 'update' operations](./doc/acquire-additional-files.md)
+* [How to use and configure APT to acquire additional files in 'update' operations](./doc/acquire-additional-files.md)
 * [Download and package installation progress reporting details](./doc/progress-reporting.md)
 * [Remarks on DNS SRV record support in APT](./doc/srv-records-support.md)
 * [Protocol specification of APT interfacing with external hooks via JSON](./doc/json-hooks-protocol.md)
