@@ -153,8 +153,8 @@ bool debSystem::UnLock(bool NoErrors)
       return _error->Error(_("Not locked"));
    if (--d->LockCount == 0)
    {
-      close(d->FrontendLockFD);
       close(d->LockFD);
+      close(d->FrontendLockFD);
       d->LockCount = 0;
    }
    
