@@ -29,10 +29,6 @@
 
 #include <sys/mman.h>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/fileutl.h>
-using std::string;
-#endif
 
 class FileFd;
 

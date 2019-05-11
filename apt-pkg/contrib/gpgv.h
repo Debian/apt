@@ -14,9 +14,6 @@
 #include <string>
 #include <vector>
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/fileutl.h>
-#endif
 
 class FileFd;
 

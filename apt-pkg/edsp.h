@@ -19,10 +19,6 @@
 #include <string>
 #include <vector>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/progress.h>
-#endif
 
 class pkgDepCache;
 class OpProgress;

@@ -19,9 +19,6 @@ class pkgPackageManager;
 class debSystemPrivate;
 class pkgDepCache;
 
-#ifndef APT_10_CLEANER_HEADERS
-class debStatusIndex;
-#endif
 
 class debSystem : public pkgSystem
 {

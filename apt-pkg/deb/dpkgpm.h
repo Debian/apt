@@ -18,17 +18,10 @@
 #include <vector>
 #include <stdio.h>
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/init.h>
-#endif
 
 class pkgDepCache;
 namespace APT { namespace Progress { class PackageManager; } }
 
-#ifndef APT_8_CLEANER_HEADERS
-using std::vector;
-using std::map;
-#endif
 
 class pkgDPkgPMPrivate;
 

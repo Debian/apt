@@ -31,14 +31,6 @@
 #include <string>
 #include <vector>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/tagfile.h>
-#endif
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/metaindex.h>
-using std::string;
-using std::vector;
-#endif
 
 class FileFd;
 class pkgTagSection;

@@ -76,14 +76,7 @@
 #include <sys/select.h>
 #include <sys/time.h>
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <unistd.h>
-#endif
 
-#ifndef APT_8_CLEANER_HEADERS
-using std::vector;
-using std::string;
-#endif
 
 class pkgAcquireStatus;
 class metaIndex;

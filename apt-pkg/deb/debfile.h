@@ -29,12 +29,6 @@
 
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/md5.h>
-#endif
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/pkgcache.h>
-#endif
 
 class FileFd;
 

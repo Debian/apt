@@ -29,12 +29,6 @@
 #include <map>
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-using std::string;
-#endif
-#ifndef APT_10_CLEANER_HEADERS
-class pkgAcquire;
-#endif
 
 class pkgCacheGenerator;
 class pkgCacheListParser;

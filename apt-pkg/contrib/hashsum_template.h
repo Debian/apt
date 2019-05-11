@@ -15,15 +15,6 @@
 
 #include <apt-pkg/strutl.h>
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/fileutl.h>
-#include <algorithm>
-#include <stdint.h>
-#endif
-#ifndef APT_8_CLEANER_HEADERS
-using std::string;
-using std::min;
-#endif
 
 class FileFd;
 

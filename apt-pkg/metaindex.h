@@ -9,16 +9,6 @@
 #include <string>
 #include <vector>
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/pkgcache.h>
-class pkgCacheGenerator;
-class OpProgress;
-#endif
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/srcrecords.h>
-using std::string;
-#endif
 
 class pkgAcquire;
 class IndexTarget;

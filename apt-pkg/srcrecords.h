@@ -18,10 +18,6 @@
 #include <string>
 #include <vector>
 
-#ifndef APT_8_CLEANER_HEADERS
-using std::string;
-using std::vector;
-#endif
 
 class pkgSourceList;
 class pkgIndexFile;

@@ -30,10 +30,6 @@
 #include <unordered_map>
 #include <vector>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/sourcelist.h>
-#endif
 
 /** \addtogroup acquire
  *  @{
