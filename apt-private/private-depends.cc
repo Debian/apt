@@ -105,24 +105,24 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 	       verset.insert(APT::VersionSet::FromPackage(CacheFile, Trg, APT::CacheSetHelper::CANDIDATE, helper));
 	    }
 
-	 }
-
-	 // Display all solutions
-	 std::unique_ptr<pkgCache::Version *[]> List(D.AllTargets());
-	 pkgPrioSortList(*Cache,List.get());
-	 for (pkgCache::Version **I = List.get(); *I != 0; I++)
-	 {
-	    pkgCache::VerIterator V(*Cache,*I);
-	    if (V != Cache->VerP + V.ParentPkg()->VersionList ||
-		  V->ParentPkg == D->Package)
-	       continue;
-	    std::cout << "    " << V.ParentPkg().FullName(true) << std::endl;
-
-	    if (Recurse == true && Shown[V.ParentPkg()->ID] == false)
+	    // Display all solutions
+	    std::unique_ptr<pkgCache::Version *[]> List(D.AllTargets());
+	    pkgPrioSortList(*Cache,List.get());
+	    for (pkgCache::Version **I = List.get(); *I != 0; I++)
 	    {
-	       Shown[V.ParentPkg()->ID] = true;
-	       verset.insert(APT::VersionSet::FromPackage(CacheFile, V.ParentPkg(), APT::CacheSetHelper::CANDIDATE, helper));
+	       pkgCache::VerIterator V(*Cache,*I);
+	       if (V != Cache->VerP + V.ParentPkg()->VersionList ||
+		   V->ParentPkg == D->Package)
+		  continue;
+	       std::cout << "    " << V.ParentPkg().FullName(true) << std::endl;
+
+	       if (Recurse == true && Shown[V.ParentPkg()->ID] == false)
+	       {
+		  Shown[V.ParentPkg()->ID] = true;
+		  verset.insert(APT::VersionSet::FromPackage(CacheFile, V.ParentPkg(), APT::CacheSetHelper::CANDIDATE, helper));
+	       }
 	    }
+
 	 }
 
 	 if (ShowOnlyFirstOr == true)
