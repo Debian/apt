@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'unrelated' 'all' '0.5~squeeze1' 'unstable'
+
+setupaptarchive
+changetowebserver --request-absolute='uri'
+
+
+msgmsg 'Check that host header we send for CONNECT is for target, not proxy'
+echo "deb https://example.example/ example example" > rootdir/etc/apt/sources.list
+rm -f rootdir/etc/apt/sources.list.d/*
+echo "Acquire::http::Proxy \"http://localhost:${APTHTTPPORT}\";" > rootdir/etc/apt/apt.conf.d/99proxy
+
+aptget update >/dev/null 2>&1
+testsuccessequal "CONNECT example.example:443 HTTP/1.1\r
+Host: example.example:443\r" grep -A1 "^CONNECT" aptarchive/webserver.log
