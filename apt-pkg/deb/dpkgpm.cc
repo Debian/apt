@@ -2475,7 +2475,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    {
 
       fprintf(report, "Df:\n");
-      FILE *log = popen("/bin/df -l","r");
+      FILE *log = popen("/bin/df -l -x squashfs","r");
       if(log != NULL)
       {
 	 char buf[1024];
