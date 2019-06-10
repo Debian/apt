@@ -820,7 +820,8 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 
       Start = ParseDepends(Start, Stop, Package, Version, Op, false, false, false, myArch);
       if (Start == 0)
-	 return _error->Error("Problem parsing dependency %zu",static_cast<size_t>(Key)); // TODO
+	 return _error->Error("Problem parsing dependency %zu of %s:%s=%s", static_cast<size_t>(Key), // TODO
+			      Ver.ParentPkg().Name(), Ver.Arch(), Ver.VerStr());
       size_t const found = Package.rfind(':');
 
       if (found == string::npos)
@@ -888,9 +889,9 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	 Start = ParseDepends(Start,Stop,Package,Version,Op, false, false, false);
 	 const size_t archfound = Package.rfind(':');
 	 if (Start == 0)
-	    return _error->Error("Problem parsing Provides line");
+	    return _error->Error("Problem parsing Provides line of %s:%s=%s", Ver.ParentPkg().Name(), Ver.Arch(), Ver.VerStr());
 	 if (unlikely(Op != pkgCache::Dep::NoOp && Op != pkgCache::Dep::Equals)) {
-	    _error->Warning("Ignoring Provides line with non-equal DepCompareOp for package %s", Package.to_string().c_str());
+	    _error->Warning("Ignoring non-equal Provides for package %s in %s:%s=%s", Package.to_string().c_str(), Ver.ParentPkg().Name(), Ver.Arch(), Ver.VerStr());
 	 } else if (archfound != string::npos) {
 	    StringView spzArch = Package.substr(archfound + 1);
 	    if (spzArch != "any")
