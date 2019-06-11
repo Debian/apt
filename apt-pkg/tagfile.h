@@ -83,8 +83,8 @@ class pkgTagSection
    APT_HIDDEN bool FindFlag(Key key,uint8_t &Flags, uint8_t const Flag) const;
    APT_HIDDEN bool FindFlag(Key key,unsigned long &Flags, unsigned long Flag) const;
    APT_HIDDEN bool Exists(Key key) const;
-   APT::StringView Find(Key key) const;
-   APT::StringView FindRaw(Key key) const;
+   APT_HIDDEN APT::StringView Find(Key key) const;
+   APT_HIDDEN APT::StringView FindRaw(Key key) const;
    bool Find(APT::StringView Tag,const char *&Start, const char *&End) const;
    bool Find(APT::StringView Tag,unsigned int &Pos) const;
    APT::StringView Find(APT::StringView Tag) const;

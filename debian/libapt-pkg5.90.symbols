@@ -50,7 +50,7 @@ libapt-pkg.so.5.90 libapt-pkg5.90 #MINVER#
  (c++)"GetListOfFilesInDir(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool const&, bool const&)@APTPKG_5.90" 0.8.0
  (c++)"WaitFd(int, bool, unsigned long)@APTPKG_5.90" 0.8.0
  (c++)"GetLock(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool)@APTPKG_5.90" 0.8.0
- (c++)"Hex2Num(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned char*, unsigned int)@APTPKG_5.90" 0.8.0
+ (c++)"Hex2Num(APT::StringView, unsigned char*, unsigned int)@APTPKG_5.90" 1.9~
  (c++)"CopyFile(FileFd&, FileFd&)@APTPKG_5.90" 0.8.0
  (c++)"ExecFork()@APTPKG_5.90" 0.8.0
  (c++)"ExecWait(int, char const*, bool)@APTPKG_5.90" 0.8.0
@@ -363,9 +363,9 @@ libapt-pkg.so.5.90 libapt-pkg5.90 #MINVER#
  (c++)"pkgCache::ReMap(bool const&)@APTPKG_5.90" 0.8.0
  (c++)"pkgCache::Header::Header()@APTPKG_5.90" 0.8.0
  (c++)"pkgCache::DepType(unsigned char)@APTPKG_5.90" 0.8.0
- (c++)"pkgCache::FindGrp(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.90" 0.8.0
- (c++)"pkgCache::FindPkg(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.90" 0.8.0
- (c++)"pkgCache::FindPkg(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.90" 0.8.0
+ (c++)"pkgCache::FindGrp(APT::StringView)@APTPKG_5.90" 1.9~
+ (c++)"pkgCache::FindPkg(APT::StringView)@APTPKG_5.90" 1.9~
+ (c++)"pkgCache::FindPkg(APT::StringView, APT::StringView)@APTPKG_5.90" 1.9~
  (c++)"pkgCache::CompType(unsigned char)@APTPKG_5.90" 0.8.0
  (c++)"pkgCache::Priority(unsigned char)@APTPKG_5.90" 0.8.0
  (c++)"pkgCache::pkgCache(MMap*, bool)@APTPKG_5.90" 0.8.0
@@ -436,17 +436,17 @@ libapt-pkg.so.5.90 libapt-pkg5.90 #MINVER#
  (c++)"pkgSourceList::GetIndexes(pkgAcquire*, bool) const@APTPKG_5.90" 0.8.0
  (c++)"pkgSourceList::Type::FixupURI(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&) const@APTPKG_5.90" 0.8.0
  (c++)"pkgSourceList::FindIndex(pkgCache::PkgFileIterator, pkgIndexFile*&) const@APTPKG_5.90" 0.8.0
- (c++)"pkgTagSection::Find(char const*, char const*&, char const*&) const@APTPKG_5.90" 0.8.0
- (c++)"pkgTagSection::Find(char const*, unsigned int&) const@APTPKG_5.90" 0.8.0
- (c++)"pkgTagSection::FindI(char const*, long) const@APTPKG_5.90" 0.8.0
- (c++)"pkgTagSection::FindS[abi:cxx11](char const*) const@APTPKG_5.90" 0.8.0
- (c++)"pkgTagSection::FindULL(char const*, unsigned long long const&) const@APTPKG_5.90" 0.8.0
- (c++)"pkgTagSection::FindFlag(char const*, unsigned long&, unsigned long) const@APTPKG_5.90" 0.8.0
+ (c++)"pkgTagSection::Find(APT::StringView, char const*&, char const*&) const@APTPKG_5.90" 1.9~
+ (c++)"pkgTagSection::Find(APT::StringView, unsigned int&) const@APTPKG_5.90" 1.9~
+ (c++)"pkgTagSection::FindI(APT::StringView, long) const@APTPKG_5.90" 1.9~
+ (c++)"pkgTagSection::Find(APT::StringView) const@APTPKG_5.90" 1.9~
+ (c++)"pkgTagSection::FindULL(APT::StringView, unsigned long long const&) const@APTPKG_5.90" 1.9~
+ (c++)"pkgTagSection::FindFlag(APT::StringView, unsigned long&, unsigned long) const@APTPKG_5.90" 1.9~
  (c++)"pkgCache::DepIterator::AllTargets() const@APTPKG_5.90" 0.8.0
  (c++)"pkgCache::DepIterator::IsCritical() const@APTPKG_5.90" 0.8.0
  (c++)"pkgCache::DepIterator::SmartTargetPkg(pkgCache::PkgIterator&) const@APTPKG_5.90" 0.8.0
  (c++)"pkgCache::GrpIterator::FindPreferredPkg(bool const&) const@APTPKG_5.90" 0.8.0
- (c++)"pkgCache::GrpIterator::FindPkg(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) const@APTPKG_5.90" 0.8.0
+ (c++)"pkgCache::GrpIterator::FindPkg(APT::StringView) const@APTPKG_5.90" 1.9~
  (c++)"pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const&) const@APTPKG_5.90" 0.8.0
  (c++)"pkgCache::PkgIterator::CurVersion() const@APTPKG_5.90" 0.8.0
  (c++)"pkgCache::PkgIterator::State() const@APTPKG_5.90" 0.8.0
@@ -456,8 +456,7 @@ libapt-pkg.so.5.90 libapt-pkg5.90 #MINVER#
  (c++)"pkgCache::VerIterator::TranslatedDescription() const@APTPKG_5.90" 0.8.0
  (c++)"pkgCache::VerIterator::RelStr[abi:cxx11]() const@APTPKG_5.90" 0.8.0
  (c++)"pkgCache::VerIterator::Automatic() const@APTPKG_5.90" 0.8.0
- (c++)"pkgCache::sHash(char const*) const@APTPKG_5.90" 0.8.0
- (c++)"pkgCache::sHash(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@APTPKG_5.90" 0.8.0
+ (c++)"pkgCache::sHash(APT::StringView) const@APTPKG_5.90" 1.9~
  (c++)"pkgCache::Header::CheckSizes(pkgCache::Header&) const@APTPKG_5.90" 0.8.0
  (c++)"debSystem::CreatePM(pkgDepCache*) const@APTPKG_5.90" 0.8.0
  (c++)"debSystem::FindIndex(pkgCache::PkgFileIterator, pkgIndexFile*&) const@APTPKG_5.90" 0.8.0
@@ -918,7 +917,6 @@ libapt-pkg.so.5.90 libapt-pkg5.90 #MINVER#
  (c++)"APT::CacheSetHelper::PackageFromCommandLine(APT::PackageContainerInterface*, pkgCacheFile&, char const**)@APTPKG_5.90" 1.1~exp4
  (c++)"APT::CacheSetHelper::PackageFromFnmatch(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_5.90" 1.1~exp4
  (c++)"APT::CacheSetHelper::PackageFromModifierCommandLine(unsigned short&, APT::PackageContainerInterface*, pkgCacheFile&, char const*, std::__cxx11::list<APT::CacheSetHelper::PkgModifier, std::allocator<APT::CacheSetHelper::PkgModifier> > const&)@APTPKG_5.90" 1.1~exp4
- (c++)"APT::CacheSetHelper::PackageFromName(pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.90" 1.1~exp4
  (c++)"APT::CacheSetHelper::PackageFromPackageName(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_5.90" 1.1~exp4
  (c++)"APT::CacheSetHelper::PackageFromRegEx(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_5.90" 1.1~exp4
  (c++)"APT::CacheSetHelper::PackageFromString(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.90" 1.1~exp4
@@ -1032,8 +1030,8 @@ libapt-pkg.so.5.90 libapt-pkg5.90 #MINVER#
  (c++)"pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager*)@APTPKG_5.90" 1.1~exp1
  (c++)"pkgTagFile::Init(FileFd*, unsigned long long)@APTPKG_5.90" 1.1~exp1
  (c++)"pkgTagSection::Count() const@APTPKG_5.90" 1.1~exp1
- (c++)"pkgTagSection::Exists(char const*) const@APTPKG_5.90" 1.1~exp1
- (c++)"pkgTagSection::FindB(char const*, bool const&) const@APTPKG_5.90" 1.1~exp1
+ (c++)"pkgTagSection::Exists(APT::StringView) const@APTPKG_5.90" 1.9~
+ (c++)"pkgTagSection::FindB(APT::StringView, bool) const@APTPKG_5.90" 1.9~
  (c++)"pkgTagSection::Scan(char const*, unsigned long, bool)@APTPKG_5.90" 1.1~exp1
  (c++)"StartsWithGPGClearTextSignature(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.90" 1.1~exp1
  (c++)"Popen(char const**, FileFd&, int&, FileFd::OpenMode, bool, bool)@APTPKG_5.90" 1.9.0~
@@ -1236,9 +1234,9 @@ libapt-pkg.so.5.90 libapt-pkg5.90 #MINVER#
  (c++)"pkgSrcRecords::Parser::Parser(pkgIndexFile const*)@APTPKG_5.90" 1.1~exp9
  (c++)"pkgSystem::~pkgSystem()@APTPKG_5.90" 1.1~exp9
  (c++)"pkgSystem::pkgSystem(char const*, pkgVersioningSystem*)@APTPKG_5.90" 1.1~exp9
- (c++)"pkgTagSection::FindFlag(char const*, unsigned char&, unsigned char) const@APTPKG_5.90" 1.1~exp9
+ (c++)"pkgTagSection::FindFlag(APT::StringView, unsigned char&, unsigned char) const@APTPKG_5.90" 1.9~
  (c++)"pkgTagSection::FindFlag(unsigned char&, unsigned char, char const*, char const*)@APTPKG_5.90" 1.1~exp9
- (c++)"pkgTagSection::FindRawS[abi:cxx11](char const*) const@APTPKG_5.90" 1.1~exp9
+ (c++)"pkgTagSection::FindRaw(APT::StringView) const@APTPKG_5.90" 1.9~
  (c++)"pkgTagSection::Tag::Remove(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.90" 1.1~exp9
  (c++)"pkgTagSection::Tag::Rename(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.90" 1.1~exp9
  (c++)"pkgTagSection::Tag::Rewrite(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_5.90" 1.1~exp9
@@ -1450,9 +1448,6 @@ libapt-pkg.so.5.90 libapt-pkg5.90 #MINVER#
  (c++)"pkgSystem::LockInner()@APTPKG_5.90" 1.7.0~alpha3~
  (c++)"pkgSystem::UnLockInner(bool)@APTPKG_5.90" 1.7.0~alpha3~
 # gcc-8 artifacts
- (c++|optional=std)"URI::operator std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >[abi:cxx11]()@APTPKG_5.90" 0.8.0
- (c++|optional=std)"std::enable_if<std::__and_<std::__not_<std::__is_tuple_like<APT::Configuration::Compressor> >, std::is_move_constructible<APT::Configuration::Compressor>, std::is_move_assignable<APT::Configuration::Compressor> >::value, void>::type std::swap<APT::Configuration::Compressor>(APT::Configuration::Compressor&, APT::Configuration::Compressor&)@APTPKG_5.90" 1.1~exp9
- (c++|optional=std)"std::ostream_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, char, std::char_traits<char> > std::__copy_move_a<false, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::ostream_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, char, std::char_traits<char> > >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::ostream_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, char, std::char_traits<char> >)@APTPKG_5.90" 1.3~exp1
  (c++|optional=std)"std::enable_if<std::__and_<std::__not_<std::__is_tuple_like<IndexTarget> >, std::is_move_constructible<IndexTarget>, std::is_move_assignable<IndexTarget> >::value, void>::type std::swap<IndexTarget>(IndexTarget&, IndexTarget&)@APTPKG_5.90" 1.5~beta2~
  (c++|optional=std)"pkgAcqMethod::SendMessage(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::unordered_map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >&&)@APTPKG_5.90" 1.7.0~alpha3~
  (c++|optional=std)"void std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> >::emplace_back<char const (&) [3], char const (&) [4], char const (&) [3], char const (&) [3], char const (&) [3], int>(char const (&) [3], char const (&) [4], char const (&) [3], char const (&) [3], char const (&) [3], int&&)@APTPKG_5.90" 1.7.0~alpha3~
@@ -1467,7 +1462,6 @@ libapt-pkg.so.5.90 libapt-pkg5.90 #MINVER#
  (c++|optional=std)"void std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> >::emplace_back<char const (&) [5], char const (&) [6], char const (&) [6], decltype(nullptr), decltype(nullptr), int>(char const (&) [5], char const (&) [6], char const (&) [6], decltype(nullptr)&&, decltype(nullptr)&&, int&&)@APTPKG_5.90" 1.7.0~alpha3~
  (c++|optional=std)"void std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> >::emplace_back<char const (&) [6], char const (&) [5], char const (&) [6], char const (&) [3], char const (&) [3], int>(char const (&) [6], char const (&) [5], char const (&) [6], char const (&) [3], char const (&) [3], int&&)@APTPKG_5.90" 1.7.0~alpha3~
  (c++|optional=std)"void std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> >::emplace_back<char const (&) [6], char const (&) [5], char const (&) [6], decltype(nullptr), decltype(nullptr), int>(char const (&) [6], char const (&) [5], char const (&) [6], decltype(nullptr)&&, decltype(nullptr)&&, int&&)@APTPKG_5.90" 1.7.0~alpha3~
- (c++|optional=std)"void std::vector<re_pattern_buffer*, std::allocator<re_pattern_buffer*> >::emplace_back<re_pattern_buffer*>(re_pattern_buffer*&&)@APTPKG_5.90" 1.7.0~alpha3~
 * Build-Depends-Package: libapt-pkg-dev
  (c++)"ExtractTar::Done()@APTPKG_5.90" 1.1~exp12
  (c++)"ExtractTar::Go(pkgDirStream&)@APTPKG_5.90" 0.8.0
@@ -1508,3 +1502,7 @@ libapt-pkg.so.5.90 libapt-pkg5.90 #MINVER#
  (c++|optional=std)"void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag)@APTPKG_5.90" 1.7.0~alpha3~
  (c++|optional=std)"void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char const*>(char const*, char const*, std::forward_iterator_tag)@APTPKG_5.90" 1.7.0~alpha3~
 ### try to ignore std:: template instances
+ (c++)"void std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> >::emplace_back<APT::Configuration::Compressor>(APT::Configuration::Compressor&&)@APTPKG_5.90" 1.9~
+ (c++)"void std::vector<APT::StringView*, std::allocator<APT::StringView*> >::emplace_back<APT::StringView*>(APT::StringView*&&)@APTPKG_5.90" 1.9~
+ (c++)"void std::vector<std::unique_ptr<FileFd, std::default_delete<FileFd> >, std::allocator<std::unique_ptr<FileFd, std::default_delete<FileFd> > > >::emplace_back<FileFd*>(FileFd*&&)@APTPKG_5.90" 1.9~
+ (optional)_ZL6hash32jPKhm._GLOBAL___.._apt_pkg_pkgcache.cc_FB5499C7_0x5f8f5e3a3ed634d9.ifunc@APTPKG_5.90 1.9~
