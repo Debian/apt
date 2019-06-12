@@ -83,7 +83,7 @@ APT_PURE time_t metaIndex::GetDate() const { return this->Date; }
 APT_PURE metaIndex::TriState metaIndex::GetLoadedSuccessfully() const { return LoadedSuccessfully; }
 APT_PURE std::string metaIndex::GetExpectedDist() const { return Dist; }
 									/*}}}*/
-bool metaIndex::CheckDist(string const &MaybeDist) const		/*{{{*/
+bool metaIndex::CheckDist(std::string const &MaybeDist) const		/*{{{*/
 {
    if (MaybeDist.empty() || this->Codename == MaybeDist || this->Suite == MaybeDist)
       return true;
@@ -93,7 +93,7 @@ bool metaIndex::CheckDist(string const &MaybeDist) const		/*{{{*/
       Transformed = "experimental";
 
    auto const pos = Transformed.rfind('/');
-   if (pos != string::npos)
+   if (pos != std::string::npos)
       Transformed = Transformed.substr(0, pos);
 
    if (Transformed == ".")
@@ -102,7 +102,7 @@ bool metaIndex::CheckDist(string const &MaybeDist) const		/*{{{*/
    return Transformed.empty() || this->Codename == Transformed || this->Suite == Transformed;
 }
 									/*}}}*/
-APT_PURE metaIndex::checkSum *metaIndex::Lookup(string const &MetaKey) const /*{{{*/
+APT_PURE metaIndex::checkSum *metaIndex::Lookup(std::string const &MetaKey) const /*{{{*/
 {
    std::map<std::string, metaIndex::checkSum* >::const_iterator sum = Entries.find(MetaKey);
    if (sum == Entries.end())
@@ -110,7 +110,7 @@ APT_PURE metaIndex::checkSum *metaIndex::Lookup(string const &MetaKey) const /*{
    return sum->second;
 }
 									/*}}}*/
-APT_PURE bool metaIndex::Exists(string const &MetaKey) const		/*{{{*/
+APT_PURE bool metaIndex::Exists(std::string const &MetaKey) const		/*{{{*/
 {
    return Entries.find(MetaKey) != Entries.end();
 }
@@ -118,7 +118,7 @@ APT_PURE bool metaIndex::Exists(string const &MetaKey) const		/*{{{*/
 std::vector<std::string> metaIndex::MetaKeys() const			/*{{{*/
 {
    std::vector<std::string> keys;
-   std::map<string,checkSum *>::const_iterator I = Entries.begin();
+   std::map<std::string, checkSum *>::const_iterator I = Entries.begin();
    while(I != Entries.end()) {
       keys.push_back((*I).first);
       ++I;
