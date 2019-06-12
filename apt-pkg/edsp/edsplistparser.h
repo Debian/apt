@@ -18,11 +18,6 @@
 
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/indexfile.h>
-#include <apt-pkg/pkgcachegen.h>
-#include <apt-pkg/tagfile.h>
-#endif
 
 namespace APT {
    class StringView;

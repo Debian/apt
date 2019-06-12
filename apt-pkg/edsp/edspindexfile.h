@@ -11,9 +11,6 @@
 #include <apt-pkg/debindexfile.h>
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/indexfile.h>
-#endif
 
 class OpProgress;
 class pkgCacheGenerator;

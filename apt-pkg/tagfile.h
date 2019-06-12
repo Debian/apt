@@ -29,9 +29,6 @@
 #include <vector>
 #include <apt-pkg/string_view.h>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/fileutl.h>
-#endif
 
 class FileFd;
 class pkgTagSectionPrivate;

@@ -30,12 +30,6 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/cachefile.h>
-#endif
-#ifndef APT_10_CLEANER_HEADERS
-#include <iostream>
-#endif
 									/*}}}*/
 
 class pkgCacheFile;

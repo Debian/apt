@@ -18,11 +18,6 @@
 #include "hashsum_template.h"
 #include "sha2_internal.h"
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <algorithm>
-#include <string>
-#include <stdint.h>
-#endif
 
 
 typedef HashSumValue<512> SHA512SumValue;

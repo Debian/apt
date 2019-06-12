@@ -30,14 +30,6 @@
 #include <set>
 #include <string>
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/install-progress.h>
-#include <iostream>
-#endif
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/depcache.h>
-using std::string;
-#endif
 
 class pkgAcquire;
 class pkgDepCache;

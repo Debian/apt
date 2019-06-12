@@ -8,12 +8,6 @@
 #include <string>
 #include <vector>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/sourcelist.h>
-#endif
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/init.h>
-#endif
 
 class pkgAcquire;
 class pkgIndexFile;

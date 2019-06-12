@@ -48,14 +48,6 @@
 #include <string>
 #include <utility>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/error.h>
-#include <apt-pkg/progress.h>
-#endif
-#ifndef APT_10_CLEANER_HEADERS
-#include <set>
-#include <vector>
-#endif
 
 class OpProgress;
 class pkgVersioningSystem;

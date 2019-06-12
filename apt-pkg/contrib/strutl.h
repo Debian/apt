@@ -26,14 +26,6 @@
 
 #include "macros.h"
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <stdlib.h>
-#endif
-#ifndef APT_8_CLEANER_HEADERS
-using std::string;
-using std::vector;
-using std::ostream;
-#endif
 
 namespace APT {
    namespace String {

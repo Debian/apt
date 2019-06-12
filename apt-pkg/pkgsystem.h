@@ -40,9 +40,6 @@
 
 #include <vector>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/depcache.h>
-#endif
 
 class pkgDepCache;
 class pkgPackageManager;

@@ -83,9 +83,6 @@
 
 #include <apt-pkg/string_view.h>
 
-#ifndef APT_8_CLEANER_HEADERS
-using std::string;
-#endif
 
 // size of (potentially big) files like debs or the install size of them
 typedef uint64_t map_filesize_t;

@@ -18,11 +18,6 @@
 
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/dirstream.h>
-#include <algorithm>
-using std::min;
-#endif
 
 class pkgDirStream;
 

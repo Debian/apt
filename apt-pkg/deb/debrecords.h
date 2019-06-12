@@ -20,9 +20,6 @@
 
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/indexfile.h>
-#endif
 
 class APT_HIDDEN debRecordParserBase : public pkgRecords::Parser
 {

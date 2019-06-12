@@ -38,16 +38,7 @@
 
 #include <apt-pkg/macros.h>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/acquire.h>
-using std::ostream;
-#endif
 
-#ifndef APT_9_CLEANER_HEADERS
-// include pkg{DistUpgrade,AllUpgrade,MiniizeUpgrade} here for compatibility
-#include <apt-pkg/update.h>
-#include <apt-pkg/upgrade.h>
-#endif
 
 
 class pkgSimulatePrivate;

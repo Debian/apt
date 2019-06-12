@@ -1,4 +1,5 @@
 #include <apt-pkg/error.h>
+#include <apt-pkg/dirstream.h>
 #include <apt-pkg/extracttar.h>
 #include <iostream>
 #include <stdlib.h>

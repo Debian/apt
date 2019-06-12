@@ -17,14 +17,6 @@
 
 #include <apt-pkg/macros.h>
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/gpgv.h>
-class FileFd;
-#endif
-#ifndef APT_8_CLEANER_HEADERS
-using std::string;
-using std::vector;
-#endif
 
 class pkgTagSection;
 class pkgCdromStatus;

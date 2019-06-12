@@ -20,15 +20,6 @@
 #include <cstring>
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-using std::min;
-using std::vector;
-#endif
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/fileutl.h>
-#include <algorithm>
-#include <vector>
-#endif
 
 
 class FileFd;
