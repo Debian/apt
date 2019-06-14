@@ -57,8 +57,7 @@ class pkgPolicy : public pkgDepCache::Policy
       std::string Pkg;
       explicit PkgPin(std::string const &Pkg) : Pin(), Pkg(Pkg) {};
    };
-   
-   Pin *Pins;
+
    Pin *VerPins;
    signed short *PFPriority;
    std::vector<Pin> Defaults;

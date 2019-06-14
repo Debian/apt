@@ -45,18 +45,14 @@ constexpr short NEVER_PIN = std::numeric_limits<short>::min();
 // ---------------------------------------------------------------------
 /* Set the defaults for operation. The default mode with no loaded policy
    file matches the V0 policy engine. */
-pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(nullptr), VerPins(nullptr),
+pkgPolicy::pkgPolicy(pkgCache *Owner) : VerPins(nullptr),
    PFPriority(nullptr), Cache(Owner), d(NULL)
 {
    if (Owner == 0)
       return;
    PFPriority = new signed short[Owner->Head().PackageFileCount];
-   auto PackageCount = Owner->Head().PackageCount;
-   Pins = new Pin[PackageCount];
    VerPins = new Pin[Owner->Head().VersionCount];
 
-   for (decltype(PackageCount) I = 0; I != PackageCount; ++I)
-      Pins[I].Type = pkgVersionMatch::None;
    auto VersionCount = Owner->Head().VersionCount;
    for (decltype(VersionCount) I = 0; I != VersionCount; ++I)
       VerPins[I].Type = pkgVersionMatch::None;
@@ -217,24 +213,22 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       {
 	 if (pams(Pkg.Arch()) == false)
 	    continue;
-	 Pin *P = Pins + Pkg->ID;
-	 // the first specific stanza for a package is the ruler,
-	 // all others need to be ignored
-	 if (P->Type != pkgVersionMatch::None)
-	    P = &*Unmatched.insert(Unmatched.end(),PkgPin(Pkg.FullName()));
-	 P->Type = Type;
-	 P->Priority = Priority;
-	 P->Data = Data;
-	 matched = true;
+
+	 PkgPin P(Pkg.FullName());
+	 P.Type = Type;
+	 P.Priority = Priority;
+	 P.Data = Data;
 
 	 // Find matching version(s) and copy the pin into it
-	 pkgVersionMatch Match(P->Data,P->Type);
+	 pkgVersionMatch Match(P.Data,P.Type);
 	 for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() != true; ++Ver)
 	 {
 	    if (Match.VersionMatches(Ver)) {
 	       Pin *VP = VerPins + Ver->ID;
-	       if (VP->Type == pkgVersionMatch::None)
-		  *VP = *P;
+	       if (VP->Type == pkgVersionMatch::None) {
+		  *VP = P;
+		   matched = true;
+	       }
 	    }
 	 }
       }
@@ -420,4 +414,4 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
 }
 									/*}}}*/
 
-pkgPolicy::~pkgPolicy() {delete [] PFPriority; delete [] Pins; delete [] VerPins; }
+pkgPolicy::~pkgPolicy() {delete [] PFPriority; delete [] VerPins; }
