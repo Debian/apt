@@ -1,4 +1,4 @@
-// -*- mode: cpp; mode: fold -*-
+   // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
 
@@ -252,28 +252,9 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
    }
 }
 									/*}}}*/
-// Policy::GetMatch - Get the matching version for a package pin	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgCache::VerIterator pkgPolicy::GetMatch(pkgCache::PkgIterator const &Pkg)
-{
-   const Pin &PPkg = Pins[Pkg->ID];
-   if (PPkg.Type == pkgVersionMatch::None)
-      return pkgCache::VerIterator(*Pkg.Cache());
-
-   pkgVersionMatch Match(PPkg.Data,PPkg.Type);
-   return Match.Find(Pkg);
-}
-									/*}}}*/
 // Policy::GetPriority - Get the priority of the package pin		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
-{
-   if (Pins[Pkg->ID].Type != pkgVersionMatch::None)
-      return Pins[Pkg->ID].Priority;
-   return 0;
-}
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, bool ConsiderFiles)
 {
    if (VerPins[Ver->ID].Type != pkgVersionMatch::None)
