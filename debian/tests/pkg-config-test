@@ -7,6 +7,7 @@ trap "rm -rf $WORKDIR" 0 INT QUIT ABRT PIPE TERM
 cd $WORKDIR
 cat <<EOF > pkgconfigtest.c
 #include <apt-pkg/init.h>
+#include <stdio.h>
 
 int main()
 {
@@ -15,7 +16,7 @@ int main()
 }
 EOF
 
-g++ -o pkgconfigtest pkgconfigtest.c `pkg-config --cflags --libs apt-pkg apt-inst`
+g++ -o pkgconfigtest pkgconfigtest.c `pkg-config --cflags --libs apt-pkg`
 echo "build: OK"
 [ -x pkgconfigtest ]
 ./pkgconfigtest
