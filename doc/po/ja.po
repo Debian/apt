@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-02-04 15:34+0100\n"
+"POT-Creation-Date: 2019-06-17 11:37+0200\n"
 "PO-Revision-Date: 2017-01-06 04:50+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -847,6 +847,21 @@ msgstr ""
 "<command>install</command> 経由で明示的にインストールしたパッケージは、自動削"
 "除のために提案されることはありません。"
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"<option>satisfy</option> satisfies dependency strings, as used in Build-"
+"Depends. It also handles conflicts, by prefixing an argument with <literal>"
+"\"Conflicts: \"</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"Example: <literal>apt satisfy \"foo, bar (>= 1.0)\" \"Conflicts: baz, fuzz"
+"\"</literal>"
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
 msgid "(&apt-cache;)"
@@ -1327,6 +1342,29 @@ msgstr ""
 msgid ""
 "The arguments are interpreted as binary or source package names. See the "
 "<option>--only-source</option> option if you want to change that."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"<literal>satisfy</literal> causes apt-get to satisfy the given dependency "
+"strings. The dependency strings may have build profiles and architecture "
+"restriction list as in build dependencies. They may optionally be prefixed "
+"with <literal>\"Conflicts: \"</literal> to unsatisfy the dependency string. "
+"Multiple strings of the same type can be specified."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"Example: <literal>apt-get satisfy \"foo\" \"Conflicts: bar\" \"baz (&gt;&gt; "
+"1.0) | bar (= 2.0), moo\"</literal>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"The legacy operator '&lt;/&gt;' is not supported, use '&lt;=/&gt;=' instead."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -2719,10 +2757,11 @@ msgid ""
 "Note that if usage of <command>apt-key</command> is desired the additional "
 "installation of the GNU Privacy Guard suite (packaged in <package>gnupg</"
 "package>) is required. For this reason alone the programmatic usage "
-"(especially in package maintainer scripts!) is strongly discouraged.  Further "
-"more the output format of all commands is undefined and can and does change "
-"whenever the underlying commands change. <command>apt-key</command> will try "
-"to detect such usage and generates warnings on stderr in these cases."
+"(especially in package maintainer scripts!) is strongly discouraged.  "
+"Further more the output format of all commands is undefined and can and does "
+"change whenever the underlying commands change. <command>apt-key</command> "
+"will try to detect such usage and generates warnings on stderr in these "
+"cases."
 msgstr ""
 "<command>apt-key</command> を利用するためには GNU Privacy Guard suite "
 "(<package>gnupg</package> に収録) を追加でインストールする必要があることに注"
@@ -7322,13 +7361,13 @@ msgstr "deb822 スタイル形式"
 #| "entry can hence be disabled by commenting out each line belonging to the "
 #| "stanza, but it is usually easier to add the field \"Enabled: no\" to the "
 #| "stanza to disable the entry. Removing the field or setting it to yes re-"
-#| "enables it.  Options have the same syntax as every other field: A "
-#| "field name separated by a colon (<literal>:</literal>) and optionally "
-#| "spaces from its value(s).  Note especially that multiple values are "
-#| "separated by spaces, not by commas as in the one-line format. Multivalue "
-#| "fields like <literal>Architectures</literal> also have "
-#| "<literal>Architectures-Add</literal> and <literal>Architectures-Remove</"
-#| "literal> to modify the default value rather than replacing it."
+#| "enables it.  Options have the same syntax as every other field: A field "
+#| "name separated by a colon (<literal>:</literal>) and optionally spaces "
+#| "from its value(s).  Note especially that multiple values are separated by "
+#| "spaces, not by commas as in the one-line format. Multivalue fields like "
+#| "<literal>Architectures</literal> also have <literal>Architectures-Add</"
+#| "literal> and <literal>Architectures-Remove</literal> to modify the "
+#| "default value rather than replacing it."
 msgid ""
 "Files in this format have the extension <filename>.sources</filename>.  The "
 "format is similar in syntax to other files used by Debian and its "

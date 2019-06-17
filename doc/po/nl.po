@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.8.0~rc3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-03-08 09:41+0100\n"
+"POT-Creation-Date: 2019-06-17 11:37+0200\n"
 "PO-Revision-Date: 2019-02-16 20:46+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -864,6 +864,21 @@ msgstr ""
 "<command>install</command> geïnstalleerd heeft, zal ook nooit voorgesteld "
 "worden om ze automatisch te verwijderderen."
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"<option>satisfy</option> satisfies dependency strings, as used in Build-"
+"Depends. It also handles conflicts, by prefixing an argument with <literal>"
+"\"Conflicts: \"</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"Example: <literal>apt satisfy \"foo, bar (>= 1.0)\" \"Conflicts: baz, fuzz"
+"\"</literal>"
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
 msgid "(&apt-cache;)"
@@ -1386,6 +1401,29 @@ msgid ""
 msgstr ""
 "De argumenten worden beschouwd als namen van binaire en broncodepakketen. "
 "Zie de optie <option>--only-source</option> indien u dit wenst te wijzigen."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"<literal>satisfy</literal> causes apt-get to satisfy the given dependency "
+"strings. The dependency strings may have build profiles and architecture "
+"restriction list as in build dependencies. They may optionally be prefixed "
+"with <literal>\"Conflicts: \"</literal> to unsatisfy the dependency string. "
+"Multiple strings of the same type can be specified."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"Example: <literal>apt-get satisfy \"foo\" \"Conflicts: bar\" \"baz (&gt;&gt; "
+"1.0) | bar (= 2.0), moo\"</literal>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"The legacy operator '&lt;/&gt;' is not supported, use '&lt;=/&gt;=' instead."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -2869,10 +2907,11 @@ msgid ""
 "Note that if usage of <command>apt-key</command> is desired the additional "
 "installation of the GNU Privacy Guard suite (packaged in <package>gnupg</"
 "package>) is required. For this reason alone the programmatic usage "
-"(especially in package maintainer scripts!) is strongly discouraged.  Further "
-"more the output format of all commands is undefined and can and does change "
-"whenever the underlying commands change. <command>apt-key</command> will try "
-"to detect such usage and generates warnings on stderr in these cases."
+"(especially in package maintainer scripts!) is strongly discouraged.  "
+"Further more the output format of all commands is undefined and can and does "
+"change whenever the underlying commands change. <command>apt-key</command> "
+"will try to detect such usage and generates warnings on stderr in these "
+"cases."
 msgstr ""
 "Merk op dat als het gebruik van het commando <command>apt-key</command> "
 "gewenst is, dan ook de installatie van de GNU Privacy Guard suite (verpakt "

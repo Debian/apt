@@ -1,3 +1,64 @@
+apt (1.9.0) experimental; urgency=medium
+
+  [ Julian Andres Klode ]
+  * CMakeLists.txt: Bump C++ standard version to C++14
+  * debian: Update to debhelper-compat (= 12)
+  * debian/rules: Do not use dh_install --list-missing (dh 12 porting)
+  * Remove all the deprecated bits, merge various function prototypes together
+  * prepare-release: Add merge-translations command
+  * Use system-provided triehash
+  * CI: Use unstable for now, as we need triehash package
+  * Tighten dependencies from apt and apt-utils on libs
+  * Add test case for local-only packages pinned to never
+  * acq: worker: Move CurrentSize, TotalSize, ResumePoint to CurrentItem
+  * apt-helper: Support multiple hashes for a file
+  * Add 'explicit' to most single argument constructors
+  * Get rid of pkgExtract and pkgFLCache
+  * Merge libapt-inst into libapt-pkg
+  * Use debDebFile to get control file instead of dpkg-deb
+  * prepare-release: Add bump-abi command
+  * Change soname to libapt-pkg.so.5.90
+  * CMake: Enforce "override" use on overriden methods
+  * debmetaindex: Use isspace_ascii() variant to normalize Signed-By
+  * README.md: Quote -j <count> as code with backticks
+  * apt-mark: Add hidden showheld alias for showhold
+  * Mnor wording improvements in documentation
+  * Make APT::StringView public, replace std::string with it in various places
+  * Introduce apt satisfy and apt-get satisfy (Closes: #275379)
+  * Run unifdef -DAPT_{8,9,10,15}_CLEANER_HEADERS
+  * Adjust code for missing includes, and using std::string
+  * Bump cache MajorVersion to 16
+
+  [ Corentin Noël ]
+  * Add pkg-config files for the apt-pkg and apt-inst libraries
+    (Closes: #439121)
+
+  [ Simon McVittie ]
+  * vendor/getinfo: Iterate through vendors in lexicographic order
+    (Closes: #924662)
+  * vendor/getinfo: Don't assume that Ubuntu is the last vendor
+    (Closes: #924662)
+
+  [ Martin Michlmayr ]
+  * Perform minor copy-editing on the docs
+
+  [ Ivan Krylov ]
+  * Mark apt-transport-https as M-A:foreign (Closes: #905141)
+
+  [ David Kalnischkies ]
+  * Don't limit cpu-limited queues to at most 10
+
+  [ Stephen Kitt ]
+  * apt-cache: only show solutions if displayed
+
+  [ Brian Murray ]
+  * Do not include squashfs file systems in df output. (LP: #1756595)
+
+  [ Simon Körner ]
+  * http: Fix Host header in proxied https connections
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 17 Jun 2019 11:36:56 +0200
+
 apt (1.8.2) unstable; urgency=medium
 
   [ Alwin Henseler ]
