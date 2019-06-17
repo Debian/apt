@@ -995,6 +995,10 @@ static time_t timegm(struct tm *t)
    method used to ignore the timezone and assume always UTC. */
 bool RFC1123StrToTime(const char* const str,time_t &time)
 {
+   return RFC1123StrToTime(std::string(str), time);
+}
+bool RFC1123StrToTime(std::string const &str,time_t &time)
+{
    unsigned short day = 0;
    signed int year = 0; // yes, Y23K problem – we going to worry then…
    std::string weekday, month, datespec, timespec, zone;

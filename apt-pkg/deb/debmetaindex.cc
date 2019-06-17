@@ -528,7 +528,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
       AuthPossible = true;
 
    std::string const StrDate = Section.FindS("Date");
-   if (RFC1123StrToTime(StrDate.c_str(), Date) == false)
+   if (RFC1123StrToTime(StrDate, Date) == false)
    {
       _error->Warning( _("Invalid '%s' entry in Release file %s"), "Date", Filename.c_str());
       Date = 0;
@@ -567,7 +567,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	 // if we have a Valid-Until header in the Release file, use it as default
 	 if (StrValidUntil.empty() == false)
 	 {
-	    if (RFC1123StrToTime(StrValidUntil.c_str(), ValidUntil) == false)
+	    if (RFC1123StrToTime(StrValidUntil, ValidUntil) == false)
 	    {
 	       if (ErrorText != NULL)
 		  strprintf(*ErrorText, _("Invalid '%s' entry in Release file %s"), "Valid-Until", Filename.c_str());

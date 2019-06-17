@@ -150,4 +150,11 @@
 #define APT_PKG_RELEASE 0
 #define APT_PKG_ABI ((APT_PKG_MAJOR * 100) + APT_PKG_MINOR)
 
+
+#if APT_PKG_ABI > 590
+#define APT_PKG_590(msg)  __attribute__((error(msg)))
+#else
+#define APT_PKG_590(msg)
+#endif
+
 #endif

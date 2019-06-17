@@ -81,7 +81,8 @@ std::string TimeRFC1123(time_t Date, bool const NumericTimezone);
  *    parsing is successful, undefined otherwise.
  * @return \b true if parsing was successful, otherwise \b false.
  */
-bool RFC1123StrToTime(const char* const str,time_t &time) APT_MUSTCHECK;
+bool RFC1123StrToTime(const char* const str,time_t &time) APT_MUSTCHECK APT_PKG_590("Replaced by std::string variant");
+bool RFC1123StrToTime(const std::string &str,time_t &time) APT_MUSTCHECK;
 bool FTPMDTMStrToTime(const char* const str,time_t &time) APT_MUSTCHECK;
 std::string LookupTag(const std::string &Message,const char *Tag,const char *Default = 0);
 int StringToBool(const std::string &Text,int Default = -1);

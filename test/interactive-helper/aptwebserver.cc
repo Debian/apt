@@ -793,7 +793,7 @@ static void * handleClient(int const client, size_t const id)		/*{{{*/
 	    if (_config->FindB("aptwebserver::support::modified-since", true) == true && condition.empty() == false)
 	    {
 	       time_t cache;
-	       if (RFC1123StrToTime(condition.c_str(), cache) == true &&
+	       if (RFC1123StrToTime(condition, cache) == true &&
 		     cache >= data.ModificationTime())
 	       {
 		  sendHead(log, client, 304, headers);
@@ -821,7 +821,7 @@ static void * handleClient(int const client, size_t const id)		/*{{{*/
 	       if (_config->FindB("aptwebserver::support::if-range", true) == true)
 		  ifrange = LookupTag(*m, "If-Range", "");
 	       bool validrange = (ifrange.empty() == true ||
-		     (RFC1123StrToTime(ifrange.c_str(), cache) == true &&
+		     (RFC1123StrToTime(ifrange, cache) == true &&
 		      cache <= data.ModificationTime()));
 
 	       // FIXME: support multiple byte-ranges (APT clients do not do this)
