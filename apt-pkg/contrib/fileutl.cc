@@ -223,6 +223,30 @@ bool RemoveFile(char const * const Function, std::string const &FileName)/*{{{*/
    is done all other calls to GetLock in any other process will fail with
    -1. The return result is the fd of the file, the call should call
    close at some time. */
+
+static std::string GetProcessName(int pid)
+{
+   struct HideError
+   {
+      int err;
+      HideError() : err(errno) { _error->PushToStack(); }
+      ~HideError()
+      {
+	 errno = err;
+	 _error->RevertToStack();
+      }
+   } hideError;
+   std::string path;
+   strprintf(path, "/proc/%d/status", pid);
+   FileFd status(path, FileFd::ReadOnly);
+   std::string line;
+   while (status.ReadLine(line))
+   {
+      if (line.substr(0, 5) == "Name:")
+	 return line.substr(6);
+   }
+   return "";
+}
 int GetLock(string File,bool Errors)
 {
    // GetLock() is used in aptitude on directories with public-write access
@@ -256,6 +280,20 @@ int GetLock(string File,bool Errors)
    {
       // always close to not leak resources
       int Tmp = errno;
+
+      if ((errno == EACCES || errno == EAGAIN))
+      {
+	 fl.l_type = F_WRLCK;
+	 fl.l_whence = SEEK_SET;
+	 fl.l_start = 0;
+	 fl.l_len = 0;
+	 fl.l_pid = -1;
+	 fcntl(FD, F_GETLK, &fl);
+      }
+      else
+      {
+	 fl.l_pid = -1;
+      }
       close(FD);
       errno = Tmp;
 
@@ -266,8 +304,21 @@ int GetLock(string File,bool Errors)
       }
   
       if (Errors == true)
-	 _error->Errno("open",_("Could not get lock %s"),File.c_str());
-      
+      {
+	 if (fl.l_pid != -1)
+	 {
+	    auto name = GetProcessName(fl.l_pid);
+	    if (name.empty())
+	       _error->Errno("open", _("Could not get lock %s. It is held by process %d"), File.c_str(), fl.l_pid);
+	    else
+	       _error->Errno("open", _("Could not get lock %s. It is held by process %d (%s)"), File.c_str(), fl.l_pid, name.c_str());
+	 }
+	 else
+	    _error->Errno("open", _("Could not get lock %s"), File.c_str());
+
+	 _error->Notice(_("Be aware that removing the lock file is not a solution and may break your system."));
+      }
+
       return -1;
    }
 
