@@ -86,7 +86,7 @@ as well as the manual pages and other documentation shipped with APT.
 Software tools like APT, which are used by thousands of users every
 day, have a steady flow of incoming bug reports. Not all of them are really
 bugs in APT: It can be packaging bugs, like failing maintainer scripts, that a
-user reports against apt, because apt was the command he executed that lead
+user reports against apt, because apt was the command they executed that lead
 to this failure; or various wishlist items for new features. Given enough time
 the occasional duplicate enters the system as well.
 Our bug tracker is therefore full with open bug reports which are waiting for you! ;)
