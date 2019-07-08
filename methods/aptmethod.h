@@ -502,10 +502,10 @@ class aptAuthConfMethod : public aptMethod
       auto const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
       if (netrcparts.empty() == false)
       {
-	 for (auto const &netrc : GetListOfFilesInDir(netrcparts, "conf", true, true))
+	 for (auto &&netrcpart : GetListOfFilesInDir(netrcparts, "conf", true, true))
 	 {
 	    authconfs.emplace_back(new FileFd());
-	    authconfs.back()->Open(netrc, FileFd::ReadOnly);
+	    authconfs.back()->Open(netrcpart, FileFd::ReadOnly);
 	 }
       }
       _error->RevertToStack();

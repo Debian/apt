@@ -67,7 +67,6 @@ static bool WriteSolution(pkgDepCache &Cache, FileFd &output)		/*{{{*/
    bool Okay = output.Failed() == false;
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false && likely(Okay); ++Pkg)
    {
-      std::string action;
       if (Cache[Pkg].Delete() == true)
 	 Okay &= EDSP::WriteSolutionStanza(output, "Remove", Pkg.CurrentVer());
       else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)

@@ -340,10 +340,10 @@ bool DoSource(CommandLine &CmdL)
    // Load the requestd sources into the fetcher
    aptAcquireWithTextStatus Fetcher;
    std::vector<std::string> UntrustedList;
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   for (const char **cmdl = CmdL.FileList + 1; *cmdl != 0; ++cmdl)
    {
       std::string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,SrcRecs,Src,Cache);
+      pkgSrcRecords::Parser *Last = FindSrc(*cmdl, SrcRecs, Src, Cache);
       if (Last == 0) {
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
       }

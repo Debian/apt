@@ -169,10 +169,7 @@ bool HashStringList::usable() const					/*{{{*/
    if (forcedType.empty() == true)
    {
       // See if there is at least one usable hash
-      for (auto const &hs: list)
-         if (hs.usable())
-            return true;
-      return false;
+      return std::any_of(list.begin(), list.end(), [](auto const &hs) { return hs.usable(); });
    }
    return find(forcedType) != NULL;
 }

@@ -89,7 +89,7 @@ static APT_PURE char const *skipColonSpaces(char const *Buffer, size_t const Len
    ++Buffer;
    for (; isspace(*Buffer) != 0 && Length - (Buffer - Start) > 0; ++Buffer)
       ;
-   if (Length - (Buffer - Start) <= 0)
+   if (Length < static_cast<size_t>(Buffer - Start))
       return nullptr;
    return Buffer;
 }

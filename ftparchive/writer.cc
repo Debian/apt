@@ -216,9 +216,8 @@ bool FTWScanner::RecursiveScan(string const &Dir)
    std::sort(FilesToProcess.begin(), FilesToProcess.end(), [](PairType a, PairType b) {
       return a.first < b.first;
    });
-   for (PairType it : FilesToProcess)
-      if (ProcessFile(it.first.c_str(), it.second) != 0)
-	 return false;
+   if (not std::all_of(FilesToProcess.cbegin(), FilesToProcess.cend(), [](auto &&it) { return ProcessFile(it.first.c_str(), it.second) == 0; }))
+      return false;
    FilesToProcess.clear();
    return true;
 }

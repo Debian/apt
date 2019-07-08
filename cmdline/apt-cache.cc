@@ -136,12 +136,12 @@ static bool DumpPackage(CommandLine &CmdL)
 /* */
 static map_pointer_t PackageNext(pkgCache::Package const * const P) { return P->NextPackage; }
 static map_pointer_t GroupNext(pkgCache::Group const * const G) { return G->Next; }
-template<class T>
-static void ShowHashTableStats(std::string Type,
-                               T *StartP,
-                               map_pointer_t *Hashtable,
-                               unsigned long Size,
-			       map_pointer_t(*Next)(T const * const))
+template <class T>
+static void ShowHashTableStats(char const *const Type,
+			       T *StartP,
+			       map_pointer_t *Hashtable,
+			       unsigned long Size,
+			       map_pointer_t (*Next)(T const *const))
 {
    // hashtable stats for the HashTable
    unsigned long NumBuckets = Size;
@@ -201,8 +201,7 @@ static bool Stats(CommandLine &CmdL)
    int NVirt = 0;
    int DVirt = 0;
    int Missing = 0;
-   pkgCache::PkgIterator I = Cache->PkgBegin();
-   for (;I.end() != true; ++I)
+   for (pkgCache::PkgIterator I = Cache->PkgBegin(); I.end() != true; ++I)
    {
       if (I->VersionList != 0 && I->ProvidesList == 0)
       {

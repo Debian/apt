@@ -727,8 +727,7 @@ bool AddVolatileSourceFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector
       return false;
    std::vector<std::string> files;
    SL->AddVolatileFile(pkg.name, &files);
-   for (auto &&f: files)
-      VolatileCmdL.emplace_back(std::move(f), pkg.arch, pkg.release, pkg.index);
+   std::transform(files.begin(), files.end(), std::back_inserter(VolatileCmdL), [&](auto &&f) { return PseudoPkg{std::move(f), pkg.arch, pkg.release, pkg.index}; });
    return true;
 
 }
@@ -740,8 +739,7 @@ bool AddVolatileBinaryFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector
       return false;
    std::vector<std::string> files;
    SL->AddVolatileFile(pkg.name, &files);
-   for (auto &&f: files)
-      VolatileCmdL.emplace_back(std::move(f), pkg.arch, pkg.release, pkg.index);
+   std::transform(files.begin(), files.end(), std::back_inserter(VolatileCmdL), [&](auto &&f) { return PseudoPkg{std::move(f), pkg.arch, pkg.release, pkg.index}; });
    return true;
 }
 									/*}}}*/

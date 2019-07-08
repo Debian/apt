@@ -56,12 +56,10 @@ static std::vector<APT::Configuration::Compressor>::const_iterator findMatchingC
 // MultiCompress::MultiCompress - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* Setup the file outputs, compression modes and fork the writer child */
-MultiCompress::MultiCompress(string const &Output,string const &Compress,
-			     mode_t const &Permissions,bool const &Write) :
-			Permissions(Permissions)
+MultiCompress::MultiCompress(string const &Output, string const &Compress,
+			     mode_t const &Permissions, bool const &Write) : Outputter{-1}, Permissions(Permissions)
 {
    Outputs = 0;
-   Outputter = -1;
    UpdateMTime = 0;
 
    auto const Compressors = APT::Configuration::getCompressors();

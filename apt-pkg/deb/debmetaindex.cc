@@ -986,7 +986,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 		  return std::find(minus.begin(), minus.end(), v) != minus.end();
 		  }), Values.end());
       }
-      return Values;
+      return std::move(Values);
    }
    static std::vector<std::string> parsePlusMinusOptions(std::string const &Name,
 	 std::map<std::string, std::string> const &Options, std::vector<std::string> const &defaultValues)
@@ -1095,8 +1095,8 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
    {
       std::vector<std::string> ret;
       ret.reserve(Options.size());
-      for (auto &&O: Options)
-	 ret.emplace_back(O.first);
+      std::transform(Options.begin(), Options.end(), std::back_inserter(ret),
+		     [](auto &&O) { return O.first; });
       std::sort(ret.begin(), ret.end());
       return ret;
    }

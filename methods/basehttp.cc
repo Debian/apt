@@ -349,7 +349,6 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 	       tmpURI.Access = base + '+' + tmpURI.Access;
 	       if (tmpURI.Access == Binary)
 	       {
-		  std::string tmpAccess = Uri.Access;
 		  std::swap(tmpURI.Access, Uri.Access);
 		  NextURI = tmpURI;
 		  std::swap(tmpURI.Access, Uri.Access);

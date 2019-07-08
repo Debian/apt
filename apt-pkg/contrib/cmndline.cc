@@ -300,7 +300,8 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 
 	 // Skip the leading dash
 	 const char *J = argv[I];
-	 for (; *J != 0 && *J == '-'; J++);
+	 for (; *J == '-'; J++)
+	    ;
 
 	 const char *JEnd = strchr(J, '-');
 	 if (JEnd != NULL)

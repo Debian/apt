@@ -349,7 +349,7 @@ static ResultState UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std:
    Out.Read(Req.str());
 
    // Writing from proxy
-   while (Out.WriteSpace() > 0)
+   while (Out.WriteSpace())
    {
       if (WaitFd(Fd->Fd(), true, Timeout) == false)
       {
@@ -363,7 +363,7 @@ static ResultState UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std:
       }
    }
 
-   while (In.ReadSpace() > 0)
+   while (In.ReadSpace())
    {
       if (WaitFd(Fd->Fd(), false, Timeout) == false)
       {
@@ -389,7 +389,7 @@ static ResultState UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std:
       return ResultState::TRANSIENT_ERROR;
    }
 
-   if (In.WriteSpace() > 0)
+   if (In.WriteSpace())
    {
       // Maybe there is actual data already read, if so we need to buffer it
       std::unique_ptr<HttpConnectFd> NewFd(new HttpConnectFd());

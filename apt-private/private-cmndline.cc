@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <algorithm>
 #include <iomanip>
 #include <vector>
 
@@ -508,15 +509,15 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
    if (likely(argc != 0 && argv[0] != NULL))
       BinarySpecificConfiguration(argv[0]);
 
-   std::vector<aptDispatchWithHelp> const CmdsWithHelp = GetCommands();
    std::vector<CommandLine::Dispatch> Cmds;
+   std::vector<aptDispatchWithHelp> const CmdsWithHelp = GetCommands();
    if (CmdsWithHelp.empty() == false)
    {
       CommandLine::Dispatch const help = { "help", [](CommandLine &){return false;} };
       Cmds.push_back(std::move(help));
    }
-   for (auto const& cmd : CmdsWithHelp)
-      Cmds.push_back({cmd.Match, cmd.Handler});
+   std::transform(CmdsWithHelp.begin(), CmdsWithHelp.end(), std::back_inserter(Cmds),
+		  [](auto &&cmd) { return CommandLine::Dispatch{cmd.Match, cmd.Handler}; });
 
    char const * CmdCalled = nullptr;
    if (Cmds.empty() == false && Cmds[0].Handler != nullptr)

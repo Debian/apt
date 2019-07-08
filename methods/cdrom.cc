@@ -43,7 +43,7 @@ class CDROMMethod : public aptMethod
    bool IsCorrectCD(URI want, string MountPath, string& NewID);
    bool AutoDetectAndMount(const URI, string &NewID);
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
-   string GetID(string Name);
+   std::string GetID(std::string const &Name);
    virtual void Exit() APT_OVERRIDE;
    virtual bool Configuration(std::string Message) APT_OVERRIDE;
 
@@ -77,7 +77,7 @@ void CDROMMethod::Exit()
 // CDROMMethod::GetID - Search the database for a matching string	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string CDROMMethod::GetID(string Name)
+std::string CDROMMethod::GetID(std::string const &Name)
 {
    // Search for an ID
    const Configuration::Item *Top = Database.Tree("CD");

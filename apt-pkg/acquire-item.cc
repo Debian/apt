@@ -3382,7 +3382,6 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
       Trusted = false;
 
    StoreFilename.clear();
-   std::set<string> targetComponents, targetCodenames, targetSuites;
    std::vector<std::unique_ptr<FileFd>> authconfs;
    for (auto Vf = Version.FileList(); Vf.end() == false; ++Vf)
    {

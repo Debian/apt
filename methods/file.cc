@@ -57,7 +57,6 @@ bool FileMethod::Fetch(FetchItem *Itm)
       {
 	 if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
 	 {
-	    HashStringList const hsl = Itm->ExpectedHashes;
 	    if (Itm->ExpectedHashes.VerifyFile(File))
 	    {
 	       Res.Filename = Itm->DestFile;

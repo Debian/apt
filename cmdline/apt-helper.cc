@@ -133,7 +133,7 @@ static bool DoSrvLookup(CommandLine &CmdL)				/*{{{*/
    return true;
 }
 									/*}}}*/
-static const APT::Configuration::Compressor *FindCompressor(std::vector<APT::Configuration::Compressor> const & compressors, std::string name)				/*{{{*/
+static const APT::Configuration::Compressor *FindCompressor(std::vector<APT::Configuration::Compressor> const &compressors, std::string const &name) /*{{{*/
 {
    APT::Configuration::Compressor const * compressor = NULL;
    for (auto const & c : compressors)

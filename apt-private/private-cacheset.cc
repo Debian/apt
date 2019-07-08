@@ -254,11 +254,12 @@ bool CacheSetHelperAPTGet::showVirtualPackageErrors(pkgCacheFile &Cache)
 	 pkgCache::PrvIterator I = Pkg.ProvidesList();
 	 unsigned short provider = 0;
 	 for (; I.end() == false; ++I) {
-	    pkgCache::PkgIterator Pkg = I.OwnerPkg();
+	    pkgCache::PkgIterator const OPkg = I.OwnerPkg();
 
-	    if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer()) {
-	       c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr();
-	       if (Cache[Pkg].Install() == true && Cache[Pkg].NewInstall() == false)
+	    if (Cache[OPkg].CandidateVerIter(Cache) == I.OwnerVer())
+	    {
+	       c1out << "  " << OPkg.FullName(true) << " " << I.OwnerVer().VerStr();
+	       if (Cache[OPkg].Install() == true && Cache[OPkg].NewInstall() == false)
 		  c1out << _(" [Installed]");
 	       c1out << std::endl;
 	       ++provider;

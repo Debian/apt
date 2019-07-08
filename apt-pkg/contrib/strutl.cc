@@ -239,7 +239,8 @@ bool ParseQuoteWord(const char *&String,string &Res)
 {
    // Skip leading whitespace
    const char *C = String;
-   for (;*C != 0 && *C == ' '; C++);
+   for (; *C == ' '; C++)
+      ;
    if (*C == 0)
       return false;
    
@@ -287,7 +288,8 @@ bool ParseQuoteWord(const char *&String,string &Res)
    Res = Buffer;
    
    // Skip ending white space
-   for (;*C != 0 && isspace(*C) != 0; C++);
+   for (; isspace(*C) != 0; C++)
+      ;
    String = C;
    return true;
 }
@@ -300,7 +302,8 @@ bool ParseCWord(const char *&String,string &Res)
 {
    // Skip leading whitespace
    const char *C = String;
-   for (;*C != 0 && *C == ' '; C++);
+   for (; *C == ' '; C++)
+      ;
    if (*C == 0)
       return false;
    
