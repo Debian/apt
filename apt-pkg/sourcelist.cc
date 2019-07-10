@@ -215,7 +215,7 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
 	 // get one option, e.g. option1=value1
 	 string option;
 	 if (ParseQuoteWord(Buffer,option) == false)
-	    return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "[option] unparseable");
+	    return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "[option] unparsable");
 
 	 if (option.length() < 3)
 	    return _error->Error(_("Malformed entry %u in %s file %s (%s)"), CurLine, "list", File.c_str(), "[option] too short");

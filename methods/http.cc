@@ -974,9 +974,10 @@ void HttpMethod::SendReq(FetchItem *Itm)
    Req << "User-Agent: " << ConfigFind("User-Agent",
 		"Debian APT-HTTP/1.3 (" PACKAGE_VERSION ")") << "\r\n";
 
-   auto const referer = ConfigFind("Referer", "");
-   if (referer.empty() == false)
-      Req << "Referer: " << referer << "\r\n";
+   // the famously typoed HTTP header field
+   auto const referrer = ConfigFind("Referer", "");
+   if (referrer.empty() == false)
+      Req << "Referer: " << referrer << "\r\n";
 
    Req << "\r\n";
 

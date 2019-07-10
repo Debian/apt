@@ -67,7 +67,7 @@ static bool DoDownloadFile(CommandLine &CmdL)				/*{{{*/
 
       fileind += 2;
 
-      // An empty string counts as a hash for compatability reasons
+      // An empty string counts as a hash for compatibility reasons
       if (CmdL.FileSize() > fileind + 1 && *CmdL.FileList[fileind + 1] == '\0')
 	 fileind++;
 

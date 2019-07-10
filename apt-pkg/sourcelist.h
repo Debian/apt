@@ -108,7 +108,7 @@ class pkgSourceList
 
    /** \brief add file for parsing, but not to the cache
     *
-    *  pkgIndexFiles origining from pkgSourcesList are included in
+    *  pkgIndexFiles originating from pkgSourcesList are included in
     *  srcpkgcache, the status files added via #AddStatusFiles are
     *  included in pkgcache, but these files here are not included in
     *  any cache to have the possibility of having a file included just

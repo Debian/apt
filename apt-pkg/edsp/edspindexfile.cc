@@ -96,7 +96,7 @@ class APT_HIDDEN edspIFType: public pkgIndexFile::Type
    public:
    virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator const &) const APT_OVERRIDE
    {
-      // we don't have a record parser for this type as the file is not presistent
+      // we don't have a record parser for this type as the file is not persistent
       return NULL;
    };
    edspIFType() {Label = "EDSP scenario file";};
@@ -112,7 +112,7 @@ class APT_HIDDEN eippIFType: public pkgIndexFile::Type
    public:
    virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator const &) const APT_OVERRIDE
    {
-      // we don't have a record parser for this type as the file is not presistent
+      // we don't have a record parser for this type as the file is not persistent
       return NULL;
    };
    eippIFType() {Label = "EIPP scenario file";};

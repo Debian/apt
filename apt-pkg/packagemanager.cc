@@ -918,7 +918,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		     else
 		     {
 			if (Debug)
-			   clog << OutputInDepth(Depth) << "So temprorary remove/deconfigure " << ConflictPkg.FullName() << " to satisfy " <<  APT::PrettyDep(&Cache, End) << endl;
+			   clog << OutputInDepth(Depth) << "So temporary remove/deconfigure " << ConflictPkg.FullName() << " to satisfy " <<  APT::PrettyDep(&Cache, End) << endl;
 			if (EarlyRemove(ConflictPkg, &End) == false)
 			   return _error->Error("Internal Error, Could not early remove %s (%d)",ConflictPkg.FullName().c_str(), 2);
 		     }

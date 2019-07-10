@@ -16,7 +16,7 @@
 
    pkgFixBroken corrects a broken system so that it is in a sane state.
  
-   pkgAllUpgrade attempts to upgade as many packages as possible but 
+   pkgAllUpgrade attempts to upgrade as many packages as possible but
    without installing new packages.
    
    The problem resolver class contains a number of complex algorithms
