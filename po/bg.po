@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-06-17 11:37+0200\n"
+"POT-Creation-Date: 2019-08-05 21:25+0200\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -699,9 +699,26 @@ msgstr ""
 "Не се използва заключване за файл за заключване %s, който е монтиран по NFS"
 
 #: apt-pkg/contrib/fileutl.cc
+#, fuzzy, c-format
+#| msgid "Could not get lock %s"
+msgid "Could not get lock %s. It is held by process %d"
+msgstr "Неуспех при достъпа до заключване %s"
+
+#: apt-pkg/contrib/fileutl.cc
+#, c-format
+msgid "Could not get lock %s. It is held by process %d (%s)"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Could not get lock %s"
 msgstr "Неуспех при достъпа до заключване %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid ""
+"Be aware that removing the lock file is not a solution and may break your "
+"system."
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format

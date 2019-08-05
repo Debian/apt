@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-06-17 11:37+0200\n"
+"POT-Creation-Date: 2019-08-05 21:25+0200\n"
 "PO-Revision-Date: 2016-12-05 21:09+0100\n"
 "Last-Translator: Oriol Debian <oriol.debian@gmail.com>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -733,9 +733,26 @@ msgid "Not using locking for nfs mounted lock file %s"
 msgstr "No s'empren bloquejos per al fitxer de blocat %s de muntar nfs"
 
 #: apt-pkg/contrib/fileutl.cc
+#, fuzzy, c-format
+#| msgid "Could not get lock %s"
+msgid "Could not get lock %s. It is held by process %d"
+msgstr "No s'ha pogut blocar %s"
+
+#: apt-pkg/contrib/fileutl.cc
+#, c-format
+msgid "Could not get lock %s. It is held by process %d (%s)"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Could not get lock %s"
 msgstr "No s'ha pogut blocar %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid ""
+"Be aware that removing the lock file is not a solution and may break your "
+"system."
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format

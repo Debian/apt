@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-06-17 11:37+0200\n"
+"POT-Creation-Date: 2019-08-05 21:25+0200\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -675,9 +675,26 @@ msgid "Not using locking for nfs mounted lock file %s"
 msgstr "จะไม่ใช้การล็อคกับแฟ้มล็อค %s ที่เมานท์ผ่าน nfs"
 
 #: apt-pkg/contrib/fileutl.cc
+#, fuzzy, c-format
+#| msgid "Could not get lock %s"
+msgid "Could not get lock %s. It is held by process %d"
+msgstr "ไม่สามารถล็อค %s"
+
+#: apt-pkg/contrib/fileutl.cc
+#, c-format
+msgid "Could not get lock %s. It is held by process %d (%s)"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Could not get lock %s"
 msgstr "ไม่สามารถล็อค %s"
+
+#: apt-pkg/contrib/fileutl.cc
+msgid ""
+"Be aware that removing the lock file is not a solution and may break your "
+"system."
+msgstr ""
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
