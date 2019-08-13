@@ -39,7 +39,7 @@ class FileFd;
  * @param fd is used as a pipe for the standard output of gpgv
  * @param key is the specific one to be used instead of using all
  */
-void ExecGPGV(std::string const &File, std::string const &FileSig,
+APT_PUBLIC void ExecGPGV(std::string const &File, std::string const &FileSig,
       int const &statusfd, int fd[2], std::string const &Key = "") APT_NORETURN;
 inline APT_NORETURN void ExecGPGV(std::string const &File, std::string const &FileSig,
       int const &statusfd = -1) {
@@ -70,7 +70,7 @@ inline APT_NORETURN void ExecGPGV(std::string const &File, std::string const &Fi
  *  @param SignatureFile is the FileFd all signatures will be written to
  *  @return true if the splitting was successful, false otherwise
  */
-bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
+APT_PUBLIC bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
       std::vector<std::string> * const ContentHeader, FileFd * const SignatureFile);
 
 /** \brief open a file which might be clear-signed
@@ -84,6 +84,6 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
  * @param[out] MessageFile is the FileFd in which the file will be opened
  * @return true if opening was successful, otherwise false
  */
-bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &MessageFile);
+APT_PUBLIC bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &MessageFile);
 
 #endif

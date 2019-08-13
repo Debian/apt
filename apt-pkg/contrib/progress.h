@@ -26,7 +26,7 @@
 
 
 class Configuration;
-class OpProgress
+class APT_PUBLIC OpProgress
 {
    unsigned long long Current;
    unsigned long long Total;
@@ -62,7 +62,7 @@ class OpProgress
    virtual ~OpProgress() {};
 };
 
-class OpTextProgress : public OpProgress
+class APT_PUBLIC OpTextProgress : public OpProgress
 {
    protected:
 

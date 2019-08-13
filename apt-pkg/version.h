@@ -23,7 +23,7 @@
 #include <string>
 
 
-class pkgVersioningSystem
+class APT_PUBLIC pkgVersioningSystem
 {
    public:
    // Global list of VS's

@@ -13,7 +13,9 @@
 #include <vector>
 #include <arpa/nameser.h>
 
-class SrvRec
+#include <apt-pkg/macros.h>
+
+class APT_PUBLIC SrvRec
 {
  public:
    std::string target;
@@ -40,15 +42,15 @@ class SrvRec
 
 /** \brief Get SRV records from host/port (builds the query string internally) 
  */
-bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result);
+APT_PUBLIC bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result);
 
 /** \brief Get SRV records for query string like: _http._tcp.example.com
  */
-bool GetSrvRecords(std::string host, int port, std::vector<SrvRec> &Result);
+APT_PUBLIC bool GetSrvRecords(std::string host, int port, std::vector<SrvRec> &Result);
 
 /** \brief Pop a single SRV record from the vector of SrvRec taking
  *         priority and weight into account
  */
-SrvRec PopFromSrvRecs(std::vector<SrvRec> &Recs);
+APT_PUBLIC SrvRec PopFromSrvRecs(std::vector<SrvRec> &Recs);
 
 #endif

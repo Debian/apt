@@ -39,7 +39,7 @@ class pkgIndexFile;
 class metaIndex;
 class CommandLine;
 
-class pkgSourceList
+class APT_PUBLIC pkgSourceList
 {
    void * const d;
    std::vector<pkgIndexFile*> VolatileFiles;

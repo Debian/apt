@@ -38,7 +38,7 @@ namespace APT {
 class PackageContainerInterface;
 class VersionContainerInterface;
 
-class CacheSetHelper {							/*{{{*/
+class APT_PUBLIC CacheSetHelper {							/*{{{*/
 /** \class APT::CacheSetHelper
     Simple base class with a lot of virtual methods which can be overridden
     to alter the behavior or the output of the CacheSets.
@@ -277,7 +277,7 @@ public:
 	inline typename Container::value_type getType(void) const { return *this->_iter; }
 };
 									/*}}}*/
-class PackageContainerInterface {					/*{{{*/
+class APT_PUBLIC PackageContainerInterface {					/*{{{*/
 /** \class PackageContainerInterface
 
  * Interface ensuring that all operations can be executed on the yet to
@@ -332,7 +332,7 @@ private:
 	void * const d;
 };
 									/*}}}*/
-template<class Container> class PackageContainer : public PackageContainerInterface {/*{{{*/
+template<class Container> class APT_PUBLIC PackageContainer : public PackageContainerInterface {/*{{{*/
 /** \class APT::PackageContainer
 
     Simple wrapper around a container class like std::set to provide a similar
@@ -682,7 +682,7 @@ typedef PackageContainer<std::list<pkgCache::PkgIterator> > PackageList;
 typedef PackageContainer<std::deque<pkgCache::PkgIterator> > PackageDeque;
 typedef PackageContainer<std::vector<pkgCache::PkgIterator> > PackageVector;
 
-class VersionContainerInterface {					/*{{{*/
+class APT_PUBLIC VersionContainerInterface {					/*{{{*/
 /** \class APT::VersionContainerInterface
 
     Same as APT::PackageContainerInterface, just for Versions */
@@ -787,7 +787,7 @@ protected:								/*{{{*/
 									/*}}}*/
 };
 									/*}}}*/
-template<class Container> class VersionContainer : public VersionContainerInterface {/*{{{*/
+template<class Container> class APT_PUBLIC VersionContainer : public VersionContainerInterface {/*{{{*/
 /** \class APT::VersionContainer
 
     Simple wrapper around a container class like std::set to provide a similar

@@ -48,7 +48,7 @@ class Configuration;
 class pkgIndexFile;
 
 class pkgSystemPrivate;
-class pkgSystem
+class APT_PUBLIC pkgSystem
 {
    public:
 
@@ -133,6 +133,6 @@ class pkgSystem
 };
 
 // The environment we are operating in.
-extern pkgSystem *_system;
+APT_PUBLIC extern pkgSystem *_system;
 
 #endif

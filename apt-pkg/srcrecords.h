@@ -21,7 +21,7 @@
 
 class pkgSourceList;
 class pkgIndexFile;
-class pkgSrcRecords
+class APT_PUBLIC pkgSrcRecords
 {
    public:
 

@@ -48,7 +48,7 @@
 
 class Configuration;
 
-class CommandLine
+class APT_PUBLIC CommandLine
 {
    public:
    struct Args;

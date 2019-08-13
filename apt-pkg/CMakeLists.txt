@@ -66,6 +66,7 @@ target_link_libraries(apt-pkg
 )
 set_target_properties(apt-pkg PROPERTIES VERSION ${MAJOR}.${MINOR})
 set_target_properties(apt-pkg PROPERTIES SOVERSION ${MAJOR})
+set_target_properties(apt-pkg PROPERTIES CXX_VISIBILITY_PRESET hidden)
 add_version_script(apt-pkg)
 
 # Install the library and the header files

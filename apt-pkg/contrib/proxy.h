@@ -10,7 +10,7 @@
 #define PKGLIB_PROXY_H
 
 class URI;
-bool AutoDetectProxy(URI &URL);
+APT_PUBLIC bool AutoDetectProxy(URI &URL);
 
 
 #endif

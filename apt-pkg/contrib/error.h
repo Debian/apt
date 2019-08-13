@@ -48,7 +48,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-class GlobalError							/*{{{*/
+class APT_PUBLIC GlobalError						/*{{{*/
 {
 public:									/*{{{*/
 	/** \brief a message can have one of following severity */
@@ -359,7 +359,7 @@ private:								/*{{{*/
 									/*}}}*/
 
 // The 'extra-ansi' syntax is used to help with collisions. 
-GlobalError *_GetErrorObj();
+APT_PUBLIC GlobalError *_GetErrorObj();
 static struct {
 	inline GlobalError* operator ->() { return _GetErrorObj(); }
 } _error APT_UNUSED;

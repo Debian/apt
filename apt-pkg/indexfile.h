@@ -34,7 +34,7 @@ class pkgCacheGenerator;
 class pkgCacheListParser;
 class OpProgress;
 
-class IndexTarget							/*{{{*/
+class APT_PUBLIC IndexTarget							/*{{{*/
 /** \brief Information about an index file. */
 {
    public:
@@ -98,7 +98,7 @@ class IndexTarget							/*{{{*/
 };
 									/*}}}*/
 
-class pkgIndexFile
+class APT_PUBLIC pkgIndexFile
 {
    void * const d;
    protected:
@@ -106,7 +106,7 @@ class pkgIndexFile
 
    public:
 
-   class Type
+   class APT_PUBLIC Type
    {
       public:
 
@@ -150,7 +150,7 @@ class pkgIndexFile
    virtual ~pkgIndexFile();
 };
 
-class pkgDebianIndexFile : public pkgIndexFile
+class APT_PUBLIC pkgDebianIndexFile : public pkgIndexFile
 {
 protected:
    virtual std::string IndexFileName() const = 0;
@@ -169,7 +169,7 @@ public:
    virtual ~pkgDebianIndexFile();
 };
 
-class pkgDebianIndexTargetFile : public pkgDebianIndexFile
+class APT_PUBLIC pkgDebianIndexTargetFile : public pkgDebianIndexFile
 {
    void * const d;
 protected:
@@ -192,7 +192,7 @@ public:
    virtual ~pkgDebianIndexTargetFile();
 };
 
-class pkgDebianIndexRealFile : public pkgDebianIndexFile
+class APT_PUBLIC pkgDebianIndexRealFile : public pkgDebianIndexFile
 {
    void * const d;
 protected:

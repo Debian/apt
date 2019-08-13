@@ -29,7 +29,7 @@ class pkgSourceList;
 class pkgIndexFile;
 class OpProgress;
 
-class pkgCacheFile
+class APT_PUBLIC pkgCacheFile
 {
    struct Private;
    /** \brief dpointer placeholder (for later in case we need it) */

@@ -36,7 +36,7 @@
 #include <apt-pkg/macros.h>
 
 
-class Configuration
+class APT_PUBLIC Configuration
 {
    public:
    
@@ -139,13 +139,13 @@ class Configuration
    };
 };
 
-extern Configuration *_config;
+APT_PUBLIC extern Configuration *_config;
 
-bool ReadConfigFile(Configuration &Conf,const std::string &FName,
+APT_PUBLIC bool ReadConfigFile(Configuration &Conf,const std::string &FName,
 		    bool const &AsSectional = false,
 		    unsigned const &Depth = 0);
 
-bool ReadConfigDir(Configuration &Conf,const std::string &Dir,
+APT_PUBLIC bool ReadConfigDir(Configuration &Conf,const std::string &Dir,
 		   bool const &AsSectional = false,
 		   unsigned const &Depth = 0);
 

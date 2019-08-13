@@ -32,7 +32,7 @@
 
 class FileFd;
 
-class debDebFile
+class APT_PUBLIC debDebFile
 {
    protected:
    
@@ -53,14 +53,14 @@ class debDebFile
    explicit debDebFile(FileFd &File);
 };
 
-class debDebFile::ControlExtract : public pkgDirStream
+class APT_PUBLIC debDebFile::ControlExtract : public pkgDirStream
 {
    public:
    
    virtual bool DoItem(Item &Itm,int &Fd) APT_OVERRIDE;
 };
 
-class debDebFile::MemControlExtract : public pkgDirStream
+class APT_PUBLIC debDebFile::MemControlExtract : public pkgDirStream
 {
    bool IsControl;
    

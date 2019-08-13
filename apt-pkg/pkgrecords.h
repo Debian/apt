@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-class pkgRecords							/*{{{*/
+class APT_PUBLIC pkgRecords							/*{{{*/
 {
    public:
    class Parser;
@@ -45,7 +45,7 @@ class pkgRecords							/*{{{*/
    virtual ~pkgRecords();
 };
 									/*}}}*/
-class pkgRecords::Parser						/*{{{*/
+class APT_PUBLIC pkgRecords::Parser						/*{{{*/
 {
    protected:
    

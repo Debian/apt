@@ -12,7 +12,7 @@
 class Configuration;
 class OpProgress;
 
-class pkgCdromStatus							/*{{{*/
+class APT_PUBLIC pkgCdromStatus							/*{{{*/
 {
    void * const d;
  protected:
@@ -35,7 +35,7 @@ class pkgCdromStatus							/*{{{*/
    virtual OpProgress* GetOpProgress() {return NULL; };
 };
 									/*}}}*/
-class pkgCdrom								/*{{{*/
+class APT_PUBLIC pkgCdrom								/*{{{*/
 {
  protected:
    enum {
@@ -85,14 +85,14 @@ class pkgCdrom								/*{{{*/
 
 
 // class that uses libudev to find cdrom/removable devices dynamically
-struct CdromDevice							/*{{{*/
+struct APT_PUBLIC CdromDevice							/*{{{*/
 {
    std::string DeviceName;
    bool Mounted;
    std::string MountPath;
 };
 									/*}}}*/
-class pkgUdevCdromDevices						/*{{{*/
+class APT_PUBLIC pkgUdevCdromDevices						/*{{{*/
 {
    void * const d;
  public:

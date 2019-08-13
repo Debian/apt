@@ -44,7 +44,7 @@ namespace APT {
    }
 }
 
-class pkgPackageManager : protected pkgCache::Namespace
+class APT_PUBLIC pkgPackageManager : protected pkgCache::Namespace
 {
    public:
    

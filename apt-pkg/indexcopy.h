@@ -23,7 +23,7 @@ class pkgCdromStatus;
 class FileFd;
 class metaIndex;
 
-class IndexCopy								/*{{{*/
+class APT_PUBLIC IndexCopy								/*{{{*/
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void * const d;
@@ -51,7 +51,7 @@ class IndexCopy								/*{{{*/
    virtual ~IndexCopy();
 };
 									/*}}}*/
-class PackageCopy : public IndexCopy					/*{{{*/
+class APT_PUBLIC PackageCopy : public IndexCopy					/*{{{*/
 {
    void * const d;
    protected:
@@ -66,7 +66,7 @@ class PackageCopy : public IndexCopy					/*{{{*/
    virtual ~PackageCopy();
 };
 									/*}}}*/
-class SourceCopy : public IndexCopy					/*{{{*/
+class APT_PUBLIC SourceCopy : public IndexCopy					/*{{{*/
 {
    void * const d;
    protected:
@@ -81,7 +81,7 @@ class SourceCopy : public IndexCopy					/*{{{*/
    virtual ~SourceCopy();
 };
 									/*}}}*/
-class TranslationsCopy							/*{{{*/
+class APT_PUBLIC  TranslationsCopy							/*{{{*/
 {
    void * const d;
    protected:
@@ -95,7 +95,7 @@ class TranslationsCopy							/*{{{*/
    virtual ~TranslationsCopy();
 };
 									/*}}}*/
-class SigVerify								/*{{{*/
+class APT_PUBLIC SigVerify								/*{{{*/
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void * const d;

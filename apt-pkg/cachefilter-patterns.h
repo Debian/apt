@@ -36,7 +36,7 @@ namespace Internal
  *  - Word nodes which contains words or quoted words
  *  - Patterns, which represent ?foo and ?foo(...) patterns
  */
-struct PatternTreeParser
+struct APT_PUBLIC PatternTreeParser
 {
 
    struct Node

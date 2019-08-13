@@ -42,12 +42,12 @@
 
 
 class pkgSimulatePrivate;
-class pkgSimulate : public pkgPackageManager				/*{{{*/
+class APT_PUBLIC pkgSimulate : public pkgPackageManager				/*{{{*/
 {
    pkgSimulatePrivate * const d;
    protected:
 
-   class Policy : public pkgDepCache::Policy
+   class APT_PUBLIC Policy : public pkgDepCache::Policy
    {
       pkgDepCache *Cache;
       public:
@@ -87,7 +87,7 @@ private:
    virtual ~pkgSimulate();
 };
 									/*}}}*/
-class pkgProblemResolver						/*{{{*/
+class APT_PUBLIC pkgProblemResolver						/*{{{*/
 {
  private:
    /** \brief dpointer placeholder (for later in case we need it) */
@@ -111,7 +111,7 @@ class pkgProblemResolver						/*{{{*/
    // Sort stuff
    APT_HIDDEN int ScoreSort(Package const *A, Package const *B) APT_PURE;
 
-   struct PackageKill
+   struct APT_PUBLIC PackageKill
    {
       PkgIterator Pkg;
       DepIterator Dep;
@@ -141,10 +141,10 @@ class pkgProblemResolver						/*{{{*/
    virtual ~pkgProblemResolver();
 };
 									/*}}}*/
-bool pkgApplyStatus(pkgDepCache &Cache);
-bool pkgFixBroken(pkgDepCache &Cache);
+APT_PUBLIC bool pkgApplyStatus(pkgDepCache &Cache);
+APT_PUBLIC bool pkgFixBroken(pkgDepCache &Cache);
 
-void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);
+APT_PUBLIC void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);
 
 
 #endif

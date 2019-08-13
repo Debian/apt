@@ -31,7 +31,7 @@ struct PrettyDep
 };
 
 }
-std::ostream& operator<<(std::ostream& os, const APT::PrettyPkg& pp);
-std::ostream& operator<<(std::ostream& os, const APT::PrettyDep& pd);
+APT_PUBLIC std::ostream& operator<<(std::ostream& os, const APT::PrettyPkg& pp);
+APT_PUBLIC std::ostream& operator<<(std::ostream& os, const APT::PrettyDep& pd);
 
 #endif

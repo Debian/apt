@@ -121,7 +121,7 @@ typedef uint8_t map_flags_t;
 typedef uint8_t map_number_t;
 
 class pkgVersioningSystem;
-class pkgCache								/*{{{*/
+class APT_PUBLIC pkgCache								/*{{{*/
 {
    public:
    // Cache element predeclarations

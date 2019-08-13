@@ -39,7 +39,7 @@
 #include <string>
 
 
-class pkgVersionMatch
+class APT_PUBLIC pkgVersionMatch
 {
    // Version Matching
    std::string VerStr;

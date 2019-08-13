@@ -11,6 +11,7 @@
 #ifndef APT_CONFIGURATION_H
 #define APT_CONFIGURATION_H
 // Include Files							/*{{{*/
+#include <apt-pkg/macros.h>
 #include <limits>
 #include <string>
 #include <vector>
@@ -38,7 +39,7 @@ namespace Configuration {							/*{{{*/
 	 *
 	 *  \return a vector of the compression types in the preferred usage order
 	 */
-	std::vector<std::string> const getCompressionTypes(bool const &Cached = true);
+	APT_PUBLIC std::vector<std::string> const getCompressionTypes(bool const &Cached = true);
 
 	/** \brief Returns a vector of Language Codes
 	 *
@@ -63,7 +64,7 @@ namespace Configuration {							/*{{{*/
 	 *
 	 *  \return a vector of (all) Language Codes in the preferred usage order
 	 */
-	std::vector<std::string> const getLanguages(bool const &All = false,
+	APT_PUBLIC std::vector<std::string> const getLanguages(bool const &All = false,
 			bool const &Cached = true, char const ** const Locale = 0);
 
 	/** \brief Are we interested in the given Language?
@@ -72,7 +73,7 @@ namespace Configuration {							/*{{{*/
 	 *  \param All defines if we check against all codes or only against used codes
 	 *  \return true if we are interested, false otherwise
 	 */
-	bool checkLanguage(std::string Lang, bool const All = false);
+	APT_PUBLIC bool checkLanguage(std::string Lang, bool const All = false);
 
 	/** \brief Returns a vector of Architectures we support
 	 *
@@ -81,17 +82,17 @@ namespace Configuration {							/*{{{*/
 	 *
 	 *  \return a vector of Architectures in preferred order
 	 */
-	std::vector<std::string> const getArchitectures(bool const &Cached = true);
+	APT_PUBLIC std::vector<std::string> const getArchitectures(bool const &Cached = true);
 
 	/** \brief Are we interested in the given Architecture?
 	 *
 	 *  \param Arch we want to check
 	 *  \return true if we are interested, false otherwise
 	 */
-	bool checkArchitecture(std::string const &Arch);
+	APT_PUBLIC bool checkArchitecture(std::string const &Arch);
 
 	/** \brief Representation of supported compressors */
-	struct Compressor {
+	struct APT_PUBLIC Compressor {
 		std::string Name;
 		std::string Extension;
 		std::string Binary;
@@ -112,15 +113,15 @@ namespace Configuration {							/*{{{*/
 	 *
 	 *  \return a vector of Compressors
 	 */
-	std::vector<Compressor> const getCompressors(bool const Cached = true);
+	APT_PUBLIC std::vector<Compressor> const getCompressors(bool const Cached = true);
 
 	/** \brief Return a vector of extensions supported for data.tar's */
-	std::vector<std::string> const getCompressorExtensions();
+	APT_PUBLIC std::vector<std::string> const getCompressorExtensions();
 
 	/** \return Return a vector of enabled build profile specifications */
-	std::vector<std::string> const getBuildProfiles();
+	APT_PUBLIC std::vector<std::string> const getBuildProfiles();
 	/** \return Return a comma-separated list of enabled build profile specifications */
-	std::string const getBuildProfilesString();
+	APT_PUBLIC std::string const getBuildProfilesString();
 									/*}}}*/
 }
 									/*}}}*/
