@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % aptent SYSTEM "apt.ent"> %aptent;
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent"> %aptverbatiment;
+<!ENTITY % aptvendor SYSTEM "apt-vendor.ent"> %aptvendor;
+]>
+
+<refentry>
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>2019-08-15T00:00:00Z</date>
+ </refentryinfo>
+
+ <refmeta>
+   <refentrytitle>apt-patterns</refentrytitle>
+   <manvolnum>7</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
+ </refmeta>
+
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-patterns</refname>
+    <refpurpose>Syntax and semantics of apt search patterns</refpurpose>
+ </refnamediv>
+
+ <refsect1><title>Description</title>
+   <para>
+   Starting with version 2.0, <command>APT</command> provides support for
+   patterns, which can be used to query the apt cache for packages.
+   </para>
+ </refsect1>
+
+ <refsect1>
+   <title>Syntax</title>
+   <variablelist>
+   </variablelist>
+
+ </refsect1>
+
+ <refsect1><title>Examples</title>
+ </refsect1>
+
+ <refsect1><title>Migrating from aptitude</title>
+   <para>
+   Patterns in apt are heavily inspired by patterns in aptitude, but with some tweaks:
+   </para>
+   <itemizedlist>
+      <listitem>
+         <para>Only long forms &mdash; the ones starting with ? &mdash; are supported</para>
+      </listitem>
+      <listitem>
+         <para>
+            Syntax is uniform: If there is an opening parenthesis after a term, it is always assumed to be the beginning of an argument list.
+         </para>
+         <para>
+            In aptitude, a syntactic form <code>"?foo(bar)"</code> could mean <code>"?and(?foo,bar)"</code> if foo does not take an argument. In APT, this will cause an error.
+         </para>
+      </listitem>
+      <listitem>
+         <para>Not all patterns are supported.</para>
+      </listitem>
+      <listitem>
+         <para>Some additional patterns are available, for example, for finding gstreamer codecs.</para>
+      </listitem>
+      <listitem>
+         <para>Escaping terms with <code>~</code> is not supported.</para>
+      </listitem>
+      <listitem>
+         <para>A trailing comma is allowed in argument lists</para>
+      </listitem>
+   </itemizedlist>
+ </refsect1>
+
+ <refsect1><title>See Also</title>
+   <para>
+   &apt-get;, &apt;
+   </para>
+ </refsect1>
+
+ &manbugs;
+ &manauthor;
+</refentry>
