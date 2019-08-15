@@ -32,5 +32,6 @@ main/binary-all/Packages
 main/i18n/Translation-en
 main/i18n/Translation-de' aptget indextargets --format '$(METAKEY)'
 
+# Check that -o Acquire::Queue-Mode=access does not crash
 find rootdir/var/lib/apt/lists/ -type f -delete
-testsuccess aptget update -o Acquire::Queue-Mode=access
+testsuccess valgrind aptget update -o Acquire::Queue-Mode=access
