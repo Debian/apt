@@ -212,10 +212,14 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<APT::CacheFilter::PackageArchitectureMatchesSpecification>(aWord(node->arguments[0]));
    if (node->matches("?automatic", 0, 0))
       return std::make_unique<Patterns::PackageIsAutomatic>(file);
+   if (node->matches("?config-files", 0, 0))
+      return std::make_unique<Patterns::PackageIsConfigFiles>();
    if (node->matches("?false", 0, 0))
       return std::make_unique<APT::CacheFilter::FalseMatcher>();
    if (node->matches("?garbage", 0, 0))
       return std::make_unique<Patterns::PackageIsGarbage>(file);
+   if (node->matches("?installed", 0, 0))
+      return std::make_unique<Patterns::PackageIsInstalled>(file);
    if (node->matches("?name", 1, 1))
       return std::make_unique<APT::CacheFilter::PackageNameMatchesRegEx>(aWord(node->arguments[0]));
    if (node->matches("?not", 1, 1))

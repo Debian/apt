@@ -117,7 +117,25 @@ automatic1/now 1.0 i386 [installed,local]
 automatic2/now 1.0 i386 [installed,local]" apt list '?automatic'
 
 testsuccessequal "Listing...
+conf-only/now 1.0 i386 [residual-config]" apt list '?config-files'
+
+testsuccessequal "Listing...
 automatic2/now 1.0 i386 [installed,local]" apt list '?garbage'
+
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]
+broken/now 1.0 i386 [installed,local]
+dpkg/now 1.16.2+fake all [installed,local]
+essential/now 1.0 i386 [installed,local]
+manual1/now 1.0 i386 [installed,local]
+manual2/now 1.0 i386 [installed,local]
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?installed'
+
+testsuccessequal "Listing...
+available/unstable 1.0 all
+conf-only/now 1.0 i386 [residual-config]
+foreign/unstable 2.0 amd64" apt list '?not(?installed)'
 
 testsuccessequal "Listing...
 automatic1/now 1.0 i386 [installed,local]

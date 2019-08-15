@@ -128,6 +128,14 @@ struct PackageIsAutomatic : public PackageMatcher
    }
 };
 
+struct PackageIsConfigFiles : public PackageMatcher
+{
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      return Pkg->CurrentState == pkgCache::State::ConfigFiles;
+   }
+};
+
 struct PackageIsGarbage : public PackageMatcher
 {
    pkgCacheFile *Cache;
@@ -136,6 +144,17 @@ struct PackageIsGarbage : public PackageMatcher
    {
       assert(Cache != nullptr);
       return (*Cache)[Pkg].Garbage;
+   }
+};
+
+struct PackageIsInstalled : public PackageMatcher
+{
+   pkgCacheFile *Cache;
+   explicit PackageIsInstalled(pkgCacheFile *Cache) : Cache(Cache) {}
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      assert(Cache != nullptr);
+      return Pkg->CurrentVer != 0;
    }
 };
 
