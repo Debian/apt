@@ -216,6 +216,8 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<Patterns::PackageIsBroken>(file);
    if (node->matches("?config-files", 0, 0))
       return std::make_unique<Patterns::PackageIsConfigFiles>();
+   if (node->matches("?essential", 0, 0))
+      return std::make_unique<Patterns::PackageIsEssential>();
    if (node->matches("?false", 0, 0))
       return std::make_unique<APT::CacheFilter::FalseMatcher>();
    if (node->matches("?garbage", 0, 0))

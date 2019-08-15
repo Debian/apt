@@ -158,6 +158,13 @@ struct PackageIsGarbage : public PackageMatcher
       return (*Cache)[Pkg].Garbage;
    }
 };
+struct PackageIsEssential : public PackageMatcher
+{
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      return (Pkg->Flags & pkgCache::Flag::Essential) != 0;
+   }
+};
 
 struct PackageIsInstalled : public PackageMatcher
 {
