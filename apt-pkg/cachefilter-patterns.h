@@ -221,6 +221,14 @@ struct PackageIsUpgradable : public PackageMatcher
       return Pkg->CurrentVer != 0 && (*Cache)[Pkg].Upgradable();
    }
 };
+
+struct PackageIsVirtual : public PackageMatcher
+{
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      return Pkg->VersionList == 0;
+   }
+};
 } // namespace Patterns
 } // namespace Internal
 } // namespace APT

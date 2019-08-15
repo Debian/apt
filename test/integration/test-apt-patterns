@@ -161,6 +161,12 @@ testsuccessequal "Listing...
 not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]
 N: There is 1 additional version. Please use the '-a' switch to see it" apt list '?upgradable'
 
+testsuccessequal "Package: does-not-exist
+State: not a real package (virtual)
+N: Can't select candidate version from package does-not-exist as it has no candidate
+N: Can't select versions from package 'does-not-exist' as it is purely virtual
+N: No packages found" apt show '?virtual'
+
 testsuccessequal "Listing..." apt list '?x-name-fnmatch(1)'
 testsuccessequal "Listing...
 automatic1/now 1.0 i386 [installed,local]

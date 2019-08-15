@@ -236,6 +236,8 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<APT::CacheFilter::TrueMatcher>();
    if (node->matches("?upgradable", 0, 0))
       return std::make_unique<Patterns::PackageIsUpgradable>(file);
+   if (node->matches("?virtual", 0, 0))
+      return std::make_unique<Patterns::PackageIsVirtual>();
    if (node->matches("?x-name-fnmatch", 1, 1))
       return std::make_unique<APT::CacheFilter::PackageNameMatchesFnmatch>(aWord(node->arguments[0]));
 
