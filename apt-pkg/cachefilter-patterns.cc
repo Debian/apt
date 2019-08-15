@@ -208,6 +208,36 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
    if (node == nullptr)
       nodeP->error("Expected a pattern");
 
+   if (node->matches("?architecture", 1, 1))
+      return std::make_unique<APT::CacheFilter::PackageArchitectureMatchesSpecification>(aWord(node->arguments[0]));
+   if (node->matches("?false", 0, 0))
+      return std::make_unique<APT::CacheFilter::FalseMatcher>();
+   if (node->matches("?name", 1, 1))
+      return std::make_unique<APT::CacheFilter::PackageNameMatchesRegEx>(aWord(node->arguments[0]));
+   if (node->matches("?not", 1, 1))
+      return std::make_unique<APT::CacheFilter::NOTMatcher>(aPattern(node->arguments[0]).release());
+   if (node->matches("?true", 0, 0))
+      return std::make_unique<APT::CacheFilter::TrueMatcher>();
+   if (node->matches("?x-name-fnmatch", 1, 1))
+      return std::make_unique<APT::CacheFilter::PackageNameMatchesFnmatch>(aWord(node->arguments[0]));
+
+   // Variable argument patterns
+   if (node->matches("?and", 0, -1))
+   {
+      auto pattern = std::make_unique<APT::CacheFilter::ANDMatcher>();
+      for (auto &arg : node->arguments)
+	 pattern->AND(aPattern(arg).release());
+      return pattern;
+   }
+   if (node->matches("?or", 0, -1))
+   {
+      auto pattern = std::make_unique<APT::CacheFilter::ORMatcher>();
+
+      for (auto &arg : node->arguments)
+	 pattern->OR(aPattern(arg).release());
+      return pattern;
+   }
+
    node->error(rstrprintf("Unrecognized pattern '%s'", node->term.to_string().c_str()));
 
    return nullptr;

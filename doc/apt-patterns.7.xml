@@ -36,11 +36,45 @@
  </refsect1>
 
  <refsect1>
-   <title>Syntax</title>
+   <title>Logic patterns</title>
+   <para>
+      These patterns provide the basic means to combine other patterns into
+      more complex expressions, as well as <code>?true</code> and <code>?false</code>
+      patterns.
+   </para>
    <variablelist>
+     <varlistentry><term><code>?and(PATTERN, PATTERN, ...)</code></term>
+     <listitem><para>Selects objects where all specified patterns match.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?false</code></term>
+     <listitem><para>Selects nothing.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?not(PATTERN)</code></term>
+     <listitem><para>Selects objects where PATTERN does not match.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?or(PATTERN, PATTERN, ...)</code></term>
+     <listitem><para>Selects objects where at least one of the specified patterns match.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?true</code></term>
+     <listitem><para>Selects all objects.</para></listitem>
+     </varlistentry>
    </variablelist>
-
  </refsect1>
+ <refsect1>
+   <title>Package patterns</title>
+   <para>
+   These patterns select specific packages.
+   </para>
+   <variablelist>
+     <varlistentry><term><code>?architecture(WILDCARD)</code></term>
+     <listitem><para>Selects packages matching the specified architecture, which may contain wildcards using any.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?name(REGEX)</code></term>
+     <listitem><para>Selects packages where the name matches the given regular expression.</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+
 
  <refsect1><title>Examples</title>
  </refsect1>

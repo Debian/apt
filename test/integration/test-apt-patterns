@@ -59,3 +59,65 @@ E: Unable to locate package ?not-a-pattern
 E: Couldn't find any package by glob '?not-a-pattern'
 E: Regex compilation error - Invalid preceding regular expression
 E: Couldn't find any package by regex '?not-a-pattern'" apt install -s '?not-a-pattern'
+
+
+msgmsg "Ensure that argument lists are present where needed, and absent elsewhere"
+
+testfailureequal "Listing...
+E: input:0-7: error: ?true does not expect an argument list
+   ?true()
+   ^^^^^^^"  apt list '?true()'
+testfailureequal "Listing...
+E: input:0-4: error: ?and expects an argument list
+   ?and
+   ^^^^" apt list '?and'
+testfailureequal "Listing...
+E: input:0-3: error: ?or expects an argument list
+   ?or
+   ^^^" apt list '?or'
+
+
+msgmsg "Basic logic: true, false, not, ?or, ?and"
+for pattern in '?true' '?not(?false)'; do
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]
+available/unstable 1.0 all
+broken/now 1.0 i386 [installed,local]
+conf-only/now 1.0 i386 [residual-config]
+dpkg/now 1.16.2+fake all [installed,local]
+essential/now 1.0 i386 [installed,local]
+foreign/unstable 2.0 amd64
+manual1/now 1.0 i386 [installed,local]
+manual2/now 1.0 i386 [installed,local]
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list "$pattern"
+done
+testsuccessequal "Listing..." apt list '?false'
+testsuccessequal "Listing..." apt list '?not(?true)'
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]
+manual1/now 1.0 i386 [installed,local]
+manual2/now 1.0 i386 [installed,local]" apt list '?or(?name(^automatic),?name(^manual))'
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]" apt list '?and(?name(^automatic),?name(1$))'
+
+
+msgmsg "Package patterns"
+
+testsuccessequal "Listing...
+foreign/unstable 2.0 amd64" apt list '?architecture(amd64)'
+
+# XXX FIXME We should have support for foreign and native
+testsuccessequal "Listing..." apt list '?architecture(foreign)'
+testsuccessequal "Listing..." apt list '?architecture(native)'
+
+
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]" apt list '?name(^automatic)'
+
+testsuccessequal "Listing..." apt list '?x-name-fnmatch(1)'
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+manual1/now 1.0 i386 [installed,local]" apt list '?x-name-fnmatch(*1)'
