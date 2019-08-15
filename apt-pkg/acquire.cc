@@ -307,7 +307,7 @@ static bool CheckForBadItemAndFailIt(pkgAcquire::Item * const Item,
 void pkgAcquire::Enqueue(ItemDesc &Item)
 {
    // Determine which queue to put the item in
-   const MethodConfig *Config;
+   const MethodConfig *Config = nullptr;
    string Name = QueueName(Item.URI,Config);
    if (Name.empty() == true)
    {
@@ -387,13 +387,15 @@ string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
 {
    constexpr int DEFAULT_HOST_LIMIT = 10;
    URI U(Uri);
-   // Access mode forces all methods to be Single-Instance
-   if (QueueMode == QueueAccess)
-      return U.Access;
 
+   // Note that this gets written through the reference to the caller.
    Config = GetConfig(U.Access);
    if (Config == nullptr)
       return {};
+
+   // Access mode forces all methods to be Single-Instance
+   if (QueueMode == QueueAccess)
+      return U.Access;
 
    // Single-Instance methods get exactly one queue per URI
    if (Config->SingleInstance == true)

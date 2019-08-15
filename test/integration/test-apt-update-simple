@@ -31,3 +31,6 @@ main/binary-amd64/Packages
 main/binary-all/Packages
 main/i18n/Translation-en
 main/i18n/Translation-de' aptget indextargets --format '$(METAKEY)'
+
+find rootdir/var/lib/apt/lists/ -type f -delete
+testsuccess aptget update -o Acquire::Queue-Mode=access
