@@ -125,6 +125,10 @@ conf-only/now 1.0 i386 [residual-config]" apt list '?config-files'
 testsuccessequal "Listing...
 essential/now 1.0 i386 [installed,local]" apt list '?essential'
 
+testsuccessequal "Listing..." apt list '?exact-name(automatic)'
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]" apt list '?exact-name(automatic1)'
+
 testsuccessequal "Listing...
 automatic2/now 1.0 i386 [installed,local]" apt list '?garbage'
 

@@ -166,6 +166,16 @@ struct PackageIsEssential : public PackageMatcher
    }
 };
 
+struct PackageHasExactName : public PackageMatcher
+{
+   std::string name;
+   explicit PackageHasExactName(std::string name) : name(name) {}
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      return Pkg.Name() == name;
+   }
+};
+
 struct PackageIsInstalled : public PackageMatcher
 {
    pkgCacheFile *Cache;
