@@ -106,8 +106,10 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
       skipSpace();
    }
 
+   node->end = state.offset;
    if (sentence[state.offset] != ')')
-      throw Error{*node, rstrprintf("Expected closing parenthesis, received %d", sentence[state.offset])};
+      throw Error{node->arguments.empty() ? *node : *node->arguments[node->arguments.size() - 1],
+		  rstrprintf("Expected closing parenthesis or comma after last argument, received %c", sentence[state.offset])};
 
    node->end = ++state.offset;
    return node;
