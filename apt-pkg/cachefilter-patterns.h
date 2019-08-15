@@ -128,6 +128,18 @@ struct PackageIsAutomatic : public PackageMatcher
    }
 };
 
+struct PackageIsBroken : public PackageMatcher
+{
+   pkgCacheFile *Cache;
+   explicit PackageIsBroken(pkgCacheFile *Cache) : Cache(Cache) {}
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      assert(Cache != nullptr);
+      auto state = (*Cache)[Pkg];
+      return state.InstBroken() || state.NowBroken();
+   }
+};
+
 struct PackageIsConfigFiles : public PackageMatcher
 {
    bool operator()(pkgCache::PkgIterator const &Pkg) override
