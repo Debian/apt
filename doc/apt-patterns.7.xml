@@ -69,6 +69,12 @@
      <varlistentry><term><code>?architecture(WILDCARD)</code></term>
      <listitem><para>Selects packages matching the specified architecture, which may contain wildcards using any.</para></listitem>
      </varlistentry>
+     <varlistentry><term><code>?automatic</code></term>
+     <listitem><para>Selects packages that were installed automatically.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?garbage</code></term>
+     <listitem><para>Selects packages that can be removed automatically.</para></listitem>
+     </varlistentry>
      <varlistentry><term><code>?name(REGEX)</code></term>
      <listitem><para>Selects packages where the name matches the given regular expression.</para></listitem>
      </varlistentry>
@@ -77,6 +83,11 @@
 
 
  <refsect1><title>Examples</title>
+   <variablelist>
+     <varlistentry><term><code>apt remove ?garbage</code></term>
+     <listitem><para>Remove all packages that are automatically installed and no longer needed - same as apt autoremove</para></listitem>
+     </varlistentry>
+   </variablelist>
  </refsect1>
 
  <refsect1><title>Migrating from aptitude</title>

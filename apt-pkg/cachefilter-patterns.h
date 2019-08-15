@@ -113,6 +113,32 @@ struct PatternParser
    std::string aWord(std::unique_ptr<PatternTreeParser::Node> &nodeP);
 };
 
+namespace Patterns
+{
+using namespace APT::CacheFilter;
+
+struct PackageIsAutomatic : public PackageMatcher
+{
+   pkgCacheFile *Cache;
+   explicit PackageIsAutomatic(pkgCacheFile *Cache) : Cache(Cache) {}
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      assert(Cache != nullptr);
+      return ((*Cache)[Pkg].Flags & pkgCache::Flag::Auto) != 0;
+   }
+};
+
+struct PackageIsGarbage : public PackageMatcher
+{
+   pkgCacheFile *Cache;
+   explicit PackageIsGarbage(pkgCacheFile *Cache) : Cache(Cache) {}
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      assert(Cache != nullptr);
+      return (*Cache)[Pkg].Garbage;
+   }
+};
+} // namespace Patterns
 } // namespace Internal
 } // namespace APT
 #endif

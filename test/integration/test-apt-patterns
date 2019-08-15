@@ -112,6 +112,12 @@ foreign/unstable 2.0 amd64" apt list '?architecture(amd64)'
 testsuccessequal "Listing..." apt list '?architecture(foreign)'
 testsuccessequal "Listing..." apt list '?architecture(native)'
 
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]" apt list '?automatic'
+
+testsuccessequal "Listing...
+automatic2/now 1.0 i386 [installed,local]" apt list '?garbage'
 
 testsuccessequal "Listing...
 automatic1/now 1.0 i386 [installed,local]
