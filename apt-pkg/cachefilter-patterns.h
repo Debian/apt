@@ -138,6 +138,41 @@ struct PackageIsGarbage : public PackageMatcher
       return (*Cache)[Pkg].Garbage;
    }
 };
+
+struct PackageIsObsolete : public PackageMatcher
+{
+   bool operator()(pkgCache::PkgIterator const &pkg) override
+   {
+      // This code can be written without loops, as aptitude does, but it
+      // is far less readable.
+      if (pkg.CurrentVer().end())
+	 return false;
+
+      // See if there is any version that exists in a repository,
+      // if so return false
+      for (auto ver = pkg.VersionList(); !ver.end(); ver++)
+      {
+	 for (auto file = ver.FileList(); !file.end(); file++)
+	 {
+	    if ((file.File()->Flags & pkgCache::Flag::NotSource) == 0)
+	       return false;
+	 }
+      }
+
+      return true;
+   }
+};
+
+struct PackageIsUpgradable : public PackageMatcher
+{
+   pkgCacheFile *Cache;
+   explicit PackageIsUpgradable(pkgCacheFile *Cache) : Cache(Cache) {}
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      assert(Cache != nullptr);
+      return Pkg->CurrentVer != 0 && (*Cache)[Pkg].Upgradable();
+   }
+};
 } // namespace Patterns
 } // namespace Internal
 } // namespace APT
