@@ -1,0 +1,61 @@
+#!/bin/sh
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'i386' 'amd64'
+
+insertpackage 'unstable' 'available' 'all' '1.0'
+
+insertinstalledpackage 'manual1' 'i386' '1.0' 'Depends: automatic1'
+insertinstalledpackage 'manual2' 'i386' '1.0'
+
+insertinstalledpackage 'automatic1' 'i386' '1.0'
+insertinstalledpackage 'automatic2' 'i386' '1.0'
+
+insertinstalledpackage 'essential' 'i386' '1.0' 'Essential: yes'
+insertinstalledpackage 'conf-only' 'i386' '1.0' '' '' 'deinstall ok config-files'
+insertinstalledpackage 'broken' 'i386' '1.0' 'Depends: does-not-exist'
+
+insertinstalledpackage 'not-obsolete' 'i386' '1.0'
+insertpackage 'unstable' 'not-obsolete' 'all' '2.0'
+
+insertpackage 'unstable' 'foreign' 'amd64' '2.0'
+
+setupaptarchive
+
+testsuccess aptmark auto automatic1 automatic2
+
+msgmsg "Check that commands understand patterns"
+
+testfailureequal "E: input:0-14: error: Unrecognized pattern '?not-a-pattern'
+   ?not-a-pattern
+   ^^^^^^^^^^^^^^
+N: Unable to locate package ?not-a-pattern
+N: Couldn't find any package by glob '?not-a-pattern'
+E: Regex compilation error - Invalid preceding regular expression
+N: Couldn't find any package by regex '?not-a-pattern'
+E: input:0-14: error: Unrecognized pattern '?not-a-pattern'
+   ?not-a-pattern
+   ^^^^^^^^^^^^^^
+N: Unable to locate package ?not-a-pattern
+N: Couldn't find any package by glob '?not-a-pattern'
+E: Regex compilation error - Invalid preceding regular expression
+N: Couldn't find any package by regex '?not-a-pattern'
+E: No packages found" apt show '?not-a-pattern'
+
+testfailureequal "Listing...
+E: input:0-14: error: Unrecognized pattern '?not-a-pattern'
+   ?not-a-pattern
+   ^^^^^^^^^^^^^^" apt list '?not-a-pattern'
+
+testfailureequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+E: input:0-14: error: Unrecognized pattern '?not-a-pattern'
+   ?not-a-pattern
+   ^^^^^^^^^^^^^^
+E: Unable to locate package ?not-a-pattern
+E: Couldn't find any package by glob '?not-a-pattern'
+E: Regex compilation error - Invalid preceding regular expression
+E: Couldn't find any package by regex '?not-a-pattern'" apt install -s '?not-a-pattern'

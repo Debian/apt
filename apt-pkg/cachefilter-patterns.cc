@@ -201,5 +201,56 @@ bool PatternTreeParser::PatternNode::matches(APT::StringView name, int min, int 
    return true;
 }
 
+std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_ptr<PatternTreeParser::Node> &nodeP)
+{
+   assert(nodeP != nullptr);
+   auto node = dynamic_cast<PatternTreeParser::PatternNode *>(nodeP.get());
+   if (node == nullptr)
+      nodeP->error("Expected a pattern");
+
+   node->error(rstrprintf("Unrecognized pattern '%s'", node->term.to_string().c_str()));
+
+   return nullptr;
+}
+
+std::string PatternParser::aWord(std::unique_ptr<PatternTreeParser::Node> &nodeP)
+{
+   assert(nodeP != nullptr);
+   auto node = dynamic_cast<PatternTreeParser::WordNode *>(nodeP.get());
+   if (node == nullptr)
+      nodeP->error("Expected a word");
+   return node->word.to_string();
+}
+
 } // namespace Internal
+
+// The bridge into the public world
+std::unique_ptr<APT::CacheFilter::Matcher> APT::CacheFilter::ParsePattern(APT::StringView pattern, pkgCacheFile *file)
+{
+   if (file != nullptr && !file->BuildDepCache())
+      return nullptr;
+
+   try
+   {
+      auto top = APT::Internal::PatternTreeParser(pattern).parseTop();
+      APT::Internal::PatternParser parser{file};
+      return parser.aPattern(top);
+   }
+   catch (APT::Internal::PatternTreeParser::Error &e)
+   {
+      std::stringstream ss;
+      ss << "input:" << e.location.start << "-" << e.location.end << ": error: " << e.message << "\n";
+      ss << pattern.to_string() << "\n";
+      for (size_t i = 0; i < e.location.start; i++)
+	 ss << " ";
+      for (size_t i = e.location.start; i < e.location.end; i++)
+	 ss << "^";
+
+      ss << "\n";
+
+      _error->Error("%s", ss.str().c_str());
+      return nullptr;
+   }
+}
+
 } // namespace APT

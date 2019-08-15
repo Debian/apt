@@ -98,6 +98,21 @@ struct PatternTreeParser
    std::unique_ptr<Node> parseQuotedWord();
 };
 
+/**
+ * \brief PatternParser parses the given sentence into a parse tree.
+ *
+ * The parse tree consists of nodes:
+ *  - Word nodes which contains words or quoted words
+ *  - Patterns, which represent ?foo and ?foo(...) patterns
+ */
+struct PatternParser
+{
+   pkgCacheFile *file;
+
+   std::unique_ptr<APT::CacheFilter::Matcher> aPattern(std::unique_ptr<PatternTreeParser::Node> &nodeP);
+   std::string aWord(std::unique_ptr<PatternTreeParser::Node> &nodeP);
+};
+
 } // namespace Internal
 } // namespace APT
 #endif

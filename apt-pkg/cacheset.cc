@@ -46,6 +46,7 @@ bool CacheSetHelper::PackageFrom(enum PkgSelector const select, PackageContainer
 	case FNMATCH: return PackageFromFnmatch(pci, Cache, pattern);
 	case PACKAGENAME: return PackageFromPackageName(pci, Cache, pattern);
 	case STRING: return PackageFromString(pci, Cache, pattern);
+	case PATTERN: return PackageFromPattern(pci, Cache, pattern);
 	}
 	return false;
 }
@@ -281,13 +282,33 @@ bool CacheSetHelper::PackageFromPackageName(PackageContainerInterface * const pc
 	pci->insert(Pkg);
 	return true;
 }
+
+bool CacheSetHelper::PackageFromPattern(PackageContainerInterface *const pci, pkgCacheFile &Cache, std::string const &pattern)
+{
+   if (pattern.size() < 1 || pattern[0] != '?')
+      return false;
+
+   auto compiledPattern = APT::CacheFilter::ParsePattern(pattern, &Cache);
+   if (!compiledPattern)
+      return false;
+
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)
+   {
+      if ((*compiledPattern)(Pkg) == false)
+	 continue;
+
+      pci->insert(Pkg);
+   }
+   return true;
+}
 									/*}}}*/
 // PackageFromString - Return all packages matching a specific string	/*{{{*/
 bool CacheSetHelper::PackageFromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &str) {
 	bool found = true;
 	_error->PushToStack();
 
-	if (PackageFrom(CacheSetHelper::PACKAGENAME, pci, Cache, str) == false &&
+	if (PackageFrom(CacheSetHelper::PATTERN, pci, Cache, str) == false &&
+	     PackageFrom(CacheSetHelper::PACKAGENAME, pci, Cache, str) == false &&
 		 PackageFrom(CacheSetHelper::TASK, pci, Cache, str) == false &&
 		 // FIXME: hm, hm, regexp/fnmatch incompatible?
 		 PackageFrom(CacheSetHelper::FNMATCH, pci, Cache, str) == false &&
@@ -686,6 +707,7 @@ void CacheSetHelper::canNotFindPackage(enum PkgSelector const select,
 	case FNMATCH: canNotFindFnmatch(pci, Cache, pattern); break;
 	case PACKAGENAME: canNotFindPackage(pci, Cache, pattern); break;
 	case STRING: canNotFindPackage(pci, Cache, pattern); break;
+	case PATTERN: canNotFindPackage(pci, Cache, pattern); break;
 	case UNKNOWN: break;
 	}
 }
@@ -822,6 +844,7 @@ void CacheSetHelper::showPackageSelection(pkgCache::PkgIterator const &pkg, enum
 	case REGEX: showRegExSelection(pkg, pattern); break;
 	case TASK: showTaskSelection(pkg, pattern); break;
 	case FNMATCH: showFnmatchSelection(pkg, pattern); break;
+	case PATTERN: showPatternSelection(pkg, pattern); break;
 	case PACKAGENAME: /* no surprises here */ break;
 	case STRING: /* handled by the special cases */ break;
 	case UNKNOWN: break;
@@ -840,6 +863,12 @@ void CacheSetHelper::showRegExSelection(pkgCache::PkgIterator const &/*pkg*/,
 // showFnmatchSelection							/*{{{*/
 void CacheSetHelper::showFnmatchSelection(pkgCache::PkgIterator const &/*pkg*/,
                                          std::string const &/*pattern*/) {
+}
+									/*}}}*/
+// showPatternSelection							/*{{{*/
+void CacheSetHelper::showPatternSelection(pkgCache::PkgIterator const & /*pkg*/,
+					  std::string const & /*pattern*/)
+{
 }
 									/*}}}*/
 									/*}}}*/

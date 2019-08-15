@@ -7,7 +7,9 @@
 #define APT_CACHEFILTER_H
 // Include Files							/*{{{*/
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/string_view.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -145,6 +147,8 @@ public:
 };
 									/*}}}*/
 
+/// \brief Parse a pattern, return nullptr or pattern
+std::unique_ptr<APT::CacheFilter::Matcher> ParsePattern(APT::StringView pattern, pkgCacheFile *file);
 }
 }
 #endif
