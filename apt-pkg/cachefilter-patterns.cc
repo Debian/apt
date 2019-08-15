@@ -144,17 +144,15 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseQuotedWord()
 // Parse a bare word atom
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord()
 {
-   static const APT::StringView CHARS("0123456789"
-				      "abcdefghijklmnopqrstuvwxyz"
-				      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-				      "-.*^$[]_\\");
-   if (CHARS.find(sentence[state.offset]) == APT::StringView::npos)
+   static const APT::StringView DISALLOWED_START("?~,()\0", 6);
+   static const APT::StringView DISALLOWED(",()\0", 4);
+   if (DISALLOWED_START.find(sentence[state.offset]) != APT::StringView::npos)
       return nullptr;
 
    auto node = std::make_unique<WordNode>();
    node->start = state.offset;
 
-   while (CHARS.find(sentence[state.offset]) != APT::StringView::npos)
+   while (DISALLOWED.find(sentence[state.offset]) == APT::StringView::npos)
       state.offset++;
 
    node->end = state.offset;
