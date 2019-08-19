@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.8.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-06-17 11:37+0200\n"
+"POT-Creation-Date: 2019-08-19 16:22+0200\n"
 "PO-Revision-Date: 2019-05-01 17:00+0100\n"
 "Last-Translator: Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -623,7 +623,7 @@ msgstr "8"
 #: apt_preferences.5.xml sources.list.5.xml apt-extracttemplates.1.xml
 #: apt-sortpkgs.1.xml apt-ftparchive.1.xml apt_auth.conf.5.xml
 #: apt-transport-http.1.xml apt-transport-https.1.xml
-#: apt-transport-mirror.1.xml
+#: apt-transport-mirror.1.xml apt-patterns.7.xml
 msgid "APT"
 msgstr "APT"
 
@@ -638,7 +638,7 @@ msgstr "interface en ligne de commande"
 #: apt_preferences.5.xml sources.list.5.xml apt-extracttemplates.1.xml
 #: apt-sortpkgs.1.xml apt-ftparchive.1.xml apt_auth.conf.5.xml
 #: apt-transport-http.1.xml apt-transport-https.1.xml
-#: apt-transport-mirror.1.xml
+#: apt-transport-mirror.1.xml apt-patterns.7.xml
 msgid "Description"
 msgstr "Description"
 
@@ -930,7 +930,7 @@ msgstr ""
 #: apt-secure.8.xml apt-cdrom.8.xml apt-config.8.xml apt.conf.5.xml
 #: apt_preferences.5.xml sources.list.5.xml apt-extracttemplates.1.xml
 #: apt-sortpkgs.1.xml apt-ftparchive.1.xml apt_auth.conf.5.xml
-#: apt-transport-http.1.xml apt-transport-https.1.xml
+#: apt-transport-http.1.xml apt-transport-https.1.xml apt-patterns.7.xml
 msgid "See Also"
 msgstr "Voir aussi"
 
@@ -6140,7 +6140,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml apt_preferences.5.xml sources.list.5.xml apt-ftparchive.1.xml
 #: apt-transport-http.1.xml apt-transport-https.1.xml
-#: apt-transport-mirror.1.xml
+#: apt-transport-mirror.1.xml apt-patterns.7.xml
 msgid "Examples"
 msgstr "Exemples"
 
@@ -11039,6 +11039,306 @@ msgstr ""
 "ceux, par exemple, de l'architecture <literal>i386</literal> par un des "
 "trois derniers."
 
+#. type: Content of: <refentry><refmeta><manvolnum>
+#: apt-patterns.7.xml
+msgid "7"
+msgstr ""
+
+#. type: Content of: <refentry><refnamediv><refpurpose>
+#: apt-patterns.7.xml
+msgid "Syntax and semantics of apt search patterns"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+msgid ""
+"Starting with version 2.0, <command>APT</command> provides support for "
+"patterns, which can be used to query the apt cache for packages."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
+msgid "Logic patterns"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+msgid ""
+"These patterns provide the basic means to combine other patterns into more "
+"complex expressions, as well as <code>?true</code> and <code>?false</code> "
+"patterns."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?and(PATTERN, PATTERN, ...)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects objects where all specified patterns match."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?false</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects nothing."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?not(PATTERN)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects objects where PATTERN does not match."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?or(PATTERN, PATTERN, ...)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects objects where at least one of the specified patterns match."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?true</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects all objects."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
+msgid "Package patterns"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+msgid "These patterns select specific packages."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?architecture(WILDCARD)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects packages matching the specified architecture, which may contain "
+"wildcards using any."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?automatic</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that were installed automatically."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?broken</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that have broken dependencies."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?config-files</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects packages that are not fully installed, but have solely residual "
+"configuration files left."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?essential</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that have Essential: yes set in their control file."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?exact-name(NAME)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages with the exact specified name."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?garbage</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that can be removed automatically."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?installed</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that are currently installed."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?name(REGEX)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages where the name matches the given regular expression."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?obsolete</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that no longer exist in repositories."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?upgradable</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that can be upgraded (have a newer candidate)."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?virtual</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects all virtual packages; that is packages without a version.  These "
+"exist when they are referenced somewhere in the archive, for example because "
+"something depends on that name."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>apt remove ?garbage</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Remove all packages that are automatically installed and no longer needed - "
+"same as apt autoremove"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>apt purge ?config-files</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Purge all packages that only have configuration files left"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
+msgid "Migrating from aptitude"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+msgid ""
+"Patterns in apt are heavily inspired by patterns in aptitude, but with some "
+"tweaks:"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid "Only long forms &mdash; the ones starting with ? &mdash; are supported"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Syntax is uniform: If there is an opening parenthesis after a term, it is "
+"always assumed to be the beginning of an argument list."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"In aptitude, a syntactic form <code>\"?foo(bar)\"</code> could mean <code>\"?"
+"and(?foo,bar)\"</code> if foo does not take an argument. In APT, this will "
+"cause an error."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid "Not all patterns are supported."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Some additional patterns are available, for example, for finding gstreamer "
+"codecs."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid "Escaping terms with <code>~</code> is not supported."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid "A trailing comma is allowed in argument lists"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "&apt-cache; &apt-conf;"
+msgid "&apt-get;, &apt;"
+msgstr "&apt-cache; &apt-conf;"
+
 #. type: Attribute 'lang' of: <book>
 #: guide.dbk offline.dbk
 msgid "en"
@@ -12966,11 +13266,6 @@ msgstr "Cette commande utilisera les fichiers récupérés sur le disque."
 #~ msgid "Keyring of &keyring-distro; archive removed trusted keys."
 #~ msgstr ""
 #~ "Trousseau des clés fiables supprimées de l'archive &keyring-distro;."
-
-#, fuzzy
-#~| msgid "&apt-cache; &apt-conf;"
-#~ msgid "&apt-get;, &apt-conf;"
-#~ msgstr "&apt-cache; &apt-conf;"
 
 #~ msgid ""
 #~ "This is a space separated list of all the architectures that appear under "
