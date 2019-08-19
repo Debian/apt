@@ -82,6 +82,7 @@ add_docbook(apt-man MANPAGE ALL
         apt-key.8.xml
         apt-mark.8.xml
         apt_preferences.5.xml
+        apt-patterns.7.xml
         apt-secure.8.xml
         apt-sortpkgs.1.xml
         apt-transport-http.1.xml

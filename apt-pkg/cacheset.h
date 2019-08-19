@@ -52,7 +52,7 @@ public:									/*{{{*/
 		GlobalError::MsgType ErrorType = GlobalError::ERROR);
 	virtual ~CacheSetHelper();
 
-	enum PkgSelector { UNKNOWN, REGEX, TASK, FNMATCH, PACKAGENAME, STRING };
+	enum PkgSelector { UNKNOWN, REGEX, TASK, FNMATCH, PACKAGENAME, STRING, PATTERN };
 
 	virtual bool PackageFrom(enum PkgSelector const select, PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern);
 
@@ -172,10 +172,12 @@ protected:
 	bool PackageFromFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
 	bool PackageFromPackageName(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
 	bool PackageFromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern);
+	bool PackageFromPattern(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern);
 private:
 	void showTaskSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
 	void showRegExSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
 	void showFnmatchSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
+	void showPatternSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
 	void canNotFindTask(PackageContainerInterface *const pci, pkgCacheFile &Cache, std::string pattern);
 	void canNotFindRegEx(PackageContainerInterface *const pci, pkgCacheFile &Cache, std::string pattern);
 	void canNotFindFnmatch(PackageContainerInterface *const pci, pkgCacheFile &Cache, std::string pattern);
@@ -739,6 +741,8 @@ public:
 			       std::string pkg, CacheSetHelper::VerSelector const fallback, CacheSetHelper &helper,
 			       bool const onlyFromName = false);
 
+	static bool FromPattern(VersionContainerInterface *const vci, pkgCacheFile &Cache,
+				std::string pkg, CacheSetHelper::VerSelector const fallback, CacheSetHelper &helper);
 
 	static bool FromPackage(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &P, CacheSetHelper::VerSelector const fallback,
