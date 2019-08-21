@@ -275,6 +275,21 @@ struct VersionIsArchive : public VersionAnyMatcher
    }
 };
 
+struct VersionIsOrigin : public VersionAnyMatcher
+{
+   BaseRegexMatcher matcher;
+   VersionIsOrigin(std::string const &pattern) : matcher(pattern) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      for (auto VF = Ver.FileList(); not VF.end(); VF++)
+      {
+	 if (VF.File().Origin() && matcher(VF.File().Origin()))
+	    return true;
+      }
+      return false;
+   }
+};
+
 struct VersionIsSourcePackage : public VersionAnyMatcher
 {
    BaseRegexMatcher matcher;

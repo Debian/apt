@@ -22,6 +22,7 @@ insertpackage 'unstable' 'not-obsolete' 'all' '2.0'
 
 insertpackage 'unstable' 'foreign' 'amd64' '2.0'
 
+getoriginfromsuite() { echo -n 'meow'; }
 setupaptarchive
 
 testsuccess aptmark auto automatic1 automatic2
@@ -161,6 +162,11 @@ available/unstable 1.0 all
 conf-only/now 1.0 i386 [residual-config]
 foreign/unstable 2.0 amd64
 not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?not(?obsolete)'
+
+testsuccessequal "Listing...
+available/unstable 1.0 all
+foreign/unstable 2.0 amd64
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?origin(^meow$)'
 
 testsuccessequal "Listing...
 automatic1/now 1.0 i386 [installed,local]
