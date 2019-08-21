@@ -73,6 +73,7 @@ add_optional_compile_options(Wundef)
 add_optional_compile_options(Wdouble-promotion)
 add_optional_compile_options(Wsuggest-override)
 add_optional_compile_options(Werror=suggest-override)
+add_optional_compile_options(Werror=return-type)
 # apt-ftparchive dependencies
 find_package(BerkeleyDB REQUIRED)
 if (BERKELEY_DB_FOUND)
