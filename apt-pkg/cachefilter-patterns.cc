@@ -6,7 +6,11 @@
  * SPDX-License-Identifier: GPL-2.0+
  */
 
+#include <config.h>
+
 #include <apt-pkg/cachefilter-patterns.h>
+
+#include <apti18n.h>
 
 namespace APT
 {
@@ -271,6 +275,38 @@ std::string PatternParser::aWord(std::unique_ptr<PatternTreeParser::Node> &nodeP
       nodeP->error("Expected a word");
    return node->word.to_string();
 }
+
+namespace Patterns
+{
+
+BaseRegexMatcher::BaseRegexMatcher(std::string const &Pattern)
+{
+   pattern = new regex_t;
+   int const Res = regcomp(pattern, Pattern.c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB);
+   if (Res == 0)
+      return;
+
+   delete pattern;
+   pattern = NULL;
+   char Error[300];
+   regerror(Res, pattern, Error, sizeof(Error));
+   _error->Error(_("Regex compilation error - %s"), Error);
+}
+bool BaseRegexMatcher::operator()(const char *string)
+{
+   if (unlikely(pattern == NULL))
+      return false;
+   else
+      return regexec(pattern, string, 0, 0, 0) == 0;
+}
+BaseRegexMatcher::~BaseRegexMatcher()
+{
+   if (pattern == NULL)
+      return;
+   regfree(pattern);
+   delete pattern;
+}
+} // namespace Patterns
 
 } // namespace Internal
 
