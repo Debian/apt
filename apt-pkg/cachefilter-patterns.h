@@ -244,6 +244,31 @@ struct PackageIsVirtual : public PackageMatcher
       return Pkg->VersionList == 0;
    }
 };
+
+struct VersionAnyMatcher : public Matcher
+{
+   bool operator()(pkgCache::GrpIterator const &Grp) override { return false; }
+   bool operator()(pkgCache::VerIterator const &Ver) override = 0;
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      for (auto Ver = Pkg.VersionList(); not Ver.end(); Ver++)
+      {
+         if ((*this)(Ver))
+            return true;
+      }
+      return false;
+   }
+};
+
+struct VersionIsVersion : public VersionAnyMatcher
+{
+   BaseRegexMatcher matcher;
+   VersionIsVersion(std::string const &pattern) : matcher(pattern) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      return matcher(Ver.VerStr());
+   }
+};
 } // namespace Patterns
 } // namespace Internal
 } // namespace APT
