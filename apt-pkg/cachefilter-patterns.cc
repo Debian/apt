@@ -236,6 +236,10 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<APT::CacheFilter::NOTMatcher>(aPattern(node->arguments[0]).release());
    if (node->matches("?obsolete", 0, 0))
       return std::make_unique<Patterns::PackageIsObsolete>();
+   if (node->matches("?source-package", 1, 1))
+      return std::make_unique<Patterns::VersionIsSourcePackage>(aWord(node->arguments[0]));
+   if (node->matches("?source-version", 1, 1))
+      return std::make_unique<Patterns::VersionIsSourceVersion>(aWord(node->arguments[0]));
    if (node->matches("?true", 0, 0))
       return std::make_unique<APT::CacheFilter::TrueMatcher>();
    if (node->matches("?upgradable", 0, 0))
