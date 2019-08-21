@@ -214,6 +214,8 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
 
    if (node->matches("?architecture", 1, 1))
       return std::make_unique<APT::CacheFilter::PackageArchitectureMatchesSpecification>(aWord(node->arguments[0]));
+   if (node->matches("?archive", 1, 1))
+      return std::make_unique<Patterns::VersionIsArchive>(aWord(node->arguments[0]));
    if (node->matches("?automatic", 0, 0))
       return std::make_unique<Patterns::PackageIsAutomatic>(file);
    if (node->matches("?broken", 0, 0))

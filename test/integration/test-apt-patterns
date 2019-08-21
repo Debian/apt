@@ -113,6 +113,11 @@ testsuccessequal "Listing..." apt list '?architecture(foreign)'
 testsuccessequal "Listing..." apt list '?architecture(native)'
 
 testsuccessequal "Listing...
+available/unstable 1.0 all
+foreign/unstable 2.0 amd64
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?archive(^unstable$)'
+
+testsuccessequal "Listing...
 automatic1/now 1.0 i386 [installed,local]
 automatic2/now 1.0 i386 [installed,local]" apt list '?automatic'
 
