@@ -84,7 +84,7 @@ check_stamp()
         return 0
     fi
 
-    if [ "$interval" -eq 0 ]; then
+    if [ "$interval" = 0 ]; then
 	debug_echo "check_stamp: interval=0"
 	# treat as no time has passed
         return 1
@@ -237,7 +237,7 @@ do_cache_backup()
     BackupArchiveInterval="$1"
     if [ "$BackupArchiveInterval" = always ]; then
         :
-    elif [ "$BackupArchiveInterval" -eq 0 ]; then
+    elif [ "$BackupArchiveInterval" = 0 ]; then
         return
     fi
 
@@ -415,12 +415,12 @@ if [ $UpdateInterval = always ] ||
    [ $AutocleanInterval = always ] ||
    [ $CleanInterval = always ] ; then
     :
-elif [ $UpdateInterval -eq 0 ] &&
-     [ $DownloadUpgradeableInterval -eq 0 ] &&
-     [ $UnattendedUpgradeInterval -eq 0 ] &&
-     [ $BackupArchiveInterval -eq 0 ] &&
-     [ $AutocleanInterval -eq 0 ] &&
-     [ $CleanInterval -eq 0 ] ; then
+elif [ $UpdateInterval = 0 ] &&
+     [ $DownloadUpgradeableInterval = 0 ] &&
+     [ $UnattendedUpgradeInterval = 0 ] &&
+     [ $BackupArchiveInterval = 0 ] &&
+     [ $AutocleanInterval = 0 ] &&
+     [ $CleanInterval = 0 ] ; then
 
     # check cache size
     check_size_constraints
