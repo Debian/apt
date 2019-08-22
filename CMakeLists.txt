@@ -186,7 +186,7 @@ if (NOT HAVE_SIGHANDLER_T)
 endif()
 
 # Handle resolving
-check_function_exists(res_init HAVE_LIBC_RESOLV)
+check_function_exists(res_ninit HAVE_LIBC_RESOLV)
 if(HAVE_LIBC_RESOLV)
     set(RESOLV_LIBRARIES)
 else()
