@@ -1781,7 +1781,7 @@ class APT_HIDDEN ZstdFileFdPrivate : public FileFdPrivate
 #ifdef HAVE_ZSTD
    ZSTD_DStream *dctx;
    ZSTD_CStream *cctx;
-   size_t res;
+   size_t res = 0;
    FileFd backend;
    simple_buffer zstd_buffer;
    // Count of bytes that the decompressor expects to read next, or buffer size.

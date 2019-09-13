@@ -2025,7 +2025,6 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 	  * they would be considered as trusted later on */
 	 string const FinalRelease = GetFinalFileNameFromURI(DetachedDataTarget.URI);
 	 string const PartialRelease = GetPartialFileNameFromURI(DetachedDataTarget.URI);
-	 string const FinalReleasegpg = GetFinalFileNameFromURI(DetachedSigTarget.URI);
 	 string const FinalInRelease = GetFinalFilename();
 	 Rename(DestFile, PartialRelease);
 	 TransactionManager->TransactionStageCopy(this, PartialRelease, FinalRelease);
@@ -2586,14 +2585,18 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       return false;
    }
 
-   for (auto const &patch: available_patches)
-      if (patch.result_hashes.usable() == false ||
-	    patch.patch_hashes.usable() == false ||
-	    patch.download_hashes.usable() == false)
+   {
+      auto const patch = std::find_if(available_patches.cbegin(), available_patches.cend(), [](auto const &patch) {
+	 return not patch.result_hashes.usable() ||
+		not patch.patch_hashes.usable() ||
+		not patch.download_hashes.usable();
+      });
+      if (patch != available_patches.cend())
       {
-	 strprintf(ErrorText, "Provides no usable hashes for %s", patch.file.c_str());
+	 strprintf(ErrorText, "Provides no usable hashes for %s", patch->file.c_str());
 	 return false;
       }
+   }
 
    // patching with too many files is rather slow compared to a fast download
    unsigned long const fileLimit = _config->FindI("Acquire::PDiffs::FileLimit", 0);
@@ -2655,13 +2658,15 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 	 return false;
       std::string const PartialFile = GetPartialFileNameFromURI(Target.URI);
       std::string const PatchedFile = GetKeepCompressedFileName(PartialFile + "-patched", Target);
-      if (RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PartialFile) == false ||
-	    RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PatchedFile) == false)
+      if (not RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PartialFile) ||
+	  not RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PatchedFile))
 	 return false;
-      for (auto const &ext : APT::Configuration::getCompressorExtensions())
       {
-	 if (RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PartialFile + ext) == false ||
-	       RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PatchedFile + ext) == false)
+	 auto const exts = APT::Configuration::getCompressorExtensions();
+	 if (not std::all_of(exts.cbegin(), exts.cend(), [&](auto const &ext) {
+		return RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PartialFile + ext) &&
+		       RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PatchedFile + ext);
+	     }))
 	    return false;
       }
       std::string const Ext = Final.substr(CurrentPackagesFile.length());

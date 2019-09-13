@@ -1378,8 +1378,6 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    int fd = _config->FindI("APT::Status-Fd",-1);
    if(fd > 0)
    {
-      ostringstream status;
-
       unsigned long long ETA = 0;
       if(CurrentCPS > 0 && TotalBytes > CurrentBytes)
          ETA = (TotalBytes - CurrentBytes) / CurrentCPS;
