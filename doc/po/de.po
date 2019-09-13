@@ -1,14 +1,14 @@
 # Translation of apt/doc to German
 # Copyright (C) 1997, 1998, 1999 Jason Gunthorpe and others.
 # This file is distributed under the same license as the apt package.
-# Chris Leick <c.leick@vollbio.de>, 2009-2018.
+# Chris Leick <c.leick@vollbio.de>, 2009-2019.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.6\n"
+"Project-Id-Version: apt 1.9.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-08-19 16:22+0200\n"
-"PO-Revision-Date: 2018-10-21 12:58+0200\n"
+"POT-Creation-Date: 2019-09-13 10:38+0200\n"
+"PO-Revision-Date: 2019-08-15 10:22+0200\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "Language: de\n"
@@ -818,6 +818,9 @@ msgid ""
 "Depends. It also handles conflicts, by prefixing an argument with <literal>"
 "\"Conflicts: \"</literal>."
 msgstr ""
+"<option>satisfy</option> erfüllt Abhängigkeitszeichenketten, wie sie in "
+"Build-Depends benutzt werden. Es handhabt auch Konflikte, indem es einem "
+"Argument ein <literal>\"Conflicts: \"</literal> voranstellt."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
@@ -825,6 +828,8 @@ msgid ""
 "Example: <literal>apt satisfy \"foo, bar (>= 1.0)\" \"Conflicts: baz, fuzz"
 "\"</literal>"
 msgstr ""
+"Beispiel: <literal>apt satisfy \"foo, bar (>= 1.0)\" \"Conflicts: baz, fuzz"
+"\"</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
@@ -1194,12 +1199,12 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid "the <literal>Archive:</literal> or <literal>Suite:</literal> line"
 msgid ""
 "<literal>reinstall</literal> is an alias for <literal>install --reinstall</"
 "literal>."
-msgstr "die <literal>Archive:</literal>- oder <literal>Suite:</literal>-Zeile"
+msgstr ""
+"<literal>reinstall</literal> ist ein Alias für <literal>install --reinstall</"
+"literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1254,6 +1259,9 @@ msgid ""
 "The arguments are interpreted as binary and source package names.  See the "
 "<option>--only-source</option> option if you want to change that."
 msgstr ""
+"Die Argumente werden als Binär- und Quellpaketnamen interpretiert. Falls Sie "
+"dies ändern möchten, sehen Sie sich die Option <option>--only-source</"
+"option> an."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1335,6 +1343,9 @@ msgid ""
 "The arguments are interpreted as binary or source package names. See the "
 "<option>--only-source</option> option if you want to change that."
 msgstr ""
+"Die Argumente werden als Binär- oder Quellpaketnamen interpretiert. Falls "
+"Sie dies ändern möchten, sehen Sie sich die Option <option>--only-source</"
+"option> an."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1345,6 +1356,12 @@ msgid ""
 "with <literal>\"Conflicts: \"</literal> to unsatisfy the dependency string. "
 "Multiple strings of the same type can be specified."
 msgstr ""
+"<literal>satisfy</literal> veranlasst apt-get, die angegebenen "
+"Abhängigkeitszeichenketten zu erfüllen. Die Abhängigkeitszeichenketten "
+"könnten Bauprofile und Architekturbeschränkungslisten in ihren "
+"Bauabhängigkeiten haben. Ihnen kann wahlweise <literal>\"Conflicts: \"</"
+"literal> vorangestellt sein, um die Abhängigkeitszeichenkette nicht zu "
+"erfüllen. Es dürfen mehrere Zeichenketten desselben Typs angegeben werden."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1352,12 +1369,16 @@ msgid ""
 "Example: <literal>apt-get satisfy \"foo\" \"Conflicts: bar\" \"baz (&gt;&gt; "
 "1.0) | bar (= 2.0), moo\"</literal>"
 msgstr ""
+"Beispiel: <literal>apt-get satisfy \"foo\" \"Conflicts: bar\" \"baz (&gt;"
+"&gt; 1.0) | bar (= 2.0), moo\"</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
 msgid ""
 "The legacy operator '&lt;/&gt;' is not supported, use '&lt;=/&gt;=' instead."
 msgstr ""
+"Der veraltete Operator »&lt;/&gt;« wird nicht unterstützt, benutzen Sie "
+"stattdessen »&lt;=/&gt;=«."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -3126,11 +3147,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
-#, fuzzy
-#| msgid ""
-#| "<literal>auto</literal> is used to mark a package as being automatically "
-#| "installed, which will cause the package to be removed when no more "
-#| "manually installed packages depend on this package."
 msgid ""
 "<literal>minimize-manual</literal> is used to mark (transitive) dependencies "
 "of metapackages as automatically installed.  This can be used after an "
@@ -3138,9 +3154,11 @@ msgid ""
 "packages; or continuously on systems managed by system configuration "
 "metapackages."
 msgstr ""
-"<literal>auto</literal> wird benutzt, um ein Paket als automatisch "
-"installiert zu markieren, was veranlasst, dass das Paket entfernt wird, wenn "
-"keine manuell installierten Pakete von ihm abhängen."
+"<literal>minimize-manual</literal> wird benutzt, um (transitive) "
+"Abhängigkeiten von Metapaketen als automatisch installiert zu markieren. "
+"Dies kann zum Beispiel nach einer Installation benutzt werden, um die Anzahl "
+"manuell installierter Pakete gering zu halten oder stetig auf Systemen, die "
+"durch Systemkonfigurations-Metapakete verwaltet werden."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
@@ -5592,6 +5610,10 @@ msgid ""
 "used when running dpkg. It may be set to any valid value of that environment "
 "variable; or the empty string, in which case the variable is not changed."
 msgstr ""
+"Dies ist eine Zeichenkette, die beim Ausführen von Dpkg die "
+"Umgebungsvariable <envar>PATH</envar> definiert. Sie kann auf jeden Wert "
+"dieser Umgebungsvariable oder eine leere Zeichenkette gesetzt werden, falls "
+"sich die Variable nicht geändert hat."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -7705,7 +7727,7 @@ msgstr ""
 "Derivaten benutzte Dateien, wie Metadatendateien, die APT von den "
 "konfigurierten Quellen herunterlädt oder der Datei <filename>debian/control</"
 "filename> in einem Debian-Quellpaket. Individuelle Einträge werden durch "
-"eine leere Zeile getrennt: Zusätzliche leere Zeilen werden ignoriert und "
+"eine leere Zeile getrennt; zusätzliche leere Zeilen werden ignoriert und "
 "<literal>#</literal>-Zeichen am Anfang einer Zeile kennzeichnen die ganze "
 "Zeile als Kommentar. Ein Eintrag kann daher deaktiviert werden, indem jede "
 "Zeile, die zum Absatz gehört, auskommentiert wird. Es ist üblicherweise "
@@ -8129,20 +8151,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "<option>Signed-By</option> (<option>signed-by</option>)  is either an "
-#| "absolute path to a keyring file (has to be accessible and readable for "
-#| "the <literal>_apt</literal> user, so ensure everyone has read-permissions "
-#| "on the file) or one or more fingerprints of keys either in the "
-#| "<filename>trusted.gpg</filename> keyring or in the keyrings in the "
-#| "<filename>trusted.gpg.d/</filename> directory (see <command>apt-key "
-#| "fingerprint</command>). If the option is set, only the key(s) in this "
-#| "keyring or only the keys with these fingerprints are used for the &apt-"
-#| "secure; verification of this repository. Defaults to the value of the "
-#| "option with the same name if set in the previously acquired "
-#| "<filename>Release</filename> file.  Otherwise all keys in the trusted "
-#| "keyrings are considered valid signers for this repository."
 msgid ""
 "<option>Signed-By</option> (<option>signed-by</option>)  is an option to "
 "require a repository to pass &apt-secure; verification with a certain set of "
@@ -8162,18 +8170,25 @@ msgid ""
 "(only fingerprints can be specified there through).  Otherwise all keys in "
 "the trusted keyrings are considered valid signers for this repository."
 msgstr ""
-"<option>Signed-By</option> (<option>signed-by</option>) ist entweder ein "
-"absoluter Pfad zu einer Schlüsselbunddatei (muss für den Benutzer von "
-"<literal>_apt</literal> zugänglich und lesbar sein, sorgen Sie also dafür, "
-"dass jeder Leserechte an der Datei hat) oder einer oder mehrere "
-"Fingerabdrücke von Schlüsseln, die entweder im <filename>trusted.gpg</"
-"filename>-Schlüsselbund oder in den Schlüsselbunden im Verzeichnis "
-"<filename>trusted.gpg.d/</filename> liegen (siehe <command>apt-key "
-"fingerprint</command>). Falls die Option gesetzt ist, wird/werden nur der/"
-"die Schlüssel in diesem Schlüsselbund oder nur die Schlüssel mit diesen "
-"Fingerabdrücken für die &apt-secure;-Überprüfung dieses Depots benutzt. Sie "
-"ist auf den Wert der Option mit demselben Namen voreingestellt, falls sie in "
-"der vorher beschafften <filename>Release</filename>-Datei gesetzt ist. "
+"<option>Signed-By</option> (<option>signed-by</option>) ist eine Option, die "
+"erfordert, dass ein Depot die &apt-secure;-Prüfung mit einem bestimmten Satz "
+"von Schlüsseln, statt mit allen vertrauenswürdigen Schlüsseln, durchläuft, "
+"die für APT konfiguriert sind. Sie wird als eine Liste absoluter Pfade zu "
+"Schlüsselbunddateien angegeben (müssen für den Systembenutzer <literal>_apt</"
+"literal> zugreif- und lesbar sein, stellen Sie also sicher, dass jedermann "
+"Leserechte für die Datei hat) sowie Fingerabdrücke von Schlüsseln, um diese "
+"aus Schlüsselbunden auszuwählen. Falls keine Schlüsselbunddateien angegeben "
+"wurden, sind der Schlüsselbund <filename>trusted.gpg</filename> und alle "
+"Schlüsselbunde im Verzeichnis <filename>trusted.gpg.d/</filename> "
+"voreingestellt (siehe <command>apt-key fingerprint</command>). Falls kein "
+"Fingerabdruck angegeben wurde, werden alle Schlüssel in den Schlüsselbunden "
+"ausgewählt. Ein Fingerabdruck wird außerdem alle Signaturen eines "
+"Unterschlüssels dieses Schlüssels akzeptieren, falls dies nicht gewünscht "
+"wird, kann ein Ausrufezeichen (<literal>!</literal>) an den Fingerabdruck "
+"angehängt werden, um dieses Verhalten zu deaktivieren. Die Option ist auf "
+"den Wert der Option mit demselben Namen voreingestellt, falls sie in der "
+"vorher beschafften <filename>Release</filename>-Datei dieses Depots gesetzt "
+"ist (allerdings können dadurch nur Fingerabdrücke angegeben werden). "
 "Andernfalls werden alle Schlüssel in den vertrauenswürdigen Schlüsselbunden "
 "als gültige Unterzeichner für dieses Depot angesehen."
 
@@ -9941,19 +9956,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "The APT auth.conf file <filename>/etc/apt/auth.conf</filename> can be "
-#| "used to store login information in a netrc-like format with restrictive "
-#| "file permissions."
 msgid ""
 "The APT auth.conf file <filename>/etc/apt/auth.conf</filename>, and .conf "
 "files inside <filename>/etc/apt/auth.conf.d</filename> can be used to store "
 "login information in a netrc-like format with restrictive file permissions."
 msgstr ""
-"Die APT-Auth.conf-Datei <filename>/etc/apt/auth.conf</filename> kann benutzt "
+"Die APT-Auth.conf-Datei <filename>/etc/apt/auth.conf</filename> und .conf-"
+"Dateien innerhalb <filename>/etc/apt/auth.conf.d</filename> können benutzt "
 "werden, um Anmeldeinformationen in einem Netrc-ähnlichen Format mit "
-"einschränkenden Dateizugriffsrechten gespeichert."
+"beschränkten Dateizugriffsrechten zu speichern."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt_auth.conf.5.xml
@@ -10163,23 +10174,17 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid "<filename>/etc/apt/auth.conf</filename>"
 msgid "<filename>/etc/apt/auth.conf.d/*.conf</filename>"
-msgstr "<filename>/etc/apt/auth.conf</filename>"
+msgstr "<filename>/etc/apt/auth.conf.d/*.conf</filename>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt_auth.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Login information for APT sources and proxies in a netrc-like format.  "
-#| "Configuration Item: <literal>Dir::Etc::netrc</literal>."
 msgid ""
 "Login information for APT sources and proxies in a netrc-like format.  "
 "Configuration Item: <literal>Dir::Etc::netrcparts</literal>."
 msgstr ""
 "Anmeldeinformationen für APT-Quellen und -Proxys in einem Netrc-ähnlichen "
-"Format. Konfigurationselement: <literal>Dir::Etc::netrc</literal>."
+"Format. Konfigurationselement: <literal>Dir::Etc::netrcparts</literal>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_auth.conf.5.xml
