@@ -1,3 +1,16 @@
+apt (1.9.4) experimental; urgency=medium
+
+  * CMake: Pass -Werror=return-type to gcc
+  * CMake: Produce a fatal error if triehash could not be found
+  * apt.systemd.daily: Do not numerically check if intervals equal 0
+    (LP: #1840995)
+  * srvrec: Use re-entrant resolver functions
+  * Pass --abort-after=1 to dpkg when using --force-depends (Closes: #935910)
+    (LP: #1844634)
+  * Fix use of GTest to adjust for GTest 1.9
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 19 Sep 2019 11:13:47 +0200
+
 apt (1.9.3) experimental; urgency=medium
 
   * Fix segfault in pkgAcquire::Enqueue() with Acquire::Queue-Mode=access
