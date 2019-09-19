@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'i386'
+
+buildsimplenativepackage 'alpha' 'all' '1' 'unstable' 'Depends: beta'
+buildsimplenativepackage 'beta' 'all' '1' 'unstable' 
+setupaptarchive
+
+testsuccess aptget install alpha -y
+
+cat > rootdir/var/lib/dpkg/info/alpha.prerm << EOF
+#!/bin/sh
+exit 42
+EOF
+chmod 755 rootdir/var/lib/dpkg/info/alpha.prerm
+
+
+testdpkginstalled 'alpha' 'beta'
+
+
+testfailure aptget remove -y beta
+
+# Beta should not be removed because alpha failed to be removed and depends on it
+
+testdpkginstalled 'alpha' 'beta'

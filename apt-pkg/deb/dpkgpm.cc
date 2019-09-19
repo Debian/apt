@@ -1790,6 +1790,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 case Item::Remove:
 	 case Item::Purge:
 	 ADDARGC("--force-depends");
+	 ADDARGC("--abort-after=1");
 	 if (std::any_of(I, J, ItemIsEssential))
 	 {
 	    ADDARGC("--force-remove-essential");
