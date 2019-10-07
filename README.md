@@ -62,8 +62,10 @@ You can also use the Ninja generator of CMake, to do that pass
 	-G Ninja
 to the cmake invocation, and then use ninja instead of make.
 
-To compile APT, you will need the following packages
-`zlib1g-dev libbz2-dev liblzma-dev docbook-xsl doxygen libdb-dev libgtest-dev pkg-config libzstd-dev libudev-dev libsystemd-dev libseccomp-dev po4a w3m`
+To compile APT, you will need the following packages:
+```
+zlib1g-dev libbz2-dev liblzma-dev docbook-xsl doxygen libdb-dev libgtest-dev pkg-config libzstd-dev libudev-dev libsystemd-dev libseccomp-dev po4a w3m
+```
 
 The source code uses in most parts a relatively uncommon indent convention,
 namely 3 spaces with 8 space tab (see [doc/style.txt](https://anonscm.debian.org/git/apt/apt.git/tree/doc/style.txt) for more on this).
