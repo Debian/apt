@@ -147,7 +147,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 	 if (_config->FindB("APT::Get::Fix-Missing",false))
 	    PM->FixMissing();
 	 else
-	    return _error->Error(_("Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?"));
+	    return _error->Error(_("Unable to fetch some archives, maybe run apt update or try with --fix-missing?"));
       }
       Fetcher.Shutdown();
       if (_error->PendingError() == true)
@@ -334,7 +334,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       }
 
       if (Failed == true && _config->FindB("APT::Get::Fix-Missing",false) == false)
-	 return _error->Error(_("Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?"));
+	 return _error->Error(_("Unable to fetch some archives, maybe run apt update or try with --fix-missing?"));
 
       if (Transient == true && Failed == true)
 	 return _error->Error(_("--fix-missing and media swapping is not currently supported"));
