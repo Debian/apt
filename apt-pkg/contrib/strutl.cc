@@ -40,6 +40,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <wchar.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -94,6 +95,53 @@ std::string Join(std::vector<std::string> list, const std::string &sep)
       oss << *it;
    }
    return oss.str();
+}
+
+// Returns string display length honoring multi-byte characters
+size_t DisplayLength(StringView str)
+{
+   size_t len = 0;
+
+   const char *p = str.data();
+   const char *const end = str.end();
+
+   mbstate_t state{};
+   while (p < end)
+   {
+      wchar_t wch;
+      size_t res = mbrtowc(&wch, p, end - p, &state);
+      switch (res)
+      {
+      case 0:
+         // Null wide character (i.e. L'\0') - stop
+         p = end;
+         break;
+
+      case static_cast<size_t>(-1):
+         // Byte sequence is invalid. Assume that it's
+         // a single-byte single-width character.
+         len += 1;
+         p += 1;
+
+         // state is undefined in this case - reset it
+         state = {};
+
+         break;
+
+      case static_cast<size_t>(-2):
+         // Byte sequence is too short. Assume that it's
+         // an incomplete single-width character and stop.
+         len += 1;
+         p = end;
+         break;
+
+      default:
+         len += wcwidth(wch);
+         p += res;
+      }
+   }
+
+   return len;
 }
 
 }
