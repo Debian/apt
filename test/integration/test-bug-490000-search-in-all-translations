@@ -1,0 +1,107 @@
+#!/bin/sh
+
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "${TESTDIR}/framework"
+
+setupenvironment
+
+ARCH='amd64'
+DIST='unstable'
+
+PKG_NAME='foo'
+PKG_VERSION='1.0'
+
+SHORT_DESCRIPTION_EN='have you fooed today?'
+LONG_DESCRIPTION_EN="${SHORT_DESCRIPTION_EN}
+ Where there's foo, there's fire."
+
+SHORT_DESCRIPTION_ZZ='bar alter ego'
+LONG_DESCRIPTION_ZZ="${SHORT_DESCRIPTION_ZZ}
+ He who foos last foos best."
+
+configure_languages()
+{
+	{
+		echo '#clear Acquire::Languages;'
+		echo 'Acquire::Languages {'
+		for language in "$@"
+		do
+			echo "  \"${language}\";"
+		done
+		echo '};'
+	} > rootdir/etc/apt/apt.conf.d/languages.conf
+}
+
+new_translation_record()
+{
+	echo "Package: ${1:?Package name expected}"
+	echo "Description-md5: ${2:?Description-md5 expected}"
+	echo "Description-${3:?Language code expected}: ${4:?Package description expected}"
+	echo
+}
+
+str_md5sum()
+{
+	echo -n "${1:?String expected}" | md5sum | cut -d ' ' -f 1
+}
+
+configarchitecture "${ARCH}"
+
+insertpackage "${DIST}" "${PKG_NAME}" "${ARCH}" "${PKG_VERSION}" '' '' "${LONG_DESCRIPTION_EN}"
+# English translation was already added by insertpackage above
+new_translation_record "${PKG_NAME}" "$(str_md5sum "${LONG_DESCRIPTION_EN}")" 'zz' "${LONG_DESCRIPTION_ZZ}" > "aptarchive/dists/${DIST}/main/i18n/Translation-zz"
+
+configure_languages en zz
+setupaptarchive
+
+# ===========================
+#
+#            Tests
+#
+# ===========================
+
+# ----------[ apt ]----------
+
+# Test that all translations are searched, but the short
+# description is in the first configured language
+
+configure_languages en zz
+testequal "${PKG_NAME}/${DIST} ${PKG_VERSION} ${ARCH}
+  ${SHORT_DESCRIPTION_EN}
+" apt -qq search alter ego
+
+configure_languages zz en
+testequal "${PKG_NAME}/${DIST} ${PKG_VERSION} ${ARCH}
+  ${SHORT_DESCRIPTION_ZZ}
+" apt -qq search you today
+
+# Search in configured languages only
+configure_languages zz
+testempty apt -qq search where fire
+
+# Patterns are AND-ed i.e. all must match against a single
+# description translation
+configure_languages en zz
+testempty apt -qq search there best
+
+# -------[ apt-cache ]-------
+
+# Test that all translations are searched, but the short
+# description is in the first configured language
+
+configure_languages en zz
+testequal "${PKG_NAME} - ${SHORT_DESCRIPTION_EN}" aptcache search alter ego
+
+configure_languages zz en
+testequal "${PKG_NAME} - ${SHORT_DESCRIPTION_ZZ}" aptcache search you today
+
+# Search in configured languages only
+configure_languages zz
+testempty aptcache search where fire
+
+# Patterns are AND-ed i.e. all must match against a single
+# description translation
+configure_languages en zz
+testempty aptcache search there best
