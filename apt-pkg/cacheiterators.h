@@ -220,6 +220,7 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + S->ParentPkg);}
 
 	inline DescIterator DescriptionList() const;
+	DescIterator TranslatedDescriptionForLanguage(APT::StringView lang) const;
 	DescIterator TranslatedDescription() const;
 	inline DepIterator DependsList() const;
 	inline PrvIterator ProvidesList() const;

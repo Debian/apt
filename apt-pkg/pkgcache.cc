@@ -992,6 +992,23 @@ string pkgCache::PkgFileIterator::RelStr()				/*{{{*/
    return Res;
 }
 									/*}}}*/
+// VerIterator::TranslatedDescriptionForLanguage - Return a DescIter for language/*{{{*/
+// ---------------------------------------------------------------------
+/* return a DescIter for the specified language
+ */
+pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescriptionForLanguage(StringView lang) const
+{
+   for (pkgCache::DescIterator Desc = DescriptionList(); Desc.end() == false; ++Desc)
+      if (lang == Desc.LanguageCode())
+         return Desc;
+
+   if (lang == "en")
+      return TranslatedDescriptionForLanguage("");
+
+   return DescIterator();
+}
+
+									/*}}}*/
 // VerIterator::TranslatedDescription - Return the a DescIter for locale/*{{{*/
 // ---------------------------------------------------------------------
 /* return a DescIter for the current locale or the default if none is
@@ -1003,30 +1020,15 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
    for (std::vector<string>::const_iterator l = lang.begin();
 	l != lang.end(); ++l)
    {
-      pkgCache::DescIterator Desc = DescriptionList();
-      for (; Desc.end() == false; ++Desc)
-	 if (*l == Desc.LanguageCode())
-	    break;
-      if (Desc.end() == true)
-      {
-	 if (*l == "en")
-	 {
-	    Desc = DescriptionList();
-	    for (; Desc.end() == false; ++Desc)
-	       if (strcmp(Desc.LanguageCode(), "") == 0)
-		  break;
-	    if (Desc.end() == true)
-	       continue;
-	 }
-	 else
-	    continue;
-      }
-      return Desc;
+      pkgCache::DescIterator Desc = TranslatedDescriptionForLanguage(*l);
+      if (Desc.IsGood())
+         return Desc;
    }
-   for (pkgCache::DescIterator Desc = DescriptionList();
-	Desc.end() == false; ++Desc)
-      if (strcmp(Desc.LanguageCode(), "") == 0)
-	 return Desc;
+
+   pkgCache::DescIterator Desc = TranslatedDescriptionForLanguage("");
+   if (Desc.IsGood())
+      return Desc;
+
    return DescriptionList();
 }
 
