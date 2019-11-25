@@ -63,7 +63,7 @@ You can also use the Ninja generator of CMake, to do that pass
 to the cmake invocation, and then use ninja instead of make.
 
 The source code uses in most parts a relatively uncommon indent convention,
-namely 3 spaces with 8 space tab (see [doc/style.txt](https://anonscm.debian.org/git/apt/apt.git/tree/doc/style.txt) for more on this).
+namely 3 spaces with 8 space tab (see [doc/style.txt](./doc/style.txt) for more on this).
 Adhering to it avoids unnecessary code-churn destroying history (aka: `git blame`)
 and you are therefore encouraged to write patches in this style.
 Your editor can surely help you with this, for vim the settings would be
