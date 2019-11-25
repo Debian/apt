@@ -382,7 +382,7 @@ bool PackageManagerFancy::DrawStatusLine()
    if (_config->FindB("Dpkg::Progress-Fancy::Progress-Bar", true))
    {
       int padding = 4;
-      auto const progressbar_size = size.columns - padding - progress_str.size();
+      auto const progressbar_size = size.columns - padding - String::DisplayLength(progress_str);
       auto const current_percent = percentage / 100.0f;
       std::cout << " " 
                 << GetTextProgressStr(current_percent, progressbar_size)
