@@ -258,11 +258,13 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<APT::CacheFilter::PackageNameMatchesFnmatch>(aWord(node->arguments[0]));
 
    // Variable argument patterns
-   if (node->matches("?and", 0, -1))
+   if (node->matches("?and", 0, -1) || node->matches("?narrow", 0, -1))
    {
       auto pattern = std::make_unique<APT::CacheFilter::ANDMatcher>();
       for (auto &arg : node->arguments)
 	 pattern->AND(aPattern(arg).release());
+      if (node->term == "?narrow")
+	 return std::make_unique<Patterns::VersionIsAnyVersion>(std::move(pattern));
       return pattern;
    }
    if (node->matches("?or", 0, -1))
