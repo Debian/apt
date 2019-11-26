@@ -121,6 +121,9 @@ not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]
 N: There is 1 additional version. Please use the '-a' switch to see it" apt list '?narrow(?version(^1\.0$),?name(not-obsolete))'
 
 
+testsuccessequal "Listing...
+foreign/unstable 2.0 amd64
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?not(?all-versions(?version(^1)))'
 
 msgmsg "Package patterns"
 

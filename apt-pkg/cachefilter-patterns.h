@@ -260,6 +260,25 @@ struct VersionAnyMatcher : public Matcher
    }
 };
 
+struct VersionIsAllVersions : public Matcher
+{
+   std::unique_ptr<APT::CacheFilter::Matcher> base;
+   VersionIsAllVersions(std::unique_ptr<APT::CacheFilter::Matcher> base) : base(std::move(base)) {}
+   bool operator()(pkgCache::GrpIterator const &) override { return false; }
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      return (*base)(Ver);
+   }
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      for (auto Ver = Pkg.VersionList(); not Ver.end(); Ver++)
+      {
+	 if (not(*this)(Ver))
+	    return false;
+      }
+      return true;
+   }
+};
 
 struct VersionIsAnyVersion : public VersionAnyMatcher
 {
