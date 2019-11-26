@@ -5,7 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'i386' 'amd64'
 
-insertpackage 'unstable' 'available' 'all' '1.0'
+insertpackage 'unstable' 'available' 'all' '1.0' 'Section: asection'
 
 insertinstalledpackage 'manual1' 'i386' '1.0' 'Depends: automatic1'
 insertinstalledpackage 'manual2' 'i386' '1.0'
@@ -13,7 +13,8 @@ insertinstalledpackage 'manual2' 'i386' '1.0'
 insertinstalledpackage 'automatic1' 'i386' '1.0' 'Source: automatic (0)'
 insertinstalledpackage 'automatic2' 'i386' '1.0' 'Source: automatic (1)'
 
-insertinstalledpackage 'essential' 'i386' '1.0' 'Essential: yes'
+insertinstalledpackage 'essential' 'i386' '1.0' 'Essential: yes
+Section: asection'
 insertinstalledpackage 'conf-only' 'i386' '1.0' '' '' 'deinstall ok config-files'
 insertinstalledpackage 'broken' 'i386' '1.0' 'Depends: does-not-exist'
 
@@ -188,6 +189,10 @@ testsuccessequal "Listing...
 available/unstable 1.0 all
 foreign/unstable 2.0 amd64
 not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?origin(^meow$)'
+
+testsuccessequal "Listing...
+available/unstable 1.0 all
+essential/now 1.0 i386 [installed,local]" apt list '?section(asection)'
 
 testsuccessequal "Listing...
 automatic1/now 1.0 i386 [installed,local]

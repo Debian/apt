@@ -320,6 +320,16 @@ struct VersionIsOrigin : public VersionAnyMatcher
    }
 };
 
+struct VersionIsSection : public VersionAnyMatcher
+{
+   BaseRegexMatcher matcher;
+   VersionIsSection(std::string const &pattern) : matcher(pattern) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      return matcher(Ver.Section());
+   }
+};
+
 struct VersionIsSourcePackage : public VersionAnyMatcher
 {
    BaseRegexMatcher matcher;
