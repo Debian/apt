@@ -61,6 +61,17 @@
    </variablelist>
  </refsect1>
  <refsect1>
+   <title>Narrowing patterns</title>
+   <para>
+   </para>
+   <variablelist>
+     <varlistentry><term><code>?any-version(PATTERN)</code></term>
+     <listitem><para>Selects any version where the pattern matches on the version.</para>
+     <para>For example, while <code>?and(?version(1),?version(2))</code> matches a package which has one version containing 1 and one version containing 2, <code>?any-version(?and(?version(1),?version(2)))</code> restricts the <code>?and</code> to act on the same version.</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+ <refsect1>
    <title>Package patterns</title>
    <para>
    These patterns select specific packages.

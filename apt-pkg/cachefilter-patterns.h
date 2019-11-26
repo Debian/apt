@@ -260,6 +260,17 @@ struct VersionAnyMatcher : public Matcher
    }
 };
 
+
+struct VersionIsAnyVersion : public VersionAnyMatcher
+{
+   std::unique_ptr<APT::CacheFilter::Matcher> base;
+   VersionIsAnyVersion(std::unique_ptr<APT::CacheFilter::Matcher> base) : base(std::move(base)) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      return (*base)(Ver);
+   }
+};
+
 struct VersionIsArchive : public VersionAnyMatcher
 {
    BaseRegexMatcher matcher;
