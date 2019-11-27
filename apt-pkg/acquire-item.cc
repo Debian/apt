@@ -2224,6 +2224,11 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
          return;
 
    // ensures that a Release.gpg file in the lists/ is removed by the transaction
+   if (not MetaIndexFileSignature.empty())
+   {
+      DestFile = MetaIndexFileSignature;
+      MetaIndexFileSignature.clear();
+   }
    TransactionManager->TransactionStageRemoval(this, DestFile);
 
    // only allow going further if the user explicitly wants it

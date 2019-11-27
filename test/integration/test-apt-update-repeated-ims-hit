@@ -53,11 +53,13 @@ testfailure grep 'aptarchive_Release.gpg$' lists.before
 for i in $(seq 1 3); do
 	msgmsg 'Running update again does not change result' "$i"
 	testwarningmsg "$GPGERROR" apt update
+	testfileequal lists.before "$(listcurrentlistsdirectory)"
 done
 
 find rootdir/var/lib/apt/lists -name '*Release*' -delete
 msgmsg 'Running update with a repository gaining hashsums'
 testwarningmsg "$GPGERROR" apt update
+testfileequal lists.before "$(listcurrentlistsdirectory)"
 
 changetowebserver
 find aptarchive -name '*Release*' -delete
