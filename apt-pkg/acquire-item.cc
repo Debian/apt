@@ -3265,19 +3265,14 @@ void pkgAcqIndex::StageDownloadDone(string const &Message)
 
    // we need to verify the file against the current Release file again
    // on if-modfied-since hit to avoid a stale attack against us
-   if(StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+   if (StringToBool(LookupTag(Message, "IMS-Hit"), false))
    {
-      // copy FinalFile into partial/ so that we check the hash again
-      string const FinalFile = GetExistingFilename(GetFinalFileNameFromURI(Target.URI));
-      if (symlink(FinalFile.c_str(), DestFile.c_str()) != 0)
-	 _error->WarningE("pkgAcqIndex::StageDownloadDone", "Symlinking final file %s back to %s failed", FinalFile.c_str(), DestFile.c_str());
-      else
-      {
-	 EraseFileName = DestFile;
-	 Filename = DestFile;
-      }
+      Filename = GetExistingFilename(GetFinalFileNameFromURI(Target.URI));
+      EraseFileName = DestFile = flCombine(flNotFile(DestFile), flNotDir(Filename));
+      if (symlink(Filename.c_str(), DestFile.c_str()) != 0)
+	 _error->WarningE("pkgAcqIndex::StageDownloadDone", "Symlinking file %s to %s failed", Filename.c_str(), DestFile.c_str());
       Stage = STAGE_DECOMPRESS_AND_VERIFY;
-      Desc.URI = "store:" + Filename;
+      Desc.URI = "store:" + DestFile;
       QueueURI(Desc);
       SetActiveSubprocess(::URI(Desc.URI).Access);
       return;
