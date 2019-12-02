@@ -72,6 +72,26 @@ bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
 	    active_token = MACHINE;
 	 break;
       case MACHINE:
+	 // If token contains a protocol: Check it first, and strip it away if
+	 // it matches. If it does not match, ignore this stanza.
+	 // If there is no protocol, only allow https protocols.
+	 if (token.find("://") != std::string::npos)
+	 {
+	    if (not APT::String::Startswith(token, Uri.Access + "://"))
+	    {
+	       active_token = NO;
+	       break;
+	    }
+	    token.erase(0, Uri.Access.length() + 3);
+	 }
+	 else if (Uri.Access != "https" && Uri.Access != "tor+https")
+	 {
+	    if (Debug)
+	       std::clog << "MaybeAddAuth: Rejecting matching host adding '" << Uri.User << "' and '" << Uri.Password << "' for "
+			 << (std::string)Uri << " from " << NetRCFile.Name() << "as the protocol is not https" << std::endl;
+	    active_token = NO;
+	    break;
+	 }
 	 if (token.find('/') == std::string::npos)
 	 {
 	    if (Uri.Port != 0 && Uri.Host == token)
@@ -168,7 +188,7 @@ bool IsAuthorized(pkgCache::PkgFileIterator const I, std::vector<std::unique_ptr
    }
 
    // FIXME: Use the full base url
-   URI uri(std::string("http://") + I.Site() + "/");
+   URI uri(std::string("https://") + I.Site() + "/");
    for (auto &authconf : authconfs)
    {
       if (not authconf->IsOpen())
