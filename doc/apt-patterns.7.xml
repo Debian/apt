@@ -61,6 +61,23 @@
    </variablelist>
  </refsect1>
  <refsect1>
+   <title>Narrowing patterns</title>
+   <para>
+   </para>
+   <variablelist>
+     <varlistentry><term><code>?all-versions(PATTERN)</code></term>
+     <listitem><para>Selects packages where all versions match PATTERN. When matching versions instead, same as PATTERN.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?any-version(PATTERN)</code></term>
+     <listitem><para>Selects any version where the pattern matches on the version.</para>
+     <para>For example, while <code>?and(?version(1),?version(2))</code> matches a package which has one version containing 1 and one version containing 2, <code>?any-version(?and(?version(1),?version(2)))</code> restricts the <code>?and</code> to act on the same version.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?narrow(PATTERN...)</code></term>
+     <listitem><para>Selects any version matching all PATTERNs, short for<code>?any-version(?and(PATTERN...))</code>.</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+ <refsect1>
    <title>Package patterns</title>
    <para>
    These patterns select specific packages.
@@ -106,6 +123,32 @@
      </varlistentry>
    </variablelist>
  </refsect1>
+ <refsect1>
+   <title>Version patterns</title>
+   <para>
+   These patterns select specific versions of a package.
+   </para>
+   <variablelist>
+     <varlistentry><term><code>?archive(REGEX)</code></term>
+     <listitem><para>Selects versions that come from the archive that matches the specified regular expression. Archive, here, means the values after <code>a=</code> in <command>apt-cache policy</command>.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?origin(REGEX)</code></term>
+     <listitem><para>Selects versions that come from the origin that matches the specified regular expression. Origin, here, means the values after <code>o=</code> in <command>apt-cache policy</command>.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?section(REGEX)</code></term>
+     <listitem><para>Selects versions where the section matches the specified regular expression.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?source-package(REGEX)</code></term>
+     <listitem><para>Selects versions where the source package name matches the specified regular expression.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?source-version(REGEX)</code></term>
+     <listitem><para>Selects versions where the source package version matches the specified regular expression.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?version(REGEX)</code></term>
+     <listitem><para>Selects versions where the version string matching the specified regular expression.</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
 
 
  <refsect1><title>Examples</title>
@@ -146,6 +189,9 @@
       </listitem>
       <listitem>
          <para>A trailing comma is allowed in argument lists</para>
+      </listitem>
+      <listitem>
+         <para>?narrow accepts infinite arguments</para>
       </listitem>
    </itemizedlist>
  </refsect1>

@@ -6,7 +6,11 @@
  * SPDX-License-Identifier: GPL-2.0+
  */
 
+#include <config.h>
+
 #include <apt-pkg/cachefilter-patterns.h>
+
+#include <apti18n.h>
 
 namespace APT
 {
@@ -210,6 +214,12 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
 
    if (node->matches("?architecture", 1, 1))
       return std::make_unique<APT::CacheFilter::PackageArchitectureMatchesSpecification>(aWord(node->arguments[0]));
+   if (node->matches("?archive", 1, 1))
+      return std::make_unique<Patterns::VersionIsArchive>(aWord(node->arguments[0]));
+   if (node->matches("?all-versions", 1, 1))
+      return std::make_unique<Patterns::VersionIsAllVersions>(aPattern(node->arguments[0]));
+   if (node->matches("?any-version", 1, 1))
+      return std::make_unique<Patterns::VersionIsAnyVersion>(aPattern(node->arguments[0]));
    if (node->matches("?automatic", 0, 0))
       return std::make_unique<Patterns::PackageIsAutomatic>(file);
    if (node->matches("?broken", 0, 0))
@@ -232,21 +242,33 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<APT::CacheFilter::NOTMatcher>(aPattern(node->arguments[0]).release());
    if (node->matches("?obsolete", 0, 0))
       return std::make_unique<Patterns::PackageIsObsolete>();
+   if (node->matches("?origin", 1, 1))
+      return std::make_unique<Patterns::VersionIsOrigin>(aWord(node->arguments[0]));
+   if (node->matches("?section", 1, 1))
+      return std::make_unique<Patterns::VersionIsSection>(aWord(node->arguments[0]));
+   if (node->matches("?source-package", 1, 1))
+      return std::make_unique<Patterns::VersionIsSourcePackage>(aWord(node->arguments[0]));
+   if (node->matches("?source-version", 1, 1))
+      return std::make_unique<Patterns::VersionIsSourceVersion>(aWord(node->arguments[0]));
    if (node->matches("?true", 0, 0))
       return std::make_unique<APT::CacheFilter::TrueMatcher>();
    if (node->matches("?upgradable", 0, 0))
       return std::make_unique<Patterns::PackageIsUpgradable>(file);
+   if (node->matches("?version", 1, 1))
+      return std::make_unique<Patterns::VersionIsVersion>(aWord(node->arguments[0]));
    if (node->matches("?virtual", 0, 0))
       return std::make_unique<Patterns::PackageIsVirtual>();
    if (node->matches("?x-name-fnmatch", 1, 1))
       return std::make_unique<APT::CacheFilter::PackageNameMatchesFnmatch>(aWord(node->arguments[0]));
 
    // Variable argument patterns
-   if (node->matches("?and", 0, -1))
+   if (node->matches("?and", 0, -1) || node->matches("?narrow", 0, -1))
    {
       auto pattern = std::make_unique<APT::CacheFilter::ANDMatcher>();
       for (auto &arg : node->arguments)
 	 pattern->AND(aPattern(arg).release());
+      if (node->term == "?narrow")
+	 return std::make_unique<Patterns::VersionIsAnyVersion>(std::move(pattern));
       return pattern;
    }
    if (node->matches("?or", 0, -1))
@@ -271,6 +293,38 @@ std::string PatternParser::aWord(std::unique_ptr<PatternTreeParser::Node> &nodeP
       nodeP->error("Expected a word");
    return node->word.to_string();
 }
+
+namespace Patterns
+{
+
+BaseRegexMatcher::BaseRegexMatcher(std::string const &Pattern)
+{
+   pattern = new regex_t;
+   int const Res = regcomp(pattern, Pattern.c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB);
+   if (Res == 0)
+      return;
+
+   delete pattern;
+   pattern = NULL;
+   char Error[300];
+   regerror(Res, pattern, Error, sizeof(Error));
+   _error->Error(_("Regex compilation error - %s"), Error);
+}
+bool BaseRegexMatcher::operator()(const char *string)
+{
+   if (unlikely(pattern == NULL))
+      return false;
+   else
+      return regexec(pattern, string, 0, 0, 0) == 0;
+}
+BaseRegexMatcher::~BaseRegexMatcher()
+{
+   if (pattern == NULL)
+      return;
+   regfree(pattern);
+   delete pattern;
+}
+} // namespace Patterns
 
 } // namespace Internal
 

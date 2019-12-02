@@ -117,6 +117,21 @@ namespace Patterns
 {
 using namespace APT::CacheFilter;
 
+/** \brief Basic helper class for matching regex */
+class BaseRegexMatcher
+{
+   regex_t *pattern;
+
+   public:
+   BaseRegexMatcher(std::string const &string);
+   ~BaseRegexMatcher();
+   bool operator()(const char *cstring);
+   bool operator()(std::string const &string)
+   {
+      return (*this)(string.c_str());
+   }
+};
+
 struct PackageIsAutomatic : public PackageMatcher
 {
    pkgCacheFile *Cache;
@@ -227,6 +242,121 @@ struct PackageIsVirtual : public PackageMatcher
    bool operator()(pkgCache::PkgIterator const &Pkg) override
    {
       return Pkg->VersionList == 0;
+   }
+};
+
+struct VersionAnyMatcher : public Matcher
+{
+   bool operator()(pkgCache::GrpIterator const &Grp) override { return false; }
+   bool operator()(pkgCache::VerIterator const &Ver) override = 0;
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      for (auto Ver = Pkg.VersionList(); not Ver.end(); Ver++)
+      {
+         if ((*this)(Ver))
+            return true;
+      }
+      return false;
+   }
+};
+
+struct VersionIsAllVersions : public Matcher
+{
+   std::unique_ptr<APT::CacheFilter::Matcher> base;
+   VersionIsAllVersions(std::unique_ptr<APT::CacheFilter::Matcher> base) : base(std::move(base)) {}
+   bool operator()(pkgCache::GrpIterator const &) override { return false; }
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      return (*base)(Ver);
+   }
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      for (auto Ver = Pkg.VersionList(); not Ver.end(); Ver++)
+      {
+	 if (not(*this)(Ver))
+	    return false;
+      }
+      return true;
+   }
+};
+
+struct VersionIsAnyVersion : public VersionAnyMatcher
+{
+   std::unique_ptr<APT::CacheFilter::Matcher> base;
+   VersionIsAnyVersion(std::unique_ptr<APT::CacheFilter::Matcher> base) : base(std::move(base)) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      return (*base)(Ver);
+   }
+};
+
+struct VersionIsArchive : public VersionAnyMatcher
+{
+   BaseRegexMatcher matcher;
+   VersionIsArchive(std::string const &pattern) : matcher(pattern) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      for (auto VF = Ver.FileList(); not VF.end(); VF++)
+      {
+	 if (VF.File().Archive() && matcher(VF.File().Archive()))
+	    return true;
+      }
+      return false;
+   }
+};
+
+struct VersionIsOrigin : public VersionAnyMatcher
+{
+   BaseRegexMatcher matcher;
+   VersionIsOrigin(std::string const &pattern) : matcher(pattern) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      for (auto VF = Ver.FileList(); not VF.end(); VF++)
+      {
+	 if (VF.File().Origin() && matcher(VF.File().Origin()))
+	    return true;
+      }
+      return false;
+   }
+};
+
+struct VersionIsSection : public VersionAnyMatcher
+{
+   BaseRegexMatcher matcher;
+   VersionIsSection(std::string const &pattern) : matcher(pattern) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      return matcher(Ver.Section());
+   }
+};
+
+struct VersionIsSourcePackage : public VersionAnyMatcher
+{
+   BaseRegexMatcher matcher;
+   VersionIsSourcePackage(std::string const &pattern) : matcher(pattern) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      return matcher(Ver.SourcePkgName());
+   }
+};
+
+struct VersionIsSourceVersion : public VersionAnyMatcher
+{
+   BaseRegexMatcher matcher;
+   VersionIsSourceVersion(std::string const &pattern) : matcher(pattern) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      return matcher(Ver.SourceVerStr());
+   }
+};
+
+struct VersionIsVersion : public VersionAnyMatcher
+{
+   BaseRegexMatcher matcher;
+   VersionIsVersion(std::string const &pattern) : matcher(pattern) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      return matcher(Ver.VerStr());
    }
 };
 } // namespace Patterns
