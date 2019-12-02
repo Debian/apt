@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.9.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-09-13 10:38+0200\n"
+"POT-Creation-Date: 2019-12-02 18:18+0100\n"
 "PO-Revision-Date: 2019-08-15 10:22+0200\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -9992,9 +9992,14 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt_auth.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "<literal>machine</literal> <replaceable>hostname</replaceable>[:"
+#| "<replaceable>port</replaceable>][/<replaceable>path</replaceable>]"
 msgid ""
-"<literal>machine</literal> <replaceable>hostname</replaceable>[:"
-"<replaceable>port</replaceable>][/<replaceable>path</replaceable>]"
+"<literal>machine</literal> <replaceable>[protocol://]</"
+"replaceable><replaceable>hostname</replaceable>[:<replaceable>port</"
+"replaceable>][/<replaceable>path</replaceable>]"
 msgstr ""
 "<literal>machine</literal> <replaceable>Rechnername</replaceable>[:"
 "<replaceable>Port</replaceable>][/<replaceable>Pfad</replaceable>]"
@@ -10025,6 +10030,12 @@ msgstr ""
 "Kürzel verarbeitet. Dies endet, wenn das Dateiende erreicht wurde oder ein "
 "anderes <emphasis><literal>machine</literal></emphasis>-Kürzel auftritt."
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt_auth.conf.5.xml
+msgid ""
+"If protocol is not specified, the entry only matches https and tor+https."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt_auth.conf.5.xml
 msgid "<literal>login</literal> <replaceable>name</replaceable>"
@@ -10052,14 +10063,16 @@ msgstr "Beispiel"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: apt_auth.conf.5.xml
-#, no-wrap
-msgid "deb http://example.org/debian &debian-stable-codename; main"
+#, fuzzy, no-wrap
+#| msgid "deb http://example.org/debian &debian-stable-codename; main"
+msgid "deb https://example.org/debian &debian-stable-codename; main"
 msgstr "deb http://example.org/debian &debian-stable-codename; main"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: apt_auth.conf.5.xml
-#, no-wrap
-msgid "deb http://apt:debian@example.org/debian &debian-stable-codename; main"
+#, fuzzy, no-wrap
+#| msgid "deb http://apt:debian@example.org/debian &debian-stable-codename; main"
+msgid "deb https://apt:debian@example.org/debian &debian-stable-codename; main"
 msgstr "deb http://apt:debian@example.org/debian &debian-stable-codename; main"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
@@ -10094,9 +10107,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: apt_auth.conf.5.xml
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "machine example.org:80 login apt password debian\n"
+#| "machine example.org/deb/ login apt password debian\n"
+#| "machine example.org/ubuntu login apt password debian\n"
+#| "machine example.orga login apt password debian\n"
+#| "machine example.net login apt password debian\n"
 msgid ""
-"machine example.org:80 login apt password debian\n"
+"machine example.org:443 login apt password debian\n"
 "machine example.org/deb/ login apt password debian\n"
 "machine example.org/ubuntu login apt password debian\n"
 "machine example.orga login apt password debian\n"
@@ -10157,6 +10176,15 @@ msgstr ""
 "<literal>machine</literal>-Kürzel mit demselben Rechnernamen vermeiden, "
 "falls Sie aber mehrere benötigen, sollte für alle ein Pfad im "
 "<literal>machine</literal>-Kürzel angegeben werden."
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt_auth.conf.5.xml
+msgid ""
+"Login information in auth.conf are more flexible than those in sources.list. "
+"For example, login information can be specified for parts of a repository "
+"only, or if the sources.list entry redirects elsewhere, login information "
+"for the redirect destination can be supplied."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt_auth.conf.5.xml
@@ -11187,6 +11215,54 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-patterns.7.xml
+msgid "Narrowing patterns"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?all-versions(PATTERN)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects packages where all versions match PATTERN. When matching versions "
+"instead, same as PATTERN."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?any-version(PATTERN)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects any version where the pattern matches on the version."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"For example, while <code>?and(?version(1),?version(2))</code> matches a "
+"package which has one version containing 1 and one version containing 2, "
+"<code>?any-version(?and(?version(1),?version(2)))</code> restricts the "
+"<code>?and</code> to act on the same version."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?narrow(PATTERN...)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects any version matching all PATTERNs, short for<code>?any-version(?"
+"and(PATTERN...))</code>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
 msgid "Package patterns"
 msgstr ""
 
@@ -11322,6 +11398,91 @@ msgid ""
 "something depends on that name."
 msgstr ""
 
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "Version &apt-product-version;"
+msgid "Version patterns"
+msgstr "Version &apt-product-version;"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+msgid "These patterns select specific versions of a package."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?archive(REGEX)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions that come from the archive that matches the specified "
+"regular expression. Archive, here, means the values after <code>a=</code> in "
+"<command>apt-cache policy</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?origin(REGEX)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions that come from the origin that matches the specified "
+"regular expression. Origin, here, means the values after <code>o=</code> in "
+"<command>apt-cache policy</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?section(REGEX)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions where the section matches the specified regular expression."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?source-package(REGEX)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions where the source package name matches the specified regular "
+"expression."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?source-version(REGEX)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions where the source package version matches the specified "
+"regular expression."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?version(REGEX)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions where the version string matching the specified regular "
+"expression."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
 msgid "<code>apt remove ?garbage</code>"
@@ -11396,6 +11557,11 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
 #: apt-patterns.7.xml
 msgid "A trailing comma is allowed in argument lists"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid "?narrow accepts infinite arguments"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
