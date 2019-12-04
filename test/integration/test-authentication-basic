@@ -96,6 +96,8 @@ password hunter2"
 	if [ "$protocol" = "https" ]; then
 		testauthsuccess "$1"
 	else
+		testfailure apthelper download-file "${1}/bash" ./downloaded/bash
+		testsuccessequal "W: ${1}/bash: ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/auth.conf: Credentials for localhost match, but the protocol is not encrypted. Annotate with http:// to use." grep "Credentials.*match" rootdir/tmp/testfailure.output
 		testauthfailure "$1"
 	fi
 

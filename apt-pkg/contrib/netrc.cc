@@ -11,6 +11,7 @@
    ##################################################################### */
 									/*}}}*/
 #include <config.h>
+#include <apti18n.h>
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
@@ -47,6 +48,8 @@ bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
    std::string line;
    while (NetRCFile.Eof() == false || line.empty() == false)
    {
+      bool protocolSpecified = false;
+
       if (line.empty())
       {
 	 if (NetRCFile.ReadLine(line) == false)
@@ -75,7 +78,8 @@ bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
 	 // If token contains a protocol: Check it first, and strip it away if
 	 // it matches. If it does not match, ignore this stanza.
 	 // If there is no protocol, only allow https protocols.
-	 if (token.find("://") != std::string::npos)
+	 protocolSpecified = token.find("://") != std::string::npos;
+	 if (protocolSpecified)
 	 {
 	    if (not APT::String::Startswith(token, Uri.Access + "://"))
 	    {
@@ -84,14 +88,7 @@ bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
 	    }
 	    token.erase(0, Uri.Access.length() + 3);
 	 }
-	 else if (Uri.Access != "https" && Uri.Access != "tor+https")
-	 {
-	    if (Debug)
-	       std::clog << "MaybeAddAuth: Rejecting matching host adding '" << Uri.User << "' and '" << Uri.Password << "' for "
-			 << (std::string)Uri << " from " << NetRCFile.Name() << "as the protocol is not https" << std::endl;
-	    active_token = NO;
-	    break;
-	 }
+
 	 if (token.find('/') == std::string::npos)
 	 {
 	    if (Uri.Port != 0 && Uri.Host == token)
@@ -107,6 +104,15 @@ bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
 	       active_token = GOOD_MACHINE;
 	    else
 	       active_token = NO;
+	 }
+
+	 if (active_token == GOOD_MACHINE && not protocolSpecified)
+	 {
+	    if (Uri.Access != "https" && Uri.Access != "tor+https")
+	    {
+	       _error->Warning(_("%s: Credentials for %s match, but the protocol is not encrypted. Annotate with %s:// to use."), NetRCFile.Name().c_str(), token.c_str(), Uri.Access.c_str());
+	       active_token = NO;
+	    }
 	 }
 	 break;
       case GOOD_MACHINE:

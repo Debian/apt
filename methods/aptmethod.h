@@ -525,6 +525,7 @@ class aptAuthConfMethod : public aptMethod
       if (uri.User.empty() == false || uri.Password.empty() == false)
 	 return true;
 
+      _error->PushToStack();
       for (auto &authconf : authconfs)
       {
 	 if (authconf->IsOpen() == false)
@@ -537,6 +538,17 @@ class aptAuthConfMethod : public aptMethod
 
 	 result &= MaybeAddAuth(*authconf, uri);
       }
+
+      if (not _error->empty())
+      {
+	 std::string message;
+	 while (not _error->empty())
+	 {
+	    _error->PopMessage(message);
+	    Warning("%s", message.c_str());
+	 }
+      }
+      _error->RevertToStack();
 
       return result;
    }
