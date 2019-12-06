@@ -70,3 +70,7 @@ testfailureequal "E: Invalid operator '>' at offset 5, did you mean '>>' or '>='
 
 msgmsg "Unsupported dependency type"
 testfailureequal "E: Problem parsing dependency: Recommends: foo" aptget satisfy 'Recommends: foo' -s
+
+
+msgmsg "Empty dependency"
+testfailureequal "E: Problem parsing dependency: " aptget satisfy '' -s

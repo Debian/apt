@@ -693,7 +693,7 @@ bool DoBuildDep(CommandLine &CmdL)
 
 	 // Reject '>' and '<' as operators, as they have strange meanings.
 	 bool insideVersionRestriction = false;
-	 for (auto C = Start; C + 1 != Stop; C++)
+	 for (auto C = Start; C + 1 < Stop; C++)
 	 {
 	    if (*C == '(')
 	       insideVersionRestriction = true;
