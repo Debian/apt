@@ -10,6 +10,13 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL=0
 
 export CTEST_OUTPUT_ON_FAILURE=1
 
+
+ifneq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
+	configure_test_flags = -DWITH_TESTS=OFF
+else
+	configure_test_flags =
+endif
+
 %:
 	dh $@ --buildsystem=cmake+ninja
 
@@ -40,5 +47,5 @@ override_dh_systemd_start:
 override_dh_auto_configure-arch: flags=-DWITH_DOC=OFF
 override_dh_auto_configure-indep: flags=-DWITH_DOC=ON
 override_dh_auto_configure-arch override_dh_auto_configure-indep:
-	dh_auto_configure -- $(flags)
+	dh_auto_configure -- $(flags) $(configure_test_flags)
 
