@@ -8,6 +8,7 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
@@ -415,9 +416,9 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 static std::string Sha1FromString(std::string const &input)		/*{{{*/
 {
    // XXX: move to hashes.h: HashString::FromString() ?
-   SHA1Summation sha1;
+   Hashes sha1(Hashes::SHA1SUM);
    sha1.Add(input.c_str(), input.length());
-   return sha1.Result().Value();
+   return sha1.GetHashString(Hashes::SHA1SUM).HashValue();
 }
 									/*}}}*/
 bool ShowSrcPackage(CommandLine &CmdL)					/*{{{*/

@@ -17,8 +17,8 @@
 #include <apt-pkg/crc-16.h>
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/macros.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile-keys.h>
@@ -298,10 +298,10 @@ APT::StringView debListParser::Description_md5()
       if (desc == "\n")
 	 return StringView();
 
-      MD5Summation md5;
+      Hashes md5(Hashes::MD5SUM);
       md5.Add(desc.data(), desc.size());
       md5.Add("\n");
-      MD5Buffer = md5.Result();
+      MD5Buffer = md5.GetHashString(Hashes::MD5SUM).HashValue();
       return StringView(MD5Buffer);
    }
    else if (likely(value.size() == 32))

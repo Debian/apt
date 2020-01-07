@@ -493,9 +493,9 @@ bool PackagesWriter::DoPackage(string FileName)
 
    string DescriptionMd5;
    if (LongDescription == false) {
-      MD5Summation descmd5;
+      Hashes descmd5(Hashes::MD5SUM);
       descmd5.Add(desc.c_str());
-      DescriptionMd5 = descmd5.Result().Value();
+      DescriptionMd5 = descmd5.GetHashString(Hashes::MD5SUM).HashValue();
       Changes.push_back(pkgTagSection::Tag::Rewrite("Description-md5", DescriptionMd5));
       if (TransWriter != NULL)
 	 TransWriter->DoPackage(Package, desc, DescriptionMd5);

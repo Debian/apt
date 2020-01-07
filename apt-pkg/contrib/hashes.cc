@@ -102,27 +102,27 @@ std::string HashString::GetHashForFile(std::string filename) const      /*{{{*/
    FileFd Fd(filename, FileFd::ReadOnly);
    if(strcasecmp(Type.c_str(), "MD5Sum") == 0)
    {
-      MD5Summation MD5;
+      Hashes MD5(Hashes::MD5SUM);
       MD5.AddFD(Fd);
-      fileHash = (std::string)MD5.Result();
+      fileHash = MD5.GetHashString(Hashes::MD5SUM).Hash;
    }
    else if (strcasecmp(Type.c_str(), "SHA1") == 0)
    {
-      SHA1Summation SHA1;
+      Hashes SHA1(Hashes::SHA1SUM);
       SHA1.AddFD(Fd);
-      fileHash = (std::string)SHA1.Result();
+      fileHash = SHA1.GetHashString(Hashes::SHA1SUM).Hash;
    }
    else if (strcasecmp(Type.c_str(), "SHA256") == 0)
    {
-      SHA256Summation SHA256;
+      Hashes SHA256(Hashes::SHA256SUM);
       SHA256.AddFD(Fd);
-      fileHash = (std::string)SHA256.Result();
+      fileHash = SHA256.GetHashString(Hashes::SHA256SUM).Hash;
    }
    else if (strcasecmp(Type.c_str(), "SHA512") == 0)
    {
-      SHA512Summation SHA512;
+      Hashes SHA512(Hashes::SHA512SUM);
       SHA512.AddFD(Fd);
-      fileHash = (std::string)SHA512.Result();
+      fileHash = SHA512.GetHashString(Hashes::SHA512SUM).Hash;
    }
    else if (strcasecmp(Type.c_str(), "Checksum-FileSize") == 0)
       strprintf(fileHash, "%llu", Fd.FileSize());
@@ -412,6 +412,15 @@ HashStringList Hashes::GetHashStringList()
    hashes.FileSize(d->FileSize);
 
    return hashes;
+}
+
+HashString Hashes::GetHashString(SupportedHashes hash)
+{
+   for (auto & Algo : Algorithms)
+      if (hash == Algo.ourAlgo)
+	 return HashString(Algo.name, HexDigest(d->hd, Algo.gcryAlgo));
+
+   abort();
 }
 Hashes::Hashes() : d(new PrivateHashes(~0)) { }
 Hashes::Hashes(unsigned int const Hashes) : d(new PrivateHashes(Hashes)) {}

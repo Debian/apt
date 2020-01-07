@@ -184,6 +184,10 @@ class Hashes
    bool Add(const unsigned char * const Data, unsigned long long const Size) APT_NONNULL(2);
    inline bool Add(const char * const Data) APT_NONNULL(2)
    {return Add(reinterpret_cast<unsigned char const *>(Data),strlen(Data));};
+   inline bool Add(const char *const Data, unsigned long long const Size) APT_NONNULL(2)
+   {
+      return Add(reinterpret_cast<unsigned char const *>(Data), Size);
+   };
    inline bool Add(const unsigned char * const Beg,const unsigned char * const End) APT_NONNULL(2,3)
    {return Add(Beg,End-Beg);};
 
@@ -193,6 +197,9 @@ class Hashes
    bool AddFD(FileFd &Fd,unsigned long long Size = 0);
 
    HashStringList GetHashStringList();
+
+   /** Get a specific hash. It is an error to use a hash that was not hashes */
+   HashString GetHashString(SupportedHashes hash);
 
    /** create a Hashes object to calculate all supported hashes
     *
