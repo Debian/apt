@@ -79,6 +79,7 @@
 	#define APT_NORETURN	__attribute__((noreturn))
 	#define APT_PRINTF(n)	__attribute__((format(printf, n, n + 1)))
 	#define APT_WEAK        __attribute__((weak));
+	#define APT_UNUSED      __attribute__((unused))
 #else
 	#define APT_DEPRECATED
 	#define APT_DEPRECATED_MSG
@@ -87,6 +88,7 @@
 	#define APT_NORETURN
 	#define APT_PRINTF(n)
 	#define APT_WEAK
+	#define APT_UNUSED
 #endif
 
 #if APT_GCC_VERSION > 0x0302
