@@ -29,6 +29,7 @@
 #define APT_GCC_VERSION 0
 #endif
 
+#ifdef APT_COMPILING_APT
 /* likely() and unlikely() can be used to mark boolean expressions
    as (not) likely true which will help the compiler to optimise */
 #if APT_GCC_VERSION >= 0x0300
@@ -37,6 +38,7 @@
 #else
 	#define likely(x)	(x)
 	#define unlikely(x)	(x)
+#endif
 #endif
 
 #if APT_GCC_VERSION >= 0x0300
