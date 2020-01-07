@@ -381,7 +381,7 @@ const char *pkgCache::Priority(unsigned char Prio)
 {
    const char *Mapping[] = {0,_("required"),_("important"),_("standard"),
                             _("optional"),_("extra")};
-   if (Prio < _count(Mapping))
+   if (Prio < APT_ARRAY_SIZE(Mapping))
       return Mapping[Prio];
    return 0;
 }

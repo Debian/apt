@@ -83,7 +83,8 @@ static constexpr Digest Digests[] = {
 static Digest FindDigest(std::string const & Digest)
 {
    int id = atoi(Digest.c_str());
-   if (id >= 0 && static_cast<unsigned>(id) < _count(Digests)) {
+   if (id >= 0 && static_cast<unsigned>(id) < APT_ARRAY_SIZE(Digests))
+   {
       return Digests[id];
    } else {
       return Digests[0];
