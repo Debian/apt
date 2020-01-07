@@ -29,9 +29,11 @@ TEST(HashSumsTest,SummationStrings)
 {
 #define EXPECT_SUM(Summation, In, Out) \
    { \
+      APT_IGNORE_DEPRECATED_PUSH \
       Summation Sum; \
       Sum.Add(In); \
       EXPECT_EQ(Sum.Result().Value(), Out) << #Summation << " for '" << In << "'"; \
+      APT_IGNORE_DEPRECATED_POP \
    }
 
    // From  FIPS PUB 180-1
@@ -80,6 +82,7 @@ TEST(HashSumsTest,SummationStrings)
 }
 TEST(HashSumsTest, Mill)
 {
+APT_IGNORE_DEPRECATED_PUSH
    SHA1Summation Sum1;
 
    const unsigned char As[] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -100,6 +103,7 @@ TEST(HashSumsTest, Mill)
    }
 
    EXPECT_EQ("34aa973cd4c4daa4f61eeb2bdbad27316534016f", Sum1.Result().Value());
+APT_IGNORE_DEPRECATED_POP
 }
 
 static void getSummationString(char const * const type, std::string &sum)
@@ -146,20 +150,20 @@ TEST(HashSumsTest, FileBased)
    std::string summation;
 
    getSummationString("md5sum", summation);
-   MD5SumValue md5(summation);
-   EXPECT_EQ(md5.Value(), summation);
+   HashString md5("MD5Sum", summation);
+   EXPECT_EQ(md5.HashValue(), summation);
 
    getSummationString("sha1sum", summation);
-   SHA1SumValue sha1(summation);
-   EXPECT_EQ(sha1.Value(), summation);
+   HashString sha1("SHA1", summation);
+   EXPECT_EQ(sha1.HashValue(), summation);
 
    getSummationString("sha256sum", summation);
-   SHA256SumValue sha256(summation);
-   EXPECT_EQ(sha256.Value(), summation);
+   HashString sha256("SHA256", summation);
+   EXPECT_EQ(sha256.HashValue(), summation);
 
    getSummationString("sha512sum", summation);
-   SHA512SumValue sha512(summation);
-   EXPECT_EQ(sha512.Value(), summation);
+   HashString sha512("SHA512", summation);
+   EXPECT_EQ(sha512.HashValue(), summation);
 
    FileFd fd("/etc/os-release", FileFd::ReadOnly);
    EXPECT_TRUE(fd.IsOpen());
@@ -172,10 +176,10 @@ TEST(HashSumsTest, FileBased)
       HashStringList list = hashes.GetHashStringList();
       EXPECT_FALSE(list.empty());
       EXPECT_EQ(5u, list.size());
-      EXPECT_EQ(md5.Value(), list.find("MD5Sum")->HashValue());
-      EXPECT_EQ(sha1.Value(), list.find("SHA1")->HashValue());
-      EXPECT_EQ(sha256.Value(), list.find("SHA256")->HashValue());
-      EXPECT_EQ(sha512.Value(), list.find("SHA512")->HashValue());
+      EXPECT_EQ(md5.HashValue(), list.find("MD5Sum")->HashValue());
+      EXPECT_EQ(sha1.HashValue(), list.find("SHA1")->HashValue());
+      EXPECT_EQ(sha256.HashValue(), list.find("SHA256")->HashValue());
+      EXPECT_EQ(sha512.HashValue(), list.find("SHA512")->HashValue());
       EXPECT_EQ(FileSize, list.find("Checksum-FileSize")->HashValue());
    }
    unsigned long long sz = fd.FileSize();
@@ -186,10 +190,10 @@ TEST(HashSumsTest, FileBased)
       HashStringList list = hashes.GetHashStringList();
       EXPECT_FALSE(list.empty());
       EXPECT_EQ(5u, list.size());
-      EXPECT_EQ(md5.Value(), list.find("MD5Sum")->HashValue());
-      EXPECT_EQ(sha1.Value(), list.find("SHA1")->HashValue());
-      EXPECT_EQ(sha256.Value(), list.find("SHA256")->HashValue());
-      EXPECT_EQ(sha512.Value(), list.find("SHA512")->HashValue());
+      EXPECT_EQ(md5.HashValue(), list.find("MD5Sum")->HashValue());
+      EXPECT_EQ(sha1.HashValue(), list.find("SHA1")->HashValue());
+      EXPECT_EQ(sha256.HashValue(), list.find("SHA256")->HashValue());
+      EXPECT_EQ(sha512.HashValue(), list.find("SHA512")->HashValue());
       EXPECT_EQ(FileSize, list.find("Checksum-FileSize")->HashValue());
    }
    fd.Seek(0);
@@ -199,10 +203,10 @@ TEST(HashSumsTest, FileBased)
       HashStringList list = hashes.GetHashStringList();
       EXPECT_FALSE(list.empty());
       EXPECT_EQ(3u, list.size());
-      EXPECT_EQ(md5.Value(), list.find("MD5Sum")->HashValue());
+      EXPECT_EQ(md5.HashValue(), list.find("MD5Sum")->HashValue());
       EXPECT_EQ(NULL, list.find("SHA1"));
       EXPECT_EQ(NULL, list.find("SHA256"));
-      EXPECT_EQ(sha512.Value(), list.find("SHA512")->HashValue());
+      EXPECT_EQ(sha512.HashValue(), list.find("SHA512")->HashValue());
       EXPECT_EQ(FileSize, list.find("Checksum-FileSize")->HashValue());
       fd.Seek(0);
       Hashes hashes2(list);
@@ -210,39 +214,39 @@ TEST(HashSumsTest, FileBased)
       list = hashes2.GetHashStringList();
       EXPECT_FALSE(list.empty());
       EXPECT_EQ(3u, list.size());
-      EXPECT_EQ(md5.Value(), list.find("MD5Sum")->HashValue());
+      EXPECT_EQ(md5.HashValue(), list.find("MD5Sum")->HashValue());
       EXPECT_EQ(NULL, list.find("SHA1"));
       EXPECT_EQ(NULL, list.find("SHA256"));
-      EXPECT_EQ(sha512.Value(), list.find("SHA512")->HashValue());
+      EXPECT_EQ(sha512.HashValue(), list.find("SHA512")->HashValue());
       EXPECT_EQ(FileSize, list.find("Checksum-FileSize")->HashValue());
    }
    fd.Seek(0);
    {
-      MD5Summation MD5;
+      Hashes MD5(Hashes::MD5SUM);
       MD5.AddFD(fd.Fd());
-      EXPECT_EQ(md5.Value(), MD5.Result().Value());
+      EXPECT_EQ(md5, MD5.GetHashString(Hashes::MD5SUM));
    }
    fd.Seek(0);
    {
-      SHA1Summation SHA1;
+      Hashes SHA1(Hashes::SHA1SUM);
       SHA1.AddFD(fd.Fd());
-      EXPECT_EQ(sha1.Value(), SHA1.Result().Value());
+      EXPECT_EQ(sha1, SHA1.GetHashString(Hashes::SHA1SUM));
    }
    fd.Seek(0);
    {
-      SHA256Summation SHA2;
+      Hashes SHA2(Hashes::SHA256SUM);
       SHA2.AddFD(fd.Fd());
-      EXPECT_EQ(sha256.Value(), SHA2.Result().Value());
+      EXPECT_EQ(sha256, SHA2.GetHashString(Hashes::SHA256SUM));
    }
    fd.Seek(0);
    {
-      SHA512Summation SHA2;
+      Hashes SHA2(Hashes::SHA512SUM);
       SHA2.AddFD(fd.Fd());
-      EXPECT_EQ(sha512.Value(), SHA2.Result().Value());
+      EXPECT_EQ(sha512, SHA2.GetHashString(Hashes::SHA512SUM));
    }
    fd.Close();
 
-   HashString sha2file("SHA512", sha512.Value());
+   HashString sha2file("SHA512", sha512.HashValue());
    EXPECT_TRUE(sha2file.VerifyFile("/etc/os-release"));
    HashString sha2wrong("SHA512", "00000000000");
    EXPECT_FALSE(sha2wrong.VerifyFile("/etc/os-release"));
@@ -251,9 +255,9 @@ TEST(HashSumsTest, FileBased)
    EXPECT_NE(sha2file, sha2wrong);
    EXPECT_TRUE(sha2file != sha2wrong);
 
-   HashString sha2big("SHA256", sha256.Value());
+   HashString sha2big("SHA256", sha256.HashValue());
    EXPECT_TRUE(sha2big.VerifyFile("/etc/os-release"));
-   HashString sha2small("sha256:" + sha256.Value());
+   HashString sha2small("sha256:" + sha256.HashValue());
    EXPECT_TRUE(sha2small.VerifyFile("/etc/os-release"));
    EXPECT_EQ(sha2big, sha2small);
    EXPECT_TRUE(sha2big == sha2small);

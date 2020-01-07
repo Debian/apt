@@ -171,12 +171,14 @@ class PrivateHashes;
 class Hashes
 {
    PrivateHashes * const d;
+APT_IGNORE_DEPRECATED_PUSH
    /* TODO: those will disappear in the future as it is hard to add new ones this way.
     * Use Add* to build the results and get them via GetHashStringList() instead */
    MD5Summation MD5 APT_PKG_590("Remove");
    SHA1Summation SHA1 APT_PKG_590("Remove");
    SHA256Summation SHA256 APT_PKG_590("Remove");
    SHA512Summation SHA512 APT_PKG_590("Remove");
+APT_IGNORE_DEPRECATED_POP
 
    public:
    static const int UntilEOF = 0;

@@ -29,7 +29,7 @@
 
 typedef HashSumValue<128> MD5SumValue;
 
-class MD5Summation : public SummationImplementation
+class APT_DEPRECATED_MSG("Use Hashes instead") APT_PKG_590("Remove") MD5Summation : public SummationImplementation
 {
    uint32_t Buf[4];
    unsigned char Bytes[2*4];
