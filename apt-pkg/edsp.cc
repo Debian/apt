@@ -94,7 +94,7 @@ static bool WriteScenarioVersion(FileFd &output, pkgCache::PkgIterator const &Pk
 // WriteScenarioDependency						/*{{{*/
 static bool WriteScenarioDependency(FileFd &output, pkgCache::VerIterator const &Ver, bool const OnlyCritical)
 {
-   std::array<std::string, _count(DepMap)> dependencies;
+   std::array<std::string, APT_ARRAY_SIZE(DepMap)> dependencies;
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {
@@ -141,7 +141,7 @@ static bool WriteScenarioLimitedDependency(FileFd &output,
 					  std::vector<bool> const &pkgset,
 					  bool const OnlyCritical)
 {
-   std::array<std::string, _count(DepMap)> dependencies;
+   std::array<std::string, APT_ARRAY_SIZE(DepMap)> dependencies;
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {

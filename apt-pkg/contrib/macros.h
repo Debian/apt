@@ -46,7 +46,7 @@
 
 /* Useful count macro, use on an array of things and it will return the
    number of items in the array */
-#define _count(a) (sizeof(a)/sizeof(a[0]))
+#define APT_ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 // Flag Macros
 #define	FLAG(f)			(1L << (f))
