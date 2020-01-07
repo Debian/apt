@@ -173,7 +173,7 @@ APT works in its internal resolver in two stages: First all packages are visited
 and marked for installation, keep back or removal. Option `Debug::pkgDepCache::Marker`
 shows this. This also decides which packages are to be installed to satisfy dependencies,
 which can be seen by `Debug::pkgDepCache::AutoInstall`. After this is done, we might
-be in a situation in which two packages want to be installed, but only on of them can be.
+be in a situation in which two packages want to be installed, but only one of them can be.
 It is the job of the `pkgProblemResolver` to decide which of two packages 'wins' and can
 therefore decide what has to happen. You can see the contenders as well as their fight and
 the resulting resolution with `Debug::pkgProblemResolver`.
@@ -190,7 +190,7 @@ webserver for simpler and more controlled testing.
 
 ### Installation order
 
-Dependencies are solved, packages downloaded: Everything read for the installation!
+Dependencies are solved, packages downloaded: Everything is ready for the installation!
 The last step in the chain is often forgotten, but still very important:
 Packages have to be installed in a particular order so that their dependencies are
 satisfied, but at the same time you don't want to install very important and optional
