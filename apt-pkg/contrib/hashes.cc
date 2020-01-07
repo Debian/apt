@@ -15,6 +15,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/macros.h>
 
 #include <algorithm>
 #include <iostream>
@@ -336,7 +337,7 @@ bool Hashes::Add(const unsigned char * const Data, unsigned long long const Size
 }
 bool Hashes::AddFD(int const Fd,unsigned long long Size)
 {
-   unsigned char Buf[64*64];
+   unsigned char Buf[APT_BUFFER_SIZE];
    bool const ToEOF = (Size == UntilEOF);
    while (Size != 0 || ToEOF)
    {
@@ -355,7 +356,7 @@ bool Hashes::AddFD(int const Fd,unsigned long long Size)
 }
 bool Hashes::AddFD(FileFd &Fd,unsigned long long Size)
 {
-   unsigned char Buf[64*64];
+   unsigned char Buf[APT_BUFFER_SIZE];
    bool const ToEOF = (Size == 0);
    while (Size != 0 || ToEOF)
    {
