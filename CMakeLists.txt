@@ -11,6 +11,7 @@ include_directories(${PROJECT_BINARY_DIR}/include)
 enable_testing()
 
 option(WITH_DOC "Build documentation." ON)
+option(WITH_TESTS "Build tests" ON)
 option(USE_NLS "Localisation support." ON)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
