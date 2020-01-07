@@ -19,10 +19,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/gpgv.h>
 #include <apt-pkg/hashes.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/sha1.h>
-#include <apt-pkg/sha2.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>
 
