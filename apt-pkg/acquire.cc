@@ -691,12 +691,12 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
    CheckDropPrivsMustBeDisabled(*this);
 
    Running = true;
-   
-   for (Queue *I = Queues; I != 0; I = I->Next)
-      I->Startup();
-   
+
    if (Log != 0)
       Log->Start();
+
+   for (Queue *I = Queues; I != 0; I = I->Next)
+      I->Startup();
    
    bool WasCancelled = false;
 
