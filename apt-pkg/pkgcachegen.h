@@ -70,7 +70,6 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    };
 
    std::unordered_set<string_pointer, hash> strMixed;
-   std::unordered_set<string_pointer, hash> strPkgNames;
    std::unordered_set<string_pointer, hash> strVersions;
    std::unordered_set<string_pointer, hash> strSections;
 #endif
@@ -124,7 +123,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 
    public:
 
-   enum StringType { MIXED, PKGNAME, VERSIONNUMBER, SECTION };
+   enum StringType { MIXED, VERSIONNUMBER, SECTION };
    map_stringitem_t StoreString(StringType const type, const char * S, unsigned int const Size);
 
    inline map_stringitem_t StoreString(enum StringType const type, APT::StringView S) {return StoreString(type, S.data(),S.length());};
@@ -179,7 +178,7 @@ class APT_HIDDEN pkgCacheListParser
    void * const d;
 
    protected:
-
+   inline bool NewGroup(pkgCache::GrpIterator &Grp, APT::StringView Name) { return Owner->NewGroup(Grp, Name); }
    inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, const char *S,unsigned int Size) {return Owner->StoreString(type, S, Size);};
    inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, APT::StringView S) {return Owner->StoreString(type, S);};
    inline map_stringitem_t WriteString(APT::StringView S) {return Owner->WriteStringInMap(S.data(), S.size());};

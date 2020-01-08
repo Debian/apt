@@ -211,9 +211,12 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 	 }
 	 if (V.end() == true)
 	 {
-	    map_stringitem_t const idx = StoreString(pkgCacheGenerator::PKGNAME, pkgname);
+	    pkgCache::GrpIterator SG;
+	    if (not NewGroup(SG, pkgname))
+	       return false;
+
 	    G = Ver.ParentPkg().Group();
-	    Ver->SourcePkgName = idx;
+	    Ver->SourcePkgName = SG->Name;
 	 }
       }
    }
