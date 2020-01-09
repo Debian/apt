@@ -559,7 +559,7 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, StringView Name)
       return false;
 
    Grp = pkgCache::GrpIterator(Cache, Cache.GrpP + Group);
-   map_stringitem_t const idxName = StoreString(PKGNAME, Name);
+   map_stringitem_t const idxName = WriteStringInMap(Name);
    if (unlikely(idxName == 0))
       return false;
    Grp->Name = idxName;
@@ -1336,7 +1336,6 @@ map_stringitem_t pkgCacheGenerator::StoreString(enum StringType const type, cons
    auto strings = &strMixed;
    switch(type) {
       case MIXED: strings = &strMixed; break;
-      case PKGNAME: strings = &strPkgNames; break;
       case VERSIONNUMBER: strings = &strVersions; break;
       case SECTION: strings = &strSections; break;
       default: _error->Fatal("Unknown enum type used for string storage of '%.*s'", Size, S); return 0;
