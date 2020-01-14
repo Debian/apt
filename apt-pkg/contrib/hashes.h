@@ -171,12 +171,14 @@ class PrivateHashes;
 class Hashes
 {
    PrivateHashes * const d;
+APT_IGNORE_DEPRECATED_PUSH
    /* TODO: those will disappear in the future as it is hard to add new ones this way.
     * Use Add* to build the results and get them via GetHashStringList() instead */
-   MD5Summation MD5;
-   SHA1Summation SHA1;
-   SHA256Summation SHA256;
-   SHA512Summation SHA512;
+   MD5Summation MD5 APT_PKG_590("Remove");
+   SHA1Summation SHA1 APT_PKG_590("Remove");
+   SHA256Summation SHA256 APT_PKG_590("Remove");
+   SHA512Summation SHA512 APT_PKG_590("Remove");
+APT_IGNORE_DEPRECATED_POP
 
    public:
    static const int UntilEOF = 0;
@@ -184,6 +186,10 @@ class Hashes
    bool Add(const unsigned char * const Data, unsigned long long const Size) APT_NONNULL(2);
    inline bool Add(const char * const Data) APT_NONNULL(2)
    {return Add(reinterpret_cast<unsigned char const *>(Data),strlen(Data));};
+   inline bool Add(const char *const Data, unsigned long long const Size) APT_NONNULL(2)
+   {
+      return Add(reinterpret_cast<unsigned char const *>(Data), Size);
+   };
    inline bool Add(const unsigned char * const Beg,const unsigned char * const End) APT_NONNULL(2,3)
    {return Add(Beg,End-Beg);};
 
@@ -193,6 +199,9 @@ class Hashes
    bool AddFD(FileFd &Fd,unsigned long long Size = 0);
 
    HashStringList GetHashStringList();
+
+   /** Get a specific hash. It is an error to use a hash that was not hashes */
+   HashString GetHashString(SupportedHashes hash);
 
    /** create a Hashes object to calculate all supported hashes
     *

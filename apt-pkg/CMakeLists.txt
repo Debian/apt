@@ -48,6 +48,7 @@ target_include_directories(apt-pkg
                                    $<$<BOOL:${UDEV_FOUND}>:${UDEV_INCLUDE_DIRS}>
                                    $<$<BOOL:${SYSTEMD_FOUND}>:${SYSTEMD_INCLUDE_DIRS}>
                                    ${ICONV_INCLUDE_DIRS}
+                                   $<$<BOOL:${GCRYPT_FOUND}>:${GCRYPT_INCLUDE_DIRS}>
 )
 
 target_link_libraries(apt-pkg
@@ -61,6 +62,7 @@ target_link_libraries(apt-pkg
                              $<$<BOOL:${UDEV_FOUND}>:${UDEV_LIBRARIES}>
                              $<$<BOOL:${SYSTEMD_FOUND}>:${SYSTEMD_LIBRARIES}>
                              ${ICONV_LIBRARIES}
+                             $<$<BOOL:${GCRYPT_FOUND}>:${GCRYPT_LIBRARIES}>
 )
 set_target_properties(apt-pkg PROPERTIES VERSION ${MAJOR}.${MINOR})
 set_target_properties(apt-pkg PROPERTIES SOVERSION ${MAJOR})

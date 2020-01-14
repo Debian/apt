@@ -15,7 +15,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/md5.h>
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/strutl.h>
 
 #include <iostream>
@@ -181,7 +181,7 @@ bool MountCdrom(string Path, string DeviceName)
    from effecting the outcome. */
 bool IdentCdrom(string CD,string &Res,unsigned int Version)
 {
-   MD5Summation Hash;
+   Hashes Hash(Hashes::MD5SUM);
    bool writable_media = false;
 
    int dirfd = open(CD.c_str(), O_RDONLY | O_DIRECTORY | O_CLOEXEC);
@@ -254,7 +254,7 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
       strprintf(S, "-%u.debug", Version);
 
    closedir(D);
-   Res = Hash.Result().Value().append(std::move(S));
+   Res = Hash.GetHashString(Hashes::MD5SUM).HashValue().append(std::move(S));
    return true;
 }
 									/*}}}*/

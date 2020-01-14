@@ -33,7 +33,7 @@ class SHA2SummationBase : public SummationImplementation
    void Result();
 };
 
-class SHA256Summation : public SHA2SummationBase
+class APT_DEPRECATED_MSG("Use Hashes instead") APT_PKG_590("Remove") SHA256Summation : public SHA2SummationBase
 {
    SHA256_CTX ctx;
    unsigned char Sum[32];
@@ -66,7 +66,7 @@ class SHA256Summation : public SHA2SummationBase
    };
 };
 
-class SHA512Summation : public SHA2SummationBase
+class APT_DEPRECATED_MSG("Use Hashes instead") APT_PKG_590("Remove") SHA512Summation : public SHA2SummationBase
 {
    SHA512_CTX ctx;
    unsigned char Sum[64];

@@ -42,7 +42,6 @@
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/macros.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>

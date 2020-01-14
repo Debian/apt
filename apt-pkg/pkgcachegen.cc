@@ -17,7 +17,6 @@
 #include <apt-pkg/hashsum_template.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/macros.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/pkgcache.h>

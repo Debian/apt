@@ -18,7 +18,7 @@
 
 typedef  HashSumValue<160> SHA1SumValue;
 
-class SHA1Summation : public SummationImplementation
+class APT_DEPRECATED_MSG("Use Hashes instead") APT_PKG_590("Remove") SHA1Summation : public SummationImplementation
 {
    /* assumes 64-bit alignment just in case */
    unsigned char Buffer[64] __attribute__((aligned(8)));

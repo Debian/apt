@@ -85,9 +85,6 @@
 
 using namespace std;
 
-/* Should be a multiple of the common page size (4096) */
-static constexpr unsigned long long APT_BUFFER_SIZE = 64 * 1024;
-
 // RunScripts - Run a set of scripts from a configuration subtree	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
