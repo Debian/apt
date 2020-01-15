@@ -125,8 +125,16 @@ bool CacheSetHelper::PackageFromTask(PackageContainerInterface * const pci, pkgC
 // PackageFromRegEx - Return all packages in the cache matching a pattern /*{{{*/
 bool CacheSetHelper::PackageFromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern) {
 	static const char * const isregex = ".?+*|[^$";
-	if (pattern.find_first_of(isregex) == std::string::npos)
-		return false;
+
+	if (_config->FindB("APT::Cmd::Pattern-Only", false))
+	{
+		// Only allow explicit regexp pattern.
+		if (pattern.size() == 0 || (pattern[0] != '^' && pattern[pattern.size() - 1] != '$'))
+			return false;
+	} else {
+		if (pattern.find_first_of(isregex) == std::string::npos)
+			return false;
+	}
 
 	bool const wasEmpty = pci->empty();
 	if (wasEmpty == true)
@@ -181,6 +189,8 @@ bool CacheSetHelper::PackageFromFnmatch(PackageContainerInterface * const pci,
                                        pkgCacheFile &Cache, std::string pattern)
 {
 	static const char * const isfnmatch = ".?*[]!";
+	if (_config->FindB("APT::Cmd::Pattern-Only", false))
+		return false;
 	if (pattern.find_first_of(isfnmatch) == std::string::npos)
 		return false;
 
