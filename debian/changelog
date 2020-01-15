@@ -1,3 +1,36 @@
+apt (1.9.6) experimental; urgency=medium
+
+  [ Julian Andres Klode ]
+  * gitlab-ci: Do not do coverage
+  * gitlab-ci: Use ccache
+  * satisfy: Fix segmentation fault when called with empty argument
+  * Add support for GTest 1.9, do not fail silently if its missing
+  * gtests: Fix netrc parser test regression from https-only changes
+  * Macro cleanup:
+    - Avoid #define _error, use anonymous C++ struct instead (Closes: #948338)
+    - Rename _count() macro to APT_ARRAY_SIZE()
+    - Remove various unused macros like MAX/MIN/ABS/APT_CONST
+    - Only define likely/unlikely if APT_COMPILING_APT set
+  * Performance: Avoid extra out-of-cache hash table deduplication for
+    package names, this saved about 10-16% on gencaches in memory
+  * acquire: Move queue startup after calling log's Start(), fixes abort()
+    calls in python-apt
+  * hashes: Use Libgcrypt for hashing purposes
+    - Raise buffer size for Hashes::AddFD() from 4 KiB to 64 KiB
+    - Convert users of {MD5,SHA1,SHA256,SHA512}Summation to use Hashes
+    - Deprecate the Summation classes and mark them for removal
+    - Remove includes of (md5|sha1|sha2).h headers
+  * netrc: Add warning when ignoring entries for unencrypted protocols
+  * apt(8): Disable regular expressions and fnmatch
+
+  [ David Kalnischkies ]
+  * Drop g++ build-dependency to help crossbuilding (Closes: #948201)
+
+  [ Denis Mosolov ]
+  * Fix typo in README.md
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 15 Jan 2020 23:06:49 +0100
+
 apt (1.9.5) experimental; urgency=medium
 
   [ Julian Andres Klode ]
