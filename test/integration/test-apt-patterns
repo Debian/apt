@@ -34,16 +34,10 @@ testfailureequal "E: input:0-14: error: Unrecognized pattern '?not-a-pattern'
    ?not-a-pattern
    ^^^^^^^^^^^^^^
 N: Unable to locate package ?not-a-pattern
-N: Couldn't find any package by glob '?not-a-pattern'
-E: Regex compilation error - Invalid preceding regular expression
-N: Couldn't find any package by regex '?not-a-pattern'
 E: input:0-14: error: Unrecognized pattern '?not-a-pattern'
    ?not-a-pattern
    ^^^^^^^^^^^^^^
 N: Unable to locate package ?not-a-pattern
-N: Couldn't find any package by glob '?not-a-pattern'
-E: Regex compilation error - Invalid preceding regular expression
-N: Couldn't find any package by regex '?not-a-pattern'
 E: No packages found" apt show '?not-a-pattern'
 
 testfailureequal "Listing...
@@ -57,10 +51,7 @@ Reading state information...
 E: input:0-14: error: Unrecognized pattern '?not-a-pattern'
    ?not-a-pattern
    ^^^^^^^^^^^^^^
-E: Unable to locate package ?not-a-pattern
-E: Couldn't find any package by glob '?not-a-pattern'
-E: Regex compilation error - Invalid preceding regular expression
-E: Couldn't find any package by regex '?not-a-pattern'" apt install -s '?not-a-pattern'
+E: Unable to locate package ?not-a-pattern" apt install -s '?not-a-pattern'
 
 
 msgmsg "Ensure that argument lists are present where needed, and absent elsewhere"
