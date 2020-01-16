@@ -1,3 +1,18 @@
+apt (1.9.7) experimental; urgency=medium
+
+  * Trim trailing whitespace (thanks lintian-brush)
+  * NewProvidesAllArch: Check if group is empty before using it.
+    This caused automake-1.16 to not be provided by automake anymore,
+    because apt wanted to add provides to packages in an empty automake-1.16
+    group. LP: #1859952
+  * Fix debian-rules-uses-deprecated-systemd-override.
+    We accidentally managed to restart apt-daily{,-upgrade}.service
+    again because our dh_systemd_start override was being ignored
+    since we switched to debhelper 12. Override dh_installsystemd
+    instead.
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 16 Jan 2020 12:13:50 +0100
+
 apt (1.9.6) experimental; urgency=medium
 
   [ Julian Andres Klode ]
