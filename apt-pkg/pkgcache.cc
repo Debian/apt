@@ -275,6 +275,10 @@ uint32_t pkgCache::CacheHash()
    header.CacheFileSize = 0;
 
    adler = hash32(adler,
+		  reinterpret_cast<const unsigned char *>(PACKAGE_VERSION),
+		  APT_ARRAY_SIZE(PACKAGE_VERSION));
+
+   adler = hash32(adler,
 		  reinterpret_cast<const unsigned char *>(&header),
 		  sizeof(header));
 
