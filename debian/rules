@@ -37,12 +37,13 @@ override_dh_gencontrol:
 override_dh_installcron:
 	dh_installcron --name=apt-compat
 
-override_dh_systemd_start:
+override_dh_installsystemd:
 	# Do not restart "apt-daily.service" because this script runs
 	# unattended-upgrades. So if apt itself is upgraded as part of
 	# an unattended-upgrades run it would kill itself
-	dh_systemd_start -papt apt-daily.timer apt-daily-upgrade.timer
-	dh_systemd_start --remaining-packages
+	dh_installsystemd -papt apt-daily.timer apt-daily-upgrade.timer
+	dh_installsystemd -papt --no-restart-on-upgrade --no-restart-after-upgrade --no-start apt-daily.service apt-daily-upgrade.service
+	dh_installsystemd --remaining-packages
 
 override_dh_auto_configure-arch: flags=-DWITH_DOC=OFF
 override_dh_auto_configure-indep: flags=-DWITH_DOC=ON
