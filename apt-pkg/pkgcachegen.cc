@@ -1203,7 +1203,7 @@ bool pkgCacheListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, StringVi
    Dynamic<StringView> DynPackage(Package);
    Dynamic<StringView> DynVersion(Version);
 
-   if (Grp.end() == true)
+   if (Grp.end() == true || Grp->FirstPackage == 0)
       return NewProvides(Ver, Package, Cache.NativeArch(), Version, Flags);
    else
    {
