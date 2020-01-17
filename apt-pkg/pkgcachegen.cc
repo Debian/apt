@@ -376,7 +376,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    map_pointer_t *LastVer = &Pkg->VersionList;
    void const * oldMap = Map.Data();
 
-   unsigned short const Hash = List.VersionHash();
+   auto Hash = List.VersionHash();
    if (Ver.end() == false)
    {
       /* We know the list is sorted so we use that fact in the search.
@@ -849,7 +849,7 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
 map_pointer_t pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
 					    APT::StringView const &VerStr,
 					    map_pointer_t const ParentPkg,
-					    unsigned short const Hash,
+					    uint32_t Hash,
 					    map_pointer_t const Next)
 {
    // Get a structure
@@ -1234,7 +1234,7 @@ bool pkgCacheListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, StringVi
    return true;
 }
 									/*}}}*/
-bool pkgCacheListParser::SameVersion(unsigned short const Hash,		/*{{{*/
+bool pkgCacheListParser::SameVersion(uint32_t Hash,		/*{{{*/
       pkgCache::VerIterator const &Ver)
 {
    return Hash == Ver->Hash;

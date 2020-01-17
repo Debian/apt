@@ -109,7 +109,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    bool NewGroup(pkgCache::GrpIterator &Grp, APT::StringView Name);
    bool NewPackage(pkgCache::PkgIterator &Pkg, APT::StringView Name, APT::StringView Arch);
    map_pointer_t NewVersion(pkgCache::VerIterator &Ver, APT::StringView const &VerStr,
-			    map_pointer_t const ParentPkg, unsigned short const Hash,
+			    map_pointer_t const ParentPkg, uint32_t Hash,
 			    map_pointer_t const Next);
    map_pointer_t NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang, APT::StringView md5sum,map_stringitem_t const idxmd5str);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
@@ -201,13 +201,13 @@ class APT_HIDDEN pkgCacheListParser
    virtual bool NewVersion(pkgCache::VerIterator &Ver) = 0;
    virtual std::vector<std::string> AvailableDescriptionLanguages() = 0;
    virtual APT::StringView Description_md5() = 0;
-   virtual unsigned short VersionHash() = 0;
+   virtual uint32_t VersionHash() = 0;
    /** compare currently parsed version with given version
     *
     * \param Hash of the currently parsed version
     * \param Ver to compare with
     */
-   virtual bool SameVersion(unsigned short const Hash, pkgCache::VerIterator const &Ver);
+   virtual bool SameVersion(uint32_t Hash, pkgCache::VerIterator const &Ver);
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
 			   pkgCache::VerIterator &Ver) = 0;
    virtual map_filesize_t Offset() = 0;

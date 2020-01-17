@@ -27,7 +27,7 @@ class APT_HIDDEN edspLikeListParser : public debListParser
    virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
    virtual std::vector<std::string> AvailableDescriptionLanguages() APT_OVERRIDE;
    virtual APT::StringView Description_md5() APT_OVERRIDE;
-   virtual unsigned short VersionHash() APT_OVERRIDE;
+   virtual uint32_t VersionHash() APT_OVERRIDE;
 
    explicit edspLikeListParser(FileFd *File);
    virtual ~edspLikeListParser();

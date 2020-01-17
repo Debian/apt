@@ -339,7 +339,7 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
 // ListParser::VersionHash - Compute a unique hash for this version	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-unsigned short debListParser::VersionHash()
+uint32_t debListParser::VersionHash()
 {
    static constexpr pkgTagSection::Key Sections[] ={
       pkgTagSection::Key::Installed_Size,
@@ -350,7 +350,7 @@ unsigned short debListParser::VersionHash()
       pkgTagSection::Key::Conflicts,
       pkgTagSection::Key::Breaks,
       pkgTagSection::Key::Replaces};
-   unsigned long Result = INIT_FCS;
+   unsigned long Result = 5381;
    for (auto I : Sections)
    {
       const char *Start;
@@ -371,7 +371,7 @@ unsigned short debListParser::VersionHash()
 	 }
 	 if (isspace_ascii(*Start) != 0 || *Start == '=')
 	    continue;
-	 Result = AddCRC16Byte(Result, tolower_ascii_unsafe(*Start));
+	 Result = 33 * Result + tolower_ascii_unsafe(*Start);
       }
 
 
@@ -991,7 +991,7 @@ unsigned char debListParser::GetPrio(string Str)
    return Out;
 }
 									/*}}}*/
-bool debListParser::SameVersion(unsigned short const Hash,		/*{{{*/
+bool debListParser::SameVersion(uint32_t Hash,		/*{{{*/
       pkgCache::VerIterator const &Ver)
 {
    if (pkgCacheListParser::SameVersion(Hash, Ver) == false)

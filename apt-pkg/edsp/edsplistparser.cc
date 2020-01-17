@@ -59,7 +59,7 @@ APT::StringView edspLikeListParser::Description_md5()
 }
 									/*}}}*/
 // ListParser::VersionHash - Compute a unique hash for this version	/*{{{*/
-unsigned short edspLikeListParser::VersionHash()
+uint32_t edspLikeListParser::VersionHash()
 {
    if (Section.Exists("APT-Hash") == true)
       return Section.FindI("APT-Hash");
