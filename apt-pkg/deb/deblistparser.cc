@@ -166,8 +166,12 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    }
    // Parse the source package name
    pkgCache::GrpIterator G = Ver.ParentPkg().Group();
+
+   // Setup the defaults
    Ver->SourcePkgName = G->Name;
    Ver->SourceVerStr = Ver->VerStr;
+
+   // Parse the name and version str
    if (Section.Find(pkgTagSection::Key::Source,Start,Stop) == true)
    {
       const char * const Space = static_cast<const char *>(memchr(Start, ' ', Stop - Start));
@@ -194,32 +198,18 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
       }
 
       APT::StringView const pkgname(Start, Stop - Start);
+      // Oh, our group is the wrong one for the source package. Make a new one.
       if (pkgname != G.Name())
       {
-	 for (pkgCache::PkgIterator P = G.PackageList(); P.end() == false; P = G.NextPkg(P))
-	 {
-	    for (V = P.VersionList(); V.end() == false; ++V)
-	    {
-	       if (pkgname == V.SourcePkgName())
-	       {
-		  Ver->SourcePkgName = V->SourcePkgName;
-		  break;
-	       }
-	    }
-	    if (V.end() == false)
-	       break;
-	 }
-	 if (V.end() == true)
-	 {
-	    pkgCache::GrpIterator SG;
-	    if (not NewGroup(SG, pkgname))
-	       return false;
-
-	    G = Ver.ParentPkg().Group();
-	    Ver->SourcePkgName = SG->Name;
-	 }
+	 if (not NewGroup(G, pkgname))
+	    return false;
       }
    }
+
+   // Link into by source package group.
+   Ver->SourcePkgName = G->Name;
+   Ver->NextInSource = G->VersionsInSource;
+   G->VersionsInSource = Ver.Index();
 
    Ver->MultiArch = ParseMultiArch(true);
    // Archive Size
