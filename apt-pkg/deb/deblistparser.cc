@@ -14,7 +14,6 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/crc-16.h>
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
