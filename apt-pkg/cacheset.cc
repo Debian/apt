@@ -295,7 +295,7 @@ bool CacheSetHelper::PackageFromPackageName(PackageContainerInterface * const pc
 
 bool CacheSetHelper::PackageFromPattern(PackageContainerInterface *const pci, pkgCacheFile &Cache, std::string const &pattern)
 {
-   if (pattern.size() < 1 || pattern[0] != '?')
+   if (pattern.size() < 1 || (pattern[0] != '?' && pattern[0] != '~'))
       return false;
 
    auto compiledPattern = APT::CacheFilter::ParsePattern(pattern, &Cache);

@@ -48,8 +48,8 @@ class PackageNameMatcher : public Matcher
       {
          std::string pattern = patterns[i];
          APT::CacheFilter::Matcher *cachefilter = NULL;
-         if (pattern.size() > 0 && pattern[0] == '?')
-            cachefilter = APT::CacheFilter::ParsePattern(pattern, &cacheFile).release();
+	 if (pattern.size() > 0 && (pattern[0] == '?' || pattern[0] == '~'))
+	    cachefilter = APT::CacheFilter::ParsePattern(pattern, &cacheFile).release();
          else if(_config->FindB("APT::Cmd::Use-Regexp", false) == true)
             cachefilter = new APT::CacheFilter::PackageNameMatchesRegEx(pattern);
          else

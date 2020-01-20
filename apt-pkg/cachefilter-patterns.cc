@@ -17,6 +17,32 @@ namespace APT
 namespace Internal
 {
 
+static const constexpr struct
+{
+   APT::StringView shortName;
+   APT::StringView longName;
+   bool takesArgument;
+} shortPatterns[] = {
+   {"r"_sv, "?architecture"_sv, true},
+   {"A"_sv, "?archive"_sv, true},
+   {"M"_sv, "?automatic"_sv, false},
+   {"b"_sv, "?broken"_sv, false},
+   {"c"_sv, "?config-files"_sv, false},
+   {"E"_sv, "?essential"_sv, false},
+   {"F"_sv, "?false"_sv, false},
+   {"g"_sv, "?garbage"_sv, false},
+   {"i"_sv, "?installed"_sv, false},
+   {"n"_sv, "?name"_sv, true},
+   {"o"_sv, "?obsolete"_sv, false},
+   {"O"_sv, "?origin"_sv, true},
+   {"s"_sv, "?section"_sv, true},
+   {"e"_sv, "?source-package"_sv, true},
+   {"T"_sv, "?true"_sv, false},
+   {"U"_sv, "?upgradable"_sv, false},
+   {"V"_sv, "?version"_sv, true},
+   {"v"_sv, "?virtual"_sv, false},
+};
+
 template <class... Args>
 std::string rstrprintf(Args... args)
 {
@@ -42,6 +68,8 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseTop()
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parse()
 {
    std::unique_ptr<Node> node;
+   if ((node = parseShortPattern()) != nullptr)
+      return node;
    if ((node = parsePattern()) != nullptr)
       return node;
    if ((node = parseQuotedWord()) != nullptr)
@@ -51,6 +79,35 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parse()
 
    throw Error{Node{state.offset, sentence.size()},
 	       "Expected pattern, quoted word, or word"};
+}
+
+// Parse a short pattern
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseShortPattern()
+{
+   if (sentence[state.offset] != '~')
+      return nullptr;
+
+   for (auto &sp : shortPatterns)
+   {
+      if (sentence.substr(state.offset + 1, sp.shortName.size()) != sp.shortName)
+	 continue;
+
+      auto node = std::make_unique<PatternNode>();
+      node->end = node->start = state.offset;
+      node->term = sp.longName;
+
+      state.offset += sp.shortName.size() + 1;
+      if (sp.takesArgument)
+      {
+	 node->arguments.push_back(parse());
+	 node->haveArgumentList = true;
+      }
+      node->end = state.offset;
+
+      return node;
+   }
+
+   throw Error{Node{state.offset, sentence.size()}, "Unknown short pattern"};
 }
 
 // Parse a list pattern (or function call pattern)
