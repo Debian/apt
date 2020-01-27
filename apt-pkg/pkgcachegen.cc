@@ -557,10 +557,11 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, StringView Name)
    if (unlikely(Group == 0))
       return false;
 
-   Grp = pkgCache::GrpIterator(Cache, Cache.GrpP + Group);
    map_stringitem_t const idxName = WriteStringInMap(Name);
    if (unlikely(idxName == 0))
       return false;
+
+   Grp = pkgCache::GrpIterator(Cache, Cache.GrpP + Group);
    Grp->Name = idxName;
 
    // Insert it into the hash table
