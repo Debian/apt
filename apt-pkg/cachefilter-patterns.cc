@@ -70,7 +70,37 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseTop()
 // Parse any pattern
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parse()
 {
-   return parseUnary();
+   return parseAnd();
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseAnd()
+{
+   auto start = state.offset;
+   std::vector<std::unique_ptr<PatternTreeParser::Node>> nodes;
+
+   for (skipSpace(); state.offset < sentence.size(); skipSpace())
+   {
+      auto node = parseUnary();
+
+      if (node == nullptr)
+	 break;
+
+      nodes.push_back(std::move(node));
+   }
+
+   if (nodes.size() == 0)
+      return nullptr;
+   if (nodes.size() == 1)
+      return std::move(nodes[0]);
+
+   auto node = std::make_unique<PatternNode>();
+   node->start = start;
+   node->end = nodes[nodes.size() - 1]->end;
+   node->term = "?and";
+   node->arguments = std::move(nodes);
+   node->haveArgumentList = true;
+
+   return node;
 }
 
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseUnary()

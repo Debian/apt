@@ -176,4 +176,12 @@ TEST(TreeParserTest, ParseShortPattern)
       caught = true;
    };
    EXPECT_TRUE(caught) << "!X should have thrown an exception";
+
+   EXPECT_PATTERN_EQ("?a?b", "?and(?a, ?b)");
+   EXPECT_PATTERN_EQ("~T~F", "?and(?true, ?false)");
+   EXPECT_PATTERN_EQ("~T ~F", "?and(?true, ?false)");
+   EXPECT_PATTERN_EQ("~T !~F", "?and(?true, ?not(?false))");
+   EXPECT_PATTERN_EQ("!~F ~T", "?and(?not(?false), ?true)");
+   EXPECT_PATTERN_EQ("!~F~T", "?and(?not(?false), ?true)");
+
 }
