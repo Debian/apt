@@ -71,7 +71,7 @@ struct PatternTreeParser
 
    struct State
    {
-      off_t offset = 0;
+      size_t offset = 0;
    };
 
    APT::StringView sentence;
