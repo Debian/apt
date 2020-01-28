@@ -67,6 +67,32 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseTop()
 // Parse any pattern
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parse()
 {
+   return parseUnary();
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseUnary()
+{
+
+   if (sentence[state.offset] != '!')
+      return parsePrimary();
+
+   auto start = ++state.offset;
+   auto primary = parsePrimary();
+
+   if (primary == nullptr)
+      throw Error{Node{start, sentence.size()}, "Expected pattern"};
+
+   auto node = std::make_unique<PatternNode>();
+   node->start = start;
+   node->end = primary->end;
+   node->term = "?not";
+   node->arguments.push_back(std::move(primary));
+   node->haveArgumentList = true;
+   return node;
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePrimary()
+{
    std::unique_ptr<Node> node;
    if ((node = parseShortPattern()) != nullptr)
       return node;
@@ -198,7 +224,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseQuotedWord()
 // Parse a bare word atom
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord()
 {
-   static const constexpr auto DISALLOWED_START = "?~,()\0"_sv;
+   static const constexpr auto DISALLOWED_START = "!?~,()\0"_sv;
    static const constexpr auto DISALLOWED = ",()\0"_sv;
    if (DISALLOWED_START.find(sentence[state.offset]) != APT::StringView::npos)
       return nullptr;

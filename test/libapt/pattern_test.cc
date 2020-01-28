@@ -158,4 +158,5 @@ TEST(TreeParserTest, ParseShortPattern)
    EXPECT_PATTERN_EQ_ATOMIC("~U", "?upgradable");
    EXPECT_PATTERN_EQ("~Vverstr", "?version(verstr)");
    EXPECT_PATTERN_EQ_ATOMIC("~v", "?virtual");
+   EXPECT_PATTERN_EQ("!foo", "?not(foo)");
 }
