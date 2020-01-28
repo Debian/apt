@@ -99,6 +99,7 @@ struct PatternTreeParser
    std::unique_ptr<Node> parsePrimary();
    std::unique_ptr<Node> parsePattern();
    std::unique_ptr<Node> parseShortPattern();
+   std::unique_ptr<Node> parseArgument();
    std::unique_ptr<Node> parseWord();
    std::unique_ptr<Node> parseQuotedWord();
 };

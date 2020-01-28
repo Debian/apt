@@ -16,19 +16,25 @@ using namespace APT::Internal;
 
 TEST(TreeParserTest, ParseWord)
 {
-   auto node = PatternTreeParser("word").parseTop();
-   auto wordNode = dynamic_cast<PatternTreeParser::WordNode *>(node.get());
+   auto node = PatternTreeParser("?word(word)").parseTop();
+   auto patternNode = dynamic_cast<PatternTreeParser::PatternNode *>(node.get());
 
-   EXPECT_EQ(node.get(), wordNode);
+   ASSERT_EQ(patternNode->arguments.size(), 1u);
+   auto wordNode = dynamic_cast<PatternTreeParser::WordNode *>(patternNode->arguments[0].get());
+
+   EXPECT_EQ(patternNode->arguments[0].get(), wordNode);
    EXPECT_EQ(wordNode->word, "word");
 }
 
 TEST(TreeParserTest, ParseQuotedWord)
 {
-   auto node = PatternTreeParser("\"a word\"").parseTop();
-   auto wordNode = dynamic_cast<PatternTreeParser::WordNode *>(node.get());
+   auto node = PatternTreeParser("?word(\"a word\")").parseTop();
+   auto patternNode = dynamic_cast<PatternTreeParser::PatternNode *>(node.get());
 
-   EXPECT_EQ(node.get(), wordNode);
+   ASSERT_EQ(patternNode->arguments.size(), 1u);
+   auto wordNode = dynamic_cast<PatternTreeParser::WordNode *>(patternNode->arguments[0].get());
+
+   EXPECT_EQ(patternNode->arguments[0].get(), wordNode);
    EXPECT_EQ(wordNode->word, "a word");
 }
 
@@ -158,5 +164,16 @@ TEST(TreeParserTest, ParseShortPattern)
    EXPECT_PATTERN_EQ_ATOMIC("~U", "?upgradable");
    EXPECT_PATTERN_EQ("~Vverstr", "?version(verstr)");
    EXPECT_PATTERN_EQ_ATOMIC("~v", "?virtual");
-   EXPECT_PATTERN_EQ("!foo", "?not(foo)");
+   EXPECT_PATTERN_EQ("!?foo", "?not(?foo)");
+
+   caught = false;
+   try
+   {
+      PatternTreeParser("!x").parseTop();
+   }
+   catch (PatternTreeParser::Error &e)
+   {
+      caught = true;
+   };
+   EXPECT_TRUE(caught) << "!X should have thrown an exception";
 }

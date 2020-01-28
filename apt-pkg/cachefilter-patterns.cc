@@ -58,6 +58,9 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseTop()
    auto node = parse();
    skipSpace();
 
+   if (node == nullptr)
+      throw Error{Node{0, sentence.size()}, "Expected pattern"};
+
    if (node->end != sentence.size())
       throw Error{Node{node->end, sentence.size()}, "Expected end of file"};
 
@@ -98,9 +101,18 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePrimary()
       return node;
    if ((node = parsePattern()) != nullptr)
       return node;
+
+   return nullptr;
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseArgument()
+{
+   std::unique_ptr<Node> node;
    if ((node = parseQuotedWord()) != nullptr)
       return node;
    if ((node = parseWord()) != nullptr)
+      return node;
+   if ((node = parse()) != nullptr)
       return node;
 
    throw Error{Node{state.offset, sentence.size()},
@@ -125,7 +137,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseShortPattern()
       state.offset += sp.shortName.size() + 1;
       if (sp.takesArgument)
       {
-	 node->arguments.push_back(parse());
+	 node->arguments.push_back(parseArgument());
 	 node->haveArgumentList = true;
       }
       node->end = state.offset;
@@ -173,7 +185,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
       return node;
    }
 
-   node->arguments.push_back(parse());
+   node->arguments.push_back(parseArgument());
    skipSpace();
    while (sentence[state.offset] == ',')
    {
@@ -182,7 +194,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
       // This was a trailing comma - allow it and break the loop
       if (sentence[state.offset] == ')')
 	 break;
-      node->arguments.push_back(parse());
+      node->arguments.push_back(parseArgument());
       skipSpace();
    }
 
