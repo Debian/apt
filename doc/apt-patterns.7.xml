@@ -168,9 +168,6 @@
    </para>
    <itemizedlist>
       <listitem>
-         <para>Only long forms &mdash; the ones starting with ? &mdash; are supported</para>
-      </listitem>
-      <listitem>
          <para>
             Syntax is uniform: If there is an opening parenthesis after a term, it is always assumed to be the beginning of an argument list.
          </para>
@@ -192,6 +189,16 @@
       </listitem>
       <listitem>
          <para>?narrow accepts infinite arguments</para>
+      </listitem>
+      <listitem>
+         <para><code>foo</code> cannot be used as a shortform for <code>?name(foo)</code>, as this can cause typos to go unnoticed:
+         Consider <code>?and(...,~poptional)</code>:
+         this requires the package to have <code>required</code> priority, but
+         if you do not type the <code>~</code>, it would require the package name to contain <code>poptional</code>.</para>
+      </listitem>
+      <listitem>
+          <para>Grouping patterns with <code>(...)</code> or writing <code>?or(A,B)</code> as <code>A|B</code> are not supported. We
+          do not believe that the use of <code>|</code> is that common, and the grouping is not necessary without it.</para>
       </listitem>
    </itemizedlist>
  </refsect1>
