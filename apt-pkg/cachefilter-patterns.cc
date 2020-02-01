@@ -199,12 +199,12 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseGroup()
    return node;
 }
 
-std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseArgument()
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseArgument(bool shrt)
 {
    std::unique_ptr<Node> node;
    if ((node = parseQuotedWord()) != nullptr)
       return node;
-   if ((node = parseWord()) != nullptr)
+   if ((node = parseWord(shrt)) != nullptr)
       return node;
    if ((node = parse()) != nullptr)
       return node;
@@ -231,7 +231,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseShortPattern()
       state.offset += sp.shortName.size() + 1;
       if (sp.takesArgument)
       {
-	 node->arguments.push_back(parseArgument());
+	 node->arguments.push_back(parseArgument(true));
 	 node->haveArgumentList = true;
       }
       node->end = state.offset;
@@ -279,7 +279,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
       return node;
    }
 
-   node->arguments.push_back(parseArgument());
+   node->arguments.push_back(parseArgument(false));
    skipSpace();
    while (sentence[state.offset] == ',')
    {
@@ -288,7 +288,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
       // This was a trailing comma - allow it and break the loop
       if (sentence[state.offset] == ')')
 	 break;
-      node->arguments.push_back(parseArgument());
+      node->arguments.push_back(parseArgument(false));
       skipSpace();
    }
 
@@ -328,10 +328,13 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseQuotedWord()
 }
 
 // Parse a bare word atom
-std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord()
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord(bool shrt)
 {
-   static const constexpr auto DISALLOWED_START = "!?~|,()\0"_sv;
-   static const constexpr auto DISALLOWED = "|,()\0"_sv;
+   static const constexpr auto DISALLOWED_START = "!?~|,() \0"_sv;
+   static const constexpr auto DISALLOWED_LONG = "|,()\0"_sv;
+   static const constexpr auto DISALLOWED_SHRT = "|,() ?\0"_sv;
+   const auto DISALLOWED = shrt ? DISALLOWED_SHRT : DISALLOWED_LONG;
+
    if (DISALLOWED_START.find(sentence[state.offset]) != APT::StringView::npos)
       return nullptr;
 
