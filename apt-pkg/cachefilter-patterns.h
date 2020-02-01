@@ -39,6 +39,8 @@ struct PatternTreeParser
       size_t start = 0;
       size_t end = 0;
 
+      explicit Node(size_t start = 0, size_t end = 0) : start(start), end(end) {}
+
       virtual std::ostream &render(std::ostream &os) { return os; };
       std::nullptr_t error(std::string message);
    };

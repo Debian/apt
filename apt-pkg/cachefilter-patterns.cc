@@ -33,13 +33,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseTop()
    skipSpace();
 
    if (node->end != sentence.size())
-   {
-      Node node2;
-
-      node2.start = node->end;
-      node2.end = sentence.size();
-      throw Error{node2, "Expected end of file"};
-   }
+      throw Error{Node{node->end, sentence.size()}, "Expected end of file"};
 
    return node;
 }
@@ -55,9 +49,8 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parse()
    if ((node = parseWord()) != nullptr)
       return node;
 
-   Node eNode;
-   eNode.end = eNode.start = state.offset;
-   throw Error{eNode, "Expected pattern, quoted word, or word"};
+   throw Error{Node{state.offset, sentence.size()},
+	       "Expected pattern, quoted word, or word"};
 }
 
 // Parse a list pattern (or function call pattern)
