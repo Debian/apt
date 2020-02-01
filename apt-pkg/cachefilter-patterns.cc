@@ -56,10 +56,10 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parse()
 // Parse a list pattern (or function call pattern)
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
 {
-   static const APT::StringView CHARS("0123456789"
-				      "abcdefghijklmnopqrstuvwxyz"
-				      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-				      "-");
+   static constexpr auto CHARS = ("0123456789"
+				  "abcdefghijklmnopqrstuvwxyz"
+				  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+				  "-"_sv);
    if (sentence[state.offset] != '?')
       return nullptr;
 
@@ -141,8 +141,8 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseQuotedWord()
 // Parse a bare word atom
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord()
 {
-   static const APT::StringView DISALLOWED_START("?~,()\0", 6);
-   static const APT::StringView DISALLOWED(",()\0", 4);
+   static const constexpr auto DISALLOWED_START = "?~,()\0"_sv;
+   static const constexpr auto DISALLOWED = ",()\0"_sv;
    if (DISALLOWED_START.find(sentence[state.offset]) != APT::StringView::npos)
       return nullptr;
 
