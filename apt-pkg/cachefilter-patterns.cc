@@ -169,8 +169,34 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePrimary()
       return node;
    if ((node = parsePattern()) != nullptr)
       return node;
+   if ((node = parseGroup()) != nullptr)
+      return node;
 
    return nullptr;
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseGroup()
+{
+   if (sentence[state.offset] != '(')
+      return nullptr;
+
+   auto start = state.offset++;
+
+   skipSpace();
+   auto node = parse();
+   if (node == nullptr)
+      throw Error{Node{state.offset, sentence.size()},
+		  "Expected pattern after '('"};
+   skipSpace();
+
+   if (sentence[state.offset] != ')')
+      throw Error{Node{state.offset, sentence.size()},
+		  "Expected closing parenthesis"};
+
+   auto end = ++state.offset;
+   node->start = start;
+   node->end = end;
+   return node;
 }
 
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseArgument()

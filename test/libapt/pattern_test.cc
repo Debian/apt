@@ -187,4 +187,8 @@ TEST(TreeParserTest, ParseShortPattern)
    EXPECT_PATTERN_EQ("!~F~T | ~T", "?or(?and(?not(?false), ?true), ?true)");
    EXPECT_PATTERN_EQ("~ramd64|~rall", "?or(?architecture(amd64), ?architecture(all))");
 
+   EXPECT_PATTERN_EQ("(?A|?B)?C", "?and(?or(?A, ?B), ?C)");
+   EXPECT_PATTERN_EQ("?A|?B?C", "?or(?A, ?and(?B, ?C))");
+   EXPECT_PATTERN_EQ("?A|(?B?C)", "?or(?A, ?and(?B, ?C))");
+   EXPECT_PATTERN_EQ("(?B?C)|?A", "?or(?and(?B, ?C), ?A)");
 }
