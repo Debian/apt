@@ -70,7 +70,45 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseTop()
 // Parse any pattern
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parse()
 {
-   return parseAnd();
+   return parseOr();
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseOr()
+{
+   auto start = state.offset;
+   std::vector<std::unique_ptr<PatternTreeParser::Node>> nodes;
+
+   auto firstNode = parseAnd();
+
+   if (firstNode == nullptr)
+      return nullptr;
+
+   nodes.push_back(std::move(firstNode));
+   for (skipSpace(); sentence[state.offset] == '|'; skipSpace())
+   {
+      state.offset++;
+      skipSpace();
+      auto node = parseAnd();
+
+      if (node == nullptr)
+	 throw Error{Node{state.offset, sentence.size()}, "Expected pattern after |"};
+
+      nodes.push_back(std::move(node));
+   }
+
+   if (nodes.size() == 0)
+      return nullptr;
+   if (nodes.size() == 1)
+      return std::move(nodes[0]);
+
+   auto node = std::make_unique<PatternNode>();
+   node->start = start;
+   node->end = nodes[nodes.size() - 1]->end;
+   node->term = "?or";
+   node->arguments = std::move(nodes);
+   node->haveArgumentList = true;
+
+   return node;
 }
 
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseAnd()
@@ -266,8 +304,8 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseQuotedWord()
 // Parse a bare word atom
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord()
 {
-   static const constexpr auto DISALLOWED_START = "!?~,()\0"_sv;
-   static const constexpr auto DISALLOWED = ",()\0"_sv;
+   static const constexpr auto DISALLOWED_START = "!?~|,()\0"_sv;
+   static const constexpr auto DISALLOWED = "|,()\0"_sv;
    if (DISALLOWED_START.find(sentence[state.offset]) != APT::StringView::npos)
       return nullptr;
 

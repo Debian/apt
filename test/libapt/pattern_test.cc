@@ -184,4 +184,7 @@ TEST(TreeParserTest, ParseShortPattern)
    EXPECT_PATTERN_EQ("!~F ~T", "?and(?not(?false), ?true)");
    EXPECT_PATTERN_EQ("!~F~T", "?and(?not(?false), ?true)");
 
+   EXPECT_PATTERN_EQ("!~F~T | ~T", "?or(?and(?not(?false), ?true), ?true)");
+   EXPECT_PATTERN_EQ("~ramd64|~rall", "?or(?architecture(amd64), ?architecture(all))");
+
 }
