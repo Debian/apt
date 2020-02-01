@@ -285,20 +285,21 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord()
 // Rendering of the tree in JSON for debugging
 std::ostream &PatternTreeParser::PatternNode::render(std::ostream &os)
 {
-   os << "{"
-      << "\"term\": \"" << term.to_string() << "\",\n"
-      << "\"arguments\": [\n";
-   for (auto &node : arguments)
-      node->render(os) << "," << std::endl;
-   os << "null]\n";
-   os << "}\n";
+
+   os << term.to_string();
+   if (haveArgumentList)
+   {
+      os << "(";
+      for (auto &node : arguments)
+	 node->render(os) << ",";
+      os << ")";
+   }
    return os;
 }
 
 std::ostream &PatternTreeParser::WordNode::render(std::ostream &os)
 {
-   os << '"' << word.to_string() << '"';
-   return os;
+   return quoted ? os << '"' << word.to_string() << '"' : os << word.to_string();
 }
 
 std::nullptr_t PatternTreeParser::Node::error(std::string message)
