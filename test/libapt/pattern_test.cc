@@ -14,6 +14,32 @@
 
 using namespace APT::Internal;
 
+#define EXPECT_EXCEPTION(exp, exc, msg)                                                        \
+   caught = false;                                                                             \
+   try                                                                                         \
+   {                                                                                           \
+      exp;                                                                                     \
+   }                                                                                           \
+   catch (exc & e)                                                                             \
+   {                                                                                           \
+      caught = true;                                                                           \
+      EXPECT_TRUE(e.message.find(msg) != std::string::npos) << msg << " not in " << e.message; \
+   };                                                                                          \
+   EXPECT_TRUE(caught) << #exp "should have thrown an exception"
+
+TEST(TreeParserTest, ParseInvalid)
+{
+   bool caught = false;
+
+   // Not a valid pattern: Reject
+   EXPECT_EXCEPTION(PatternTreeParser("?").parse(), PatternTreeParser::Error, "Pattern must have a term");
+   EXPECT_EXCEPTION(PatternTreeParser("?AB?").parse(), PatternTreeParser::Error, "Pattern must have a term");
+   EXPECT_EXCEPTION(PatternTreeParser("~").parse(), PatternTreeParser::Error, "Unknown short pattern");
+
+   // Not a pattern at all: Report nullptr
+   EXPECT_EQ(PatternTreeParser("A?").parse(), nullptr);
+}
+
 TEST(TreeParserTest, ParseWord)
 {
    auto node = PatternTreeParser("?word(word)").parseTop();

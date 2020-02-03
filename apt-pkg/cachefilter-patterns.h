@@ -92,9 +92,9 @@ struct PatternTreeParser
    /// There may not be anything before or after the pattern, except for
    /// whitespace.
    std::unique_ptr<Node> parseTop();
+   std::unique_ptr<Node> parse(); // public for test cases only
 
    private:
-   std::unique_ptr<Node> parse();
    std::unique_ptr<Node> parseOr();
    std::unique_ptr<Node> parseAnd();
    std::unique_ptr<Node> parseUnary();

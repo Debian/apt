@@ -263,6 +263,9 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
 
    node->term = sentence.substr(node->start, state.offset - node->start);
 
+   if (node->term.size() <= 1)
+      throw Error{*node, "Pattern must have a term/name"};
+
    node->end = skipSpace();
    // We don't have any arguments, return node;
    if (sentence[state.offset] != '(')
