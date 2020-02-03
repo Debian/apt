@@ -123,7 +123,10 @@ static inline int StringViewCompareFast(StringView a, StringView b) {
     return memcmp(a.data(), b.data(), a.size());
 }
 
-
+static constexpr inline APT::StringView operator""_sv(const char *data, size_t size)
+{
+   return APT::StringView(data, size);
+}
 }
 
 inline bool operator ==(const char *other, APT::StringView that);

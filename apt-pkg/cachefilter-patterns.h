@@ -39,6 +39,8 @@ struct PatternTreeParser
       size_t start = 0;
       size_t end = 0;
 
+      explicit Node(size_t start = 0, size_t end = 0) : start(start), end(end) {}
+
       virtual std::ostream &render(std::ostream &os) { return os; };
       std::nullptr_t error(std::string message);
    };
@@ -71,7 +73,7 @@ struct PatternTreeParser
 
    struct State
    {
-      off_t offset = 0;
+      size_t offset = 0;
    };
 
    APT::StringView sentence;
@@ -90,11 +92,18 @@ struct PatternTreeParser
    /// There may not be anything before or after the pattern, except for
    /// whitespace.
    std::unique_ptr<Node> parseTop();
+   std::unique_ptr<Node> parse(); // public for test cases only
 
    private:
-   std::unique_ptr<Node> parse();
+   std::unique_ptr<Node> parseOr();
+   std::unique_ptr<Node> parseAnd();
+   std::unique_ptr<Node> parseUnary();
+   std::unique_ptr<Node> parsePrimary();
+   std::unique_ptr<Node> parseGroup();
    std::unique_ptr<Node> parsePattern();
-   std::unique_ptr<Node> parseWord();
+   std::unique_ptr<Node> parseShortPattern();
+   std::unique_ptr<Node> parseArgument(bool shrt);
+   std::unique_ptr<Node> parseWord(bool shrt);
    std::unique_ptr<Node> parseQuotedWord();
 };
 

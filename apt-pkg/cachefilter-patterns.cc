@@ -17,6 +17,32 @@ namespace APT
 namespace Internal
 {
 
+static const constexpr struct
+{
+   APT::StringView shortName;
+   APT::StringView longName;
+   bool takesArgument;
+} shortPatterns[] = {
+   {"r"_sv, "?architecture"_sv, true},
+   {"A"_sv, "?archive"_sv, true},
+   {"M"_sv, "?automatic"_sv, false},
+   {"b"_sv, "?broken"_sv, false},
+   {"c"_sv, "?config-files"_sv, false},
+   {"E"_sv, "?essential"_sv, false},
+   {"F"_sv, "?false"_sv, false},
+   {"g"_sv, "?garbage"_sv, false},
+   {"i"_sv, "?installed"_sv, false},
+   {"n"_sv, "?name"_sv, true},
+   {"o"_sv, "?obsolete"_sv, false},
+   {"O"_sv, "?origin"_sv, true},
+   {"s"_sv, "?section"_sv, true},
+   {"e"_sv, "?source-package"_sv, true},
+   {"T"_sv, "?true"_sv, false},
+   {"U"_sv, "?upgradable"_sv, false},
+   {"V"_sv, "?version"_sv, true},
+   {"v"_sv, "?virtual"_sv, false},
+};
+
 template <class... Args>
 std::string rstrprintf(Args... args)
 {
@@ -32,14 +58,11 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseTop()
    auto node = parse();
    skipSpace();
 
-   if (node->end != sentence.size())
-   {
-      Node node2;
+   if (node == nullptr)
+      throw Error{Node{0, sentence.size()}, "Expected pattern"};
 
-      node2.start = node->end;
-      node2.end = sentence.size();
-      throw Error{node2, "Expected end of file"};
-   }
+   if (node->end != sentence.size())
+      throw Error{Node{node->end, sentence.size()}, "Expected end of file"};
 
    return node;
 }
@@ -47,26 +70,185 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseTop()
 // Parse any pattern
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parse()
 {
+   return parseOr();
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseOr()
+{
+   auto start = state.offset;
+   std::vector<std::unique_ptr<PatternTreeParser::Node>> nodes;
+
+   auto firstNode = parseAnd();
+
+   if (firstNode == nullptr)
+      return nullptr;
+
+   nodes.push_back(std::move(firstNode));
+   for (skipSpace(); sentence[state.offset] == '|'; skipSpace())
+   {
+      state.offset++;
+      skipSpace();
+      auto node = parseAnd();
+
+      if (node == nullptr)
+	 throw Error{Node{state.offset, sentence.size()}, "Expected pattern after |"};
+
+      nodes.push_back(std::move(node));
+   }
+
+   if (nodes.size() == 0)
+      return nullptr;
+   if (nodes.size() == 1)
+      return std::move(nodes[0]);
+
+   auto node = std::make_unique<PatternNode>();
+   node->start = start;
+   node->end = nodes[nodes.size() - 1]->end;
+   node->term = "?or";
+   node->arguments = std::move(nodes);
+   node->haveArgumentList = true;
+
+   return node;
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseAnd()
+{
+   auto start = state.offset;
+   std::vector<std::unique_ptr<PatternTreeParser::Node>> nodes;
+
+   for (skipSpace(); state.offset < sentence.size(); skipSpace())
+   {
+      auto node = parseUnary();
+
+      if (node == nullptr)
+	 break;
+
+      nodes.push_back(std::move(node));
+   }
+
+   if (nodes.size() == 0)
+      return nullptr;
+   if (nodes.size() == 1)
+      return std::move(nodes[0]);
+
+   auto node = std::make_unique<PatternNode>();
+   node->start = start;
+   node->end = nodes[nodes.size() - 1]->end;
+   node->term = "?and";
+   node->arguments = std::move(nodes);
+   node->haveArgumentList = true;
+
+   return node;
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseUnary()
+{
+
+   if (sentence[state.offset] != '!')
+      return parsePrimary();
+
+   auto start = ++state.offset;
+   auto primary = parsePrimary();
+
+   if (primary == nullptr)
+      throw Error{Node{start, sentence.size()}, "Expected pattern"};
+
+   auto node = std::make_unique<PatternNode>();
+   node->start = start;
+   node->end = primary->end;
+   node->term = "?not";
+   node->arguments.push_back(std::move(primary));
+   node->haveArgumentList = true;
+   return node;
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePrimary()
+{
    std::unique_ptr<Node> node;
+   if ((node = parseShortPattern()) != nullptr)
+      return node;
    if ((node = parsePattern()) != nullptr)
       return node;
-   if ((node = parseQuotedWord()) != nullptr)
-      return node;
-   if ((node = parseWord()) != nullptr)
+   if ((node = parseGroup()) != nullptr)
       return node;
 
-   Node eNode;
-   eNode.end = eNode.start = state.offset;
-   throw Error{eNode, "Expected pattern, quoted word, or word"};
+   return nullptr;
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseGroup()
+{
+   if (sentence[state.offset] != '(')
+      return nullptr;
+
+   auto start = state.offset++;
+
+   skipSpace();
+   auto node = parse();
+   if (node == nullptr)
+      throw Error{Node{state.offset, sentence.size()},
+		  "Expected pattern after '('"};
+   skipSpace();
+
+   if (sentence[state.offset] != ')')
+      throw Error{Node{state.offset, sentence.size()},
+		  "Expected closing parenthesis"};
+
+   auto end = ++state.offset;
+   node->start = start;
+   node->end = end;
+   return node;
+}
+
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseArgument(bool shrt)
+{
+   std::unique_ptr<Node> node;
+   if ((node = parseQuotedWord()) != nullptr)
+      return node;
+   if ((node = parseWord(shrt)) != nullptr)
+      return node;
+   if ((node = parse()) != nullptr)
+      return node;
+
+   throw Error{Node{state.offset, sentence.size()},
+	       "Expected pattern, quoted word, or word"};
+}
+
+// Parse a short pattern
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseShortPattern()
+{
+   if (sentence[state.offset] != '~')
+      return nullptr;
+
+   for (auto &sp : shortPatterns)
+   {
+      if (sentence.substr(state.offset + 1, sp.shortName.size()) != sp.shortName)
+	 continue;
+
+      auto node = std::make_unique<PatternNode>();
+      node->end = node->start = state.offset;
+      node->term = sp.longName;
+
+      state.offset += sp.shortName.size() + 1;
+      if (sp.takesArgument)
+      {
+	 node->arguments.push_back(parseArgument(true));
+	 node->haveArgumentList = true;
+      }
+      node->end = state.offset;
+
+      return node;
+   }
+
+   throw Error{Node{state.offset, sentence.size()}, "Unknown short pattern"};
 }
 
 // Parse a list pattern (or function call pattern)
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
 {
-   static const APT::StringView CHARS("0123456789"
-				      "abcdefghijklmnopqrstuvwxyz"
-				      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-				      "-");
+   static constexpr auto CHARS = ("0123456789"
+				  "abcdefghijklmnopqrstuvwxyz"
+				  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+				  "-"_sv);
    if (sentence[state.offset] != '?')
       return nullptr;
 
@@ -80,6 +262,9 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
    }
 
    node->term = sentence.substr(node->start, state.offset - node->start);
+
+   if (node->term.size() <= 1)
+      throw Error{*node, "Pattern must have a term/name"};
 
    node->end = skipSpace();
    // We don't have any arguments, return node;
@@ -97,7 +282,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
       return node;
    }
 
-   node->arguments.push_back(parse());
+   node->arguments.push_back(parseArgument(false));
    skipSpace();
    while (sentence[state.offset] == ',')
    {
@@ -106,7 +291,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
       // This was a trailing comma - allow it and break the loop
       if (sentence[state.offset] == ')')
 	 break;
-      node->arguments.push_back(parse());
+      node->arguments.push_back(parseArgument(false));
       skipSpace();
    }
 
@@ -146,10 +331,13 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseQuotedWord()
 }
 
 // Parse a bare word atom
-std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord()
+std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord(bool shrt)
 {
-   static const APT::StringView DISALLOWED_START("?~,()\0", 6);
-   static const APT::StringView DISALLOWED(",()\0", 4);
+   static const constexpr auto DISALLOWED_START = "!?~|,() \0"_sv;
+   static const constexpr auto DISALLOWED_LONG = "|,()\0"_sv;
+   static const constexpr auto DISALLOWED_SHRT = "|,() ?\0"_sv;
+   const auto DISALLOWED = shrt ? DISALLOWED_SHRT : DISALLOWED_LONG;
+
    if (DISALLOWED_START.find(sentence[state.offset]) != APT::StringView::npos)
       return nullptr;
 
@@ -167,20 +355,21 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord()
 // Rendering of the tree in JSON for debugging
 std::ostream &PatternTreeParser::PatternNode::render(std::ostream &os)
 {
-   os << "{"
-      << "\"term\": \"" << term.to_string() << "\",\n"
-      << "\"arguments\": [\n";
-   for (auto &node : arguments)
-      node->render(os) << "," << std::endl;
-   os << "null]\n";
-   os << "}\n";
+
+   os << term.to_string();
+   if (haveArgumentList)
+   {
+      os << "(";
+      for (auto &node : arguments)
+	 node->render(os) << ",";
+      os << ")";
+   }
    return os;
 }
 
 std::ostream &PatternTreeParser::WordNode::render(std::ostream &os)
 {
-   os << '"' << word.to_string() << '"';
-   return os;
+   return quoted ? os << '"' << word.to_string() << '"' : os << word.to_string();
 }
 
 std::nullptr_t PatternTreeParser::Node::error(std::string message)

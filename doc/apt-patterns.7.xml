@@ -43,19 +43,19 @@
       patterns.
    </para>
    <variablelist>
-     <varlistentry><term><code>?and(PATTERN, PATTERN, ...)</code></term>
+     <varlistentry><term><code>?and(PATTERN, PATTERN, ...)</code></term><term><code>PATTERN PATTERN ...</code></term>
      <listitem><para>Selects objects where all specified patterns match.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?false</code></term>
+     <varlistentry><term><code>?false</code></term><term><code>~F</code></term>
      <listitem><para>Selects nothing.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?not(PATTERN)</code></term>
+     <varlistentry><term><code>?not(PATTERN)</code></term><term><code>!PATTERN</code></term>
      <listitem><para>Selects objects where PATTERN does not match.</para></listitem>
      </varlistentry>
      <varlistentry><term><code>?or(PATTERN, PATTERN, ...)</code></term>
      <listitem><para>Selects objects where at least one of the specified patterns match.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?true</code></term>
+     <varlistentry><term><code>?true</code></term><term><code>~T</code></term>
      <listitem><para>Selects all objects.</para></listitem>
      </varlistentry>
    </variablelist>
@@ -83,40 +83,40 @@
    These patterns select specific packages.
    </para>
    <variablelist>
-     <varlistentry><term><code>?architecture(WILDCARD)</code></term>
+     <varlistentry><term><code>?architecture(WILDCARD)</code></term><term><code>~rWILDCARD</code></term>
      <listitem><para>Selects packages matching the specified architecture, which may contain wildcards using any.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?automatic</code></term>
+     <varlistentry><term><code>?automatic</code></term><term><code>~M</code></term>
      <listitem><para>Selects packages that were installed automatically.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?broken</code></term>
+     <varlistentry><term><code>?broken</code></term><term><code>~b</code></term>
      <listitem><para>Selects packages that have broken dependencies.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?config-files</code></term>
+     <varlistentry><term><code>?config-files</code></term><term><code>~c</code></term>
      <listitem><para>Selects packages that are not fully installed, but have solely residual configuration files left.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?essential</code></term>
+     <varlistentry><term><code>?essential</code></term><term><code>~E</code></term>
      <listitem><para>Selects packages that have Essential: yes set in their control file.</para></listitem>
      </varlistentry>
      <varlistentry><term><code>?exact-name(NAME)</code></term>
      <listitem><para>Selects packages with the exact specified name.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?garbage</code></term>
+     <varlistentry><term><code>?garbage</code></term><term><code>~g</code></term>
      <listitem><para>Selects packages that can be removed automatically.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?installed</code></term>
+     <varlistentry><term><code>?installed</code></term><term><code>~i</code></term>
      <listitem><para>Selects packages that are currently installed.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?name(REGEX)</code></term>
+     <varlistentry><term><code>?name(REGEX)</code></term><term><code>~nREGEX</code></term>
      <listitem><para>Selects packages where the name matches the given regular expression.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?obsolete</code></term>
+     <varlistentry><term><code>?obsolete</code></term><term><code>~o</code></term>
      <listitem><para>Selects packages that no longer exist in repositories.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?upgradable</code></term>
+     <varlistentry><term><code>?upgradable</code></term><term><code>~U</code></term>
      <listitem><para>Selects packages that can be upgraded (have a newer candidate).</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?virtual</code></term>
+     <varlistentry><term><code>?virtual</code></term><term><code>~v</code></term>
      <listitem><para>Selects all virtual packages; that is packages without a version.
       These exist when they are referenced somewhere in the archive,
       for example because something depends on that name.</para></listitem>
@@ -129,22 +129,22 @@
    These patterns select specific versions of a package.
    </para>
    <variablelist>
-     <varlistentry><term><code>?archive(REGEX)</code></term>
+     <varlistentry><term><code>?archive(REGEX)</code></term><term><code>~AREGEX</code></term>
      <listitem><para>Selects versions that come from the archive that matches the specified regular expression. Archive, here, means the values after <code>a=</code> in <command>apt-cache policy</command>.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?origin(REGEX)</code></term>
+     <varlistentry><term><code>?origin(REGEX)</code></term><term><code>~OREGEX</code></term>
      <listitem><para>Selects versions that come from the origin that matches the specified regular expression. Origin, here, means the values after <code>o=</code> in <command>apt-cache policy</command>.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?section(REGEX)</code></term>
+     <varlistentry><term><code>?section(REGEX)</code></term><term><code>~sREGEX</code></term>
      <listitem><para>Selects versions where the section matches the specified regular expression.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?source-package(REGEX)</code></term>
+     <varlistentry><term><code>?source-package(REGEX)</code></term><term><code>~eREGEX</code></term>
      <listitem><para>Selects versions where the source package name matches the specified regular expression.</para></listitem>
      </varlistentry>
      <varlistentry><term><code>?source-version(REGEX)</code></term>
      <listitem><para>Selects versions where the source package version matches the specified regular expression.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?version(REGEX)</code></term>
+     <varlistentry><term><code>?version(REGEX)</code></term><term><code>~VREGEX</code></term>
      <listitem><para>Selects versions where the version string matching the specified regular expression.</para></listitem>
      </varlistentry>
    </variablelist>
@@ -168,9 +168,6 @@
    </para>
    <itemizedlist>
       <listitem>
-         <para>Only long forms &mdash; the ones starting with ? &mdash; are supported</para>
-      </listitem>
-      <listitem>
          <para>
             Syntax is uniform: If there is an opening parenthesis after a term, it is always assumed to be the beginning of an argument list.
          </para>
@@ -192,6 +189,16 @@
       </listitem>
       <listitem>
          <para>?narrow accepts infinite arguments</para>
+      </listitem>
+      <listitem>
+         <para><code>foo</code> cannot be used as a shortform for <code>?name(foo)</code>, as this can cause typos to go unnoticed:
+         Consider <code>?and(...,~poptional)</code>:
+         this requires the package to have <code>required</code> priority, but
+         if you do not type the <code>~</code>, it would require the package name to contain <code>poptional</code>.</para>
+      </listitem>
+      <listitem>
+          <para>Grouping patterns with <code>(...)</code> or writing <code>?or(A,B)</code> as <code>A|B</code> are not supported. We
+          do not believe that the use of <code>|</code> is that common, and the grouping is not necessary without it.</para>
       </listitem>
    </itemizedlist>
  </refsect1>
