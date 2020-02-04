@@ -52,11 +52,14 @@
      <varlistentry><term><code>?not(PATTERN)</code></term><term><code>!PATTERN</code></term>
      <listitem><para>Selects objects where PATTERN does not match.</para></listitem>
      </varlistentry>
-     <varlistentry><term><code>?or(PATTERN, PATTERN, ...)</code></term>
+     <varlistentry><term><code>?or(PATTERN, PATTERN, ...)</code></term><term><code>PATTERN | PATTERN | ...</code></term>
      <listitem><para>Selects objects where at least one of the specified patterns match.</para></listitem>
      </varlistentry>
      <varlistentry><term><code>?true</code></term><term><code>~T</code></term>
      <listitem><para>Selects all objects.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>(PATTERN)</code></term>
+     <listitem><para>Selects the same as <code>PATTERN</code>, can be used to work around precedence, for example, <code>(~ramd64|~ri386)~nfoo</code></para></listitem>
      </varlistentry>
    </variablelist>
  </refsect1>
@@ -158,6 +161,9 @@
      </varlistentry>
      <varlistentry><term><code>apt purge ?config-files</code></term>
      <listitem><para>Purge all packages that only have configuration files left</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>apt list '~i !~M (~slibs|~sperl|~spython)'</code></term>
+     <listitem><para>List all manually-installed packages in sections matching libs, perl, or python.</para></listitem>
      </varlistentry>
    </variablelist>
  </refsect1>
