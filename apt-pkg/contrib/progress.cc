@@ -123,7 +123,7 @@ bool OpProgress::CheckChange(float Interval)
 
    std::chrono::duration<decltype(Interval)> Delta =
       std::chrono::seconds(NowTime.tv_sec - LastTime.tv_sec) +
-      std::chrono::microseconds(NowTime.tv_sec - LastTime.tv_usec);
+      std::chrono::microseconds(NowTime.tv_usec - LastTime.tv_usec);
 
    if (Delta.count() < Interval)
       return false;

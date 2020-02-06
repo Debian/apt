@@ -56,6 +56,15 @@ static struct timeval GetTimevalFromSteadyClock()			/*{{{*/
    return { Time_sec.count(), Time_usec.count() };
 }
 									/*}}}*/
+static auto GetTimeDeltaSince(struct timeval StartTime)			/*{{{*/
+{
+   auto const NewTime = GetTimevalFromSteadyClock();
+   std::chrono::duration<double> Delta =
+      std::chrono::seconds(NewTime.tv_sec - StartTime.tv_sec) +
+      std::chrono::microseconds(NewTime.tv_usec - StartTime.tv_usec);
+   return llround(Delta.count());
+}
+									/*}}}*/
 
 // struct PackageMap - List of all package files in the config file	/*{{{*/
 // ---------------------------------------------------------------------
@@ -241,16 +250,11 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
              << SizeToStr(Size) << "B ";
    else
       c0out << ' ';
-   
-   struct timeval NewTime = GetTimevalFromSteadyClock();
-   std::chrono::duration<double> Delta =
-      std::chrono::seconds(NewTime.tv_sec - StartTime.tv_sec) +
-      std::chrono::microseconds(NewTime.tv_sec - StartTime.tv_usec);
 
    c0out << Packages.Stats.Packages << " files " <<
 /*      SizeToStr(Packages.Stats.MD5Bytes) << "B/" << */
       SizeToStr(Packages.Stats.Bytes) << "B " <<
-      TimeToStr(llround(Delta.count())) << endl;
+      TimeToStr(GetTimeDeltaSince(StartTime)) << endl;
 
    if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
      c0out << " Misses in Cache: " << Packages.Stats.Misses<< endl;
@@ -328,13 +332,8 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    else
       c0out << ' ';
    
-   struct timeval NewTime = GetTimevalFromSteadyClock();
-   std::chrono::duration<double> Delta =
-      std::chrono::seconds(NewTime.tv_sec - StartTime.tv_sec) +
-      std::chrono::microseconds(NewTime.tv_sec - StartTime.tv_usec);
-   
    c0out << Sources.Stats.Packages << " pkgs in " <<
-      TimeToStr(llround(Delta.count())) << endl;
+      TimeToStr(GetTimeDeltaSince(StartTime)) << endl;
 
    if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
      c0out << " Misses in Cache: " << Sources.Stats.Misses << endl;
@@ -444,17 +443,12 @@ bool PackageMap::GenContents(Configuration &Setup,
    else
       c0out << ' ';
    
-   struct timeval NewTime = GetTimevalFromSteadyClock();
-   std::chrono::duration<double> Delta =
-      std::chrono::seconds(NewTime.tv_sec - StartTime.tv_sec) +
-      std::chrono::microseconds(NewTime.tv_sec - StartTime.tv_usec);
-   
    if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
      c0out << " Misses in Cache: " << Contents.Stats.Misses<< endl;
 
    c0out << Contents.Stats.Packages << " files " <<
       SizeToStr(Contents.Stats.Bytes) << "B " <<
-      TimeToStr(llround(Delta.count())) << endl;
+      TimeToStr(GetTimeDeltaSince(StartTime)) << endl;
    
    return true;
 }
@@ -970,12 +964,8 @@ static bool Generate(CommandLine &CmdL)
 	 return false;
       }
 
-   struct timeval NewTime = GetTimevalFromSteadyClock();
-   std::chrono::duration<double> Delta =
-      std::chrono::seconds(NewTime.tv_sec - StartTime.tv_sec) +
-      std::chrono::microseconds(NewTime.tv_sec - StartTime.tv_usec);
    c1out << "Done. " << SizeToStr(Stats.Bytes) << "B in " << Stats.Packages
-         << " archives. Took " << TimeToStr(llround(Delta.count())) << endl;
+         << " archives. Took " << TimeToStr(GetTimeDeltaSince(StartTime)) << endl;
 
    UnloadTree(TransList);
    return true;
