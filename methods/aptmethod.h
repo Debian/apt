@@ -137,8 +137,11 @@ protected:
       ALLOW(chown);
       ALLOW(chown32);
       ALLOW(clock_getres);
+      ALLOW(clock_getres_time64);
       ALLOW(clock_gettime);
+      ALLOW(clock_gettime64);
       ALLOW(clock_nanosleep);
+      ALLOW(clock_nanosleep_time64);
       ALLOW(close);
       ALLOW(creat);
       ALLOW(dup);
@@ -220,9 +223,11 @@ protected:
       ALLOW(pipe2);
       ALLOW(poll);
       ALLOW(ppoll);
+      ALLOW(ppoll_time64);
       ALLOW(prctl);
       ALLOW(prlimit64);
       ALLOW(pselect6);
+      ALLOW(pselect6_time64);
       ALLOW(read);
       ALLOW(readv);
       ALLOW(rename);
@@ -264,6 +269,7 @@ protected:
       ALLOW(unlinkat);
       ALLOW(utime);
       ALLOW(utimensat);
+      ALLOW(utimensat_time64);
       ALLOW(utimes);
       ALLOW(write);
       ALLOW(writev);
