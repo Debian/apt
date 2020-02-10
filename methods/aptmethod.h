@@ -169,6 +169,7 @@ protected:
       ALLOW(ftruncate);
       ALLOW(ftruncate64);
       ALLOW(futex);
+      ALLOW(futex_time64);
       ALLOW(futimesat);
       ALLOW(getegid);
       ALLOW(getegid32);
@@ -283,6 +284,7 @@ protected:
 	 ALLOW(recv);
 	 ALLOW(recvfrom);
 	 ALLOW(recvmmsg);
+	 ALLOW(recvmmsg_time64);
 	 ALLOW(recvmsg);
 	 ALLOW(send);
 	 ALLOW(sendmmsg);
