@@ -285,6 +285,21 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &Fi
    return PFPriority[File->ID];
 }
 									/*}}}*/
+// SetPriority - Directly set priority					/*{{{*/
+// ---------------------------------------------------------------------
+void pkgPolicy::SetPriority(pkgCache::VerIterator const &Ver, signed short Priority)
+{
+   Pin pin;
+   pin.Data = "pkgPolicy::SetPriority";
+   pin.Priority = Priority;
+   VerPins[Ver->ID] = pin;
+}
+void pkgPolicy::SetPriority(pkgCache::PkgFileIterator const &File, signed short Priority)
+{
+   PFPriority[File->ID] = Priority;
+}
+
+									/*}}}*/
 // ReadPinDir - Load the pin files from this dir into a Policy		/*{{{*/
 // ---------------------------------------------------------------------
 /* This will load each pin file in the given dir into a Policy. If the
