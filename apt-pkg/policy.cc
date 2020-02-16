@@ -18,7 +18,6 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/netrc.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/strutl.h>
@@ -85,7 +84,6 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : VerPins(nullptr),
 /* */
 bool pkgPolicy::InitDefaults()
 {
-   std::vector<std::unique_ptr<FileFd>> authconfs;
    // Initialize the priorities based on the status of the package file
    for (pkgCache::PkgFileIterator I = Cache->FileBegin(); I != Cache->FileEnd(); ++I)
    {
@@ -96,8 +94,6 @@ bool pkgPolicy::InitDefaults()
 	 PFPriority[I->ID] = 100;
       else if (I.Flagged(pkgCache::Flag::NotAutomatic))
 	 PFPriority[I->ID] = 1;
-      if (I.Flagged(pkgCache::Flag::PackagesRequireAuthorization) && !IsAuthorized(I, authconfs))
-	 PFPriority[I->ID] = NEVER_PIN;
    }
 
    // Apply the defaults..

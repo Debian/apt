@@ -13,12 +13,9 @@
 #ifndef NETRC_H
 #define NETRC_H
 
-#include <memory>
 #include <string>
-#include <vector>
 
 #include <apt-pkg/macros.h>
-#include <apt-pkg/pkgcache.h>
 
 
 
@@ -26,5 +23,4 @@ class URI;
 class FileFd;
 
 bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri);
-bool IsAuthorized(pkgCache::PkgFileIterator const I, std::vector<std::unique_ptr<FileFd>> &authconfs) APT_HIDDEN;
 #endif
