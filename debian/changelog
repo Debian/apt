@@ -1,3 +1,22 @@
+apt (1.9.10) experimental; urgency=medium
+
+  [ David Kalnischkies ]
+  * Fix remaining usec vs sec time-delta calculation typos.
+    Thanks to Trent W. Buck for initial patch (Closes: #950776)
+
+  [ Julian Andres Klode ]
+  * seccomp: Allow time64 variants (>402,<415) of allowed syscalls
+    (Closes: #951012)
+  * debian/control: Bump libseccomp-dev Build-Depends to >= 2.4.2
+  * seccomp: Allow recvmmsg_time64() and futex_time64()
+  * policy: Add SetPriority() methods
+  * Revert "Add a Packages-Require-Authorization Release file field"
+
+  [ Michael Vogt ]
+  * doc: remove "WIP" from apt.8.xml
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 18 Feb 2020 12:32:42 +0100
+
 apt (1.9.9) experimental; urgency=medium
 
   * Widen regular expressions for versioned kernel packages (LP: #1607845)
