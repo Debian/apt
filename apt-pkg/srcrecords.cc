@@ -52,7 +52,7 @@ pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : d(NULL), Files(0)
    // Doesn't work without any source index files
    if (Files.empty() == true)
    {
-      _error->Error(_("You must put some 'source' URIs"
+      _error->Error(_("You must put some 'deb-src' URIs"
 		    " in your sources.list"));
       return;
    }   
