@@ -8,6 +8,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/netrc.h>
+#include <apt-pkg/strutl.h>
 
 #include <algorithm>
 #include <locale>

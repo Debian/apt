@@ -23,6 +23,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/srcrecords.h>
+#include <apt-pkg/strutl.h>
 
 #include <iostream>
 #include <memory>

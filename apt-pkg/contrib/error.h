@@ -362,6 +362,6 @@ private:								/*{{{*/
 GlobalError *_GetErrorObj();
 static struct {
 	inline GlobalError* operator ->() { return _GetErrorObj(); }
-} _error APT_UNUSED APT_PKG_590("Consider rewriting this");
+} _error APT_UNUSED;
 
 #endif
