@@ -643,7 +643,7 @@ struct pkgCache::Version
 
        No two packages in existence should have the same VerStr
        and Hash with different contents. */
-   unsigned short Hash;
+   uint32_t Hash;
    /** \brief unique sequel ID */
    map_id_t ID;
    /** \brief parsed priority value */
