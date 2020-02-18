@@ -171,6 +171,11 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       return;
    }
 
+   bool IsSourcePin = APT::String::Startswith(Name, "src:");
+   if (IsSourcePin) {
+      Name = Name.substr(sizeof("src:") - 1);
+   }
+
    size_t found = Name.rfind(':');
    string Arch;
    if (found != string::npos) {
@@ -186,10 +191,11 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() != true; ++G)
 	 if (Name != G.Name() && match.ExpressionMatches(Name, G.Name()))
 	 {
+	    auto NameToPinFor = IsSourcePin ? string("src:").append(G.Name()) : string(G.Name());
 	    if (Arch.empty() == false)
-	       CreatePin(Type, string(G.Name()).append(":").append(Arch), Data, Priority);
+	       CreatePin(Type, NameToPinFor.append(":").append(Arch), Data, Priority);
 	    else
-	       CreatePin(Type, G.Name(), Data, Priority);
+	       CreatePin(Type, NameToPinFor, Data, Priority);
 	 }
       return;
    }
@@ -205,25 +211,48 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       else
 	 MatchingArch = Arch;
       APT::CacheFilter::PackageArchitectureMatchesSpecification pams(MatchingArch);
-      for (pkgCache::PkgIterator Pkg = Grp.PackageList(); Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
-      {
-	 if (pams(Pkg.Arch()) == false)
-	    continue;
 
-	 PkgPin P(Pkg.FullName());
-	 P.Type = Type;
-	 P.Priority = Priority;
-	 P.Data = Data;
-
-	 // Find matching version(s) and copy the pin into it
-	 pkgVersionMatch Match(P.Data,P.Type);
-	 for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() != true; ++Ver)
+      if (IsSourcePin) {
+	 for (pkgCache::VerIterator Ver = Grp.VersionsInSource(); not Ver.end(); Ver = Ver.NextInSource())
 	 {
+	    if (pams(Ver.ParentPkg().Arch()) == false)
+	       continue;
+
+	    PkgPin P(Ver.ParentPkg().FullName());
+	    P.Type = Type;
+	    P.Priority = Priority;
+	    P.Data = Data;
+	    // Find matching version(s) and copy the pin into it
+	    pkgVersionMatch Match(P.Data,P.Type);
 	    if (Match.VersionMatches(Ver)) {
 	       Pin *VP = VerPins + Ver->ID;
 	       if (VP->Type == pkgVersionMatch::None) {
 		  *VP = P;
 		   matched = true;
+	       }
+	    }
+	 }
+      } else {
+	 for (pkgCache::PkgIterator Pkg = Grp.PackageList(); Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
+	 {
+	    if (pams(Pkg.Arch()) == false)
+	       continue;
+
+	    PkgPin P(Pkg.FullName());
+	    P.Type = Type;
+	    P.Priority = Priority;
+	    P.Data = Data;
+
+	    // Find matching version(s) and copy the pin into it
+	    pkgVersionMatch Match(P.Data,P.Type);
+	    for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() != true; ++Ver)
+	    {
+	       if (Match.VersionMatches(Ver)) {
+		  Pin *VP = VerPins + Ver->ID;
+		  if (VP->Type == pkgVersionMatch::None) {
+		     *VP = P;
+		      matched = true;
+		  }
 	       }
 	    }
 	 }

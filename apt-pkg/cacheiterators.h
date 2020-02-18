@@ -116,6 +116,7 @@ class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 
 	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;}
 	inline PkgIterator PackageList() const;
+	inline VerIterator VersionsInSource() const;
 	PkgIterator FindPkg(APT::StringView Arch = APT::StringView("any", 3)) const;
 	/** \brief find the package with the "best" architecture
 
@@ -192,6 +193,13 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	// Iteration
 	inline VerIterator& operator++() {if (S != Owner->VerP) S = Owner->VerP + S->NextVer; return *this;}
 	inline VerIterator operator++(int) { VerIterator const tmp(*this); operator++(); return tmp; }
+
+	inline VerIterator NextInSource()
+	{
+	   if (S != Owner->VerP)
+	      S = Owner->VerP + S->NextInSource;
+	   return *this;
+	}
 
 	// Comparison
 	int CompareVer(const VerIterator &B) const;
@@ -494,6 +502,10 @@ class pkgCache::DescFileIterator : public Iterator<DescFile, DescFileIterator> {
 // Inlined Begin functions can't be in the class because of order problems /*{{{*/
 inline pkgCache::PkgIterator pkgCache::GrpIterator::PackageList() const
        {return PkgIterator(*Owner,Owner->PkgP + S->FirstPackage);}
+       inline pkgCache::VerIterator pkgCache::GrpIterator::VersionsInSource() const
+       {
+	  return VerIterator(*Owner, Owner->VerP + S->VersionsInSource);
+       }
 inline pkgCache::VerIterator pkgCache::PkgIterator::VersionList() const
        {return VerIterator(*Owner,Owner->VerP + S->VersionList);}
 inline pkgCache::VerIterator pkgCache::PkgIterator::CurrentVer() const

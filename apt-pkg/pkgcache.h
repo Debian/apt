@@ -381,7 +381,11 @@ struct pkgCache::Header
     On or more packages with the same name form a group, so we have
     a simple way to access a package built for different architectures
     Group exists in a singly linked list of group records starting at
-    the hash index of the name in the pkgCache::Header::GrpHashTable */
+    the hash index of the name in the pkgCache::Header::GrpHashTable
+
+    They also act as a representation of source packages, allowing you to
+    iterate over all binaries produced by a source package.
+    */
 struct pkgCache::Group
 {
    /** \brief Name of the group */
@@ -392,10 +396,14 @@ struct pkgCache::Group
    map_pointer_t FirstPackage;	// Package
    /** \brief Link to the last package which belongs to the group */
    map_pointer_t LastPackage;	// Package
+
    /** \brief Link to the next Group */
    map_pointer_t Next;		// Group
    /** \brief unique sequel ID */
    map_id_t ID;
+
+   /** \brief List of binary produces by source package with this name. */
+   map_pointer_t VersionsInSource;	// Version
 
 };
 									/*}}}*/
@@ -640,6 +648,8 @@ struct pkgCache::Version
    map_id_t ID;
    /** \brief parsed priority value */
    map_number_t Priority;
+   /** \brief next version in the source package (might be different binary) */
+   map_pointer_t NextInSource;           // Version
 };
 									/*}}}*/
 // Description structure						/*{{{*/
