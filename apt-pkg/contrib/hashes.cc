@@ -16,6 +16,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/strutl.h>
 
 #include <algorithm>
 #include <iostream>

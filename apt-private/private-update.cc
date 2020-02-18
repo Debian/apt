@@ -10,6 +10,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/sourcelist.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/update.h>
 
 #include <apt-private/acqprogress.h>
