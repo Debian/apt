@@ -669,6 +669,9 @@ bool pkgTagSection::Find(StringView TagView,unsigned int &Pos) const
 bool pkgTagSection::FindInternal(unsigned int Pos, const char *&Start,
 		         const char *&End) const
 {
+   if (unlikely(Pos + 1 >= d->Tags.size() || Pos >= d->Tags.size()))
+      return _error->Error("Internal parsing error");
+
    Start = Section + d->Tags[Pos].StartValue;
    // Strip off the gunk from the end
    End = Section + d->Tags[Pos + 1].StartTag;
@@ -713,6 +716,9 @@ StringView pkgTagSection::Find(Key key) const
 // TagSection::FindRawS - Find a string					/*{{{*/
 StringView pkgTagSection::FindRawInternal(unsigned int Pos) const
 {
+   if (unlikely(Pos + 1 >= d->Tags.size() || Pos >= d->Tags.size()))
+      return _error->Error("Internal parsing error"), "";
+
    char const *Start = (char const *) memchr(Section + d->Tags[Pos].EndTag, ':', d->Tags[Pos].StartValue - d->Tags[Pos].EndTag);
    char const *End = Section + d->Tags[Pos + 1].StartTag;
 
@@ -928,6 +934,8 @@ bool pkgTagSection::FindFlag(unsigned long &Flags, unsigned long Flag,
 									/*}}}*/
 void pkgTagSection::Get(const char *&Start,const char *&Stop,unsigned int I) const/*{{{*/
 {
+   if (unlikely(I + 1 >= d->Tags.size() || I >= d->Tags.size()))
+      abort();
    Start = Section + d->Tags[I].StartTag;
    Stop = Section + d->Tags[I+1].StartTag;
 }
