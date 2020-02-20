@@ -714,8 +714,13 @@ StringView pkgTagSection::Find(Key key) const
 StringView pkgTagSection::FindRawInternal(unsigned int Pos) const
 {
    char const *Start = (char const *) memchr(Section + d->Tags[Pos].EndTag, ':', d->Tags[Pos].StartValue - d->Tags[Pos].EndTag);
-   ++Start;
    char const *End = Section + d->Tags[Pos + 1].StartTag;
+
+   if (Start == nullptr)
+      return "";
+
+   ++Start;
+
    if (unlikely(Start > End))
       return "";
 
