@@ -40,7 +40,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    APT_HIDDEN map_stringitem_t WriteStringInMap(APT::StringView String) { return WriteStringInMap(String.data(), String.size()); };
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String);
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String, const unsigned long &Len);
-   APT_HIDDEN map_pointer_t AllocateInMap(const unsigned long &size);
+   APT_HIDDEN map_pointer<void> AllocateInMap(const unsigned long &size);
 
    // Dirty hack for public users that do not use C++11 yet
 #if __cplusplus >= 201103L
@@ -108,15 +108,15 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 
    bool NewGroup(pkgCache::GrpIterator &Grp, APT::StringView Name);
    bool NewPackage(pkgCache::PkgIterator &Pkg, APT::StringView Name, APT::StringView Arch);
-   map_pointer_t NewVersion(pkgCache::VerIterator &Ver, APT::StringView const &VerStr,
-			    map_pointer_t const ParentPkg, uint32_t Hash,
-			    map_pointer_t const Next);
-   map_pointer_t NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang, APT::StringView md5sum,map_stringitem_t const idxmd5str);
+   map_pointer<pkgCache::Version> NewVersion(pkgCache::VerIterator &Ver, APT::StringView const &VerStr,
+			    map_pointer<pkgCache::Package> const ParentPkg, uint32_t Hash,
+			    map_pointer<pkgCache::Version> const Next);
+   map_pointer<pkgCache::Description> NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang, APT::StringView md5sum,map_stringitem_t const idxmd5str);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
-		   map_pointer_t const Version, uint8_t const Op,
-		   uint8_t const Type, map_pointer_t* &OldDepLast);
+		   map_pointer<pkgCache::Version> const Version, uint8_t const Op,
+		   uint8_t const Type, map_pointer<pkgCache::Dependency>* &OldDepLast);
    bool NewProvides(pkgCache::VerIterator &Ver, pkgCache::PkgIterator &Pkg,
 		    map_stringitem_t const ProvidesVersion, uint8_t const Flags);
 
@@ -172,7 +172,7 @@ class APT_HIDDEN pkgCacheListParser
 
    // Some cache items
    pkgCache::VerIterator OldDepVer;
-   map_pointer_t *OldDepLast;
+   map_pointer<pkgCache::Dependency> *OldDepLast;
 
    void * const d;
 

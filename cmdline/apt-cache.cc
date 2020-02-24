@@ -134,14 +134,14 @@ static bool DumpPackage(CommandLine &CmdL)
 // ShowHashTableStats - Show stats about a hashtable			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static map_pointer_t PackageNext(pkgCache::Package const * const P) { return P->NextPackage; }
-static map_pointer_t GroupNext(pkgCache::Group const * const G) { return G->Next; }
+static map_pointer<pkgCache::Package> PackageNext(pkgCache::Package const * const P) { return P->NextPackage; }
+static map_pointer<pkgCache::Group> GroupNext(pkgCache::Group const * const G) { return G->Next; }
 template <class T>
 static void ShowHashTableStats(char const *const Type,
 			       T *StartP,
-			       map_pointer_t *Hashtable,
+			       map_pointer<T> *Hashtable,
 			       unsigned long Size,
-			       map_pointer_t (*Next)(T const *const))
+			       map_pointer<T> (*Next)(T const *const))
 {
    // hashtable stats for the HashTable
    unsigned long NumBuckets = Size;

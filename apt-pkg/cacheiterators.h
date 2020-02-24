@@ -321,15 +321,15 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	struct DependencyProxy
 	{
 	   map_stringitem_t &Version;
-	   map_pointer_t &Package;
+	   map_pointer<pkgCache::Package> &Package;
 	   map_id_t &ID;
 	   unsigned char &Type;
 	   unsigned char &CompareOp;
-	   map_pointer_t &ParentVer;
-	   map_pointer_t &DependencyData;
-	   map_pointer_t &NextRevDepends;
-	   map_pointer_t &NextDepends;
-	   map_pointer_t &NextData;
+	   map_pointer<pkgCache::Version> &ParentVer;
+	   map_pointer<pkgCache::DependencyData> &DependencyData;
+	   map_pointer<Dependency> &NextRevDepends;
+	   map_pointer<Dependency> &NextDepends;
+	   map_pointer<pkgCache::DependencyData> &NextData;
 	   DependencyProxy const * operator->() const { return this; }
 	   DependencyProxy * operator->() { return this; }
 	};

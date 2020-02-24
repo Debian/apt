@@ -93,9 +93,9 @@ typedef uint32_t map_id_t;
 // some files get an id, too, but in far less absolute numbers
 typedef uint16_t map_fileid_t;
 // relative pointer from cache start
-typedef uint32_t map_pointer_t;
+template <typename T> using map_pointer = uint32_t;
 // same as the previous, but documented to be to a string item
-typedef map_pointer_t map_stringitem_t;
+typedef map_pointer<char> map_stringitem_t;
 // we have only a small amount of flags for each item
 typedef uint8_t map_flags_t;
 typedef uint8_t map_number_t;
@@ -325,16 +325,16 @@ struct pkgCache::Header
 
        The PackageFile structures are singly linked lists that represent
        all package files that have been merged into the cache. */
-   map_pointer_t FileList;
+   map_pointer<PackageFile> FileList;
    /** \brief index of the first ReleaseFile structure */
-   map_pointer_t RlsFileList;
+   map_pointer<ReleaseFile> RlsFileList;
 
    /** \brief String representing the version system used */
-   map_pointer_t VerSysName;
+   map_stringitem_t VerSysName;
    /** \brief native architecture the cache was built against */
-   map_pointer_t Architecture;
+   map_stringitem_t Architecture;
    /** \brief all architectures the cache was built against */
-   map_pointer_t Architectures;
+   map_stringitem_t Architectures;
    /** \brief The maximum size of a raw entry from the original Package file */
    map_filesize_t MaxVerFileSize;
    /** \brief The maximum size of a raw entry from the original Translation file */
@@ -363,10 +363,10 @@ struct pkgCache::Header
    uint32_t HashTableSize;
    uint32_t GetHashTableSize() const { return HashTableSize; }
    void SetHashTableSize(unsigned int const sz) { HashTableSize = sz; }
-   map_pointer_t GetArchitectures() const { return Architectures; }
-   void SetArchitectures(map_pointer_t const idx) { Architectures = idx; }
-   map_pointer_t * PkgHashTableP() const { return (map_pointer_t*) (this + 1); }
-   map_pointer_t * GrpHashTableP() const { return PkgHashTableP() + GetHashTableSize(); }
+   map_stringitem_t GetArchitectures() const { return Architectures; }
+   void SetArchitectures(map_stringitem_t const idx) { Architectures = idx; }
+   map_pointer<Package> * PkgHashTableP() const { return (map_pointer<Package>*) (this + 1); }
+   map_pointer<Group> * GrpHashTableP() const { return reinterpret_cast<map_pointer<Group> *>(PkgHashTableP() + GetHashTableSize()); }
 
    /** \brief Hash of the file (TODO: Rename) */
    map_filesize_small_t CacheFileSize;
@@ -393,17 +393,17 @@ struct pkgCache::Group
 
    // Linked List
    /** \brief Link to the first package which belongs to the group */
-   map_pointer_t FirstPackage;	// Package
+   map_pointer<Package> FirstPackage;
    /** \brief Link to the last package which belongs to the group */
-   map_pointer_t LastPackage;	// Package
+   map_pointer<Package> LastPackage;
 
    /** \brief Link to the next Group */
-   map_pointer_t Next;		// Group
+   map_pointer<Group> Next;
    /** \brief unique sequel ID */
    map_id_t ID;
 
    /** \brief List of binary produces by source package with this name. */
-   map_pointer_t VersionsInSource;	// Version
+   map_pointer<Version> VersionsInSource;
 
 };
 									/*}}}*/
@@ -432,19 +432,19 @@ struct pkgCache::Package
        versions of a package can be cleanly handled by the system.
        Furthermore, this linked list is guaranteed to be sorted
        from Highest version to lowest version with no duplicate entries. */
-   map_pointer_t VersionList;       // Version
+   map_pointer<Version> VersionList;
    /** \brief index to the installed version */
-   map_pointer_t CurrentVer;        // Version
+   map_pointer<Version> CurrentVer;
    /** \brief index of the group this package belongs to */
-   map_pointer_t Group;             // Group the Package belongs to
+   map_pointer<pkgCache::Group> Group;
 
    // Linked list
    /** \brief Link to the next package in the same bucket */
-   map_pointer_t NextPackage;       // Package
+   map_pointer<Package> NextPackage;
    /** \brief List of all dependencies on this package */
-   map_pointer_t RevDepends;        // Dependency
+   map_pointer<Dependency> RevDepends;
    /** \brief List of all "packages" this package provide */
-   map_pointer_t ProvidesList;      // Provides
+   map_pointer<Provides> ProvidesList;
 
    // Install/Remove/Purge etc
    /** \brief state that the user wishes the package to be in */
@@ -504,7 +504,7 @@ struct pkgCache::ReleaseFile
 
    // Linked list
    /** \brief Link to the next ReleaseFile in the Cache */
-   map_pointer_t NextFile;
+   map_pointer<ReleaseFile> NextFile;
    /** \brief unique sequel ID */
    map_fileid_t ID;
 };
@@ -520,7 +520,7 @@ struct pkgCache::PackageFile
    /** \brief physical disk file that this PackageFile represents */
    map_stringitem_t FileName;
    /** \brief the release information */
-   map_pointer_t Release;
+   map_pointer<ReleaseFile> Release;
 
    map_stringitem_t Component;
    map_stringitem_t Architecture;
@@ -543,7 +543,7 @@ struct pkgCache::PackageFile
 
    // Linked list
    /** \brief Link to the next PackageFile in the Cache */
-   map_pointer_t NextFile;        // PackageFile
+   map_pointer<PackageFile> NextFile;
    /** \brief unique sequel ID */
    map_fileid_t ID;
 };
@@ -556,9 +556,9 @@ struct pkgCache::PackageFile
 struct pkgCache::VerFile
 {
    /** \brief index of the package file that this version was found in */
-   map_pointer_t File;           // PackageFile
+   map_pointer<PackageFile> File;
    /** \brief next step in the linked list */
-   map_pointer_t NextFile;       // PkgVerFile
+   map_pointer<VerFile> NextFile;
    /** \brief position in the package file */
    map_filesize_t Offset;         // File offset
    /** @TODO document pkgCache::VerFile::Size */
@@ -570,9 +570,9 @@ struct pkgCache::VerFile
 struct pkgCache::DescFile
 {
    /** \brief index of the file that this description was found in */
-   map_pointer_t File;           // PackageFile
+   map_pointer<PackageFile> File;
    /** \brief next step in the linked list */
-   map_pointer_t NextFile;       // PkgVerFile
+   map_pointer<DescFile> NextFile;
    /** \brief position in the file */
    map_filesize_t Offset;         // File offset
    /** @TODO document pkgCache::DescFile::Size */
@@ -619,19 +619,19 @@ struct pkgCache::Version
        applies to. If FileList is 0 then this is a blank version.
        The structure should also have a 0 in all other fields excluding
        pkgCache::Version::VerStr and Possibly pkgCache::Version::NextVer. */
-   map_pointer_t FileList;          // VerFile
+   map_pointer<VerFile> FileList;
    /** \brief next (lower or equal) version in the linked list */
-   map_pointer_t NextVer;           // Version
+   map_pointer<Version> NextVer;
    /** \brief next description in the linked list */
-   map_pointer_t DescriptionList;   // Description
+   map_pointer<Description> DescriptionList;
    /** \brief base of the dependency list */
-   map_pointer_t DependsList;       // Dependency
+   map_pointer<Dependency> DependsList;
    /** \brief links to the owning package
 
        This allows reverse dependencies to determine the package */
-   map_pointer_t ParentPkg;         // Package
+   map_pointer<Package> ParentPkg;
    /** \brief list of pkgCache::Provides */
-   map_pointer_t ProvidesList;      // Provides
+   map_pointer<Provides> ProvidesList;
 
    /** \brief archive size for this version
 
@@ -649,7 +649,7 @@ struct pkgCache::Version
    /** \brief parsed priority value */
    map_number_t Priority;
    /** \brief next version in the source package (might be different binary) */
-   map_pointer_t NextInSource;           // Version
+   map_pointer<Version> NextInSource;
 };
 									/*}}}*/
 // Description structure						/*{{{*/
@@ -668,11 +668,11 @@ struct pkgCache::Description
    map_stringitem_t md5sum;
 
    /** @TODO document pkgCache::Description::FileList */
-   map_pointer_t FileList;          // DescFile
+   map_pointer<DescFile> FileList;
    /** \brief next translation for this description */
-   map_pointer_t NextDesc;          // Description
+   map_pointer<Description> NextDesc;
    /** \brief the text is a description of this package */
-   map_pointer_t ParentPkg;         // Package
+   map_pointer<Package> ParentPkg;
 
    /** \brief unique sequel ID */
    map_id_t ID;
@@ -693,7 +693,7 @@ struct pkgCache::DependencyData
 
        The generator will - if the package does not already exist -
        create a blank (no version records) package. */
-   map_pointer_t Package;         // Package
+   map_pointer<pkgCache::Package> Package;
 
    /** \brief Dependency type - Depends, Recommends, Conflicts, etc */
    map_number_t Type;
@@ -702,17 +702,17 @@ struct pkgCache::DependencyData
        If the high bit is set then it is a logical OR with the previous record. */
    map_flags_t CompareOp;
 
-   map_pointer_t NextData;
+   map_pointer<DependencyData> NextData;
 };
 struct pkgCache::Dependency
 {
-   map_pointer_t DependencyData;  // DependencyData
+   map_pointer<pkgCache::DependencyData> DependencyData;
    /** \brief version of the package which has the depends */
-   map_pointer_t ParentVer;       // Version
+   map_pointer<Version> ParentVer;
    /** \brief next reverse dependency of this package */
-   map_pointer_t NextRevDepends;  // Dependency
+   map_pointer<Dependency> NextRevDepends;
    /** \brief next dependency of this version */
-   map_pointer_t NextDepends;     // Dependency
+   map_pointer<Dependency> NextDepends;
 
    /** \brief unique sequel ID */
    map_id_t ID;
@@ -730,9 +730,9 @@ struct pkgCache::Dependency
 struct pkgCache::Provides
 {
    /** \brief index of the package providing this */
-   map_pointer_t ParentPkg;        // Package
+   map_pointer<Package> ParentPkg;
    /** \brief index of the version this provide line applies to */
-   map_pointer_t Version;          // Version
+   map_pointer<pkgCache::Version> Version;
    /** \brief version in the provides line (if any)
 
        This version allows dependencies to depend on specific versions of a
@@ -740,9 +740,9 @@ struct pkgCache::Provides
    map_stringitem_t ProvideVersion;
    map_flags_t Flags;
    /** \brief next provides (based of package) */
-   map_pointer_t NextProvides;     // Provides
+   map_pointer<Provides> NextProvides;
    /** \brief next provides (based of version) */
-   map_pointer_t NextPkgProv;      // Provides
+   map_pointer<Provides> NextPkgProv;
 };
 									/*}}}*/
 
