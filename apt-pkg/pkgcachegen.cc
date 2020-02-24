@@ -226,13 +226,15 @@ map_stringitem_t pkgCacheGenerator::WriteStringInMap(const char *String) {
    return index;
 }
 									/*}}}*/
-map_pointer<void> pkgCacheGenerator::AllocateInMap(const unsigned long &size) {/*{{{*/
+uint32_t pkgCacheGenerator::AllocateInMap(const unsigned long &size) {/*{{{*/
    size_t oldSize = Map.Size();
    void const * const oldMap = Map.Data();
-   map_pointer<void> const index = Map.Allocate(size);
+   auto index = Map.Allocate(size);
    if (index != 0)
       ReMap(oldMap, Map.Data(), oldSize);
-   return index;
+   if (index != static_cast<uint32_t>(index))
+      abort();					// Internal error
+   return static_cast<uint32_t>(index);
 }
 									/*}}}*/
 // CacheGenerator::MergeList - Merge the package list			/*{{{*/
@@ -553,7 +555,7 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, StringView Name)
       return true;
 
    // Get a structure
-   map_pointer<pkgCache::Group> const Group = AllocateInMap(sizeof(pkgCache::Group));
+   auto const Group = AllocateInMap<pkgCache::Group>();
    if (unlikely(Group == 0))
       return false;
 
@@ -594,7 +596,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
 	 return true;
 
    // Get a structure
-   map_pointer<pkgCache::Package> const Package = AllocateInMap(sizeof(pkgCache::Package));
+   auto const Package = AllocateInMap<pkgCache::Package>();
    if (unlikely(Package == 0))
       return false;
    Pkg = pkgCache::PkgIterator(Cache,Cache.PkgP + Package);
@@ -820,7 +822,7 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
       return true;
    
    // Get a structure
-   map_pointer<pkgCache::VerFile> const VerFile = AllocateInMap(sizeof(pkgCache::VerFile));
+   auto const VerFile = AllocateInMap<pkgCache::VerFile>();
    if (VerFile == 0)
       return false;
    
@@ -853,7 +855,7 @@ map_pointer<pkgCache::Version> pkgCacheGenerator::NewVersion(pkgCache::VerIterat
 					    map_pointer<pkgCache::Version> const Next)
 {
    // Get a structure
-   map_pointer<pkgCache::Package> const Version = AllocateInMap(sizeof(pkgCache::Version));
+   auto const Version = AllocateInMap<pkgCache::Version>();
    if (Version == 0)
       return 0;
    
@@ -905,7 +907,7 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
       return true;
    
    // Get a structure
-   map_pointer<pkgCache::DescFile> const DescFile = AllocateInMap(sizeof(pkgCache::DescFile));
+   auto const DescFile = AllocateInMap<pkgCache::DescFile>();
    if (DescFile == 0)
       return false;
 
@@ -938,7 +940,7 @@ map_pointer<pkgCache::Description> pkgCacheGenerator::NewDescription(pkgCache::D
 					    map_stringitem_t const idxmd5str)
 {
    // Get a structure
-   map_pointer<pkgCache::Description> const Description = AllocateInMap(sizeof(pkgCache::Description));
+   auto const Description = AllocateInMap<pkgCache::Description>();
    if (Description == 0)
       return 0;
 
@@ -976,7 +978,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 {
    void const * const oldMap = Map.Data();
    // Get a structure
-   map_pointer<pkgCache::Dependency> const Dependency = AllocateInMap(sizeof(pkgCache::Dependency));
+   auto const Dependency = AllocateInMap<pkgCache::Dependency>();
    if (unlikely(Dependency == 0))
       return false;
 
@@ -1003,7 +1005,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 
    if (isDuplicate == false)
    {
-      DependencyData = AllocateInMap(sizeof(pkgCache::DependencyData));
+      DependencyData = AllocateInMap<pkgCache::DependencyData>();
       if (unlikely(DependencyData == 0))
         return false;
    }
@@ -1175,7 +1177,7 @@ bool pkgCacheGenerator::NewProvides(pkgCache::VerIterator &Ver,
 				    uint8_t const Flags)
 {
    // Get a structure
-   map_pointer<pkgCache::Provides> const Provides = AllocateInMap(sizeof(pkgCache::Provides));
+   auto const Provides = AllocateInMap<pkgCache::Provides>();
    if (unlikely(Provides == 0))
       return false;
    ++Cache.HeaderP->ProvidesCount;
@@ -1249,7 +1251,7 @@ bool pkgCacheGenerator::SelectReleaseFile(const string &File,const string &Site,
       return true;
 
    // Get some space for the structure
-   map_pointer<pkgCache::ReleaseFile> const idxFile = AllocateInMap(sizeof(*CurrentRlsFile));
+   auto const idxFile = AllocateInMap<pkgCache::ReleaseFile>();
    if (unlikely(idxFile == 0))
       return false;
    CurrentRlsFile = Cache.RlsFileP + idxFile;
@@ -1283,7 +1285,7 @@ bool pkgCacheGenerator::SelectFile(std::string const &File,
 {
    CurrentFile = nullptr;
    // Get some space for the structure
-   map_pointer<pkgCache::PackageFile> const idxFile = AllocateInMap(sizeof(*CurrentFile));
+   auto const idxFile = AllocateInMap<pkgCache::PackageFile>();
    if (unlikely(idxFile == 0))
       return false;
    CurrentFile = Cache.PkgFileP + idxFile;

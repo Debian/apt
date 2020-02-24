@@ -40,7 +40,10 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    APT_HIDDEN map_stringitem_t WriteStringInMap(APT::StringView String) { return WriteStringInMap(String.data(), String.size()); };
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String);
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String, const unsigned long &Len);
-   APT_HIDDEN map_pointer<void> AllocateInMap(const unsigned long &size);
+   APT_HIDDEN uint32_t AllocateInMap(const unsigned long &size);
+   template<typename T> map_pointer<T> AllocateInMap() {
+      return map_pointer<T>{AllocateInMap(sizeof(T))};
+   }
 
    // Dirty hack for public users that do not use C++11 yet
 #if __cplusplus >= 201103L
