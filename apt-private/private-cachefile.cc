@@ -22,7 +22,7 @@
 using namespace std;
 
 static bool SortPackagesByName(pkgCache * const Owner,
-      map_pointer<pkgCache::Package> const A, map_pointer<pkgCache::Package> const B)
+      map_pointer<pkgCache::Group> const A, map_pointer<pkgCache::Group> const B)
 {
    if (A == 0)
       return false;

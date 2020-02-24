@@ -467,7 +467,7 @@ static bool DumpAvail(CommandLine &)
    char *Buffer = new char[Cache->HeaderP->MaxVerFileSize+10];
    for (pkgCache::VerFile **J = VFList; *J != 0;)
    {
-      pkgCache::PkgFileIterator File(*Cache,(*J)->File + Cache->PkgFileP);
+      pkgCache::PkgFileIterator File(*Cache, Cache->PkgFileP + (*J)->File);
       // FIXME: Add support for volatile/with-source files
       FileFd PkgF(File.FileName(),FileFd::ReadOnly, FileFd::Extension);
       if (_error->PendingError() == true)
@@ -481,7 +481,7 @@ static bool DumpAvail(CommandLine &)
       unsigned long Pos = 0;
       for (; *J != 0; J++)
       {
-	 if ((*J)->File + Cache->PkgFileP != File)
+	 if (Cache->PkgFileP + (*J)->File != File)
 	    break;
 	 
 	 const pkgCache::VerFile &VF = **J;

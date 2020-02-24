@@ -118,7 +118,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
-		   map_pointer<pkgCache::Version> const Version, uint8_t const Op,
+		   map_stringitem_t const Version, uint8_t const Op,
 		   uint8_t const Type, map_pointer<pkgCache::Dependency>* &OldDepLast);
    bool NewProvides(pkgCache::VerIterator &Ver, pkgCache::PkgIterator &Pkg,
 		    map_stringitem_t const ProvidesVersion, uint8_t const Flags);

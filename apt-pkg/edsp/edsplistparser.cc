@@ -87,7 +87,7 @@ bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
    if (state != 0)
    {
       Pkg->CurrentState = pkgCache::State::Installed;
-      Pkg->CurrentVer = Ver.Index();
+      Pkg->CurrentVer = Ver.MapPointer();
    }
 
    if (Section.FindB("APT-Automatic", false))
@@ -162,7 +162,7 @@ bool eippListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 	    case pkgCache::State::TriggersAwaited:
 	    case pkgCache::State::TriggersPending:
 	    case pkgCache::State::Installed:
-	       Pkg->CurrentVer = Ver.Index();
+	       Pkg->CurrentVer = Ver.MapPointer();
 	       break;
 	 }
 	 break;

@@ -77,6 +77,7 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/mmap.h>
 
+#include <cstddef>       // required for nullptr_t
 #include <string>
 #include <stdint.h>
 #include <time.h>
@@ -92,10 +93,29 @@ typedef uint32_t map_filesize_small_t;
 typedef uint32_t map_id_t;
 // some files get an id, too, but in far less absolute numbers
 typedef uint16_t map_fileid_t;
+
 // relative pointer from cache start
-template <typename T> using map_pointer = uint32_t;
+template <typename T> class map_pointer {
+   uint32_t val;
+public:
+   map_pointer() noexcept : val(0) {}
+   map_pointer(nullptr_t) noexcept : val(0) {}
+   explicit map_pointer(uint32_t n) noexcept : val(n) {}
+   explicit operator uint32_t() noexcept { return val; }
+};
+
+template<typename T> inline T *operator +(T *p, map_pointer<T> m) { return p + uint32_t(m); }
+template<typename T> inline bool operator ==(map_pointer<T> u, map_pointer<T> m) { return uint32_t(u) == uint32_t(m); }
+template<typename T> inline bool operator !=(map_pointer<T> u, map_pointer<T> m) { return uint32_t(u) != uint32_t(m); }
+template<typename T> inline bool operator <(map_pointer<T> u, map_pointer<T> m) { return uint32_t(u) < uint32_t(m); }
+template<typename T> inline bool operator >(map_pointer<T> u, map_pointer<T> m) { return uint32_t(u) > uint32_t(m); }
+template<typename T> inline uint32_t operator -(map_pointer<T> u, map_pointer<T> m) { return uint32_t(u) - uint32_t(m); }
+template<typename T> bool operator ==(map_pointer<T> m, nullptr_t) { return uint32_t(m) == 0; }
+template<typename T> bool operator !=(map_pointer<T> m, nullptr_t) { return uint32_t(m) != 0; }
+
 // same as the previous, but documented to be to a string item
 typedef map_pointer<char> map_stringitem_t;
+
 // we have only a small amount of flags for each item
 typedef uint8_t map_flags_t;
 typedef uint8_t map_number_t;

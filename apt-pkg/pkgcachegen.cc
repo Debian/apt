@@ -210,7 +210,7 @@ map_stringitem_t pkgCacheGenerator::WriteStringInMap(const char *String,
 					const unsigned long &Len) {
    size_t oldSize = Map.Size();
    void const * const oldMap = Map.Data();
-   map_stringitem_t const index = Map.WriteString(String, Len);
+   map_stringitem_t const index{Map.WriteString(String, Len)};
    if (index != 0)
       ReMap(oldMap, Map.Data(), oldSize);
    return index;
@@ -220,7 +220,7 @@ map_stringitem_t pkgCacheGenerator::WriteStringInMap(const char *String,
 map_stringitem_t pkgCacheGenerator::WriteStringInMap(const char *String) {
    size_t oldSize = Map.Size();
    void const * const oldMap = Map.Data();
-   map_stringitem_t const index = Map.WriteString(String);
+   map_stringitem_t const index{Map.WriteString(String)};
    if (index != 0)
       ReMap(oldMap, Map.Data(), oldSize);
    return index;
@@ -375,7 +375,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 {
    pkgCache::VerIterator Ver = Pkg.VersionList();
    Dynamic<pkgCache::VerIterator> DynVer(Ver);
-   map_pointer<void> *LastVer = &Pkg->VersionList;
+   map_pointer<pkgCache::Version> *LastVer = &Pkg->VersionList;
    void const * oldMap = Map.Data();
 
    auto Hash = List.VersionHash();
@@ -435,7 +435,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    }
 
    // Add a new version
-   map_pointer<pkgCache::Version> const verindex = NewVersion(Ver, Version, Pkg.Index(), Hash, *LastVer);
+   map_pointer<pkgCache::Version> const verindex = NewVersion(Ver, Version, Pkg.MapPointer(), Hash, *LastVer);
    if (unlikely(verindex == 0))
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
 			   Pkg.Name(), "NewVersion", 1);
@@ -527,7 +527,7 @@ bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterato
 	    Ver.ParentPkg().Name(), "NewDescription", 1);
 
    md5idx = Desc->md5sum;
-   Desc->ParentPkg = Ver.ParentPkg().Index();
+   Desc->ParentPkg = Ver.ParentPkg().MapPointer();
 
    // we add at the end, so that the start is constant as we need
    // that to be able to efficiently share these lists
@@ -602,7 +602,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
    Pkg = pkgCache::PkgIterator(Cache,Cache.PkgP + Package);
 
    // Set the name, arch and the ID
-   Pkg->Group = Grp.Index();
+   Pkg->Group = Grp.MapPointer();
    // all is mapped to the native architecture
    map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : StoreString(MIXED, Arch);
    if (unlikely(idxArch == 0))
@@ -827,14 +827,14 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
       return false;
    
    pkgCache::VerFileIterator VF(Cache,Cache.VerFileP + VerFile);
-   VF->File = CurrentFile - Cache.PkgFileP;
+   VF->File = map_pointer<pkgCache::PackageFile>{CurrentFile - Cache.PkgFileP};
    
    // Link it to the end of the list
    map_pointer<pkgCache::VerFile> *Last = &Ver->FileList;
    for (pkgCache::VerFileIterator V = Ver.FileList(); V.end() == false; ++V)
       Last = &V->NextFile;
    VF->NextFile = *Last;
-   *Last = VF.Index();
+   *Last = VF.MapPointer();
    
    VF->Offset = List.Offset();
    VF->Size = List.Size();
@@ -912,7 +912,7 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
       return false;
 
    pkgCache::DescFileIterator DF(Cache,Cache.DescFileP + DescFile);
-   DF->File = CurrentFile - Cache.PkgFileP;
+   DF->File = map_pointer<pkgCache::PackageFile>{CurrentFile - Cache.PkgFileP};
 
    // Link it to the end of the list
    map_pointer<pkgCache::DescFile> *Last = &Desc->FileList;
@@ -920,7 +920,7 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
       Last = &D->NextFile;
 
    DF->NextFile = *Last;
-   *Last = DF.Index();
+   *Last = DF.MapPointer();
    
    DF->Offset = List.Offset();
    DF->Size = List.Size();
@@ -971,7 +971,7 @@ map_pointer<pkgCache::Description> pkgCacheGenerator::NewDescription(pkgCache::D
    version and to the package that it is pointing to. */
 bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 				   pkgCache::VerIterator &Ver,
-				   map_pointer<pkgCache::Version> const Version,
+				   map_stringitem_t const Version,
 				   uint8_t const Op,
 				   uint8_t const Type,
 				   map_pointer<pkgCache::Dependency> * &OldDepLast)
@@ -1011,7 +1011,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
    }
 
    pkgCache::Dependency * Link = Cache.DepP + Dependency;
-   Link->ParentVer = Ver.Index();
+   Link->ParentVer = Ver.MapPointer();
    Link->DependencyData = DependencyData;
    Link->ID = Cache.HeaderP->DependsCount++;
 
@@ -1021,7 +1021,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
       Dep->Type = Type;
       Dep->CompareOp = Op;
       Dep->Version = Version;
-      Dep->Package = Pkg.Index();
+      Dep->Package = Pkg.MapPointer();
       ++Cache.HeaderP->DependsDataCount;
       if (PreviousData != 0)
       {
@@ -1184,16 +1184,16 @@ bool pkgCacheGenerator::NewProvides(pkgCache::VerIterator &Ver,
 
    // Fill it in
    pkgCache::PrvIterator Prv(Cache,Cache.ProvideP + Provides,Cache.PkgP);
-   Prv->Version = Ver.Index();
+   Prv->Version = Ver.MapPointer();
    Prv->ProvideVersion = ProvideVersion;
    Prv->Flags = Flags;
    Prv->NextPkgProv = Ver->ProvidesList;
-   Ver->ProvidesList = Prv.Index();
+   Ver->ProvidesList = Prv.MapPointer();
 
    // Link it to the package
-   Prv->ParentPkg = Pkg.Index();
+   Prv->ParentPkg = Pkg.MapPointer();
    Prv->NextProvides = Pkg->ProvidesList;
-   Pkg->ProvidesList = Prv.Index();
+   Pkg->ProvidesList = Prv.MapPointer();
    return true;
 }
 									/*}}}*/
@@ -1267,7 +1267,7 @@ bool pkgCacheGenerator::SelectReleaseFile(const string &File,const string &Site,
    CurrentRlsFile->Flags = Flags;
    CurrentRlsFile->ID = Cache.HeaderP->ReleaseFileCount;
    RlsFileName = File;
-   Cache.HeaderP->RlsFileList = CurrentRlsFile - Cache.RlsFileP;
+   Cache.HeaderP->RlsFileList = map_pointer<pkgCache::ReleaseFile>{CurrentRlsFile - Cache.RlsFileP};
    Cache.HeaderP->ReleaseFileCount++;
 
    return true;
@@ -1316,11 +1316,11 @@ bool pkgCacheGenerator::SelectFile(std::string const &File,
    CurrentFile->Component = component;
    CurrentFile->Flags = Flags;
    if (CurrentRlsFile != nullptr)
-      CurrentFile->Release = CurrentRlsFile - Cache.RlsFileP;
+      CurrentFile->Release = map_pointer<pkgCache::ReleaseFile>{CurrentRlsFile - Cache.RlsFileP};
    else
       CurrentFile->Release = 0;
    PkgFileName = File;
-   Cache.HeaderP->FileList = CurrentFile - Cache.PkgFileP;
+   Cache.HeaderP->FileList = map_pointer<pkgCache::PackageFile>{CurrentFile - Cache.PkgFileP};
    Cache.HeaderP->PackageFileCount++;
 
    if (Progress != 0)
@@ -1362,6 +1362,7 @@ public:
    ScopedErrorRevert() { _error->PushToStack(); }
    ~ScopedErrorRevert() { _error->RevertToStack(); }
 };
+
 static bool CheckValidity(FileFd &CacheFile, std::string const &CacheFileName,
                           pkgSourceList &List,
                           FileIterator const Start,
@@ -1632,7 +1633,7 @@ static bool loadBackMMapFromFile(std::unique_ptr<pkgCacheGenerator> &Gen,
    if (CacheF.IsOpen() == false || CacheF.Seek(0) == false || CacheF.Failed())
       return false;
    _error->PushToStack();
-   map_pointer<void> const alloc = Map->RawAllocate(CacheF.Size());
+   uint32_t const alloc = Map->RawAllocate(CacheF.Size());
    bool const newError = _error->PendingError();
    _error->MergeWithStack();
    if (alloc == 0 && newError)

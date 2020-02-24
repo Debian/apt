@@ -451,7 +451,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const
 	    LastPkg.end() == true))
 		return PkgIterator(*Owner, 0);
 
-	if (S->LastPackage == LastPkg.Index())
+	if (S->LastPackage == LastPkg.MapPointer())
 		return PkgIterator(*Owner, 0);
 
 	return PkgIterator(*Owner, Owner->PkgP + LastPkg->NextPackage);
