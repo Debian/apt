@@ -48,6 +48,19 @@ static bool IsDuplicateDescription(pkgCache &Cache, pkgCache::DescIterator Desc,
 using std::string;
 using APT::StringView;
 
+// Convert an offset returned from e.g. DynamicMMap or ptr difference to
+// an uint32_t location without data loss.
+template <typename T>
+static inline uint32_t NarrowOffset(T ptr)
+{
+   uint32_t res = static_cast<uint32_t>(ptr);
+   if (unlikely(ptr < 0))
+      abort();
+   if (unlikely(static_cast<T>(res) != ptr))
+      abort();
+   return res;
+}
+
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* We set the dirty flag and make sure that is written to the disk */
@@ -210,7 +223,7 @@ map_stringitem_t pkgCacheGenerator::WriteStringInMap(const char *String,
 					const unsigned long &Len) {
    size_t oldSize = Map.Size();
    void const * const oldMap = Map.Data();
-   map_stringitem_t const index{Map.WriteString(String, Len)};
+   map_stringitem_t const index{NarrowOffset(Map.WriteString(String, Len))};
    if (index != 0)
       ReMap(oldMap, Map.Data(), oldSize);
    return index;
@@ -220,7 +233,7 @@ map_stringitem_t pkgCacheGenerator::WriteStringInMap(const char *String,
 map_stringitem_t pkgCacheGenerator::WriteStringInMap(const char *String) {
    size_t oldSize = Map.Size();
    void const * const oldMap = Map.Data();
-   map_stringitem_t const index{Map.WriteString(String)};
+   map_stringitem_t const index{NarrowOffset(Map.WriteString(String))};
    if (index != 0)
       ReMap(oldMap, Map.Data(), oldSize);
    return index;
@@ -827,7 +840,7 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
       return false;
    
    pkgCache::VerFileIterator VF(Cache,Cache.VerFileP + VerFile);
-   VF->File = map_pointer<pkgCache::PackageFile>{CurrentFile - Cache.PkgFileP};
+   VF->File = map_pointer<pkgCache::PackageFile>{NarrowOffset(CurrentFile - Cache.PkgFileP)};
    
    // Link it to the end of the list
    map_pointer<pkgCache::VerFile> *Last = &Ver->FileList;
@@ -912,7 +925,7 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
       return false;
 
    pkgCache::DescFileIterator DF(Cache,Cache.DescFileP + DescFile);
-   DF->File = map_pointer<pkgCache::PackageFile>{CurrentFile - Cache.PkgFileP};
+   DF->File = map_pointer<pkgCache::PackageFile>{NarrowOffset(CurrentFile - Cache.PkgFileP)};
 
    // Link it to the end of the list
    map_pointer<pkgCache::DescFile> *Last = &Desc->FileList;
@@ -1267,7 +1280,7 @@ bool pkgCacheGenerator::SelectReleaseFile(const string &File,const string &Site,
    CurrentRlsFile->Flags = Flags;
    CurrentRlsFile->ID = Cache.HeaderP->ReleaseFileCount;
    RlsFileName = File;
-   Cache.HeaderP->RlsFileList = map_pointer<pkgCache::ReleaseFile>{CurrentRlsFile - Cache.RlsFileP};
+   Cache.HeaderP->RlsFileList = map_pointer<pkgCache::ReleaseFile>{NarrowOffset(CurrentRlsFile - Cache.RlsFileP)};
    Cache.HeaderP->ReleaseFileCount++;
 
    return true;
@@ -1316,11 +1329,11 @@ bool pkgCacheGenerator::SelectFile(std::string const &File,
    CurrentFile->Component = component;
    CurrentFile->Flags = Flags;
    if (CurrentRlsFile != nullptr)
-      CurrentFile->Release = map_pointer<pkgCache::ReleaseFile>{CurrentRlsFile - Cache.RlsFileP};
+      CurrentFile->Release = map_pointer<pkgCache::ReleaseFile>{NarrowOffset(CurrentRlsFile - Cache.RlsFileP)};
    else
       CurrentFile->Release = 0;
    PkgFileName = File;
-   Cache.HeaderP->FileList = map_pointer<pkgCache::PackageFile>{CurrentFile - Cache.PkgFileP};
+   Cache.HeaderP->FileList = map_pointer<pkgCache::PackageFile>{NarrowOffset(CurrentFile - Cache.PkgFileP)};
    Cache.HeaderP->PackageFileCount++;
 
    if (Progress != 0)
