@@ -19,6 +19,11 @@
 #include <string>
 #include <vector>
 #include <assert.h>
+
+#ifndef APT_COMPILING_APT
+#error Internal header
+#endif
+
 namespace APT
 {
 
@@ -60,15 +65,15 @@ struct PatternTreeParser
       std::vector<std::unique_ptr<Node>> arguments;
       bool haveArgumentList = false;
 
-      std::ostream &render(std::ostream &stream) override;
-      bool matches(APT::StringView name, int min, int max);
+      APT_HIDDEN std::ostream &render(std::ostream &stream) override;
+      APT_HIDDEN bool matches(APT::StringView name, int min, int max);
    };
 
    struct WordNode : public Node
    {
       APT::StringView word;
       bool quoted = false;
-      std::ostream &render(std::ostream &stream) override;
+      APT_HIDDEN std::ostream &render(std::ostream &stream) override;
    };
 
    struct State
@@ -95,16 +100,16 @@ struct PatternTreeParser
    std::unique_ptr<Node> parse(); // public for test cases only
 
    private:
-   std::unique_ptr<Node> parseOr();
-   std::unique_ptr<Node> parseAnd();
-   std::unique_ptr<Node> parseUnary();
-   std::unique_ptr<Node> parsePrimary();
-   std::unique_ptr<Node> parseGroup();
-   std::unique_ptr<Node> parsePattern();
-   std::unique_ptr<Node> parseShortPattern();
-   std::unique_ptr<Node> parseArgument(bool shrt);
-   std::unique_ptr<Node> parseWord(bool shrt);
-   std::unique_ptr<Node> parseQuotedWord();
+   APT_HIDDEN std::unique_ptr<Node> parseOr();
+   APT_HIDDEN std::unique_ptr<Node> parseAnd();
+   APT_HIDDEN std::unique_ptr<Node> parseUnary();
+   APT_HIDDEN std::unique_ptr<Node> parsePrimary();
+   APT_HIDDEN std::unique_ptr<Node> parseGroup();
+   APT_HIDDEN std::unique_ptr<Node> parsePattern();
+   APT_HIDDEN std::unique_ptr<Node> parseShortPattern();
+   APT_HIDDEN std::unique_ptr<Node> parseArgument(bool shrt);
+   APT_HIDDEN std::unique_ptr<Node> parseWord(bool shrt);
+   APT_HIDDEN std::unique_ptr<Node> parseQuotedWord();
 };
 
 /**
@@ -114,7 +119,7 @@ struct PatternTreeParser
  *  - Word nodes which contains words or quoted words
  *  - Patterns, which represent ?foo and ?foo(...) patterns
  */
-struct PatternParser
+struct APT_HIDDEN PatternParser
 {
    pkgCacheFile *file;
 
@@ -141,7 +146,7 @@ class BaseRegexMatcher
    }
 };
 
-struct PackageIsAutomatic : public PackageMatcher
+struct APT_HIDDEN PackageIsAutomatic : public PackageMatcher
 {
    pkgCacheFile *Cache;
    explicit PackageIsAutomatic(pkgCacheFile *Cache) : Cache(Cache) {}
@@ -152,7 +157,7 @@ struct PackageIsAutomatic : public PackageMatcher
    }
 };
 
-struct PackageIsBroken : public PackageMatcher
+struct APT_HIDDEN PackageIsBroken : public PackageMatcher
 {
    pkgCacheFile *Cache;
    explicit PackageIsBroken(pkgCacheFile *Cache) : Cache(Cache) {}
@@ -164,7 +169,7 @@ struct PackageIsBroken : public PackageMatcher
    }
 };
 
-struct PackageIsConfigFiles : public PackageMatcher
+struct APT_HIDDEN PackageIsConfigFiles : public PackageMatcher
 {
    bool operator()(pkgCache::PkgIterator const &Pkg) override
    {
@@ -172,7 +177,7 @@ struct PackageIsConfigFiles : public PackageMatcher
    }
 };
 
-struct PackageIsGarbage : public PackageMatcher
+struct APT_HIDDEN PackageIsGarbage : public PackageMatcher
 {
    pkgCacheFile *Cache;
    explicit PackageIsGarbage(pkgCacheFile *Cache) : Cache(Cache) {}
@@ -182,7 +187,7 @@ struct PackageIsGarbage : public PackageMatcher
       return (*Cache)[Pkg].Garbage;
    }
 };
-struct PackageIsEssential : public PackageMatcher
+struct APT_HIDDEN PackageIsEssential : public PackageMatcher
 {
    bool operator()(pkgCache::PkgIterator const &Pkg) override
    {
@@ -190,7 +195,7 @@ struct PackageIsEssential : public PackageMatcher
    }
 };
 
-struct PackageHasExactName : public PackageMatcher
+struct APT_HIDDEN PackageHasExactName : public PackageMatcher
 {
    std::string name;
    explicit PackageHasExactName(std::string name) : name(name) {}
@@ -200,7 +205,7 @@ struct PackageHasExactName : public PackageMatcher
    }
 };
 
-struct PackageIsInstalled : public PackageMatcher
+struct APT_HIDDEN PackageIsInstalled : public PackageMatcher
 {
    pkgCacheFile *Cache;
    explicit PackageIsInstalled(pkgCacheFile *Cache) : Cache(Cache) {}
@@ -211,7 +216,7 @@ struct PackageIsInstalled : public PackageMatcher
    }
 };
 
-struct PackageIsObsolete : public PackageMatcher
+struct APT_HIDDEN PackageIsObsolete : public PackageMatcher
 {
    bool operator()(pkgCache::PkgIterator const &pkg) override
    {
@@ -235,7 +240,7 @@ struct PackageIsObsolete : public PackageMatcher
    }
 };
 
-struct PackageIsUpgradable : public PackageMatcher
+struct APT_HIDDEN PackageIsUpgradable : public PackageMatcher
 {
    pkgCacheFile *Cache;
    explicit PackageIsUpgradable(pkgCacheFile *Cache) : Cache(Cache) {}
@@ -246,7 +251,7 @@ struct PackageIsUpgradable : public PackageMatcher
    }
 };
 
-struct PackageIsVirtual : public PackageMatcher
+struct APT_HIDDEN PackageIsVirtual : public PackageMatcher
 {
    bool operator()(pkgCache::PkgIterator const &Pkg) override
    {
@@ -254,7 +259,7 @@ struct PackageIsVirtual : public PackageMatcher
    }
 };
 
-struct VersionAnyMatcher : public Matcher
+struct APT_HIDDEN VersionAnyMatcher : public Matcher
 {
    bool operator()(pkgCache::GrpIterator const &Grp) override { return false; }
    bool operator()(pkgCache::VerIterator const &Ver) override = 0;
@@ -269,7 +274,7 @@ struct VersionAnyMatcher : public Matcher
    }
 };
 
-struct VersionIsAllVersions : public Matcher
+struct APT_HIDDEN VersionIsAllVersions : public Matcher
 {
    std::unique_ptr<APT::CacheFilter::Matcher> base;
    VersionIsAllVersions(std::unique_ptr<APT::CacheFilter::Matcher> base) : base(std::move(base)) {}
@@ -289,7 +294,7 @@ struct VersionIsAllVersions : public Matcher
    }
 };
 
-struct VersionIsAnyVersion : public VersionAnyMatcher
+struct APT_HIDDEN VersionIsAnyVersion : public VersionAnyMatcher
 {
    std::unique_ptr<APT::CacheFilter::Matcher> base;
    VersionIsAnyVersion(std::unique_ptr<APT::CacheFilter::Matcher> base) : base(std::move(base)) {}
@@ -299,7 +304,7 @@ struct VersionIsAnyVersion : public VersionAnyMatcher
    }
 };
 
-struct VersionIsArchive : public VersionAnyMatcher
+struct APT_HIDDEN VersionIsArchive : public VersionAnyMatcher
 {
    BaseRegexMatcher matcher;
    VersionIsArchive(std::string const &pattern) : matcher(pattern) {}
@@ -314,7 +319,7 @@ struct VersionIsArchive : public VersionAnyMatcher
    }
 };
 
-struct VersionIsOrigin : public VersionAnyMatcher
+struct APT_HIDDEN VersionIsOrigin : public VersionAnyMatcher
 {
    BaseRegexMatcher matcher;
    VersionIsOrigin(std::string const &pattern) : matcher(pattern) {}
@@ -329,7 +334,7 @@ struct VersionIsOrigin : public VersionAnyMatcher
    }
 };
 
-struct VersionIsSection : public VersionAnyMatcher
+struct APT_HIDDEN VersionIsSection : public VersionAnyMatcher
 {
    BaseRegexMatcher matcher;
    VersionIsSection(std::string const &pattern) : matcher(pattern) {}
@@ -339,7 +344,7 @@ struct VersionIsSection : public VersionAnyMatcher
    }
 };
 
-struct VersionIsSourcePackage : public VersionAnyMatcher
+struct APT_HIDDEN VersionIsSourcePackage : public VersionAnyMatcher
 {
    BaseRegexMatcher matcher;
    VersionIsSourcePackage(std::string const &pattern) : matcher(pattern) {}
@@ -349,7 +354,7 @@ struct VersionIsSourcePackage : public VersionAnyMatcher
    }
 };
 
-struct VersionIsSourceVersion : public VersionAnyMatcher
+struct APT_HIDDEN VersionIsSourceVersion : public VersionAnyMatcher
 {
    BaseRegexMatcher matcher;
    VersionIsSourceVersion(std::string const &pattern) : matcher(pattern) {}
@@ -359,7 +364,7 @@ struct VersionIsSourceVersion : public VersionAnyMatcher
    }
 };
 
-struct VersionIsVersion : public VersionAnyMatcher
+struct APT_HIDDEN VersionIsVersion : public VersionAnyMatcher
 {
    BaseRegexMatcher matcher;
    VersionIsVersion(std::string const &pattern) : matcher(pattern) {}
