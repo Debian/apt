@@ -22,7 +22,7 @@
 using namespace std;
 
 static bool SortPackagesByName(pkgCache * const Owner,
-      map_pointer_t const A, map_pointer_t const B)
+      map_pointer<pkgCache::Group> const A, map_pointer<pkgCache::Group> const B)
 {
    if (A == 0)
       return false;
@@ -42,7 +42,7 @@ void SortedPackageUniverse::LazyInit() const
       return;
    pkgCache * const Owner = data();
    // In Multi-Arch systems Grps are easier to sort than Pkgs
-   std::vector<map_pointer_t> GrpList;
+   std::vector<map_pointer<pkgCache::Group>> GrpList;
    List.reserve(Owner->Head().GroupCount);
    for (pkgCache::GrpIterator I{Owner->GrpBegin()}; I.end() != true; ++I)
       GrpList.emplace_back(I - Owner->GrpP);

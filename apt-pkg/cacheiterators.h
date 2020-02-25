@@ -80,6 +80,7 @@ template<typename Str, typename Itr> class pkgCache::Iterator :
 	// Mixed stuff
 	inline bool IsGood() const { return S && Owner && ! end();}
 	inline unsigned long Index() const {return S - OwnerPointer();}
+	inline map_pointer<Str> MapPointer() const {return map_pointer<Str>(Index()) ;}
 
 	void ReMap(void const * const oldMap, void const * const newMap) {
 		if (Owner == 0 || S == 0)
@@ -293,7 +294,7 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	inline PkgIterator TargetPkg() const {return PkgIterator(*Owner,Owner->PkgP + S2->Package);}
 	inline PkgIterator SmartTargetPkg() const {PkgIterator R(*Owner,0);SmartTargetPkg(R);return R;}
 	inline VerIterator ParentVer() const {return VerIterator(*Owner,Owner->VerP + S->ParentVer);}
-	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->ParentVer].ParentPkg);}
+	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[uint32_t(S->ParentVer)].ParentPkg);}
 	inline bool Reverse() const {return Type == DepRev;}
 	bool IsCritical() const APT_PURE;
 	bool IsNegative() const APT_PURE;
@@ -321,15 +322,15 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	struct DependencyProxy
 	{
 	   map_stringitem_t &Version;
-	   map_pointer_t &Package;
+	   map_pointer<pkgCache::Package> &Package;
 	   map_id_t &ID;
 	   unsigned char &Type;
 	   unsigned char &CompareOp;
-	   map_pointer_t &ParentVer;
-	   map_pointer_t &DependencyData;
-	   map_pointer_t &NextRevDepends;
-	   map_pointer_t &NextDepends;
-	   map_pointer_t &NextData;
+	   map_pointer<pkgCache::Version> &ParentVer;
+	   map_pointer<pkgCache::DependencyData> &DependencyData;
+	   map_pointer<Dependency> &NextRevDepends;
+	   map_pointer<Dependency> &NextDepends;
+	   map_pointer<pkgCache::DependencyData> &NextData;
 	   DependencyProxy const * operator->() const { return this; }
 	   DependencyProxy * operator->() { return this; }
 	};
@@ -378,7 +379,7 @@ class pkgCache::PrvIterator : public Iterator<Provides, PrvIterator> {
 	inline const char *ProvideVersion() const {return S->ProvideVersion == 0?0:Owner->StrP + S->ProvideVersion;}
 	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + S->ParentPkg);}
 	inline VerIterator OwnerVer() const {return VerIterator(*Owner,Owner->VerP + S->Version);}
-	inline PkgIterator OwnerPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->Version].ParentPkg);}
+	inline PkgIterator OwnerPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[uint32_t(S->Version)].ParentPkg);}
 
 	/* MultiArch can be translated to SingleArch for an resolver and we did so,
 	   by adding provides to help the resolver understand the problem, but
@@ -475,7 +476,7 @@ class pkgCache::VerFileIterator : public pkgCache::Iterator<VerFile, VerFileIter
 	inline VerFileIterator operator++(int) { VerFileIterator const tmp(*this); operator++(); return tmp; }
 
 	// Accessors
-	inline PkgFileIterator File() const {return PkgFileIterator(*Owner,S->File + Owner->PkgFileP);}
+	inline PkgFileIterator File() const {return PkgFileIterator(*Owner, Owner->PkgFileP + S->File);}
 
 	inline VerFileIterator() : Iterator<VerFile, VerFileIterator>() {}
 	inline VerFileIterator(pkgCache &Owner,VerFile *Trg) : Iterator<VerFile, VerFileIterator>(Owner, Trg) {}
@@ -493,7 +494,7 @@ class pkgCache::DescFileIterator : public Iterator<DescFile, DescFileIterator> {
 	inline DescFileIterator operator++(int) { DescFileIterator const tmp(*this); operator++(); return tmp; }
 
 	// Accessors
-	inline PkgFileIterator File() const {return PkgFileIterator(*Owner,S->File + Owner->PkgFileP);}
+	inline PkgFileIterator File() const {return PkgFileIterator(*Owner, Owner->PkgFileP + S->File);}
 
 	inline DescFileIterator() : Iterator<DescFile, DescFileIterator>() {}
 	inline DescFileIterator(pkgCache &Owner,DescFile *Trg) : Iterator<DescFile, DescFileIterator>(Owner, Trg) {}

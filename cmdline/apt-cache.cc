@@ -134,14 +134,14 @@ static bool DumpPackage(CommandLine &CmdL)
 // ShowHashTableStats - Show stats about a hashtable			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static map_pointer_t PackageNext(pkgCache::Package const * const P) { return P->NextPackage; }
-static map_pointer_t GroupNext(pkgCache::Group const * const G) { return G->Next; }
+static map_pointer<pkgCache::Package> PackageNext(pkgCache::Package const * const P) { return P->NextPackage; }
+static map_pointer<pkgCache::Group> GroupNext(pkgCache::Group const * const G) { return G->Next; }
 template <class T>
 static void ShowHashTableStats(char const *const Type,
 			       T *StartP,
-			       map_pointer_t *Hashtable,
+			       map_pointer<T> *Hashtable,
 			       unsigned long Size,
-			       map_pointer_t (*Next)(T const *const))
+			       map_pointer<T> (*Next)(T const *const))
 {
    // hashtable stats for the HashTable
    unsigned long NumBuckets = Size;
@@ -467,7 +467,7 @@ static bool DumpAvail(CommandLine &)
    char *Buffer = new char[Cache->HeaderP->MaxVerFileSize+10];
    for (pkgCache::VerFile **J = VFList; *J != 0;)
    {
-      pkgCache::PkgFileIterator File(*Cache,(*J)->File + Cache->PkgFileP);
+      pkgCache::PkgFileIterator File(*Cache, Cache->PkgFileP + (*J)->File);
       // FIXME: Add support for volatile/with-source files
       FileFd PkgF(File.FileName(),FileFd::ReadOnly, FileFd::Extension);
       if (_error->PendingError() == true)
@@ -481,7 +481,7 @@ static bool DumpAvail(CommandLine &)
       unsigned long Pos = 0;
       for (; *J != 0; J++)
       {
-	 if ((*J)->File + Cache->PkgFileP != File)
+	 if (Cache->PkgFileP + (*J)->File != File)
 	    break;
 	 
 	 const pkgCache::VerFile &VF = **J;

@@ -208,7 +208,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    // Link into by source package group.
    Ver->SourcePkgName = G->Name;
    Ver->NextInSource = G->VersionsInSource;
-   G->VersionsInSource = Ver.Index();
+   G->VersionsInSource = Ver.MapPointer();
 
    Ver->MultiArch = ParseMultiArch(true);
    // Archive Size
@@ -469,7 +469,7 @@ bool debStatusListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
       if (Ver.end() == true)
 	 _error->Warning("Encountered status field in a non-version description");
       else
-	 Pkg->CurrentVer = Ver.Index();
+	 Pkg->CurrentVer = Ver.MapPointer();
    }
    
    return true;
