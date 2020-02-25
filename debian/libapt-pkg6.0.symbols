@@ -407,10 +407,8 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"pkgDPkgPM::Configure(pkgCache::PkgIterator)@APTPKG_6.0" 0.8.0
  (c++)"pkgDPkgPM::pkgDPkgPM(pkgDepCache*)@APTPKG_6.0" 0.8.0
  (c++)"pkgDPkgPM::~pkgDPkgPM()@APTPKG_6.0" 0.8.0
- (c++)"pkgPolicy::GetPriority(pkgCache::PkgIterator const&)@APTPKG_6.0" 0.8.0
  (c++)"pkgPolicy::InitDefaults()@APTPKG_6.0" 0.8.0
  (c++)"pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const&)@APTPKG_6.0" 0.8.0
- (c++)"pkgPolicy::GetMatch(pkgCache::PkgIterator const&)@APTPKG_6.0" 0.8.0
  (c++)"pkgPolicy::CreatePin(pkgVersionMatch::MatchType, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, short)@APTPKG_6.0" 0.8.0
  (c++)"pkgPolicy::pkgPolicy(pkgCache*)@APTPKG_6.0" 0.8.0
  (c++)"pkgPolicy::~pkgPolicy()@APTPKG_6.0" 0.8.0
@@ -667,29 +665,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"pkgDepCache::Policy::GetPriority(pkgCache::PkgIterator const&)@APTPKG_6.0" 0.8.16~exp6
  (c++)"pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator const&)@APTPKG_6.0" 0.8.16~exp6
 ### generalisation of checksums (with lfs) -- mostly api-compatible available (without sha512 in previous versions)
- (c++)"MD5Summation::Add(unsigned char const*, unsigned long long)@APTPKG_6.0" 0.8.16~exp6
- (c++)"MD5Summation::Result()@APTPKG_6.0" 0.8.16~exp2
- (c++)"MD5Summation::MD5Summation()@APTPKG_6.0" 0.8.16~exp2
- (c++)"SHA1Summation::SHA1Summation()@APTPKG_6.0" 0.8.16~exp2
- (c++)"SHA1Summation::Add(unsigned char const*, unsigned long long)@APTPKG_6.0" 0.8.16~exp6
- (c++)"SHA1Summation::Result()@APTPKG_6.0" 0.8.16~exp2
- (c++)"SummationImplementation::AddFD(int, unsigned long long)@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo for MD5Summation@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo for SHA1Summation@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo for SHA256Summation@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo for SHA512Summation@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo for SHA2SummationBase@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo for SummationImplementation@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo name for MD5Summation@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo name for SHA1Summation@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo name for SHA256Summation@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo name for SHA512Summation@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo name for SHA2SummationBase@APTPKG_6.0" 0.8.16~exp6
- (c++)"typeinfo name for SummationImplementation@APTPKG_6.0" 0.8.16~exp6
- (c++)"vtable for MD5Summation@APTPKG_6.0" 0.8.16~exp6
- (c++)"vtable for SHA1Summation@APTPKG_6.0" 0.8.16~exp6
- (c++)"vtable for SHA256Summation@APTPKG_6.0" 0.8.16~exp6
- (c++)"vtable for SHA512Summation@APTPKG_6.0" 0.8.16~exp6
 ### large file support - available in older api-compatible versions without lfs ###
  (c++)"StrToNum(char const*, unsigned long long&, unsigned int, unsigned int)@APTPKG_6.0" 0.8.16~exp6
  (c++)"OpProgress::SubProgress(unsigned long long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, float)@APTPKG_6.0" 0.8.16~exp6
@@ -734,9 +709,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"pkgDepCache::AddSizes(pkgCache::PkgIterator const&, bool)@APTPKG_6.0" 0.8.16~exp6
  (c++)"pkgDepCache::AddStates(pkgCache::PkgIterator const&, bool)@APTPKG_6.0" 0.8.16~exp6
 ### used internally by public interfaces - if you use them directly, you can keep the pieces
- (c++|optional=internal|regex)"^SHA256_.*@APTPKG_6.0$" 0.8.16~exp2
- (c++|optional=internal|regex)"^SHA384_.*@APTPKG_6.0$" 0.8.16~exp2
- (c++|optional=internal|regex)"^SHA512_.*@APTPKG_6.0$" 0.8.16~exp2
 ### orderlist rework: the touched methods are protected
  (c++)"SigINT(int)@APTPKG_6.0" 0.8.16~exp14
  (c++)"pkgPackageManager::SigINTStop@APTPKG_6.0" 0.8.16~exp14
@@ -749,7 +721,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"FileFd::Open(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, FileFd::CompressMode, unsigned long)@APTPKG_6.0" 0.8.16~exp9
  (c++)"FileFd::Open(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, APT::Configuration::Compressor const&, unsigned long)@APTPKG_6.0" 0.8.16~exp9
  (c++)"FileFd::ReadLine(char*, unsigned long long)@APTPKG_6.0" 0.8.16~exp9
- (c++)"SummationImplementation::AddFD(FileFd&, unsigned long long)@APTPKG_6.0" 0.8.16~exp9
 ### CacheSet rework: making them real containers breaks bigtime the API (for the CacheSetHelper)
  (c++)"APT::CacheSetHelper::canNotFindTask(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 0.8.16~exp9
  (c++)"APT::CacheSetHelper::canNotFindRegEx(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 0.8.16~exp9
@@ -1319,6 +1290,15 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"vtable for pkgSourceList@APTPKG_6.0" 1.1~exp9
  (c++)"vtable for SigVerify@APTPKG_6.0" 1.1~exp9
  (c++)"vtable for TranslationsCopy@APTPKG_6.0" 1.1~exp9
+### ABI 6
+ (c++)"APT::CacheFilter::ParsePattern(APT::StringView, pkgCacheFile*)@APTPKG_6.0" 1.9.10
+ (c++)"APT::CacheSetHelper::PackageFromPattern(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.9.10
+ (c++)"APT::CacheSetHelper::showPatternSelection(pkgCache::PkgIterator const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.9.10
+ (c++)"APT::String::DisplayLength(APT::StringView)@APTPKG_6.0" 1.9.10
+ (c++)"Hashes::GetHashString(Hashes::SupportedHashes)@APTPKG_6.0" 1.9.10
+ (c++)"pkgCache::VerIterator::TranslatedDescriptionForLanguage(APT::StringView) const@APTPKG_6.0" 1.9.10
+ (c++)"pkgPolicy::SetPriority(pkgCache::PkgFileIterator const&, short)@APTPKG_6.0" 1.9.10
+ (c++)"pkgPolicy::SetPriority(pkgCache::VerIterator const&, short)@APTPKG_6.0" 1.9.10
 ### dpkg selection state changer & general dpkg interfacing
  (c++)"APT::StateChanges::clear()@APTPKG_6.0" 1.1~exp15
  (c++)"APT::StateChanges::empty() const@APTPKG_6.0" 1.1~exp15
@@ -1425,7 +1405,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"void std::shuffle<__gnu_cxx::__normal_iterator<IndexTarget*, std::vector<IndexTarget, std::allocator<IndexTarget> > >, std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>&>(__gnu_cxx::__normal_iterator<IndexTarget*, std::vector<IndexTarget, std::allocator<IndexTarget> > >, __gnu_cxx::__normal_iterator<IndexTarget*, std::vector<IndexTarget, std::allocator<IndexTarget> > >, std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>&)@APTPKG_6.0" 1.3~rc2
  (c++)"void std::vector<pkgDPkgPM::Item, std::allocator<pkgDPkgPM::Item> >::emplace_back<pkgDPkgPM::Item::Ops, pkgCache::PkgIterator>(pkgDPkgPM::Item::Ops&&, pkgCache::PkgIterator&&)@APTPKG_6.0" 1.3~rc2
  (c++)"void std::vector<pkgDPkgPM::Item, std::allocator<pkgDPkgPM::Item> >::emplace_back<pkgDPkgPM::Item::Ops, pkgCache::PkgIterator&>(pkgDPkgPM::Item::Ops&&, pkgCache::PkgIterator&)@APTPKG_6.0" 1.3~rc2
- (c++)"void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::emplace_back<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.3~rc2
  (c++)"void std::vector<std::pair<pkgDPkgPM::Item*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<pkgDPkgPM::Item*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::emplace_back<pkgDPkgPM::Item*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >(pkgDPkgPM::Item*&&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&)@APTPKG_6.0" 1.3~rc2
  (c++)"APT::String::Join(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.4~beta4
  (c++)"debListParser::ParseDepends(char const*, char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, unsigned int&, bool const&, bool const&, bool const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.4~beta3
@@ -1501,8 +1480,35 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++|optional=std)"std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> >::~vector()@APTPKG_6.0" 0.8.12
  (c++|optional=std)"void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag)@APTPKG_6.0" 1.7.0~alpha3~
  (c++|optional=std)"void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char const*>(char const*, char const*, std::forward_iterator_tag)@APTPKG_6.0" 1.7.0~alpha3~
+ (c++|optional=std)"typeinfo for std::_Mutex_base<(__gnu_cxx::_Lock_policy)2>@APTPKG_6.0" 1.9.10
+ (c++|optional=std)"typeinfo for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@APTPKG_6.0" 1.9.10
+ (c++|optional=std)"typeinfo for std::_Sp_counted_deleter<__res_state*, void (*)(__res_state*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@APTPKG_6.0" 1.9.10
+ (c++|optional=std)"typeinfo name for std::_Mutex_base<(__gnu_cxx::_Lock_policy)2>@APTPKG_6.0" 1.9.10
+ (c++|optional=std)"typeinfo name for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@APTPKG_6.0" 1.9.10
+ (c++|optional=std)"typeinfo name for std::_Sp_counted_deleter<__res_state*, void (*)(__res_state*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@APTPKG_6.0" 1.9.10
+ (c++|optional=std)"typeinfo name for void (*)(__res_state*)@APTPKG_6.0" 1.9.10
+ (c++|optional=std)"vtable for std::_Sp_counted_deleter<__res_state*, void (*)(__res_state*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@APTPKG_6.0" 1.9.10
 ### try to ignore std:: template instances
  (c++)"void std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> >::emplace_back<APT::Configuration::Compressor>(APT::Configuration::Compressor&&)@APTPKG_6.0" 1.9~
  (c++)"void std::vector<APT::StringView*, std::allocator<APT::StringView*> >::emplace_back<APT::StringView*>(APT::StringView*&&)@APTPKG_6.0" 1.9~
- (c++)"void std::vector<std::unique_ptr<FileFd, std::default_delete<FileFd> >, std::allocator<std::unique_ptr<FileFd, std::default_delete<FileFd> > > >::emplace_back<FileFd*>(FileFd*&&)@APTPKG_6.0" 1.9~
- (optional)_ZL6hash32jPKhm._GLOBAL___.._apt_pkg_pkgcache.cc_FB5499C7_0x5f8f5e3a3ed634d9.ifunc@APTPKG_6.0 1.9~
+ (regex|optional)".*hash32.*\.ifunc@APTPKG_6.0" 1.9.10
+### Internal functions needed for testing purposes
+ (c++)"APT::Internal::Patterns::BaseRegexMatcher::~BaseRegexMatcher()@APTPKG_6.0" 1.9.10
+ (c++)"APT::Internal::Patterns::BaseRegexMatcher::BaseRegexMatcher(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.9.10
+ (c++)"APT::Internal::Patterns::BaseRegexMatcher::operator()(char const*)@APTPKG_6.0" 1.9.10
+ (c++)"APT::Internal::PatternTreeParser::Node::error(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 1.9.10
+ (c++)"APT::Internal::PatternTreeParser::parse()@APTPKG_6.0" 1.9.10
+ (c++)"APT::Internal::PatternTreeParser::parseTop()@APTPKG_6.0" 1.9.10
+ (c++)"typeinfo for APT::Internal::PatternTreeParser::Error@APTPKG_6.0" 1.9.10
+ (c++)"typeinfo for APT::Internal::PatternTreeParser::Node@APTPKG_6.0" 1.9.10
+ (c++)"typeinfo for APT::Internal::PatternTreeParser::PatternNode@APTPKG_6.0" 1.9.10
+ (c++)"typeinfo for APT::Internal::PatternTreeParser::WordNode@APTPKG_6.0" 1.9.10
+ (c++)"typeinfo name for APT::Internal::PatternTreeParser::Error@APTPKG_6.0" 1.9.10
+ (c++)"typeinfo name for APT::Internal::PatternTreeParser::Node@APTPKG_6.0" 1.9.10
+ (c++)"typeinfo name for APT::Internal::PatternTreeParser::PatternNode@APTPKG_6.0" 1.9.10
+ (c++)"typeinfo name for APT::Internal::PatternTreeParser::WordNode@APTPKG_6.0" 1.9.10
+ (c++)"void std::vector<std::unique_ptr<APT::Internal::PatternTreeParser::Node, std::default_delete<APT::Internal::PatternTreeParser::Node> >, std::allocator<std::unique_ptr<APT::Internal::PatternTreeParser::Node, std::default_delete<APT::Internal::PatternTreeParser::Node> > > >::emplace_back<std::unique_ptr<APT::Internal::PatternTreeParser::Node, std::default_delete<APT::Internal::PatternTreeParser::Node> > >(std::unique_ptr<APT::Internal::PatternTreeParser::Node, std::default_delete<APT::Internal::PatternTreeParser::Node> >&&)@APTPKG_6.0" 1.9.10
+ (c++)"vtable for APT::Internal::PatternTreeParser::Error@APTPKG_6.0" 1.9.10
+ (c++)"vtable for APT::Internal::PatternTreeParser::Node@APTPKG_6.0" 1.9.10
+ (c++)"vtable for APT::Internal::PatternTreeParser::PatternNode@APTPKG_6.0" 1.9.10
+ (c++)"vtable for APT::Internal::PatternTreeParser::WordNode@APTPKG_6.0" 1.9.10
