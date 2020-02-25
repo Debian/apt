@@ -302,8 +302,30 @@ public:
    unsigned long long FileSize;
    gcry_md_hd_t hd;
 
+   void maybeInit()
+   {
+
+      // Yikes, we got to initialize libgcrypt, or we get warnings. But we
+      // abstract away libgcrypt in Hashes from our users - they are not
+      // supposed to know what the hashing backend is, so we can't force
+      // them to init themselves as libgcrypt folks want us to. So this
+      // only leaves us with this option...
+      if (!gcry_control(GCRYCTL_INITIALIZATION_FINISHED_P))
+      {
+	 if (!gcry_check_version(nullptr))
+	 {
+	    fprintf(stderr, "libgcrypt is too old (need %s, have %s)\n",
+		    "nullptr", gcry_check_version(NULL));
+	    exit(2);
+	 }
+
+	 gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);
+      }
+   }
+
    explicit PrivateHashes(unsigned int const CalcHashes) : FileSize(0)
    {
+      maybeInit();
       gcry_md_open(&hd, 0, 0);
       for (auto & Algo : Algorithms)
       {
@@ -313,6 +335,7 @@ public:
    }
 
    explicit PrivateHashes(HashStringList const &Hashes) : FileSize(0) {
+      maybeInit();
       gcry_md_open(&hd, 0, 0);
       for (auto & Algo : Algorithms)
       {
