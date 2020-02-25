@@ -230,6 +230,7 @@ class pkgCache								/*{{{*/
    Dependency *DepP;
    DependencyData *DepDataP;
    char *StrP;
+   void *reserved[12];
 
    virtual bool ReMap(bool const &Errorchecks = true);
    inline bool Sync() {return Map.Sync();}
@@ -365,10 +366,10 @@ struct pkgCache::Header
        Start indicates the first byte of the pool, Count is the number of objects
        remaining in the pool and ItemSize is the structure size (alignment factor)
        of the pool. An ItemSize of 0 indicates the pool is empty. There should be
-       the same number of pools as there are structure types. The generator
+       twice the number of pools as there are non-private structure types. The generator
        stores this information so future additions can make use of any unused pool
        blocks. */
-   DynamicMMap::Pool Pools[12];
+   DynamicMMap::Pool Pools[2 * 12];
 
    /** \brief hash tables providing rapid group/package name lookup
 
@@ -425,6 +426,8 @@ struct pkgCache::Group
    /** \brief List of binary produces by source package with this name. */
    map_pointer<Version> VersionsInSource;
 
+   /** \brief Private pointer */
+   map_pointer<void> d;
 };
 									/*}}}*/
 // Package structure							/*{{{*/
@@ -487,6 +490,9 @@ struct pkgCache::Package
    map_id_t ID;
    /** \brief some useful indicators of the package's state */
    map_flags_t Flags;
+
+   /** \brief Private pointer */
+   map_pointer<void> d;
 };
 									/*}}}*/
 // Release File structure						/*{{{*/
@@ -527,6 +533,9 @@ struct pkgCache::ReleaseFile
    map_pointer<ReleaseFile> NextFile;
    /** \brief unique sequel ID */
    map_fileid_t ID;
+
+   /** \brief Private pointer */
+   map_pointer<void> d;
 };
 									/*}}}*/
 // Package File structure						/*{{{*/
@@ -566,6 +575,9 @@ struct pkgCache::PackageFile
    map_pointer<PackageFile> NextFile;
    /** \brief unique sequel ID */
    map_fileid_t ID;
+
+   /** \brief Private pointer */
+   map_pointer<void> d;
 };
 									/*}}}*/
 // VerFile structure							/*{{{*/
@@ -670,6 +682,9 @@ struct pkgCache::Version
    map_number_t Priority;
    /** \brief next version in the source package (might be different binary) */
    map_pointer<Version> NextInSource;
+
+   /** \brief Private pointer */
+   map_pointer<void> d;
 };
 									/*}}}*/
 // Description structure						/*{{{*/
