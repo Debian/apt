@@ -607,9 +607,9 @@ void pkgAcquire::Worker::HandleFailure(std::vector<pkgAcquire::Item *> const &It
    for (auto const Owner : ItmOwners)
    {
       std::string NewURI;
-      if (errTransient == true && Config->LocalOnly == false && Owner->ModifyRetries() != 0)
+      if (errTransient == true && Config->LocalOnly == false && Owner->Retries != 0)
       {
-	 --Owner->ModifyRetries();
+	 --Owner->Retries;
 	 Owner->FailMessage(Message);
 	 auto SavedDesc = Owner->GetItemDesc();
 	 if (Log != nullptr)

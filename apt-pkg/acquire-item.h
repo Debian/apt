@@ -152,6 +152,9 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     */
    std::string DestFile;
 
+   /** \brief Number of retries */
+   unsigned int Retries;
+
    /** \brief Invoked by the acquire worker when the object couldn't
     *  be fetched.
     *
@@ -231,8 +234,6 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     *  no trailing newline.
     */
    virtual std::string Custom600Headers() const;
-   // Retries should really be a member of the Item, but can't be for ABI reasons
-   APT_HIDDEN unsigned int &ModifyRetries();
    // this is more a hack than a proper external interface, hence hidden
    APT_HIDDEN std::unordered_map<std::string, std::string> &ModifyCustomFields();
    // this isn't the super nicest interface either…
