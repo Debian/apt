@@ -59,7 +59,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    bool IsArchitectureAllSupportedFor(IndexTarget const &target) const override;
    bool HasSupportForComponent(std::string const &component) const override;
 
-   APT_PURE time_t GetNotBefore() const;
+   APT_PURE time_t GetNotBefore() const override;
 
    void AddComponent(std::string const &sourcesEntry,
 	 bool const isSrc, std::string const &Name,

@@ -73,7 +73,7 @@ public:
    bool GetSupportsAcquireByHash() const;
    time_t GetValidUntil() const;
    time_t GetDate() const;
-   APT_HIDDEN time_t GetNotBefore() const; // FIXME make virtual
+   virtual time_t GetNotBefore() const = 0;
 
    std::string GetExpectedDist() const;
    bool CheckDist(std::string const &MaybeDist) const;
