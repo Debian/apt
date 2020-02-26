@@ -290,9 +290,8 @@ public:
    std::vector<std::string> BadAlternativeSites;
    std::vector<std::string> PastRedirections;
    std::unordered_map<std::string, std::string> CustomFields;
-   unsigned int Retries;
 
-   Private() : Retries(_config->FindI("Acquire::Retries", 0))
+   Private()
    {
    }
 };
@@ -771,7 +770,7 @@ class APT_HIDDEN CleanupItem : public pkgAcqTransactionItem		/*{{{*/
 // Acquire::Item::Item - Constructor					/*{{{*/
 pkgAcquire::Item::Item(pkgAcquire * const owner) :
    FileSize(0), PartialSize(0), ID(0), Complete(false), Local(false),
-    QueueCounter(0), ExpectedAdditionalItems(0), Owner(owner), d(new Private())
+    QueueCounter(0), ExpectedAdditionalItems(0), Retries(_config->FindI("Acquire::Retries", 0)), Owner(owner), d(new Private())
 {
    Owner->Add(this);
    Status = StatIdle;
@@ -841,11 +840,6 @@ void pkgAcquire::Item::RemoveAlternativeSite(std::string &&OldSite) /*{{{*/
 					   }),
 			    d->AlternativeURIs.end());
    d->BadAlternativeSites.push_back(std::move(OldSite));
-}
-									/*}}}*/
-unsigned int &pkgAcquire::Item::ModifyRetries() /*{{{*/
-{
-   return d->Retries;
 }
 									/*}}}*/
 std::string pkgAcquire::Item::ShortDesc() const				/*{{{*/
@@ -3933,12 +3927,6 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
 	 Complete = false;
       }
    }
-}
-									/*}}}*/
-void pkgAcqFile::Failed(string const &Message, pkgAcquire::MethodConfig const *const Cnf) /*{{{*/
-{
-   // FIXME: Remove this pointless overload on next ABI break
-   Item::Failed(Message, Cnf);
 }
 									/*}}}*/
 string pkgAcqFile::Custom600Headers() const				/*{{{*/

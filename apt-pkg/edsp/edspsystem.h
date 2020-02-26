@@ -11,6 +11,7 @@
 
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/error.h>
 
 #include <memory>
 #include <vector>
@@ -36,6 +37,13 @@ public:
    virtual signed Score(Configuration const &Cnf) APT_OVERRIDE;
    virtual bool FindIndex(pkgCache::PkgFileIterator File,
 			  pkgIndexFile *&Found) const APT_OVERRIDE;
+
+   bool MultiArchSupported() const override { return true; }
+   std::vector<std::string> ArchitecturesSupported() const override { return {}; };
+
+   bool LockInner() override { return _error->Error("LockInner is not implemented"); };
+   bool UnLockInner(bool NoErrors=false) override { return _error->Error("UnLockInner is not implemented"); };
+   bool IsLocked() override { return true; };
 
    explicit edspLikeSystem(char const * const Label);
    virtual ~edspLikeSystem();

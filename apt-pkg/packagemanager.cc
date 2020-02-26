@@ -704,10 +704,6 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
 // ---------------------------------------------------------------------
 /* This puts the system in a state where it can Unpack Pkg, if Pkg is already
    unpacked, or when it has been unpacked, if Immediate==true it configures it. */
-bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
-{
-   return SmartUnPack(Pkg, true, 0);
-}
 bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int const Depth)
 {
    bool PkgLoop = List->IsFlag(Pkg,pkgOrderList::Loop);
@@ -1130,11 +1126,7 @@ pkgPackageManager::OrderResult
 pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
 {
    bool goResult;
-   auto simulation = dynamic_cast<pkgSimulate*>(this);
-   if (simulation == nullptr)
-      goResult = Go(progress);
-   else
-      goResult = simulation->Go2(progress);
+   goResult = Go(progress);
    if(goResult == false) 
       return Failed;
    

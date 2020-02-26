@@ -419,7 +419,7 @@ pid_t debSystem::ExecDpkg(std::vector<std::string> const &sArgs, int * const inp
    return dpkg;
 }
 									/*}}}*/
-bool debSystem::SupportsMultiArch()					/*{{{*/
+bool debSystem::MultiArchSupported() const					/*{{{*/
 {
    std::vector<std::string> Args = GetDpkgBaseCommand();
    Args.push_back("--assert-multi-arch");
@@ -440,7 +440,7 @@ bool debSystem::SupportsMultiArch()					/*{{{*/
    return false;
 }
 									/*}}}*/
-std::vector<std::string> debSystem::SupportedArchitectures()		/*{{{*/
+std::vector<std::string> debSystem::ArchitecturesSupported() const		/*{{{*/
 {
    std::vector<std::string> archs;
    {

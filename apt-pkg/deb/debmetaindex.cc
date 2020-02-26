@@ -447,12 +447,12 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    // FIXME: find better tag name
    SupportsAcquireByHash = Section.FindB("Acquire-By-Hash", false);
 
-   SetOrigin(Section.FindS("Origin"));
-   SetLabel(Section.FindS("Label"));
-   SetVersion(Section.FindS("Version"));
+   Origin = Section.FindS("Origin");
+   Label = Section.FindS("Label");
+   Version = Section.FindS("Version");
    Suite = Section.FindS("Suite");
    Codename = Section.FindS("Codename");
-   SetReleaseNotes(Section.FindS("Release-Notes"));
+   ReleaseNotes = Section.FindS("Release-Notes");
    {
       std::string const archs = Section.FindS("Architectures");
       if (archs.empty() == false)
@@ -484,7 +484,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	 else
 	    defaultpin = 1;
       }
-      SetDefaultPin(defaultpin);
+      DefaultPin = defaultpin;
    }
 
    bool FoundHashSum = false;

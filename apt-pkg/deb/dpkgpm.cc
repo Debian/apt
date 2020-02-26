@@ -1711,7 +1711,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    // create log
    OpenLog();
 
-   bool dpkgMultiArch = debSystem::SupportsMultiArch();
+   bool dpkgMultiArch = _system->MultiArchSupported();
 
    // start pty magic before the loop
    StartPtyMagic();
@@ -2014,8 +2014,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 else
 	    setenv("DPKG_COLORS", "never", 0);
 
-	 if (dynamic_cast<debSystem*>(_system) != nullptr
-	    && dynamic_cast<debSystem*>(_system)->IsLocked() == true) {
+	 if (_system->IsLocked() == true) {
 	    setenv("DPKG_FRONTEND_LOCKED", "true", 1);
 	 }
 	 if (_config->Find("DPkg::Path", "").empty() == false)

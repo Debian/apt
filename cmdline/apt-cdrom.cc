@@ -107,7 +107,7 @@ static bool AddOrIdent(bool const Add)
 
    bool oneSuccessful = false;
    bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", true);
-   if (AutoDetect == true && UdevCdroms.Dlopen() == true)
+   if (AutoDetect == true)
    {
       bool const Debug = _config->FindB("Debug::Acquire::cdrom", false);
       std::string const CDMount = _config->Find("Acquire::cdrom::mount");

@@ -923,12 +923,6 @@ pkgUdevCdromDevices::pkgUdevCdromDevices() /*{{{*/
 {
 }
 									/*}}}*/
-
-bool pkgUdevCdromDevices::Dlopen()					/*{{{*/
-{
-   return true;
-}
-									/*}}}*/
 // convenience interface, this will just call ScanForRemovable		/*{{{*/
 vector<CdromDevice> pkgUdevCdromDevices::Scan()
 {

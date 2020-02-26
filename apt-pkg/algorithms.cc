@@ -260,7 +260,7 @@ void pkgSimulate::ShortBreaks()
    cout << ']' << endl;
 }
 									/*}}}*/
-bool pkgSimulate::Go2(APT::Progress::PackageManager *)			/*{{{*/
+bool pkgSimulate::Go(APT::Progress::PackageManager *)			/*{{{*/
 {
    if (pkgDPkgPM::ExpandPendingCalls(d->List, Cache) == false)
       return false;

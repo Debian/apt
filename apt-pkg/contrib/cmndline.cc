@@ -382,11 +382,6 @@ bool CommandLine::DispatchArg(Dispatch const * const Map,bool NoMatch)
    
    return false;
 }
-bool CommandLine::DispatchArg(Dispatch *Map,bool NoMatch)
-{
-   Dispatch const * const Map2 = Map;
-   return DispatchArg(Map2, NoMatch);
-}
 									/*}}}*/
 // CommandLine::SaveInConfig - for output later in a logfile or so	/*{{{*/
 // ---------------------------------------------------------------------
