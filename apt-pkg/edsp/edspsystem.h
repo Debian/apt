@@ -42,7 +42,7 @@ public:
    std::vector<std::string> ArchitecturesSupported() const override { return {}; };
 
    bool LockInner() override { return _error->Error("LockInner is not implemented"); };
-   bool UnLockInner(bool NoErrors=false) override { return _error->Error("UnLockInner is not implemented"); };
+   bool UnLockInner(bool) override { return _error->Error("UnLockInner is not implemented"); };
    bool IsLocked() override { return true; };
 
    explicit edspLikeSystem(char const * const Label);

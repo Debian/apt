@@ -1044,10 +1044,6 @@ static time_t timegm(struct tm *t)
    we allow them here to to be able to reuse the method. Either way, a date
    must be in UTC or parsing will fail. Previous implementations of this
    method used to ignore the timezone and assume always UTC. */
-bool RFC1123StrToTime(const char* const str,time_t &time)
-{
-   return RFC1123StrToTime(std::string(str), time);
-}
 bool RFC1123StrToTime(std::string const &str,time_t &time)
 {
    unsigned short day = 0;
