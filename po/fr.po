@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-01-15 23:07+0100\n"
+"POT-Creation-Date: 2020-02-26 21:29+0100\n"
 "PO-Revision-Date: 2019-01-21 09:19+0100\n"
 "Last-Translator: Julien Patriarca <leatherface@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -1094,6 +1094,12 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Impossible de traiter le fichier %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
+#, fuzzy, c-format
+#| msgid "Waiting for headers"
+msgid "Waiting for cache lock (%s)"
+msgstr "Attente des fichiers d'en-tête"
+
+#: apt-pkg/deb/debsystem.cc
 #, c-format
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
@@ -1632,7 +1638,9 @@ msgid "Unsupported file %s given on commandline"
 msgstr "Le fichier donné %s n'est pas compris sur la ligne de commande"
 
 #: apt-pkg/srcrecords.cc
-msgid "You must put some 'source' URIs in your sources.list"
+#, fuzzy
+#| msgid "You must put some 'source' URIs in your sources.list"
+msgid "You must put some 'deb-src' URIs in your sources.list"
 msgstr ""
 "Vous devez insérer quelques adresses « sources » dans votre sources.list"
 

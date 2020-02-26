@@ -1,3 +1,39 @@
+apt (1.9.11) experimental; urgency=medium
+
+  [ Tomáš Janoušek ]
+  * bash completion: Add autopurge command
+
+  [ Tris Emmy Wilson ]
+  * apt-mark: don't lie about successful marks
+
+  [ Julian Andres Klode ]
+  * apt(8): Wait for lock (Closes: #754103)
+  * policy: Implement pinning by source package (Closes: #166032)
+  * Initialize libgcrypt on first use (Closes: #949074)
+  * Fix various compiler warnings
+  * Bump ABI to 6.0; update symbols file; cleanup ABI:
+    - Merge various function overloads together
+    - Make stuff that should be virtual virtual
+    - Default to hidden visibility
+  * Code removals:
+    - Use a 32-bit djb VersionHash instead of CRC-16
+    - Remove CRC-16 implementation
+  * Hardening:
+    - tagfile: Check if memchr() returned null before using
+    - tagfile: Check out-of-bounds access to Tags vector
+  * Cache improvements:
+    - Type safe cache: Replace map_pointer_t with map_pointer<T>
+    - Extensibility: Add d-pointers to groups, packages, versions, and files
+    - Prepare for package hashtable removal: Swap locations of hashtables
+
+  [ Nis Martensen ]
+  * apt-pkg/srcrecords.cc: 'source' means 'deb-src' in error message
+
+  [ David Kalnischkies ]
+  * Parse records including empty tag names correctly
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 26 Feb 2020 21:29:48 +0100
+
 apt (1.9.10) experimental; urgency=medium
 
   [ David Kalnischkies ]

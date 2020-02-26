@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.8.0~rc3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-01-15 23:07+0100\n"
+"POT-Creation-Date: 2020-02-26 21:29+0100\n"
 "PO-Revision-Date: 2019-02-16 20:35+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -1088,6 +1088,12 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Kon pakketbestand %s niet ontleden (%d)"
 
 #: apt-pkg/deb/debsystem.cc
+#, fuzzy, c-format
+#| msgid "Waiting for headers"
+msgid "Waiting for cache lock (%s)"
+msgstr "Wachten op de kopteksten"
+
+#: apt-pkg/deb/debsystem.cc
 #, c-format
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
@@ -1617,7 +1623,9 @@ msgid "Unsupported file %s given on commandline"
 msgstr "Niet ondersteund bestand %s opgegeven aan de commandoregel"
 
 #: apt-pkg/srcrecords.cc
-msgid "You must put some 'source' URIs in your sources.list"
+#, fuzzy
+#| msgid "You must put some 'source' URIs in your sources.list"
+msgid "You must put some 'deb-src' URIs in your sources.list"
 msgstr ""
 "Uw bronnenlijst (/etc/apt/sources.list) dient tenminste één bron-URI te "
 "bevatten"

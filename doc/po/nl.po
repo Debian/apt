@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.8.0~rc3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-02-18 12:32+0100\n"
+"POT-Creation-Date: 2020-02-26 21:29+0100\n"
 "PO-Revision-Date: 2019-02-16 20:46+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -6910,6 +6910,71 @@ msgstr ""
 "specifieke pins die kunnen overschrijven. Het patroon \"<literal>*</literal>"
 "\" in een Package-veld wordt op zichzelf niet als een &glob;-expressie "
 "beschouwd."
+
+#. type: Content of: <refentry><refsect1><refsect2><title>
+#: apt_preferences.5.xml
+msgid "Pinning by source package"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"APT supports pinning by source packages. To pin by a source package, prepend "
+"\"src:\" to the package name."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"For example, to pin all binaries produced by the apt source package of this "
+"APT's version to 990, you can do:"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><programlisting>
+#: apt_preferences.5.xml
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Package: perl\n"
+#| "Pin: version &good-perl;*\n"
+#| "Pin-Priority: 1001\n"
+msgid ""
+"Package: src:apt\n"
+"Pin: version &apt-product-version;\n"
+"Pin-Priority: 990\n"
+msgstr ""
+"Package: perl\n"
+"Pin: version &good-perl;*\n"
+"Pin-Priority: 1001\n"
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"Source package pinning can be combined with regular expressions and glob "
+"patterns, and can also take a binary architecture."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"For example, let's pin all binaries for all architectures produced by any "
+"source package containing apt in its name to 990:"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><programlisting>
+#: apt_preferences.5.xml
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Package: *\n"
+#| "Pin: origin \"\"\n"
+#| "Pin-Priority: 999\n"
+msgid ""
+"Package: src:*apt*:any\n"
+"Pin: version *\n"
+"Pin-Priority: 990\n"
+msgstr ""
+"Package: *\n"
+"Pin: origin \"\"\n"
+"Pin-Priority: 999\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml

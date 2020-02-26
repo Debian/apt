@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-01-15 23:07+0100\n"
+"POT-Creation-Date: 2020-02-26 21:29+0100\n"
 "PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -999,6 +999,12 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Pakettitiedostoa %s ei voi jäsentää (%d)"
 
 #: apt-pkg/deb/debsystem.cc
+#, fuzzy, c-format
+#| msgid "Waiting for headers"
+msgid "Waiting for cache lock (%s)"
+msgstr "Odotetaan otsikoita"
+
+#: apt-pkg/deb/debsystem.cc
 #, c-format
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
@@ -1495,7 +1501,9 @@ msgid "Unsupported file %s given on commandline"
 msgstr ""
 
 #: apt-pkg/srcrecords.cc
-msgid "You must put some 'source' URIs in your sources.list"
+#, fuzzy
+#| msgid "You must put some 'source' URIs in your sources.list"
+msgid "You must put some 'deb-src' URIs in your sources.list"
 msgstr "Tiedostossa sources.list on oltava rivejä joissa \"lähde\"-URI"
 
 #: apt-pkg/tagfile.cc
