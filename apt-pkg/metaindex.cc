@@ -146,25 +146,16 @@ void metaIndex::swapLoad(metaIndex * const OldMetaIndex)		/*{{{*/
 
 bool metaIndex::IsArchitectureSupported(std::string const &arch) const	/*{{{*/
 {
-   debReleaseIndex const * const deb = dynamic_cast<debReleaseIndex const *>(this);
-   if (deb != NULL)
-      return deb->IsArchitectureSupported(arch);
    return true;
 }
 									/*}}}*/
 bool metaIndex::IsArchitectureAllSupportedFor(IndexTarget const &target) const/*{{{*/
 {
-   debReleaseIndex const * const deb = dynamic_cast<debReleaseIndex const *>(this);
-   if (deb != NULL)
-      return deb->IsArchitectureAllSupportedFor(target);
    return true;
 }
 									/*}}}*/
 bool metaIndex::HasSupportForComponent(std::string const &component) const/*{{{*/
 {
-   debReleaseIndex const * const deb = dynamic_cast<debReleaseIndex const *>(this);
-   if (deb != NULL)
-      return deb->HasSupportForComponent(component);
    return true;
 }
 									/*}}}*/

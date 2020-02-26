@@ -102,10 +102,9 @@ public:
              char const * const Type);
    virtual ~metaIndex();
 
-   // FIXME: make virtual on next abi break
-   bool IsArchitectureSupported(std::string const &arch) const;
-   bool IsArchitectureAllSupportedFor(IndexTarget const &target) const;
-   bool HasSupportForComponent(std::string const &component) const;
+   virtual bool IsArchitectureSupported(std::string const &arch) const;
+   virtual bool IsArchitectureAllSupportedFor(IndexTarget const &target) const;
+   virtual bool HasSupportForComponent(std::string const &component) const;
    // FIXME: should be members of the class on abi break
    APT_HIDDEN void SetOrigin(std::string const &origin);
    APT_HIDDEN void SetLabel(std::string const &label);
