@@ -100,7 +100,7 @@ class pkgSystem
     *
     * @return \b true if the system supports MultiArch, \b false if not.
     */
-   bool MultiArchSupported() const;
+   virtual bool MultiArchSupported() const = 0;
    /** architectures supported by this system
     *
     * A MultiArch capable system might be configured to use
@@ -109,7 +109,7 @@ class pkgSystem
     * @return a list of all architectures (native + foreign) configured
     * for on this system (aka: which can be installed without force)
     */
-   std::vector<std::string> ArchitecturesSupported() const;
+   virtual std::vector<std::string> ArchitecturesSupported() const  = 0;
 
    APT_HIDDEN void SetVersionMapping(map_id_t const in, map_id_t const out);
    APT_HIDDEN map_id_t GetVersionMapping(map_id_t const in) const;
@@ -124,10 +124,10 @@ class pkgSystem
     * lock without releasing the overall outer lock, so that dpkg can run
     * correctly but no other APT instance can acquire the system lock.
     */
-   bool LockInner();
-   bool UnLockInner(bool NoErrors = false);
+   virtual bool LockInner()  = 0;
+   virtual bool UnLockInner(bool NoErrors = false)  = 0;
    /// checks if the system is currently locked
-   bool IsLocked();
+   virtual bool IsLocked() = 0;
    private:
    pkgSystemPrivate * const d;
 };

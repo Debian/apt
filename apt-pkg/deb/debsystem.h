@@ -45,12 +45,12 @@ class debSystem : public pkgSystem
    APT_HIDDEN static std::vector<std::string> GetDpkgBaseCommand();
    APT_HIDDEN static void DpkgChrootDirectory();
    APT_HIDDEN static pid_t ExecDpkg(std::vector<std::string> const &sArgs, int * const inputFd, int * const outputFd, bool const DiscardOutput);
-   APT_HIDDEN static bool SupportsMultiArch();
-   APT_HIDDEN static std::vector<std::string> SupportedArchitectures();
+   bool MultiArchSupported() const override;
+   std::vector<std::string> ArchitecturesSupported() const override;
 
-   APT_HIDDEN bool LockInner();
-   APT_HIDDEN bool UnLockInner(bool NoErrors=false);
-   APT_HIDDEN bool IsLocked();
+   bool LockInner() override;
+   bool UnLockInner(bool NoErrors=false) override;
+   bool IsLocked() override;
 };
 
 extern debSystem debSys;
