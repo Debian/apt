@@ -65,11 +65,8 @@ pkgIndexFile::pkgIndexFile(bool const Trusted) :			/*{{{*/
 }
 									/*}}}*/
 // IndexFile::ArchiveInfo - Stub					/*{{{*/
-std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator const &Ver) const
+std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator const &) const
 {
-   debDebPkgFileIndex const * const debfile = dynamic_cast<debDebPkgFileIndex const*>(this);
-   if (debfile != nullptr)
-      return debfile->ArchiveInfo_impl(Ver);
    return std::string();
 }
 									/*}}}*/
