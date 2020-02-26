@@ -29,7 +29,7 @@ protected:
    std::unique_ptr<pkgIndexFile> StatusFile;
 
 public:
-   virtual bool Lock() APT_OVERRIDE APT_PURE;
+   virtual bool Lock(OpProgress * const Progress) APT_OVERRIDE APT_PURE;
    virtual bool UnLock(bool NoErrors = false) APT_OVERRIDE APT_PURE;
    virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const APT_OVERRIDE APT_PURE;
    virtual bool Initialize(Configuration &Cnf) APT_OVERRIDE;
@@ -41,7 +41,7 @@ public:
    bool MultiArchSupported() const override { return true; }
    std::vector<std::string> ArchitecturesSupported() const override { return {}; };
 
-   bool LockInner() override { return _error->Error("LockInner is not implemented"); };
+   bool LockInner(OpProgress * const, int) override { return _error->Error("LockInner is not implemented"); };
    bool UnLockInner(bool) override { return _error->Error("UnLockInner is not implemented"); };
    bool IsLocked() override { return true; };
 

@@ -27,8 +27,7 @@ class debSystem : public pkgSystem
    APT_HIDDEN bool CheckUpdates();
 
    public:
-
-   virtual bool Lock() APT_OVERRIDE;
+   virtual bool Lock(OpProgress *const Progress) APT_OVERRIDE;
    virtual bool UnLock(bool NoErrors = false) APT_OVERRIDE;
    virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const APT_OVERRIDE;
    virtual bool Initialize(Configuration &Cnf) APT_OVERRIDE;
@@ -48,7 +47,7 @@ class debSystem : public pkgSystem
    bool MultiArchSupported() const override;
    std::vector<std::string> ArchitecturesSupported() const override;
 
-   bool LockInner() override;
+   bool LockInner(OpProgress *const Progress, int timeoutSec) override;
    bool UnLockInner(bool NoErrors=false) override;
    bool IsLocked() override;
 };

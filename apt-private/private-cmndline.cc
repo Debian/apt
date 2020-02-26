@@ -475,6 +475,11 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
       _config->CndSet("Binary::apt::APT::Keep-Downloaded-Packages", false);
       _config->CndSet("Binary::apt::APT::Get::Update::InteractiveReleaseInfoChanges", true);
       _config->CndSet("Binary::apt::APT::Cmd::Pattern-Only", true);
+
+      if (isatty(STDIN_FILENO))
+         _config->CndSet("Binary::apt::Dpkg::Lock::Timeout", -1);
+      else
+         _config->CndSet("Binary::apt::Dpkg::Lock::Timeout", 120);
    }
 
    _config->Set("Binary", binary);

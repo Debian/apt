@@ -106,7 +106,7 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
 
    if (WithLock == true)
    {
-      if (_system->Lock() == false)
+      if (_system->Lock(Progress) == false)
 	 return false;
       d->WithLock = true;
    }
