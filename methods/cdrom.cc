@@ -62,7 +62,6 @@ CDROMMethod::CDROMMethod() : aptMethod("cdrom", "1.0",SingleInstance | LocalOnly
 					  Debug(false),
                                           MountedByApt(false)
 {
-   UdevCdroms.Dlopen();
 }
 									/*}}}*/
 // CDROMMethod::Exit - Unmount the disc if necessary			/*{{{*/
