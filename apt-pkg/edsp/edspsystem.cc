@@ -39,7 +39,7 @@ eippSystem::eippSystem() : edspLikeSystem("Debian APT planner interface")
 }
 									/*}}}*/
 // System::Lock - Get the lock						/*{{{*/
-bool edspLikeSystem::Lock()
+bool edspLikeSystem::Lock(OpProgress *)
 {
    return true;
 }

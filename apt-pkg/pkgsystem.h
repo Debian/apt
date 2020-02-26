@@ -46,6 +46,7 @@ class pkgPackageManager;
 class pkgVersioningSystem;
 class Configuration;
 class pkgIndexFile;
+class OpProgress;
 
 class pkgSystemPrivate;
 class APT_PUBLIC pkgSystem
@@ -62,7 +63,7 @@ class APT_PUBLIC pkgSystem
    
    /* Prevent other programs from touching shared data not covered by
       other locks (cache or state locks) */
-   virtual bool Lock() = 0;
+   virtual bool Lock(OpProgress *const Progress = nullptr) = 0;
    virtual bool UnLock(bool NoErrors = false) = 0;
    
    /* Various helper classes to interface with specific bits of this
@@ -124,7 +125,7 @@ class APT_PUBLIC pkgSystem
     * lock without releasing the overall outer lock, so that dpkg can run
     * correctly but no other APT instance can acquire the system lock.
     */
-   virtual bool LockInner()  = 0;
+   virtual bool LockInner(OpProgress *const Progress = 0, int timeOutSec = 0) = 0;
    virtual bool UnLockInner(bool NoErrors = false)  = 0;
    /// checks if the system is currently locked
    virtual bool IsLocked() = 0;
