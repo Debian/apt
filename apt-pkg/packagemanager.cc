@@ -1130,11 +1130,7 @@ pkgPackageManager::OrderResult
 pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
 {
    bool goResult;
-   auto simulation = dynamic_cast<pkgSimulate*>(this);
-   if (simulation == nullptr)
-      goResult = Go(progress);
-   else
-      goResult = simulation->Go2(progress);
+   goResult = Go(progress);
    if(goResult == false) 
       return Failed;
    

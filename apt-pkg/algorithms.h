@@ -71,9 +71,8 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
    virtual bool Configure(PkgIterator Pkg) APT_OVERRIDE;
    virtual bool Remove(PkgIterator Pkg,bool Purge) APT_OVERRIDE;
 
-   // FIXME: trick to avoid ABI break for virtual reimplementation; fix on next ABI break
 public:
-   APT_HIDDEN bool Go2(APT::Progress::PackageManager * progress);
+   bool Go(APT::Progress::PackageManager * progress) override;
 
 private:
    APT_HIDDEN void ShortBreaks();
