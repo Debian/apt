@@ -386,8 +386,11 @@ struct pkgCache::Header
    void SetHashTableSize(unsigned int const sz) { HashTableSize = sz; }
    map_stringitem_t GetArchitectures() const { return Architectures; }
    void SetArchitectures(map_stringitem_t const idx) { Architectures = idx; }
-   map_pointer<Package> * PkgHashTableP() const { return (map_pointer<Package>*) (this + 1); }
-   map_pointer<Group> * GrpHashTableP() const { return reinterpret_cast<map_pointer<Group> *>(PkgHashTableP() + GetHashTableSize()); }
+
+#ifdef APT_COMPILING_APT
+   map_pointer<Group> * GrpHashTableP() const { return (map_pointer<Group>*) (this + 1); }
+   map_pointer<Package> * PkgHashTableP() const { return reinterpret_cast<map_pointer<Package> *>(GrpHashTableP() + GetHashTableSize()); }
+#endif
 
    /** \brief Hash of the file (TODO: Rename) */
    map_filesize_small_t CacheFileSize;
