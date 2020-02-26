@@ -3935,12 +3935,6 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
    }
 }
 									/*}}}*/
-void pkgAcqFile::Failed(string const &Message, pkgAcquire::MethodConfig const *const Cnf) /*{{{*/
-{
-   // FIXME: Remove this pointless overload on next ABI break
-   Item::Failed(Message, Cnf);
-}
-									/*}}}*/
 string pkgAcqFile::Custom600Headers() const				/*{{{*/
 {
    if (IsIndexFile)

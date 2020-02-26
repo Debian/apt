@@ -1146,7 +1146,6 @@ class pkgAcqFile : public pkgAcquire::Item
    virtual bool HashesRequired() const APT_OVERRIDE;
 
    // Specialized action members
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &CalcHashes,
 		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual std::string DescURI() const APT_OVERRIDE {return Desc.URI;};
