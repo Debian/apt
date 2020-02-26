@@ -11,12 +11,6 @@
 
 class metaIndexPrivate							/*{{{*/
 {
-   public:
-   std::string Origin;
-   std::string Label;
-   std::string Version;
-   signed short DefaultPin;
-   std::string ReleaseNotes;
 };
 									/*}}}*/
 
@@ -63,13 +57,13 @@ APT_PURE std::string metaIndex::GetDist() const { return Dist; }
 APT_PURE const char* metaIndex::GetType() const { return Type; }
 APT_PURE metaIndex::TriState metaIndex::GetTrusted() const { return Trusted; }
 APT_PURE std::string metaIndex::GetSignedBy() const { return SignedBy; }
-APT_PURE std::string metaIndex::GetOrigin() const { return d->Origin; }
-APT_PURE std::string metaIndex::GetLabel() const { return d->Label; }
-APT_PURE std::string metaIndex::GetVersion() const { return d->Version; }
+APT_PURE std::string metaIndex::GetOrigin() const { return Origin; }
+APT_PURE std::string metaIndex::GetLabel() const { return Label; }
+APT_PURE std::string metaIndex::GetVersion() const { return Version; }
 APT_PURE std::string metaIndex::GetCodename() const { return Codename; }
 APT_PURE std::string metaIndex::GetSuite() const { return Suite; }
-APT_PURE std::string metaIndex::GetReleaseNotes() const { return d->ReleaseNotes; }
-APT_PURE signed short metaIndex::GetDefaultPin() const { return d->DefaultPin; }
+APT_PURE std::string metaIndex::GetReleaseNotes() const { return ReleaseNotes; }
+APT_PURE signed short metaIndex::GetDefaultPin() const { return DefaultPin; }
 APT_PURE bool metaIndex::GetSupportsAcquireByHash() const { return SupportsAcquireByHash; }
 APT_PURE time_t metaIndex::GetValidUntil() const { return ValidUntil; }
 APT_PURE time_t metaIndex::GetNotBefore() const
@@ -137,10 +131,10 @@ void metaIndex::swapLoad(metaIndex * const OldMetaIndex)		/*{{{*/
    std::swap(Entries, OldMetaIndex->Entries);
    std::swap(LoadedSuccessfully, OldMetaIndex->LoadedSuccessfully);
 
-   OldMetaIndex->SetOrigin(d->Origin);
-   OldMetaIndex->SetLabel(d->Label);
-   OldMetaIndex->SetVersion(d->Version);
-   OldMetaIndex->SetDefaultPin(d->DefaultPin);
+   OldMetaIndex->Origin = Origin;
+   OldMetaIndex->Label = Label;
+   OldMetaIndex->Version =Version;
+   OldMetaIndex->DefaultPin = DefaultPin;
 }
 									/*}}}*/
 
@@ -159,9 +153,3 @@ bool metaIndex::HasSupportForComponent(std::string const &component) const/*{{{*
    return true;
 }
 									/*}}}*/
-
-void metaIndex::SetOrigin(std::string const &origin) { d->Origin = origin; }
-void metaIndex::SetLabel(std::string const &label) { d->Label = label; }
-void metaIndex::SetVersion(std::string const &version) { d->Version = version; }
-void metaIndex::SetDefaultPin(signed short const defaultpin) { d->DefaultPin = defaultpin; }
-void metaIndex::SetReleaseNotes(std::string const &notes) { d->ReleaseNotes = notes; }

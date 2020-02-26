@@ -44,6 +44,11 @@ protected:
    // parsed from a file
    std::string Suite;
    std::string Codename;
+   std::string Origin;
+   std::string Label;
+   std::string Version;
+   signed short DefaultPin;
+   std::string ReleaseNotes;
    time_t Date;
    time_t ValidUntil;
    bool SupportsAcquireByHash;
@@ -105,12 +110,6 @@ public:
    virtual bool IsArchitectureSupported(std::string const &arch) const;
    virtual bool IsArchitectureAllSupportedFor(IndexTarget const &target) const;
    virtual bool HasSupportForComponent(std::string const &component) const;
-   // FIXME: should be members of the class on abi break
-   APT_HIDDEN void SetOrigin(std::string const &origin);
-   APT_HIDDEN void SetLabel(std::string const &label);
-   APT_HIDDEN void SetVersion(std::string const &version);
-   APT_HIDDEN void SetDefaultPin(signed short const defaultpin);
-   APT_HIDDEN void SetReleaseNotes(std::string const &notes);
 };
 
 #endif
