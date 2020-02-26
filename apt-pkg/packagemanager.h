@@ -79,9 +79,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    // Install helpers
    bool ConfigureAll();
    bool SmartConfigure(PkgIterator Pkg, int const Depth) APT_MUSTCHECK;
-   //FIXME: merge on abi break
-   bool SmartUnPack(PkgIterator Pkg) APT_MUSTCHECK;
-   bool SmartUnPack(PkgIterator Pkg, bool const Immediate, int const Depth) APT_MUSTCHECK;
+   bool SmartUnPack(PkgIterator Pkg, bool const Immediate = true, int const Depth = 0) APT_MUSTCHECK;
    bool SmartRemove(PkgIterator Pkg) APT_MUSTCHECK;
    bool EarlyRemove(PkgIterator Pkg, DepIterator const * const Dep) APT_MUSTCHECK;
 

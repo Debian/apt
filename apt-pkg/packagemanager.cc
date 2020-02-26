@@ -704,10 +704,6 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
 // ---------------------------------------------------------------------
 /* This puts the system in a state where it can Unpack Pkg, if Pkg is already
    unpacked, or when it has been unpacked, if Immediate==true it configures it. */
-bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
-{
-   return SmartUnPack(Pkg, true, 0);
-}
 bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int const Depth)
 {
    bool PkgLoop = List->IsFlag(Pkg,pkgOrderList::Loop);
