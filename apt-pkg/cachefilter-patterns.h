@@ -261,7 +261,7 @@ struct APT_HIDDEN PackageIsVirtual : public PackageMatcher
 
 struct APT_HIDDEN VersionAnyMatcher : public Matcher
 {
-   bool operator()(pkgCache::GrpIterator const &Grp) override { return false; }
+   bool operator()(pkgCache::GrpIterator const &) override { return false; }
    bool operator()(pkgCache::VerIterator const &Ver) override = 0;
    bool operator()(pkgCache::PkgIterator const &Pkg) override
    {

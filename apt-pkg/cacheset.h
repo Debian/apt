@@ -201,7 +201,7 @@ template<typename Interface, typename Master, typename iterator_type, typename c
 protected:
 	container_iterator _iter;
 public:
-	explicit Container_iterator_base(container_iterator i) : _iter(i) {}
+	explicit Container_iterator_base(container_iterator const &i) : _iter(i) {}
 	inline container_value operator*(void) const { return static_cast<iterator_type const*>(this)->getType(); };
 	operator container_iterator(void) const { return _iter; }
 	inline iterator_type& operator++() { ++_iter; return static_cast<iterator_type&>(*this); }
@@ -241,12 +241,10 @@ template<class Interface, class Container, class Master> class Container_iterato
 	typedef Container_iterator<Interface, Container, Master> iterator_type;
 	typedef typename Container::iterator container_iterator;
 public:
-	explicit Container_iterator(container_iterator i) :
+	explicit Container_iterator(container_iterator const &i) :
 	   Container_iterator_base<Interface, Master, iterator_type, container_iterator, typename Container::value_type>(i) {}
 
 	operator typename Master::const_iterator() { return typename Master::const_iterator(this->_iter); }
-	inline iterator_type& operator=(iterator_type const &i) { this->_iter = i._iter; return static_cast<iterator_type&>(*this); }
-	inline iterator_type& operator=(container_iterator const &i) { this->_iter = i; return static_cast<iterator_type&>(*this); }
 	inline typename Container::iterator::reference operator*(void) const { return *this->_iter; }
 
 	inline typename Container::value_type getType(void) const { return *this->_iter; }
@@ -325,6 +323,7 @@ public:
 	CacheSetHelper::PkgSelector getConstructor() const { return ConstructedBy; }
 	PackageContainerInterface();
 	explicit PackageContainerInterface(CacheSetHelper::PkgSelector const by);
+	PackageContainerInterface(PackageContainerInterface const &by);
 	PackageContainerInterface& operator=(PackageContainerInterface const &other);
 	virtual ~PackageContainerInterface();
 
@@ -762,6 +761,7 @@ public:
 				   CacheSetHelper &helper);
 
 	VersionContainerInterface();
+	VersionContainerInterface(VersionContainerInterface const &other);
 	VersionContainerInterface& operator=(VersionContainerInterface const &other);
 	virtual ~VersionContainerInterface();
 private:

@@ -915,6 +915,7 @@ CacheSetHelper::CacheSetHelper(bool const ShowError, GlobalError::MsgType ErrorT
 CacheSetHelper::~CacheSetHelper() {}
 
 PackageContainerInterface::PackageContainerInterface() : ConstructedBy(CacheSetHelper::UNKNOWN), d(NULL) {}
+PackageContainerInterface::PackageContainerInterface(PackageContainerInterface const &by) : PackageContainerInterface() { *this = by; }
 PackageContainerInterface::PackageContainerInterface(CacheSetHelper::PkgSelector const by) : ConstructedBy(by), d(NULL) {}
 PackageContainerInterface& PackageContainerInterface::operator=(PackageContainerInterface const &other) {
    if (this != &other)
@@ -928,6 +929,9 @@ PackageUniverse::PackageUniverse(pkgCacheFile * const Owner) : _cont(Owner->GetP
 PackageUniverse::~PackageUniverse() {}
 
 VersionContainerInterface::VersionContainerInterface() : d(NULL) {}
+VersionContainerInterface::VersionContainerInterface(VersionContainerInterface const &other) : VersionContainerInterface() {
+	*this = other;
+};
 VersionContainerInterface& VersionContainerInterface::operator=(VersionContainerInterface const &) {
    return *this;
 }

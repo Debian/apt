@@ -285,3 +285,61 @@ TEST(TagFileTest, Comments)
 
    EXPECT_FALSE(tfile.Step(section));
 }
+
+TEST(TagFileTest, EmptyTagName)
+{
+   FileFd fd;
+   createTemporaryFile("emptytagname", fd, NULL, "0:\n"
+"PACKAGE:0\n"
+"\n"
+":\n"
+"PACKAGE:\n"
+"\n"
+"PACKAGE:\n"
+":\n"
+"\n"
+"PACKAGE:\n"
+":\n"
+"Version:1\n"
+"\n"
+"PACKAGE::\n"
+   );
+   pkgTagFile tfile(&fd);
+   pkgTagSection section;
+   ASSERT_TRUE(tfile.Step(section));
+   EXPECT_EQ(2u, section.Count());
+   EXPECT_TRUE(section.Exists("PACKAGE"));
+   EXPECT_EQ("0", section.FindS("PACKAGE"));
+   EXPECT_TRUE(section.Exists("0"));
+   EXPECT_EQ("", section.FindS("0"));
+
+   ASSERT_TRUE(tfile.Step(section));
+   EXPECT_EQ(2u, section.Count());
+   EXPECT_TRUE(section.Exists("PACKAGE"));
+   EXPECT_EQ("", section.FindS("PACKAGE"));
+   EXPECT_TRUE(section.Exists(""));
+   EXPECT_EQ("", section.FindS(""));
+
+   ASSERT_TRUE(tfile.Step(section));
+   EXPECT_EQ(2u, section.Count());
+   EXPECT_TRUE(section.Exists("PACKAGE"));
+   EXPECT_EQ("", section.FindS("PACKAGE"));
+   EXPECT_TRUE(section.Exists(""));
+   EXPECT_EQ("", section.FindS(""));
+
+   ASSERT_TRUE(tfile.Step(section));
+   EXPECT_EQ(3u, section.Count());
+   EXPECT_TRUE(section.Exists("PACKAGE"));
+   EXPECT_EQ("", section.FindS("PACKAGE"));
+   EXPECT_TRUE(section.Exists(""));
+   EXPECT_EQ("", section.FindS(""));
+   EXPECT_TRUE(section.Exists("Version"));
+   EXPECT_EQ("1", section.FindS("Version"));
+
+   ASSERT_TRUE(tfile.Step(section));
+   EXPECT_EQ(1u, section.Count());
+   EXPECT_TRUE(section.Exists("PACKAGE"));
+   EXPECT_EQ(":", section.FindS("PACKAGE"));
+
+   EXPECT_FALSE(tfile.Step(section));
+}

@@ -513,7 +513,6 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
       return false;
 
    pkgTagSectionPrivate::TagData lastTagData(0);
-   lastTagData.EndTag = 0;
    Key lastTagKey = Key::Unknown;
    unsigned int lastTagHash = 0;
    while (Stop < End)
@@ -529,7 +528,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
       if (isspace_ascii(Stop[0]) == 0)
       {
 	 // store the last found tag
-	 if (lastTagData.EndTag != 0)
+	 if (lastTagData.StartValue != 0)
 	 {
 	    if (lastTagKey != Key::Unknown) {
 	       AlphaIndexes[static_cast<size_t>(lastTagKey)] = TagCount;
@@ -579,7 +578,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
       // Double newline marks the end of the record
       if (Stop+1 < End && Stop[1] == '\n')
       {
-	 if (lastTagData.EndTag != 0)
+	 if (lastTagData.StartValue != 0)
 	 {
 	    if (lastTagKey != Key::Unknown) {
 	       AlphaIndexes[static_cast<size_t>(lastTagKey)] = TagCount;

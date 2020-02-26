@@ -131,17 +131,17 @@ void metaIndex::swapLoad(metaIndex * const OldMetaIndex)		/*{{{*/
 }
 									/*}}}*/
 
-bool metaIndex::IsArchitectureSupported(std::string const &arch) const	/*{{{*/
+bool metaIndex::IsArchitectureSupported(std::string const &) const	/*{{{*/
 {
    return true;
 }
 									/*}}}*/
-bool metaIndex::IsArchitectureAllSupportedFor(IndexTarget const &target) const/*{{{*/
+bool metaIndex::IsArchitectureAllSupportedFor(IndexTarget const &) const/*{{{*/
 {
    return true;
 }
 									/*}}}*/
-bool metaIndex::HasSupportForComponent(std::string const &component) const/*{{{*/
+bool metaIndex::HasSupportForComponent(std::string const &) const/*{{{*/
 {
    return true;
 }
