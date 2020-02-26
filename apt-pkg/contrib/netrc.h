@@ -22,5 +22,5 @@
 class URI;
 class FileFd;
 
-bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri);
+APT_PUBLIC bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri);
 #endif

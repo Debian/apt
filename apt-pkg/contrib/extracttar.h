@@ -21,7 +21,7 @@
 
 class pkgDirStream;
 
-class ExtractTar
+class APT_PUBLIC ExtractTar
 {
    protected:
    

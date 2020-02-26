@@ -41,7 +41,7 @@ class pkgTagFilePrivate;
  * Beware: This class does \b NOT support (#-)comments in in- or output!
  * If the input contains comments they have to be stripped first like pkgTagFile
  * does with SUPPORT_COMMENTS flag set. */
-class pkgTagSection
+class APT_PUBLIC pkgTagSection
 {
    const char *Section;
    unsigned int AlphaIndexes[128];
@@ -170,7 +170,7 @@ class pkgTagSection
  * via #pkgTagSection. The default mode tries to be as fast as possible and
  * assumes perfectly valid (machine generated) files like Packages. Support
  * for comments e.g. needs to be enabled explicitly. */
-class pkgTagFile
+class APT_PUBLIC pkgTagFile
 {
    pkgTagFilePrivate * const d;
 
@@ -198,7 +198,7 @@ public:
    virtual ~pkgTagFile();
 };
 
-extern const char **TFRewritePackageOrder;
-extern const char **TFRewriteSourceOrder;
+APT_PUBLIC extern const char **TFRewritePackageOrder;
+APT_PUBLIC extern const char **TFRewriteSourceOrder;
 
 #endif

@@ -30,7 +30,7 @@
 #include <vector>
 
 
-class pkgAcqMethod
+class APT_PUBLIC pkgAcqMethod
 {
    protected:
 

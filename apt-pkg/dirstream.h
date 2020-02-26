@@ -26,7 +26,7 @@
 
 #include <apt-pkg/macros.h>
 
-class pkgDirStream
+class APT_PUBLIC pkgDirStream
 { 
    public:
 

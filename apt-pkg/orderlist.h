@@ -21,7 +21,7 @@
 #include <string>
 
 class pkgDepCache;
-class pkgOrderList : protected pkgCache::Namespace
+class APT_PUBLIC pkgOrderList : protected pkgCache::Namespace
 {
    void * const d;
    protected:

@@ -52,12 +52,12 @@
 class OpProgress;
 class pkgVersioningSystem;
 
-class pkgDepCache : protected pkgCache::Namespace
+class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
 {
    public:
 
    /** \brief An arbitrary predicate on packages. */
-   class InRootSetFunc
+   class APT_PUBLIC InRootSetFunc
    {
    public:
      virtual bool InRootSet(const pkgCache::PkgIterator &/*pkg*/) {return false;};
@@ -156,7 +156,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *  to a std::set of pointers to them and use those to store
     *  information about what happened in a group in the group.
     */
-   class ActionGroup
+   class APT_PUBLIC ActionGroup
    {
        void * const d;
        pkgDepCache &cache;
@@ -193,7 +193,7 @@ class pkgDepCache : protected pkgCache::Namespace
    /** \brief Returns \b true for packages matching a regular
     *  expression in APT::NeverAutoRemove.
     */
-   class DefaultRootSetFunc : public InRootSetFunc, public Configuration::MatchAgainstConfig
+   class APT_PUBLIC DefaultRootSetFunc : public InRootSetFunc, public Configuration::MatchAgainstConfig
    {
    public:
      DefaultRootSetFunc() : Configuration::MatchAgainstConfig("APT::NeverAutoRemove") {};
@@ -202,7 +202,7 @@ class pkgDepCache : protected pkgCache::Namespace
      bool InRootSet(const pkgCache::PkgIterator &pkg) APT_OVERRIDE { return pkg.end() == false && Match(pkg.Name()); };
    };
 
-   struct StateCache
+   struct APT_PUBLIC StateCache
    {
       // text versions of the two version fields
       const char *CandVersion;
@@ -264,7 +264,7 @@ class pkgDepCache : protected pkgCache::Namespace
    void UpdateVerState(PkgIterator const &Pkg);
 
    // User Policy control
-   class Policy
+   class APT_PUBLIC Policy
    {
       public:
       Policy() {

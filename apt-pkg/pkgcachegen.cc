@@ -14,7 +14,6 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/hashsum_template.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/metaindex.h>

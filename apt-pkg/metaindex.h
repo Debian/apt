@@ -17,7 +17,7 @@ class OpProgress;
 
 class metaIndexPrivate;
 
-class metaIndex
+class APT_PUBLIC metaIndex
 {
 public:
    struct checkSum

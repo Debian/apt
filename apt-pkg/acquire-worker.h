@@ -44,7 +44,7 @@
  *
  *  \sa pkgAcqMethod, pkgAcquire::Item, pkgAcquire
  */
-class pkgAcquire::Worker : public WeakPointable
+class APT_PUBLIC pkgAcquire::Worker : public WeakPointable
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void * const d;

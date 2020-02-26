@@ -147,7 +147,7 @@ public:
    std::string ArchiveInfo(pkgCache::VerIterator const &Ver) const override;
 };
 
-class debDscFileIndex : public pkgDebianIndexRealFile
+class APT_PUBLIC debDscFileIndex : public pkgDebianIndexRealFile
 {
    void * const d;
 
@@ -174,7 +174,7 @@ public:
    virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 };
 
-class debStringPackageIndex : public pkgDebianIndexRealFile
+class APT_PUBLIC debStringPackageIndex : public pkgDebianIndexRealFile
 {
    void * const d;
 protected:

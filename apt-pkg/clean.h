@@ -16,7 +16,7 @@
 
 class pkgCache;
 
-class pkgArchiveCleaner
+class APT_PUBLIC pkgArchiveCleaner
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void * const d;

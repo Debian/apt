@@ -12,9 +12,9 @@ namespace APT {
 namespace Progress {
 
  class PackageManager;
- PackageManager* PackageManagerProgressFactory();
+ APT_PUBLIC PackageManager* PackageManagerProgressFactory();
 
- class PackageManager
+ class APT_PUBLIC PackageManager
  {
  private:
     /** \brief dpointer placeholder */
@@ -59,7 +59,7 @@ namespace Progress {
                                 std::string /*ConfMessage*/) {}
  };
 
- class PackageManagerProgressFd : public PackageManager
+ class APT_PUBLIC PackageManagerProgressFd : public PackageManager
  {
     void * const d;
  protected:
@@ -90,7 +90,7 @@ namespace Progress {
 
  };
 
- class PackageManagerProgressDeb822Fd : public PackageManager
+ class APT_PUBLIC PackageManagerProgressDeb822Fd : public PackageManager
  {
     void * const d;
  protected:
@@ -120,7 +120,7 @@ namespace Progress {
                                    std::string ConfMessage) APT_OVERRIDE;
  };
 
- class PackageManagerFancy : public PackageManager
+ class APT_PUBLIC PackageManagerFancy : public PackageManager
  {
     void * const d;
  private:
@@ -156,7 +156,7 @@ namespace Progress {
     static std::string GetTextProgressStr(float percent, int OutputSize);
  };
 
- class PackageManagerText : public PackageManager
+ class APT_PUBLIC PackageManagerText : public PackageManager
  {
     void * const d;
  public:

@@ -24,9 +24,9 @@ namespace APT {
          FORBID_INSTALL_NEW_PACKAGES = 2,
 	 ALLOW_EVERYTHING = 0
       };
-      bool Upgrade(pkgDepCache &Cache, int UpgradeMode, OpProgress * const Progress = NULL);
+      APT_PUBLIC bool Upgrade(pkgDepCache &Cache, int UpgradeMode, OpProgress * const Progress = NULL);
    }
 }
 
-bool pkgMinimizeUpgrade(pkgDepCache &Cache);
+APT_PUBLIC bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 #endif

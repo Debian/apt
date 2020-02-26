@@ -43,7 +43,7 @@ class pkgAcqMetaClearSig;
 class pkgAcqIndexMergeDiffs;
 class metaIndex;
 
-class pkgAcquire::Item : public WeakPointable				/*{{{*/
+class APT_PUBLIC pkgAcquire::Item : public WeakPointable				/*{{{*/
 /** \brief Represents the process by which a pkgAcquire object should
  *  retrieve a file or a collection of files.
  *
@@ -940,7 +940,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
  *  If the package file already exists in the cache, nothing will be
  *  done.
  */
-class pkgAcqArchive : public pkgAcquire::Item
+class APT_PUBLIC pkgAcqArchive : public pkgAcquire::Item
 {
    void * const d;
 
@@ -1018,7 +1018,7 @@ class pkgAcqArchive : public pkgAcquire::Item
  *  Downloads the changelog to a temporary file it will also remove again
  *  while it is deconstructed or downloads it to a named location.
  */
-class pkgAcqChangelog : public pkgAcquire::Item
+class APT_PUBLIC pkgAcqChangelog : public pkgAcquire::Item
 {
    class Private;
    Private * const d;
@@ -1134,7 +1134,7 @@ private:
  *  normally is a NOP, such as "file".  If the download fails, the
  *  partial file is renamed to get a ".FAILED" extension.
  */
-class pkgAcqFile : public pkgAcquire::Item
+class APT_PUBLIC pkgAcqFile : public pkgAcquire::Item
 {
    void * const d;
 
