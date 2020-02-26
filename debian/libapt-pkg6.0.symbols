@@ -104,7 +104,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"pkgAcquire::Remove(pkgAcquire::Item*)@APTPKG_6.0" 0.8.0
  (c++)"pkgAcquire::Remove(pkgAcquire::Worker*)@APTPKG_6.0" 0.8.0
  (c++)"pkgAcquire::RunFds(fd_set*, fd_set*)@APTPKG_6.0" 0.8.0
- (c++)"pkgAcquire::RunFdsSane(fd_set*, fd_set*)@APTPKG_6.0" 1.1.1
  (c++)"pkgAcquire::SetFds(int&, fd_set*, fd_set*)@APTPKG_6.0" 0.8.0
  (c++)"pkgAcquire::UriEnd()@APTPKG_6.0" 0.8.0
  (c++)"pkgAcquire::Worker::OutFdReady()@APTPKG_6.0" 0.8.0
@@ -138,7 +137,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"pkgRecords::~pkgRecords()@APTPKG_6.0" 0.8.0
  (c++)"pkgTagFile::Step(pkgTagSection&)@APTPKG_6.0" 0.8.0
  (c++)"pkgTagFile::~pkgTagFile()@APTPKG_6.0" 0.8.0
- (c++)"CommandLine::DispatchArg(CommandLine::Dispatch*, bool)@APTPKG_6.0" 0.8.0
  (c++)"CommandLine::SaveInConfig(unsigned int const&, char const* const*)@APTPKG_6.0" 0.8.0
  (c++)"CommandLine::Parse(int, char const**)@APTPKG_6.0" 0.8.0
  (c++)"CommandLine::HandleOpt(int&, int, char const**, char const*&, CommandLine::Args*, bool)@APTPKG_6.0" 0.8.0
@@ -199,6 +197,7 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"pkgSimulate::Remove(pkgCache::PkgIterator, bool)@APTPKG_6.0" 0.8.0
  (c++)"pkgSimulate::Install(pkgCache::PkgIterator, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 0.8.0
  (c++)"pkgSimulate::Configure(pkgCache::PkgIterator)@APTPKG_6.0" 0.8.0
+ (c++)"pkgSimulate::Go(APT::Progress::PackageManager*)@APTPKG_6.0" 1.9.10
  (c++)"pkgSimulate::pkgSimulate(pkgDepCache*)@APTPKG_6.0" 0.8.0
  (c++)"pkgSimulate::~pkgSimulate()@APTPKG_6.0" 0.8.0
  (c++)"pkgAcqMethod::FetchResult::TakeHashes(Hashes&)@APTPKG_6.0" 0.8.0
@@ -304,7 +303,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"pkgPackageManager::FixMissing()@APTPKG_6.0" 0.8.0
  (c++)"pkgPackageManager::GetArchives(pkgAcquire*, pkgSourceList*, pkgRecords*)@APTPKG_6.0" 0.8.0
  (c++)"pkgPackageManager::SmartRemove(pkgCache::PkgIterator)@APTPKG_6.0" 0.8.0
- (c++)"pkgPackageManager::SmartUnPack(pkgCache::PkgIterator)@APTPKG_6.0" 0.8.0
  (c++)"pkgPackageManager::ConfigureAll()@APTPKG_6.0" 0.8.0
  (c++)"pkgPackageManager::ImmediateAdd(pkgCache::PkgIterator, bool, unsigned int const&)@APTPKG_6.0" 0.8.0
  (c++)"pkgPackageManager::OrderInstall()@APTPKG_6.0" 0.8.0
@@ -321,7 +319,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"debVersioningSystem::CheckDep(char const*, int, char const*)@APTPKG_6.0" 0.8.0
  (c++)"debVersioningSystem::debVersioningSystem()@APTPKG_6.0" 0.8.0
  (c++)"pkgUdevCdromDevices::Scan()@APTPKG_6.0" 0.8.0
- (c++)"pkgUdevCdromDevices::Dlopen()@APTPKG_6.0" 0.8.0
  (c++)"pkgUdevCdromDevices::pkgUdevCdromDevices()@APTPKG_6.0" 0.8.0
  (c++)"pkgUdevCdromDevices::~pkgUdevCdromDevices()@APTPKG_6.0" 0.8.0
  (c++)"pkgVersioningSystem::GlobalList@APTPKG_6.0" 0.8.0
@@ -1037,6 +1034,7 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"debDebianSourceDirIndex::GetType() const@APTPKG_6.0" 1.1~exp9
  (c++)"debDebPkgFileIndex::~debDebPkgFileIndex()@APTPKG_6.0" 1.1~exp9
  (c++)"debDebPkgFileIndex::debDebPkgFileIndex(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.1~exp9
+ (c++)"debDebPkgFileIndex::ArchiveInfo[abi:cxx11](pkgCache::VerIterator const&) const@APTPKG_6.0" 1.1~exp9
  (c++)"debDebPkgFileIndex::FindInCache(pkgCache&) const@APTPKG_6.0" 1.1~exp9
  (c++)"debDebPkgFileIndex::GetArchitecture[abi:cxx11]() const@APTPKG_6.0" 1.1~exp9
  (c++)"debDebPkgFileIndex::GetComponent[abi:cxx11]() const@APTPKG_6.0" 1.1~exp9
@@ -1126,7 +1124,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"pkgAcqChangelog::URI(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, char const*, char const*)@APTPKG_6.0" 1.1~exp9
  (c++)"pkgAcqChangelog::URITemplate[abi:cxx11](pkgCache::RlsFileIterator const&)@APTPKG_6.0" 1.1~exp9
  (c++)"pkgAcqFile::Done(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, HashStringList const&, pkgAcquire::MethodConfig const*)@APTPKG_6.0" 1.1~exp9
- (c++)"pkgAcqFile::Failed(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, pkgAcquire::MethodConfig const*)@APTPKG_6.0" 1.1~exp9
  (c++)"pkgAcqFile::GetExpectedHashes() const@APTPKG_6.0" 1.1~exp9
  (c++)"pkgAcqFile::HashesRequired() const@APTPKG_6.0" 1.1~exp9
  (c++)"pkgAcqFile::pkgAcqFile(pkgAcquire*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, HashStringList const&, unsigned long long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool)@APTPKG_6.0" 1.1~exp9
@@ -1318,8 +1315,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"APT::StateChanges::StateChanges(APT::StateChanges&&)@APTPKG_6.0" 1.1~exp15
  (c++)"APT::StateChanges::Unhold()@APTPKG_6.0" 1.1~exp15
  (c++)"APT::StateChanges::Unhold(pkgCache::VerIterator const&)@APTPKG_6.0" 1.1~exp15
- (c++)"pkgSystem::ArchitecturesSupported[abi:cxx11]() const@APTPKG_6.0" 1.1~exp15
- (c++)"pkgSystem::MultiArchSupported() const@APTPKG_6.0" 1.1~exp15
  (c++)"metaIndex::IsArchitectureSupported(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@APTPKG_6.0" 1.1~exp15
 ### misc stuff
  (c++)"RemoveFile(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.1~exp15
@@ -1423,9 +1418,11 @@ libapt-pkg.so.6.0 libapt-pkg6.0 #MINVER#
  (c++)"RemoveFileAt(char const*, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.5~beta2~
  (c++|optional=std)"void std::vector<pkgAcquireStatus::ReleaseInfoChange, std::allocator<pkgAcquireStatus::ReleaseInfoChange> >::emplace_back<pkgAcquireStatus::ReleaseInfoChange>(pkgAcquireStatus::ReleaseInfoChange&&)@APTPKG_6.0" 1.5~beta2~
  (c++)"pkgAcqMethod::FetchItem::Proxy[abi:cxx11]()@APTPKG_6.0" 1.6~alpha1~
- (c++)"pkgSystem::IsLocked()@APTPKG_6.0" 1.7.0~alpha3~
- (c++)"pkgSystem::LockInner()@APTPKG_6.0" 1.7.0~alpha3~
- (c++)"pkgSystem::UnLockInner(bool)@APTPKG_6.0" 1.7.0~alpha3~
+ (c++)"debSystem::ArchitecturesSupported[abi:cxx11]() const@APTPKG_6.0" 1.9.10
+ (c++)"debSystem::MultiArchSupported() const@APTPKG_6.0" 1.9.10
+ (c++)"debSystem::IsLocked()@APTPKG_6.0" 1.9.10
+ (c++)"debSystem::LockInner()@APTPKG_6.0" 1.9.10
+ (c++)"debSystem::UnLockInner(bool)@APTPKG_6.0" 1.9.10
 # gcc-8 artifacts
  (c++|optional=std)"std::enable_if<std::__and_<std::__not_<std::__is_tuple_like<IndexTarget> >, std::is_move_constructible<IndexTarget>, std::is_move_assignable<IndexTarget> >::value, void>::type std::swap<IndexTarget>(IndexTarget&, IndexTarget&)@APTPKG_6.0" 1.5~beta2~
  (c++|optional=std)"pkgAcqMethod::SendMessage(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::unordered_map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >&&)@APTPKG_6.0" 1.7.0~alpha3~
