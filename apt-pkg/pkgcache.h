@@ -102,6 +102,7 @@ public:
    map_pointer(nullptr_t) noexcept : val(0) {}
    explicit map_pointer(uint32_t n) noexcept : val(n) {}
    explicit operator uint32_t() noexcept { return val; }
+   explicit operator bool() noexcept { return val != 0; }
 };
 
 template<typename T> inline T *operator +(T *p, map_pointer<T> m) { return p + uint32_t(m); }
