@@ -26,7 +26,7 @@ namespace APT { namespace Progress { class PackageManager; } }
 class pkgDPkgPMPrivate;
 
 
-class pkgDPkgPM : public pkgPackageManager
+class APT_PUBLIC pkgDPkgPM : public pkgPackageManager
 {
    private:
    pkgDPkgPMPrivate * const d;
