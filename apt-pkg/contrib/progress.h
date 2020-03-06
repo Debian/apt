@@ -28,6 +28,7 @@
 class Configuration;
 class APT_PUBLIC OpProgress
 {
+   friend class OpTextProgress;
    unsigned long long Current;
    unsigned long long Total;
    unsigned long long Size;
