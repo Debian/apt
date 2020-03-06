@@ -79,6 +79,11 @@ debSystem::~debSystem()
    checking of the updates directory. */
 static int GetLockMaybeWait(std::string const &file, OpProgress *Progress, int &timeoutSec)
 {
+   struct ScopedAbsoluteProgress
+   {
+      ScopedAbsoluteProgress() { _config->Set("APT::Internal::OpProgress::Absolute", true); }
+      ~ScopedAbsoluteProgress() { _config->Set("APT::Internal::OpProgress::Absolute", false); }
+   } _scopedAbsoluteProgress;
    int fd = -1;
    if (timeoutSec == 0 || Progress == nullptr)
       return GetLock(file);
@@ -102,7 +107,7 @@ static int GetLockMaybeWait(std::string const &file, OpProgress *Progress, int &
       _error->PopMessage(poppedError);
       _error->RevertToStack();
 
-      strprintf(completeError, _("Waiting for cache lock (%s)"), poppedError.c_str());
+      strprintf(completeError, _("Waiting for cache lock: %s"), poppedError.c_str());
       sleep(1);
       Progress->OverallProgress(i, timeoutSec, 0, completeError);
    }

@@ -91,7 +91,10 @@ void OpProgress::SubProgress(unsigned long long SubTotal,const string &Op,
    an update the display would be swamped and the system much slower.
    This provides an upper bound on the update rate. */
 bool OpProgress::CheckChange(float Interval)
-{  
+{
+   // For absolute progress, we assume every call is relevant.
+   if (_config->FindB("APT::Internal::OpProgress::Absolute", false))
+      return true;
    // New major progress indication
    if (Op != LastOp)
    {
@@ -199,9 +202,14 @@ void OpTextProgress::Update()
       Write(S);
       cout << endl;
    }
-   
-   // Print the spinner
-   snprintf(S,sizeof(S),_("%c%s... %u%%"),'\r',Op.c_str(),(unsigned int)Percent);
+
+   // Print the spinner. Absolute progress shows us a time progress.
+   if (_config->FindB("APT::Internal::OpProgress::Absolute", false) && Total != -1llu)
+      snprintf(S, sizeof(S), _("%c%s... %llu/%llus"), '\r', Op.c_str(), Current, Total);
+   else if (_config->FindB("APT::Internal::OpProgress::Absolute", false))
+      snprintf(S, sizeof(S), _("%c%s... %llus"), '\r', Op.c_str(), Current);
+   else
+      snprintf(S, sizeof(S), _("%c%s... %u%%"), '\r', Op.c_str(), (unsigned int)Percent);
    Write(S);
 
    OldOp = Op;
