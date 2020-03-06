@@ -302,13 +302,15 @@ int GetLock(string File,bool Errors)
   
       if (Errors == true)
       {
+	 // We only do the lookup in the if ((errno == EACCES || errno == EAGAIN))
+	 // case, so we do not need to show the errno strerrr here...
 	 if (fl.l_pid != -1)
 	 {
 	    auto name = GetProcessName(fl.l_pid);
 	    if (name.empty())
-	       _error->Errno("open", _("Could not get lock %s. It is held by process %d"), File.c_str(), fl.l_pid);
+	       _error->Error(_("Could not get lock %s. It is held by process %d"), File.c_str(), fl.l_pid);
 	    else
-	       _error->Errno("open", _("Could not get lock %s. It is held by process %d (%s)"), File.c_str(), fl.l_pid, name.c_str());
+	       _error->Error(_("Could not get lock %s. It is held by process %d (%s)"), File.c_str(), fl.l_pid, name.c_str());
 	 }
 	 else
 	    _error->Errno("open", _("Could not get lock %s"), File.c_str());
