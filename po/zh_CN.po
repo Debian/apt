@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.7.x\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-02-26 21:29+0100\n"
+"POT-Creation-Date: 2020-03-07 21:20+0100\n"
 "PO-Revision-Date: 2019-01-12 00:00+0000\n"
 "Last-Translator: Mo Zhou <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
@@ -894,7 +894,18 @@ msgstr "%c%s... 完成"
 msgid "..."
 msgstr "..."
 
-#. Print the spinner
+#: apt-pkg/contrib/progress.cc
+#, fuzzy, c-format
+#| msgid "%c%s... %u%%"
+msgid "%c%s... %llu/%llus"
+msgstr "%c%s... %u%%"
+
+#: apt-pkg/contrib/progress.cc
+#, fuzzy, c-format
+#| msgid "%c%s... %u%%"
+msgid "%c%s... %llus"
+msgstr "%c%s... %u%%"
+
 #: apt-pkg/contrib/progress.cc
 #, c-format
 msgid "%c%s... %u%%"
@@ -1016,7 +1027,7 @@ msgstr "无法解析软件包文件 %s (%d)"
 #: apt-pkg/deb/debsystem.cc
 #, fuzzy, c-format
 #| msgid "Waiting for headers"
-msgid "Waiting for cache lock (%s)"
+msgid "Waiting for cache lock: %s"
 msgstr "正在等待报头"
 
 #: apt-pkg/deb/debsystem.cc

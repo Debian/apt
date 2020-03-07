@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-02-26 21:29+0100\n"
+"POT-Creation-Date: 2020-03-07 21:20+0100\n"
 "PO-Revision-Date: 2008-08-26 18:25+0300\n"
 "Last-Translator: Θανάσης Νάτσης <natsisthanasis@gmail.com>\n"
 "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
@@ -900,7 +900,16 @@ msgstr "%c%s... Ολοκληρώθηκε"
 msgid "..."
 msgstr ""
 
-#. Print the spinner
+#: apt-pkg/contrib/progress.cc
+#, fuzzy, c-format
+msgid "%c%s... %llu/%llus"
+msgstr "%c%s... Ολοκληρώθηκε"
+
+#: apt-pkg/contrib/progress.cc
+#, fuzzy, c-format
+msgid "%c%s... %llus"
+msgstr "%c%s... Ολοκληρώθηκε"
+
 #: apt-pkg/contrib/progress.cc
 #, fuzzy, c-format
 msgid "%c%s... %u%%"
@@ -1022,7 +1031,7 @@ msgstr "Αδύνατη η ανάλυση του αρχείου πακέτου %s
 #: apt-pkg/deb/debsystem.cc
 #, fuzzy, c-format
 #| msgid "Waiting for headers"
-msgid "Waiting for cache lock (%s)"
+msgid "Waiting for cache lock: %s"
 msgstr "Αναμονή επικεφαλίδων"
 
 #: apt-pkg/deb/debsystem.cc

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-02-26 21:29+0100\n"
+"POT-Creation-Date: 2020-03-07 21:20+0100\n"
 "PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -879,7 +879,16 @@ msgstr "%c%s... Valmis"
 msgid "..."
 msgstr ""
 
-#. Print the spinner
+#: apt-pkg/contrib/progress.cc
+#, fuzzy, c-format
+msgid "%c%s... %llu/%llus"
+msgstr "%c%s... Valmis"
+
+#: apt-pkg/contrib/progress.cc
+#, fuzzy, c-format
+msgid "%c%s... %llus"
+msgstr "%c%s... Valmis"
+
 #: apt-pkg/contrib/progress.cc
 #, fuzzy, c-format
 msgid "%c%s... %u%%"
@@ -1001,7 +1010,7 @@ msgstr "Pakettitiedostoa %s ei voi jäsentää (%d)"
 #: apt-pkg/deb/debsystem.cc
 #, fuzzy, c-format
 #| msgid "Waiting for headers"
-msgid "Waiting for cache lock (%s)"
+msgid "Waiting for cache lock: %s"
 msgstr "Odotetaan otsikoita"
 
 #: apt-pkg/deb/debsystem.cc

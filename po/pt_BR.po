@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-02-26 21:29+0100\n"
+"POT-Creation-Date: 2020-03-07 21:20+0100\n"
 "PO-Revision-Date: 2008-11-17 02:33-0200\n"
 "Last-Translator: Felipe Augusto van de Wiel (faw) <faw@debian.org>\n"
 "Language-Team: Brazilian Portuguese <debian-l10n-portuguese@lists.debian."
@@ -887,7 +887,16 @@ msgstr "%c%s... Pronto"
 msgid "..."
 msgstr ""
 
-#. Print the spinner
+#: apt-pkg/contrib/progress.cc
+#, fuzzy, c-format
+msgid "%c%s... %llu/%llus"
+msgstr "%c%s... Pronto"
+
+#: apt-pkg/contrib/progress.cc
+#, fuzzy, c-format
+msgid "%c%s... %llus"
+msgstr "%c%s... Pronto"
+
 #: apt-pkg/contrib/progress.cc
 #, fuzzy, c-format
 msgid "%c%s... %u%%"
@@ -1009,7 +1018,7 @@ msgstr "Impossível analisar arquivo de pacote %s (%d)"
 #: apt-pkg/deb/debsystem.cc
 #, fuzzy, c-format
 #| msgid "Waiting for headers"
-msgid "Waiting for cache lock (%s)"
+msgid "Waiting for cache lock: %s"
 msgstr "Aguardando por cabeçalhos"
 
 #: apt-pkg/deb/debsystem.cc

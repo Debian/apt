@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-02-26 21:29+0100\n"
+"POT-Creation-Date: 2020-03-07 21:20+0100\n"
 "PO-Revision-Date: 2016-12-05 21:09+0100\n"
 "Last-Translator: Oriol Debian <oriol.debian@gmail.com>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -953,7 +953,18 @@ msgstr "%c%s… Fet"
 msgid "..."
 msgstr "…"
 
-#. Print the spinner
+#: apt-pkg/contrib/progress.cc
+#, fuzzy, c-format
+#| msgid "%c%s... %u%%"
+msgid "%c%s... %llu/%llus"
+msgstr "%c%s… %u%%"
+
+#: apt-pkg/contrib/progress.cc
+#, fuzzy, c-format
+#| msgid "%c%s... %u%%"
+msgid "%c%s... %llus"
+msgstr "%c%s… %u%%"
+
 #: apt-pkg/contrib/progress.cc
 #, c-format
 msgid "%c%s... %u%%"
@@ -1081,7 +1092,7 @@ msgstr "No es pot analitzar el fitxer del paquet %s (%d)"
 #: apt-pkg/deb/debsystem.cc
 #, fuzzy, c-format
 #| msgid "Waiting for headers"
-msgid "Waiting for cache lock (%s)"
+msgid "Waiting for cache lock: %s"
 msgstr "S'estan esperant les capçaleres"
 
 #: apt-pkg/deb/debsystem.cc
