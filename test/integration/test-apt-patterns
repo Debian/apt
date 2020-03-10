@@ -26,6 +26,18 @@ insertpackage 'unstable' 'foreign' 'amd64' '2.0'
 getoriginfromsuite() { echo -n 'meow'; }
 setupaptarchive
 
+cat >> rootdir/var/lib/dpkg/status <<EOF
+
+Package: notinstalled
+Status: hold ok not-installed
+Architecture: amd64
+
+Package: nosection
+Status: install ok installed
+Architecture: amd64
+Version: 29
+EOF
+
 testsuccess aptmark auto automatic1 automatic2
 
 msgmsg "Check that commands understand patterns"
@@ -83,6 +95,7 @@ essential/now 1.0 i386 [installed,local]
 foreign/unstable 2.0 amd64
 manual1/now 1.0 i386 [installed,local]
 manual2/now 1.0 i386 [installed,local]
+nosection/now 29 amd64 [installed,local]
 not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list "$pattern"
 done
 testsuccessequal "Listing..." apt list '?false'
@@ -115,12 +128,14 @@ N: There is 1 additional version. Please use the '-a' switch to see it" apt list
 
 testsuccessequal "Listing...
 foreign/unstable 2.0 amd64
+nosection/now 29 amd64 [installed,local]
 not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?not(?all-versions(?version(^1)))'
 
 msgmsg "Package patterns"
 
 testsuccessequal "Listing...
-foreign/unstable 2.0 amd64" apt list '?architecture(amd64)'
+foreign/unstable 2.0 amd64
+nosection/now 29 amd64 [installed,local]" apt list '?architecture(amd64)'
 
 # XXX FIXME We should have support for foreign and native
 testsuccessequal "Listing..." apt list '?architecture(foreign)'
@@ -159,6 +174,7 @@ dpkg/now 1.16.2+fake all [installed,local]
 essential/now 1.0 i386 [installed,local]
 manual1/now 1.0 i386 [installed,local]
 manual2/now 1.0 i386 [installed,local]
+nosection/now 29 amd64 [installed,local]
 not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?installed'
 
 testsuccessequal "Listing...
@@ -185,6 +201,9 @@ testsuccessequal "Listing...
 available/unstable 1.0 all
 essential/now 1.0 i386 [installed,local]" apt list '?section(asection)'
 
+testsuccessequal 'Listing...
+essential/now 1.0 i386 [installed,local]' apt list '~i !~M (~slibs|~sasection)'
+
 testsuccessequal "Listing...
 automatic1/now 1.0 i386 [installed,local]
 automatic2/now 1.0 i386 [installed,local]" apt list '?source-package(^automatic$)'
@@ -202,8 +221,12 @@ not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?version(2.0)'
 
 testsuccessequal "Package: does-not-exist
 State: not a real package (virtual)
+Package: notinstalled:amd64
+State: not a real package (virtual)
 N: Can't select candidate version from package does-not-exist as it has no candidate
+N: Can't select candidate version from package notinstalled:amd64 as it has no candidate
 N: Can't select versions from package 'does-not-exist' as it is purely virtual
+N: Can't select versions from package 'notinstalled:amd64' as it is purely virtual
 N: No packages found" apt show '?virtual'
 
 testsuccessequal "Listing..." apt list '?x-name-fnmatch(1)'

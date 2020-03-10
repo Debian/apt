@@ -501,7 +501,7 @@ BaseRegexMatcher::BaseRegexMatcher(std::string const &Pattern)
 }
 bool BaseRegexMatcher::operator()(const char *string)
 {
-   if (unlikely(pattern == NULL))
+   if (unlikely(pattern == nullptr) || string == nullptr)
       return false;
    else
       return regexec(pattern, string, 0, 0, 0) == 0;
