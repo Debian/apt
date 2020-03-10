@@ -247,6 +247,32 @@ void GlobalError::MergeWithStack() {
 // GlobalError::Item::operator<<						/*{{{*/
 APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
 {
+   static constexpr auto COLOR_RESET = "\033[0m";
+   static constexpr auto COLOR_NOTICE = "\033[33m";  // normal yellow
+   static constexpr auto COLOR_WARN = "\033[1;33m";  // bold yellow
+   static constexpr auto COLOR_ERROR = "\033[1;31m"; // bold red
+
+   bool use_color = _config->FindB("APT::Color", false);
+
+   if (use_color)
+   {
+      switch (i.Type)
+      {
+      case GlobalError::FATAL:
+      case GlobalError::ERROR:
+	 out << COLOR_ERROR;
+	 break;
+      case GlobalError::WARNING:
+	 out << COLOR_WARN;
+	 break;
+      case GlobalError::NOTICE:
+	 out << COLOR_NOTICE;
+	 break;
+      default:
+	 break;
+      }
+   }
+
    switch (i.Type)
    {
    case GlobalError::FATAL:
@@ -264,6 +290,22 @@ APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
       break;
    }
    out << ": ";
+
+   if (use_color)
+   {
+      switch (i.Type)
+      {
+      case GlobalError::FATAL:
+      case GlobalError::ERROR:
+      case GlobalError::WARNING:
+      case GlobalError::NOTICE:
+	 out << COLOR_RESET;
+	 break;
+      default:
+	 break;
+      }
+   }
+
    std::string::size_type line_start = 0;
    std::string::size_type line_end;
    while ((line_end = i.Text.find_first_of("\n\r", line_start)) != std::string::npos)
@@ -281,6 +323,10 @@ APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
    else if (line_start != std::string::npos)
       out << std::endl
 	  << "   " << i.Text.substr(line_start);
+
+   if (use_color)
+      out << COLOR_RESET;
+
    return out;
 }
 									/*}}}*/
