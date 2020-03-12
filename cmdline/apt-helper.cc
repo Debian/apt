@@ -10,6 +10,7 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/cachefilter-patterns.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
@@ -257,6 +258,35 @@ static bool DropPrivsAndRun(CommandLine &CmdL)				/*{{{*/
    return ExecWait(pid, CmdL.FileList[1]);
 }
 									/*}}}*/
+static bool AnalyzePattern(CommandLine &CmdL)				/*{{{*/
+{
+   if (CmdL.FileSize() != 2)
+      return _error->Error("Expect one argument, a pattern");
+
+   try
+   {
+      auto top = APT::Internal::PatternTreeParser(CmdL.FileList[1]).parseTop();
+      top->render(std::cout) << "\n";
+   }
+   catch (APT::Internal::PatternTreeParser::Error &e)
+   {
+      std::stringstream ss;
+      ss << "input:" << e.location.start << "-" << e.location.end << ": error: " << e.message << "\n";
+      ss << CmdL.FileList[1] << "\n";
+      for (size_t i = 0; i < e.location.start; i++)
+	 ss << " ";
+      for (size_t i = e.location.start; i < e.location.end; i++)
+	 ss << "^";
+
+      ss << "\n";
+
+      _error->Error("%s", ss.str().c_str());
+      return false;
+   }
+
+   return true;
+}
+									/*}}}*/
 static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
@@ -278,6 +308,8 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
        {"auto-detect-proxy", &DoAutoDetectProxy, _("detect proxy using apt.conf")},
        {"wait-online", &DoWaitOnline, _("wait for system to be online")},
        {"drop-privs", &DropPrivsAndRun, _("drop privileges before running given command")},
+       {"analyze-pattern", &AnalyzePattern, _("analyse a pattern")},
+       {"analyse-pattern", &AnalyzePattern, nullptr},
        {nullptr, nullptr, nullptr}};
 }
 									/*}}}*/
