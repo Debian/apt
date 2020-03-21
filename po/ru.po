@@ -9,22 +9,23 @@
 # Yuri Kozlov <kozlov.y@gmail.com>, 2004, 2005, 2006, 2007, 2008.
 # Yuri Kozlov <yuray@komyakino.ru>, 2009, 2010, 2012, 2015, 2016.
 # Lev Lamberov <dogsleg@debian.org>, 2018.
-# Aleksej Shilin <rootlexx@mail.ru>, 2017, 2018, 2019.
+# Алексей Шилин <rootlexx@mail.ru>, 2017-2020.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.8.0\n"
+"Project-Id-Version: apt 2.0.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-03-07 21:20+0100\n"
-"PO-Revision-Date: 2019-02-10 11:50+0300\n"
-"Last-Translator: Aleksej Shilin <rootlexx@mail.ru>\n"
-"Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
+"POT-Creation-Date: 2020-03-21 08:10+0100\n"
+"PO-Revision-Date: 2020-03-09 22:43+0300\n"
+"Last-Translator: Алексей Шилин <rootlexx@mail.ru>\n"
+"Language-Team: русский <debian-l10n-russian@lists.debian.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Gtranslator 3.30.1\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -736,26 +737,28 @@ msgstr ""
 "системе nfs"
 
 #: apt-pkg/contrib/fileutl.cc
-#, fuzzy, c-format
-#| msgid "Could not get lock %s"
+#, c-format
 msgid "Could not get lock %s. It is held by process %d"
-msgstr "Не удалось получить файл блокировки %s"
+msgstr "Не удалось получить блокировку файла %s. Она удерживается процессом %d"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Could not get lock %s. It is held by process %d (%s)"
 msgstr ""
+"Не удалось получить блокировку файла %s. Она удерживается процессом %d (%s)"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Could not get lock %s"
-msgstr "Не удалось получить файл блокировки %s"
+msgstr "Не удалось получить блокировку файла %s"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid ""
 "Be aware that removing the lock file is not a solution and may break your "
 "system."
 msgstr ""
+"Имейте в виду, что удаление файла блокировки не является решением и может "
+"сломать вашу систему."
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -939,6 +942,8 @@ msgid ""
 "%s: Credentials for %s match, but the protocol is not encrypted. Annotate "
 "with %s:// to use."
 msgstr ""
+"%s: Учётные данные для %s найдены, но используется нешифрованный протокол. "
+"Явно укажите %s:// для их использования."
 
 #: apt-pkg/contrib/progress.cc
 #, c-format
@@ -955,16 +960,14 @@ msgid "..."
 msgstr "…"
 
 #: apt-pkg/contrib/progress.cc
-#, fuzzy, c-format
-#| msgid "%c%s... %u%%"
+#, c-format
 msgid "%c%s... %llu/%llus"
-msgstr "%c%s… %u%%"
+msgstr "%c%s… %llu/%lluс"
 
 #: apt-pkg/contrib/progress.cc
-#, fuzzy, c-format
-#| msgid "%c%s... %u%%"
+#, c-format
 msgid "%c%s... %llus"
-msgstr "%c%s… %u%%"
+msgstr "%c%s… %lluс"
 
 #: apt-pkg/contrib/progress.cc
 #, c-format
@@ -1015,10 +1018,9 @@ msgid "Unparsable control file"
 msgstr "Не удалось разобрать содержимое файла control"
 
 #: apt-pkg/deb/debindexfile.cc
-#, fuzzy, c-format
-#| msgid "Could not get lock %s"
+#, c-format
 msgid "Could not read meta data from %s"
-msgstr "Не удалось получить файл блокировки %s"
+msgstr "Не удалось прочесть метаданные из %s"
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; another identifier like Contents;
@@ -1088,10 +1090,9 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Невозможно разобрать содержимое файла пакета %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid "Waiting for headers"
+#, c-format
 msgid "Waiting for cache lock: %s"
-msgstr "Ожидание заголовков"
+msgstr "Ожидание блокировки кэша: %s"
 
 #: apt-pkg/deb/debsystem.cc
 #, c-format
@@ -1624,8 +1625,6 @@ msgid "Unsupported file %s given on commandline"
 msgstr "В командной строке указан неподдерживаемый файл %s"
 
 #: apt-pkg/srcrecords.cc
-#, fuzzy
-#| msgid "You must put some 'source' URIs in your sources.list"
 msgid "You must put some 'deb-src' URIs in your sources.list"
 msgstr ""
 "Вы должны заполнить sources.list, поместив туда URI источников пакетов с "
@@ -2539,6 +2538,8 @@ msgstr ""
 msgid ""
 "Invalid operator '%c' at offset %d, did you mean '%c%c' or '%c='? - in: %s"
 msgstr ""
+"Неверный оператор «%1$c» по смещению %2$d в «%6$s»; возможно, вы имели в "
+"виду «%3$c%4$c» или «%5$c=»?"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -2919,10 +2920,8 @@ msgid "Configure build-dependencies for source packages"
 msgstr "настроить сборочные зависимости для пакета с исходным кодом"
 
 #: cmdline/apt-get.cc
-#, fuzzy
-#| msgid "Building dependency tree"
 msgid "Satisfy dependency strings"
-msgstr "Построение дерева зависимостей"
+msgstr "удовлетворить строки зависимостей"
 
 #: cmdline/apt-get.cc
 msgid "Erase downloaded archive files"
@@ -3225,10 +3224,8 @@ msgid "edit the source information file"
 msgstr "редактировать файл с источниками пакетов"
 
 #: cmdline/apt.cc
-#, fuzzy
-#| msgid "Failed to satisfy %s dependency for %s: %s"
 msgid "satisfy dependency strings"
-msgstr "Невозможно удовлетворить зависимость типа %s для пакета %s: %s"
+msgstr "удовлетворить строки зависимостей"
 
 #: dselect/install
 msgid "Bad default setting!"
