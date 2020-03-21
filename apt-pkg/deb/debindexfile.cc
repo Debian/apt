@@ -189,7 +189,7 @@ bool debDebPkgFileIndex::GetContent(std::ostream &content, std::string const &de
    while (isspace_ascii(Control[0]))
       Control++;
 
-   content << Control;
+   content << Control << '\n';
    content << "Filename: " << debfile << "\n";
    content << "Size: " << std::to_string(Buf.st_size) << "\n";
 
