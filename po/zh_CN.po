@@ -5,22 +5,22 @@
 # Carlos Z.F. Liu <carlosliu@users.sourceforge.net>, 2004, 2006.
 # Aron Xu <happyaron.xu@gmail.com>, 2009, 2010.
 # Mo Zhou <cdluminate@gmail.com>, 2014, 2015, 2016, 2017, 2019.
-# Boyuan Yang <073plan@gmail.com>, 2018.
+# Boyuan Yang <073plan@gmail.com>, 2018, 2020.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.7.x\n"
+"Project-Id-Version: apt 2.0.1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2020-03-24 11:53+0100\n"
-"PO-Revision-Date: 2019-01-12 00:00+0000\n"
-"Last-Translator: Mo Zhou <cdluminate@gmail.com>\n"
+"PO-Revision-Date: 2020-03-26 17:38-0400\n"
+"Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.0.8\n"
+"X-Generator: Poedit 2.3\n"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -246,6 +246,8 @@ msgid ""
 "The method '%s' is unsupported and disabled by default. Consider switching "
 "to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
 msgstr ""
+"目前“%s”方法不受支持且默认禁用。请考虑切换至 http(s)。您可以将 Dir::Bin::"
+"Methods::%s 设置为“%s”来重新启用。"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -683,15 +685,14 @@ msgid "Not using locking for nfs mounted lock file %s"
 msgstr "无法在 nfs 文件系统上使用文件锁 %s"
 
 #: apt-pkg/contrib/fileutl.cc
-#, fuzzy, c-format
-#| msgid "Could not get lock %s"
+#, c-format
 msgid "Could not get lock %s. It is held by process %d"
-msgstr "无法获得锁 %s"
+msgstr "无法获得锁 %s。锁正由进程 %d 持有"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Could not get lock %s. It is held by process %d (%s)"
-msgstr ""
+msgstr "无法获得锁 %s。锁正由进程 %d（%s）持有"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -702,7 +703,7 @@ msgstr "无法获得锁 %s"
 msgid ""
 "Be aware that removing the lock file is not a solution and may break your "
 "system."
-msgstr ""
+msgstr "请注意，直接移除锁文件不一定是合适的解决方案，且可能损坏您的系统。"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -879,6 +880,7 @@ msgid ""
 "%s: Credentials for %s match, but the protocol is not encrypted. Annotate "
 "with %s:// to use."
 msgstr ""
+"%s：用于 %s 的凭据已匹配，但协议并未加密。请使用 %s:// 进行标注来使用。"
 
 #: apt-pkg/contrib/progress.cc
 #, c-format
@@ -895,16 +897,14 @@ msgid "..."
 msgstr "..."
 
 #: apt-pkg/contrib/progress.cc
-#, fuzzy, c-format
-#| msgid "%c%s... %u%%"
+#, c-format
 msgid "%c%s... %llu/%llus"
-msgstr "%c%s... %u%%"
+msgstr "%c%s... %llu/%llu秒"
 
 #: apt-pkg/contrib/progress.cc
-#, fuzzy, c-format
-#| msgid "%c%s... %u%%"
+#, c-format
 msgid "%c%s... %llus"
-msgstr "%c%s... %u%%"
+msgstr "%c%s... %llu秒"
 
 #: apt-pkg/contrib/progress.cc
 #, c-format
@@ -955,10 +955,9 @@ msgid "Unparsable control file"
 msgstr "不能解析的主控文件"
 
 #: apt-pkg/deb/debindexfile.cc
-#, fuzzy, c-format
-#| msgid "Could not get lock %s"
+#, c-format
 msgid "Could not read meta data from %s"
-msgstr "无法获得锁 %s"
+msgstr "无法从 %s 读取元数据"
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; another identifier like Contents;
@@ -1025,10 +1024,9 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "无法解析软件包文件 %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid "Waiting for headers"
+#, c-format
 msgid "Waiting for cache lock: %s"
-msgstr "正在等待报头"
+msgstr "正在等待缓存锁：%s"
 
 #: apt-pkg/deb/debsystem.cc
 #, c-format
@@ -1483,7 +1481,7 @@ msgstr "无法识别锁定的类型 %s"
 #, c-format
 msgid ""
 "%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
-msgstr ""
+msgstr "%s：特殊的“Pin-Priority: %s”只能用于“Package: *”记录"
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -1526,10 +1524,8 @@ msgid "Unsupported file %s given on commandline"
 msgstr "命令行中有不支持的文件 %s"
 
 #: apt-pkg/srcrecords.cc
-#, fuzzy
-#| msgid "You must put some 'source' URIs in your sources.list"
 msgid "You must put some 'deb-src' URIs in your sources.list"
-msgstr "您必须在 sources.list 中指定代码源(deb-src) URI"
+msgstr "您必须在 sources.list 中指定代码源（deb-src）URI"
 
 #: apt-pkg/tagfile.cc
 #, c-format
@@ -2394,6 +2390,8 @@ msgstr "要检查生成软件包的构建依赖关系，必须指定至少一个
 msgid ""
 "Invalid operator '%c' at offset %d, did you mean '%c%c' or '%c='? - in: %s"
 msgstr ""
+"发现了无效的操作符“%c”（位于偏移量 %d 处），您是否想使用“%c%c”或“%c=”？ - 位"
+"于：%s"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -2715,13 +2713,11 @@ msgstr "进行一次升级"
 
 #: cmdline/apt-get.cc
 msgid "Install new packages (pkg is libc6 not libc6.deb)"
-msgstr "安装新的软件包(注：软件包名称是 libc6 而非 libc6.deb)"
+msgstr "安装新的软件包（注：软件包名称应当类似 libc6 而非 libc6.deb）"
 
 #: cmdline/apt-get.cc
-#, fuzzy
-#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
-msgstr "安装新的软件包(注：软件包名称是 libc6 而非 libc6.deb)"
+msgstr "重新安装软件包（注：软件包名称应当类似 libc6 而非 libc6.deb）"
 
 #: cmdline/apt-get.cc
 msgid "Remove packages"
@@ -2748,10 +2744,8 @@ msgid "Configure build-dependencies for source packages"
 msgstr "为源码包配置所需的编译依赖关系"
 
 #: cmdline/apt-get.cc
-#, fuzzy
-#| msgid "Building dependency tree"
 msgid "Satisfy dependency strings"
-msgstr "正在分析软件包的依赖关系树"
+msgstr "使系统满足依赖关系字符串"
 
 #: cmdline/apt-get.cc
 msgid "Erase downloaded archive files"
@@ -2835,7 +2829,7 @@ msgstr "运行给定命令前先降低权限"
 
 #: cmdline/apt-helper.cc
 msgid "analyse a pattern"
-msgstr ""
+msgstr "分析一个模式"
 
 #: cmdline/apt-internal-planner.cc
 msgid ""
@@ -2880,13 +2874,11 @@ msgstr "%s 已经被设置为自动安装。\n"
 
 #: cmdline/apt-mark.cc
 msgid "No changes necessary"
-msgstr ""
+msgstr "无需进行变更"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
-#| msgid "The following NEW packages will be installed:"
 msgid "The following packages will be marked as automatically installed:"
-msgstr "下列【新】软件包将被安装："
+msgstr "下列软件包将被标记为自动安装："
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -2950,10 +2942,8 @@ msgid "Mark the given packages as manually installed"
 msgstr "标记指定软件包为手动安装"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
-#| msgid "Mark the given packages as automatically installed"
 msgid "Mark all dependencies of meta packages as automatically installed."
-msgstr "标记指定软件包为自动安装"
+msgstr "标记所有元软件包的依赖为自动安装。"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3028,10 +3018,8 @@ msgid "install packages"
 msgstr "安装软件包"
 
 #: cmdline/apt.cc
-#, fuzzy
-#| msgid "install packages"
 msgid "reinstall packages"
-msgstr "安装软件包"
+msgstr "重新安装软件包"
 
 #: cmdline/apt.cc
 msgid "remove packages"
@@ -3056,10 +3044,8 @@ msgid "edit the source information file"
 msgstr "编辑软件源信息文件"
 
 #: cmdline/apt.cc
-#, fuzzy
-#| msgid "Failed to satisfy %s dependency for %s: %s"
 msgid "satisfy dependency strings"
-msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：%3$s"
+msgstr "使系统满足依赖关系字符串"
 
 #: dselect/install
 msgid "Bad default setting!"
