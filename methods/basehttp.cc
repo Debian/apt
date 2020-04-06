@@ -232,7 +232,7 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 
    if (stringcasecmp(Tag,"Last-Modified:") == 0)
    {
-      if (RFC1123StrToTime(Val.c_str(), Date) == false)
+      if (RFC1123StrToTime(Val, Date) == false)
 	 return _error->Error(_("Unknown date format"));
       return true;
    }
@@ -313,7 +313,7 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 	 ;
       else if (Req.Location[0] == '/' && Queue->Uri.empty() == false)
       {
-	 URI Uri = Queue->Uri;
+	 URI Uri(Queue->Uri);
 	 if (Uri.Host.empty() == false)
             NextURI = URI::SiteOnly(Uri);
 	 else
@@ -332,7 +332,7 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
       else
       {
 	 NextURI = DeQuoteString(Req.Location);
-	 URI tmpURI = NextURI;
+	 URI tmpURI(NextURI);
 	 if (tmpURI.Access.find('+') != std::string::npos)
 	 {
 	    _error->Error("Server tried to trick us into using a specific implementation: %s", tmpURI.Access.c_str());
@@ -340,7 +340,7 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 	       return ERROR_WITH_CONTENT_PAGE;
 	    return ERROR_UNRECOVERABLE;
 	 }
-	 URI Uri = Queue->Uri;
+	 URI Uri(Queue->Uri);
 	 if (Binary.find('+') != std::string::npos)
 	 {
 	    auto base = Binary.substr(0, Binary.find('+'));
@@ -349,7 +349,6 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 	       tmpURI.Access = base + '+' + tmpURI.Access;
 	       if (tmpURI.Access == Binary)
 	       {
-		  std::string tmpAccess = Uri.Access;
 		  std::swap(tmpURI.Access, Uri.Access);
 		  NextURI = tmpURI;
 		  std::swap(tmpURI.Access, Uri.Access);
@@ -493,7 +492,7 @@ bool BaseHttpMethod::Fetch(FetchItem *)
 
    do {
       // Make sure we stick with the same server
-      if (Server->Comp(QueueBack->Uri) == false)
+      if (Server->Comp(URI(QueueBack->Uri)) == false)
 	 break;
 
       bool const UsableHashes = QueueBack->ExpectedHashes.usable();
@@ -578,14 +577,14 @@ int BaseHttpMethod::Loop()
 	 continue;
       
       // Connect to the server
-      if (Server == 0 || Server->Comp(Queue->Uri) == false)
+      if (Server == 0 || Server->Comp(URI(Queue->Uri)) == false)
       {
 	 if (!Queue->Proxy().empty())
 	 {
-	    URI uri = Queue->Uri;
+	    URI uri(Queue->Uri);
 	    _config->Set("Acquire::" + uri.Access + "::proxy::" + uri.Host, Queue->Proxy());
 	 }
-	 Server = CreateServerState(Queue->Uri);
+	 Server = CreateServerState(URI(Queue->Uri));
 	 setPostfixForMethodNames(::URI(Queue->Uri).Host.c_str());
 	 AllowRedirect = ConfigFindB("AllowRedirect", true);
 	 PipelineDepth = ConfigFindI("Pipeline-Depth", 10);

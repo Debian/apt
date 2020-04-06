@@ -22,7 +22,7 @@ prepare() {
 	cp "$1" aptarchive/Packages
 	find aptarchive -name 'Release' -delete
 	compressfile aptarchive/Packages
-        # create Release file with incorret checksums
+        # create Release file with incorrect checksums
 	cat > aptarchive/Release <<EOF
 Date: Fri, 05 Aug 2011 09:22:08 UTC
 MD5Sum:

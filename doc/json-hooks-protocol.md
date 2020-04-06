@@ -27,7 +27,7 @@ The general life of a hook is as following.
 
 It is unspecified whether a hook is sent one or more messages. For
 example, a hook may be started only once for the lifetime of the apt
-process and receive multiple notificatgions, but a hook may also be
+process and receive multiple notifications, but a hook may also be
 started multiple times. Hooks should thus be stateless.
 
 ## JSON messages

@@ -202,7 +202,7 @@ int getnameinfo(const struct sockaddr *sa, socklen_t salen,
 	 }
       }
       
-      // Resolve as a plain numberic
+      // Resolve as a plain numeric
       if ((flags & NI_NUMERICHOST) == NI_NUMERICHOST)
       {
 	 strncpy(host,inet_ntoa(sin->sin_addr),hostlen);
@@ -231,7 +231,7 @@ int getnameinfo(const struct sockaddr *sa, socklen_t salen,
 	 }
       }
       
-      // Resolve as a plain numberic
+      // Resolve as a plain numeric
       if ((flags & NI_NUMERICSERV) == NI_NUMERICSERV)
       {
 	 snprintf(serv,servlen,"%u",ntohs(sin->sin_port));

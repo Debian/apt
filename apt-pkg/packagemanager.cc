@@ -632,10 +632,6 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 // PM::EarlyRemove - Perform removal of packages before their time	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is called to deal with conflicts arising from unpacking */
-bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
-{
-   return EarlyRemove(Pkg, NULL);
-}
 bool pkgPackageManager::EarlyRemove(PkgIterator Pkg, DepIterator const * const Dep)
 {
    if (List->IsNow(Pkg) == false)
@@ -708,10 +704,6 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
 // ---------------------------------------------------------------------
 /* This puts the system in a state where it can Unpack Pkg, if Pkg is already
    unpacked, or when it has been unpacked, if Immediate==true it configures it. */
-bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
-{
-   return SmartUnPack(Pkg, true, 0);
-}
 bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int const Depth)
 {
    bool PkgLoop = List->IsFlag(Pkg,pkgOrderList::Loop);
@@ -922,7 +914,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		     else
 		     {
 			if (Debug)
-			   clog << OutputInDepth(Depth) << "So temprorary remove/deconfigure " << ConflictPkg.FullName() << " to satisfy " <<  APT::PrettyDep(&Cache, End) << endl;
+			   clog << OutputInDepth(Depth) << "So temporary remove/deconfigure " << ConflictPkg.FullName() << " to satisfy " <<  APT::PrettyDep(&Cache, End) << endl;
 			if (EarlyRemove(ConflictPkg, &End) == false)
 			   return _error->Error("Internal Error, Could not early remove %s (%d)",ConflictPkg.FullName().c_str(), 2);
 		     }
@@ -1128,48 +1120,18 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	 
    return Completed;
 }
-// PM::DoInstallPostFork - compat /*{{{*/
-// ---------------------------------------------------------------------
-									/*}}}*/
-pkgPackageManager::OrderResult
-pkgPackageManager::DoInstallPostFork(int statusFd)
-{
-   APT::Progress::PackageManager *progress = new
-      APT::Progress::PackageManagerProgressFd(statusFd);
-   pkgPackageManager::OrderResult res = DoInstallPostFork(progress);
-   delete progress;
-   return res;
-}
-									/*}}}*/
 // PM::DoInstallPostFork - Does install part that happens after the fork /*{{{*/
 // ---------------------------------------------------------------------
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
 {
    bool goResult;
-   auto simulation = dynamic_cast<pkgSimulate*>(this);
-   if (simulation == nullptr)
-      goResult = Go(progress);
-   else
-      goResult = simulation->Go2(progress);
+   goResult = Go(progress);
    if(goResult == false) 
       return Failed;
    
    return Res;
 }
-									/*}}}*/	
-// PM::DoInstall - Does the installation				/*{{{*/
-// ---------------------------------------------------------------------
-/* compat */
-pkgPackageManager::OrderResult 
-pkgPackageManager::DoInstall(int statusFd)
-{
-    APT::Progress::PackageManager *progress = new
-       APT::Progress::PackageManagerProgressFd(statusFd);
-    OrderResult res = DoInstall(progress);
-    delete progress;
-    return res;
- }
 									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------

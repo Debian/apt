@@ -13,29 +13,18 @@
 #define APTPKG_HASHES_H
 
 #include <apt-pkg/macros.h>
-#include <apt-pkg/md5.h>
-#include <apt-pkg/sha1.h>
-#include <apt-pkg/sha2.h>
 
 #include <cstring>
 #include <string>
-
-#ifndef APT_8_CLEANER_HEADERS
-using std::min;
-using std::vector;
-#endif
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/fileutl.h>
-#include <algorithm>
 #include <vector>
-#endif
+
 
 
 class FileFd;
 
 // helper class that contains hash function name
 // and hash
-class HashString
+class APT_PUBLIC HashString
 {
  protected:
    std::string Type;
@@ -47,14 +36,12 @@ class HashString
 
  public:
    HashString(std::string Type, std::string Hash);
-   HashString(std::string StringedHashString);  // init from str as "type:hash"
+   explicit HashString(std::string StringedHashString);  // init from str as "type:hash"
    HashString();
 
    // get hash type used
    std::string HashType() const { return Type; };
    std::string HashValue() const { return Hash; };
-   APT_DEPRECATED_MSG("method was const-ified") std::string HashType() { return Type; };
-   APT_DEPRECATED_MSG("method was const-ified") std::string HashValue() { return Hash; };
 
    // verify the given filename against the currently loaded hash
    bool VerifyFile(std::string filename) const;
@@ -74,7 +61,7 @@ class HashString
    static APT_PURE const char** SupportedHashes();
 };
 
-class HashStringList
+class APT_PUBLIC HashStringList
 {
    public:
    /** find best hash if no specific one is requested
@@ -165,11 +152,11 @@ class HashStringList
    HashStringList() {}
 
    // simplifying API-compatibility constructors
-   HashStringList(std::string const &hash) {
+   explicit HashStringList(std::string const &hash) {
       if (hash.empty() == false)
 	 list.push_back(HashString(hash));
    }
-   HashStringList(char const * const hash) {
+   explicit HashStringList(char const * const hash) {
       if (hash != NULL && hash[0] != '\0')
 	 list.push_back(HashString(hash));
    }
@@ -179,37 +166,32 @@ class HashStringList
 };
 
 class PrivateHashes;
-class Hashes
+class APT_PUBLIC Hashes
 {
    PrivateHashes * const d;
-
    public:
-   /* those will disappear in the future as it is hard to add new ones this way.
-    * Use Add* to build the results and get them via GetHashStringList() instead */
-   APT_DEPRECATED_MSG("Use general .Add* and .GetHashStringList methods instead of hardcoding specific hashes") MD5Summation MD5;
-   APT_DEPRECATED_MSG("Use general .Add* and .GetHashStringList methods instead of hardcoding specific hashes") SHA1Summation SHA1;
-   APT_DEPRECATED_MSG("Use general .Add* and .GetHashStringList methods instead of hardcoding specific hashes") SHA256Summation SHA256;
-   APT_DEPRECATED_MSG("Use general .Add* and .GetHashStringList methods instead of hardcoding specific hashes") SHA512Summation SHA512;
-
    static const int UntilEOF = 0;
 
    bool Add(const unsigned char * const Data, unsigned long long const Size) APT_NONNULL(2);
-   APT_DEPRECATED_MSG("Construct accordingly instead of choosing hashes while adding") bool Add(const unsigned char * const Data, unsigned long long const Size, unsigned int const Hashes) APT_NONNULL(2);
    inline bool Add(const char * const Data) APT_NONNULL(2)
    {return Add(reinterpret_cast<unsigned char const *>(Data),strlen(Data));};
+   inline bool Add(const char *const Data, unsigned long long const Size) APT_NONNULL(2)
+   {
+      return Add(reinterpret_cast<unsigned char const *>(Data), Size);
+   };
    inline bool Add(const unsigned char * const Beg,const unsigned char * const End) APT_NONNULL(2,3)
    {return Add(Beg,End-Beg);};
 
    enum SupportedHashes { MD5SUM = (1 << 0), SHA1SUM = (1 << 1), SHA256SUM = (1 << 2),
       SHA512SUM = (1 << 3) };
    bool AddFD(int const Fd,unsigned long long Size = 0);
-   APT_DEPRECATED_MSG("Construct accordingly instead of choosing hashes while adding") bool AddFD(int const Fd,unsigned long long Size, unsigned int const Hashes);
    bool AddFD(FileFd &Fd,unsigned long long Size = 0);
-   APT_DEPRECATED_MSG("Construct accordingly instead of choosing hashes while adding") bool AddFD(FileFd &Fd,unsigned long long Size, unsigned int const Hashes);
 
    HashStringList GetHashStringList();
 
-APT_IGNORE_DEPRECATED_PUSH
+   /** Get a specific hash. It is an error to use a hash that was not hashes */
+   HashString GetHashString(SupportedHashes hash);
+
    /** create a Hashes object to calculate all supported hashes
     *
     * If ALL is too much, you can limit which Hashes are calculated
@@ -217,34 +199,10 @@ APT_IGNORE_DEPRECATED_PUSH
     * which hashes to generate. */
    Hashes();
    /** @param Hashes bitflag composed of #SupportedHashes */
-   Hashes(unsigned int const Hashes);
+   explicit Hashes(unsigned int const Hashes);
    /** @param Hashes is a list of hashes */
-   Hashes(HashStringList const &Hashes);
+   explicit Hashes(HashStringList const &Hashes);
    virtual ~Hashes();
-APT_IGNORE_DEPRECATED_POP
-
-   private:
-   APT_HIDDEN APT_PURE inline unsigned int boolsToFlag(bool const addMD5, bool const addSHA1, bool const addSHA256, bool const addSHA512)
-   {
-      unsigned int hashes = ~0;
-      if (addMD5 == false) hashes &= ~MD5SUM;
-      if (addSHA1 == false) hashes &= ~SHA1SUM;
-      if (addSHA256 == false) hashes &= ~SHA256SUM;
-      if (addSHA512 == false) hashes &= ~SHA512SUM;
-      return hashes;
-   }
-
-   public:
-APT_IGNORE_DEPRECATED_PUSH
-   APT_DEPRECATED_MSG("Construct accordingly instead of choosing hashes while adding") bool AddFD(int const Fd, unsigned long long Size, bool const addMD5,
-	 bool const addSHA1, bool const addSHA256, bool const addSHA512) {
-      return AddFD(Fd, Size, boolsToFlag(addMD5, addSHA1, addSHA256, addSHA512));
-   };
-   APT_DEPRECATED_MSG("Construct accordingly instead of choosing hashes while adding") bool AddFD(FileFd &Fd, unsigned long long Size, bool const addMD5,
-	 bool const addSHA1, bool const addSHA256, bool const addSHA512) {
-      return AddFD(Fd, Size, boolsToFlag(addMD5, addSHA1, addSHA256, addSHA512));
-   };
-APT_IGNORE_DEPRECATED_POP
 };
 
 #endif

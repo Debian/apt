@@ -19,8 +19,10 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/progress.h>
 
 #include <algorithm>
+#include <sstream>
 
 #include <string>
 #include <vector>
@@ -75,7 +77,47 @@ debSystem::~debSystem()
 // ---------------------------------------------------------------------
 /* This mirrors the operations dpkg does when it starts up. Note the
    checking of the updates directory. */
-bool debSystem::Lock()
+static int GetLockMaybeWait(std::string const &file, OpProgress *Progress, int &timeoutSec)
+{
+   struct ScopedAbsoluteProgress
+   {
+      ScopedAbsoluteProgress() { _config->Set("APT::Internal::OpProgress::Absolute", true); }
+      ~ScopedAbsoluteProgress() { _config->Set("APT::Internal::OpProgress::Absolute", false); }
+   } _scopedAbsoluteProgress;
+   int fd = -1;
+   if (timeoutSec == 0 || Progress == nullptr)
+      return GetLock(file);
+
+   if (_config->FindB("Debug::Locking", false))
+      std::cerr << "Lock: " << file << " wait " << timeoutSec << std::endl;
+
+   for (int i = 0; timeoutSec < 0 || i < timeoutSec; i++)
+   {
+      _error->PushToStack();
+      fd = GetLock(file);
+      if (fd != -1 || errno == EPERM)
+      {
+	 if (timeoutSec > 0)
+	    timeoutSec -= i;
+	 _error->MergeWithStack();
+	 return fd;
+      }
+      std::string poppedError;
+      std::string completeError;
+      _error->PopMessage(poppedError);
+      _error->RevertToStack();
+
+      strprintf(completeError, _("Waiting for cache lock: %s"), poppedError.c_str());
+      sleep(1);
+      Progress->OverallProgress(i, timeoutSec, 0, completeError);
+   }
+
+   if (timeoutSec > 0)
+      timeoutSec = 1;
+   return fd;
+}
+
+bool debSystem::Lock(OpProgress *const Progress)
 {
    // Disable file locking
    if (_config->FindB("Debug::NoLocking",false) == true || d->LockCount > 0)
@@ -84,10 +126,12 @@ bool debSystem::Lock()
       return true;
    }
 
+   // This will count downwards.
+   int lockTimeOutSec = _config->FindI("DPkg::Lock::Timeout", 0);
    // Create the lockfile
    string AdminDir = flNotFile(_config->FindFile("Dir::State::status"));
    string FrontendLockFile = AdminDir + "lock-frontend";
-   d->FrontendLockFD = GetLock(FrontendLockFile);
+   d->FrontendLockFD = GetLockMaybeWait(FrontendLockFile, Progress, lockTimeOutSec);
    if (d->FrontendLockFD == -1)
    {
       if (errno == EACCES || errno == EAGAIN)
@@ -97,7 +141,7 @@ bool debSystem::Lock()
 	 return _error->Error(_("Unable to acquire the dpkg frontend lock (%s), "
 	                        "are you root?"),FrontendLockFile.c_str());
    }
-   if (LockInner() == false)
+   if (LockInner(Progress, lockTimeOutSec) == false)
    {
       close(d->FrontendLockFD);
       return false;
@@ -126,9 +170,10 @@ bool debSystem::Lock()
    return true;
 }
 
-bool debSystem::LockInner() {
+bool debSystem::LockInner(OpProgress *const Progress, int timeOutSec)
+{
    string AdminDir = flNotFile(_config->FindFile("Dir::State::status"));
-   d->LockFD = GetLock(AdminDir + "lock");
+   d->LockFD = GetLockMaybeWait(AdminDir + "lock", Progress, timeOutSec);
    if (d->LockFD == -1)
    {
       if (errno == EACCES || errno == EAGAIN)
@@ -153,8 +198,8 @@ bool debSystem::UnLock(bool NoErrors)
       return _error->Error(_("Not locked"));
    if (--d->LockCount == 0)
    {
-      close(d->FrontendLockFD);
       close(d->LockFD);
+      close(d->FrontendLockFD);
       d->LockCount = 0;
    }
    
@@ -419,7 +464,7 @@ pid_t debSystem::ExecDpkg(std::vector<std::string> const &sArgs, int * const inp
    return dpkg;
 }
 									/*}}}*/
-bool debSystem::SupportsMultiArch()					/*{{{*/
+bool debSystem::MultiArchSupported() const					/*{{{*/
 {
    std::vector<std::string> Args = GetDpkgBaseCommand();
    Args.push_back("--assert-multi-arch");
@@ -440,7 +485,7 @@ bool debSystem::SupportsMultiArch()					/*{{{*/
    return false;
 }
 									/*}}}*/
-std::vector<std::string> debSystem::SupportedArchitectures()		/*{{{*/
+std::vector<std::string> debSystem::ArchitecturesSupported() const		/*{{{*/
 {
    std::vector<std::string> archs;
    {

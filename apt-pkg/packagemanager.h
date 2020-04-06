@@ -30,14 +30,6 @@
 #include <set>
 #include <string>
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/install-progress.h>
-#include <iostream>
-#endif
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/depcache.h>
-using std::string;
-#endif
 
 class pkgAcquire;
 class pkgDepCache;
@@ -52,7 +44,7 @@ namespace APT {
    }
 }
 
-class pkgPackageManager : protected pkgCache::Namespace
+class APT_PUBLIC pkgPackageManager : protected pkgCache::Namespace
 {
    public:
    
@@ -87,19 +79,15 @@ class pkgPackageManager : protected pkgCache::Namespace
    // Install helpers
    bool ConfigureAll();
    bool SmartConfigure(PkgIterator Pkg, int const Depth) APT_MUSTCHECK;
-   //FIXME: merge on abi break
-   bool SmartUnPack(PkgIterator Pkg) APT_MUSTCHECK;
-   bool SmartUnPack(PkgIterator Pkg, bool const Immediate, int const Depth) APT_MUSTCHECK;
+   bool SmartUnPack(PkgIterator Pkg, bool const Immediate = true, int const Depth = 0) APT_MUSTCHECK;
    bool SmartRemove(PkgIterator Pkg) APT_MUSTCHECK;
    bool EarlyRemove(PkgIterator Pkg, DepIterator const * const Dep) APT_MUSTCHECK;
-   APT_DEPRECATED bool EarlyRemove(PkgIterator Pkg) APT_MUSTCHECK;
 
    // The Actual installation implementation
    virtual bool Install(PkgIterator /*Pkg*/,std::string /*File*/) {return false;};
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
    virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
    virtual bool Go(APT::Progress::PackageManager * /*progress*/) {return true;};
-   APT_DEPRECATED_MSG("Use overload with explicit progress manager") virtual bool Go(int /*statusFd*/=-1) {return true;};
 
    virtual void Reset() {};
 
@@ -114,8 +102,6 @@ class pkgPackageManager : protected pkgCache::Namespace
 
    // Do the installation
    OrderResult DoInstall(APT::Progress::PackageManager *progress);
-   // compat
-   APT_DEPRECATED_MSG("Use APT::Progress::PackageManager subclass instead of fd") OrderResult DoInstall(int statusFd=-1);
 
    friend bool EIPP::OrderInstall(char const * const planner, pkgPackageManager * const PM,
 	 unsigned int const version, OpProgress * const Progress);
@@ -131,7 +117,6 @@ class pkgPackageManager : protected pkgCache::Namespace
    // stuff that needs to be done after the fork
    OrderResult DoInstallPostFork(APT::Progress::PackageManager *progress);
    // compat
-   APT_DEPRECATED_MSG("Use APT::Progress::PackageManager subclass instead of fd") OrderResult DoInstallPostFork(int statusFd=-1);
 
    // ?
    bool FixMissing();

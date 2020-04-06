@@ -11,9 +11,6 @@
 #include <apt-pkg/debindexfile.h>
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/indexfile.h>
-#endif
 
 class OpProgress;
 class pkgCacheGenerator;
@@ -29,7 +26,7 @@ public:
    virtual bool Exists() const APT_OVERRIDE;
    virtual bool HasPackages() const APT_OVERRIDE;
 
-   edspLikeIndex(std::string const &File);
+   explicit edspLikeIndex(std::string const &File);
    virtual ~edspLikeIndex();
 };
 
@@ -42,7 +39,7 @@ protected:
 public:
    virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 
-   edspIndex(std::string const &File);
+   explicit edspIndex(std::string const &File);
    virtual ~edspIndex();
 };
 
@@ -55,7 +52,7 @@ protected:
 public:
    virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
 
-   eippIndex(std::string const &File);
+   explicit eippIndex(std::string const &File);
    virtual ~eippIndex();
 };
 

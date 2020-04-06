@@ -44,7 +44,7 @@ using namespace std;
 // Worker::Worker - Constructor for Queue startup			/*{{{*/
 pkgAcquire::Worker::Worker(Queue *Q, MethodConfig *Cnf, pkgAcquireStatus *log) :
    d(NULL), OwnerQ(Q), Log(log), Config(Cnf), Access(Cnf->Access),
-   CurrentItem(nullptr), CurrentSize(0), TotalSize(0)
+   CurrentItem(nullptr)
 {
    Construct();
 }
@@ -369,12 +369,12 @@ bool pkgAcquire::Worker::RunMessages()
 	    }
 
 	    CurrentItem = Itm;
-	    CurrentSize = 0;
-	    TotalSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
-	    ResumePoint = strtoull(LookupTag(Message,"Resume-Point","0").c_str(), NULL, 10);
+	    Itm->CurrentSize = 0;
+	    Itm->TotalSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
+	    Itm->ResumePoint = strtoull(LookupTag(Message,"Resume-Point","0").c_str(), NULL, 10);
 	    for (auto const Owner: Itm->Owners)
 	    {
-	       Owner->Start(Message, TotalSize);
+	       Owner->Start(Message, Itm->TotalSize);
 	       // Display update before completion
 	       if (Log != nullptr)
 	       {
@@ -607,9 +607,9 @@ void pkgAcquire::Worker::HandleFailure(std::vector<pkgAcquire::Item *> const &It
    for (auto const Owner : ItmOwners)
    {
       std::string NewURI;
-      if (errTransient == true && Config->LocalOnly == false && Owner->ModifyRetries() != 0)
+      if (errTransient == true && Config->LocalOnly == false && Owner->Retries != 0)
       {
-	 --Owner->ModifyRetries();
+	 --Owner->Retries;
 	 Owner->FailMessage(Message);
 	 auto SavedDesc = Owner->GetItemDesc();
 	 if (Log != nullptr)
@@ -766,7 +766,7 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    Message += "URI: " + Item->URI;
    Message += "\nFilename: " + Item->Owner->DestFile;
 
-   URI URL = Item->URI;
+   URI URL(Item->URI);
    // FIXME: We should not hard code proxy protocols here.
    if (URL.Access == "http" || URL.Access == "https")
    {
@@ -918,7 +918,7 @@ void pkgAcquire::Worker::Pulse()
    struct stat Buf;
    if (stat(CurrentItem->Owner->DestFile.c_str(),&Buf) != 0)
       return;
-   CurrentSize = Buf.st_size;
+   CurrentItem->CurrentSize = Buf.st_size;
 }
 									/*}}}*/
 // Worker::ItemDone - Called when the current item is finished		/*{{{*/
@@ -926,9 +926,7 @@ void pkgAcquire::Worker::Pulse()
 /* */
 void pkgAcquire::Worker::ItemDone()
 {
-   CurrentItem = 0;
-   CurrentSize = 0;
-   TotalSize = 0;
+   CurrentItem = nullptr;
    Status = string();
 }
 									/*}}}*/

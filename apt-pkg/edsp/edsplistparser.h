@@ -13,16 +13,10 @@
 
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/pkgcache.h>
 
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/indexfile.h>
-#include <apt-pkg/pkgcachegen.h>
-#include <apt-pkg/tagfile.h>
-#endif
 
 namespace APT {
    class StringView;
@@ -33,9 +27,9 @@ class APT_HIDDEN edspLikeListParser : public debListParser
    virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
    virtual std::vector<std::string> AvailableDescriptionLanguages() APT_OVERRIDE;
    virtual APT::StringView Description_md5() APT_OVERRIDE;
-   virtual unsigned short VersionHash() APT_OVERRIDE;
+   virtual uint32_t VersionHash() APT_OVERRIDE;
 
-   edspLikeListParser(FileFd *File);
+   explicit edspLikeListParser(FileFd *File);
    virtual ~edspLikeListParser();
 };
 
@@ -48,7 +42,7 @@ protected:
    virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver) APT_OVERRIDE;
 
 public:
-   edspListParser(FileFd *File);
+   explicit edspListParser(FileFd *File);
    virtual ~edspListParser();
 };
 
@@ -58,7 +52,7 @@ protected:
    virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver) APT_OVERRIDE;
 
 public:
-   eippListParser(FileFd *File);
+   explicit eippListParser(FileFd *File);
    virtual ~eippListParser();
 };
 #endif

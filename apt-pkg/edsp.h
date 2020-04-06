@@ -19,10 +19,6 @@
 #include <string>
 #include <vector>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/progress.h>
-#endif
 
 class pkgDepCache;
 class OpProgress;
@@ -53,14 +49,9 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return true if request was composed successfully, otherwise false
 	 */
-	bool WriteRequest(pkgDepCache &Cache, FileFd &output,
+	APT_PUBLIC bool WriteRequest(pkgDepCache &Cache, FileFd &output,
 				 unsigned int const flags = 0,
 				OpProgress *Progress = NULL);
-	bool WriteRequest(pkgDepCache &Cache, FILE* output,
-				 bool const upgrade = false,
-				 bool const distUpgrade = false,
-				 bool const autoRemove = false,
-				OpProgress *Progress = NULL) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
 
 	/** \brief creates the scenario representing the package universe
 	 *
@@ -79,8 +70,7 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return true if universe was composed successfully, otherwise false
 	 */
-	bool WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress *Progress = NULL);
-	bool WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress = NULL) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
+	APT_PUBLIC bool WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress *Progress = NULL);
 
 	/** \brief creates a limited scenario representing the package universe
 	 *
@@ -97,12 +87,9 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return true if universe was composed successfully, otherwise false
 	 */
-	bool WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
+	APT_PUBLIC bool WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
 					 std::vector<bool> const &pkgset,
 					 OpProgress *Progress = NULL);
-	bool WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
-					 APT::PackageSet const &pkgset,
-					 OpProgress *Progress = NULL) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
 
 	/** \brief waits and acts on the information returned from the solver
 	 *
@@ -118,7 +105,7 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return true if a solution is found and applied correctly, otherwise false
 	 */
-	bool ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progress = NULL);
+	APT_PUBLIC bool ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progress = NULL);
 
 	/** \brief search and read the request stanza for action later
 	 *
@@ -136,11 +123,8 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return true if the request could be found and worked on, otherwise false
 	 */
-	bool ReadRequest(int const input, std::list<std::string> &install,
+	APT_PUBLIC bool ReadRequest(int const input, std::list<std::string> &install,
 			std::list<std::string> &remove, unsigned int &flags);
-	APT_DEPRECATED_MSG("use the flag-based version instead") bool ReadRequest(int const input, std::list<std::string> &install,
-			std::list<std::string> &remove, bool &upgrade,
-			bool &distUpgrade, bool &autoRemove);
 
 	/** \brief takes the request lists and applies it on the cache
 	 *
@@ -154,7 +138,7 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return false if the request couldn't be applied, true otherwise
 	 */
-	bool ApplyRequest(std::list<std::string> const &install,
+	APT_PUBLIC bool ApplyRequest(std::list<std::string> const &install,
 				 std::list<std::string> const &remove,
 				 pkgDepCache &Cache);
 
@@ -170,8 +154,7 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return true if stanza could be written, otherwise false
 	 */
-	bool WriteSolutionStanza(FileFd &output, char const * const Type, pkgCache::VerIterator const &Ver);
-	bool WriteSolution(pkgDepCache &Cache, FILE* output) APT_DEPRECATED_MSG("Use FileFd-based single-stanza interface instead");
+	APT_PUBLIC bool WriteSolutionStanza(FileFd &output, char const * const Type, pkgCache::VerIterator const &Ver);
 
 	/** \brief sends a progress report
 	 *
@@ -179,8 +162,7 @@ namespace EDSP								/*{{{*/
 	 *  \param message the solver wants the user to see
 	 *  \param output the front-end listens for progress report
 	 */
-	bool WriteProgress(unsigned short const percent, const char* const message, FileFd &output);
-	bool WriteProgress(unsigned short const percent, const char* const message, FILE* output) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
+	APT_PUBLIC bool WriteProgress(unsigned short const percent, const char* const message, FileFd &output);
 
 	/** \brief sends an error report
 	 *
@@ -197,8 +179,7 @@ namespace EDSP								/*{{{*/
 	 *  \param message is free form text to describe the error
 	 *  \param output the front-end listens for error messages
 	 */
-	bool WriteError(char const * const uuid, std::string const &message, FileFd &output);
-	bool WriteError(char const * const uuid, std::string const &message, FILE* output) APT_DEPRECATED_MSG("Use FileFd-based interface instead");
+	APT_PUBLIC bool WriteError(char const * const uuid, std::string const &message, FileFd &output);
 
 
 	/** \brief executes the given solver and returns the pipe ends
@@ -212,8 +193,7 @@ namespace EDSP								/*{{{*/
 	 *
 	 *  \return PID of the started solver or 0 if failure occurred
 	 */
-	pid_t ExecuteSolver(const char* const solver, int * const solver_in, int * const solver_out, bool /*overload*/);
-	APT_DEPRECATED_MSG("add a dummy bool parameter to use the overload returning a pid_t") bool ExecuteSolver(const char* const solver, int *solver_in, int *solver_out);
+	APT_PUBLIC pid_t ExecuteSolver(const char* const solver, int * const solver_in, int * const solver_out, bool /*overload*/);
 
 	/** \brief call an external resolver to handle the request
 	 *
@@ -227,12 +207,9 @@ namespace EDSP								/*{{{*/
 	 *  \return true if the solver has successfully solved the problem,
 	 *  otherwise false
 	 */
-	bool ResolveExternal(const char* const solver, pkgDepCache &Cache,
+	APT_PUBLIC bool ResolveExternal(const char* const solver, pkgDepCache &Cache,
 				    unsigned int const flags = 0,
 				    OpProgress *Progress = NULL);
-	APT_DEPRECATED_MSG("use the flag-based version instead") bool ResolveExternal(const char* const solver, pkgDepCache &Cache,
-				    bool const upgrade, bool const distUpgrade,
-				    bool const autoRemove, OpProgress *Progress = NULL);
 }
 									/*}}}*/
 class pkgPackageManager;
@@ -265,10 +242,10 @@ namespace EIPP								/*{{{*/
       REINSTALL,
       REMOVE
    };
-   bool ReadRequest(int const input,
+   APT_PUBLIC bool ReadRequest(int const input,
 	 std::list<std::pair<std::string,PKG_ACTION>> &actions,
 	 unsigned int &flags);
-   bool ApplyRequest(std::list<std::pair<std::string,PKG_ACTION>> &actions,
+   APT_PUBLIC bool ApplyRequest(std::list<std::pair<std::string,PKG_ACTION>> &actions,
 	 pkgDepCache &Cache);
 }
 									/*}}}*/

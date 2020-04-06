@@ -1,0 +1,76 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'i386' 'amd64'
+
+insertpackage 'stable' 'depends' 'i386' '1'
+insertpackage 'stable' 'depends' 'amd64' '1'
+insertinstalledpackage 'conflicts' 'i386' '1' 'Multi-Arch: same'
+insertinstalledpackage 'conflicts' 'amd64' '1' 'Multi-Arch: same'
+setupaptarchive
+
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  conflicts
+The following NEW packages will be installed:
+  depends
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv conflicts [1]
+Inst depends (1 stable [i386])
+Conf depends (1 stable [i386])" aptget satisfy --simulate "depends (>= 1)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]"
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  conflicts:amd64
+The following NEW packages will be installed:
+  depends:amd64
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv conflicts:amd64 [1]
+Inst depends:amd64 (1 stable [amd64])
+Conf depends:amd64 (1 stable [amd64])" aptget satisfy --simulate "depends (>= 1)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]" --host-architecture amd64
+
+msgmsg "Build profile"
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget satisfy --simulate "depends:amd64 <a>, depends:i386 <i>"
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  depends:amd64
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst depends:amd64 (1 stable [amd64])
+Conf depends:amd64 (1 stable [amd64])" aptget satisfy --simulate "depends:amd64 <a>, depends:i386 <i>" -P a
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  depends
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst depends (1 stable [i386])
+Conf depends (1 stable [i386])" aptget satisfy --simulate "depends:amd64 <a>, depends:i386 <i>" -P i
+
+
+msgmsg "Broken syntax"
+testfailureequal "E: Problem parsing dependency: apt (>= 2" aptget satisfy 'foo' 'apt (>= 2' -s
+testfailureequal "E: Problem parsing dependency: Conflicts: apt (>= 2" aptget satisfy 'foo' 'Conflicts: apt (>= 2' -s
+
+
+msgmsg "Legacy operators"
+testfailureequal "E: Invalid operator '<' at offset 5, did you mean '<<' or '<='? - in: foo (< 1)" aptget satisfy 'foo (< 1)' -s
+testfailureequal "E: Invalid operator '>' at offset 5, did you mean '>>' or '>='? - in: foo (> 1)" aptget satisfy 'foo (> 1)' -s
+
+msgmsg "Unsupported dependency type"
+testfailureequal "E: Problem parsing dependency: Recommends: foo" aptget satisfy 'Recommends: foo' -s
+
+
+msgmsg "Empty dependency"
+testfailureequal "E: Problem parsing dependency: " aptget satisfy '' -s

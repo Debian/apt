@@ -38,11 +38,8 @@
 
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-using std::string;
-#endif
 
-class pkgVersionMatch
+class APT_PUBLIC pkgVersionMatch
 {
    // Version Matching
    std::string VerStr;

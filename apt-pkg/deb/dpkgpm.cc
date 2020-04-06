@@ -301,10 +301,6 @@ bool pkgDPkgPM::Remove(PkgIterator Pkg,bool Purge)
 // ---------------------------------------------------------------------
 /* This is part of the helper script communication interface, it sends
    very complete information down to the other end of the pipe.*/
-bool pkgDPkgPM::SendV2Pkgs(FILE *F)
-{
-   return SendPkgsInfo(F, 2);
-}
 bool pkgDPkgPM::SendPkgsInfo(FILE * const F, unsigned int const &Version)
 {
    // This version of APT supports only v3, so don't sent higher versions
@@ -1223,17 +1219,6 @@ void pkgDPkgPM::BuildPackagesProgressMap()
    ++PackagesTotal;
 }
                                                                         /*}}}*/
-bool pkgDPkgPM::Go(int StatusFd)					/*{{{*/
-{
-   APT::Progress::PackageManager *progress = NULL;
-   if (StatusFd == -1)
-      progress = APT::Progress::PackageManagerProgressFactory();
-   else
-      progress = new APT::Progress::PackageManagerProgressFd(StatusFd);
-
-   return Go(progress);
-}
-									/*}}}*/
 void pkgDPkgPM::StartPtyMagic()						/*{{{*/
 {
    if (_config->FindB("Dpkg::Use-Pty", true) == false)
@@ -1726,7 +1711,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    // create log
    OpenLog();
 
-   bool dpkgMultiArch = debSystem::SupportsMultiArch();
+   bool dpkgMultiArch = _system->MultiArchSupported();
 
    // start pty magic before the loop
    StartPtyMagic();
@@ -1790,6 +1775,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 case Item::Remove:
 	 case Item::Purge:
 	 ADDARGC("--force-depends");
+	 ADDARGC("--abort-after=1");
 	 if (std::any_of(I, J, ItemIsEssential))
 	 {
 	    ADDARGC("--force-remove-essential");
@@ -2028,8 +2014,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 else
 	    setenv("DPKG_COLORS", "never", 0);
 
-	 if (dynamic_cast<debSystem*>(_system) != nullptr
-	    && dynamic_cast<debSystem*>(_system)->IsLocked() == true) {
+	 if (_system->IsLocked() == true) {
 	    setenv("DPKG_FRONTEND_LOCKED", "true", 1);
 	 }
 	 if (_config->Find("DPkg::Path", "").empty() == false)
@@ -2475,7 +2460,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    {
 
       fprintf(report, "Df:\n");
-      FILE *log = popen("/bin/df -l","r");
+      FILE *log = popen("/bin/df -l -x squashfs","r");
       if(log != NULL)
       {
 	 char buf[1024];

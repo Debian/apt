@@ -29,6 +29,7 @@
 #include <apt-private/private-source.h>
 
 #include <apt-pkg/debindexfile.h>
+#include <apt-pkg/deblistparser.h>
 
 #include <stddef.h>
 #include <stdio.h>
@@ -339,10 +340,10 @@ bool DoSource(CommandLine &CmdL)
    // Load the requestd sources into the fetcher
    aptAcquireWithTextStatus Fetcher;
    std::vector<std::string> UntrustedList;
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
+   for (const char **cmdl = CmdL.FileList + 1; *cmdl != 0; ++cmdl)
    {
       std::string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,SrcRecs,Src,Cache);
+      pkgSrcRecords::Parser *Last = FindSrc(*cmdl, SrcRecs, Src, Cache);
       if (Last == 0) {
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
       }
@@ -383,14 +384,14 @@ bool DoSource(CommandLine &CmdL)
       }
 
       // Back track
-      std::vector<pkgSrcRecords::File2> Lst;
-      if (Last->Files2(Lst) == false) {
+      std::vector<pkgSrcRecords::File> Lst;
+      if (Last->Files(Lst) == false) {
 	 return false;
       }
 
       DscFile curDsc;
       // Load them into the fetcher
-      for (std::vector<pkgSrcRecords::File2>::const_iterator I = Lst.begin();
+      for (std::vector<pkgSrcRecords::File>::const_iterator I = Lst.begin();
 	    I != Lst.end(); ++I)
       {
 	 // Try to guess what sort of file it is we are getting.
@@ -652,8 +653,10 @@ bool DoBuildDep(CommandLine &CmdL)
 
    CacheFile Cache;
    auto VolatileCmdL = GetPseudoPackages(Cache.GetSourceList(), CmdL, AddVolatileSourceFile, pseudoArch);
+   auto AreDoingSatisfy = strcasecmp(CmdL.FileList[0], "satisfy") == 0;
 
-   _config->Set("APT::Install-Recommends", false);
+   if (not AreDoingSatisfy)
+      _config->Set("APT::Install-Recommends", false);
 
    if (CmdL.FileSize() <= 1 && VolatileCmdL.empty())
       return _error->Error(_("Must specify at least one package to check builddeps for"));
@@ -661,6 +664,7 @@ bool DoBuildDep(CommandLine &CmdL)
    std::ostringstream buildDepsPkgFile;
    std::vector<PseudoPkg> pseudoPkgs;
    // deal with the build essentials first
+   if (not AreDoingSatisfy)
    {
       std::vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
       for (auto && opt: _config->FindVector("APT::Build-Essential"))
@@ -678,11 +682,78 @@ bool DoBuildDep(CommandLine &CmdL)
       pseudoPkgs.emplace_back(pseudo, nativeArch, "");
    }
 
+   if (AreDoingSatisfy)
+   {
+      std::vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
+      for (unsigned i = 1; i < CmdL.FileSize(); i++)
+      {
+	 const char *Start = CmdL.FileList[i];
+	 const char *Stop = Start + strlen(Start);
+	 auto Type = pkgSrcRecords::Parser::BuildDependIndep;
+
+	 // Reject '>' and '<' as operators, as they have strange meanings.
+	 bool insideVersionRestriction = false;
+	 for (auto C = Start; C + 1 < Stop; C++)
+	 {
+	    if (*C == '(')
+	       insideVersionRestriction = true;
+	    else if (*C == ')')
+	       insideVersionRestriction = false;
+	    else if (insideVersionRestriction && (*C == '<' || *C == '>'))
+	    {
+	       if (C[1] != *C && C[1] != '=')
+		  return _error->Error(_("Invalid operator '%c' at offset %d, did you mean '%c%c' or '%c='? - in: %s"), *C, (int)(C - Start), *C, *C, *C, Start);
+	       C++;
+	    }
+	 }
+
+	 if (APT::String::Startswith(Start, "Conflicts:"))
+	 {
+	    Type = pkgSrcRecords::Parser::BuildConflictIndep;
+	    Start += strlen("Conflicts:");
+	 }
+	 while (1)
+	 {
+	    pkgSrcRecords::Parser::BuildDepRec rec;
+	    Start = debListParser::ParseDepends(Start, Stop,
+						rec.Package, rec.Version, rec.Op, true, false, true, pseudoArch);
+
+	    if (Start == 0)
+	       return _error->Error("Problem parsing dependency: %s", CmdL.FileList[i]);
+	    rec.Type = Type;
+
+	    // We parsed a package that was ignored (wrong architecture restriction
+	    // or something).
+	    if (rec.Package.empty())
+	    {
+	       // If we are in an OR group, we need to set the "Or" flag of the
+	       // previous entry to our value.
+	       if (BuildDeps.empty() == false && (BuildDeps[BuildDeps.size() - 1].Op & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+	       {
+		  BuildDeps[BuildDeps.size() - 1].Op &= ~pkgCache::Dep::Or;
+		  BuildDeps[BuildDeps.size() - 1].Op |= (rec.Op & pkgCache::Dep::Or);
+	       }
+	    }
+	    else
+	    {
+	       BuildDeps.emplace_back(std::move(rec));
+	    }
+
+	    if (Start == Stop)
+	       break;
+	 }
+      }
+      std::string const pseudo = "command line argument";
+      WriteBuildDependencyPackage(buildDepsPkgFile, pseudo, pseudoArch, BuildDeps);
+      pseudoPkgs.emplace_back(pseudo, pseudoArch, "");
+   }
+
    // Read the source list
    if (Cache.BuildSourceList() == false)
       return false;
    pkgSourceList *List = Cache.GetSourceList();
 
+   if (not AreDoingSatisfy)
    {
       auto const VolatileSources = List->GetVolatileFiles();
       for (auto &&pkg : VolatileCmdL)
@@ -713,7 +784,7 @@ bool DoBuildDep(CommandLine &CmdL)
    }
 
    bool const WantLock = _config->FindB("APT::Get::Print-URIs", false) == false;
-   if (CmdL.FileList[1] != 0)
+   if (CmdL.FileList[1] != 0 && not AreDoingSatisfy)
    {
       if (Cache.BuildCaches(WantLock) == false)
 	 return false;
@@ -786,7 +857,7 @@ bool DoBuildDep(CommandLine &CmdL)
 
    {
       pkgDepCache::ActionGroup group(Cache);
-      if (_config->FindB("APT::Get::Build-Dep-Automatic", false) == false)
+      if (_config->FindB(AreDoingSatisfy ? "APT::Get::Satisfy-Automatic" : "APT::Get::Build-Dep-Automatic", false) == false)
       {
 	 for (auto const &pkg: removeAgain)
 	 {

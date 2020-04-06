@@ -47,11 +47,11 @@ Description-${LOCALE}: Mächtige Oberfläche für dpkg
  auf den dpkg-Paketmanager. Es beinhaltet das apt-get-Werkzeug und die
  APT-Dselect-Methode. Beides sind einfache und sicherere Wege,
  um Pakete zu installieren und Upgrades durchzuführen.
-$MD5Sum" | bzip2 > aptarchive/${LOCALE}.bz2
+$MD5Sum" > "aptarchive/${LOCALE}"
 
-# the $LOCALE translation file will not be included as it is a flat archive it came from and therefore
-# its name can not be guessed correctly… (in non-flat archives the files are called Translation-*)
-echo 'APT::Cache::Generate "false";' > rootdir/etc/apt/apt.conf.d/00nogenerate
+# add our $LOCALE translation file explicitly to be picked up by apt-ftparchive
+echo "APT::FTPArchive::Release::Patterns:: \"en\";
+APT::FTPArchive::Release::Patterns:: \"${LOCALE}\";" > rootdir/etc/apt/apt.conf.d/ftparchivepattern
 
 NOLONGSTANZA="$PACKAGESTANZA
 Description: Advanced front-end for dpkg
@@ -90,7 +90,8 @@ testrun() {
 	testequal "$LOCALESTANZA2" aptcache show apt:amd64 -o Test=File-${LOCALE}
 	testequal "$NOLONGSTANZA" aptcache show apt -o Acquire::Languages="ww" -o Test=File-${LOCALE}
 	testequal "$LOCALESTANZA" aptcache show apt -o Acquire::Languages::="ww" -o Test=File-${LOCALE}
-	LC_ALL=C testequal "$ENGLISHSTANZA" aptcache show apt -o Test=File-${LOCALE}
+	LC_ALL=C.UTF-8 testequal "$LOCALESTANZA" aptcache show apt -o Test=File-${LOCALE}
+	LC_ALL=C.UTF-8 testequal "$ENGLISHSTANZA" aptcache show apt -o Test=File-${LOCALE} -o Acquire::Languages="environment,${LOCALE}"
 	export LC_ALL=""
 	echo "Acquire::Languages { \"ww\"; \"${LOCALE}\"; \"en\"; };" > rootdir/etc/apt/apt.conf.d/00languages
 	testequal "$LOCALESTANZA" aptcache show apt -o Test=File-ww-${LOCALE}
@@ -113,7 +114,7 @@ Description-en: Advanced front-end for dpkg
  This is Debian's next generation front-end for the dpkg package manager.
  It provides the apt-get utility and APT dselect method that provides a
  simpler, safer way to install and upgrade packages.
-$MD5Sum" | bzip2 > aptarchive/en.bz2
+$MD5Sum" > aptarchive/en
 
 ENGLISHSTANZA="$PACKAGESTANZA
 Description-en: Advanced front-end for dpkg

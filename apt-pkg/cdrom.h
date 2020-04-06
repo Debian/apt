@@ -8,15 +8,11 @@
 
 #include <stddef.h>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/init.h>
-using namespace std;
-#endif
 
 class Configuration;
 class OpProgress;
 
-class pkgCdromStatus							/*{{{*/
+class APT_PUBLIC pkgCdromStatus							/*{{{*/
 {
    void * const d;
  protected:
@@ -39,7 +35,7 @@ class pkgCdromStatus							/*{{{*/
    virtual OpProgress* GetOpProgress() {return NULL; };
 };
 									/*}}}*/
-class pkgCdrom								/*{{{*/
+class APT_PUBLIC pkgCdrom								/*{{{*/
 {
  protected:
    enum {
@@ -89,40 +85,19 @@ class pkgCdrom								/*{{{*/
 
 
 // class that uses libudev to find cdrom/removable devices dynamically
-struct CdromDevice							/*{{{*/
+struct APT_PUBLIC CdromDevice							/*{{{*/
 {
    std::string DeviceName;
    bool Mounted;
    std::string MountPath;
 };
 									/*}}}*/
-class pkgUdevCdromDevices						/*{{{*/
+class APT_PUBLIC pkgUdevCdromDevices						/*{{{*/
 {
    void * const d;
-
- protected:
-   // old libudev dlopen structure, not used anymore, but can't break ABI
-   void *_padding;
-   struct _padding *(*_padding__new)(void);
-   int (*_padding__enumerate_add_match_property)(struct _padding_enumerate *_padding_enumerate, const char *property, const char *value);
-   int (*_padding__enumerate_scan_devices)(struct _padding_enumerate *_padding_enumerate);
-   struct _padding_list_entry *(*_padding__enumerate_get_list_entry)(struct _padding_enumerate *_padding_enumerate);
-   struct _padding_device *(*_padding__device_new_from_syspath)(struct _padding *_padding, const char *syspath);
-   struct _padding *(*_padding__enumerate_get__padding)(struct _padding_enumerate *_padding_enumerate);
-   const char *(*_padding__list_entry_get_name)(struct _padding_list_entry *list_entry);
-   const char *(*_padding__device_get_devnode)(struct _padding_device *_padding_device);
-   struct _padding_enumerate *(*_padding__enumerate_new)(struct _padding *_padding);
-   struct _padding_list_entry *(*_padding__list_entry_get_next)(struct _padding_list_entry *list_entry);
-   const char *(*_padding__device_get_property_value)(struct _padding_device *_padding_device, const char *key);
-   int (*_padding__enumerate_add_match_sysattr)(struct _padding_enumerate *_padding_enumerate, const char *property, const char *value);
-   // end lib_padding dlopen
-   
  public:
    pkgUdevCdromDevices();
    virtual ~pkgUdevCdromDevices();
-
-   // try to open 
-   bool Dlopen();
 
    // convenience interface, this will just call ScanForRemovable
    // with "APT::cdrom::CdromOnly"

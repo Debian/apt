@@ -127,25 +127,6 @@ static bool SetupAPTPartialDirectory(std::string const &grand, std::string const
 
    return true;
 }
-bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
-{
-   Log = Progress;
-   if (Lock.empty())
-   {
-      string const listDir = _config->FindDir("Dir::State::lists");
-      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "partial", 0700) == false)
-	 return _error->Errno("Acquire", _("List directory %s is missing."), (listDir + "partial").c_str());
-      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir, "auxfiles", 0755) == false)
-      {
-	 // not being able to create lists/auxfiles isn't critical as we will use a tmpdir then
-      }
-      string const archivesDir = _config->FindDir("Dir::Cache::Archives");
-      if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir, "partial", 0700) == false)
-	 return _error->Errno("Acquire", _("Archives directory %s is missing."), (archivesDir + "partial").c_str());
-      return true;
-   }
-   return GetLock(Lock);
-}
 bool pkgAcquire::GetLock(std::string const &Lock)
 {
    if (Lock.empty() == true)
@@ -326,7 +307,7 @@ static bool CheckForBadItemAndFailIt(pkgAcquire::Item * const Item,
 void pkgAcquire::Enqueue(ItemDesc &Item)
 {
    // Determine which queue to put the item in
-   const MethodConfig *Config;
+   const MethodConfig *Config = nullptr;
    string Name = QueueName(Item.URI,Config);
    if (Name.empty() == true)
    {
@@ -404,73 +385,99 @@ void pkgAcquire::Dequeue(Item *Itm)
    return http://foo.org or http */
 string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
 {
+   constexpr int DEFAULT_HOST_LIMIT = 10;
    URI U(Uri);
-   
+
+   // Note that this gets written through the reference to the caller.
    Config = GetConfig(U.Access);
-   if (Config == 0)
-      return string();
-   
-   /* Single-Instance methods get exactly one queue per URI. This is
-      also used for the Access queue method  */
-   if (Config->SingleInstance == true || QueueMode == QueueAccess)
+   if (Config == nullptr)
+      return {};
+
+   // Access mode forces all methods to be Single-Instance
+   if (QueueMode == QueueAccess)
       return U.Access;
 
-   string AccessSchema = U.Access + ':';
-   string FullQueueName;
+   // Single-Instance methods get exactly one queue per URI
+   if (Config->SingleInstance == true)
+      return U.Access;
 
+   // Host-less methods like rred, store, …
    if (U.Host.empty())
    {
-      long existing = 0;
+      int existing = 0;
       // check how many queues exist already and reuse empty ones
+      auto const AccessSchema = U.Access + ':';
       for (Queue const *I = Queues; I != 0; I = I->Next)
-	 if (I->Name.compare(0, AccessSchema.length(), AccessSchema) == 0)
+	 if (APT::String::Startswith(I->Name, AccessSchema))
 	 {
 	    if (I->Items == nullptr)
 	       return I->Name;
 	    ++existing;
 	 }
 
+      int const Limit = _config->FindI("Acquire::QueueHost::Limit",
 #ifdef _SC_NPROCESSORS_ONLN
-      long cpuCount = sysconf(_SC_NPROCESSORS_ONLN) * 2;
+	    sysconf(_SC_NPROCESSORS_ONLN) * 2
 #else
-      long cpuCount = 10;
+	    DEFAULT_HOST_LIMIT
 #endif
-      cpuCount = _config->FindI("Acquire::QueueHost::Limit", cpuCount);
+      );
 
-      if (cpuCount <= 0 || existing < cpuCount)
-	 strprintf(FullQueueName, "%s%ld", AccessSchema.c_str(), existing);
-      else
-      {
-	 long const randomQueue = random() % cpuCount;
-	 strprintf(FullQueueName, "%s%ld", AccessSchema.c_str(), randomQueue);
-      }
+      // create a new worker if we don't have too many yet
+      if (Limit <= 0 || existing < Limit)
+	 return AccessSchema + std::to_string(existing);
 
-      if (Debug)
-         clog << "Chose random queue " << FullQueueName << " for " << Uri << endl;
-   } else
+      // find the worker with the least to do
+      // we already established that there are no empty and we can't spawn new
+      Queue const *selected = nullptr;
+      auto selected_backlog = std::numeric_limits<decltype(HashStringList().FileSize())>::max();
+      for (Queue const *Q = Queues; Q != nullptr; Q = Q->Next)
+	 if (APT::String::Startswith(Q->Name, AccessSchema))
+	 {
+	    decltype(selected_backlog) current_backlog = 0;
+	    for (auto const *I = Q->Items; I != nullptr; I = I->Next)
+	    {
+	       auto const hashes = I->Owner->GetExpectedHashes();
+	       if (not hashes.empty())
+		  current_backlog += hashes.FileSize();
+	       else
+		  current_backlog += I->Owner->FileSize;
+	    }
+	    if (current_backlog < selected_backlog)
+	    {
+	       selected = Q;
+	       selected_backlog = current_backlog;
+	    }
+	 }
+
+      if (unlikely(selected == nullptr))
+	 return AccessSchema + "0";
+      return selected->Name;
+   }
+   // most methods talking to remotes like http
+   else
    {
-      FullQueueName = AccessSchema + U.Host;
-   }
-   unsigned int Instances = 0, SchemaLength = AccessSchema.length();
-
-   Queue *I = Queues;
-   for (; I != 0; I = I->Next) {
+      auto const FullQueueName = U.Access + ':' + U.Host;
       // if the queue already exists, re-use it
-      if (I->Name == FullQueueName)
-	 return FullQueueName;
+      for (Queue const *Q = Queues; Q != nullptr; Q = Q->Next)
+	 if (Q->Name == FullQueueName)
+	    return FullQueueName;
 
-      if (I->Name.compare(0, SchemaLength, AccessSchema) == 0)
-	 Instances++;
+      int existing = 0;
+      // check how many queues exist already and reuse empty ones
+      auto const AccessSchema = U.Access + ':';
+      for (Queue const *Q = Queues; Q != nullptr; Q = Q->Next)
+	 if (APT::String::Startswith(Q->Name, AccessSchema))
+	    ++existing;
+
+      int const Limit = _config->FindI("Acquire::QueueHost::Limit", DEFAULT_HOST_LIMIT);
+      // if we have too many hosts open use a single generic for the rest
+      if (existing >= Limit)
+	 return U.Access;
+
+      // we can still create new named queues
+      return FullQueueName;
    }
-
-   if (Debug) {
-      clog << "Found " << Instances << " instances of " << U.Access << endl;
-   }
-
-   if (Instances >= static_cast<decltype(Instances)>(_config->FindI("Acquire::QueueHost::Limit",10)))
-      return U.Access;
-
-   return FullQueueName;
 }
 									/*}}}*/
 // Acquire::GetConfig - Fetch the configuration information		/*{{{*/
@@ -529,18 +536,12 @@ void pkgAcquire::SetFds(int &Fd,fd_set *RSet,fd_set *WSet)
    }
 }
 									/*}}}*/
-// Acquire::RunFds - compatibility remove on next abi/api break		/*{{{*/
-void pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
-{
-   RunFdsSane(RSet, WSet);
-}
-									/*}}}*/
-// Acquire::RunFdsSane - Deal with active FDs				/*{{{*/
+// Acquire::RunFds - Deal with active FDs				/*{{{*/
 // ---------------------------------------------------------------------
 /* Dispatch active FDs over to the proper workers. It is very important
    that a worker never be erased while this is running! The queue class
    should never erase a worker except during shutdown processing. */
-bool pkgAcquire::RunFdsSane(fd_set *RSet,fd_set *WSet)
+bool pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
 {
    bool Res = true;
 
@@ -654,7 +655,7 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
 
       // if its the source file (e.g. local sources) we might be lucky
       // by dropping the dropping only for some methods.
-      URI const source = (*I)->DescURI();
+      URI const source((*I)->DescURI());
       if (source.Access == "file" || source.Access == "copy")
       {
 	 std::string const conf = "Binary::" + source.Access + "::APT::Sandbox::User";
@@ -684,12 +685,12 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
    CheckDropPrivsMustBeDisabled(*this);
 
    Running = true;
-   
-   for (Queue *I = Queues; I != 0; I = I->Next)
-      I->Startup();
-   
+
    if (Log != 0)
       Log->Start();
+
+   for (Queue *I = Queues; I != 0; I = I->Next)
+      I->Startup();
    
    bool WasCancelled = false;
 
@@ -719,7 +720,7 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 	 break;
       }
 
-      if(RunFdsSane(&RFds,&WFds) == false)
+      if(RunFds(&RFds,&WFds) == false)
          break;
 
       // Timeout, notify the log class
@@ -1301,13 +1302,13 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    {
       if (I->CurrentItem != 0 && I->CurrentItem->Owner->Complete == false)
       {
-	 CurrentBytes += I->CurrentSize;
-	 ResumeSize += I->ResumePoint;
+	 CurrentBytes += I->CurrentItem->CurrentSize;
+	 ResumeSize += I->CurrentItem->ResumePoint;
 
 	 // Files with unknown size always have 100% completion
 	 if (I->CurrentItem->Owner->FileSize == 0 &&
 	     I->CurrentItem->Owner->Complete == false)
-	    TotalBytes += I->CurrentSize;
+	    TotalBytes += I->CurrentItem->CurrentSize;
       }
    }
    
@@ -1371,8 +1372,6 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    int fd = _config->FindI("APT::Status-Fd",-1);
    if(fd > 0)
    {
-      ostringstream status;
-
       unsigned long long ETA = 0;
       if(CurrentCPS > 0 && TotalBytes > CurrentBytes)
          ETA = (TotalBytes - CurrentBytes) / CurrentCPS;
@@ -1444,9 +1443,8 @@ void pkgAcquireStatus::Fetched(unsigned long long Size,unsigned long long Resume
 									/*}}}*/
 bool pkgAcquireStatus::ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes)/*{{{*/
 {
-   auto const virt = dynamic_cast<pkgAcquireStatus2*>(this);
-   if (virt != nullptr)
-      return virt->ReleaseInfoChanges(LastRelease, CurrentRelease, std::move(Changes));
+   (void) LastRelease;
+   (void) CurrentRelease;
    return ReleaseInfoChangesAsGlobalErrors(std::move(Changes));
 }
 									/*}}}*/
@@ -1464,12 +1462,6 @@ bool pkgAcquireStatus::ReleaseInfoChangesAsGlobalErrors(std::vector<ReleaseInfoC
    return AllOkay;
 }
 									/*}}}*/
-bool pkgAcquireStatus2::ReleaseInfoChanges(metaIndex const * const, metaIndex const * const, std::vector<ReleaseInfoChange> &&Changes)
-{
-   return ReleaseInfoChangesAsGlobalErrors(std::move(Changes));
-}
-pkgAcquireStatus2::pkgAcquireStatus2() : pkgAcquireStatus() {}
-pkgAcquireStatus2::~pkgAcquireStatus2() {}
 
 
 pkgAcquire::UriIterator::UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), CurItem(0)

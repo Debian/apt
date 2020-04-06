@@ -1,8 +1,10 @@
-Tests: run-tests
+Tests: run-tests, pkg-config-test
 Restrictions: allow-stderr
 Depends: @, @builddeps@, dpkg, fakeroot, wget, stunnel4, lsof, db-util,
          gnupg (>= 2) | gnupg2,
          gnupg1 | gnupg (<< 2),
          gpgv (>= 2) | gpgv2,
          gpgv1 | gpgv (<< 2),
-         libfile-fcntllock-perl, python3-apt, aptitude
+         libfile-fcntllock-perl, python3-apt, aptitude,
+         pkg-config,
+         valgrind

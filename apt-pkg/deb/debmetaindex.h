@@ -8,12 +8,6 @@
 #include <string>
 #include <vector>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/sourcelist.h>
-#endif
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/init.h>
-#endif
 
 class pkgAcquire;
 class pkgIndexFile;
@@ -61,11 +55,11 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    std::map<std::string, std::string> GetReleaseOptions();
 
    virtual bool IsTrusted() const APT_OVERRIDE;
-   bool IsArchitectureSupported(std::string const &arch) const;
-   bool IsArchitectureAllSupportedFor(IndexTarget const &target) const;
-   bool HasSupportForComponent(std::string const &component) const;
+   bool IsArchitectureSupported(std::string const &arch) const override;
+   bool IsArchitectureAllSupportedFor(IndexTarget const &target) const override;
+   bool HasSupportForComponent(std::string const &component) const override;
 
-   APT_PURE time_t GetNotBefore() const;
+   APT_PURE time_t GetNotBefore() const override;
 
    void AddComponent(std::string const &sourcesEntry,
 	 bool const isSrc, std::string const &Name,

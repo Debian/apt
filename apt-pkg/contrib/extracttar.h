@@ -18,15 +18,10 @@
 
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/dirstream.h>
-#include <algorithm>
-using std::min;
-#endif
 
 class pkgDirStream;
 
-class ExtractTar
+class APT_PUBLIC ExtractTar
 {
    protected:
    
@@ -48,7 +43,6 @@ class ExtractTar
    // Fork and reap gzip
    bool StartGzip();
    bool Done();
-   APT_DEPRECATED_MSG("Parameter Force is ignored, use Done() instead.") bool Done(bool Force);
 
    public:
 

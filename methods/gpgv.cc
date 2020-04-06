@@ -83,7 +83,8 @@ static constexpr Digest Digests[] = {
 static Digest FindDigest(std::string const & Digest)
 {
    int id = atoi(Digest.c_str());
-   if (id >= 0 && static_cast<unsigned>(id) < _count(Digests)) {
+   if (id >= 0 && static_cast<unsigned>(id) < APT_ARRAY_SIZE(Digests))
+   {
       return Digests[id];
    } else {
       return Digests[0];
@@ -309,18 +310,16 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	       auto const master = SubKeyMapping.find(l);
 	       if (master == SubKeyMapping.end())
 		  continue;
-	       for (auto const &sub : master->second)
-		  if (IsTheSameKey(sub, good))
-		  {
-		     if (std::find(Signers.Valid.cbegin(), Signers.Valid.cend(), sub) == Signers.Valid.cend())
-			continue;
-		     found = true;
-		     Signers.SignedBy.push_back(l);
-		     Signers.SignedBy.push_back(sub + "!");
-		     break;
-		  }
-	       if (found)
+	       auto const validsubkeysig = std::find_if(master->second.cbegin(), master->second.cend(), [&](auto const subkey) {
+		  return IsTheSameKey(subkey, good) && std::find(Signers.Valid.cbegin(), Signers.Valid.cend(), subkey) != Signers.Valid.cend();
+	       });
+	       if (validsubkeysig != master->second.cend())
+	       {
+		  found = true;
+		  Signers.SignedBy.push_back(l);
+		  Signers.SignedBy.push_back(*validsubkeysig + "!");
 		  break;
+	       }
 	    }
 	 }
 	 if (Debug)
@@ -419,7 +418,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 
 bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 {
-   URI const Get = Itm->Uri;
+   URI const Get(Itm->Uri);
    string const Path = Get.Host + Get.Path; // To account for relative paths
    SignersStorage Signers;
 

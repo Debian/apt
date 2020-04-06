@@ -9,16 +9,6 @@
 #include <string>
 #include <vector>
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/pkgcache.h>
-class pkgCacheGenerator;
-class OpProgress;
-#endif
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/srcrecords.h>
-using std::string;
-#endif
 
 class pkgAcquire;
 class IndexTarget;
@@ -27,19 +17,15 @@ class OpProgress;
 
 class metaIndexPrivate;
 
-class metaIndex
+class APT_PUBLIC metaIndex
 {
 public:
-   APT_IGNORE_DEPRECATED_PUSH
    struct checkSum
    {
       std::string MetaKeyFilename;
       HashStringList Hashes;
       unsigned long long Size;
-
-      APT_DEPRECATED_MSG("Use the HashStringList member Hashes instead of a hardcoded HashString") HashString Hash;
    };
-   APT_IGNORE_DEPRECATED_POP
 
    enum APT_HIDDEN TriState {
       TRI_YES, TRI_DONTCARE, TRI_NO, TRI_UNSET
@@ -58,6 +44,11 @@ protected:
    // parsed from a file
    std::string Suite;
    std::string Codename;
+   std::string Origin;
+   std::string Label;
+   std::string Version;
+   signed short DefaultPin;
+   std::string ReleaseNotes;
    time_t Date;
    time_t ValidUntil;
    bool SupportsAcquireByHash;
@@ -82,7 +73,7 @@ public:
    bool GetSupportsAcquireByHash() const;
    time_t GetValidUntil() const;
    time_t GetDate() const;
-   APT_HIDDEN time_t GetNotBefore() const; // FIXME make virtual
+   virtual time_t GetNotBefore() const = 0;
 
    std::string GetExpectedDist() const;
    bool CheckDist(std::string const &MaybeDist) const;
@@ -116,16 +107,9 @@ public:
              char const * const Type);
    virtual ~metaIndex();
 
-   // FIXME: make virtual on next abi break
-   bool IsArchitectureSupported(std::string const &arch) const;
-   bool IsArchitectureAllSupportedFor(IndexTarget const &target) const;
-   bool HasSupportForComponent(std::string const &component) const;
-   // FIXME: should be members of the class on abi break
-   APT_HIDDEN void SetOrigin(std::string const &origin);
-   APT_HIDDEN void SetLabel(std::string const &label);
-   APT_HIDDEN void SetVersion(std::string const &version);
-   APT_HIDDEN void SetDefaultPin(signed short const defaultpin);
-   APT_HIDDEN void SetReleaseNotes(std::string const &notes);
+   virtual bool IsArchitectureSupported(std::string const &arch) const;
+   virtual bool IsArchitectureAllSupportedFor(IndexTarget const &target) const;
+   virtual bool HasSupportForComponent(std::string const &component) const;
 };
 
 #endif

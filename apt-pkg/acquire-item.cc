@@ -25,7 +25,6 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
-#include <apt-pkg/netrc.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/sourcelist.h>
@@ -291,9 +290,8 @@ public:
    std::vector<std::string> BadAlternativeSites;
    std::vector<std::string> PastRedirections;
    std::unordered_map<std::string, std::string> CustomFields;
-   unsigned int Retries;
 
-   Private() : Retries(_config->FindI("Acquire::Retries", 0))
+   Private()
    {
    }
 };
@@ -770,15 +768,13 @@ class APT_HIDDEN CleanupItem : public pkgAcqTransactionItem		/*{{{*/
 									/*}}}*/
 
 // Acquire::Item::Item - Constructor					/*{{{*/
-APT_IGNORE_DEPRECATED_PUSH
 pkgAcquire::Item::Item(pkgAcquire * const owner) :
-   FileSize(0), PartialSize(0), Mode(0), ID(0), Complete(false), Local(false),
-    QueueCounter(0), ExpectedAdditionalItems(0), Owner(owner), d(new Private())
+   FileSize(0), PartialSize(0), ID(0), Complete(false), Local(false),
+    QueueCounter(0), ExpectedAdditionalItems(0), Retries(_config->FindI("Acquire::Retries", 0)), Owner(owner), d(new Private())
 {
    Owner->Add(this);
    Status = StatIdle;
 }
-APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // Acquire::Item::~Item - Destructor					/*{{{*/
 pkgAcquire::Item::~Item()
@@ -844,11 +840,6 @@ void pkgAcquire::Item::RemoveAlternativeSite(std::string &&OldSite) /*{{{*/
 					   }),
 			    d->AlternativeURIs.end());
    d->BadAlternativeSites.push_back(std::move(OldSite));
-}
-									/*}}}*/
-unsigned int &pkgAcquire::Item::ModifyRetries() /*{{{*/
-{
-   return d->Retries;
 }
 									/*}}}*/
 std::string pkgAcquire::Item::ShortDesc() const				/*{{{*/
@@ -1120,15 +1111,6 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
 void pkgAcquire::Item::SetActiveSubprocess(const std::string &subprocess)/*{{{*/
 {
       ActiveSubprocess = subprocess;
-      APT_IGNORE_DEPRECATED_PUSH
-      Mode = ActiveSubprocess.c_str();
-      APT_IGNORE_DEPRECATED_POP
-}
-									/*}}}*/
-// Acquire::Item::ReportMirrorFailure					/*{{{*/
-void pkgAcquire::Item::ReportMirrorFailure(std::string const &FailCode)
-{
-   ReportMirrorFailureToCentral(*this, FailCode, FailCode);
 }
 									/*}}}*/
 std::string pkgAcquire::Item::HashSum() const				/*{{{*/
@@ -2036,7 +2018,6 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 	  * they would be considered as trusted later on */
 	 string const FinalRelease = GetFinalFileNameFromURI(DetachedDataTarget.URI);
 	 string const PartialRelease = GetPartialFileNameFromURI(DetachedDataTarget.URI);
-	 string const FinalReleasegpg = GetFinalFileNameFromURI(DetachedSigTarget.URI);
 	 string const FinalInRelease = GetFinalFilename();
 	 Rename(DestFile, PartialRelease);
 	 TransactionManager->TransactionStageCopy(this, PartialRelease, FinalRelease);
@@ -2236,6 +2217,11 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
          return;
 
    // ensures that a Release.gpg file in the lists/ is removed by the transaction
+   if (not MetaIndexFileSignature.empty())
+   {
+      DestFile = MetaIndexFileSignature;
+      MetaIndexFileSignature.clear();
+   }
    TransactionManager->TransactionStageRemoval(this, DestFile);
 
    // only allow going further if the user explicitly wants it
@@ -2597,14 +2583,18 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       return false;
    }
 
-   for (auto const &patch: available_patches)
-      if (patch.result_hashes.usable() == false ||
-	    patch.patch_hashes.usable() == false ||
-	    patch.download_hashes.usable() == false)
+   {
+      auto const patch = std::find_if(available_patches.cbegin(), available_patches.cend(), [](auto const &patch) {
+	 return not patch.result_hashes.usable() ||
+		not patch.patch_hashes.usable() ||
+		not patch.download_hashes.usable();
+      });
+      if (patch != available_patches.cend())
       {
-	 strprintf(ErrorText, "Provides no usable hashes for %s", patch.file.c_str());
+	 strprintf(ErrorText, "Provides no usable hashes for %s", patch->file.c_str());
 	 return false;
       }
+   }
 
    // patching with too many files is rather slow compared to a fast download
    unsigned long const fileLimit = _config->FindI("Acquire::PDiffs::FileLimit", 0);
@@ -2666,13 +2656,15 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 	 return false;
       std::string const PartialFile = GetPartialFileNameFromURI(Target.URI);
       std::string const PatchedFile = GetKeepCompressedFileName(PartialFile + "-patched", Target);
-      if (RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PartialFile) == false ||
-	    RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PatchedFile) == false)
+      if (not RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PartialFile) ||
+	  not RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PatchedFile))
 	 return false;
-      for (auto const &ext : APT::Configuration::getCompressorExtensions())
       {
-	 if (RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PartialFile + ext) == false ||
-	       RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PatchedFile + ext) == false)
+	 auto const exts = APT::Configuration::getCompressorExtensions();
+	 if (not std::all_of(exts.cbegin(), exts.cend(), [&](auto const &ext) {
+		return RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PartialFile + ext) &&
+		       RemoveFileForBootstrapLinking(ErrorText, CurrentPackagesFile, PatchedFile + ext);
+	     }))
 	    return false;
       }
       std::string const Ext = Final.substr(CurrentPackagesFile.length());
@@ -3271,19 +3263,14 @@ void pkgAcqIndex::StageDownloadDone(string const &Message)
 
    // we need to verify the file against the current Release file again
    // on if-modfied-since hit to avoid a stale attack against us
-   if(StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+   if (StringToBool(LookupTag(Message, "IMS-Hit"), false))
    {
-      // copy FinalFile into partial/ so that we check the hash again
-      string const FinalFile = GetExistingFilename(GetFinalFileNameFromURI(Target.URI));
-      if (symlink(FinalFile.c_str(), DestFile.c_str()) != 0)
-	 _error->WarningE("pkgAcqIndex::StageDownloadDone", "Symlinking final file %s back to %s failed", FinalFile.c_str(), DestFile.c_str());
-      else
-      {
-	 EraseFileName = DestFile;
-	 Filename = DestFile;
-      }
+      Filename = GetExistingFilename(GetFinalFileNameFromURI(Target.URI));
+      EraseFileName = DestFile = flCombine(flNotFile(DestFile), flNotDir(Filename));
+      if (symlink(Filename.c_str(), DestFile.c_str()) != 0)
+	 _error->WarningE("pkgAcqIndex::StageDownloadDone", "Symlinking file %s to %s failed", Filename.c_str(), DestFile.c_str());
       Stage = STAGE_DECOMPRESS_AND_VERIFY;
-      Desc.URI = "store:" + Filename;
+      Desc.URI = "store:" + DestFile;
       QueueURI(Desc);
       SetActiveSubprocess(::URI(Desc.URI).Access);
       return;
@@ -3346,11 +3333,10 @@ pkgAcqIndex::~pkgAcqIndex() {}
 // ---------------------------------------------------------------------
 /* This just sets up the initial fetch environment and queues the first
    possibilitiy */
-APT_IGNORE_DEPRECATED_PUSH
 pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sources,
 			     pkgRecords *const Recs, pkgCache::VerIterator const &Version,
 			     string &StoreFilename) : Item(Owner), d(NULL), LocalSource(false), Version(Version), Sources(Sources), Recs(Recs),
-						      StoreFilename(StoreFilename), Vf(),
+						      StoreFilename(StoreFilename),
 						      Trusted(false)
 {
    if (Version.Arch() == 0)
@@ -3394,16 +3380,12 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
       Trusted = false;
 
    StoreFilename.clear();
-   std::set<string> targetComponents, targetCodenames, targetSuites;
-   std::vector<std::unique_ptr<FileFd>> authconfs;
    for (auto Vf = Version.FileList(); Vf.end() == false; ++Vf)
    {
       auto const PkgF = Vf.File();
       if (unlikely(PkgF.end()))
 	 continue;
       if (PkgF.Flagged(pkgCache::Flag::NotSource))
-	 continue;
-      if (PkgF.Flagged(pkgCache::Flag::PackagesRequireAuthorization) && !IsAuthorized(PkgF, authconfs))
 	 continue;
       pkgIndexFile *Index;
       if (Sources->FindIndex(PkgF, Index) == false)
@@ -3539,7 +3521,6 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
    Local = false;
    QueueURI(Desc);
 }
-APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 bool pkgAcqArchive::QueueNext() /*{{{*/
 {
@@ -3865,11 +3846,10 @@ pkgAcqChangelog::~pkgAcqChangelog()					/*{{{*/
 									/*}}}*/
 
 // AcqFile::pkgAcqFile - Constructor					/*{{{*/
-APT_IGNORE_DEPRECATED_PUSH
 pkgAcqFile::pkgAcqFile(pkgAcquire *const Owner, string const &URI, HashStringList const &Hashes,
 		       unsigned long long const Size, string const &Dsc, string const &ShortDesc,
 		       const string &DestDir, const string &DestFilename,
-		       bool const IsIndexFile) : Item(Owner), d(NULL), Retries(0), IsIndexFile(IsIndexFile), ExpectedHashes(Hashes)
+		       bool const IsIndexFile) : Item(Owner), d(NULL), IsIndexFile(IsIndexFile), ExpectedHashes(Hashes)
 {
    if(!DestFilename.empty())
       DestFile = DestFilename;
@@ -3900,7 +3880,6 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *const Owner, string const &URI, HashStringLis
 
    QueueURI(Desc);
 }
-APT_IGNORE_DEPRECATED_POP
 									/*}}}*/
 // AcqFile::Done - Item downloaded OK					/*{{{*/
 void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
@@ -3948,12 +3927,6 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
 	 Complete = false;
       }
    }
-}
-									/*}}}*/
-void pkgAcqFile::Failed(string const &Message, pkgAcquire::MethodConfig const *const Cnf) /*{{{*/
-{
-   // FIXME: Remove this pointless overload on next ABI break
-   Item::Failed(Message, Cnf);
 }
 									/*}}}*/
 string pkgAcqFile::Custom600Headers() const				/*{{{*/

@@ -22,9 +22,9 @@ done
 mv foo.rpm foo.deb
 for exe in apt aptget; do
 	for cmd in install remove purge upgrade full-upgrade; do
-		testfailuremsg "E: Sub-process Popen returned an error code (2)
-E: Encountered a section with no Package: header
-E: Problem with MergeList ${TMPWORKINGDIRECTORY}/foo.deb
+		testfailuremsg "E: Invalid archive signature
+E: Internal error, could not locate member control.tar.{zstlz4gzxzbz2lzma}
+E: Could not read meta data from ${TMPWORKINGDIRECTORY}/foo.deb
 E: The package lists or status file could not be parsed or opened." $exe $cmd ./foo.deb
 	done
 done
@@ -168,12 +168,16 @@ createpkg 'trailing-newline' '' '
 createpkg 'double-trailing-newline' '' '
 
 '
+createpkg 'last-line-parse' '' 'Pre-Depends: pkg-as-it-should-be
+'
 
 echo 'Package: /pkg-/
 Pin: release a=experimental
 Pin-Priority: 501' > rootdir/etc/apt/preferences.d/pinit
 
+testfailuremsg 'E: Unable to correct problems, you have held broken packages.' aptget install -q=0 ./incoming/pkg-last-line-parse_0_all.deb
 testsuccess aptget install ./incoming/pkg-as-it-should-be_0_all.deb
+testsuccess aptget install ./incoming/pkg-last-line-parse_0_all.deb
 testsuccess aptget install "$(readlink -f ./incoming/pkg-leading-newline_0_all.deb)"
 testsuccess aptget install ./incoming/pkg-trailing-newline_0_all.deb
 testsuccess aptget install ./incoming/pkg-double-trailing-newline_0_all.deb

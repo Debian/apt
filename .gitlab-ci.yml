@@ -1,6 +1,11 @@
-image: debian:testing
+image: debian:unstable
 variables:
   DEBIAN_FRONTEND: noninteractive
+  CCACHE_DIR: $CI_PROJECT_DIR/.ccache
+  CCACHE_BASEDIR: $CI_PROJECT_DIR
+cache:
+  paths:
+    - .ccache
 
 test as root:
   stage: test
@@ -8,15 +13,14 @@ test as root:
     - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
     - rm -f /etc/dpkg/dpkg.cfg.d/excludes
     - apt-get update
-    - apt-get install -qq build-essential expect gcovr sudo
+    - apt-get install -qq build-essential expect sudo ccache
     - chmod -R o+rwX $PWD
     - ./prepare-release travis-ci
-    - sudo -u travis mkdir build
-    - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=Coverage -G Ninja ..
-    - sudo -u travis ninja -C build
+    - sudo -u travis mkdir -p build .ccache
+    - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=Release  -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
+    - sudo -u travis --preserve-env=CCACHE_DIR,CCACHE_BASEDIR ninja -C build
     - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
     - unbuffer ./test/integration/run-tests -q -j 4
-    - gcovr
 
 test as user:
   stage: test
@@ -24,13 +28,12 @@ test as user:
     - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
     - rm -f /etc/dpkg/dpkg.cfg.d/excludes
     - apt-get update
-    - apt-get install -qq build-essential expect gcovr sudo
+    - apt-get install -qq build-essential expect sudo ccache
     - chmod 755 /root
     - chmod -R o+rwX $PWD
     - ./prepare-release travis-ci
-    - sudo -u travis mkdir build
-    - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=Coverage -G Ninja ..
-    - sudo -u travis ninja -C build
+    - sudo -u travis mkdir -p build .ccache
+    - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
+    - sudo -u travis --preserve-env=CCACHE_DIR,CCACHE_BASEDIR ninja -C build
     - sudo -u travis CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
     - sudo -u travis unbuffer ./test/integration/run-tests -q -j 4
-    - sudo -u travis gcovr

@@ -43,17 +43,9 @@ bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
    if (FileExists(Dir) == false)
       return true;
 
-   auto const withoutChangingDir = dynamic_cast<pkgArchiveCleaner2*>(this);
    int const dirfd = open(Dir.c_str(), O_RDONLY | O_DIRECTORY | O_CLOEXEC);
    if (dirfd == -1)
       return _error->Errno("open",_("Unable to read %s"),Dir.c_str());
-   std::string CWD;
-   if (withoutChangingDir == nullptr)
-   {
-      CWD = SafeGetCWD();
-      if (fchdir(dirfd) != 0)
-	 return _error->Errno("fchdir",_("Unable to change to %s"),Dir.c_str());
-   }
    DIR * const D = fdopendir(dirfd);
    if (D == nullptr)
       return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
@@ -131,18 +123,9 @@ bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
 	    continue;
       }
 
-      if (withoutChangingDir == nullptr)
-      {
-	 APT_IGNORE_DEPRECATED_PUSH
-	 Erase(Dir->d_name, Pkg, Ver, St);
-	 APT_IGNORE_DEPRECATED_POP
-      }
-      else
-	 withoutChangingDir->Erase(dirfd, Dir->d_name, Pkg, Ver, St);
+      Erase(dirfd, Dir->d_name, Pkg, Ver, St);
    }
    closedir(D);
-   if (withoutChangingDir == nullptr && chdir(CWD.c_str()) != 0)
-      return _error->Errno("chdir", _("Unable to change to %s"),Dir.c_str());
    return true;
 }
 									/*}}}*/

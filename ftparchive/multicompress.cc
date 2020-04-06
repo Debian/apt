@@ -18,8 +18,7 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/hashsum_template.h>
-#include <apt-pkg/md5.h>
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/strutl.h>
 
 #include <ctype.h>
@@ -56,12 +55,10 @@ static std::vector<APT::Configuration::Compressor>::const_iterator findMatchingC
 // MultiCompress::MultiCompress - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* Setup the file outputs, compression modes and fork the writer child */
-MultiCompress::MultiCompress(string const &Output,string const &Compress,
-			     mode_t const &Permissions,bool const &Write) :
-			Permissions(Permissions)
+MultiCompress::MultiCompress(string const &Output, string const &Compress,
+			     mode_t const &Permissions, bool const &Write) : Outputter{-1}, Permissions(Permissions)
 {
    Outputs = 0;
-   Outputter = -1;
    UpdateMTime = 0;
 
    auto const Compressors = APT::Configuration::getCompressors();
@@ -269,7 +266,7 @@ bool MultiCompress::Child(int const &FD)
    SetNonBlock(FD,false);
    unsigned char Buffer[32*1024];
    unsigned long long FileSize = 0;
-   MD5Summation MD5;
+   Hashes MD5(Hashes::MD5SUM);
    while (1)
    {
       WaitFd(FD,false);
@@ -317,7 +314,7 @@ bool MultiCompress::Child(int const &FD)
       }
 
       // Compute the hash
-      MD5Summation OldMD5;
+      Hashes OldMD5(Hashes::MD5SUM);
       unsigned long long NewFileSize = 0;
       while (1)
       {
@@ -332,7 +329,7 @@ bool MultiCompress::Child(int const &FD)
       CompFd.Close();
 
       // Check the hash
-      if (OldMD5.Result() == MD5.Result() &&
+      if (OldMD5.GetHashString(Hashes::MD5SUM) == MD5.GetHashString(Hashes::MD5SUM) &&
 	  FileSize == NewFileSize)
       {
 	 for (Files *I = Outputs; I != 0; I = I->Next)

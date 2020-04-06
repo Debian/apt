@@ -30,10 +30,6 @@
 #include <unordered_map>
 #include <vector>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/sourcelist.h>
-#endif
 
 /** \addtogroup acquire
  *  @{
@@ -47,7 +43,7 @@ class pkgAcqMetaClearSig;
 class pkgAcqIndexMergeDiffs;
 class metaIndex;
 
-class pkgAcquire::Item : public WeakPointable				/*{{{*/
+class APT_PUBLIC pkgAcquire::Item : public WeakPointable				/*{{{*/
 /** \brief Represents the process by which a pkgAcquire object should
  *  retrieve a file or a collection of files.
  *
@@ -102,11 +98,6 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
    /** \brief How much of the object was already fetched. */
    unsigned long long PartialSize;
 
-   /** \brief If not \b NULL, contains the name of a subprocess that
-    *  is operating on this object (for instance, "gzip" or "gpgv").
-    */
-   APT_DEPRECATED_MSG("Use the std::string member ActiveSubprocess instead") const char *Mode;
-
    /** \brief contains the name of the subprocess that is operating on this object
     * (for instance, "gzip", "rred" or "gpgv"). This is obsoleting #Mode from above
     * as it can manage the lifetime of included string properly. */
@@ -160,6 +151,9 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     *  will be written.
     */
    std::string DestFile;
+
+   /** \brief Number of retries */
+   unsigned int Retries;
 
    /** \brief Invoked by the acquire worker when the object couldn't
     *  be fetched.
@@ -240,8 +234,6 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
     *  no trailing newline.
     */
    virtual std::string Custom600Headers() const;
-   // Retries should really be a member of the Item, but can't be for ABI reasons
-   APT_HIDDEN unsigned int &ModifyRetries();
    // this is more a hack than a proper external interface, hence hidden
    APT_HIDDEN std::unordered_map<std::string, std::string> &ModifyCustomFields();
    // this isn't the super nicest interface either…
@@ -283,15 +275,6 @@ class pkgAcquire::Item : public WeakPointable				/*{{{*/
 
    /** \return \b true if this object is being fetched from a trusted source. */
    virtual bool IsTrusted() const;
-
-   /** \brief Report mirror problem
-    *
-    *  This allows reporting mirror failures back to a centralized
-    *  server. The apt-report-mirror-failure script is called for this
-    *
-    *  \param FailCode A short failure string that is send
-    */
-   APT_DEPRECATED_MSG("Item::Failed does this for you") void ReportMirrorFailure(std::string const &FailCode);
 
    /** \brief Set the name of the current active subprocess
     *
@@ -957,7 +940,7 @@ class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
  *  If the package file already exists in the cache, nothing will be
  *  done.
  */
-class pkgAcqArchive : public pkgAcquire::Item
+class APT_PUBLIC pkgAcqArchive : public pkgAcquire::Item
 {
    void * const d;
 
@@ -982,18 +965,6 @@ class pkgAcqArchive : public pkgAcquire::Item
     *  should be stored.
     */
    std::string &StoreFilename;
-
-   /** \brief The next file for this version to try to download. */
-   APT_DEPRECATED_MSG("Unused member")
-   pkgCache::VerFileIterator Vf;
-
-   /** \brief How many (more) times to try to find a new source from
-    *  which to download this package version if it fails.
-    *
-    *  Set from Acquire::Retries.
-    */
-   APT_DEPRECATED_MSG("Unused member. See pkgAcqItem::Retries.")
-   unsigned int Retries;
 
    /** \brief \b true if this version file is being downloaded from a
     *  trusted source.
@@ -1047,7 +1018,7 @@ class pkgAcqArchive : public pkgAcquire::Item
  *  Downloads the changelog to a temporary file it will also remove again
  *  while it is deconstructed or downloads it to a named location.
  */
-class pkgAcqChangelog : public pkgAcquire::Item
+class APT_PUBLIC pkgAcqChangelog : public pkgAcquire::Item
 {
    class Private;
    Private * const d;
@@ -1163,15 +1134,9 @@ private:
  *  normally is a NOP, such as "file".  If the download fails, the
  *  partial file is renamed to get a ".FAILED" extension.
  */
-class pkgAcqFile : public pkgAcquire::Item
+class APT_PUBLIC pkgAcqFile : public pkgAcquire::Item
 {
    void * const d;
-
-   /** \brief How many times to retry the download, set from
-    *  Acquire::Retries.
-    */
-   APT_DEPRECATED_MSG("Unused member. See pkgAcqItem::Retries.")
-   unsigned int Retries;
 
    /** \brief Should this file be considered a index file */
    bool IsIndexFile;
@@ -1182,7 +1147,6 @@ class pkgAcqFile : public pkgAcquire::Item
    virtual bool HashesRequired() const APT_OVERRIDE;
 
    // Specialized action members
-   virtual void Failed(std::string const &Message,pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual void Done(std::string const &Message, HashStringList const &CalcHashes,
 		     pkgAcquire::MethodConfig const * const Cnf) APT_OVERRIDE;
    virtual std::string DescURI() const APT_OVERRIDE {return Desc.URI;};

@@ -64,6 +64,9 @@
 /* The mail address to reach upstream */
 #define PACKAGE_MAIL "${PACKAGE_MAIL}"
 
+/* Guard for code that should only be emitted when compiling apt */
+#define APT_COMPILING_APT
+
 /* Various directories */
 #cmakedefine CMAKE_INSTALL_FULL_BINDIR "${CMAKE_INSTALL_FULL_BINDIR}"
 #cmakedefine STATE_DIR "${STATE_DIR}"
@@ -80,11 +83,6 @@
 /* defined if __builtin_ia32_crc32{s,d}i() exists in an sse4.2 target */
 #cmakedefine HAVE_FMV_SSE42_AND_CRC32
 #cmakedefine HAVE_FMV_SSE42_AND_CRC32DI
-
-#define APT_8_CLEANER_HEADERS
-#define APT_9_CLEANER_HEADERS
-#define APT_10_CLEANER_HEADERS
-#define APT_15_CLEANER_HEADERS
 
 /* unrolling is faster combined with an optimizing compiler */
 #define SHA2_UNROLL_TRANSFORM

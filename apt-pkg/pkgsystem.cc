@@ -56,22 +56,6 @@ APT_PURE pkgSystem *pkgSystem::GetSystem(const char *Label)
    return 0;   
 }
 									/*}}}*/
-bool pkgSystem::MultiArchSupported() const				/*{{{*/
-{
-   debSystem const * const deb = dynamic_cast<debSystem const *>(this);
-   if (deb != NULL)
-      return deb->SupportsMultiArch();
-   return true;
-}
-									/*}}}*/
-std::vector<std::string> pkgSystem::ArchitecturesSupported() const	/*{{{*/
-{
-   debSystem const * const deb = dynamic_cast<debSystem const *>(this);
-   if (deb != NULL)
-      return deb->SupportedArchitectures();
-   return {};
-}
-									/*}}}*/
 // pkgSystem::Set/GetVersionMapping - for internal/external communication/*{{{*/
 void pkgSystem::SetVersionMapping(map_id_t const in, map_id_t const out)
 {
@@ -83,31 +67,6 @@ map_id_t pkgSystem::GetVersionMapping(map_id_t const in) const
 {
    auto const o = d->idmap.find(in);
    return (o == d->idmap.end()) ? in : o->second;
-}
-									/*}}}*/
-
-bool pkgSystem::LockInner()				/*{{{*/
-{
-   debSystem * const deb = dynamic_cast<debSystem *>(this);
-   if (deb != NULL)
-      return deb->LockInner();
-   return _error->Error("LockInner is not implemented");
-}
-									/*}}}*/
-bool pkgSystem::UnLockInner(bool NoErrors)				/*{{{*/
-{
-   debSystem * const deb = dynamic_cast<debSystem *>(this);
-   if (deb != NULL)
-      return deb->UnLockInner(NoErrors);
-   return _error->Error("UnLockInner is not implemented");
-}
-									/*}}}*/
-bool pkgSystem::IsLocked() 						/*{{{*/
-{
-   debSystem * const deb = dynamic_cast<debSystem *>(this);
-   if (deb != NULL)
-      return deb->IsLocked();
-   return true;
 }
 									/*}}}*/
 pkgSystem::~pkgSystem() {}

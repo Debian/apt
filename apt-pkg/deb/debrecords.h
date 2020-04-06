@@ -20,9 +20,6 @@
 
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/indexfile.h>
-#endif
 
 class APT_HIDDEN debRecordParserBase : public pkgRecords::Parser
 {
@@ -85,7 +82,7 @@ class APT_HIDDEN debDebFileRecordParser : public debRecordParserBase
  public:
    virtual std::string FileName() APT_OVERRIDE;
 
-   debDebFileRecordParser(std::string FileName);
+   explicit debDebFileRecordParser(std::string FileName);
    virtual ~debDebFileRecordParser();
 };
 

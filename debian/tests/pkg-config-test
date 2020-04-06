@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+
+WORKDIR=$(mktemp -d)
+trap "rm -rf $WORKDIR" 0 INT QUIT ABRT PIPE TERM
+cd $WORKDIR
+cat <<EOF > pkgconfigtest.c
+#include <apt-pkg/init.h>
+#include <stdio.h>
+
+int main()
+{
+    printf("Apt Version: %s \n", pkgVersion);
+    return 0;
+}
+EOF
+
+g++ -o pkgconfigtest pkgconfigtest.c `pkg-config --cflags --libs apt-pkg`
+echo "build: OK"
+[ -x pkgconfigtest ]
+./pkgconfigtest
+echo "run: OK"

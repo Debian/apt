@@ -43,7 +43,7 @@ class FileMethod : public aptMethod
 /* */
 bool FileMethod::Fetch(FetchItem *Itm)
 {
-   URI Get = Itm->Uri;
+   URI Get(Itm->Uri);
    std::string File = Get.Path;
    FetchResult Res;
    if (Get.Host.empty() == false)
@@ -57,7 +57,6 @@ bool FileMethod::Fetch(FetchItem *Itm)
       {
 	 if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
 	 {
-	    HashStringList const hsl = Itm->ExpectedHashes;
 	    if (Itm->ExpectedHashes.VerifyFile(File))
 	    {
 	       Res.Filename = Itm->DestFile;

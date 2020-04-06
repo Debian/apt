@@ -46,10 +46,10 @@ testprotected() {
 	testfailure --nomsg grep '^[A-Z]: ' protected.list
 
 	msgtest 'Check kernel autoremoval protection list includes' 'most recent kernel'
-	testsuccess --nomsg grep '^\^linux-image-100\\\.0\\\.0-1-generic\$$' protected.list
+	testsuccess --nomsg grep '^\^linux-.*-100\\\.0\\\.0-1-generic\$$' protected.list
 
 	msgtest 'Check kernel autoremoval protection list includes' 'running kernel'
-	testsuccess --nomsg grep "^\\^linux-image-$(uname -r | tr '[A-Z]' '[a-z]' | sed -e 's#\.#\\\\.#g')\\\$\$" protected.list
+	testsuccess --nomsg grep "^\\^linux-.*-$(uname -r | tr '[A-Z]' '[a-z]' | sed -e 's#\.#\\\\.#g')\\\$\$" protected.list
 
 	msgtest 'Check kernel autoremoval protection list does not include' 'metapackages'
 	testfailure --nomsg grep -e '^\^linux-image-amd64\$$' -e '^\^linux-image-686-pae\$$' -e ':i386' protected.list
@@ -115,7 +115,7 @@ Remv ${CURRENTKERNEL}-dbg [5-1]" aptget autoremove -sV
 msgmsg "run without parameter"
 testprotected
 msgtest 'Check kernel autoremoval protection list does not include' 'old kernel'
-testfailure --nomsg grep '^\^linux-image-1\\\.0\\\.0-2-generic\$$' protected.list
+testfailure --nomsg grep '^\^linux-.*-1\\\.0\\\.0-2-generic\$$' protected.list
 export COLUMNS=99999
 testsuccessequal "Reading package lists...
 Building dependency tree...
@@ -134,9 +134,9 @@ msgmsg "install unknown kernel"
 # know for sure without complicated detection mechanisms
 testprotected 1.0.0-2-ungeneric
 msgtest 'Check kernel autoremoval protection list does not include' 'old kernel'
-testfailure --nomsg grep '^\^linux-image-1\\\.0\\\.0-2-generic\$$' protected.list
+testfailure --nomsg grep '^\^linux-.*-1\\\.0\\\.0-2-generic\$$' protected.list
 msgtest 'Check kernel autoremoval protection list does include' 'unknown installed kernel'
-testsuccess --nomsg grep '^\^linux-image-1\\\.0\\\.0-2-ungeneric\$$' protected.list
+testsuccess --nomsg grep '^\^linux-.*-1\\\.0\\\.0-2-ungeneric\$$' protected.list
 export COLUMNS=9
 testsuccessequal "Reading package lists...
 Building dependency tree...
@@ -154,7 +154,7 @@ unset COLUMNS
 msgmsg "install an old kernel"
 testprotected 1.0.0-2-generic
 msgtest 'Check kernel autoremoval protection list includes' 'installed kernel'
-testsuccess --nomsg grep '^\^linux-image-1\\\.0\\\.0-2-generic\$$' protected.list
+testsuccess --nomsg grep '^\^linux-.*-1\\\.0\\\.0-2-generic\$$' protected.list
 export COLUMNS=9
 testsuccessequal "Reading package lists...
 Building dependency tree...

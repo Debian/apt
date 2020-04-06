@@ -40,18 +40,16 @@
 
 #include <vector>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/depcache.h>
-#endif
 
 class pkgDepCache;
 class pkgPackageManager;
 class pkgVersioningSystem;
 class Configuration;
 class pkgIndexFile;
+class OpProgress;
 
 class pkgSystemPrivate;
-class pkgSystem
+class APT_PUBLIC pkgSystem
 {
    public:
 
@@ -65,7 +63,7 @@ class pkgSystem
    
    /* Prevent other programs from touching shared data not covered by
       other locks (cache or state locks) */
-   virtual bool Lock() = 0;
+   virtual bool Lock(OpProgress *const Progress = nullptr) = 0;
    virtual bool UnLock(bool NoErrors = false) = 0;
    
    /* Various helper classes to interface with specific bits of this
@@ -86,7 +84,7 @@ class pkgSystem
    virtual bool FindIndex(pkgCache::PkgFileIterator File,
 			  pkgIndexFile *&Found) const = 0;
 
-   /* Evauluate how 'right' we are for this system based on the filesystem
+   /* Evaluate how 'right' we are for this system based on the filesystem
       etc.. */
    virtual signed Score(Configuration const &/*Cnf*/) {
       return 0;
@@ -103,7 +101,7 @@ class pkgSystem
     *
     * @return \b true if the system supports MultiArch, \b false if not.
     */
-   bool MultiArchSupported() const;
+   virtual bool MultiArchSupported() const = 0;
    /** architectures supported by this system
     *
     * A MultiArch capable system might be configured to use
@@ -112,7 +110,7 @@ class pkgSystem
     * @return a list of all architectures (native + foreign) configured
     * for on this system (aka: which can be installed without force)
     */
-   std::vector<std::string> ArchitecturesSupported() const;
+   virtual std::vector<std::string> ArchitecturesSupported() const  = 0;
 
    APT_HIDDEN void SetVersionMapping(map_id_t const in, map_id_t const out);
    APT_HIDDEN map_id_t GetVersionMapping(map_id_t const in) const;
@@ -127,15 +125,15 @@ class pkgSystem
     * lock without releasing the overall outer lock, so that dpkg can run
     * correctly but no other APT instance can acquire the system lock.
     */
-   bool LockInner();
-   bool UnLockInner(bool NoErrors = false);
+   virtual bool LockInner(OpProgress *const Progress = 0, int timeOutSec = 0) = 0;
+   virtual bool UnLockInner(bool NoErrors = false)  = 0;
    /// checks if the system is currently locked
-   bool IsLocked();
+   virtual bool IsLocked() = 0;
    private:
    pkgSystemPrivate * const d;
 };
 
 // The environment we are operating in.
-extern pkgSystem *_system;
+APT_PUBLIC extern pkgSystem *_system;
 
 #endif

@@ -229,6 +229,27 @@ gdb() {
 	fi
 	runapt command gdb --quiet -ex "directory '$SOURCEDIRECTORY'" -ex run "$CMD" --args "$CMD" "$@"
 }
+
+valgrind() {
+	local CMD
+	case "$1" in
+	aptget) CMD="apt-get";;
+	aptcache) CMD="apt-cache";;
+	aptcdrom) CMD="apt-cdrom";;
+	aptconfig) CMD="apt-config";;
+	aptmark) CMD="apt-mark";;
+	apthelper) CMD="apt-helper";;
+	aptftparchive) CMD="apt-ftparchive";;
+	dpkg) shift; runapt "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg" "$@"; return;;
+	*) CMD="$1";;
+	esac
+	shift
+	if [ "${CMD##*/}" = "$CMD" ]; then
+		CMD="${BUILDDIRECTORY}/${CMD}"
+	fi
+	runapt command valgrind "$CMD" "$@"
+}
+
 lastmodification() {
 	date -u -d "@$(stat -c '%Y' "${TMPWORKINGDIRECTORY}/$1")" -R
 }

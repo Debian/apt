@@ -17,6 +17,7 @@
 #include <time.h>
 
 #include <algorithm>
+#include <memory>
 #include <tuple>
 
 #include <apt-pkg/configuration.h>
@@ -61,11 +62,15 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
    unsigned char answer[PACKETSZ];
    int answer_len, compressed_name_len;
    int answer_count;
+   struct __res_state res;
 
-   if (res_init() != 0)
+   if (res_ninit(&res) != 0)
       return _error->Errno("res_init", "Failed to init resolver");
 
-   answer_len = res_query(name.c_str(), C_IN, T_SRV, answer, sizeof(answer));
+   // Close on return
+   std::shared_ptr<void> guard(&res, res_nclose);
+
+   answer_len = res_nquery(&res, name.c_str(), C_IN, T_SRV, answer, sizeof(answer));
    if (answer_len == -1)
       return false;
    if (answer_len < (int)sizeof(HEADER))

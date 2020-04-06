@@ -15,17 +15,31 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
-#include <apt-pkg/md5.h>
-#include <apt-pkg/sha1.h>
-#include <apt-pkg/sha2.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/strutl.h>
 
 #include <algorithm>
 #include <iostream>
 #include <string>
+#include <assert.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#include <gcrypt.h>
 									/*}}}*/
+
+static const constexpr struct HashAlgo
+{
+   const char *name;
+   int gcryAlgo;
+   Hashes::SupportedHashes ourAlgo;
+} Algorithms[] = {
+   {"MD5Sum", GCRY_MD_MD5, Hashes::MD5SUM},
+   {"SHA1", GCRY_MD_SHA1, Hashes::SHA1SUM},
+   {"SHA256", GCRY_MD_SHA256, Hashes::SHA256SUM},
+   {"SHA512", GCRY_MD_SHA512, Hashes::SHA512SUM},
+};
 
 const char * HashString::_SupportedHashes[] =
 {
@@ -89,27 +103,27 @@ std::string HashString::GetHashForFile(std::string filename) const      /*{{{*/
    FileFd Fd(filename, FileFd::ReadOnly);
    if(strcasecmp(Type.c_str(), "MD5Sum") == 0)
    {
-      MD5Summation MD5;
+      Hashes MD5(Hashes::MD5SUM);
       MD5.AddFD(Fd);
-      fileHash = (std::string)MD5.Result();
+      fileHash = MD5.GetHashString(Hashes::MD5SUM).Hash;
    }
    else if (strcasecmp(Type.c_str(), "SHA1") == 0)
    {
-      SHA1Summation SHA1;
+      Hashes SHA1(Hashes::SHA1SUM);
       SHA1.AddFD(Fd);
-      fileHash = (std::string)SHA1.Result();
+      fileHash = SHA1.GetHashString(Hashes::SHA1SUM).Hash;
    }
    else if (strcasecmp(Type.c_str(), "SHA256") == 0)
    {
-      SHA256Summation SHA256;
+      Hashes SHA256(Hashes::SHA256SUM);
       SHA256.AddFD(Fd);
-      fileHash = (std::string)SHA256.Result();
+      fileHash = SHA256.GetHashString(Hashes::SHA256SUM).Hash;
    }
    else if (strcasecmp(Type.c_str(), "SHA512") == 0)
    {
-      SHA512Summation SHA512;
+      Hashes SHA512(Hashes::SHA512SUM);
       SHA512.AddFD(Fd);
-      fileHash = (std::string)SHA512.Result();
+      fileHash = SHA512.GetHashString(Hashes::SHA512SUM).Hash;
    }
    else if (strcasecmp(Type.c_str(), "Checksum-FileSize") == 0)
       strprintf(fileHash, "%llu", Fd.FileSize());
@@ -169,10 +183,7 @@ bool HashStringList::usable() const					/*{{{*/
    if (forcedType.empty() == true)
    {
       // See if there is at least one usable hash
-      for (auto const &hs: list)
-         if (hs.usable())
-            return true;
-      return false;
+      return std::any_of(list.begin(), list.end(), [](auto const &hs) { return hs.usable(); });
    }
    return find(forcedType) != NULL;
 }
@@ -289,50 +300,68 @@ bool HashStringList::operator!=(HashStringList const &other) const
 class PrivateHashes {
 public:
    unsigned long long FileSize;
-   unsigned int CalcHashes;
+   gcry_md_hd_t hd;
 
-   explicit PrivateHashes(unsigned int const CalcHashes) : FileSize(0), CalcHashes(CalcHashes) {}
+   void maybeInit()
+   {
+
+      // Yikes, we got to initialize libgcrypt, or we get warnings. But we
+      // abstract away libgcrypt in Hashes from our users - they are not
+      // supposed to know what the hashing backend is, so we can't force
+      // them to init themselves as libgcrypt folks want us to. So this
+      // only leaves us with this option...
+      if (!gcry_control(GCRYCTL_INITIALIZATION_FINISHED_P))
+      {
+	 if (!gcry_check_version(nullptr))
+	 {
+	    fprintf(stderr, "libgcrypt is too old (need %s, have %s)\n",
+		    "nullptr", gcry_check_version(NULL));
+	    exit(2);
+	 }
+
+	 gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);
+      }
+   }
+
+   explicit PrivateHashes(unsigned int const CalcHashes) : FileSize(0)
+   {
+      maybeInit();
+      gcry_md_open(&hd, 0, 0);
+      for (auto & Algo : Algorithms)
+      {
+	 if ((CalcHashes & Algo.ourAlgo) == Algo.ourAlgo)
+	    gcry_md_enable(hd, Algo.gcryAlgo);
+      }
+   }
+
    explicit PrivateHashes(HashStringList const &Hashes) : FileSize(0) {
-      unsigned int calcHashes = Hashes.usable() ? 0 : ~0;
-      if (Hashes.find("MD5Sum") != NULL)
-	 calcHashes |= Hashes::MD5SUM;
-      if (Hashes.find("SHA1") != NULL)
-	 calcHashes |= Hashes::SHA1SUM;
-      if (Hashes.find("SHA256") != NULL)
-	 calcHashes |= Hashes::SHA256SUM;
-      if (Hashes.find("SHA512") != NULL)
-	 calcHashes |= Hashes::SHA512SUM;
-      CalcHashes = calcHashes;
+      maybeInit();
+      gcry_md_open(&hd, 0, 0);
+      for (auto & Algo : Algorithms)
+      {
+	 if (not Hashes.usable() || Hashes.find(Algo.name) != NULL)
+	    gcry_md_enable(hd, Algo.gcryAlgo);
+      }
+   }
+   ~PrivateHashes()
+   {
+      gcry_md_close(hd);
    }
 };
 									/*}}}*/
 // Hashes::Add* - Add the contents of data or FD			/*{{{*/
 bool Hashes::Add(const unsigned char * const Data, unsigned long long const Size)
 {
-   if (Size == 0)
-      return true;
-   bool Res = true;
-APT_IGNORE_DEPRECATED_PUSH
-   if ((d->CalcHashes & MD5SUM) == MD5SUM)
-      Res &= MD5.Add(Data, Size);
-   if ((d->CalcHashes & SHA1SUM) == SHA1SUM)
-      Res &= SHA1.Add(Data, Size);
-   if ((d->CalcHashes & SHA256SUM) == SHA256SUM)
-      Res &= SHA256.Add(Data, Size);
-   if ((d->CalcHashes & SHA512SUM) == SHA512SUM)
-      Res &= SHA512.Add(Data, Size);
-APT_IGNORE_DEPRECATED_POP
-   d->FileSize += Size;
-   return Res;
-}
-bool Hashes::Add(const unsigned char * const Data, unsigned long long const Size, unsigned int const Hashes)
-{
-   d->CalcHashes = Hashes;
-   return Add(Data, Size);
+   if (Size != 0)
+   {
+      gcry_md_write(d->hd, Data, Size);
+      d->FileSize += Size;
+   }
+   return true;
 }
 bool Hashes::AddFD(int const Fd,unsigned long long Size)
 {
-   unsigned char Buf[64*64];
+   unsigned char Buf[APT_BUFFER_SIZE];
    bool const ToEOF = (Size == UntilEOF);
    while (Size != 0 || ToEOF)
    {
@@ -349,14 +378,9 @@ bool Hashes::AddFD(int const Fd,unsigned long long Size)
    }
    return true;
 }
-bool Hashes::AddFD(int const Fd,unsigned long long Size, unsigned int const Hashes)
-{
-   d->CalcHashes = Hashes;
-   return AddFD(Fd, Size);
-}
 bool Hashes::AddFD(FileFd &Fd,unsigned long long Size)
 {
-   unsigned char Buf[64*64];
+   unsigned char Buf[APT_BUFFER_SIZE];
    bool const ToEOF = (Size == 0);
    while (Size != 0 || ToEOF)
    {
@@ -378,31 +402,51 @@ bool Hashes::AddFD(FileFd &Fd,unsigned long long Size)
    }
    return true;
 }
-bool Hashes::AddFD(FileFd &Fd,unsigned long long Size, unsigned int const Hashes)
-{
-   d->CalcHashes = Hashes;
-   return AddFD(Fd, Size);
-}
 									/*}}}*/
+
+static APT_PURE std::string HexDigest(gcry_md_hd_t hd, int algo)
+{
+   char Conv[16] =
+      {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
+       'c', 'd', 'e', 'f'};
+
+   auto Size = gcry_md_get_algo_dlen(algo);
+   char Result[((Size)*2) + 1];
+   Result[(Size)*2] = 0;
+
+   auto Sum = gcry_md_read(hd, algo);
+
+   // Convert each char into two letters
+   size_t J = 0;
+   size_t I = 0;
+   for (; I != (Size)*2; J++, I += 2)
+   {
+      Result[I] = Conv[Sum[J] >> 4];
+      Result[I + 1] = Conv[Sum[J] & 0xF];
+   }
+   return std::string(Result);
+};
+
 HashStringList Hashes::GetHashStringList()
 {
    HashStringList hashes;
-APT_IGNORE_DEPRECATED_PUSH
-   if ((d->CalcHashes & MD5SUM) == MD5SUM)
-      hashes.push_back(HashString("MD5Sum", MD5.Result().Value()));
-   if ((d->CalcHashes & SHA1SUM) == SHA1SUM)
-      hashes.push_back(HashString("SHA1", SHA1.Result().Value()));
-   if ((d->CalcHashes & SHA256SUM) == SHA256SUM)
-      hashes.push_back(HashString("SHA256", SHA256.Result().Value()));
-   if ((d->CalcHashes & SHA512SUM) == SHA512SUM)
-      hashes.push_back(HashString("SHA512", SHA512.Result().Value()));
-APT_IGNORE_DEPRECATED_POP
+   for (auto & Algo : Algorithms)
+      if (gcry_md_is_enabled(d->hd, Algo.gcryAlgo))
+	 hashes.push_back(HashString(Algo.name, HexDigest(d->hd, Algo.gcryAlgo)));
    hashes.FileSize(d->FileSize);
+
    return hashes;
 }
-APT_IGNORE_DEPRECATED_PUSH
+
+HashString Hashes::GetHashString(SupportedHashes hash)
+{
+   for (auto & Algo : Algorithms)
+      if (hash == Algo.ourAlgo)
+	 return HashString(Algo.name, HexDigest(d->hd, Algo.gcryAlgo));
+
+   abort();
+}
 Hashes::Hashes() : d(new PrivateHashes(~0)) { }
 Hashes::Hashes(unsigned int const Hashes) : d(new PrivateHashes(Hashes)) {}
 Hashes::Hashes(HashStringList const &Hashes) : d(new PrivateHashes(Hashes)) {}
 Hashes::~Hashes() { delete d; }
-APT_IGNORE_DEPRECATED_POP

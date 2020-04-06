@@ -63,6 +63,7 @@ APT
      Arch-Only "<BOOL>";
      Indep-Only "<BOOL>";
      Build-Dep-Automatic "<BOOL>";
+     Satisfy-Automatic "<BOOL>";
 
      // (non-)confirming options
      Force-Yes "<BOOL>"; // allows downgrades, essential removal and eats children
@@ -550,6 +551,7 @@ Debug
   InstallProgress::Fancy "<BOOL>";
   APT::Progress::PackageManagerFd "<BOOL>";
   SetupAPTPartialDirectory::AssumeGood "<BOOL>";
+  Locking "<BOOL>";
 };
 
 pkgCacheGen
@@ -683,6 +685,7 @@ dpkg::selection::remove::approved "<BOOL>";
 dpkg::remove::crossgrade::implicit "<BOOL>";
 dpkg::selection::current::saveandrestore "<BOOL>";
 dpkg::use-pty "<BOOL>";
+dpkg::lock::timeout "<INT>";
 
 apt::cmd::disable-script-warning "<BOOL>";
 apt::cmd::show-update-stats "<BOOL>";
@@ -694,6 +697,7 @@ apt::cmd::list-include-summary "<BOOL>";
 apt::cmd::use-regexp "<BOOL>";
 apt::cmd::all-versions "<BOOL>";
 apt::cmd::format "<STRING>";
+apt::cmd::pattern-only "<BOOL>";  // internal
 
 apt::config::dump::emptyvalue "<BOOL>";
 apt::config::dump::format "<STRING>";
@@ -822,3 +826,6 @@ dir::filelistdir "<STRING>";
 dir::dpkg::tupletable "<FILE>";
 dir::dpkg::triplettable "<FILE>";
 dir::dpkg::cputable "<FILE>";
+
+APT::Internal::OpProgress::Absolute "<BOOL>";
+APT::Color "<BOOL>";

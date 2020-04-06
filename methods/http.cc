@@ -320,14 +320,14 @@ static ResultState UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std:
    std::string ProperHost;
 
    if (Host.find(':') != std::string::npos)
-      ProperHost = '[' + Proxy.Host + ']';
+      ProperHost = '[' + Host + ']';
    else
-      ProperHost = Proxy.Host;
+      ProperHost = Host;
 
    // Build the connect
    Req << "CONNECT " << Host << ":" << std::to_string(Port) << " HTTP/1.1\r\n";
    if (Proxy.Port != 0)
-      Req << "Host: " << ProperHost << ":" << std::to_string(Proxy.Port) << "\r\n";
+      Req << "Host: " << ProperHost << ":" << std::to_string(Port) << "\r\n";
    else
       Req << "Host: " << ProperHost << "\r\n";
 
@@ -349,7 +349,7 @@ static ResultState UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std:
    Out.Read(Req.str());
 
    // Writing from proxy
-   while (Out.WriteSpace() > 0)
+   while (Out.WriteSpace())
    {
       if (WaitFd(Fd->Fd(), true, Timeout) == false)
       {
@@ -363,7 +363,7 @@ static ResultState UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std:
       }
    }
 
-   while (In.ReadSpace() > 0)
+   while (In.ReadSpace())
    {
       if (WaitFd(Fd->Fd(), false, Timeout) == false)
       {
@@ -389,7 +389,7 @@ static ResultState UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std:
       return ResultState::TRANSIENT_ERROR;
    }
 
-   if (In.WriteSpace() > 0)
+   if (In.WriteSpace())
    {
       // Maybe there is actual data already read, if so we need to buffer it
       std::unique_ptr<HttpConnectFd> NewFd(new HttpConnectFd());
@@ -892,7 +892,7 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
 /* This places the http request in the outbound buffer */
 void HttpMethod::SendReq(FetchItem *Itm)
 {
-   URI Uri = Itm->Uri;
+   URI Uri(Itm->Uri);
    {
       auto const plus = Binary.find('+');
       if (plus != std::string::npos)
@@ -974,9 +974,10 @@ void HttpMethod::SendReq(FetchItem *Itm)
    Req << "User-Agent: " << ConfigFind("User-Agent",
 		"Debian APT-HTTP/1.3 (" PACKAGE_VERSION ")") << "\r\n";
 
-   auto const referer = ConfigFind("Referer", "");
-   if (referer.empty() == false)
-      Req << "Referer: " << referer << "\r\n";
+   // the famously typoed HTTP header field
+   auto const referrer = ConfigFind("Referer", "");
+   if (referrer.empty() == false)
+      Req << "Referer: " << referrer << "\r\n";
 
    Req << "\r\n";
 

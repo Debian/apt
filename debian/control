@@ -9,25 +9,26 @@ Uploaders: Michael Vogt <mvo@debian.org>,
 Rules-Requires-Root: no
 Standards-Version: 4.1.1
 Build-Depends: cmake (>= 3.4),
-               debhelper (>= 11.2~),
+               debhelper-compat (= 12),
                docbook-xml,
                docbook-xsl,
                dpkg-dev (>= 1.17.14),
-               g++ (>= 4:7),
                gettext (>= 0.12),
                googletest <!nocheck> | libgtest-dev <!nocheck>,
                libbz2-dev,
                libdb-dev,
                libgnutls28-dev (>= 3.4.6),
+               libgcrypt20-dev,
                liblz4-dev (>= 0.0~r126),
                liblzma-dev,
-               libseccomp-dev [amd64 arm64 armel armhf i386 mips mips64el mipsel ppc64el s390x hppa powerpc powerpcspe ppc64 x32],
+               libseccomp-dev (>= 2.4.2) [amd64 arm64 armel armhf i386 mips mips64el mipsel ppc64el s390x hppa powerpc powerpcspe ppc64 x32],
                libsystemd-dev [linux-any],
                libudev-dev [linux-any],
                libzstd-dev (>= 1.0),
                ninja-build,
                pkg-config,
                po4a (>= 0.34-2),
+               triehash,
                xsltproc,
                zlib1g-dev
 Build-Depends-Indep: doxygen, graphviz, w3m
@@ -38,6 +39,7 @@ Package: apt
 Architecture: any
 Depends: adduser,
          gpgv | gpgv2 | gpgv1,
+         libapt-pkg6.0 (>= ${binary:Version}),
          ${apt:keyring},
          ${misc:Depends},
          ${shlibs:Depends}
@@ -67,7 +69,7 @@ Description: commandline package manager
   * apt-config as an interface to the configuration settings
   * apt-key as an interface to manage authentication keys
 
-Package: libapt-pkg5.0
+Package: libapt-pkg6.0
 Architecture: any
 Multi-Arch: same
 Priority: optional
@@ -93,19 +95,6 @@ Description: package management runtime library
     http(s), rsh as well as an interface to add more transports like
     tor+http(s) (apt-transport-tor).
 
-Package: libapt-inst2.0
-Architecture: any
-Multi-Arch: same
-Priority: optional
-Pre-Depends: ${misc:Pre-Depends}
-Depends: ${misc:Depends}, ${shlibs:Depends}
-Section: libs
-Provides: libapt-inst (= ${binary:Version})
-Description: deb package format runtime library
- This library provides methods to query and extract information
- from deb packages. This includes the control data and the package
- file content.
-
 Package: apt-doc
 Architecture: all
 Priority: optional
@@ -120,8 +109,7 @@ Architecture: any
 Multi-Arch: same
 Priority: optional
 Pre-Depends: ${misc:Pre-Depends}
-Depends: libapt-inst (= ${binary:Version}),
-         libapt-pkg (= ${binary:Version}),
+Depends: libapt-pkg (= ${binary:Version}),
          zlib1g-dev,
          ${misc:Depends}
 Section: libdevel
@@ -144,7 +132,9 @@ Description: documentation for APT development
 
 Package: apt-utils
 Architecture: any
-Depends: apt (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Depends: apt (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends}
 Description: package management related utility programs
  This package contains some less used commandline utilities related
  to package management with APT.
@@ -157,6 +147,7 @@ Description: package management related utility programs
 
 Package: apt-transport-https
 Architecture: all
+Multi-Arch: foreign
 Depends: apt (>= 1.5~alpha4), ${misc:Depends}
 Priority: optional
 Section: oldlibs

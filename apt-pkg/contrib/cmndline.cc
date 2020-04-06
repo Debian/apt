@@ -300,7 +300,8 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 
 	 // Skip the leading dash
 	 const char *J = argv[I];
-	 for (; *J != 0 && *J == '-'; J++);
+	 for (; *J == '-'; J++)
+	    ;
 
 	 const char *JEnd = strchr(J, '-');
 	 if (JEnd != NULL)
@@ -380,11 +381,6 @@ bool CommandLine::DispatchArg(Dispatch const * const Map,bool NoMatch)
    }
    
    return false;
-}
-bool CommandLine::DispatchArg(Dispatch *Map,bool NoMatch)
-{
-   Dispatch const * const Map2 = Map;
-   return DispatchArg(Map2, NoMatch);
 }
 									/*}}}*/
 // CommandLine::SaveInConfig - for output later in a logfile or so	/*{{{*/

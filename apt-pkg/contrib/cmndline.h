@@ -45,13 +45,10 @@
 
 #include <apt-pkg/macros.h>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/configuration.h>
-#endif
 
 class Configuration;
 
-class CommandLine
+class APT_PUBLIC CommandLine
 {
    public:
    struct Args;
@@ -83,8 +80,6 @@ class CommandLine
    bool Parse(int argc,const char **argv);
    void ShowHelp();
    unsigned int FileSize() const APT_PURE;
-   // FIXME: merge on next ABI break
-   bool DispatchArg(Dispatch *List,bool NoMatch = true);
    bool DispatchArg(Dispatch const * const List,bool NoMatch = true);
       
    static char const * GetCommand(Dispatch const * const Map,

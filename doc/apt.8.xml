@@ -13,7 +13,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2019-01-27T00:00:00Z</date>
+   <date>2020-02-13T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -109,6 +109,15 @@
      </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>satisfy</option> (&apt-get;)</term>
+     <listitem><para><option>satisfy</option> satisfies dependency strings, as
+	  used in Build-Depends. It also handles conflicts, by prefixing an argument
+	  with <literal>"Conflicts: "</literal>.
+     </para><para>Example: <literal>apt satisfy "foo, bar (>= 1.0)" "Conflicts: baz, fuzz"</literal>
+     </para></listitem>
+     </varlistentry>
+
+
      <varlistentry><term><option>search</option> (&apt-cache;)</term>
      <listitem><para><option>search</option> can be used to search for the given
 	   &regex; term(s) in the list of available packages and display
@@ -128,7 +137,7 @@
      </para></listitem>
      </varlistentry>
 
-     <varlistentry><term><option>list</option> (work-in-progress)</term>
+     <varlistentry><term><option>list</option></term>
      <listitem><para><option>list</option> is somewhat similar to <command>dpkg-query --list</command>
 	   in that it can display a list of packages satisfying certain
 	   criteria.  It supports &glob; patterns for matching package names as
@@ -140,7 +149,7 @@
 
      <varlistentry><term><option>edit-sources</option> (work-in-progress)</term>
      <listitem><para><literal>edit-sources</literal> lets you edit
-	   your &sources-list; files in your preferred texteditor while also
+	   your &sources-list; files in your preferred text editor while also
 	   providing basic sanity checks.
      </para></listitem>
      </varlistentry>

@@ -1,10 +1,8 @@
 # Include apt-pkg directly, as some files have #include <system.h>
 include_directories(${PROJECT_BINARY_DIR}/include/apt-pkg)
 
-add_definitions("-DAPT_PKG_EXPOSE_STRING_VIEW")
-
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/apt-pkg/)
-execute_process(COMMAND ${PERL_EXECUTABLE} ${PROJECT_SOURCE_DIR}/triehash/triehash.pl
+execute_process(COMMAND ${TRIEHASH_EXECUTABLE}
                         --ignore-case
                          --header ${PROJECT_BINARY_DIR}/include/apt-pkg/tagfile-keys.h
                          --code ${CMAKE_CURRENT_BINARY_DIR}/tagfile-keys.cc
@@ -29,6 +27,8 @@ execute_process(COMMAND grep "^#define APT_PKG_RELEASE"
 message(STATUS "Building libapt-pkg ${MAJOR} (release ${MINOR})")
 set(APT_PKG_MAJOR ${MAJOR} PARENT_SCOPE) # exporting for methods/CMakeLists.txt
 
+configure_file(apt-pkg.pc.in ${CMAKE_CURRENT_BINARY_DIR}/apt-pkg.pc @ONLY)
+
 # Definition of the C++ files used to build the library - note that this
 # is expanded at CMake time, so you have to rerun cmake if you add or remove
 # a file (you can just run cmake . in the build directory)
@@ -48,6 +48,7 @@ target_include_directories(apt-pkg
                                    $<$<BOOL:${UDEV_FOUND}>:${UDEV_INCLUDE_DIRS}>
                                    $<$<BOOL:${SYSTEMD_FOUND}>:${SYSTEMD_INCLUDE_DIRS}>
                                    ${ICONV_INCLUDE_DIRS}
+                                   $<$<BOOL:${GCRYPT_FOUND}>:${GCRYPT_INCLUDE_DIRS}>
 )
 
 target_link_libraries(apt-pkg
@@ -61,14 +62,17 @@ target_link_libraries(apt-pkg
                              $<$<BOOL:${UDEV_FOUND}>:${UDEV_LIBRARIES}>
                              $<$<BOOL:${SYSTEMD_FOUND}>:${SYSTEMD_LIBRARIES}>
                              ${ICONV_LIBRARIES}
+                             $<$<BOOL:${GCRYPT_FOUND}>:${GCRYPT_LIBRARIES}>
 )
 set_target_properties(apt-pkg PROPERTIES VERSION ${MAJOR}.${MINOR})
 set_target_properties(apt-pkg PROPERTIES SOVERSION ${MAJOR})
+set_target_properties(apt-pkg PROPERTIES CXX_VISIBILITY_PRESET hidden)
 add_version_script(apt-pkg)
 
 # Install the library and the header files
 install(TARGETS apt-pkg LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${headers} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/apt-pkg)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/apt-pkg.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 flatify(${PROJECT_BINARY_DIR}/include/apt-pkg/ "${headers}")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Coverage")

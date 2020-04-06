@@ -1,0 +1,235 @@
+#!/bin/sh
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'i386' 'amd64'
+
+insertpackage 'unstable' 'available' 'all' '1.0' 'Section: asection'
+
+insertinstalledpackage 'manual1' 'i386' '1.0' 'Depends: automatic1'
+insertinstalledpackage 'manual2' 'i386' '1.0'
+
+insertinstalledpackage 'automatic1' 'i386' '1.0' 'Source: automatic (0)'
+insertinstalledpackage 'automatic2' 'i386' '1.0' 'Source: automatic (1)'
+
+insertinstalledpackage 'essential' 'i386' '1.0' 'Essential: yes
+Section: asection'
+insertinstalledpackage 'conf-only' 'i386' '1.0' '' '' 'deinstall ok config-files'
+insertinstalledpackage 'broken' 'i386' '1.0' 'Depends: does-not-exist'
+
+insertinstalledpackage 'not-obsolete' 'i386' '1.0'
+insertpackage 'unstable' 'not-obsolete' 'all' '2.0'
+
+insertpackage 'unstable' 'foreign' 'amd64' '2.0'
+
+getoriginfromsuite() { echo -n 'meow'; }
+setupaptarchive
+
+cat >> rootdir/var/lib/dpkg/status <<EOF
+
+Package: notinstalled
+Status: hold ok not-installed
+Architecture: amd64
+
+Package: nosection
+Status: install ok installed
+Architecture: amd64
+Version: 29
+EOF
+
+testsuccess aptmark auto automatic1 automatic2
+
+msgmsg "Check that commands understand patterns"
+
+testfailureequal "E: input:0-14: error: Unrecognized pattern '?not-a-pattern'
+   ?not-a-pattern
+   ^^^^^^^^^^^^^^
+N: Unable to locate package ?not-a-pattern
+E: input:0-14: error: Unrecognized pattern '?not-a-pattern'
+   ?not-a-pattern
+   ^^^^^^^^^^^^^^
+N: Unable to locate package ?not-a-pattern
+E: No packages found" apt show '?not-a-pattern'
+
+testfailureequal "Listing...
+E: input:0-14: error: Unrecognized pattern '?not-a-pattern'
+   ?not-a-pattern
+   ^^^^^^^^^^^^^^" apt list '?not-a-pattern'
+
+testfailureequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+E: input:0-14: error: Unrecognized pattern '?not-a-pattern'
+   ?not-a-pattern
+   ^^^^^^^^^^^^^^
+E: Unable to locate package ?not-a-pattern" apt install -s '?not-a-pattern'
+
+
+msgmsg "Ensure that argument lists are present where needed, and absent elsewhere"
+
+testfailureequal "Listing...
+E: input:0-7: error: ?true does not expect an argument list
+   ?true()
+   ^^^^^^^"  apt list '?true()'
+testfailureequal "Listing...
+E: input:0-4: error: ?and expects an argument list
+   ?and
+   ^^^^" apt list '?and'
+testfailureequal "Listing...
+E: input:0-3: error: ?or expects an argument list
+   ?or
+   ^^^" apt list '?or'
+
+
+msgmsg "Basic logic: true, false, not, ?or, ?and"
+for pattern in '?true' '?not(?false)'; do
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]
+available/unstable 1.0 all
+broken/now 1.0 i386 [installed,local]
+conf-only/now 1.0 i386 [residual-config]
+dpkg/now 1.16.2+fake all [installed,local]
+essential/now 1.0 i386 [installed,local]
+foreign/unstable 2.0 amd64
+manual1/now 1.0 i386 [installed,local]
+manual2/now 1.0 i386 [installed,local]
+nosection/now 29 amd64 [installed,local]
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list "$pattern"
+done
+testsuccessequal "Listing..." apt list '?false'
+testsuccessequal "Listing..." apt list '?not(?true)'
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]
+manual1/now 1.0 i386 [installed,local]
+manual2/now 1.0 i386 [installed,local]" apt list '?or(?name(^automatic),?name(^manual))'
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]" apt list '?and(?name(^automatic),?name(1$))'
+
+
+msgmsg "Narrow and friends"
+testsuccessequal "Listing...
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]
+N: There is 1 additional version. Please use the '-a' switch to see it" apt list '?and(?version(^1\.0$),?version(^2\.0$))'
+
+testsuccessequal "Listing..." apt list '?any-version(?and(?version(^1\.0$),?version(^2\.0$)))'
+testsuccessequal "Listing..." apt list '?narrow(?version(^1\.0$),?version(^2\.0$))'
+
+# XXX FIXME: I guess we do want this to only show version 1.0?
+testsuccessequal "Listing...
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]
+N: There is 1 additional version. Please use the '-a' switch to see it" apt list '?any-version(?and(?version(^1\.0$),?name(not-obsolete)))'
+testsuccessequal "Listing...
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]
+N: There is 1 additional version. Please use the '-a' switch to see it" apt list '?narrow(?version(^1\.0$),?name(not-obsolete))'
+
+
+testsuccessequal "Listing...
+foreign/unstable 2.0 amd64
+nosection/now 29 amd64 [installed,local]
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?not(?all-versions(?version(^1)))'
+
+msgmsg "Package patterns"
+
+testsuccessequal "Listing...
+foreign/unstable 2.0 amd64
+nosection/now 29 amd64 [installed,local]" apt list '?architecture(amd64)'
+
+# XXX FIXME We should have support for foreign and native
+testsuccessequal "Listing..." apt list '?architecture(foreign)'
+testsuccessequal "Listing..." apt list '?architecture(native)'
+
+testsuccessequal "Listing...
+available/unstable 1.0 all
+foreign/unstable 2.0 amd64
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?archive(^unstable$)'
+
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]" apt list '?automatic'
+
+testsuccessequal "Listing...
+broken/now 1.0 i386 [installed,local]" apt list '?broken'
+
+testsuccessequal "Listing...
+conf-only/now 1.0 i386 [residual-config]" apt list '?config-files'
+
+testsuccessequal "Listing...
+essential/now 1.0 i386 [installed,local]" apt list '?essential'
+
+testsuccessequal "Listing..." apt list '?exact-name(automatic)'
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]" apt list '?exact-name(automatic1)'
+
+testsuccessequal "Listing...
+automatic2/now 1.0 i386 [installed,local]" apt list '?garbage'
+
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]
+broken/now 1.0 i386 [installed,local]
+dpkg/now 1.16.2+fake all [installed,local]
+essential/now 1.0 i386 [installed,local]
+manual1/now 1.0 i386 [installed,local]
+manual2/now 1.0 i386 [installed,local]
+nosection/now 29 amd64 [installed,local]
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?installed'
+
+testsuccessequal "Listing...
+available/unstable 1.0 all
+conf-only/now 1.0 i386 [residual-config]
+foreign/unstable 2.0 amd64" apt list '?not(?installed)'
+
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]" apt list '?name(^automatic)'
+
+testsuccessequal "Listing...
+available/unstable 1.0 all
+conf-only/now 1.0 i386 [residual-config]
+foreign/unstable 2.0 amd64
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?not(?obsolete)'
+
+testsuccessequal "Listing...
+available/unstable 1.0 all
+foreign/unstable 2.0 amd64
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?origin(^meow$)'
+
+testsuccessequal "Listing...
+available/unstable 1.0 all
+essential/now 1.0 i386 [installed,local]" apt list '?section(asection)'
+
+testsuccessequal 'Listing...
+essential/now 1.0 i386 [installed,local]' apt list '~i !~M (~slibs|~sasection)'
+
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]" apt list '?source-package(^automatic$)'
+
+testsuccessequal "Listing...
+automatic2/now 1.0 i386 [installed,local]" apt list '?source-version(^1$)'
+
+testsuccessequal "Listing...
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]
+N: There is 1 additional version. Please use the '-a' switch to see it" apt list '?upgradable'
+
+testsuccessequal "Listing...
+foreign/unstable 2.0 amd64
+not-obsolete/unstable 2.0 i386 [upgradable from: 1.0]" apt list '?version(2.0)'
+
+testsuccessequal "Package: does-not-exist
+State: not a real package (virtual)
+Package: notinstalled:amd64
+State: not a real package (virtual)
+N: Can't select candidate version from package does-not-exist as it has no candidate
+N: Can't select candidate version from package notinstalled:amd64 as it has no candidate
+N: Can't select versions from package 'does-not-exist' as it is purely virtual
+N: Can't select versions from package 'notinstalled:amd64' as it is purely virtual
+N: No packages found" apt show '?virtual'
+
+testsuccessequal "Listing..." apt list '?x-name-fnmatch(1)'
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+manual1/now 1.0 i386 [installed,local]" apt list '?x-name-fnmatch(*1)'

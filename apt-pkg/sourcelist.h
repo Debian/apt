@@ -31,14 +31,6 @@
 #include <string>
 #include <vector>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/tagfile.h>
-#endif
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/metaindex.h>
-using std::string;
-using std::vector;
-#endif
 
 class FileFd;
 class pkgTagSection;
@@ -47,7 +39,7 @@ class pkgIndexFile;
 class metaIndex;
 class CommandLine;
 
-class pkgSourceList
+class APT_PUBLIC pkgSourceList
 {
    void * const d;
    std::vector<pkgIndexFile*> VolatileFiles;
@@ -116,7 +108,7 @@ class pkgSourceList
 
    /** \brief add file for parsing, but not to the cache
     *
-    *  pkgIndexFiles origining from pkgSourcesList are included in
+    *  pkgIndexFiles originating from pkgSourcesList are included in
     *  srcpkgcache, the status files added via #AddStatusFiles are
     *  included in pkgcache, but these files here are not included in
     *  any cache to have the possibility of having a file included just
@@ -131,7 +123,6 @@ class pkgSourceList
    void AddVolatileFile(pkgIndexFile * const File);
    bool AddVolatileFile(std::string const &File);
    bool AddVolatileFile(std::string const &File, std::vector<std::string> * const VolatileCmdL);
-   APT_DEPRECATED_MSG("Use the overload with string-vector") void AddVolatileFiles(CommandLine &CmdL, std::vector<const char*> * const VolatileCmdL);
    void AddVolatileFiles(CommandLine &CmdL, std::vector<std::string> * const VolatileCmdL);
 
    /** @return list of files registered with #AddVolatileFile */

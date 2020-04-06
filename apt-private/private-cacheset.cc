@@ -188,6 +188,25 @@ CacheSetHelperAPTGet::CacheSetHelperAPTGet(std::ostream &pout) :
 {
    explicitlyNamed = true;
 }
+void CacheSetHelperAPTGet::showPackageSelection(pkgCache::PkgIterator const &pkg, enum PkgSelector const select,
+						std::string const &pattern)
+{
+   switch (select)
+   {
+   case REGEX:
+      showRegExSelection(pkg, pattern);
+      break;
+   case TASK:
+      showTaskSelection(pkg, pattern);
+      break;
+   case FNMATCH:
+      showFnmatchSelection(pkg, pattern);
+      break;
+   default:
+      APT::CacheSetHelper::showPackageSelection(pkg, select, pattern);
+      break;
+   }
+}
 void CacheSetHelperAPTGet::showTaskSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern)
 {
    ioprintf(out, _("Note, selecting '%s' for task '%s'\n"),
@@ -206,13 +225,22 @@ void CacheSetHelperAPTGet::showRegExSelection(pkgCache::PkgIterator const &Pkg, 
 	 Pkg.FullName(true).c_str(), pattern.c_str());
    explicitlyNamed = false;
 }
-void CacheSetHelperAPTGet::showSelectedVersion(pkgCache::PkgIterator const &/*Pkg*/, pkgCache::VerIterator const Ver,
-      std::string const &ver, bool const /*verIsRel*/)
+void CacheSetHelperAPTGet::showVersionSelection(pkgCache::PkgIterator const &Pkg,
+						pkgCache::VerIterator const &Ver, enum VerSelector const select, std::string const &pattern)
 {
-   if (ver == Ver.VerStr())
-      return;
-   selectedByRelease.push_back(make_pair(Ver, ver));
+   switch (select)
+   {
+   case RELEASE:
+   case VERSIONNUMBER:
+      if (pattern == Ver.VerStr())
+	 return;
+      selectedByRelease.push_back(make_pair(Ver, pattern));
+      break;
+   default:
+      return APT::CacheSetHelper::showVersionSelection(Pkg, Ver, select, pattern);
+   }
 }
+
 bool CacheSetHelperAPTGet::showVirtualPackageErrors(pkgCacheFile &Cache)
 {
    if (virtualPkgs.empty() == true)
@@ -226,11 +254,12 @@ bool CacheSetHelperAPTGet::showVirtualPackageErrors(pkgCacheFile &Cache)
 	 pkgCache::PrvIterator I = Pkg.ProvidesList();
 	 unsigned short provider = 0;
 	 for (; I.end() == false; ++I) {
-	    pkgCache::PkgIterator Pkg = I.OwnerPkg();
+	    pkgCache::PkgIterator const OPkg = I.OwnerPkg();
 
-	    if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer()) {
-	       c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr();
-	       if (Cache[Pkg].Install() == true && Cache[Pkg].NewInstall() == false)
+	    if (Cache[OPkg].CandidateVerIter(Cache) == I.OwnerVer())
+	    {
+	       c1out << "  " << OPkg.FullName(true) << " " << I.OwnerVer().VerStr();
+	       if (Cache[OPkg].Install() == true && Cache[OPkg].NewInstall() == false)
 		  c1out << _(" [Installed]");
 	       c1out << std::endl;
 	       ++provider;
@@ -268,6 +297,33 @@ bool CacheSetHelperAPTGet::showVirtualPackageErrors(pkgCacheFile &Cache)
    }
    return false;
 }
+pkgCache::VerIterator CacheSetHelperAPTGet::canNotGetVersion(enum VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg)
+{
+   switch (select)
+   {
+   case NEWEST:
+      return canNotFindNewestVer(Cache, Pkg);
+   case CANDIDATE:
+      return canNotFindCandidateVer(Cache, Pkg);
+   default:
+      return APT::CacheSetHelper::canNotGetVersion(select, Cache, Pkg);
+   }
+}
+void CacheSetHelperAPTGet::canNotFindVersion(enum VerSelector const select, APT::VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg)
+{
+   switch (select)
+   {
+   case NEWEST:
+      canNotFindNewestVer(Cache, Pkg);
+      break;
+   case CANDIDATE:
+      canNotFindCandidateVer(Cache, Pkg);
+      break;
+   default:
+      return APT::CacheSetHelper::canNotFindVersion(select, vci, Cache, Pkg);
+   }
+}
+
 pkgCache::VerIterator CacheSetHelperAPTGet::canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg)
 {
    APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, CacheSetHelper::CANDIDATE);

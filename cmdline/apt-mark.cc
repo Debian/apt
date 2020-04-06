@@ -56,7 +56,8 @@ static bool DoAuto(CommandLine &CmdL)
       return _error->Error(_("No packages found"));
 
    bool MarkAuto = strcasecmp(CmdL.FileList[0],"auto") == 0;
-   int AutoMarkChanged = 0;
+
+   vector<string> PackagesMarked;
 
    for (APT::PackageList::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
@@ -74,16 +75,27 @@ static bool DoAuto(CommandLine &CmdL)
 	 continue;
       }
 
-      if (MarkAuto == false)
-	 ioprintf(c1out,_("%s set to manually installed.\n"), Pkg.FullName(true).c_str());
-      else
-	 ioprintf(c1out,_("%s set to automatically installed.\n"), Pkg.FullName(true).c_str());
-
+      PackagesMarked.push_back(Pkg.FullName(true));
       DepCache->MarkAuto(Pkg, MarkAuto);
-      ++AutoMarkChanged;
    }
-   if (AutoMarkChanged > 0 && _config->FindB("APT::Mark::Simulate", false) == false)
-      return DepCache->writeStateFile(NULL);
+
+   bool MarkWritten = false;
+   bool IsSimulation = _config->FindB("APT::Mark::Simulate", false);
+   if (PackagesMarked.size() > 0 && !IsSimulation) {
+      MarkWritten = DepCache->writeStateFile(NULL);
+      if(!MarkWritten) {
+         return MarkWritten;
+      }
+   }
+
+   if(IsSimulation || MarkWritten) {
+      for (vector<string>::const_iterator I = PackagesMarked.begin(); I != PackagesMarked.end(); ++I) {
+         if (MarkAuto == false)
+            ioprintf(c1out,_("%s set to manually installed.\n"), (*I).c_str());
+         else
+            ioprintf(c1out,_("%s set to automatically installed.\n"), (*I).c_str());
+      }
+   }
    return true;
 }
 									/*}}}*/
@@ -365,7 +377,7 @@ static bool ShowSelection(CommandLine &CmdL)				/*{{{*/
    else if (strncasecmp(CmdL.FileList[0], "showdeinstall", strlen("showdeinstall")) == 0 ||
 	 strncasecmp(CmdL.FileList[0], "showremove", strlen("showremove")) == 0)
       selector = pkgCache::State::DeInstall;
-   else if (strncasecmp(CmdL.FileList[0], "showhold", strlen("showhold")) == 0)
+   else if (strncasecmp(CmdL.FileList[0], "showhold", strlen("showhold")) == 0 || strncasecmp(CmdL.FileList[0], "showheld", strlen("showheld")) == 0)
       selector = pkgCache::State::Hold;
    else //if (strcasecmp(CmdL.FileList[0], "showinstall", strlen("showinstall")) == 0)
       selector = pkgCache::State::Install;
@@ -423,7 +435,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"purge",&DoSelection, nullptr},
       {"showauto",&ShowAuto, _("Print the list of automatically installed packages")},
       {"showmanual",&ShowAuto, _("Print the list of manually installed packages")},
-      {"showhold",&ShowSelection, _("Print the list of packages on hold")}, {"showholds",&ShowSelection, nullptr},
+      {"showhold",&ShowSelection, _("Print the list of packages on hold")}, {"showholds",&ShowSelection, nullptr}, {"showheld",&ShowSelection, nullptr},
       {"showinstall",&ShowSelection, nullptr}, {"showinstalls",&ShowSelection, nullptr},
       {"showdeinstall",&ShowSelection, nullptr}, {"showdeinstalls",&ShowSelection, nullptr},
       {"showremove",&ShowSelection, nullptr}, {"showremoves",&ShowSelection, nullptr},

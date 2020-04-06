@@ -59,7 +59,7 @@ static std::string NormalizeSignedBy(std::string SignedBy, bool const SupportFil
    // but fingerprints are harder to fake than the others and this option is set once,
    // not interactively all the time so easy to type is not really a concern.
    std::transform(SignedBy.begin(), SignedBy.end(), SignedBy.begin(), [](char const c) {
-      return (isspace(c) == 0) ? c : ',';
+      return (isspace_ascii(c) == 0) ? c : ',';
    });
    auto fingers = VectorizeString(SignedBy, ',');
    auto const isAnEmptyString = [](std::string const &s) { return s.empty(); };
@@ -109,7 +109,7 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
    std::vector<std::string> SupportedComponents;
    std::map<std::string, std::string> const ReleaseOptions;
 
-   debReleaseIndexPrivate(std::map<std::string, std::string> const &Options) : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0), CheckDate(metaIndex::TRI_UNSET), DateMaxFuture(0), NotBefore(0), ReleaseOptions(Options) {}
+   explicit debReleaseIndexPrivate(std::map<std::string, std::string> const &Options) : CheckValidUntil(metaIndex::TRI_UNSET), ValidUntilMin(0), ValidUntilMax(0), CheckDate(metaIndex::TRI_UNSET), DateMaxFuture(0), NotBefore(0), ReleaseOptions(Options) {}
 };
 									/*}}}*/
 // ReleaseIndex::MetaIndex* - display helpers				/*{{{*/
@@ -447,12 +447,12 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    // FIXME: find better tag name
    SupportsAcquireByHash = Section.FindB("Acquire-By-Hash", false);
 
-   SetOrigin(Section.FindS("Origin"));
-   SetLabel(Section.FindS("Label"));
-   SetVersion(Section.FindS("Version"));
+   Origin = Section.FindS("Origin");
+   Label = Section.FindS("Label");
+   Version = Section.FindS("Version");
    Suite = Section.FindS("Suite");
    Codename = Section.FindS("Codename");
-   SetReleaseNotes(Section.FindS("Release-Notes"));
+   ReleaseNotes = Section.FindS("Release-Notes");
    {
       std::string const archs = Section.FindS("Architectures");
       if (archs.empty() == false)
@@ -484,7 +484,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	 else
 	    defaultpin = 1;
       }
-      SetDefaultPin(defaultpin);
+      DefaultPin = defaultpin;
    }
 
    bool FoundHashSum = false;
@@ -510,9 +510,6 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
             Sum->MetaKeyFilename = Name;
             Sum->Size = Size;
 	    Sum->Hashes.FileSize(Size);
-	    APT_IGNORE_DEPRECATED_PUSH
-	    Sum->Hash = hs;
-	    APT_IGNORE_DEPRECATED_POP
 	    Entries[Name] = Sum;
          }
          Entries[Name]->Hashes.push_back(hs);
@@ -531,7 +528,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
       AuthPossible = true;
 
    std::string const StrDate = Section.FindS("Date");
-   if (RFC1123StrToTime(StrDate.c_str(), Date) == false)
+   if (RFC1123StrToTime(StrDate, Date) == false)
    {
       _error->Warning( _("Invalid '%s' entry in Release file %s"), "Date", Filename.c_str());
       Date = 0;
@@ -570,7 +567,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	 // if we have a Valid-Until header in the Release file, use it as default
 	 if (StrValidUntil.empty() == false)
 	 {
-	    if (RFC1123StrToTime(StrValidUntil.c_str(), ValidUntil) == false)
+	    if (RFC1123StrToTime(StrValidUntil, ValidUntil) == false)
 	    {
 	       if (ErrorText != NULL)
 		  strprintf(*ErrorText, _("Invalid '%s' entry in Release file %s"), "Valid-Until", Filename.c_str());
@@ -918,7 +915,6 @@ bool debReleaseIndex::Merge(pkgCacheGenerator &Gen,OpProgress * /*Prog*/) const/
    #undef APT_INRELEASE
    Section.FindFlag("NotAutomatic", File->Flags, pkgCache::Flag::NotAutomatic);
    Section.FindFlag("ButAutomaticUpgrades", File->Flags, pkgCache::Flag::ButAutomaticUpgrades);
-   Section.FindFlag("Packages-Require-Authorization", File->Flags, pkgCache::Flag::PackagesRequireAuthorization);
 
    return true;
 }
@@ -989,7 +985,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 		  return std::find(minus.begin(), minus.end(), v) != minus.end();
 		  }), Values.end());
       }
-      return Values;
+      return std::move(Values);
    }
    static std::vector<std::string> parsePlusMinusOptions(std::string const &Name,
 	 std::map<std::string, std::string> const &Options, std::vector<std::string> const &defaultValues)
@@ -1098,8 +1094,8 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
    {
       std::vector<std::string> ret;
       ret.reserve(Options.size());
-      for (auto &&O: Options)
-	 ret.emplace_back(O.first);
+      std::transform(Options.begin(), Options.end(), std::back_inserter(ret),
+		     [](auto &&O) { return O.first; });
       std::sort(ret.begin(), ret.end());
       return ret;
    }

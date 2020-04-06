@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iterator>
+#include <numeric>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -1149,10 +1150,10 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 bool ReadConfigDir(Configuration &Conf,const string &Dir,
 		   bool const &AsSectional, unsigned const &Depth)
 {
-   bool good = true;
-   for (auto const &I : GetListOfFilesInDir(Dir, "conf", true, true))
-      good = ReadConfigFile(Conf, I, AsSectional, Depth) && good;
-   return good;
+   auto const files = GetListOfFilesInDir(Dir, "conf", true, true);
+   return std::accumulate(files.cbegin(), files.cend(), true, [&](bool good, auto const &file) {
+      return ReadConfigFile(Conf, file, AsSectional, Depth) && good;
+   });
 }
 									/*}}}*/
 // MatchAgainstConfig Constructor					/*{{{*/

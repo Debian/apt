@@ -15,7 +15,7 @@
 
 #include <string>
 
-class debVersioningSystem : public pkgVersioningSystem
+class APT_PUBLIC debVersioningSystem : public pkgVersioningSystem
 {
    public:
 
@@ -36,6 +36,6 @@ class debVersioningSystem : public pkgVersioningSystem
    debVersioningSystem();
 };
 
-extern debVersioningSystem debVS;
+extern APT_PUBLIC debVersioningSystem debVS;
 
 #endif

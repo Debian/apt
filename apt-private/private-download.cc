@@ -339,7 +339,7 @@ bool DoClean(CommandLine &)
 // ---------------------------------------------------------------------
 /* This is similar to clean but it only purges things that cannot be 
    downloaded, that is old versions of cached packages. */
- class LogCleaner : public pkgArchiveCleaner2
+ class LogCleaner : public pkgArchiveCleaner
 {
    protected:
       virtual void Erase(int const dirfd, char const * const File, std::string const &Pkg, std::string const &Ver,struct stat const &St) APT_OVERRIDE

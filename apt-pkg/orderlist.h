@@ -21,7 +21,7 @@
 #include <string>
 
 class pkgDepCache;
-class pkgOrderList : protected pkgCache::Namespace
+class APT_PUBLIC pkgOrderList : protected pkgCache::Namespace
 {
    void * const d;
    protected:
@@ -47,7 +47,6 @@ class pkgOrderList : protected pkgCache::Namespace
    bool Debug;
    
    // Main visit function
-   APT_DEPRECATED_MSG("Add a unique calling identifier as parameter for debugging output") bool VisitNode(PkgIterator Pkg) { return VisitNode(Pkg, "UNKNOWN"); };
    bool VisitNode(PkgIterator Pkg, char const* from);
    bool VisitDeps(DepFunc F,PkgIterator Pkg);
    bool VisitRDeps(DepFunc F,PkgIterator Pkg);

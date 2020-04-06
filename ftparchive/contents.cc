@@ -204,7 +204,7 @@ void GenContents::Add(const char *Dir,const char *Package)
    Node *Root = &this->Root;
    
    // Drop leading slashes
-   while (*Dir == '/' && *Dir != 0)
+   while (*Dir == '/')
       Dir++;
    
    // Run over the string and grab out each bit up to and including a /

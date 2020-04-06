@@ -1,4 +1,4 @@
-// -*- mode: cpp; mode: fold -*-
+   // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
 
@@ -18,7 +18,6 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/netrc.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/strutl.h>
@@ -45,18 +44,14 @@ constexpr short NEVER_PIN = std::numeric_limits<short>::min();
 // ---------------------------------------------------------------------
 /* Set the defaults for operation. The default mode with no loaded policy
    file matches the V0 policy engine. */
-pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(nullptr), VerPins(nullptr),
+pkgPolicy::pkgPolicy(pkgCache *Owner) : VerPins(nullptr),
    PFPriority(nullptr), Cache(Owner), d(NULL)
 {
    if (Owner == 0)
       return;
    PFPriority = new signed short[Owner->Head().PackageFileCount];
-   auto PackageCount = Owner->Head().PackageCount;
-   Pins = new Pin[PackageCount];
    VerPins = new Pin[Owner->Head().VersionCount];
 
-   for (decltype(PackageCount) I = 0; I != PackageCount; ++I)
-      Pins[I].Type = pkgVersionMatch::None;
    auto VersionCount = Owner->Head().VersionCount;
    for (decltype(VersionCount) I = 0; I != VersionCount; ++I)
       VerPins[I].Type = pkgVersionMatch::None;
@@ -89,7 +84,6 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(nullptr), VerPins(nullptr),
 /* */
 bool pkgPolicy::InitDefaults()
 {
-   std::vector<std::unique_ptr<FileFd>> authconfs;
    // Initialize the priorities based on the status of the package file
    for (pkgCache::PkgFileIterator I = Cache->FileBegin(); I != Cache->FileEnd(); ++I)
    {
@@ -100,8 +94,6 @@ bool pkgPolicy::InitDefaults()
 	 PFPriority[I->ID] = 100;
       else if (I.Flagged(pkgCache::Flag::NotAutomatic))
 	 PFPriority[I->ID] = 1;
-      if (I.Flagged(pkgCache::Flag::PackagesRequireAuthorization) && !IsAuthorized(I, authconfs))
-	 PFPriority[I->ID] = NEVER_PIN;
    }
 
    // Apply the defaults..
@@ -179,6 +171,11 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       return;
    }
 
+   bool IsSourcePin = APT::String::Startswith(Name, "src:");
+   if (IsSourcePin) {
+      Name = Name.substr(sizeof("src:") - 1);
+   }
+
    size_t found = Name.rfind(':');
    string Arch;
    if (found != string::npos) {
@@ -194,10 +191,11 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() != true; ++G)
 	 if (Name != G.Name() && match.ExpressionMatches(Name, G.Name()))
 	 {
+	    auto NameToPinFor = IsSourcePin ? string("src:").append(G.Name()) : string(G.Name());
 	    if (Arch.empty() == false)
-	       CreatePin(Type, string(G.Name()).append(":").append(Arch), Data, Priority);
+	       CreatePin(Type, NameToPinFor.append(":").append(Arch), Data, Priority);
 	    else
-	       CreatePin(Type, G.Name(), Data, Priority);
+	       CreatePin(Type, NameToPinFor, Data, Priority);
 	 }
       return;
    }
@@ -213,28 +211,49 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       else
 	 MatchingArch = Arch;
       APT::CacheFilter::PackageArchitectureMatchesSpecification pams(MatchingArch);
-      for (pkgCache::PkgIterator Pkg = Grp.PackageList(); Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
-      {
-	 if (pams(Pkg.Arch()) == false)
-	    continue;
-	 Pin *P = Pins + Pkg->ID;
-	 // the first specific stanza for a package is the ruler,
-	 // all others need to be ignored
-	 if (P->Type != pkgVersionMatch::None)
-	    P = &*Unmatched.insert(Unmatched.end(),PkgPin(Pkg.FullName()));
-	 P->Type = Type;
-	 P->Priority = Priority;
-	 P->Data = Data;
-	 matched = true;
 
-	 // Find matching version(s) and copy the pin into it
-	 pkgVersionMatch Match(P->Data,P->Type);
-	 for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() != true; ++Ver)
+      if (IsSourcePin) {
+	 for (pkgCache::VerIterator Ver = Grp.VersionsInSource(); not Ver.end(); Ver = Ver.NextInSource())
 	 {
+	    if (pams(Ver.ParentPkg().Arch()) == false)
+	       continue;
+
+	    PkgPin P(Ver.ParentPkg().FullName());
+	    P.Type = Type;
+	    P.Priority = Priority;
+	    P.Data = Data;
+	    // Find matching version(s) and copy the pin into it
+	    pkgVersionMatch Match(P.Data,P.Type);
 	    if (Match.VersionMatches(Ver)) {
 	       Pin *VP = VerPins + Ver->ID;
-	       if (VP->Type == pkgVersionMatch::None)
-		  *VP = *P;
+	       if (VP->Type == pkgVersionMatch::None) {
+		  *VP = P;
+		   matched = true;
+	       }
+	    }
+	 }
+      } else {
+	 for (pkgCache::PkgIterator Pkg = Grp.PackageList(); Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
+	 {
+	    if (pams(Pkg.Arch()) == false)
+	       continue;
+
+	    PkgPin P(Pkg.FullName());
+	    P.Type = Type;
+	    P.Priority = Priority;
+	    P.Data = Data;
+
+	    // Find matching version(s) and copy the pin into it
+	    pkgVersionMatch Match(P.Data,P.Type);
+	    for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() != true; ++Ver)
+	    {
+	       if (Match.VersionMatches(Ver)) {
+		  Pin *VP = VerPins + Ver->ID;
+		  if (VP->Type == pkgVersionMatch::None) {
+		     *VP = P;
+		      matched = true;
+		  }
+	       }
 	    }
 	 }
       }
@@ -252,28 +271,9 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
    }
 }
 									/*}}}*/
-// Policy::GetMatch - Get the matching version for a package pin	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgCache::VerIterator pkgPolicy::GetMatch(pkgCache::PkgIterator const &Pkg)
-{
-   const Pin &PPkg = Pins[Pkg->ID];
-   if (PPkg.Type == pkgVersionMatch::None)
-      return pkgCache::VerIterator(*Pkg.Cache());
-
-   pkgVersionMatch Match(PPkg.Data,PPkg.Type);
-   return Match.Find(Pkg);
-}
-									/*}}}*/
 // Policy::GetPriority - Get the priority of the package pin		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
-{
-   if (Pins[Pkg->ID].Type != pkgVersionMatch::None)
-      return Pins[Pkg->ID].Priority;
-   return 0;
-}
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, bool ConsiderFiles)
 {
    if (VerPins[Ver->ID].Type != pkgVersionMatch::None)
@@ -309,6 +309,21 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &Fi
 {
    return PFPriority[File->ID];
 }
+									/*}}}*/
+// SetPriority - Directly set priority					/*{{{*/
+// ---------------------------------------------------------------------
+void pkgPolicy::SetPriority(pkgCache::VerIterator const &Ver, signed short Priority)
+{
+   Pin pin;
+   pin.Data = "pkgPolicy::SetPriority";
+   pin.Priority = Priority;
+   VerPins[Ver->ID] = pin;
+}
+void pkgPolicy::SetPriority(pkgCache::PkgFileIterator const &File, signed short Priority)
+{
+   PFPriority[File->ID] = Priority;
+}
+
 									/*}}}*/
 // ReadPinDir - Load the pin files from this dir into a Policy		/*{{{*/
 // ---------------------------------------------------------------------
@@ -439,4 +454,4 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
 }
 									/*}}}*/
 
-pkgPolicy::~pkgPolicy() {delete [] PFPriority; delete [] Pins; delete [] VerPins; }
+pkgPolicy::~pkgPolicy() {delete [] PFPriority; delete [] VerPins; }

@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# In apt 1.9.6, this test would have failed, outputting:
+#   The following packages will be REMOVED:
+#    libltdl-dev
+#   0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+#   Remv libltdl-dev [1]
+#
+# Because we started inserting groups without packages, and then could not
+# properly insert the provides.
+
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture "i386"
+
+insertinstalledpackage 'automake' 'i386' '1' 'Provides: automake-1.16
+Source: automake-1.16
+Multi-Arch: foreign'
+insertinstalledpackage 'libltdl-dev' 'i386' '1' 'Depends: automake-1.16'
+
+setupaptarchive
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget install -f -s

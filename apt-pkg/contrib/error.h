@@ -48,7 +48,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-class GlobalError							/*{{{*/
+class APT_PUBLIC GlobalError						/*{{{*/
 {
 public:									/*{{{*/
 	/** \brief a message can have one of following severity */
@@ -315,32 +315,10 @@ private:								/*{{{*/
 		Item(char const *Text, MsgType const &Type) :
 			Text(Text), Type(Type) {};
 
-		APT_HIDDEN friend std::ostream& operator<< (std::ostream &out, Item i) {
-			switch(i.Type) {
-			case FATAL:
-			case ERROR: out << 'E'; break;
-			case WARNING: out << 'W'; break;
-			case NOTICE: out << 'N'; break;
-			case DEBUG: out << 'D'; break;
-			}
-			out << ": ";
-			std::string::size_type line_start = 0;
-			std::string::size_type line_end;
-			while ((line_end = i.Text.find_first_of("\n\r", line_start)) != std::string::npos) {
-				if (line_start != 0)
-				   out << std::endl << "   ";
-				out << i.Text.substr(line_start, line_end - line_start);
-				line_start = i.Text.find_first_not_of("\n\r", line_end + 1);
-				if (line_start == std::string::npos)
-				   break;
-			}
-			if (line_start == 0)
-			   out << i.Text;
-			else if (line_start != std::string::npos)
-			   out << std::endl << "   " << i.Text.substr(line_start);
-			return out;
-		}
+		APT_HIDDEN friend std::ostream &operator<<(std::ostream &out, Item i);
 	};
+
+	APT_HIDDEN friend std::ostream &operator<<(std::ostream &out, Item i);
 
 	std::list<Item> Messages;
 	bool PendingFlag;
@@ -359,7 +337,9 @@ private:								/*{{{*/
 									/*}}}*/
 
 // The 'extra-ansi' syntax is used to help with collisions. 
-GlobalError *_GetErrorObj();
-#define _error _GetErrorObj()
+APT_PUBLIC GlobalError *_GetErrorObj();
+static struct {
+	inline GlobalError* operator ->() { return _GetErrorObj(); }
+} _error APT_UNUSED;
 
 #endif

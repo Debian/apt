@@ -29,10 +29,10 @@ target_link_libraries(apt-cdrom apt-pkg apt-private)
 target_link_libraries(apt-helper apt-pkg apt-private)
 target_link_libraries(apt-mark apt-pkg apt-private)
 target_link_libraries(apt-sortpkgs apt-pkg apt-private)
-target_link_libraries(apt-extracttemplates apt-pkg apt-inst apt-private)
-target_link_libraries(apt-internal-solver apt-pkg apt-inst apt-private)
-target_link_libraries(apt-dump-solver apt-pkg apt-inst apt-private)
-target_link_libraries(apt-internal-planner apt-pkg apt-inst apt-private)
+target_link_libraries(apt-extracttemplates apt-pkg apt-private)
+target_link_libraries(apt-internal-solver apt-pkg apt-private)
+target_link_libraries(apt-dump-solver apt-pkg apt-private)
+target_link_libraries(apt-internal-planner apt-pkg apt-private)
 
 set_target_properties(apt-dump-solver
                       PROPERTIES RUNTIME_OUTPUT_DIRECTORY solvers

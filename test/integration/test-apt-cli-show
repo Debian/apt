@@ -20,6 +20,8 @@ insertpackage 'unstable' 'bar' 'i386,amd64' '1' '' '' "$DESCR"
 insertpackage 'unstable' 'big' 'i386,amd64' '1' 'Installed-Size: 4129421' '' "$DESCR"
 insertpackage 'unstable' 'large' 'all' '1' "Provides: pkga$(generatelotsofnames)" '' "$DESCR"
 insertpackage 'unstable' 'large2' 'all' '1' "Provides: foobar, pkga$(generatelotsofnames)" '' "$DESCR"
+insertpackage 'unstable' 'multi' 'all' '1.0' '' '' "$DESCR"
+insertpackage 'unstable' 'multi' 'all' '2.0' '' '' "$DESCR"
 insertinstalledpackage 'foo' 'all' '1.0'
 
 setupaptarchive
@@ -98,6 +100,80 @@ APT-Sources: file:$APTARCHIVE unstable/main all Packages
 Description: Some description
  That has multiple lines
 " apt show large2
+
+# Test for multiple versions
+testsuccessequal "Package: multi
+Version: 2.0
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Download-Size: unknown
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+
+N: There is 1 additional record. Please use the '-a' switch to see it" apt show multi
+
+testsuccessequal "Package: multi
+Version: 2.0
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Download-Size: unknown
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+
+Package: multi
+Version: 1.0
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Download-Size: unknown
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+" apt show multi -a
+
+# test apt info
+testsuccessequal "Package: multi
+Version: 2.0
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Download-Size: unknown
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+
+N: There is 1 additional record. Please use the '-a' switch to see it" apt info multi
+
+testsuccessequal "Package: multi
+Version: 2.0
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Download-Size: unknown
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+
+Package: multi
+Version: 1.0
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Download-Size: unknown
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+" apt info multi -a
 
 # this is the default, but disabled by the testcases
 testsuccess apt show foo -o Apt::Cmd::Disable-Script-Warning=0

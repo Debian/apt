@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-02-04 15:34+0100\n"
+"POT-Creation-Date: 2020-02-26 21:29+0100\n"
 "PO-Revision-Date: 2017-03-27 19:05+0200\n"
 "Last-Translator: Beatrice Torracca <beatricet@libero.it>\n"
 "Language-Team: Italian <debian-l10n-italian@lists.debian.org>\n"
@@ -673,7 +673,7 @@ msgstr "8"
 #: apt_preferences.5.xml sources.list.5.xml apt-extracttemplates.1.xml
 #: apt-sortpkgs.1.xml apt-ftparchive.1.xml apt_auth.conf.5.xml
 #: apt-transport-http.1.xml apt-transport-https.1.xml
-#: apt-transport-mirror.1.xml
+#: apt-transport-mirror.1.xml apt-patterns.7.xml
 msgid "APT"
 msgstr "APT"
 
@@ -688,7 +688,7 @@ msgstr "interfaccia a riga di comando"
 #: apt_preferences.5.xml sources.list.5.xml apt-extracttemplates.1.xml
 #: apt-sortpkgs.1.xml apt-ftparchive.1.xml apt_auth.conf.5.xml
 #: apt-transport-http.1.xml apt-transport-https.1.xml
-#: apt-transport-mirror.1.xml
+#: apt-transport-mirror.1.xml apt-patterns.7.xml
 msgid "Description"
 msgstr "Descrizione"
 
@@ -855,6 +855,21 @@ msgstr ""
 "pacchetti che sono stati esplicitamente installati con <command>install</"
 "command> non vengono mai proposti per la rimozione automatica."
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"<option>satisfy</option> satisfies dependency strings, as used in Build-"
+"Depends. It also handles conflicts, by prefixing an argument with <literal>"
+"\"Conflicts: \"</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"Example: <literal>apt satisfy \"foo, bar (>= 1.0)\" \"Conflicts: baz, fuzz"
+"\"</literal>"
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
 msgid "(&apt-cache;)"
@@ -890,11 +905,6 @@ msgstr ""
 "permettere ad &apt; di rimuovere un pacchetto o quando si cercano nuovi "
 "pacchetti da installare."
 
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt.8.xml
-msgid "(work-in-progress)"
-msgstr "(lavoro-in-corso)"
-
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
 msgid ""
@@ -912,11 +922,16 @@ msgstr ""
 "versioni installate (<option>--installed</option>), aggiornabili (<option>--"
 "upgradeable</option>) o disponibili (<option>--all-versions</option>)."
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt.8.xml
+msgid "(work-in-progress)"
+msgstr "(lavoro-in-corso)"
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
 msgid ""
 "<literal>edit-sources</literal> lets you edit your &sources-list; files in "
-"your preferred texteditor while also providing basic sanity checks."
+"your preferred text editor while also providing basic sanity checks."
 msgstr ""
 "<literal>edit-sources</literal> permette di modificare i propri file "
 "&sources-list; nell'editor di testo preferito e fornisce controlli di sanità "
@@ -962,7 +977,7 @@ msgstr ""
 #: apt-secure.8.xml apt-cdrom.8.xml apt-config.8.xml apt.conf.5.xml
 #: apt_preferences.5.xml sources.list.5.xml apt-extracttemplates.1.xml
 #: apt-sortpkgs.1.xml apt-ftparchive.1.xml apt_auth.conf.5.xml
-#: apt-transport-http.1.xml apt-transport-https.1.xml
+#: apt-transport-http.1.xml apt-transport-https.1.xml apt-patterns.7.xml
 msgid "See Also"
 msgstr "Vedere anche"
 
@@ -1220,6 +1235,14 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
+msgid ""
+"Fallback to regular expressions is deprecated in APT 2.0, has been removed "
+"in &apt;, except for anchored expressions, and will be removed from &apt-"
+"get; in a future version. Use &apt-patterns; instead."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
 #, fuzzy
 #| msgid ""
 #| "A new <literal>list</literal> command is available similar to "
@@ -1362,6 +1385,29 @@ msgstr ""
 msgid ""
 "The arguments are interpreted as binary or source package names. See the "
 "<option>--only-source</option> option if you want to change that."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"<literal>satisfy</literal> causes apt-get to satisfy the given dependency "
+"strings. The dependency strings may have build profiles and architecture "
+"restriction list as in build dependencies. They may optionally be prefixed "
+"with <literal>\"Conflicts: \"</literal> to unsatisfy the dependency string. "
+"Multiple strings of the same type can be specified."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"Example: <literal>apt-get satisfy \"foo\" \"Conflicts: bar\" \"baz (&gt;&gt; "
+"1.0) | bar (= 2.0), moo\"</literal>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"The legacy operator '&lt;/&gt;' is not supported, use '&lt;=/&gt;=' instead."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -2820,10 +2866,11 @@ msgid ""
 "Note that if usage of <command>apt-key</command> is desired the additional "
 "installation of the GNU Privacy Guard suite (packaged in <package>gnupg</"
 "package>) is required. For this reason alone the programmatic usage "
-"(especially in package maintainerscripts!) is strongly discouraged.  Further "
-"more the output format of all commands is undefined and can and does change "
-"whenever the underlying commands change. <command>apt-key</command> will try "
-"to detect such usage and generates warnings on stderr in these cases."
+"(especially in package maintainer scripts!) is strongly discouraged.  "
+"Further more the output format of all commands is undefined and can and does "
+"change whenever the underlying commands change. <command>apt-key</command> "
+"will try to detect such usage and generates warnings on stderr in these "
+"cases."
 msgstr ""
 "Notare che si desidera usare <command>apt-key</command> è necessaria "
 "l'installazione aggiuntiva della suite GNU Privacy Guard (pacchettizzata in "
@@ -4469,7 +4516,7 @@ msgid ""
 "option disabled you should try to explicitly <literal>install</literal> the "
 "package APT is unable to configure immediately; but please make sure you "
 "also report your problem to your distribution and to the APT team with the "
-"buglink below, so they can work on improving or correcting the upgrade "
+"bug link below, so they can work on improving or correcting the upgrade "
 "process."
 msgstr ""
 "Prima di eseguire una grossa operazione come <literal>dist-upgrade</literal> "
@@ -4802,7 +4849,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
 msgid ""
-"The options in these scopes configure APTs acquire transports for the "
+"The options in these scopes configure APT's acquire transports for the "
 "protocols HTTP and HTTPS and are documented in the &apt-transport-http; and "
 "&apt-transport-https; manpages respectively."
 msgstr ""
@@ -6083,7 +6130,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml apt_preferences.5.xml sources.list.5.xml apt-ftparchive.1.xml
 #: apt-transport-http.1.xml apt-transport-https.1.xml
-#: apt-transport-mirror.1.xml
+#: apt-transport-mirror.1.xml apt-patterns.7.xml
 msgid "Examples"
 msgstr "Esempi"
 
@@ -6728,6 +6775,71 @@ msgstr ""
 "con caratteri jolly, in modo che i pin specifici successivi abbiano "
 "precedenza su di essi. Il modello «<literal>*</literal>» in un campo Package "
 "non viene considerato come un'espressione &glob;."
+
+#. type: Content of: <refentry><refsect1><refsect2><title>
+#: apt_preferences.5.xml
+msgid "Pinning by source package"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"APT supports pinning by source packages. To pin by a source package, prepend "
+"\"src:\" to the package name."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"For example, to pin all binaries produced by the apt source package of this "
+"APT's version to 990, you can do:"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><programlisting>
+#: apt_preferences.5.xml
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Package: perl\n"
+#| "Pin: version &good-perl;*\n"
+#| "Pin-Priority: 1001\n"
+msgid ""
+"Package: src:apt\n"
+"Pin: version &apt-product-version;\n"
+"Pin-Priority: 990\n"
+msgstr ""
+"Package: perl\n"
+"Pin: version &good-perl;*\n"
+"Pin-Priority: 1001\n"
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"Source package pinning can be combined with regular expressions and glob "
+"patterns, and can also take a binary architecture."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"For example, let's pin all binaries for all architectures produced by any "
+"source package containing apt in its name to 990:"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><programlisting>
+#: apt_preferences.5.xml
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Package: *\n"
+#| "Pin: origin \"\"\n"
+#| "Pin-Priority: 999\n"
+msgid ""
+"Package: src:*apt*:any\n"
+"Pin: version *\n"
+"Pin-Priority: 990\n"
+msgstr ""
+"Package: *\n"
+"Pin: origin \"\"\n"
+"Pin-Priority: 999\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
@@ -7635,13 +7747,13 @@ msgstr "Formato in stile deb822"
 #| "entry can hence be disabled by commenting out each line belonging to the "
 #| "stanza, but it is usually easier to add the field \"Enabled: no\" to the "
 #| "stanza to disable the entry. Removing the field or setting it to yes re-"
-#| "enables it.  Options have the same syntax as every other field: A "
-#| "fieldname separated by a colon (<literal>:</literal>) and optionally "
-#| "spaces from its value(s).  Note especially that multiple values are "
-#| "separated by spaces, not by commas as in the one-line format. Multivalue "
-#| "fields like <literal>Architectures</literal> also have "
-#| "<literal>Architectures-Add</literal> and <literal>Architectures-Remove</"
-#| "literal> to modify the default value rather than replacing it."
+#| "enables it.  Options have the same syntax as every other field: A field "
+#| "name separated by a colon (<literal>:</literal>) and optionally spaces "
+#| "from its value(s).  Note especially that multiple values are separated by "
+#| "spaces, not by commas as in the one-line format. Multivalue fields like "
+#| "<literal>Architectures</literal> also have <literal>Architectures-Add</"
+#| "literal> and <literal>Architectures-Remove</literal> to modify the "
+#| "default value rather than replacing it."
 msgid ""
 "Files in this format have the extension <filename>.sources</filename>.  The "
 "format is similar in syntax to other files used by Debian and its "
@@ -7653,7 +7765,7 @@ msgid ""
 "be disabled by commenting out each line belonging to the stanza, but it is "
 "usually easier to add the field \"Enabled: no\" to the stanza to disable the "
 "entry. Removing the field or setting it to yes re-enables it.  Options have "
-"the same syntax as every other field: A fieldname separated by a colon "
+"the same syntax as every other field: A field name separated by a colon "
 "(<literal>:</literal>) and optionally spaces from its value(s).  Note "
 "especially that multiple values are separated by whitespaces (like spaces, "
 "tabs and newlines), not by commas as in the one-line format.  Multivalue "
@@ -7900,7 +8012,7 @@ msgid ""
 "accessed and how data is acquired from it. Format, syntax and names of the "
 "options vary between the one-line-style and deb822-style formats as "
 "described, but they both have the same options available. For simplicity we "
-"list the deb822 fieldname and provide the one-line name in brackets.  "
+"list the deb822 field name and provide the one-line name in brackets.  "
 "Remember that besides setting multivalue options explicitly, there is also "
 "the option to modify them based on the default, but we aren't listing those "
 "names explicitly here. Unsupported options are silently ignored by all APT "
@@ -8256,7 +8368,7 @@ msgid ""
 "communication with the remote server (or proxy) is not encrypted so a "
 "sufficiently capable attacker can observe and record login as well as all "
 "other interactions. The attacker can <emphasis>not</emphasis> modify the "
-"communication through as APTs data security model is independent of the "
+"communication through as APT's data security model is independent of the "
 "chosen transport method. See &apt-secure; for details."
 msgstr ""
 
@@ -9757,7 +9869,7 @@ msgid ""
 "checksums will be used. With this option enabled this will no longer happen "
 "as it will be checked if the file was changed.  Note that this option is set "
 "to \"<literal>false</literal>\" by default as it is not recommend to upload "
-"multiply versions/builds of a package with the same versionnumber, so in "
+"multiple versions/builds of a package with the same version number, so in "
 "theory nobody will have these problems and therefore all these extra checks "
 "are useless."
 msgstr ""
@@ -9866,8 +9978,9 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt_auth.conf.5.xml
 msgid ""
-"<literal>machine</literal> <replaceable>hostname</replaceable>[:"
-"<replaceable>port</replaceable>][/<replaceable>path</replaceable>]"
+"<literal>machine</literal> <replaceable>[protocol://]</"
+"replaceable><replaceable>hostname</replaceable>[:<replaceable>port</"
+"replaceable>][/<replaceable>path</replaceable>]"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -9883,6 +9996,12 @@ msgid ""
 "Once a match is made, the subsequent tokens are processed, stopping when the "
 "end of file is reached or another <emphasis><literal>machine</literal></"
 "emphasis> token is encountered."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt_auth.conf.5.xml
+msgid ""
+"If protocol is not specified, the entry only matches https and tor+https."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
@@ -9920,14 +10039,14 @@ msgstr "Esempi"
 #: apt_auth.conf.5.xml
 #, fuzzy, no-wrap
 #| msgid "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
-msgid "deb http://example.org/debian &debian-stable-codename; main"
+msgid "deb https://example.org/debian &debian-stable-codename; main"
 msgstr "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: apt_auth.conf.5.xml
 #, fuzzy, no-wrap
 #| msgid "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
-msgid "deb http://apt:debian@example.org/debian &debian-stable-codename; main"
+msgid "deb https://apt:debian@example.org/debian &debian-stable-codename; main"
 msgstr "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
@@ -9958,7 +10077,7 @@ msgstr ""
 #: apt_auth.conf.5.xml
 #, no-wrap
 msgid ""
-"machine example.org:80 login apt password debian\n"
+"machine example.org:443 login apt password debian\n"
 "machine example.org/deb/ login apt password debian\n"
 "machine example.org/ubuntu login apt password debian\n"
 "machine example.orga login apt password debian\n"
@@ -9994,6 +10113,15 @@ msgid ""
 "should avoid multiple <literal>machine</literal> tokens with the same "
 "hostname, but if you need multiple they should all have a path specified in "
 "the <literal>machine</literal> token."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt_auth.conf.5.xml
+msgid ""
+"Login information in auth.conf are more flexible than those in sources.list. "
+"For example, login information can be specified for parts of a repository "
+"only, or if the sources.list entry redirects elsewhere, login information "
+"for the redirect destination can be supplied."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
@@ -10093,7 +10221,7 @@ msgid ""
 "wide configuration.  Proxies specific to APT can be configured via the "
 "option <literal>Acquire::http::Proxy</literal>.  Proxies which should be "
 "used only for certain hosts can be specified via <literal>Acquire::http::"
-"Proxy::<replaceable>host</replaceable></literal>. Even more finegrained "
+"Proxy::<replaceable>host</replaceable></literal>. Even more fine-grained "
 "control can be achieved via proxy autodetection, detailed further below.  "
 "All these options use the URI format <literal><replaceable>scheme</"
 "replaceable>://[[<replaceable>user</replaceable>][:<replaceable>pass</"
@@ -10737,6 +10865,642 @@ msgid ""
 "package of architecture <literal>amd64</literal> is served by the second and "
 "those of e.g. architecture <literal>i386</literal> by one of the last three."
 msgstr ""
+
+#. type: Content of: <refentry><refmeta><manvolnum>
+#: apt-patterns.7.xml
+msgid "7"
+msgstr ""
+
+#. type: Content of: <refentry><refnamediv><refpurpose>
+#: apt-patterns.7.xml
+msgid "Syntax and semantics of apt search patterns"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+msgid ""
+"Starting with version 2.0, <command>APT</command> provides support for "
+"patterns, which can be used to query the apt cache for packages."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
+msgid "Logic patterns"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+msgid ""
+"These patterns provide the basic means to combine other patterns into more "
+"complex expressions, as well as <code>?true</code> and <code>?false</code> "
+"patterns."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?and(PATTERN, PATTERN, ...)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>PATTERN PATTERN ...</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects objects where all specified patterns match."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?false</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~F</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects nothing."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?not(PATTERN)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>!PATTERN</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects objects where PATTERN does not match."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?or(PATTERN, PATTERN, ...)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>PATTERN | PATTERN | ...</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects objects where at least one of the specified patterns match."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?true</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~T</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects all objects."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>(PATTERN)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects the same as <code>PATTERN</code>, can be used to work around "
+"precedence, for example, <code>(~ramd64|~ri386)~nfoo</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "Packages"
+msgid "Narrowing patterns"
+msgstr "Packages"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?all-versions(PATTERN)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects packages where all versions match PATTERN. When matching versions "
+"instead, same as PATTERN."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?any-version(PATTERN)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects any version where the pattern matches on the version."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"For example, while <code>?and(?version(1),?version(2))</code> matches a "
+"package which has one version containing 1 and one version containing 2, "
+"<code>?any-version(?and(?version(1),?version(2)))</code> restricts the "
+"<code>?and</code> to act on the same version."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?narrow(PATTERN...)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects any version matching all PATTERNs, short for<code>?any-version(?"
+"and(PATTERN...))</code>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "Packages"
+msgid "Package patterns"
+msgstr "Packages"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+msgid "These patterns select specific packages."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?architecture(WILDCARD)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~rWILDCARD</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects packages matching the specified architecture, which may contain "
+"wildcards using any."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?automatic</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~M</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that were installed automatically."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?broken</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~b</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that have broken dependencies."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?config-files</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~c</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects packages that are not fully installed, but have solely residual "
+"configuration files left."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?essential</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~E</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that have Essential: yes set in their control file."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?exact-name(NAME)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages with the exact specified name."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?garbage</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~g</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that can be removed automatically."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?installed</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~i</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that are currently installed."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?name(REGEX)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~nREGEX</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages where the name matches the given regular expression."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?obsolete</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~o</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that no longer exist in repositories."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?upgradable</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~U</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects packages that can be upgraded (have a newer candidate)."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?virtual</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~v</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects all virtual packages; that is packages without a version.  These "
+"exist when they are referenced somewhere in the archive, for example because "
+"something depends on that name."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "Packages"
+msgid "Version patterns"
+msgstr "Packages"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+msgid "These patterns select specific versions of a package."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?archive(REGEX)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~AREGEX</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions that come from the archive that matches the specified "
+"regular expression. Archive, here, means the values after <code>a=</code> in "
+"<command>apt-cache policy</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?origin(REGEX)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~OREGEX</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions that come from the origin that matches the specified "
+"regular expression. Origin, here, means the values after <code>o=</code> in "
+"<command>apt-cache policy</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?section(REGEX)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~sREGEX</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions where the section matches the specified regular expression."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?source-package(REGEX)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~eREGEX</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions where the source package name matches the specified regular "
+"expression."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?source-version(REGEX)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions where the source package version matches the specified "
+"regular expression."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?version(REGEX)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~VREGEX</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions where the version string matching the specified regular "
+"expression."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>apt remove ?garbage</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Remove all packages that are automatically installed and no longer needed - "
+"same as apt autoremove"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>apt purge ?config-files</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Purge all packages that only have configuration files left"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>apt list '~i !~M (~slibs|~sperl|~spython)'</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"List all manually-installed packages in sections matching libs, perl, or "
+"python."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
+msgid "Migrating from aptitude"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+msgid ""
+"Patterns in apt are heavily inspired by patterns in aptitude, but with some "
+"tweaks:"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Syntax is uniform: If there is an opening parenthesis after a term, it is "
+"always assumed to be the beginning of an argument list."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"In aptitude, a syntactic form <code>\"?foo(bar)\"</code> could mean <code>\"?"
+"and(?foo,bar)\"</code> if foo does not take an argument. In APT, this will "
+"cause an error."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid "Not all patterns are supported."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Some additional patterns are available, for example, for finding gstreamer "
+"codecs."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid "Escaping terms with <code>~</code> is not supported."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid "A trailing comma is allowed in argument lists"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid "?narrow accepts infinite arguments"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"<code>foo</code> cannot be used as a shortform for <code>?name(foo)</code>, "
+"as this can cause typos to go unnoticed: Consider <code>?and(...,"
+"~poptional)</code>: this requires the package to have <code>required</code> "
+"priority, but if you do not type the <code>~</code>, it would require the "
+"package name to contain <code>poptional</code>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Grouping patterns with <code>(...)</code> or writing <code>?or(A,B)</code> "
+"as <code>A|B</code> are not supported. We do not believe that the use of "
+"<code>|</code> is that common, and the grouping is not necessary without it."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "&apt-get;, &apt-conf;"
+msgid "&apt-get;, &apt;"
+msgstr "&apt-get;, &apt-conf;"
 
 #. type: Attribute 'lang' of: <book>
 #: guide.dbk offline.dbk
@@ -12673,9 +13437,6 @@ msgstr "che userà gli archivi già scaricati e presenti sul disco."
 #~ "per tale fonte. Il valore predefinito è impostato a falso per "
 #~ "compatibilità all'indietro. In futuro ciò cambierà."
 
-#~ msgid "&apt-get;, &apt-conf;"
-#~ msgstr "&apt-get;, &apt-conf;"
-
 #~ msgid ""
 #~ "This is a space separated list of all the architectures that appear under "
 #~ "search section. The special architecture 'source' is used to indicate "
@@ -13931,9 +14692,6 @@ msgstr "che userà gli archivi già scaricati e presenti sul disco."
 #~ msgid "<option>--recurse</option>"
 #~ msgstr "<option>--recurse</option>"
 
-#~ msgid "<option>--installed</option>"
-#~ msgstr "<option>--installed</option>"
-
 #~ msgid "&apt-commonoptions;"
 #~ msgstr "&apt-commonoptions;"
 
@@ -14352,9 +15110,6 @@ msgstr "che userà gli archivi già scaricati e presenti sul disco."
 
 #~ msgid "SrcDirectory"
 #~ msgstr "SrcDirectory"
-
-#~ msgid "Packages"
-#~ msgstr "Packages"
 
 #~ msgid "Sources"
 #~ msgstr "Sources"

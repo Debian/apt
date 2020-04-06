@@ -1,6 +1,7 @@
 // Includes								/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
@@ -24,11 +25,30 @@
 #include <sstream>
 #include <string>
 #include <utility>
+#include <vector>
 #include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/
 
+static std::vector<pkgCache::DescIterator> const TranslatedDescriptionsList(pkgCache::VerIterator const &V) /*{{{*/
+{
+   std::vector<pkgCache::DescIterator> Descriptions;
+
+   for (std::string const &lang: APT::Configuration::getLanguages())
+   {
+      pkgCache::DescIterator Desc = V.TranslatedDescriptionForLanguage(lang);
+      if (Desc.IsGood())
+         Descriptions.push_back(Desc);
+   }
+
+   if (Descriptions.empty())
+      Descriptions.push_back(V.TranslatedDescription());
+
+   return Descriptions;
+}
+
+									/*}}}*/
 static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
 {
 
@@ -94,27 +114,49 @@ static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
       if (PkgsDone[P->ID] == true)
 	 continue;
 
-      char const * const PkgName = P.Name();
-      pkgCache::DescIterator Desc = V.TranslatedDescription();
-      std::string LongDesc = "";
-      if (Desc.end() == false)
+      std::vector<std::string> PkgDescriptions;
+      if (not NamesOnly)
       {
-	 pkgRecords::Parser &parser = records.Lookup(Desc.FileList());
-	 LongDesc = parser.LongDesc();
+         for (auto &Desc: TranslatedDescriptionsList(V))
+         {
+            pkgRecords::Parser &parser = records.Lookup(Desc.FileList());
+            PkgDescriptions.push_back(parser.LongDesc());
+         }
       }
 
       bool all_found = true;
+
+      char const * const PkgName = P.Name();
+      std::vector<bool> SkipDescription(PkgDescriptions.size(), false);
       for (std::vector<regex_t>::const_iterator pattern = Patterns.begin();
-	    pattern != Patterns.end(); ++pattern)
+           pattern != Patterns.end(); ++pattern)
       {
-	 if (regexec(&(*pattern), PkgName, 0, 0, 0) == 0)
-	    continue;
-	 else if (NamesOnly == false && regexec(&(*pattern), LongDesc.c_str(), 0, 0, 0) == 0)
-	    continue;
-	 // search patterns are AND, so one failing fails all
-	 all_found = false;
-	 break;
+         if (regexec(&(*pattern), PkgName, 0, 0, 0) == 0)
+            continue;
+         else if (not NamesOnly)
+         {
+            bool found = false;
+
+            for (std::vector<std::string>::size_type i = 0; i < PkgDescriptions.size(); ++i)
+            {
+               if (not SkipDescription[i])
+               {
+                  if (regexec(&(*pattern), PkgDescriptions[i].c_str(), 0, 0, 0) == 0)
+                     found = true;
+                  else
+                     SkipDescription[i] = true;
+               }
+            }
+
+            if (found)
+               continue;
+         }
+
+         // search patterns are AND, so one failing fails all
+         all_found = false;
+         break;
       }
+
       if (all_found == true)
       {
 	 PkgsDone[P->ID] = true;
@@ -290,19 +332,43 @@ static bool Search(CommandLine &CmdL)
    // Iterate over all the version records and check them
    for (ExDescFile *J = DFList; J->Df != 0; ++J)
    {
-      pkgRecords::Parser &P = Recs.Lookup(pkgCache::DescFileIterator(*Cache,J->Df));
       size_t const PatternOffset = J->ID * NumPatterns;
-
-      if (NamesOnly == false)
+      if (not NamesOnly)
       {
-	 std::string const LongDesc = P.LongDesc();
-	 for (unsigned I = 0; I < NumPatterns; ++I)
-	 {
-	    if (PatternMatch[PatternOffset + I] == true)
-	       continue;
-	    else if (regexec(&Patterns[I],LongDesc.c_str(),0,0,0) == 0)
-	       PatternMatch[PatternOffset + I] = true;
-	 }
+         std::vector<std::string> PkgDescriptions;
+         for (auto &Desc: TranslatedDescriptionsList(J->V))
+         {
+            pkgRecords::Parser &parser = Recs.Lookup(Desc.FileList());
+            PkgDescriptions.push_back(parser.LongDesc());
+         }
+
+         std::vector<bool> SkipDescription(PkgDescriptions.size(), false);
+         for (unsigned I = 0; I < NumPatterns; ++I)
+         {
+            if (PatternMatch[PatternOffset + I])
+               continue;
+            else
+            {
+               bool found = false;
+
+               for (std::vector<std::string>::size_type k = 0; k < PkgDescriptions.size(); ++k)
+               {
+                  if (not SkipDescription[k])
+                  {
+                     if (regexec(&Patterns[I], PkgDescriptions[k].c_str(), 0, 0, 0) == 0)
+                     {
+                        found = true;
+                        PatternMatch[PatternOffset + I] = true;
+                     }
+                     else
+                        SkipDescription[k] = true;
+                  }
+               }
+
+               if (not found)
+                  break;
+            }
+         }
       }
 
       bool matchedAll = true;
@@ -325,7 +391,10 @@ static bool Search(CommandLine &CmdL)
 	    DisplayRecordV1(CacheFile, Recs, J->V, Vf, Start, Length, std::cout);
 	 }
 	 else
-	    printf("%s - %s\n",P.Name().c_str(),P.ShortDesc().c_str());
+	 {
+	    pkgRecords::Parser &P = Recs.Lookup(pkgCache::DescFileIterator(*Cache, J->Df));
+	    printf("%s - %s\n", P.Name().c_str(), P.ShortDesc().c_str());
+	 }
       }
    }
    

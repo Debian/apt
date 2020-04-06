@@ -29,16 +29,10 @@
 
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/md5.h>
-#endif
-#ifndef APT_10_CLEANER_HEADERS
-#include <apt-pkg/pkgcache.h>
-#endif
 
 class FileFd;
 
-class debDebFile
+class APT_PUBLIC debDebFile
 {
    protected:
    
@@ -56,17 +50,17 @@ class debDebFile
    const ARArchive::Member *GotoMember(const char *Name);
    inline FileFd &GetFile() {return File;};
    
-   debDebFile(FileFd &File);
+   explicit debDebFile(FileFd &File);
 };
 
-class debDebFile::ControlExtract : public pkgDirStream
+class APT_PUBLIC debDebFile::ControlExtract : public pkgDirStream
 {
    public:
    
    virtual bool DoItem(Item &Itm,int &Fd) APT_OVERRIDE;
 };
 
-class debDebFile::MemControlExtract : public pkgDirStream
+class APT_PUBLIC debDebFile::MemControlExtract : public pkgDirStream
 {
    bool IsControl;
    
@@ -87,7 +81,7 @@ class debDebFile::MemControlExtract : public pkgDirStream
    bool TakeControl(const void *Data,unsigned long long Size);
 
    MemControlExtract() : IsControl(false), Control(0), Length(0), Member("control") {};
-   MemControlExtract(std::string Member) : IsControl(false), Control(0), Length(0), Member(Member) {};
+   explicit MemControlExtract(std::string Member) : IsControl(false), Control(0), Length(0), Member(Member) {};
    ~MemControlExtract() {delete [] Control;};   
 };
 									/*}}}*/

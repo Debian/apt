@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % aptent SYSTEM "apt.ent"> %aptent;
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent"> %aptverbatiment;
+<!ENTITY % aptvendor SYSTEM "apt-vendor.ent"> %aptvendor;
+]>
+
+<refentry>
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>2020-02-04T00:00:00Z</date>
+ </refentryinfo>
+
+ <refmeta>
+   <refentrytitle>apt-patterns</refentrytitle>
+   <manvolnum>7</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
+ </refmeta>
+
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-patterns</refname>
+    <refpurpose>Syntax and semantics of apt search patterns</refpurpose>
+ </refnamediv>
+
+ <refsect1><title>Description</title>
+   <para>
+   Starting with version 2.0, <command>APT</command> provides support for
+   patterns, which can be used to query the apt cache for packages.
+   </para>
+ </refsect1>
+
+ <refsect1>
+   <title>Logic patterns</title>
+   <para>
+      These patterns provide the basic means to combine other patterns into
+      more complex expressions, as well as <code>?true</code> and <code>?false</code>
+      patterns.
+   </para>
+   <variablelist>
+     <varlistentry><term><code>?and(PATTERN, PATTERN, ...)</code></term><term><code>PATTERN PATTERN ...</code></term>
+     <listitem><para>Selects objects where all specified patterns match.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?false</code></term><term><code>~F</code></term>
+     <listitem><para>Selects nothing.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?not(PATTERN)</code></term><term><code>!PATTERN</code></term>
+     <listitem><para>Selects objects where PATTERN does not match.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?or(PATTERN, PATTERN, ...)</code></term><term><code>PATTERN | PATTERN | ...</code></term>
+     <listitem><para>Selects objects where at least one of the specified patterns match.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?true</code></term><term><code>~T</code></term>
+     <listitem><para>Selects all objects.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>(PATTERN)</code></term>
+     <listitem><para>Selects the same as <code>PATTERN</code>, can be used to work around precedence, for example, <code>(~ramd64|~ri386)~nfoo</code></para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+ <refsect1>
+   <title>Narrowing patterns</title>
+   <para>
+   </para>
+   <variablelist>
+     <varlistentry><term><code>?all-versions(PATTERN)</code></term>
+     <listitem><para>Selects packages where all versions match PATTERN. When matching versions instead, same as PATTERN.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?any-version(PATTERN)</code></term>
+     <listitem><para>Selects any version where the pattern matches on the version.</para>
+     <para>For example, while <code>?and(?version(1),?version(2))</code> matches a package which has one version containing 1 and one version containing 2, <code>?any-version(?and(?version(1),?version(2)))</code> restricts the <code>?and</code> to act on the same version.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?narrow(PATTERN...)</code></term>
+     <listitem><para>Selects any version matching all PATTERNs, short for<code>?any-version(?and(PATTERN...))</code>.</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+ <refsect1>
+   <title>Package patterns</title>
+   <para>
+   These patterns select specific packages.
+   </para>
+   <variablelist>
+     <varlistentry><term><code>?architecture(WILDCARD)</code></term><term><code>~rWILDCARD</code></term>
+     <listitem><para>Selects packages matching the specified architecture, which may contain wildcards using any.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?automatic</code></term><term><code>~M</code></term>
+     <listitem><para>Selects packages that were installed automatically.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?broken</code></term><term><code>~b</code></term>
+     <listitem><para>Selects packages that have broken dependencies.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?config-files</code></term><term><code>~c</code></term>
+     <listitem><para>Selects packages that are not fully installed, but have solely residual configuration files left.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?essential</code></term><term><code>~E</code></term>
+     <listitem><para>Selects packages that have Essential: yes set in their control file.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?exact-name(NAME)</code></term>
+     <listitem><para>Selects packages with the exact specified name.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?garbage</code></term><term><code>~g</code></term>
+     <listitem><para>Selects packages that can be removed automatically.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?installed</code></term><term><code>~i</code></term>
+     <listitem><para>Selects packages that are currently installed.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?name(REGEX)</code></term><term><code>~nREGEX</code></term>
+     <listitem><para>Selects packages where the name matches the given regular expression.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?obsolete</code></term><term><code>~o</code></term>
+     <listitem><para>Selects packages that no longer exist in repositories.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?upgradable</code></term><term><code>~U</code></term>
+     <listitem><para>Selects packages that can be upgraded (have a newer candidate).</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?virtual</code></term><term><code>~v</code></term>
+     <listitem><para>Selects all virtual packages; that is packages without a version.
+      These exist when they are referenced somewhere in the archive,
+      for example because something depends on that name.</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+ <refsect1>
+   <title>Version patterns</title>
+   <para>
+   These patterns select specific versions of a package.
+   </para>
+   <variablelist>
+     <varlistentry><term><code>?archive(REGEX)</code></term><term><code>~AREGEX</code></term>
+     <listitem><para>Selects versions that come from the archive that matches the specified regular expression. Archive, here, means the values after <code>a=</code> in <command>apt-cache policy</command>.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?origin(REGEX)</code></term><term><code>~OREGEX</code></term>
+     <listitem><para>Selects versions that come from the origin that matches the specified regular expression. Origin, here, means the values after <code>o=</code> in <command>apt-cache policy</command>.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?section(REGEX)</code></term><term><code>~sREGEX</code></term>
+     <listitem><para>Selects versions where the section matches the specified regular expression.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?source-package(REGEX)</code></term><term><code>~eREGEX</code></term>
+     <listitem><para>Selects versions where the source package name matches the specified regular expression.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?source-version(REGEX)</code></term>
+     <listitem><para>Selects versions where the source package version matches the specified regular expression.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?version(REGEX)</code></term><term><code>~VREGEX</code></term>
+     <listitem><para>Selects versions where the version string matching the specified regular expression.</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+
+
+ <refsect1><title>Examples</title>
+   <variablelist>
+     <varlistentry><term><code>apt remove ?garbage</code></term>
+     <listitem><para>Remove all packages that are automatically installed and no longer needed - same as apt autoremove</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>apt purge ?config-files</code></term>
+     <listitem><para>Purge all packages that only have configuration files left</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>apt list '~i !~M (~slibs|~sperl|~spython)'</code></term>
+     <listitem><para>List all manually-installed packages in sections matching libs, perl, or python.</para></listitem>
+     </varlistentry>
+   </variablelist>
+ </refsect1>
+
+ <refsect1><title>Migrating from aptitude</title>
+   <para>
+   Patterns in apt are heavily inspired by patterns in aptitude, but with some tweaks:
+   </para>
+   <itemizedlist>
+      <listitem>
+         <para>
+            Syntax is uniform: If there is an opening parenthesis after a term, it is always assumed to be the beginning of an argument list.
+         </para>
+         <para>
+            In aptitude, a syntactic form <code>"?foo(bar)"</code> could mean <code>"?and(?foo,bar)"</code> if foo does not take an argument. In APT, this will cause an error.
+         </para>
+      </listitem>
+      <listitem>
+         <para>Not all patterns are supported.</para>
+      </listitem>
+      <listitem>
+         <para>Some additional patterns are available, for example, for finding gstreamer codecs.</para>
+      </listitem>
+      <listitem>
+         <para>Escaping terms with <code>~</code> is not supported.</para>
+      </listitem>
+      <listitem>
+         <para>A trailing comma is allowed in argument lists</para>
+      </listitem>
+      <listitem>
+         <para>?narrow accepts infinite arguments</para>
+      </listitem>
+      <listitem>
+         <para><code>foo</code> cannot be used as a shortform for <code>?name(foo)</code>, as this can cause typos to go unnoticed:
+         Consider <code>?and(...,~poptional)</code>:
+         this requires the package to have <code>required</code> priority, but
+         if you do not type the <code>~</code>, it would require the package name to contain <code>poptional</code>.</para>
+      </listitem>
+      <listitem>
+          <para>Grouping patterns with <code>(...)</code> or writing <code>?or(A,B)</code> as <code>A|B</code> are not supported. We
+          do not believe that the use of <code>|</code> is that common, and the grouping is not necessary without it.</para>
+      </listitem>
+   </itemizedlist>
+ </refsect1>
+
+ <refsect1><title>See Also</title>
+   <para>
+   &apt-get;, &apt;
+   </para>
+ </refsect1>
+
+ &manbugs;
+ &manauthor;
+</refentry>

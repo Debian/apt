@@ -10,7 +10,9 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apti18n.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/debfile.h>
 #include <apt-pkg/debindexfile.h>
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/debrecords.h>
@@ -21,6 +23,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/srcrecords.h>
+#include <apt-pkg/strutl.h>
 
 #include <iostream>
 #include <memory>
@@ -172,36 +175,23 @@ bool debDebPkgFileIndex::GetContent(std::ostream &content, std::string const &de
    if (stat(debfile.c_str(), &Buf) != 0)
       return false;
 
-   // get the control data out of the deb file via dpkg-deb -I
-   std::string dpkg = _config->Find("Dir::Bin::dpkg","dpkg-deb");
-   std::vector<const char *> Args;
-   Args.push_back(dpkg.c_str());
-   Args.push_back("-I");
-   Args.push_back(debfile.c_str());
-   Args.push_back("control");
-   Args.push_back(NULL);
-   FileFd PipeFd;
-   pid_t Child;
-   if(Popen((const char**)&Args[0], PipeFd, Child, FileFd::ReadOnly) == false)
-      return _error->Error("Popen failed");
+   FileFd debFd(debfile, FileFd::ReadOnly);
+   debDebFile deb(debFd);
+   debDebFile::MemControlExtract extractor("control");
 
-   std::string line;
-   bool first_line_seen = false;
-   while (PipeFd.ReadLine(line))
-   {
-      if (first_line_seen == false)
-      {
-	 if (line.empty())
-	    continue;
-	 first_line_seen = true;
-      }
-      else if (line.empty())
-	 break;
-      content << line << "\n";
-   }
+   if (not extractor.Read(deb))
+      return _error->Error(_("Could not read meta data from %s"), debfile.c_str());
+
+   // trim off newlines
+   while (extractor.Control[extractor.Length] == '\n')
+      extractor.Control[extractor.Length--] = '\0';
+   const char *Control = extractor.Control;
+   while (isspace_ascii(Control[0]))
+      Control++;
+
+   content << Control << '\n';
    content << "Filename: " << debfile << "\n";
    content << "Size: " << std::to_string(Buf.st_size) << "\n";
-   ExecWait(Child, "Popen");
 
    return true;
 }
@@ -256,7 +246,7 @@ pkgCache::PkgFileIterator debDebPkgFileIndex::FindInCache(pkgCache &Cache) const
 
    return File;
 }
-std::string debDebPkgFileIndex::ArchiveInfo_impl(pkgCache::VerIterator const &Ver) const
+std::string debDebPkgFileIndex::ArchiveInfo(pkgCache::VerIterator const &Ver) const
 {
    std::string Res = IndexFileName() + " ";
    Res.append(Ver.ParentPkg().Name()).append(" ");

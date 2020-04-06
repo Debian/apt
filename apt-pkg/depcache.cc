@@ -1723,21 +1723,6 @@ void pkgDepCache::StateCache::Update(PkgIterator Pkg,pkgCache &Cache)
      Status = 2;      
 }
 									/*}}}*/
-// StateCache::StripEpoch - Remove the epoch specifier from the version	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-const char *pkgDepCache::StateCache::StripEpoch(const char *Ver)
-{
-   if (Ver == 0)
-      return 0;
-
-   // Strip any epoch
-   char const * const I = strchr(Ver, ':');
-   if (I == nullptr)
-      return Ver;
-   return I + 1;
-}
-									/*}}}*/
 // Policy::GetCandidateVer - Returns the Candidate install version	/*{{{*/
 // ---------------------------------------------------------------------
 /* The default just returns the highest available version that is not

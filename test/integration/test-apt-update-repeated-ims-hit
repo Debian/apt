@@ -1,0 +1,75 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+configcompression '.' 'bz2'
+
+echo 'Package: apt
+Priority: important
+Section: admin
+Installed-Size: 5984
+Maintainer: APT Development Team <deity@lists.debian.org>
+Architecture: i386
+Version: 0.8.7
+Filename: pool/main/a/apt/apt_0.8.7_i386.deb
+Size: 2140230
+MD5sum: 74769bfbcef9ebc4fa74f7a5271b9c08
+Description: Advanced front-end for dpkg
+Description-md5: d41ee493aa9fcc6cbc9ce4eb7069959c' > aptarchive/Packages
+compressfile aptarchive/Packages
+
+echo "Package: apt
+Description-en: Advanced front-end for dpkg
+ This is Debian's next generation front-end for the dpkg package manager.
+ It provides the apt-get utility and APT dselect method that provides a
+ simpler, safer way to install and upgrade packages.
+$MD5Sum" > aptarchive/en
+compressfile aptarchive/en
+
+echo "APT::FTPArchive::Release::Patterns:: \"en\";
+APT::FTPArchive::Release::Patterns:: \"en.*\";" > rootdir/etc/apt/apt.conf.d/ftparchivepattern
+
+export APT_DONT_SIGN='InRelease'
+setupaptarchive --no-update
+rm -f aptarchive/Packages aptarchive/en
+
+rm -f rootdir/etc/apt/trusted.gpg.d/*
+sed -i -e 's#^deb #deb [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
+
+APTARCHIVE="$(readlink -f ./aptarchive)"
+GPGERROR="W: GPG error: file:$APTARCHIVE  Release: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 5A90D141DBAC8DAE"
+
+msgmsg 'Running update again does not change result' '0'
+testwarningmsg "$GPGERROR" apt update
+listcurrentlistsdirectory > lists.before
+testsuccess grep 'aptarchive_en$' lists.before
+testsuccess grep 'aptarchive_Packages$' lists.before
+testsuccess grep 'aptarchive_Release$' lists.before
+testfailure grep 'aptarchive_Release.gpg$' lists.before
+
+for i in $(seq 1 3); do
+	msgmsg 'Running update again does not change result' "$i"
+	testwarningmsg "$GPGERROR" apt update
+	testfileequal lists.before "$(listcurrentlistsdirectory)"
+done
+
+find rootdir/var/lib/apt/lists -name '*Release*' -delete
+msgmsg 'Running update with a repository gaining hashsums'
+testwarningmsg "$GPGERROR" apt update
+testfileequal lists.before "$(listcurrentlistsdirectory)"
+
+changetowebserver
+find aptarchive -name '*Release*' -delete
+rm -rf rootdir/var/lib/apt/lists
+
+msgmsg 'Running update with no indexes' '0'
+testsuccess apt update
+listcurrentlistsdirectory > lists.before
+for i in $(seq 1 3); do
+	msgmsg 'Running update with no indexes' "$i"
+	testsuccess apt update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::Transaction=1
+	testfileequal lists.before "$(listcurrentlistsdirectory)"
+done

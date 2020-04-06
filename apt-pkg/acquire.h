@@ -76,14 +76,7 @@
 #include <sys/select.h>
 #include <sys/time.h>
 
-#ifndef APT_10_CLEANER_HEADERS
-#include <unistd.h>
-#endif
 
-#ifndef APT_8_CLEANER_HEADERS
-using std::vector;
-using std::string;
-#endif
 
 class pkgAcquireStatus;
 class metaIndex;
@@ -96,7 +89,7 @@ class metaIndex;
  *
  *  \todo Why all the protected data items and methods?
  */
-class pkgAcquire
+class APT_PUBLIC pkgAcquire
 {   
    private:
    /** \brief FD of the Lock file we acquire in Setup (if any) */
@@ -240,12 +233,7 @@ class pkgAcquire
     *
     * \return false if there is an error condition on one of the fds
     */
-   bool RunFdsSane(fd_set *RSet,fd_set *WSet);
-
-   // just here for compatibility, needs to be removed on the next
-   // ABI/API break. RunFdsSane() is what should be used as it
-   // returns if there is an error condition on one of the fds
-   virtual void RunFds(fd_set *RSet,fd_set *WSet);
+   virtual bool RunFds(fd_set *RSet,fd_set *WSet);
 
    /** \brief Check for idle queues with ready-to-fetch items.
     *
@@ -353,20 +341,6 @@ class pkgAcquire
     */
    unsigned long long PartialPresent();
 
-   /** \brief Delayed constructor
-    *
-    *  \param Progress indicator associated with this download or
-    *  \b NULL for none.  This object is not owned by the
-    *  download process and will not be deleted when the pkgAcquire
-    *  object is destroyed.  Naturally, it should live for at least as
-    *  long as the pkgAcquire object does.
-    *  \param Lock defines a lock file that should be acquired to ensure
-    *  only one Acquire class is in action at the time or an empty string
-    *  if no lock file should be used. If set also all needed directories
-    *  will be created.
-    */
-   APT_DEPRECATED_MSG("Use constructors, .SetLog and .GetLock as needed") bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "");
-
    void SetLog(pkgAcquireStatus *Progress) { Log = Progress; }
 
    /** \brief acquire lock and perform directory setup
@@ -398,7 +372,7 @@ class pkgAcquire
  *
  *  An item may have several associated ItemDescs over its lifetime.
  */
-struct pkgAcquire::ItemDesc : public WeakPointable
+struct APT_PUBLIC pkgAcquire::ItemDesc : public WeakPointable
 {
    /** \brief URI from which to download this item. */
    std::string URI;
@@ -414,7 +388,7 @@ struct pkgAcquire::ItemDesc : public WeakPointable
  *
  *  \todo Why so many protected values?
  */
-class pkgAcquire::Queue
+class APT_PUBLIC pkgAcquire::Queue
 {
    friend class pkgAcquire;
    friend class pkgAcquire::UriIterator;
@@ -438,6 +412,21 @@ class pkgAcquire::Queue
 
       /** \brief The underlying items interested in the download */
       std::vector<Item*> Owners;
+
+      /** \brief How many bytes of the file have been downloaded.  Zero
+       *  if the current progress of the file cannot be determined.
+       */
+      unsigned long long CurrentSize = 0;
+
+      /** \brief The total number of bytes to be downloaded.  Zero if the
+       *  total size of the final is unknown.
+       */
+      unsigned long long TotalSize = 0;
+
+      /** \brief How much of the file was already downloaded prior to
+       *  starting this worker.
+       */
+      unsigned long long ResumePoint = 0;
 
       typedef std::vector<Item*>::const_iterator owner_iterator;
 
@@ -597,7 +586,7 @@ class pkgAcquire::Queue
 };
 									/*}}}*/
 /** \brief Iterates over all the URIs being fetched by a pkgAcquire object.	{{{*/
-class pkgAcquire::UriIterator
+class APT_PUBLIC pkgAcquire::UriIterator
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void * const d;
@@ -634,7 +623,7 @@ class pkgAcquire::UriIterator
 };
 									/*}}}*/
 /** \brief Information about the properties of a single acquire method.	{{{*/
-struct pkgAcquire::MethodConfig
+struct APT_PUBLIC pkgAcquire::MethodConfig
 {
    class Private;
    /** \brief dpointer placeholder (for later in case we need it) */
@@ -699,7 +688,7 @@ struct pkgAcquire::MethodConfig
  *
  *  \todo Why protected members?
  */
-class pkgAcquireStatus
+class APT_PUBLIC pkgAcquireStatus
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void * const d;
@@ -819,17 +808,13 @@ class pkgAcquireStatus
     *  success it will print for each change the message attached to it via GlobalError either as an
     *  error (if DefaultAction == false) or as a notice otherwise.
     *
-    *  \b Note: To keep ABI compatibility for now this method isn't marked as
-    *  virtual, but you can derive your class from #pkgAcquireStatus2 which has it
-    *  marked as virtual. TODO on next ABI break: merge both classes.
-    *
     *  @param LastRelease can be used to extract further information from the previous Release file
     *  @param CurrentRelease can be used to extract further information from the current Release file
     *  @param Changes is an array of changes alongside explanatory messages
     *                 which should be presented in some way to the user.
     *  @return \b true if all changes are accepted by user, otherwise or if user can't be asked \b false
     */
-   bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes);
+   virtual bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes);
    APT_HIDDEN static bool ReleaseInfoChangesAsGlobalErrors(std::vector<ReleaseInfoChange> &&Changes);
 
    /** \brief Invoked when an item is confirmed to be up-to-date.
@@ -871,14 +856,6 @@ class pkgAcquireStatus
    /** \brief Initialize all counters to 0 and the time to the current time. */
    pkgAcquireStatus();
    virtual ~pkgAcquireStatus();
-};
-class pkgAcquireStatus2: public pkgAcquireStatus
-{
-public:
-   virtual bool ReleaseInfoChanges(metaIndex const * const LastRelease, metaIndex const * const CurrentRelease, std::vector<ReleaseInfoChange> &&Changes);
-
-   pkgAcquireStatus2();
-   virtual ~pkgAcquireStatus2();
 };
 									/*}}}*/
 /** @} */

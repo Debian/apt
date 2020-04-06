@@ -13,7 +13,7 @@
 class APT_PUBLIC CacheFile : public pkgCacheFile
 {
    public:
-   std::vector<map_pointer_t> UniverseList;
+   std::vector<map_pointer<pkgCache::Package>> UniverseList;
 
    bool CheckDeps(bool AllowBroken = false);
    bool BuildCaches(bool WithLock = true)
@@ -40,13 +40,13 @@ class APT_PUBLIC CacheFile : public pkgCacheFile
 
 class SortedPackageUniverse : public APT::PackageUniverse
 {
-   std::vector<map_pointer_t> &List;
+   std::vector<map_pointer<pkgCache::Package>> &List;
    void LazyInit() const;
 
 public:
    explicit SortedPackageUniverse(CacheFile &Cache);
 
-   class const_iterator : public APT::Container_iterator_base<APT::PackageContainerInterface, SortedPackageUniverse, SortedPackageUniverse::const_iterator, std::vector<map_pointer_t>::const_iterator, pkgCache::PkgIterator>
+   class const_iterator : public APT::Container_iterator_base<APT::PackageContainerInterface, SortedPackageUniverse, SortedPackageUniverse::const_iterator, std::vector<map_pointer<pkgCache::Package>>::const_iterator, pkgCache::PkgIterator>
    {
       pkgCache * const Cache;
       public:
@@ -55,8 +55,8 @@ public:
 	    if (*_iter == 0) return pkgCache::PkgIterator(*Cache);
 	    return pkgCache::PkgIterator(*Cache, Cache->PkgP + *_iter);
 	 }
-	 explicit const_iterator(pkgCache * const Owner, std::vector<map_pointer_t>::const_iterator i):
-	    Container_iterator_base<APT::PackageContainerInterface, SortedPackageUniverse, SortedPackageUniverse::const_iterator, std::vector<map_pointer_t>::const_iterator, pkgCache::PkgIterator>(i), Cache(Owner) {}
+	 explicit const_iterator(pkgCache * const Owner, std::vector<map_pointer<pkgCache::Package>>::const_iterator i):
+	    Container_iterator_base<APT::PackageContainerInterface, SortedPackageUniverse, SortedPackageUniverse::const_iterator, std::vector<map_pointer<pkgCache::Package>>::const_iterator, pkgCache::PkgIterator>(i), Cache(Owner) {}
 
    };
    typedef const_iterator iterator;

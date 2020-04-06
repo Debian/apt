@@ -11,6 +11,7 @@ include_directories(${PROJECT_BINARY_DIR}/include)
 enable_testing()
 
 option(WITH_DOC "Build documentation." ON)
+option(WITH_TESTS "Build tests" ON)
 option(USE_NLS "Localisation support." ON)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMake")
@@ -38,6 +39,12 @@ find_package(Iconv REQUIRED)
 
 find_package(Perl REQUIRED)
 
+find_program(TRIEHASH_EXECUTABLE NAMES triehash)
+
+if (NOT TRIEHASH_EXECUTABLE)
+  message(FATAL_ERROR "Could not find triehash executable")
+endif()
+
 if(USE_NLS)
   find_package(Intl REQUIRED)
   link_libraries(${Intl_LIBRARIES})
@@ -50,7 +57,7 @@ add_definitions(${LFS_DEFINITIONS})
 link_libraries(${LFS_LIBRARIES})
 
 # Set compiler flags
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
@@ -69,7 +76,9 @@ add_optional_compile_options(Wnoexcept)
 add_optional_compile_options(Wsign-promo)
 add_optional_compile_options(Wundef)
 add_optional_compile_options(Wdouble-promotion)
-
+add_optional_compile_options(Wsuggest-override)
+add_optional_compile_options(Werror=suggest-override)
+add_optional_compile_options(Werror=return-type)
 # apt-ftparchive dependencies
 find_package(BerkeleyDB REQUIRED)
 if (BERKELEY_DB_FOUND)
@@ -125,6 +134,8 @@ if (SECCOMP_FOUND)
   set(HAVE_SECCOMP 1)
 endif()
 
+find_package(Gcrypt REQUIRED)
+
 # Mount()ing and stat()ing and friends
 check_symbol_exists(statfs sys/vfs.h HAVE_VFS_H)
 check_include_files(sys/params.h HAVE_PARAMS_H)
@@ -178,7 +189,7 @@ if (NOT HAVE_SIGHANDLER_T)
 endif()
 
 # Handle resolving
-check_function_exists(res_init HAVE_LIBC_RESOLV)
+check_function_exists(res_ninit HAVE_LIBC_RESOLV)
 if(HAVE_LIBC_RESOLV)
     set(RESOLV_LIBRARIES)
 else()
@@ -193,7 +204,8 @@ check_cxx_target(HAVE_FMV_SSE42_AND_CRC32DI "sse4.2" "__builtin_ia32_crc32di(0, 
 # Configure some variables like package, version and architecture.
 set(PACKAGE ${PROJECT_NAME})
 set(PACKAGE_MAIL "APT Development Team <deity@lists.debian.org>")
-set(PACKAGE_VERSION "1.8.1")
+set(PACKAGE_VERSION "2.0.1")
+string(REGEX MATCH "^[0-9.]+" PROJECT_VERSION ${PACKAGE_VERSION})
 
 if (NOT DEFINED DPKG_DATADIR)
   execute_process(COMMAND ${PERL_EXECUTABLE} -MDpkg -e "print $Dpkg::DATADIR;"
@@ -229,7 +241,6 @@ configure_file(CMake/apti18n.h.in ${PROJECT_BINARY_DIR}/include/apti18n.h)
 add_subdirectory(vendor)
 add_subdirectory(apt-pkg)
 add_subdirectory(apt-private)
-add_subdirectory(apt-inst)
 add_subdirectory(cmdline)
 add_subdirectory(completions)
 add_subdirectory(doc)

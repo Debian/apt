@@ -10,6 +10,7 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/cachefilter-patterns.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
@@ -63,14 +64,36 @@ static bool DoDownloadFile(CommandLine &CmdL)				/*{{{*/
    {
       std::string download_uri = CmdL.FileList[fileind + 1];
       std::string targetfile = CmdL.FileList[fileind + 2];
-      std::string hash;
-      if (CmdL.FileSize() > fileind + 3)
-	 hash = CmdL.FileList[fileind + 3];
+      HashStringList hashes;
+
+      fileind += 2;
+
+      // An empty string counts as a hash for compatibility reasons
+      if (CmdL.FileSize() > fileind + 1 && *CmdL.FileList[fileind + 1] == '\0')
+	 fileind++;
+
+      /* Let's start looking for hashes */
+      for (auto i = fileind + 1; CmdL.FileSize() > i; i++)
+      {
+	 bool isAHash = false;
+
+	 for (auto HashP = HashString::SupportedHashes(); *HashP != nullptr; HashP++)
+	 {
+	    if (APT::String::Startswith(CmdL.FileList[i], *HashP))
+	       isAHash = true;
+	 }
+
+	 if (!isAHash)
+	    break;
+
+	 hashes.push_back(HashString(CmdL.FileList[i]));
+	 fileind++;
+      }
+
       // we use download_uri as descr and targetfile as short-descr
-      new pkgAcqFile(&Fetcher, download_uri, hash, 0, download_uri, targetfile,
-	    "dest-dir-ignored", targetfile);
+      new pkgAcqFile(&Fetcher, download_uri, hashes, 0, download_uri, targetfile,
+		     "dest-dir-ignored", targetfile);
       targetfiles.push_back(targetfile);
-      fileind += 3;
    }
 
    bool Failed = false;
@@ -111,7 +134,7 @@ static bool DoSrvLookup(CommandLine &CmdL)				/*{{{*/
    return true;
 }
 									/*}}}*/
-static const APT::Configuration::Compressor *FindCompressor(std::vector<APT::Configuration::Compressor> const & compressors, std::string name)				/*{{{*/
+static const APT::Configuration::Compressor *FindCompressor(std::vector<APT::Configuration::Compressor> const &compressors, std::string const &name) /*{{{*/
 {
    APT::Configuration::Compressor const * compressor = NULL;
    for (auto const & c : compressors)
@@ -235,6 +258,35 @@ static bool DropPrivsAndRun(CommandLine &CmdL)				/*{{{*/
    return ExecWait(pid, CmdL.FileList[1]);
 }
 									/*}}}*/
+static bool AnalyzePattern(CommandLine &CmdL)				/*{{{*/
+{
+   if (CmdL.FileSize() != 2)
+      return _error->Error("Expect one argument, a pattern");
+
+   try
+   {
+      auto top = APT::Internal::PatternTreeParser(CmdL.FileList[1]).parseTop();
+      top->render(std::cout) << "\n";
+   }
+   catch (APT::Internal::PatternTreeParser::Error &e)
+   {
+      std::stringstream ss;
+      ss << "input:" << e.location.start << "-" << e.location.end << ": error: " << e.message << "\n";
+      ss << CmdL.FileList[1] << "\n";
+      for (size_t i = 0; i < e.location.start; i++)
+	 ss << " ";
+      for (size_t i = e.location.start; i < e.location.end; i++)
+	 ss << "^";
+
+      ss << "\n";
+
+      _error->Error("%s", ss.str().c_str());
+      return false;
+   }
+
+   return true;
+}
+									/*}}}*/
 static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
@@ -256,6 +308,8 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
        {"auto-detect-proxy", &DoAutoDetectProxy, _("detect proxy using apt.conf")},
        {"wait-online", &DoWaitOnline, _("wait for system to be online")},
        {"drop-privs", &DropPrivsAndRun, _("drop privileges before running given command")},
+       {"analyze-pattern", &AnalyzePattern, _("analyse a pattern")},
+       {"analyse-pattern", &AnalyzePattern, nullptr},
        {nullptr, nullptr, nullptr}};
 }
 									/*}}}*/

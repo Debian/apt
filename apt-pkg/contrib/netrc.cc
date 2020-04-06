@@ -11,6 +11,7 @@
    ##################################################################### */
 									/*}}}*/
 #include <config.h>
+#include <apti18n.h>
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
@@ -47,6 +48,8 @@ bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
    std::string line;
    while (NetRCFile.Eof() == false || line.empty() == false)
    {
+      bool protocolSpecified = false;
+
       if (line.empty())
       {
 	 if (NetRCFile.ReadLine(line) == false)
@@ -72,6 +75,20 @@ bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
 	    active_token = MACHINE;
 	 break;
       case MACHINE:
+	 // If token contains a protocol: Check it first, and strip it away if
+	 // it matches. If it does not match, ignore this stanza.
+	 // If there is no protocol, only allow https protocols.
+	 protocolSpecified = token.find("://") != std::string::npos;
+	 if (protocolSpecified)
+	 {
+	    if (not APT::String::Startswith(token, Uri.Access + "://"))
+	    {
+	       active_token = NO;
+	       break;
+	    }
+	    token.erase(0, Uri.Access.length() + 3);
+	 }
+
 	 if (token.find('/') == std::string::npos)
 	 {
 	    if (Uri.Port != 0 && Uri.Host == token)
@@ -87,6 +104,15 @@ bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
 	       active_token = GOOD_MACHINE;
 	    else
 	       active_token = NO;
+	 }
+
+	 if (active_token == GOOD_MACHINE && not protocolSpecified)
+	 {
+	    if (Uri.Access != "https" && Uri.Access != "tor+https")
+	    {
+	       _error->Warning(_("%s: Credentials for %s match, but the protocol is not encrypted. Annotate with %s:// to use."), NetRCFile.Name().c_str(), token.c_str(), Uri.Access.c_str());
+	       active_token = NO;
+	    }
 	 }
 	 break;
       case GOOD_MACHINE:
@@ -139,57 +165,5 @@ bool MaybeAddAuth(FileFd &NetRCFile, URI &Uri)
       }
       std::clog << ") for " << (std::string)Uri << " from " << NetRCFile.Name() << std::endl;
    }
-   return false;
-}
-
-void maybe_add_auth(URI &Uri, std::string NetRCFile)
-{
-   if (FileExists(NetRCFile) == false)
-      return;
-   FileFd fd;
-   if (fd.Open(NetRCFile, FileFd::ReadOnly))
-      MaybeAddAuth(fd, Uri);
-}
-
-/* Check if we are authorized. */
-bool IsAuthorized(pkgCache::PkgFileIterator const I, std::vector<std::unique_ptr<FileFd>> &authconfs)
-{
-   if (authconfs.empty())
-   {
-      _error->PushToStack();
-      auto const netrc = _config->FindFile("Dir::Etc::netrc");
-      if (not netrc.empty())
-      {
-	 authconfs.emplace_back(new FileFd());
-	 authconfs.back()->Open(netrc, FileFd::ReadOnly);
-      }
-
-      auto const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
-      if (not netrcparts.empty())
-      {
-	 for (auto const &netrc : GetListOfFilesInDir(netrcparts, "conf", true, true))
-	 {
-	    authconfs.emplace_back(new FileFd());
-	    authconfs.back()->Open(netrc, FileFd::ReadOnly);
-	 }
-      }
-      _error->RevertToStack();
-   }
-
-   // FIXME: Use the full base url
-   URI uri(std::string("http://") + I.Site() + "/");
-   for (auto &authconf : authconfs)
-   {
-      if (not authconf->IsOpen())
-	 continue;
-      if (not authconf->Seek(0))
-	 continue;
-
-      MaybeAddAuth(*authconf, uri);
-
-      if (not uri.User.empty() || not uri.Password.empty())
-	 return true;
-   }
-
    return false;
 }

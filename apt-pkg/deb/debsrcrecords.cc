@@ -158,30 +158,7 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
 // ---------------------------------------------------------------------
 /* This parses the list of files and returns it, each file is required to have
    a complete source package */
-bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &F)
-{
-   std::vector<pkgSrcRecords::File2> F2;
-   if (Files2(F2) == false)
-      return false;
-   for (std::vector<pkgSrcRecords::File2>::const_iterator f2 = F2.begin(); f2 != F2.end(); ++f2)
-   {
-      pkgSrcRecords::File2 f;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-      f.MD5Hash = f2->MD5Hash;
-      f.Size = f2->Size;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
-      f.Path = f2->Path;
-      f.Type = f2->Type;
-      F.push_back(f);
-   }
-   return true;
-}
-bool debSrcRecordParser::Files2(std::vector<pkgSrcRecords::File2> &List)
+bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 {
    List.clear();
 
@@ -231,7 +208,7 @@ bool debSrcRecordParser::Files2(std::vector<pkgSrcRecords::File2> &List)
 	    path = Base + path;
 
 	 // look if we have a record for this file already
-	 std::vector<pkgSrcRecords::File2>::iterator file = List.begin();
+	 std::vector<pkgSrcRecords::File>::iterator file = List.begin();
 	 for (; file != List.end(); ++file)
 	    if (file->Path == path)
 	       break;
@@ -239,12 +216,6 @@ bool debSrcRecordParser::Files2(std::vector<pkgSrcRecords::File2> &List)
 	 // we have it already, store the new hash and be done
 	 if (file != List.end())
 	 {
-	    if (checksumField == "Files")
-	    {
-	       APT_IGNORE_DEPRECATED_PUSH
-	       file->MD5Hash = hash;
-	       APT_IGNORE_DEPRECATED_POP
-	    }
 	    // an error here indicates that we have two different hashes for the same file
 	    if (file->Hashes.push_back(hashString) == false)
 	       return _error->Error("Error parsing checksum in %s of source package %s", checksumField.c_str(), Package().c_str());
@@ -252,17 +223,11 @@ bool debSrcRecordParser::Files2(std::vector<pkgSrcRecords::File2> &List)
 	 }
 
 	 // we haven't seen this file yet
-	 pkgSrcRecords::File2 F;
+	 pkgSrcRecords::File F;
 	 F.Path = path;
 	 F.FileSize = strtoull(size.c_str(), NULL, 10);
 	 F.Hashes.push_back(hashString);
 	 F.Hashes.FileSize(F.FileSize);
-
-	 APT_IGNORE_DEPRECATED_PUSH
-	 F.Size = F.FileSize;
-	 if (checksumField == "Files")
-	    F.MD5Hash = hash;
-	 APT_IGNORE_DEPRECATED_POP
 
 	 // Try to guess what sort of file it is we are getting.
 	 string::size_type Pos = F.Path.length()-1;

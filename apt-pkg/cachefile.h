@@ -22,11 +22,6 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/acquire.h>
-#include <apt-pkg/policy.h>
-#include <apt-pkg/sourcelist.h>
-#endif
 
 class MMap;
 class pkgPolicy;
@@ -34,7 +29,7 @@ class pkgSourceList;
 class pkgIndexFile;
 class OpProgress;
 
-class pkgCacheFile
+class APT_PUBLIC pkgCacheFile
 {
    struct Private;
    /** \brief dpointer placeholder (for later in case we need it) */
@@ -65,13 +60,11 @@ class pkgCacheFile
    inline unsigned char &operator [](pkgCache::DepIterator const &I) const {return (*DCache)[I];};
 
    bool BuildCaches(OpProgress *Progress = NULL,bool WithLock = true);
-   APT_DEPRECATED_MSG("Pass Progress in as a pointer") bool BuildCaches(OpProgress &Progress,bool const &WithLock = true) { return BuildCaches(&Progress, WithLock); };
    bool BuildSourceList(OpProgress *Progress = NULL);
    bool BuildPolicy(OpProgress *Progress = NULL);
    bool BuildDepCache(OpProgress *Progress = NULL);
    bool Open(OpProgress *Progress = NULL, bool WithLock = true);
    inline bool ReadOnlyOpen(OpProgress *Progress = NULL) { return Open(Progress, false); };
-   APT_DEPRECATED_MSG("Pass Progress in as a pointer") bool Open(OpProgress &Progress,bool const &WithLock = true) { return Open(&Progress, WithLock); };
    static void RemoveCaches();
    void Close();
 

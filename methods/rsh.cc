@@ -90,7 +90,7 @@ bool RSHConn::Open()
 // RSHConn::Connect - Fire up rsh and connect				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool RSHConn::Connect(std::string Host, unsigned int Port, std::string User)
+bool RSHConn::Connect(std::string const &Host, unsigned int Port, std::string const &User)
 {
    char *PortStr = NULL;
    if (Port != 0)
@@ -169,7 +169,7 @@ bool RSHConn::Connect(std::string Host, unsigned int Port, std::string User)
    
    return true;
 }
-bool RSHConn::Connect(std::string Host, std::string User)
+bool RSHConn::Connect(std::string const &Host, std::string const &User)
 {
    return Connect(Host, 0, User);
 }
@@ -433,7 +433,7 @@ void RSHMethod::SigTerm(int)
 /* */
 bool RSHMethod::Fetch(FetchItem *Itm)
 {
-   URI Get = Itm->Uri;
+   URI Get(Itm->Uri);
    const char *File = Get.Path.c_str();
    FetchResult Res;
    Res.Filename = Itm->DestFile;

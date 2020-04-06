@@ -7,7 +7,9 @@
 #define APT_CACHEFILTER_H
 // Include Files							/*{{{*/
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/string_view.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -18,7 +20,7 @@ class pkgCacheFile;
 namespace APT {
 namespace CacheFilter {
 
-class Matcher {
+class APT_PUBLIC Matcher {
 public:
    virtual bool operator() (pkgCache::PkgIterator const &/*Pkg*/) = 0;
    virtual bool operator() (pkgCache::GrpIterator const &/*Grp*/) = 0;
@@ -26,7 +28,7 @@ public:
    virtual ~Matcher();
 };
 
-class PackageMatcher : public Matcher {
+class APT_PUBLIC PackageMatcher : public Matcher {
 public:
    virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE = 0;
    virtual bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE { return (*this)(Ver.ParentPkg()); }
@@ -35,21 +37,21 @@ public:
 };
 
 // Generica like True, False, NOT, AND, OR				/*{{{*/
-class TrueMatcher : public Matcher {
+class APT_PUBLIC TrueMatcher : public Matcher {
 public:
    virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
    virtual bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
    virtual bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
 };
 
-class FalseMatcher : public Matcher {
+class APT_PUBLIC FalseMatcher : public Matcher {
 public:
    virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
    virtual bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
    virtual bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
 };
 
-class NOTMatcher : public Matcher {
+class APT_PUBLIC NOTMatcher : public Matcher {
    Matcher * const matcher;
 public:
    explicit NOTMatcher(Matcher * const matcher);
@@ -59,7 +61,7 @@ public:
    virtual ~NOTMatcher();
 };
 
-class ANDMatcher : public Matcher {
+class APT_PUBLIC ANDMatcher : public Matcher {
    std::vector<Matcher *> matchers;
 public:
    // 5 ought to be enough for everybody… c++11 variadic templates would be nice
@@ -75,7 +77,7 @@ public:
    virtual bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
    virtual ~ANDMatcher();
 };
-class ORMatcher : public Matcher {
+class APT_PUBLIC ORMatcher : public Matcher {
    std::vector<Matcher *> matchers;
 public:
    // 5 ought to be enough for everybody… c++11 variadic templates would be nice
@@ -92,7 +94,7 @@ public:
    virtual ~ORMatcher();
 };
 									/*}}}*/
-class PackageNameMatchesRegEx : public PackageMatcher {			/*{{{*/
+class APT_PUBLIC PackageNameMatchesRegEx : public PackageMatcher {			/*{{{*/
 	regex_t* pattern;
 public:
 	explicit PackageNameMatchesRegEx(std::string const &Pattern);
@@ -101,7 +103,7 @@ public:
 	virtual ~PackageNameMatchesRegEx();
 };
 									/*}}}*/
-class PackageNameMatchesFnmatch : public PackageMatcher {		/*{{{*/
+class APT_PUBLIC PackageNameMatchesFnmatch : public PackageMatcher {		/*{{{*/
 	const std::string Pattern;
 public:
 	explicit PackageNameMatchesFnmatch(std::string const &Pattern);
@@ -110,7 +112,7 @@ public:
 	virtual ~PackageNameMatchesFnmatch() {};
 };
 									/*}}}*/
-class PackageArchitectureMatchesSpecification : public PackageMatcher {	/*{{{*/
+class APT_PUBLIC PackageArchitectureMatchesSpecification : public PackageMatcher {	/*{{{*/
 /** \class PackageArchitectureMatchesSpecification
    \brief matching against architecture specification strings
 
@@ -136,7 +138,7 @@ public:
 	virtual ~PackageArchitectureMatchesSpecification();
 };
 									/*}}}*/
-class PackageIsNewInstall : public PackageMatcher {			/*{{{*/
+class APT_PUBLIC PackageIsNewInstall : public PackageMatcher {			/*{{{*/
 	pkgCacheFile * const Cache;
 public:
 	explicit PackageIsNewInstall(pkgCacheFile * const Cache);
@@ -145,6 +147,8 @@ public:
 };
 									/*}}}*/
 
+/// \brief Parse a pattern, return nullptr or pattern
+APT_PUBLIC std::unique_ptr<APT::CacheFilter::Matcher> ParsePattern(APT::StringView pattern, pkgCacheFile *file);
 }
 }
 #endif

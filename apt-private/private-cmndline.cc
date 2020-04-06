@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <algorithm>
 #include <iomanip>
 #include <vector>
 
@@ -58,7 +59,7 @@ static bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char cons
       addArg('n', "names-only", "APT::Cache::NamesOnly", 0);
       addArg('f', "full", "APT::Cache::ShowFull", 0);
    }
-   else if (CmdMatches("show"))
+   else if (CmdMatches("show") | CmdMatches("info"))
    {
       addArg('a', "all-versions", "APT::Cache::AllVersions", 0);
    }
@@ -216,14 +217,17 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "tar-only", "APT::Get::Tar-Only", 0);
       addArg(0, "dsc-only", "APT::Get::Dsc-Only", 0);
    }
-   else if (CmdMatches("build-dep"))
+   else if (CmdMatches("build-dep") || CmdMatches("satisfy"))
    {
       addArg('a', "host-architecture", "APT::Get::Host-Architecture", CommandLine::HasArg);
       addArg('P', "build-profiles", "APT::Build-Profiles", CommandLine::HasArg);
       addArg(0, "purge", "APT::Get::Purge", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
-      addArg(0,"arch-only","APT::Get::Arch-Only",0);
-      addArg(0,"indep-only","APT::Get::Indep-Only",0);
+      if (CmdMatches("build-dep"))
+      {
+         addArg(0,"arch-only","APT::Get::Arch-Only",0);
+         addArg(0,"indep-only","APT::Get::Indep-Only",0);
+      }
       // this has no effect *but* sbuild is using it (see LP: #1255806)
       // once sbuild is fixed, this option can be removed
       addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
@@ -241,7 +245,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
 
    if (CmdMatches("install", "reinstall", "remove", "purge", "upgrade", "dist-upgrade",
 	    "dselect-upgrade", "autoremove", "auto-remove", "autopurge", "clean", "autoclean", "auto-clean", "check",
-	    "build-dep", "full-upgrade", "source"))
+	    "build-dep", "satisfy", "full-upgrade", "source"))
    {
       addArg('s', "simulate", "APT::Get::Simulate", 0);
       addArg('s', "just-print", "APT::Get::Simulate", 0);
@@ -286,7 +290,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
 static bool addArgumentsAPTMark(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("auto", "manual", "hold", "unhold", "showauto",
-	    "showmanual", "showhold", "showholds",
+	    "showmanual", "showhold", "showholds", "showheld",
 	    "markauto", "unmarkauto", "minimize-manual"))
    {
       addArg('f',"file","Dir::State::extended_states",CommandLine::HasArg);
@@ -340,7 +344,7 @@ static bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * c
       addArg('v', "verbose", "APT::Cmd::List-Include-Summary", 0);
       addArg('a', "all-versions", "APT::Cmd::All-Versions", 0);
    }
-   else if (CmdMatches("show"))
+   else if (CmdMatches("show") || CmdMatches("info"))
    {
       addArg('a', "all-versions", "APT::Cache::AllVersions", 0);
    }
@@ -470,6 +474,12 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
       _config->CndSet("Binary::apt::DPkg::Progress-Fancy", true);
       _config->CndSet("Binary::apt::APT::Keep-Downloaded-Packages", false);
       _config->CndSet("Binary::apt::APT::Get::Update::InteractiveReleaseInfoChanges", true);
+      _config->CndSet("Binary::apt::APT::Cmd::Pattern-Only", true);
+
+      if (isatty(STDIN_FILENO))
+         _config->CndSet("Binary::apt::Dpkg::Lock::Timeout", -1);
+      else
+         _config->CndSet("Binary::apt::Dpkg::Lock::Timeout", 120);
    }
 
    _config->Set("Binary", binary);
@@ -505,15 +515,15 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
    if (likely(argc != 0 && argv[0] != NULL))
       BinarySpecificConfiguration(argv[0]);
 
-   std::vector<aptDispatchWithHelp> const CmdsWithHelp = GetCommands();
    std::vector<CommandLine::Dispatch> Cmds;
+   std::vector<aptDispatchWithHelp> const CmdsWithHelp = GetCommands();
    if (CmdsWithHelp.empty() == false)
    {
       CommandLine::Dispatch const help = { "help", [](CommandLine &){return false;} };
       Cmds.push_back(std::move(help));
    }
-   for (auto const& cmd : CmdsWithHelp)
-      Cmds.push_back({cmd.Match, cmd.Handler});
+   std::transform(CmdsWithHelp.begin(), CmdsWithHelp.end(), std::back_inserter(Cmds),
+		  [](auto &&cmd) { return CommandLine::Dispatch{cmd.Match, cmd.Handler}; });
 
    char const * CmdCalled = nullptr;
    if (Cmds.empty() == false && Cmds[0].Handler != nullptr)

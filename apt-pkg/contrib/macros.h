@@ -13,40 +13,9 @@
 #ifndef MACROS_H
 #define MACROS_H
 
-// MIN_VAL(SINT16) will return -0x8000 and MAX_VAL(SINT16) = 0x7FFF
-#define	MIN_VAL(t)	(((t)(-1) > 0) ? (t)( 0) : (t)(((1L<<(sizeof(t)*8-1))  )))
-#define	MAX_VAL(t)	(((t)(-1) > 0) ? (t)(-1) : (t)(((1L<<(sizeof(t)*8-1))-1)))
-
-// Min/Max functions
-#if !defined(MIN)
-#if defined(__HIGHC__)
-#define MIN(x,y) _min(x,y)
-#define MAX(x,y) _max(x,y)
-#endif
-
-// GNU C++ has a min/max operator <coolio>
-#if defined(__GNUG__)
-#define MIN(A,B) ((A) <? (B))
-#define MAX(A,B) ((A) >? (B))
-#endif
-
-/* Templates tend to mess up existing code that uses min/max because of the
-   strict matching requirements */
-#if !defined(MIN)
-#define MIN(A,B) ((A) < (B)?(A):(B))
-#define MAX(A,B) ((A) > (B)?(A):(B))
-#endif
-#endif
-
-/* Bound functions, bound will return the value b within the limits a-c
-   bounv will change b so that it is within the limits of a-c. */
-#define _bound(a,b,c) MIN(c,MAX(b,a))
-#define _boundv(a,b,c) b = _bound(a,b,c)
-#define ABS(a) (((a) < (0)) ?-(a) : (a))
-
 /* Useful count macro, use on an array of things and it will return the
    number of items in the array */
-#define _count(a) (sizeof(a)/sizeof(a[0]))
+#define APT_ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 // Flag Macros
 #define	FLAG(f)			(1L << (f))
@@ -60,6 +29,7 @@
 #define APT_GCC_VERSION 0
 #endif
 
+#ifdef APT_COMPILING_APT
 /* likely() and unlikely() can be used to mark boolean expressions
    as (not) likely true which will help the compiler to optimise */
 #if APT_GCC_VERSION >= 0x0300
@@ -69,24 +39,25 @@
 	#define likely(x)	(x)
 	#define unlikely(x)	(x)
 #endif
+#endif
 
 #if APT_GCC_VERSION >= 0x0300
 	#define APT_DEPRECATED	__attribute__ ((deprecated))
 	#define APT_DEPRECATED_MSG(X)	__attribute__ ((deprecated(X)))
 	// __attribute__((const)) is too dangerous for us, we end up using it wrongly
-	#define APT_CONST	__attribute__((pure))
 	#define APT_PURE	__attribute__((pure))
 	#define APT_NORETURN	__attribute__((noreturn))
 	#define APT_PRINTF(n)	__attribute__((format(printf, n, n + 1)))
 	#define APT_WEAK        __attribute__((weak));
+	#define APT_UNUSED      __attribute__((unused))
 #else
 	#define APT_DEPRECATED
 	#define APT_DEPRECATED_MSG
-	#define APT_CONST
 	#define APT_PURE
 	#define APT_NORETURN
 	#define APT_PRINTF(n)
 	#define APT_WEAK
+	#define APT_UNUSED
 #endif
 
 #if APT_GCC_VERSION > 0x0302
@@ -116,26 +87,6 @@
 	#define APT_HOT
 #endif
 
-#ifndef APT_10_CLEANER_HEADERS
-#if APT_GCC_VERSION >= 0x0300
-	#define __must_check	__attribute__ ((warn_unused_result))
-	#define __deprecated	__attribute__ ((deprecated))
-	#define __attrib_const	__attribute__ ((__const__))
-	#define __like_printf(n)	__attribute__((format(printf, n, n + 1)))
-#else
-	#define __must_check	/* no warn_unused_result */
-	#define __deprecated	/* no deprecated */
-	#define __attrib_const	/* no const attribute */
-	#define __like_printf(n)	/* no like-printf */
-#endif
-#if APT_GCC_VERSION >= 0x0403
-	#define __cold	__attribute__ ((__cold__))
-	#define __hot	__attribute__ ((__hot__))
-#else
-	#define __cold	/* no cold marker */
-	#define __hot	/* no hot marker */
-#endif
-#endif
 
 #if __GNUC__ >= 4
 	#define APT_IGNORE_DEPRECATED_PUSH \
@@ -165,9 +116,12 @@
 // reverse-dependencies of libapt-pkg against the new SONAME.
 // Non-ABI-Breaks should only increase RELEASE number.
 // See also buildlib/libversion.mak
-#define APT_PKG_MAJOR 5
+#define APT_PKG_MAJOR 6
 #define APT_PKG_MINOR 0
-#define APT_PKG_RELEASE 2
+#define APT_PKG_RELEASE 0
 #define APT_PKG_ABI ((APT_PKG_MAJOR * 100) + APT_PKG_MINOR)
+
+/* Should be a multiple of the common page size (4096) */
+static constexpr unsigned long long APT_BUFFER_SIZE = 64 * 1024;
 
 #endif

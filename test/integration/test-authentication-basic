@@ -65,35 +65,61 @@ runtest() {
 	authfile ''
 	testauthfailure "$1"
 
+	protocol="${1%%://*}"
+
 	# good auth
-	authfile 'machine localhost
+	authfile "machine ${protocol}://localhost
 login star@irc
-password hunter2'
+password hunter2"
 	testauthsuccess "$1"
 
 	# bad auth
-	authfile 'machine localhost
+	authfile "machine ${protocol}://localhost
 login anonymous
-password hunter2'
+password hunter2"
 	testauthfailure "$1"
 
 	# 2 stanzas: unmatching + good auth
-	authfile 'machine debian.org
+	authfile "machine ${protocol}://debian.org
 login debian
 password jessie
 
-machine localhost
+machine ${protocol}://localhost
 login star@irc
-password hunter2'
+password hunter2"
 	testauthsuccess "$1"
+
+	# no protocol specifier
+	authfile "machine localhost
+login star@irc
+password hunter2"
+	if [ "$protocol" = "https" ]; then
+		testauthsuccess "$1"
+	else
+		testfailure apthelper download-file "${1}/bash" ./downloaded/bash
+		testsuccessequal "W: ${1}/bash: ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/auth.conf: Credentials for localhost match, but the protocol is not encrypted. Annotate with http:// to use." grep "Credentials.*match" rootdir/tmp/testfailure.output
+		testauthfailure "$1"
+	fi
+
+	# wrong protocol specifier
+	if [ "$protocol" = "https" ]; then
+		authfile "machine http://localhost
+login star@irc
+password hunter2"
+	else
+		authfile "machine https://localhost
+login star@irc
+password hunter2"
+	fi
+	testauthfailure "$1"
 
 	# delete file, make sure it fails; add auth.conf.d snippet, works again.
 	rm rootdir/etc/apt/auth.conf
 	testauthfailure "$1"
 
-	authfile  'machine localhost
+	authfile  "machine ${protocol}://localhost
 login star@irc
-password hunter2' rootdir/etc/apt/auth.conf.d/myauth.conf
+password hunter2" rootdir/etc/apt/auth.conf.d/myauth.conf
 	testauthsuccess "$1"
 	rm rootdir/etc/apt/auth.conf.d/myauth.conf
 }

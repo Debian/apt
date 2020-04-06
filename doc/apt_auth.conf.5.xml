@@ -13,7 +13,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2018-12-03T00:00:00Z</date>
+   <date>2019-12-02T00:00:00Z</date>
  </refentryinfo>
 
  <refmeta>
@@ -50,7 +50,7 @@ Unknown tokens will be ignored. Tokens may be separated by spaces, tabs or newli
 
 <variablelist>
 <varlistentry>
-<term><literal>machine</literal> <replaceable>hostname</replaceable>[:<replaceable>port</replaceable>][/<replaceable>path</replaceable>]</term>
+<term><literal>machine</literal> <replaceable>[protocol://]</replaceable><replaceable>hostname</replaceable>[:<replaceable>port</replaceable>][/<replaceable>path</replaceable>]</term>
 <listitem><para>Entries are looked up by searching for the
 <emphasis><literal>machine</literal></emphasis> token matching the
 hostname of the URI apt needs login information for. Extending the netrc-format
@@ -60,7 +60,8 @@ different login information reside on the same server. A machine token with a pa
 matches if the path in the URI starts with the path given in the token.
 Once a match is made, the subsequent tokens are processed, stopping when the
 end of file is reached or another <emphasis><literal>machine</literal></emphasis>
-token is encountered.</para></listitem>
+token is encountered.</para>
+<para>If protocol is not specified, the entry only matches https and tor+https.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -80,9 +81,9 @@ token is encountered.</para></listitem>
 <refsect1><title>Example</title>
 <para>Supplying login information for a user named <literal>apt</literal>
 with the password <literal>debian</literal> for the &sources-list; entry
-<literallayout>deb http://example.org/debian &debian-stable-codename; main</literallayout>
+<literallayout>deb https://example.org/debian &debian-stable-codename; main</literallayout>
 could be done in the entry directly:
-<literallayout>deb http://apt:debian@example.org/debian &debian-stable-codename; main</literallayout>
+<literallayout>deb https://apt:debian@example.org/debian &debian-stable-codename; main</literallayout>
 Alternatively an entry like the following in the auth.conf file could be used:
 <literallayout>machine example.org
 login apt
@@ -95,7 +96,7 @@ machine example.org/debian login apt password debian
 machine example.org/debian/ login apt password debian
 </literallayout>
 On the other hand neither of the following lines apply:
-<literallayout>machine example.org:80 login apt password debian
+<literallayout>machine example.org:443 login apt password debian
 machine example.org/deb/ login apt password debian
 machine example.org/ubuntu login apt password debian
 machine example.orga login apt password debian
@@ -111,6 +112,9 @@ also the implementation slightly. For maximum backward compatibility you should
 avoid multiple <literal>machine</literal> tokens with the same hostname, but if
 you need multiple they should all have a path specified in the
 <literal>machine</literal> token.</para>
+<para>Login information in auth.conf are more flexible than those in sources.list. For
+example, login information can be specified for parts of a repository only, or if the
+sources.list entry redirects elsewhere, login information for the redirect destination can be supplied.</para>
 </refsect1>
 
 <refsect1>

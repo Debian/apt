@@ -19,10 +19,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/gpgv.h>
 #include <apt-pkg/hashes.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/sha1.h>
-#include <apt-pkg/sha2.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>
 
@@ -216,9 +213,8 @@ bool FTWScanner::RecursiveScan(string const &Dir)
    std::sort(FilesToProcess.begin(), FilesToProcess.end(), [](PairType a, PairType b) {
       return a.first < b.first;
    });
-   for (PairType it : FilesToProcess)
-      if (ProcessFile(it.first.c_str(), it.second) != 0)
-	 return false;
+   if (not std::all_of(FilesToProcess.cbegin(), FilesToProcess.cend(), [](auto &&it) { return ProcessFile(it.first.c_str(), it.second) == 0; }))
+      return false;
    FilesToProcess.clear();
    return true;
 }
@@ -494,9 +490,9 @@ bool PackagesWriter::DoPackage(string FileName)
 
    string DescriptionMd5;
    if (LongDescription == false) {
-      MD5Summation descmd5;
+      Hashes descmd5(Hashes::MD5SUM);
       descmd5.Add(desc.c_str());
-      DescriptionMd5 = descmd5.Result().Value();
+      DescriptionMd5 = descmd5.GetHashString(Hashes::MD5SUM).HashValue();
       Changes.push_back(pkgTagSection::Tag::Rewrite("Description-md5", DescriptionMd5));
       if (TransWriter != NULL)
 	 TransWriter->DoPackage(Package, desc, DescriptionMd5);

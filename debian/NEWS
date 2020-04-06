@@ -1,7 +1,37 @@
+apt (1.9.11) experimental; urgency=medium
+
+  apt(8) now waits for the lock indefinitely if connected to a tty, or
+  for 120 seconds if not.
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 26 Feb 2020 20:30:33 +0100
+
+apt (1.9.6) experimental; urgency=medium
+
+  apt(8) no longer treats package names passed as regular expressions or fnmatch
+  expressions, requiring the use of patterns (apt-patterns(5)) to perform complex
+  searches. For ease of use, regular expressions starting with ^ or ending with
+  $ continue to work.
+
+  This fixes the problem where e.g. g++ could mean either "the package g++"
+  or, if there is no g++ package, "all packages containing g". This change
+  will propagate to apt-* after the release of Debian bullseye.
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 15 Jan 2020 21:45:18 +0100
+
+apt (1.9.5) unstable; urgency=medium
+
+  Credentials in apt_auth.conf(5) now only apply to https and tor+https
+  sources to avoid them being leaked over plaintext (Closes: #945911). To
+  opt-in to http, add http:// before the hostname. Note that this will transmit
+  credentials in plain text, which you do not want on devices that could be
+  operating in an untrusted network.
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Mon, 02 Dec 2019 11:45:52 +0100
+
 apt (1.8.0~alpha3) unstable; urgency=medium
 
   The PATH for running dpkg is now configured by the option DPkg::Path,
-  and defaults to "/usr/sbin:/usr/bin:/sbin/:bin". Previous behavior of
+  and defaults to "/usr/sbin:/usr/bin:/sbin:/bin". Previous behavior of
   not changing PATH may be restored by setting the option to an empty string.
 
   Support for /etc/apt/auth.conf.d/ has been added, see apt_auth.conf(5).

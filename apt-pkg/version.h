@@ -22,11 +22,8 @@
 #include <apt-pkg/strutl.h>
 #include <string>
 
-#ifndef APT_8_CLEANER_HEADERS
-using std::string;
-#endif
 
-class pkgVersioningSystem
+class APT_PUBLIC pkgVersioningSystem
 {
    public:
    // Global list of VS's

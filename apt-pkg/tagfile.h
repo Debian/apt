@@ -27,13 +27,8 @@
 #include <list>
 #include <string>
 #include <vector>
-#ifdef APT_PKG_EXPOSE_STRING_VIEW
 #include <apt-pkg/string_view.h>
-#endif
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/fileutl.h>
-#endif
 
 class FileFd;
 class pkgTagSectionPrivate;
@@ -46,7 +41,7 @@ class pkgTagFilePrivate;
  * Beware: This class does \b NOT support (#-)comments in in- or output!
  * If the input contains comments they have to be stripped first like pkgTagFile
  * does with SUPPORT_COMMENTS flag set. */
-class pkgTagSection
+class APT_PUBLIC pkgTagSection
 {
    const char *Section;
    unsigned int AlphaIndexes[128];
@@ -55,10 +50,8 @@ class pkgTagSection
    pkgTagSectionPrivate * const d;
 
    APT_HIDDEN bool FindInternal(unsigned int Pos,const char *&Start, const char *&End) const;
-#if defined(APT_PKG_EXPOSE_STRING_VIEW)
    APT_HIDDEN APT::StringView FindInternal(unsigned int Pos) const;
    APT_HIDDEN APT::StringView FindRawInternal(unsigned int Pos) const;
-#endif
    APT_HIDDEN signed int FindIInternal(unsigned int Pos,signed long Default = 0) const;
    APT_HIDDEN bool FindBInternal(unsigned int Pos, bool Default = false) const;
    APT_HIDDEN unsigned long long FindULLInternal(unsigned int Pos, unsigned long long const &Default = 0) const;
@@ -73,21 +66,9 @@ class pkgTagSection
    inline bool operator ==(const pkgTagSection &rhs) {return Section == rhs.Section;};
    inline bool operator !=(const pkgTagSection &rhs) {return Section != rhs.Section;};
 
-#if !defined(APT_PKG_EXPOSE_STRING_VIEW) || defined(APT_COMPILING_TAGFILE_COMPAT_CC)
-   bool Find(const char *Tag,const char *&Start, const char *&End) const;
-   bool Find(const char *Tag,unsigned int &Pos) const;
-   signed int FindI(const char *Tag,signed long Default = 0) const;
-   bool FindB(const char *Tag, bool const &Default = false) const;
-   unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
-   bool FindFlag(const char * const Tag,uint8_t &Flags,
-		 uint8_t const Flag) const;
-   bool FindFlag(const char *Tag,unsigned long &Flags,
-		 unsigned long Flag) const;
-   bool Exists(const char* const Tag) const;
-#endif
    // TODO: Remove internally
-   std::string FindS(const char *Tag) const;
-   std::string FindRawS(const char *Tag) const;
+   std::string FindS(APT::StringView sv) const { return Find(sv).to_string(); }
+   std::string FindRawS(APT::StringView sv) const { return FindRaw(sv).to_string(); };
 
    // Functions for lookup with a perfect hash function
    enum class Key;
@@ -99,23 +80,21 @@ class pkgTagSection
    APT_HIDDEN bool FindFlag(Key key,uint8_t &Flags, uint8_t const Flag) const;
    APT_HIDDEN bool FindFlag(Key key,unsigned long &Flags, unsigned long Flag) const;
    APT_HIDDEN bool Exists(Key key) const;
-#ifdef APT_PKG_EXPOSE_STRING_VIEW
    APT_HIDDEN APT::StringView Find(Key key) const;
    APT_HIDDEN APT::StringView FindRaw(Key key) const;
-   APT_HIDDEN bool Find(APT::StringView Tag,const char *&Start, const char *&End) const;
-   APT_HIDDEN bool Find(APT::StringView Tag,unsigned int &Pos) const;
-   APT_HIDDEN APT::StringView Find(APT::StringView Tag) const;
-   APT_HIDDEN APT::StringView FindRaw(APT::StringView Tag) const;
-   APT_HIDDEN signed int FindI(APT::StringView Tag,signed long Default = 0) const;
-   APT_HIDDEN bool FindB(APT::StringView, bool Default = false) const;
-   APT_HIDDEN unsigned long long FindULL(APT::StringView Tag, unsigned long long const &Default = 0) const;
+   bool Find(APT::StringView Tag,const char *&Start, const char *&End) const;
+   bool Find(APT::StringView Tag,unsigned int &Pos) const;
+   APT::StringView Find(APT::StringView Tag) const;
+   APT::StringView FindRaw(APT::StringView Tag) const;
+   signed int FindI(APT::StringView Tag,signed long Default = 0) const;
+   bool FindB(APT::StringView, bool Default = false) const;
+   unsigned long long FindULL(APT::StringView Tag, unsigned long long const &Default = 0) const;
 
-   APT_HIDDEN bool FindFlag(APT::StringView Tag,uint8_t &Flags,
+   bool FindFlag(APT::StringView Tag,uint8_t &Flags,
 		 uint8_t const Flag) const;
-   APT_HIDDEN bool FindFlag(APT::StringView Tag,unsigned long &Flags,
+   bool FindFlag(APT::StringView Tag,unsigned long &Flags,
 		 unsigned long Flag) const;
-   APT_HIDDEN bool Exists(APT::StringView Tag) const;
-#endif
+   bool Exists(APT::StringView Tag) const;
 
    bool static FindFlag(uint8_t &Flags, uint8_t const Flag,
 				const char* const Start, const char* const Stop);
@@ -187,16 +166,11 @@ class pkgTagSection
 };
 
 
-class APT_DEPRECATED_MSG("Use pkgTagFile with the SUPPORT_COMMENTS flag instead") pkgUserTagSection : public pkgTagSection
-{
-   virtual void TrimRecord(bool BeforeRecord, const char* &End) APT_OVERRIDE;
-};
-
 /** \class pkgTagFile reads and prepares a deb822 formatted file for parsing
  * via #pkgTagSection. The default mode tries to be as fast as possible and
  * assumes perfectly valid (machine generated) files like Packages. Support
  * for comments e.g. needs to be enabled explicitly. */
-class pkgTagFile
+class APT_PUBLIC pkgTagFile
 {
    pkgTagFilePrivate * const d;
 
@@ -224,18 +198,7 @@ public:
    virtual ~pkgTagFile();
 };
 
-extern const char **TFRewritePackageOrder;
-extern const char **TFRewriteSourceOrder;
-
-APT_IGNORE_DEPRECATED_PUSH
-struct APT_DEPRECATED_MSG("Use pkgTagSection::Tag and pkgTagSection::Write() instead") TFRewriteData
-{
-   const char *Tag;
-   const char *Rewrite;
-   const char *NewTag;
-};
-APT_DEPRECATED_MSG("Use pkgTagSection::Tag and pkgTagSection::Write() instead") bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
-	       TFRewriteData *Rewrite);
-APT_IGNORE_DEPRECATED_POP
+APT_PUBLIC extern const char **TFRewritePackageOrder;
+APT_PUBLIC extern const char **TFRewriteSourceOrder;
 
 #endif

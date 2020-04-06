@@ -96,7 +96,7 @@ Additional optional properties:
   deal with compressed files transparently you have to explicitly set
   this option to `false` to avoid problems with users setting the option
   globally. On the other hand, if you set it to `true` or don't set it you
-  have to ensure your front-end can deal with all compressed fileformats
+  have to ensure your front-end can deal with all compressed file formats
   supported by apt (libapt users can e.g. use `FileFd`, others can use
   the `cat-file` command of `/usr/lib/apt/apt-helper`).
 * `Fallback-Of`: Is by default not set. If it is set and specifies another

@@ -56,7 +56,7 @@ class MirrorMethod : public aptMethod /*{{{*/
       unsigned long priority = std::numeric_limits<decltype(priority)>::max();
       decltype(genrng)::result_type seed = 0;
       std::unordered_map<std::string, std::vector<std::string>> tags;
-      MirrorInfo(std::string const &u, std::vector<std::string> &&ptags = {}) : uri(u)
+      explicit MirrorInfo(std::string const &u, std::vector<std::string> &&ptags = {}) : uri(u)
       {
 	 for (auto &&tag : ptags)
 	 {
@@ -97,7 +97,7 @@ class MirrorMethod : public aptMethod /*{{{*/
    void DealWithPendingItems(std::vector<std::string> const &baseuris, MirrorListInfo const &info, FetchItem *const Itm, std::function<void()> handler);
 
    public:
-   MirrorMethod(std::string &&pProg) : aptMethod(std::move(pProg), "2.0", SingleInstance | Pipeline | SendConfig | AuxRequests), genrng(clock())
+   explicit MirrorMethod(std::string &&pProg) : aptMethod(std::move(pProg), "2.0", SingleInstance | Pipeline | SendConfig | AuxRequests), genrng(clock())
    {
       SeccompFlags = aptMethod::BASE | aptMethod::DIRECTORY;
    }
@@ -222,8 +222,7 @@ bool MirrorMethod::MirrorListFileRecieved(MirrorListInfo &info, FetchItem *const
 		      [&access](char const *const a) { return APT::String::Endswith(access, std::string("+") + a); }) ||
 	  access == "mirror")
       {
-	 for (auto const &a : disallowLocal)
-	    limitAccess.emplace_back(a);
+	 std::copy(std::begin(disallowLocal), std::end(disallowLocal), std::back_inserter(limitAccess));
       }
       std::string line;
       while (mirrorlist.ReadLine(line))
@@ -323,12 +322,9 @@ std::string MirrorMethod::GetMirrorFileURI(std::string const &Message, FetchItem
 	 if (plus < colon)
 	 {
 	    // started as tor+mirror+http we want to get the file via tor+http
-	    auto access = uristr.substr(0, colon);
-	    std::string prefixAccess;
+	    auto const access = uristr.substr(0, colon);
 	    if (APT::String::Startswith(access, "mirror") == false)
 	    {
-	       prefixAccess = uristr.substr(0, plus);
-	       access.erase(0, plus + 1);
 	       uristr.erase(plus, strlen("mirror") + 1);
 	       return uristr;
 	    }

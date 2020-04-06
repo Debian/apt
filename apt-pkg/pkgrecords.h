@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-class pkgRecords							/*{{{*/
+class APT_PUBLIC pkgRecords							/*{{{*/
 {
    public:
    class Parser;
@@ -45,7 +45,7 @@ class pkgRecords							/*{{{*/
    virtual ~pkgRecords();
 };
 									/*}}}*/
-class pkgRecords::Parser						/*{{{*/
+class APT_PUBLIC pkgRecords::Parser						/*{{{*/
 {
    protected:
    
@@ -67,10 +67,6 @@ class pkgRecords::Parser						/*{{{*/
     * choose the hash to be used.
     */
    virtual HashStringList Hashes() const { return HashStringList(); };
-   APT_DEPRECATED_MSG("Use .Hashes instead of a hardcoded hash algorithm") std::string MD5Hash() const { return GetHashFromHashes("MD5Sum"); };
-   APT_DEPRECATED_MSG("Use .Hashes instead of a hardcoded hash algorithm") std::string SHA1Hash() const { return GetHashFromHashes("SHA1"); };
-   APT_DEPRECATED_MSG("Use .Hashes instead of a hardcoded hash algorithm") std::string SHA256Hash() const { return GetHashFromHashes("SHA256"); };
-   APT_DEPRECATED_MSG("Use .Hashes instead of a hardcoded hash algorithm") std::string SHA512Hash() const { return GetHashFromHashes("SHA512"); };
 
    // These are some general stats about the package
    virtual std::string Maintainer() {return std::string();};

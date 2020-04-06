@@ -29,10 +29,6 @@
 
 #include <sys/mman.h>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/fileutl.h>
-using std::string;
-#endif
 
 class FileFd;
 
@@ -74,7 +70,7 @@ class MMap
    bool Sync(unsigned long Start,unsigned long Stop);
    
    MMap(FileFd &F,unsigned long Flags);
-   MMap(unsigned long Flags);
+   explicit MMap(unsigned long Flags);
    virtual ~MMap();
 };
 

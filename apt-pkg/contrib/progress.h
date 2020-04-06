@@ -24,13 +24,11 @@
 #include <string>
 #include <sys/time.h>
 
-#ifndef APT_8_CLEANER_HEADERS
-using std::string;
-#endif
 
 class Configuration;
-class OpProgress
+class APT_PUBLIC OpProgress
 {
+   friend class OpTextProgress;
    unsigned long long Current;
    unsigned long long Total;
    unsigned long long Size;
@@ -65,7 +63,7 @@ class OpProgress
    virtual ~OpProgress() {};
 };
 
-class OpTextProgress : public OpProgress
+class APT_PUBLIC OpTextProgress : public OpProgress
 {
    protected:
 
@@ -80,9 +78,9 @@ class OpTextProgress : public OpProgress
 
    virtual void Done() APT_OVERRIDE;
    
-   OpTextProgress(bool NoUpdate = false) : NoUpdate(NoUpdate), 
+   explicit OpTextProgress(bool NoUpdate = false) : NoUpdate(NoUpdate),
                 NoDisplay(false), LastLen(0) {};
-   OpTextProgress(Configuration &Config);
+   explicit OpTextProgress(Configuration &Config);
    virtual ~OpTextProgress() {Done();};
 };
 

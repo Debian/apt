@@ -25,7 +25,6 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/sptr.h>
 #include <apt-pkg/strutl.h>
 
 #include <cstdio>
@@ -85,9 +84,6 @@
 									/*}}}*/
 
 using namespace std;
-
-/* Should be a multiple of the common page size (4096) */
-static constexpr unsigned long long APT_BUFFER_SIZE = 64 * 1024;
 
 // RunScripts - Run a set of scripts from a configuration subtree	/*{{{*/
 // ---------------------------------------------------------------------
@@ -224,6 +220,30 @@ bool RemoveFile(char const * const Function, std::string const &FileName)/*{{{*/
    is done all other calls to GetLock in any other process will fail with
    -1. The return result is the fd of the file, the call should call
    close at some time. */
+
+static std::string GetProcessName(int pid)
+{
+   struct HideError
+   {
+      int err;
+      HideError() : err(errno) { _error->PushToStack(); }
+      ~HideError()
+      {
+	 errno = err;
+	 _error->RevertToStack();
+      }
+   } hideError;
+   std::string path;
+   strprintf(path, "/proc/%d/status", pid);
+   FileFd status(path, FileFd::ReadOnly);
+   std::string line;
+   while (status.ReadLine(line))
+   {
+      if (line.substr(0, 5) == "Name:")
+	 return line.substr(6);
+   }
+   return "";
+}
 int GetLock(string File,bool Errors)
 {
    // GetLock() is used in aptitude on directories with public-write access
@@ -257,6 +277,20 @@ int GetLock(string File,bool Errors)
    {
       // always close to not leak resources
       int Tmp = errno;
+
+      if ((errno == EACCES || errno == EAGAIN))
+      {
+	 fl.l_type = F_WRLCK;
+	 fl.l_whence = SEEK_SET;
+	 fl.l_start = 0;
+	 fl.l_len = 0;
+	 fl.l_pid = -1;
+	 fcntl(FD, F_GETLK, &fl);
+      }
+      else
+      {
+	 fl.l_pid = -1;
+      }
       close(FD);
       errno = Tmp;
 
@@ -267,8 +301,23 @@ int GetLock(string File,bool Errors)
       }
   
       if (Errors == true)
-	 _error->Errno("open",_("Could not get lock %s"),File.c_str());
-      
+      {
+	 // We only do the lookup in the if ((errno == EACCES || errno == EAGAIN))
+	 // case, so we do not need to show the errno strerrr here...
+	 if (fl.l_pid != -1)
+	 {
+	    auto name = GetProcessName(fl.l_pid);
+	    if (name.empty())
+	       _error->Error(_("Could not get lock %s. It is held by process %d"), File.c_str(), fl.l_pid);
+	    else
+	       _error->Error(_("Could not get lock %s. It is held by process %d (%s)"), File.c_str(), fl.l_pid, name.c_str());
+	 }
+	 else
+	    _error->Errno("open", _("Could not get lock %s"), File.c_str());
+
+	 _error->Notice(_("Be aware that removing the lock file is not a solution and may break your system."));
+      }
+
       return -1;
    }
 
@@ -1731,7 +1780,7 @@ class APT_HIDDEN ZstdFileFdPrivate : public FileFdPrivate
 #ifdef HAVE_ZSTD
    ZSTD_DStream *dctx;
    ZSTD_CStream *cctx;
-   size_t res;
+   size_t res = 0;
    FileFd backend;
    simple_buffer zstd_buffer;
    // Count of bytes that the decompressor expects to read next, or buffer size.
@@ -1948,7 +1997,7 @@ class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {				/*{{{*/
       bool eof;
       bool compressing;
 
-      LZMAFILE(FileFd * const fd) : file(nullptr), filefd(fd), eof(false), compressing(false) { buffer[0] = '\0'; }
+      explicit LZMAFILE(FileFd * const fd) : file(nullptr), filefd(fd), eof(false), compressing(false) { buffer[0] = '\0'; }
       ~LZMAFILE()
       {
 	 if (compressing == true && filefd->Failed() == false)
@@ -3018,19 +3067,6 @@ bool FileFd::FileFdError(const char *Description,...) {
    return false;
 }
 									/*}}}*/
-gzFile FileFd::gzFd() {							/*{{{*/
-#ifdef HAVE_ZLIB
-   GzipFileFdPrivate * const gzipd = dynamic_cast<GzipFileFdPrivate*>(d);
-   if (gzipd == nullptr)
-      return nullptr;
-   else
-      return gzipd->gz;
-#else
-   return nullptr;
-#endif
-}
-									/*}}}*/
-
 // Glob - wrapper around "glob()"					/*{{{*/
 std::vector<std::string> Glob(std::string const &pattern, int flags)
 {
@@ -3151,16 +3187,6 @@ bool Rename(std::string From, std::string To)				/*{{{*/
       return false;
    }
    return true;
-}
-									/*}}}*/
-bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)/*{{{*/
-{
-   return Popen(Args, Fd, Child, Mode, true);
-}
-									/*}}}*/
-bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr)/*{{{*/
-{
-   return Popen(Args, Fd, Child, Mode, CaptureStderr, false);
 }
 									/*}}}*/
 bool Popen(const char *Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, bool CaptureStderr, bool Sandbox) /*{{{*/

@@ -8,6 +8,7 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
@@ -89,7 +90,7 @@ static APT_PURE char const *skipColonSpaces(char const *Buffer, size_t const Len
    ++Buffer;
    for (; isspace(*Buffer) != 0 && Length - (Buffer - Start) > 0; ++Buffer)
       ;
-   if (Length - (Buffer - Start) <= 0)
+   if (Length < static_cast<size_t>(Buffer - Start))
       return nullptr;
    return Buffer;
 }
@@ -415,9 +416,9 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 static std::string Sha1FromString(std::string const &input)		/*{{{*/
 {
    // XXX: move to hashes.h: HashString::FromString() ?
-   SHA1Summation sha1;
+   Hashes sha1(Hashes::SHA1SUM);
    sha1.Add(input.c_str(), input.length());
-   return sha1.Result().Value();
+   return sha1.GetHashString(Hashes::SHA1SUM).HashValue();
 }
 									/*}}}*/
 bool ShowSrcPackage(CommandLine &CmdL)					/*{{{*/

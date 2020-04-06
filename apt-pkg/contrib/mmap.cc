@@ -357,25 +357,26 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
 
    // Look for a matching pool entry
    Pool *I;
-   Pool *Empty = 0;
    for (I = Pools; I != Pools + PoolCount; ++I)
    {
-      if (I->ItemSize == 0)
-	 Empty = I;
       if (I->ItemSize == ItemSize)
 	 break;
    }
-   // No pool is allocated, use an unallocated one
-   if (I == Pools + PoolCount)
+   // No pool is allocated, use an unallocated one.
+   if (unlikely(I == Pools + PoolCount))
    {
+      for (I = Pools; I != Pools + PoolCount; ++I)
+      {
+	 if (I->ItemSize == 0)
+	    break;
+      }
       // Woops, we ran out, the calling code should allocate more.
-      if (Empty == 0)
+      if (I == Pools + PoolCount)
       {
 	 _error->Error("Ran out of allocation pools");
 	 return 0;
       }
-      
-      I = Empty;
+
       I->ItemSize = ItemSize;
       I->Count = 0;
    }

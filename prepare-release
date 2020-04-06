@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 cd "$(readlink -f $(dirname $0))"
@@ -11,7 +11,6 @@ VERSION=$(dpkg-parsechangelog | sed -n -e '/^Version:/s/^Version: //p')
 DISTRIBUTION=$(dpkg-parsechangelog | sed -n -e '/^Distribution:/s/^Distribution: //p')
 
 LIBAPTPKGVERSION="$(awk -v ORS='.' '/^\#define APT_PKG_M/ {print $3}' apt-pkg/contrib/macros.h | sed 's/\.$//')"
-LIBAPTINSTVERSION="$(sed -nr 's/set\(MAJOR ([^)]*)\)/\1/p' apt-inst/CMakeLists.txt)"
 
 librarysymbolsfromfile() {
 	local MISSING="$(grep '^+#MISSING' "$1")"
@@ -64,7 +63,6 @@ if [ "$1" = 'pre-export' ]; then
 	}
 
 	libraryversioncheck 'libapt-pkg' "$LIBAPTPKGVERSION"
-	libraryversioncheck 'libapt-inst' "$LIBAPTINSTVERSION"
 
 
 	if [ "$DISTRIBUTION" = 'sid' ]; then
@@ -181,7 +179,6 @@ elif [ "$1" = 'library' ]; then
 	}
 	librarysymbols 'libapt-pkg' "${LIBAPTPKGVERSION}"
 	echo
-	librarysymbols 'libapt-inst' "${LIBAPTINSTVERSION}"
 elif [ "$1" = 'buildlog' ]; then
 	while [ -n "$2" ]; do
 		librarysymbolsfromfile "$2" 'UNKNOWN'
@@ -222,7 +219,7 @@ elif [ "$1" = 'coverage' ]; then
 	}
 	grep 'build/include/' "${DIR}/apt.coverage.fixed" | sed "s#^SF:$(pwd)/##" | while read file; do
 		rewritefile "$file" 'apt-pkg' 'apt-pkg/deb' 'apt-pkg/edsp' 'apt-pkg/contrib' \
-		   'apt-inst' 'apt-inst/deb' 'apt-inst/contrib' 'apt-private'
+		  'apt-private'
 	done
 	genhtml --output-directory "${DIR}" "${DIR}/apt.coverage.fixed" ${LCOVRC}
 elif [ "$1" = 'spellcheckers' -o "$1" = 'lint' ]; then
@@ -341,6 +338,31 @@ elif [ "$1" = 'spellcheckers' -o "$1" = 'lint' ]; then
 				-e '^I: po/es.po: duplicate-header-field X-POFile-SpellExtra$' \
 			|| true
 	fi
+elif [ "$1" = "merge-translations" ]; then
+	if [ -z "$2" ]; then
+		echo "Usage:\t$0 $1 <branch to merge from>" >&2
+		exit 1
+	fi
+	for i in {doc/,}po/*.po ; do
+		# 1. concatenate the translations, picking new translations
+		# 2. merge the translations so we only have matching translations left
+		# 3. remove any newly introduced obsolete translations (only in $2)
+		# 4. concatenate again to restore "old" obsolete translations
+		# 5. write output
+		msgcat --use-first <(git show $2:$i) $i \
+			| msgmerge --no-fuzzy --previous - $i \
+			| msgattrib --no-obsolete -  \
+			| msgcat --use-first - $i \
+			| sponge $i
+	done
+elif [ "$1" = "bump-abi" ]; then
+	LIBAPTPKGVERSION=${2:-${LIBAPTPKGVERSION}}
+	rename s/libapt-pkg[0-9.]+[0-9]/libapt-pkg${LIBAPTPKGVERSION}/g $(find debian/ -type f)
+	sed -i \
+		-re s/libapt-pkg[0-9.]+[0-9]/libapt-pkg${LIBAPTPKGVERSION}/g \
+		-re s/APTPKG_[0-9.]+[0-9]/APTPKG_${LIBAPTPKGVERSION}/g \
+		-re s/libapt-pkg.so.[0-9.]+[0-9]/libapt-pkg.so.${LIBAPTPKGVERSION}/g \
+		$(find debian/ -type f -and -not -name changelog)
 else
 	echo >&1 "Usage:\t$0 pre-export
 \t$0 pre-build
@@ -373,6 +395,10 @@ runs all tests and generates a html report in the end.
 
 »spellcheckers« runs »codespell« and »spellintian« on the appropiate files and
 filters out obvious false positives.
+
+\t$0 merge-translations branch
+
+Merge translations from the given branch.
 "
 
 fi

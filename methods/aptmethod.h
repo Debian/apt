@@ -8,6 +8,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/netrc.h>
+#include <apt-pkg/strutl.h>
 
 #include <algorithm>
 #include <locale>
@@ -137,8 +138,11 @@ protected:
       ALLOW(chown);
       ALLOW(chown32);
       ALLOW(clock_getres);
+      ALLOW(clock_getres_time64);
       ALLOW(clock_gettime);
+      ALLOW(clock_gettime64);
       ALLOW(clock_nanosleep);
+      ALLOW(clock_nanosleep_time64);
       ALLOW(close);
       ALLOW(creat);
       ALLOW(dup);
@@ -166,6 +170,7 @@ protected:
       ALLOW(ftruncate);
       ALLOW(ftruncate64);
       ALLOW(futex);
+      ALLOW(futex_time64);
       ALLOW(futimesat);
       ALLOW(getegid);
       ALLOW(getegid32);
@@ -220,9 +225,11 @@ protected:
       ALLOW(pipe2);
       ALLOW(poll);
       ALLOW(ppoll);
+      ALLOW(ppoll_time64);
       ALLOW(prctl);
       ALLOW(prlimit64);
       ALLOW(pselect6);
+      ALLOW(pselect6_time64);
       ALLOW(read);
       ALLOW(readv);
       ALLOW(rename);
@@ -264,6 +271,7 @@ protected:
       ALLOW(unlinkat);
       ALLOW(utime);
       ALLOW(utimensat);
+      ALLOW(utimensat_time64);
       ALLOW(utimes);
       ALLOW(write);
       ALLOW(writev);
@@ -277,6 +285,7 @@ protected:
 	 ALLOW(recv);
 	 ALLOW(recvfrom);
 	 ALLOW(recvmmsg);
+	 ALLOW(recvmmsg_time64);
 	 ALLOW(recvmsg);
 	 ALLOW(send);
 	 ALLOW(sendmmsg);
@@ -502,10 +511,10 @@ class aptAuthConfMethod : public aptMethod
       auto const netrcparts = _config->FindDir("Dir::Etc::netrcparts");
       if (netrcparts.empty() == false)
       {
-	 for (auto const &netrc : GetListOfFilesInDir(netrcparts, "conf", true, true))
+	 for (auto &&netrcpart : GetListOfFilesInDir(netrcparts, "conf", true, true))
 	 {
 	    authconfs.emplace_back(new FileFd());
-	    authconfs.back()->Open(netrc, FileFd::ReadOnly);
+	    authconfs.back()->Open(netrcpart, FileFd::ReadOnly);
 	 }
       }
       _error->RevertToStack();
@@ -525,6 +534,7 @@ class aptAuthConfMethod : public aptMethod
       if (uri.User.empty() == false || uri.Password.empty() == false)
 	 return true;
 
+      _error->PushToStack();
       for (auto &authconf : authconfs)
       {
 	 if (authconf->IsOpen() == false)
@@ -537,6 +547,17 @@ class aptAuthConfMethod : public aptMethod
 
 	 result &= MaybeAddAuth(*authconf, uri);
       }
+
+      if (not _error->empty())
+      {
+	 std::string message;
+	 while (not _error->empty())
+	 {
+	    _error->PopMessage(message);
+	    Warning("%s", message.c_str());
+	 }
+      }
+      _error->RevertToStack();
 
       return result;
    }

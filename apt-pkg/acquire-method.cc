@@ -21,9 +21,6 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
-#include <apt-pkg/md5.h>
-#include <apt-pkg/sha1.h>
-#include <apt-pkg/sha2.h>
 #include <apt-pkg/strutl.h>
 
 #include <algorithm>
@@ -416,7 +413,7 @@ int pkgAcqMethod::Run(bool Single)
 	    Tmp->Uri = LookupTag(Message,"URI");
 	    Tmp->Proxy(LookupTag(Message, "Proxy"));
 	    Tmp->DestFile = LookupTag(Message,"FileName");
-	    if (RFC1123StrToTime(LookupTag(Message,"Last-Modified").c_str(),Tmp->LastModified) == false)
+	    if (RFC1123StrToTime(LookupTag(Message,"Last-Modified"),Tmp->LastModified) == false)
 	       Tmp->LastModified = 0;
 	    Tmp->IndexFile = StringToBool(LookupTag(Message,"Index-File"),false);
 	    Tmp->FailIgnore = StringToBool(LookupTag(Message,"Fail-Ignore"),false);

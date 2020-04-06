@@ -1037,7 +1037,7 @@ bool FtpMethod::Configuration(string Message)
 /* Fetch a single file, called by the base class..  */
 bool FtpMethod::Fetch(FetchItem *Itm)
 {
-   URI Get = Itm->Uri;
+   URI Get(Itm->Uri);
    const char *File = Get.Path.c_str();
    FetchResult Res;
    Res.Filename = Itm->DestFile;
@@ -1166,8 +1166,8 @@ int main(int, const char *argv[])
       proxy urls */
    if (getenv("ftp_proxy") != 0)
    {
-      URI Proxy = string(getenv("ftp_proxy"));
-      
+      URI Proxy(string(getenv("ftp_proxy")));
+
       // Run the HTTP method
       if (Proxy.Access == "http")
       {

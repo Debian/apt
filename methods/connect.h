@@ -42,7 +42,7 @@ ResultState Connect(std::string To, int Port, const char *Service, int DefPort,
 		    std::unique_ptr<MethodFd> &Fd, unsigned long TimeOut, aptMethod *Owner);
 
 ResultState UnwrapSocks(std::string To, int Port, URI Proxy, std::unique_ptr<MethodFd> &Fd, unsigned long Timeout, aptMethod *Owner);
-ResultState UnwrapTLS(std::string To, std::unique_ptr<MethodFd> &Fd, unsigned long Timeout, aptMethod *Owner);
+ResultState UnwrapTLS(std::string const &To, std::unique_ptr<MethodFd> &Fd, unsigned long Timeout, aptMethod *Owner);
 
 void RotateDNS();
 

@@ -260,7 +260,7 @@ void pkgSimulate::ShortBreaks()
    cout << ']' << endl;
 }
 									/*}}}*/
-bool pkgSimulate::Go2(APT::Progress::PackageManager *)			/*{{{*/
+bool pkgSimulate::Go(APT::Progress::PackageManager *)			/*{{{*/
 {
    if (pkgDPkgPM::ExpandPendingCalls(d->List, Cache) == false)
       return false;
@@ -1341,32 +1341,6 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 
    delete[] PList;
    return true;
-}
-									/*}}}*/
-// ProblemResolver::InstallProtect - deprecated cpu-eating no-op	/*{{{*/
-// ---------------------------------------------------------------------
-/* Actions issued with FromUser bit set are protected from further
-   modification (expect by other calls with FromUser set) nowadays , so we
-   don't need to reissue actions here, they are already set in stone. */
-void pkgProblemResolver::InstallProtect()
-{
-   pkgDepCache::ActionGroup group(Cache);
-
-   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
-   {
-      if ((Flags[I->ID] & Protected) == Protected)
-      {
-	 if ((Flags[I->ID] & ToRemove) == ToRemove)
-	    Cache.MarkDelete(I);
-	 else 
-	 {
-	    // preserve the information whether the package was auto
-	    // or manually installed
-	    bool autoInst = (Cache[I].Flags & pkgCache::Flag::Auto);
-	    Cache.MarkInstall(I, false, 0, !autoInst);
-	 }
-      }
-   }   
 }
 									/*}}}*/
 // PrioSortList - Sort a list of versions by priority			/*{{{*/

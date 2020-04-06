@@ -15,10 +15,10 @@
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/edsplistparser.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/string_view.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>
 
 #include <array>
@@ -59,7 +59,7 @@ APT::StringView edspLikeListParser::Description_md5()
 }
 									/*}}}*/
 // ListParser::VersionHash - Compute a unique hash for this version	/*{{{*/
-unsigned short edspLikeListParser::VersionHash()
+uint32_t edspLikeListParser::VersionHash()
 {
    if (Section.Exists("APT-Hash") == true)
       return Section.FindI("APT-Hash");
@@ -87,7 +87,7 @@ bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
    if (state != 0)
    {
       Pkg->CurrentState = pkgCache::State::Installed;
-      Pkg->CurrentVer = Ver.Index();
+      Pkg->CurrentVer = Ver.MapPointer();
    }
 
    if (Section.FindB("APT-Automatic", false))
@@ -162,7 +162,7 @@ bool eippListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 	    case pkgCache::State::TriggersAwaited:
 	    case pkgCache::State::TriggersPending:
 	    case pkgCache::State::Installed:
-	       Pkg->CurrentVer = Ver.Index();
+	       Pkg->CurrentVer = Ver.MapPointer();
 	       break;
 	 }
 	 break;

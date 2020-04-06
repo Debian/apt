@@ -13,7 +13,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2015-08-15T00:00:00Z</date>
+   <date>2020-01-17T00:00:00Z</date>
  </refentryinfo>
 
  <refmeta>
@@ -303,7 +303,28 @@ a &glob; expression in itself.
 </para>
 </refsect2>
 
+<refsect2><title>Pinning by source package</title>
+<para>APT supports pinning by source packages. To pin by a source package,
+prepend "src:" to the package name.</para>
+<para>For example, to pin all binaries produced by the apt source package
+of this APT's version to 990, you can do:</para>
 
+<programlisting>
+Package: src:apt
+Pin: version &apt-product-version;
+Pin-Priority: 990
+</programlisting>
+
+<para>Source package pinning can be combined with regular expressions and
+glob patterns, and can also take a binary architecture.</para>
+<para>For example, let's pin all binaries for all architectures produced by
+any source package containing apt in its name to 990:</para>
+<programlisting>
+Package: src:*apt*:any
+Pin: version *
+Pin-Priority: 990
+</programlisting>
+</refsect2>
 
 
 
