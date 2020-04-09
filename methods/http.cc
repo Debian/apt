@@ -45,6 +45,10 @@
 #include "http.h"
 
 #include <apti18n.h>
+
+#ifdef HAVE_SYSTEMD
+#include <systemd/sd-login.h>
+#endif
 									/*}}}*/
 using namespace std;
 
@@ -972,7 +976,21 @@ void HttpMethod::SendReq(FetchItem *Itm)
 	 << Base64Encode(Uri.User + ":" + Uri.Password) << "\r\n";
 
    Req << "User-Agent: " << ConfigFind("User-Agent",
-		"Debian APT-HTTP/1.3 (" PACKAGE_VERSION ")") << "\r\n";
+		"Debian APT-HTTP/1.3 (" PACKAGE_VERSION ")");
+
+#ifdef HAVE_SYSTEMD
+   char *unit = nullptr;
+   sd_pid_get_unit(getpid(), &unit);
+   if (unit != nullptr && *unit != '\0' && not APT::String::Startswith(unit, "user@") // user@ _is_ interactive
+       && unit != "packagekit.service"s						      // packagekit likely is interactive
+       && unit != "dbus.service"s						      // aptdaemon and qapt don't have systemd services
+       && ConfigFindB("User-Agent-Non-Interactive", false))
+      Req << " non-interactive";
+
+   free(unit);
+#endif
+
+   Req << "\r\n";
 
    // the famously typoed HTTP header field
    auto const referrer = ConfigFind("Referer", "");

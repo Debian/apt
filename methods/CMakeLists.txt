@@ -17,9 +17,10 @@ add_executable(rsh rsh.cc)
 
 target_compile_definitions(connectlib PRIVATE ${GNUTLS_DEFINITIONS})
 target_include_directories(connectlib PRIVATE ${GNUTLS_INCLUDE_DIR})
+target_include_directories(http PRIVATE $<$<BOOL:${SYSTEMD_FOUND}>:${SYSTEMD_INCLUDE_DIRS}>)
 
 # Additional libraries to link against for networked stuff
-target_link_libraries(http ${GNUTLS_LIBRARIES})
+target_link_libraries(http ${GNUTLS_LIBRARIES} $<$<BOOL:${SYSTEMD_FOUND}>:${SYSTEMD_LIBRARIES}>)
 target_link_libraries(ftp ${GNUTLS_LIBRARIES})
 
 # Install the library
