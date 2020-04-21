@@ -16,6 +16,7 @@ APTARCHIVE="$(readlink -f ./aptarchive)"
 
 signreleasefiles 'Joe Sixpack'
 
+echo 'APT::Update::On-Launch { "echo ON_LAUNCH"; };' >> rootdir/etc/apt/apt.conf.d/display-success.conf
 echo 'APT::Update::Post-Invoke-Success { "echo SUCCESS"; };' >> rootdir/etc/apt/apt.conf.d/display-success.conf
 echo 'APT::Update::Post-Invoke { "echo RUN"; };' >> rootdir/etc/apt/apt.conf.d/display-success.conf
 
@@ -23,6 +24,7 @@ echo 'APT::Update::Post-Invoke { "echo RUN"; };' >> rootdir/etc/apt/apt.conf.d/d
 msgmsg "All sources OK => run Post-Invoke-Success and Post-Invoke"
 testsuccess aptget update
 cp rootdir/tmp/testsuccess.output aptupdate.output
+testsuccess grep "ON_LAUNCH" aptupdate.output
 testsuccess grep "RUN" aptupdate.output
 testsuccess grep "SUCCESS" aptupdate.output
 
@@ -35,6 +37,7 @@ testfailure apt update
 cp rootdir/tmp/testfailure.output aptupdate.output
 listcurrentlistsdirectory > lists.after
 testfailure cmp lists.before lists.after
+testsuccess grep "ON_LAUNCH" aptupdate.output
 testsuccess grep "RUN" aptupdate.output
 testsuccess grep "SUCCESS" aptupdate.output
 
@@ -45,5 +48,6 @@ mv lists.after lists.before
 testfailure apt update
 cp rootdir/tmp/testfailure.output aptupdate.output
 testfileequal lists.before "$(listcurrentlistsdirectory)"
+testsuccess grep "ON_LAUNCH" aptupdate.output
 testsuccess grep "RUN" aptupdate.output
 testfailure grep "SUCCESS" aptupdate.output
