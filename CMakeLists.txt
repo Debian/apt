@@ -45,6 +45,18 @@ if (NOT TRIEHASH_EXECUTABLE)
   message(FATAL_ERROR "Could not find triehash executable")
 endif()
 
+find_program(W3M_EXECUTABLE NAMES w3m)
+
+if (NOT W3M_EXECUTABLE)
+  message(FATAL_ERROR "Could not find w3m executable")
+endif()
+
+find_program(PO4A_EXECUTABLE NAMES po4a)
+
+if (NOT PO4A_EXECUTABLE)
+  message(FATAL_ERROR "Could not find po4a executable")
+endif()
+
 if(USE_NLS)
   find_package(Intl REQUIRED)
   link_libraries(${Intl_LIBRARIES})
