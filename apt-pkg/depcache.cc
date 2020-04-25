@@ -1399,45 +1399,40 @@ bool pkgDepCache::IsInstallOkDependenciesSatisfiableByCandidates(PkgIterator con
 
    for (DepIterator Dep = CandVer.DependsList(); Dep.end() != true;)
    {
-      // Grok or groups
       DepIterator Start = Dep;
-      bool Result = true;
+      bool foundSolution = false;
       unsigned Ors = 0;
-      for (bool LastOR = true; Dep.end() == false && LastOR == true; ++Dep, ++Ors)
+      // Is it possible to statisfy this dependency?
+      for (bool LastOR = true; not Dep.end() && LastOR; ++Dep, ++Ors)
       {
 	 LastOR = (Dep->CompareOp & Dep::Or) == Dep::Or;
 
-	 if ((DepState[Dep->ID] & DepInstall) == DepInstall)
-	    Result = false;
+	 if ((DepState[Dep->ID] & (DepInstall | DepCVer)) != 0)
+	    foundSolution = true;
       }
 
-      if (Start.IsCritical() == false || Start.IsNegative() == true || Result == false)
+      if (foundSolution || not Start.IsCritical() || Start.IsNegative())
 	 continue;
 
-      /* If we are in an or group locate the first or that can succeed.
-         We have already cached this… */
-      for (; Ors > 1 && (DepState[Start->ID] & DepCVer) != DepCVer; --Ors)
-	 ++Start;
+      if (DebugAutoInstall == true)
+	 std::clog << OutputInDepth(Depth) << APT::PrettyDep(this, Start) << " can't be satisfied!" << std::endl;
 
-      if (Ors == 1 && (DepState[Start->ID] &DepCVer) != DepCVer)
+      // the dependency is critical, but can't be installed, so discard the candidate
+      // as the problemresolver will trip over it otherwise trying to install it (#735967)
+      StateCache &State = PkgState[Pkg->ID];
+      if (not State.Protect())
       {
-	 if (DebugAutoInstall == true)
-	    std::clog << OutputInDepth(Depth) << APT::PrettyDep(this, Start) << " can't be satisfied!" << std::endl;
-
-	 // the dependency is critical, but can't be installed, so discard the candidate
-	 // as the problemresolver will trip over it otherwise trying to install it (#735967)
-	 if (Pkg->CurrentVer != 0 && (PkgState[Pkg->ID].iFlags & Protected) != Protected)
-         {
+	 if (Pkg->CurrentVer != 0)
 	    SetCandidateVersion(Pkg.CurrentVer());
-            StateCache &State = PkgState[Pkg->ID];
-	    if (State.Mode != ModeDelete)
-	    {
-	       State.Mode = ModeKeep;
-	       State.Update(Pkg, *this);
-	    }
-         }
-	 return false;
+	 else
+	    State.CandidateVer = nullptr;
+	 if (not State.Delete())
+	 {
+	    State.Mode = ModeKeep;
+	    State.Update(Pkg, *this);
+	 }
       }
+      return false;
    }
 
    return true;
