@@ -1246,42 +1246,47 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 
       /* This bit is for processing the possibility of an install/upgrade
          fixing the problem for "positive" dependencies */
-      if (Start.IsNegative() == false && (DepState[Start->ID] & DepCVer) == DepCVer)
+      if (not Start.IsNegative() && (DepState[Start->ID] & DepCVer) == DepCVer)
       {
-	 pkgCacheFile CacheFile(this);
-	 APT::VersionList verlist = APT::VersionList::FromDependency(CacheFile, Start, APT::CacheSetHelper::CANDIDATE);
-	 CompareProviders comp(Start);
+	 bool foundSolution = false;
+	 for (; Start != Dep && not foundSolution; ++Start)
+	 {
+	    pkgCacheFile CacheFile(this);
+	    APT::VersionList verlist = APT::VersionList::FromDependency(CacheFile, Start, APT::CacheSetHelper::CANDIDATE);
+	    CompareProviders comp(Start);
 
-	 do {
-	    APT::VersionList::iterator InstVer = std::max_element(verlist.begin(), verlist.end(), comp);
+	    do
+	    {
+	       APT::VersionList::iterator InstVer = std::max_element(verlist.begin(), verlist.end(), comp);
+	       if (InstVer == verlist.end())
+		  break;
 
-	    if (InstVer == verlist.end())
+	       pkgCache::PkgIterator InstPkg = InstVer.ParentPkg();
+	       if (DebugAutoInstall)
+		  std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
+			    << " as " << Start.DepType() << " of " << Pkg.Name() << '\n';
+	       if (not MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
+	       {
+		  verlist.erase(InstVer);
+		  continue;
+	       }
+
+	       // now check if we should consider it a automatic dependency or not
+	       if (InstPkg->CurrentVer == 0 && MoveAutoBitToDependencies)
+	       {
+		  if (DebugAutoInstall == true)
+		     std::clog << OutputInDepth(Depth) << "Setting " << InstPkg.FullName(false) << " NOT as auto-installed (direct "
+			       << Start.DepType() << " of " << Pkg.FullName(false) << " which is manual and in APT::Move-Autobit-Sections)\n";
+		  MarkAuto(InstPkg, false);
+	       }
+
+	       foundSolution = true;
 	       break;
-
-	    pkgCache::PkgIterator InstPkg = InstVer.ParentPkg();
-	    if(DebugAutoInstall == true)
-	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
-			 << " as " << Start.DepType() << " of " << Pkg.Name()
-			 << std::endl;
-	    if (MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps) == false)
-	    {
-	       verlist.erase(InstVer);
-	       continue;
-	    }
-
-	    // now check if we should consider it a automatic dependency or not
-	    if(InstPkg->CurrentVer == 0 && MoveAutoBitToDependencies)
-	    {
-	       if(DebugAutoInstall == true)
-		  std::clog << OutputInDepth(Depth) << "Setting " << InstPkg.FullName(false) << " NOT as auto-installed (direct "
-		     << Start.DepType() << " of " << Pkg.FullName(false) << " which is manual and in APT::Move-Autobit-Sections)" << std::endl;
-	       MarkAuto(InstPkg, false);
-	    }
-
-
-	    break;
-	 } while(true);
-	 continue;
+	    } while (true);
+	 }
+	 if (foundSolution)
+	    continue;
+	 break;
       }
       /* Negative dependencies have no or-group
 	 If the dependency isn't versioned, we try if an upgrade might solve the problem.

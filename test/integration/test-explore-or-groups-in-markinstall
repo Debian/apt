@@ -1,0 +1,47 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'okay' 'all' '1'
+insertpackage 'unstable' 'unneeded' 'all' '1'
+insertpackage 'unstable' 'later' 'all' '1'
+
+insertpackage 'unstable' 'bad-level0' 'all' '1' 'Depends: unneeded, unknown'
+
+insertfoos() {
+	insertpackage 'unstable' "foo-${1}-level0" 'all' '1' "${2}: unknown | okay | later"
+	insertpackage 'unstable' "foo-${1}-level1" 'all' '1' "${2}: bad-level0 | okay | later"
+}
+insertfoos 'd' 'Depends'
+insertfoos 'r' 'Recommends'
+
+setupaptarchive
+
+testsuccessheadequal() {
+	msggroup 'testsuccessheadequal'
+	local HEADLINES="$1"
+	local CMP="$2"
+	shift 2
+	testsuccesswithglobalerror 'testsuccess' 'EW' "$@"
+	cp "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccessheadequal.output"
+	testsuccessequal "$CMP" head -n "$HEADLINES" "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccessheadequal.output"
+	msggroup
+}
+checkfoos() {
+	msgmsg 'Install checks with foos dependency type' "$2"
+	for i in 0 1; do
+		testsuccessheadequal 7 "Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  okay
+The following NEW packages will be installed:
+  foo-${1}-level${i} okay
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded." apt install foo-${1}-level${i} -s
+	done
+}
+checkfoos 'd' 'Depends'
+checkfoos 'r' 'Recommends'
