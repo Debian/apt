@@ -298,9 +298,9 @@ APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, b
          out bogus entries that may be due to config-file states, or
          other. */
       if (file.File().Flagged(pkgCache::Flag::NotSource) && Ver.ParentPkg().CurrentVer() != Ver)
-	 priority = std::max(priority, static_cast<decltype(priority)>(-1));
+	 priority = std::max<decltype(priority)>(priority, -1);
       else
-	 priority = std::max(priority, static_cast<decltype(priority)>(GetPriority(file.File())));
+	 priority = std::max<decltype(priority)>(priority, GetPriority(file.File()));
    }
 
    return priority == std::numeric_limits<decltype(priority)>::min() ? 0 : priority;
