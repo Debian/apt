@@ -980,10 +980,8 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
    return true;
 }
 									/*}}}*/
-// DepCache::MarkInstall - Put the package in the install state		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-struct CompareProviders {
+struct CompareProviders							/*{{{*/
+{
    pkgCache::PkgIterator const Pkg;
    explicit CompareProviders(pkgCache::DepIterator const &Dep) : Pkg(Dep.TargetPkg()) {};
    //bool operator() (APT::VersionList::iterator const &AV, APT::VersionList::iterator const &BV)
@@ -1068,35 +1066,10 @@ struct CompareProviders {
       return A->ID < B->ID;
    }
 };
-bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
-			      unsigned long Depth, bool FromUser,
-			      bool ForceImportantDeps)
+									/*}}}*/
+bool pkgDepCache::MarkInstall_StateChange(PkgIterator const &Pkg, bool AutoInst, bool FromUser) /*{{{*/
 {
-   if (IsModeChangeOk(ModeInstall, Pkg, Depth, FromUser) == false)
-      return false;
-
    StateCache &P = PkgState[Pkg->ID];
-
-   // See if there is even any possible installation candidate
-   if (P.CandidateVer == 0)
-      return false;
-
-   /* Check that it is not already marked for install and that it can be 
-      installed */
-   if ((not P.InstPolicyBroken() && not P.InstBroken()) &&
-       (P.Mode == ModeInstall ||
-	P.CandidateVer == (Version *)Pkg.CurrentVer()))
-   {
-      if (P.CandidateVer == (Version *)Pkg.CurrentVer() && P.InstallVer == 0)
-	 return MarkKeep(Pkg, false, FromUser, Depth+1);
-      return true;
-   }
-
-   // check if we are allowed to install the package
-   if (not IsInstallOk(Pkg, AutoInst, Depth, FromUser))
-      return false;
-
-   ActionGroup group(*this);
    P.iFlags &= ~AutoKept;
 
    /* Target the candidate version and remove the autoflag. We reset the
@@ -1104,7 +1077,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       should have the ability to de-auto a package by changing its state */
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
-   
+
    P.Mode = ModeInstall;
    P.InstallVer = P.CandidateVer;
 
@@ -1124,23 +1097,15 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
      }
    if (P.CandidateVer == (Version *)Pkg.CurrentVer())
       P.Mode = ModeKeep;
-       
+
    AddStates(Pkg);
    Update(Pkg);
    AddSizes(Pkg);
-
-   if (not AutoInst || _config->Find("APT::Solver", "internal") != "internal")
-      return true;
-
-   if (DebugMarker)
-      std::clog << OutputInDepth(Depth) << "MarkInstall " << APT::PrettyPkg(this, Pkg) << " FU=" << FromUser << std::endl;
-
-   // collect dependencies we will have to resolve one way or the other
-   VerIterator const PV = P.InstVerIter(*this);
-   if (unlikely(PV.end()))
-      return false;
-
-   std::vector<pkgCache::DepIterator> toRemove, toInstall;
+   return true;
+}
+									/*}}}*/
+bool pkgDepCache::MarkInstall_CollectDependencies(pkgCache::VerIterator const &PV, std::vector<pkgCache::DepIterator> &toInstall, std::vector<pkgCache::DepIterator> &toRemove) /*{{{*/
+{
    for (auto Dep = PV.DependsList(); not Dep.end();)
    {
       auto const Start = Dep;
@@ -1169,11 +1134,14 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       else
 	 toInstall.push_back(Start);
    }
-
+   return true;
+}
+									/*}}}*/
+bool pkgDepCache::MarkInstall_RemoveConflictsIfNotUpgradeable(unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade) /*{{{*/
+{
    /* Negative dependencies have no or-group
       If the dependency isn't versioned, we try if an upgrade might solve the problem.
       Otherwise we remove the offender if needed */
-   APT::PackageVector toUpgrade;
    for (auto const &D : toRemove)
    {
       std::unique_ptr<Version *[]> List(D.AllTargets());
@@ -1206,6 +1174,11 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       }
    }
    toRemove.clear();
+   return true;
+}
+									/*}}}*/
+bool pkgDepCache::MarkInstall_UpgradeOrRemoveConflicts(unsigned long Depth, bool const ForceImportantDeps, APT::PackageVector &toUpgrade) /*{{{*/
+{
    for (auto const &InstPkg : toUpgrade)
       if (not MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
       {
@@ -1215,20 +1188,11 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    return false;
       }
    toUpgrade.clear();
-
-   bool MoveAutoBitToDependencies = false;
-   if (PV->Section != 0 && (P.Flags & Flag::Auto) != Flag::Auto)
-   {
-      VerIterator const CurVer = Pkg.CurrentVer();
-      if (not CurVer.end() && CurVer->Section != 0 && strcmp(CurVer.Section(), PV.Section()) != 0)
-      {
-	 bool const CurVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", CurVer.Section());
-	 bool const InstVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", PV.Section());
-	 MoveAutoBitToDependencies = (not CurVerInMoveSection && InstVerInMoveSection);
-      }
-   }
-   APT::PackageVector toMoveAuto;
-
+   return true;
+}
+									/*}}}*/
+bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, std::vector<pkgCache::DepIterator> &toInstall, APT::PackageVector *const toMoveAuto) /*{{{*/
+{
    auto const IsSatisfiedByInstalled = [&](auto const D) { return (DepState[D.ID] & DepInstall) == DepInstall; };
    for (auto &&Dep : toInstall)
    {
@@ -1314,8 +1278,8 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       continue;
 	    }
 
-	    if (MoveAutoBitToDependencies && InstPkg->CurrentVer == 0)
-	       toMoveAuto.push_back(InstPkg);
+	    if (toMoveAuto != nullptr && InstPkg->CurrentVer == 0)
+	       toMoveAuto->push_back(InstPkg);
 
 	    foundSolution = true;
 	    break;
@@ -1344,6 +1308,79 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       }
    }
    toInstall.clear();
+   return true;
+}
+									/*}}}*/
+// DepCache::MarkInstall - Put the package in the install state		/*{{{*/
+bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
+			      unsigned long Depth, bool FromUser,
+			      bool ForceImportantDeps)
+{
+   if (IsModeChangeOk(ModeInstall, Pkg, Depth, FromUser) == false)
+      return false;
+
+   StateCache &P = PkgState[Pkg->ID];
+
+   // See if there is even any possible installation candidate
+   if (P.CandidateVer == 0)
+      return false;
+
+   /* Check that it is not already marked for install and that it can be 
+      installed */
+   if ((not P.InstPolicyBroken() && not P.InstBroken()) &&
+       (P.Mode == ModeInstall ||
+	P.CandidateVer == (Version *)Pkg.CurrentVer()))
+   {
+      if (P.CandidateVer == (Version *)Pkg.CurrentVer() && P.InstallVer == 0)
+	 return MarkKeep(Pkg, false, FromUser, Depth + 1);
+      return true;
+   }
+
+   // check if we are allowed to install the package
+   if (not IsInstallOk(Pkg, AutoInst, Depth, FromUser))
+      return false;
+
+   ActionGroup group(*this);
+   if (not MarkInstall_StateChange(Pkg, AutoInst, FromUser))
+      return false;
+
+   if (not AutoInst || _config->Find("APT::Solver", "internal") != "internal")
+      return true;
+
+   if (DebugMarker)
+      std::clog << OutputInDepth(Depth) << "MarkInstall " << APT::PrettyPkg(this, Pkg) << " FU=" << FromUser << std::endl;
+
+   VerIterator const PV = P.InstVerIter(*this);
+   if (unlikely(PV.end()))
+      return false;
+
+   std::vector<pkgCache::DepIterator> toInstall, toRemove;
+   if (not MarkInstall_CollectDependencies(PV, toInstall, toRemove))
+      return false;
+
+   APT::PackageVector toUpgrade;
+   if (not MarkInstall_RemoveConflictsIfNotUpgradeable(Depth, toRemove, toUpgrade))
+      return false;
+
+   if (not MarkInstall_UpgradeOrRemoveConflicts(Depth, ForceImportantDeps, toUpgrade))
+      return false;
+
+   bool const MoveAutoBitToDependencies = [&]() {
+      if (PV->Section == 0 || (P.Flags & Flag::Auto) == Flag::Auto)
+	 return false;
+      VerIterator const CurVer = Pkg.CurrentVer();
+      if (not CurVer.end() && CurVer->Section != 0 && strcmp(CurVer.Section(), PV.Section()) != 0)
+      {
+	 bool const CurVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", CurVer.Section());
+	 bool const InstVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", PV.Section());
+	 return (not CurVerInMoveSection && InstVerInMoveSection);
+      }
+      return false;
+   }();
+
+   APT::PackageVector toMoveAuto;
+   if (not MarkInstall_InstallDependencies(Pkg, Depth, ForceImportantDeps, toInstall, MoveAutoBitToDependencies ? &toMoveAuto : nullptr))
+      return false;
 
    if (MoveAutoBitToDependencies)
    {
