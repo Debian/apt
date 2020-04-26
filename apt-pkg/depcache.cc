@@ -1324,7 +1324,24 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    break;
       } while (Start++ != End);
       if (not foundSolution && End.IsCritical())
+      {
+	 StateCache &State = PkgState[Pkg->ID];
+	 if (not State.Protect())
+	 {
+	    RemoveSizes(Pkg);
+	    RemoveStates(Pkg);
+	    if (Pkg->CurrentVer != 0)
+	       State.InstallVer = State.CandidateVer = Pkg.CurrentVer();
+	    else
+	       State.InstallVer = State.CandidateVer = nullptr;
+	    State.Mode = ModeKeep;
+	    State.Update(Pkg, *this);
+	    AddStates(Pkg);
+	    Update(Pkg);
+	    AddSizes(Pkg);
+	 }
 	 return false;
+      }
    }
    toInstall.clear();
 
