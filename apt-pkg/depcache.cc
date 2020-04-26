@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <list>
 #include <set>
 #include <string>
@@ -1018,52 +1019,52 @@ struct CompareProviders							/*{{{*/
 	    }
 	 }
 	 if (instA != instB)
-	    return instA == false;
+	    return instA;
       }
       if ((A->CurrentVer == 0 || B->CurrentVer == 0) && A->CurrentVer != B->CurrentVer)
-	 return A->CurrentVer == 0;
+	 return A->CurrentVer != 0;
       // Prefer packages in the same group as the target; e.g. foo:i386, foo:amd64
       if (A->Group != B->Group)
       {
 	 if (A->Group == Pkg->Group && B->Group != Pkg->Group)
-	    return false;
-	 else if (B->Group == Pkg->Group && A->Group != Pkg->Group)
 	    return true;
+	 else if (B->Group == Pkg->Group && A->Group != Pkg->Group)
+	    return false;
       }
       // we like essentials
       if ((A->Flags & pkgCache::Flag::Essential) != (B->Flags & pkgCache::Flag::Essential))
       {
 	 if ((A->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
-	    return false;
-	 else if ((B->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
 	    return true;
+	 else if ((B->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+	    return false;
       }
       if ((A->Flags & pkgCache::Flag::Important) != (B->Flags & pkgCache::Flag::Important))
       {
 	 if ((A->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
-	    return false;
-	 else if ((B->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
 	    return true;
+	 else if ((B->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
+	    return false;
       }
       // prefer native architecture
       if (strcmp(A.Arch(), B.Arch()) != 0)
       {
 	 if (strcmp(A.Arch(), A.Cache()->NativeArch()) == 0)
-	    return false;
-	 else if (strcmp(B.Arch(), B.Cache()->NativeArch()) == 0)
 	    return true;
+	 else if (strcmp(B.Arch(), B.Cache()->NativeArch()) == 0)
+	    return false;
 	 std::vector<std::string> archs = APT::Configuration::getArchitectures();
 	 for (std::vector<std::string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
 	    if (*a == A.Arch())
-	       return false;
-	    else if (*a == B.Arch())
 	       return true;
+	    else if (*a == B.Arch())
+	       return false;
       }
       // higher priority seems like a good idea
       if (AV->Priority != BV->Priority)
-	 return AV->Priority > BV->Priority;
+	 return AV->Priority < BV->Priority;
       // unable to decide…
-      return A->ID < B->ID;
+      return A->ID > B->ID;
    }
 };
 									/*}}}*/
@@ -1257,52 +1258,49 @@ bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsign
 	 }
       }
 
-      bool foundSolution = false;
-      bool thereIsOnlyOne1 = Start == End;
+      pkgCacheFile CacheFile{this};
+      APT::PackageVector toUpgrade, toNewInstall;
       do
       {
 	 if ((DepState[Start->ID] & DepCVer) != DepCVer)
 	    continue;
 
-	 pkgCacheFile CacheFile(this);
-	 APT::VersionList verlist = APT::VersionList::FromDependency(CacheFile, Start, APT::CacheSetHelper::CANDIDATE);
-	 CompareProviders comp(Start);
-	 bool thereIsOnlyOne2 = thereIsOnlyOne1 && verlist.size() == 1;
-
-	 do
+	 APT::VersionVector verlist = APT::VersionVector::FromDependency(CacheFile, Start, APT::CacheSetHelper::CANDIDATE);
+	 std::sort(verlist.begin(), verlist.end(), CompareProviders{Start});
+	 for (auto const &Ver : verlist)
 	 {
-	    APT::VersionList::iterator InstVer = std::max_element(verlist.begin(), verlist.end(), comp);
-	    if (InstVer == verlist.end())
-	       break;
-
-	    pkgCache::PkgIterator InstPkg = InstVer.ParentPkg();
-	    if (DebugAutoInstall)
-	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
-			 << " as " << Start.DepType() << " of " << Pkg.Name() << '\n';
-	    if (thereIsOnlyOne2 && PkgState[Pkg->ID].Protect() && IsCriticalDep)
-	    {
-	       if (not MarkInstall(InstPkg, false, Depth + 1, false, ForceImportantDeps))
-	       {
-		  verlist.erase(InstVer);
-		  continue;
-	       }
-	       MarkProtected(InstPkg);
-	    }
-	    if (not MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
-	    {
-	       verlist.erase(InstVer);
-	       continue;
-	    }
-
-	    if (toMoveAuto != nullptr && InstPkg->CurrentVer == 0)
-	       toMoveAuto->push_back(InstPkg);
-
-	    foundSolution = true;
-	    break;
-	 } while (true);
-	 if (foundSolution)
-	    break;
+	    auto P = Ver.ParentPkg();
+	    if (P->CurrentVer != 0)
+	       toUpgrade.emplace_back(std::move(P));
+	    else
+	       toNewInstall.emplace_back(std::move(P));
+	 }
       } while (Start++ != End);
+
+      std::move(toNewInstall.begin(), toNewInstall.end(), std::back_inserter(toUpgrade));
+      bool foundSolution = false;
+      for (auto const &InstPkg : toUpgrade)
+      {
+	 if (PkgState[InstPkg->ID].CandidateVer == nullptr || PkgState[InstPkg->ID].CandidateVer == InstPkg.CurrentVer())
+	    continue;
+	 if (DebugAutoInstall)
+	    std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.FullName()
+		      << " as " << End.DepType() << " of " << Pkg.FullName() << '\n';
+	 if (IsCriticalDep && toUpgrade.size() == 1 && PkgState[Pkg->ID].Protect())
+	 {
+	    if (not MarkInstall(InstPkg, false, Depth + 1, false, ForceImportantDeps))
+	       continue;
+	    MarkProtected(InstPkg);
+	 }
+	 if (not MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
+	    continue;
+
+	 if (toMoveAuto != nullptr && InstPkg->CurrentVer == 0)
+	    toMoveAuto->push_back(InstPkg);
+
+	 foundSolution = true;
+	 break;
+      }
       if (not foundSolution && IsCriticalDep)
       {
 	 StateCache &State = PkgState[Pkg->ID];

@@ -7,16 +7,28 @@ setupenvironment
 configarchitecture 'amd64'
 
 insertpackage 'unstable' 'okay' 'all' '1'
+insertpackage 'unstable' 'upgrade' 'all' '2'
 insertpackage 'unstable' 'unneeded' 'all' '1'
 insertpackage 'unstable' 'later' 'all' '1'
 
 insertpackage 'unstable' 'bad-level0' 'all' '1' 'Depends: unneeded, unknown'
 insertpackage 'unstable' 'bad-level1' 'all' '1' 'Depends: bad-level0'
+insertpackage 'unstable' 'bad-upgrade-level0' 'all' '2' 'Depends: unneeded, unknown'
+insertpackage 'unstable' 'bad-upgrade-level1' 'all' '2' 'Depends: bad-upgrade-level0 (>= 2)'
+
+insertinstalledpackage 'upgrade' 'all' '1'
+insertinstalledpackage 'bad-upgrade' 'all' '1'
+insertinstalledpackage 'bad-upgrade-level0' 'all' '1'
+insertinstalledpackage 'bad-upgrade-level1' 'all' '1'
 
 insertfoos() {
-	insertpackage 'unstable' "foo-${1}-level0" 'all' '1' "${2}: unknown | okay | later"
-	insertpackage 'unstable' "foo-${1}-level1" 'all' '1' "${2}: bad-level0 | okay | later"
-	insertpackage 'unstable' "foo-${1}-level2" 'all' '1' "${2}: bad-level1 | okay | later"
+	insertpackage 'unstable' "foo-${1}-level0" 'all' '1' "${2}: unknown | unknown | okay | later"
+	insertpackage 'unstable' "foo-${1}-level1" 'all' '1' "${2}: bad-level0 | bad-level0 | okay | later"
+	insertpackage 'unstable' "foo-${1}-level2" 'all' '1' "${2}: bad-level1 | bad-level1 | okay | later"
+
+	insertpackage 'unstable' "foo-${1}-upgrade-level0" 'all' '1' "${2}: bad-upgrade (>= 2) | okay | upgrade (>= 2) | later"
+	insertpackage 'unstable' "foo-${1}-upgrade-level1" 'all' '1' "${2}: bad-upgrade-level0 (>= 2) | bad-upgrade-level0 (>= 2) | bad-level0 | okay | upgrade (>= 2) | later"
+	insertpackage 'unstable' "foo-${1}-upgrade-level2" 'all' '1' "${2}: bad-upgrade-level1 (>= 2) | bad-upgrade-level1 (>= 2) | bad-level1 | okay | upgrade (>= 2) | later"
 }
 insertfoos 'd' 'Depends'
 insertfoos 'r' 'Recommends'
@@ -35,14 +47,23 @@ testsuccessheadequal() {
 }
 checkfoos() {
 	msgmsg 'Install checks with foos dependency type' "$2"
-	for i in 0 1 2; do
+	for level in 0 1 2; do
 		testsuccessheadequal 7 "Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
   okay
 The following NEW packages will be installed:
-  foo-${1}-level${i} okay
-0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded." apt install foo-${1}-level${i} -s
+  foo-${1}-level${level} okay
+0 upgraded, 2 newly installed, 0 to remove and 3 not upgraded." apt install foo-${1}-level${level} -s
+		testsuccessheadequal 9 "Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  upgrade
+The following NEW packages will be installed:
+  foo-${1}-upgrade-level${level}
+The following packages will be upgraded:
+  upgrade
+1 upgraded, 1 newly installed, 0 to remove and $((2-${level})) not upgraded." apt install foo-${1}-upgrade-level${level} -s
 	done
 }
 checkfoos 'd' 'Depends'
