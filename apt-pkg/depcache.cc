@@ -1083,7 +1083,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 
    /* Check that it is not already marked for install and that it can be 
       installed */
-   if ((P.InstPolicyBroken() == false && P.InstBroken() == false) && 
+   if ((not P.InstPolicyBroken() && not P.InstBroken()) &&
        (P.Mode == ModeInstall ||
 	P.CandidateVer == (Version *)Pkg.CurrentVer()))
    {
@@ -1093,7 +1093,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    }
 
    // check if we are allowed to install the package
-   if (IsInstallOk(Pkg,AutoInst,Depth,FromUser) == false)
+   if (not IsInstallOk(Pkg, AutoInst, Depth, FromUser))
       return false;
 
    ActionGroup group(*this);
@@ -1129,68 +1129,112 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    Update(Pkg);
    AddSizes(Pkg);
 
-   if (AutoInst == false || _config->Find("APT::Solver", "internal") != "internal")
+   if (not AutoInst || _config->Find("APT::Solver", "internal") != "internal")
       return true;
 
-   if (DebugMarker == true)
+   if (DebugMarker)
       std::clog << OutputInDepth(Depth) << "MarkInstall " << APT::PrettyPkg(this, Pkg) << " FU=" << FromUser << std::endl;
 
-   bool MoveAutoBitToDependencies = false;
+   // collect dependencies we will have to resolve one way or the other
    VerIterator const PV = P.InstVerIter(*this);
-   if (unlikely(PV.end() == true))
+   if (unlikely(PV.end()))
       return false;
-   else if (PV->Section != 0 && (P.Flags & Flag::Auto) != Flag::Auto)
+
+   std::vector<pkgCache::DepIterator> toRemove, toInstall;
+   for (auto Dep = PV.DependsList(); not Dep.end();)
    {
-      VerIterator const CurVer = Pkg.CurrentVer();
-      if (CurVer.end() == false && CurVer->Section != 0 && strcmp(CurVer.Section(), PV.Section()) != 0)
+      auto const Start = Dep;
+      // check if an installed package satisfies the dependency (and get the extend of the or-group)
+      bool foundSolution = false;
+      for (bool LastOR = true; not Dep.end() && LastOR; ++Dep)
       {
-	 bool const CurVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", CurVer.Section());
-	 bool const InstVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", PV.Section());
-	 MoveAutoBitToDependencies = (CurVerInMoveSection == false && InstVerInMoveSection == true);
-	 if (MoveAutoBitToDependencies == true)
+	 LastOR = (Dep->CompareOp & Dep::Or) == Dep::Or;
+	 if ((DepState[Dep->ID] & DepInstall) == DepInstall)
+	    foundSolution = true;
+      }
+      if (foundSolution)
+	 continue;
+
+      /* Check if this dep should be consider for install.
+         (Pre-)Depends, Conflicts and Breaks for sure.
+         Recommends & Suggests depending on configuration */
+      if (not IsImportantDep(Start))
+	 continue;
+
+      if (Start.IsNegative())
+      {
+	 if (Start->Type != pkgCache::Dep::Obsoletes)
+	    toRemove.push_back(Start);
+      }
+      else
+	 toInstall.push_back(Start);
+   }
+
+   /* Negative dependencies have no or-group
+      If the dependency isn't versioned, we try if an upgrade might solve the problem.
+      Otherwise we remove the offender if needed */
+   APT::PackageVector toUpgrade;
+   for (auto const &D : toRemove)
+   {
+      std::unique_ptr<Version *[]> List(D.AllTargets());
+      pkgCache::PkgIterator TrgPkg = D.TargetPkg();
+      for (Version **I = List.get(); *I != 0; I++)
+      {
+	 VerIterator Ver(*this, *I);
+	 PkgIterator Pkg = Ver.ParentPkg();
+
+	 /* The List includes all packages providing this dependency,
+	    even providers which are not installed, so skip them. */
+	 if (PkgState[Pkg->ID].InstallVer == 0)
+	    continue;
+
+	 // Ignore negative dependencies on versions that are not going to get installed
+	 if (PkgState[Pkg->ID].InstallVer != *I)
+	    continue;
+
+	 if ((D->Version != 0 || TrgPkg != Pkg) &&
+	     PkgState[Pkg->ID].CandidateVer != PkgState[Pkg->ID].InstallVer &&
+	     PkgState[Pkg->ID].CandidateVer != *I)
+	    toUpgrade.push_back(Pkg);
+	 else
 	 {
 	    if(DebugAutoInstall == true)
-	       std::clog << OutputInDepth(Depth) << "Setting " << Pkg.FullName(false) << " as auto-installed, moving manual to its dependencies" << std::endl;
-	    MarkAuto(Pkg, true);
+	       std::clog << OutputInDepth(Depth) << " Removing: " << Pkg.Name() << " as upgrade is not an option\n";
+	    if (not MarkDelete(Pkg, false, Depth + 1, false))
+	       return false;
 	 }
       }
    }
-
-   DepIterator Dep = PV.DependsList();
-   for (; Dep.end() != true;)
-   {
-      // Grok or groups
-      DepIterator Start = Dep;
-      bool Result = true;
-      unsigned Ors = 0;
-      for (bool LastOR = true; Dep.end() == false && LastOR == true; ++Dep, ++Ors)
+   toRemove.clear();
+   for (auto const &InstPkg : toUpgrade)
+      if (not MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
       {
-	 LastOR = (Dep->CompareOp & Dep::Or) == Dep::Or;
-
-	 if ((DepState[Dep->ID] & DepInstall) == DepInstall)
-	    Result = false;
+	 if (DebugAutoInstall)
+	    std::clog << OutputInDepth(Depth) << " Removing: " << InstPkg.FullName() << " as upgrade is not possible\n";
+	 if (not MarkDelete(InstPkg, false, Depth + 1, false))
+	    return false;
       }
-      
-      // Dep is satisfied okay.
-      if (Result == false)
-	 continue;
+   toUpgrade.clear();
 
-      /* Check if this dep should be consider for install. If it is a user
-         defined important dep and we are installed a new package then
-	 it will be installed. Otherwise we only check for important
-         deps that have changed from the installed version */
-      if (IsImportantDep(Start) == false)
-	 continue;
+   bool MoveAutoBitToDependencies = false;
+   if (PV->Section != 0 && (P.Flags & Flag::Auto) != Flag::Auto)
+   {
+      VerIterator const CurVer = Pkg.CurrentVer();
+      if (not CurVer.end() && CurVer->Section != 0 && strcmp(CurVer.Section(), PV.Section()) != 0)
+      {
+	 bool const CurVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", CurVer.Section());
+	 bool const InstVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", PV.Section());
+	 MoveAutoBitToDependencies = (not CurVerInMoveSection && InstVerInMoveSection);
+      }
+   }
+   APT::PackageVector toMoveAuto;
 
-      /* If we are in an or group locate the first or that can
-         succeed. We have already cached this… */
-      for (; Ors > 1 && (DepState[Start->ID] & DepCVer) != DepCVer; --Ors)
-	 ++Start;
-
-      /* unsatisfiable dependency: IsInstallOkDependenciesSatisfiableByCandidates
-         would have prevented us to get here if not overridden, so just skip
-	 over the problem here as the front-end will know what it is doing */
-      if (Ors == 1 && (DepState[Start->ID] &DepCVer) != DepCVer && Start.IsNegative() == false)
+   auto const IsSatisfiedByInstalled = [&](auto const D) { return (DepState[D.ID] & DepInstall) == DepInstall; };
+   for (auto &&Dep : toInstall)
+   {
+      pkgDepCache::DepIterator Start, End;
+      Dep.GlobOr(Start, End);
+      if (std::any_of(Start, Dep, IsSatisfiedByInstalled))
 	 continue;
 
       /* Check if any ImportantDep() (but not Critical) were added
@@ -1200,7 +1244,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
        * package should follow that Recommends rather than causing the
        * dependency to be removed. (bug #470115)
        */
-      if (Pkg->CurrentVer != 0 && ForceImportantDeps == false && Start.IsCritical() == false)
+      if (Pkg->CurrentVer != 0 && not ForceImportantDeps && not Start.IsCritical())
       {
 	 bool isNewImportantDep = true;
 	 bool isPreviouslySatisfiedImportantDep = false;
@@ -1209,7 +1253,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    //FIXME: Should we handle or-group better here?
 	    // We do not check if the package we look for is part of the same or-group
 	    // we might find while searching, but could that really be a problem?
-	    if (D.IsCritical() == true || IsImportantDep(D) == false ||
+	    if (D.IsCritical() || not IsImportantDep(D) ||
 		Start.TargetPkg() != D.TargetPkg())
 	       continue;
 
@@ -1219,118 +1263,85 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       ++D;
 
 	    isPreviouslySatisfiedImportantDep = (((*this)[D] & DepGNow) != 0);
-	    if (isPreviouslySatisfiedImportantDep == true)
+	    if (isPreviouslySatisfiedImportantDep)
 	       break;
 	 }
 
-	 if(isNewImportantDep == true)
+	 if (isNewImportantDep)
 	 {
-	    if (DebugAutoInstall == true)
+	    if (DebugAutoInstall)
 	       std::clog << OutputInDepth(Depth) << "new important dependency: "
-			 << Start.TargetPkg().FullName() << std::endl;
+			 << Start.TargetPkg().FullName() << '\n';
 	 }
-	 else if(isPreviouslySatisfiedImportantDep == true)
+	 else if (isPreviouslySatisfiedImportantDep)
 	 {
-	    if (DebugAutoInstall == true)
+	    if (DebugAutoInstall)
 	       std::clog << OutputInDepth(Depth) << "previously satisfied important dependency on "
-			 << Start.TargetPkg().FullName() << std::endl;
+			 << Start.TargetPkg().FullName() << '\n';
 	 }
 	 else
 	 {
-	    if (DebugAutoInstall == true)
+	    if (DebugAutoInstall)
 	       std::clog << OutputInDepth(Depth) << "ignore old unsatisfied important dependency on "
-			 << Start.TargetPkg().FullName() << std::endl;
+			 << Start.TargetPkg().FullName() << '\n';
 	    continue;
 	 }
       }
 
-      /* This bit is for processing the possibility of an install/upgrade
-         fixing the problem for "positive" dependencies */
-      if (not Start.IsNegative() && (DepState[Start->ID] & DepCVer) == DepCVer)
+      bool foundSolution = false;
+      do
       {
-	 bool foundSolution = false;
-	 for (; Start != Dep && not foundSolution; ++Start)
+	 if ((DepState[Start->ID] & DepCVer) != DepCVer)
+	    continue;
+
+	 pkgCacheFile CacheFile(this);
+	 APT::VersionList verlist = APT::VersionList::FromDependency(CacheFile, Start, APT::CacheSetHelper::CANDIDATE);
+	 CompareProviders comp(Start);
+
+	 do
 	 {
-	    pkgCacheFile CacheFile(this);
-	    APT::VersionList verlist = APT::VersionList::FromDependency(CacheFile, Start, APT::CacheSetHelper::CANDIDATE);
-	    CompareProviders comp(Start);
-
-	    do
-	    {
-	       APT::VersionList::iterator InstVer = std::max_element(verlist.begin(), verlist.end(), comp);
-	       if (InstVer == verlist.end())
-		  break;
-
-	       pkgCache::PkgIterator InstPkg = InstVer.ParentPkg();
-	       if (DebugAutoInstall)
-		  std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
-			    << " as " << Start.DepType() << " of " << Pkg.Name() << '\n';
-	       if (not MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
-	       {
-		  verlist.erase(InstVer);
-		  continue;
-	       }
-
-	       // now check if we should consider it a automatic dependency or not
-	       if (InstPkg->CurrentVer == 0 && MoveAutoBitToDependencies)
-	       {
-		  if (DebugAutoInstall == true)
-		     std::clog << OutputInDepth(Depth) << "Setting " << InstPkg.FullName(false) << " NOT as auto-installed (direct "
-			       << Start.DepType() << " of " << Pkg.FullName(false) << " which is manual and in APT::Move-Autobit-Sections)\n";
-		  MarkAuto(InstPkg, false);
-	       }
-
-	       foundSolution = true;
+	    APT::VersionList::iterator InstVer = std::max_element(verlist.begin(), verlist.end(), comp);
+	    if (InstVer == verlist.end())
 	       break;
-	    } while (true);
-	 }
+
+	    pkgCache::PkgIterator InstPkg = InstVer.ParentPkg();
+	    if (DebugAutoInstall)
+	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
+			 << " as " << Start.DepType() << " of " << Pkg.Name() << '\n';
+	    if (not MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
+	    {
+	       verlist.erase(InstVer);
+	       continue;
+	    }
+
+	    if (MoveAutoBitToDependencies && InstPkg->CurrentVer == 0)
+	       toMoveAuto.push_back(InstPkg);
+
+	    foundSolution = true;
+	    break;
+	 } while (true);
 	 if (foundSolution)
-	    continue;
-	 break;
-      }
-      /* Negative dependencies have no or-group
-	 If the dependency isn't versioned, we try if an upgrade might solve the problem.
-	 Otherwise we remove the offender if needed */
-      else if (Start.IsNegative() == true && Start->Type != pkgCache::Dep::Obsoletes)
+	    break;
+      } while (Start++ != End);
+      if (not foundSolution && End.IsCritical())
+	 return false;
+   }
+   toInstall.clear();
+
+   if (MoveAutoBitToDependencies)
+   {
+      if (DebugAutoInstall)
+	 std::clog << OutputInDepth(Depth) << "Setting " << Pkg.FullName(false) << " as auto-installed, moving manual to its dependencies" << std::endl;
+      MarkAuto(Pkg, true);
+      for (auto const &InstPkg : toMoveAuto)
       {
-	 std::unique_ptr<Version *[]> List(Start.AllTargets());
-	 pkgCache::PkgIterator TrgPkg = Start.TargetPkg();
-	 for (Version **I = List.get(); *I != 0; I++)
-	 {
-	    VerIterator Ver(*this,*I);
-	    PkgIterator Pkg = Ver.ParentPkg();
-
-	    /* The List includes all packages providing this dependency,
-	       even providers which are not installed, so skip them. */
-	    if (PkgState[Pkg->ID].InstallVer == 0)
-	       continue;
-
-            /* Ignore negative dependencies that we are not going to 
-               get installed */
-            if (PkgState[Pkg->ID].InstallVer != *I)
-               continue;
-
-	    if ((Start->Version != 0 || TrgPkg != Pkg) &&
-		PkgState[Pkg->ID].CandidateVer != PkgState[Pkg->ID].InstallVer &&
-		PkgState[Pkg->ID].CandidateVer != *I &&
-		MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps) == true)
-	       continue;
-	    else if (Start->Type == pkgCache::Dep::Conflicts || 
-                     Start->Type == pkgCache::Dep::DpkgBreaks) 
-            {
-               if(DebugAutoInstall == true)
-                  std::clog << OutputInDepth(Depth) 
-                            << " Removing: " << Pkg.Name()
-                            << std::endl;
-               if (MarkDelete(Pkg,false,Depth + 1, false) == false)
-                  break;
-            }
-	 }
-	 continue;
+	 if (DebugAutoInstall)
+	    std::clog << OutputInDepth(Depth) << "Setting " << InstPkg.FullName(false) << " NOT as auto-installed (dependency"
+		      << " of " << Pkg.FullName(false) << " which is manual and in APT::Move-Autobit-Sections)\n";
+	 MarkAuto(InstPkg, false);
       }
    }
-
-   return Dep.end() == true;
+   return true;
 }
 									/*}}}*/
 // DepCache::IsInstallOk - check if it is ok to install this package	/*{{{*/
