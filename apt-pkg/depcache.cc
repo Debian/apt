@@ -1137,7 +1137,7 @@ bool pkgDepCache::MarkInstall_CollectDependencies(pkgCache::VerIterator const &P
    return true;
 }
 									/*}}}*/
-bool pkgDepCache::MarkInstall_RemoveConflictsIfNotUpgradeable(unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade) /*{{{*/
+bool pkgDepCache::MarkInstall_RemoveConflictsIfNotUpgradeable(pkgCache::VerIterator const &PV, unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade) /*{{{*/
 {
    /* Negative dependencies have no or-group
       If the dependency isn't versioned, we try if an upgrade might solve the problem.
@@ -1167,7 +1167,7 @@ bool pkgDepCache::MarkInstall_RemoveConflictsIfNotUpgradeable(unsigned long Dept
 	 else
 	 {
 	    if(DebugAutoInstall == true)
-	       std::clog << OutputInDepth(Depth) << " Removing: " << Pkg.Name() << " as upgrade is not an option\n";
+	       std::clog << OutputInDepth(Depth) << " Removing: " << Pkg.Name() << " as upgrade is not an option for " << PV.ParentPkg().FullName() << "(" << PV.VerStr() << ")\n";
 	    if (not MarkDelete(Pkg, false, Depth + 1, false))
 	       return false;
 	 }
@@ -1340,32 +1340,39 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
    if (not IsInstallOk(Pkg, AutoInst, Depth, FromUser))
       return false;
 
+   bool const AutoSolve = AutoInst && _config->Find("APT::Solver", "internal") == "internal";
+
+   std::vector<pkgCache::DepIterator> toInstall, toRemove;
+   APT::PackageVector toUpgrade;
+   if (AutoSolve)
+   {
+      VerIterator const PV = P.CandidateVerIter(*this);
+      if (unlikely(PV.end()))
+	 return false;
+      if (not MarkInstall_CollectDependencies(PV, toInstall, toRemove))
+	 return false;
+
+      if (not MarkInstall_RemoveConflictsIfNotUpgradeable(PV, Depth, toRemove, toUpgrade))
+	 return false;
+   }
+
    ActionGroup group(*this);
    if (not MarkInstall_StateChange(Pkg, AutoInst, FromUser))
       return false;
 
-   if (not AutoInst || _config->Find("APT::Solver", "internal") != "internal")
+   if (not AutoSolve)
       return true;
 
    if (DebugMarker)
-      std::clog << OutputInDepth(Depth) << "MarkInstall " << APT::PrettyPkg(this, Pkg) << " FU=" << FromUser << std::endl;
-
-   VerIterator const PV = P.InstVerIter(*this);
-   if (unlikely(PV.end()))
-      return false;
-
-   std::vector<pkgCache::DepIterator> toInstall, toRemove;
-   if (not MarkInstall_CollectDependencies(PV, toInstall, toRemove))
-      return false;
-
-   APT::PackageVector toUpgrade;
-   if (not MarkInstall_RemoveConflictsIfNotUpgradeable(Depth, toRemove, toUpgrade))
-      return false;
+      std::clog << OutputInDepth(Depth) << "MarkInstall " << APT::PrettyPkg(this, Pkg) << " FU=" << FromUser << '\n';
 
    if (not MarkInstall_UpgradeOrRemoveConflicts(Depth, ForceImportantDeps, toUpgrade))
       return false;
 
    bool const MoveAutoBitToDependencies = [&]() {
+      VerIterator const PV = P.InstVerIter(*this);
+      if (unlikely(PV.end()))
+	 return false;
       if (PV->Section == 0 || (P.Flags & Flag::Auto) == Flag::Auto)
 	 return false;
       VerIterator const CurVer = Pkg.CurrentVer();
