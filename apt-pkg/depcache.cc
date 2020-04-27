@@ -1180,7 +1180,7 @@ bool pkgDepCache::MarkInstall_RemoveConflictsIfNotUpgradeable(pkgCache::VerItera
    return true;
 }
 									/*}}}*/
-bool pkgDepCache::MarkInstall_UpgradeOrRemoveConflicts(PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, APT::PackageVector &toUpgrade) /*{{{*/
+bool pkgDepCache::MarkInstall_UpgradeOrRemoveConflicts(bool const propagateProctected, unsigned long Depth, bool const ForceImportantDeps, APT::PackageVector &toUpgrade) /*{{{*/
 {
    for (auto const &InstPkg : toUpgrade)
       if (not MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
@@ -1189,14 +1189,14 @@ bool pkgDepCache::MarkInstall_UpgradeOrRemoveConflicts(PkgIterator const &Pkg, u
 	    std::clog << OutputInDepth(Depth) << " Removing: " << InstPkg.FullName() << " as upgrade is not possible\n";
 	 if (not MarkDelete(InstPkg, false, Depth + 1, false))
 	    return false;
-	 if (PkgState[Pkg->ID].Protect())
+	 if (propagateProctected)
 	    MarkProtected(InstPkg);
       }
    toUpgrade.clear();
    return true;
 }
 									/*}}}*/
-bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, std::vector<pkgCache::DepIterator> &toInstall, APT::PackageVector *const toMoveAuto) /*{{{*/
+bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, std::vector<pkgCache::DepIterator> &toInstall, APT::PackageVector *const toMoveAuto, bool const propagateProctected) /*{{{*/
 {
    auto const IsSatisfiedByInstalled = [&](auto const D) { return (DepState[D.ID] & DepInstall) == DepInstall; };
    for (auto &&Dep : toInstall)
@@ -1286,7 +1286,7 @@ bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsign
 	 if (DebugAutoInstall)
 	    std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.FullName()
 		      << " as " << End.DepType() << " of " << Pkg.FullName() << '\n';
-	 if (IsCriticalDep && toUpgrade.size() == 1 && PkgState[Pkg->ID].Protect())
+	 if (propagateProctected && IsCriticalDep && toUpgrade.size() == 1)
 	 {
 	    if (not MarkInstall(InstPkg, false, Depth + 1, false, ForceImportantDeps))
 	       continue;
@@ -1303,9 +1303,9 @@ bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsign
       }
       if (not foundSolution && IsCriticalDep)
       {
-	 StateCache &State = PkgState[Pkg->ID];
-	 if (not State.Protect())
+	 if (not propagateProctected)
 	 {
+	    StateCache &State = PkgState[Pkg->ID];
 	    RemoveSizes(Pkg);
 	    RemoveStates(Pkg);
 	    if (Pkg->CurrentVer != 0)
@@ -1380,7 +1380,26 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
    if (DebugMarker)
       std::clog << OutputInDepth(Depth) << "MarkInstall " << APT::PrettyPkg(this, Pkg) << " FU=" << FromUser << '\n';
 
-   if (not MarkInstall_UpgradeOrRemoveConflicts(Pkg, Depth, ForceImportantDeps, toUpgrade))
+   class ScopedProtected
+   {
+      pkgDepCache::StateCache &P;
+      bool const already;
+
+      public:
+      ScopedProtected(pkgDepCache::StateCache &p) : P{p}, already{P.Protect()}
+      {
+	 if (not already)
+	    P.iFlags |= Protected;
+      }
+      ~ScopedProtected()
+      {
+	 if (not already)
+	    P.iFlags &= (~Protected);
+      }
+      operator bool() noexcept { return already; }
+   } propagateProctected{PkgState[Pkg->ID]};
+
+   if (not MarkInstall_UpgradeOrRemoveConflicts(propagateProctected, Depth, ForceImportantDeps, toUpgrade))
       return false;
 
    bool const MoveAutoBitToDependencies = [&]() {
@@ -1400,7 +1419,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
    }();
 
    APT::PackageVector toMoveAuto;
-   if (not MarkInstall_InstallDependencies(Pkg, Depth, ForceImportantDeps, toInstall, MoveAutoBitToDependencies ? &toMoveAuto : nullptr))
+   if (not MarkInstall_InstallDependencies(Pkg, Depth, ForceImportantDeps, toInstall, MoveAutoBitToDependencies ? &toMoveAuto : nullptr, propagateProctected))
       return false;
 
    if (MoveAutoBitToDependencies)
