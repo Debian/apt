@@ -11,10 +11,12 @@ insertpackage 'unstable' 'unneeded' 'all' '1'
 insertpackage 'unstable' 'later' 'all' '1'
 
 insertpackage 'unstable' 'bad-level0' 'all' '1' 'Depends: unneeded, unknown'
+insertpackage 'unstable' 'bad-level1' 'all' '1' 'Depends: bad-level0'
 
 insertfoos() {
 	insertpackage 'unstable' "foo-${1}-level0" 'all' '1' "${2}: unknown | okay | later"
 	insertpackage 'unstable' "foo-${1}-level1" 'all' '1' "${2}: bad-level0 | okay | later"
+	insertpackage 'unstable' "foo-${1}-level2" 'all' '1' "${2}: bad-level1 | okay | later"
 }
 insertfoos 'd' 'Depends'
 insertfoos 'r' 'Recommends'
@@ -33,7 +35,7 @@ testsuccessheadequal() {
 }
 checkfoos() {
 	msgmsg 'Install checks with foos dependency type' "$2"
-	for i in 0 1; do
+	for i in 0 1 2; do
 		testsuccessheadequal 7 "Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:

@@ -27,7 +27,7 @@ testsuccess aptcache show nosection
 testfailure grep 'Section' rootdir/tmp/testsuccess.output
 testequal 'dpkg' aptmark showmanual
 
-testsuccess aptget install mydesktop -y -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
+testsuccess aptget install mydesktop -y -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
 
 testmarkedmanual 'dpkg' 'mydesktop'
 testmarkedauto 'mydesktop-core' 'foreignpkg:i386' 'texteditor' 'browser' 'nosection'
@@ -75,12 +75,7 @@ testsuccess aptmark auto nosection
 testmarkedauto 'browser' 'nosection'
 testmarkedmanual 'dpkg' 'foreignpkg:i386'
 
-# nosection should be auto, not manual, but is marked as such by the resolver
-# removing mydesktop-core temporally… the resolver should be figuring out here
-# that there is no point of removing mydesktop-core as its an unavoidable
-# dependency of the user-requested mydesktop
-
 testsuccess aptget install mydesktop -y -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
 
-testmarkedmanual 'dpkg' 'foreignpkg:i386' 'mydesktop' 'nosection'
-testmarkedauto 'browser' 'mydesktop-core' 'texteditor'
+testmarkedmanual 'dpkg' 'foreignpkg:i386' 'mydesktop'
+testmarkedauto 'browser' 'mydesktop-core' 'texteditor' 'nosection'
