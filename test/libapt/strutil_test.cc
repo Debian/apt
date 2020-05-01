@@ -99,25 +99,25 @@ TEST(StrUtilTest,StartsWith)
 }
 TEST(StrUtilTest,TimeToStr)
 {
-   EXPECT_EQ("0s", TimeToStr(0));
-   EXPECT_EQ("42s", TimeToStr(42));
-   EXPECT_EQ("9min 21s", TimeToStr((9*60) + 21));
-   EXPECT_EQ("20min 42s", TimeToStr((20*60) + 42));
-   EXPECT_EQ("10h 42min 21s", TimeToStr((10*3600) + (42*60) + 21));
-   EXPECT_EQ("10h 42min 21s", TimeToStr((10*3600) + (42*60) + 21));
-   EXPECT_EQ("1988d 3h 29min 7s", TimeToStr((1988*86400) + (3*3600) + (29*60) + 7));
+   EXPECT_EQ("0 s", TimeToStr(0));
+   EXPECT_EQ("42 s", TimeToStr(42));
+   EXPECT_EQ("9 min 21 s", TimeToStr((9*60) + 21));
+   EXPECT_EQ("20 min 42 s", TimeToStr((20*60) + 42));
+   EXPECT_EQ("10 h 42 min 21 s", TimeToStr((10*3600) + (42*60) + 21));
+   EXPECT_EQ("10 h 42 min 21 s", TimeToStr((10*3600) + (42*60) + 21));
+   EXPECT_EQ("1988 d 3 h 29 min 7 s", TimeToStr((1988*86400) + (3*3600) + (29*60) + 7));
 
-   EXPECT_EQ("59s", TimeToStr(59));
-   EXPECT_EQ("60s", TimeToStr(60));
-   EXPECT_EQ("1min 1s", TimeToStr(61));
-   EXPECT_EQ("59min 59s", TimeToStr(3599));
-   EXPECT_EQ("60min 0s", TimeToStr(3600));
-   EXPECT_EQ("1h 0min 1s", TimeToStr(3601));
-   EXPECT_EQ("1h 1min 0s", TimeToStr(3660));
-   EXPECT_EQ("23h 59min 59s", TimeToStr(86399));
-   EXPECT_EQ("24h 0min 0s", TimeToStr(86400));
-   EXPECT_EQ("1d 0h 0min 1s", TimeToStr(86401));
-   EXPECT_EQ("1d 0h 1min 0s", TimeToStr(86460));
+   EXPECT_EQ("59 s", TimeToStr(59));
+   EXPECT_EQ("60 s", TimeToStr(60));
+   EXPECT_EQ("1 min 1 s", TimeToStr(61));
+   EXPECT_EQ("59 min 59 s", TimeToStr(3599));
+   EXPECT_EQ("60 min 0 s", TimeToStr(3600));
+   EXPECT_EQ("1 h 0 min 1 s", TimeToStr(3601));
+   EXPECT_EQ("1 h 1 min 0 s", TimeToStr(3660));
+   EXPECT_EQ("23 h 59 min 59 s", TimeToStr(86399));
+   EXPECT_EQ("24 h 0 min 0 s", TimeToStr(86400));
+   EXPECT_EQ("1 d 0 h 0 min 1 s", TimeToStr(86401));
+   EXPECT_EQ("1 d 0 h 1 min 0 s", TimeToStr(86460));
 }
 TEST(StrUtilTest,SubstVar)
 {
