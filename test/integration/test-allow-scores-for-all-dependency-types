@@ -116,42 +116,18 @@ Conf baz (2 unversioned [amd64])' aptget install baz -st unversioned
 testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
-  foo
-The following packages will be REMOVED:
   bar
+The following packages will be REMOVED:
+  foo
 The following NEW packages will be installed:
   baz
 The following packages will be upgraded:
-  foo
-1 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
-Remv bar [1]
-Inst foo [1] (2 versioned [amd64])
-Inst baz (2 versioned [amd64])
-Conf foo (2 versioned [amd64])
-Conf baz (2 versioned [amd64])' aptget install baz -st versioned
-
-testsuccessequal 'Reading package lists...
-Building dependency tree...
-The following NEW packages will be installed:
-  baz
-0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
-Inst baz (2 unversioned [amd64])
-Conf baz (2 unversioned [amd64])' aptget install baz -st unversioned
-testsuccessequal 'Reading package lists...
-Building dependency tree...
-The following additional packages will be installed:
-  foo
-The following packages will be REMOVED:
   bar
-The following NEW packages will be installed:
-  baz
-The following packages will be upgraded:
-  foo
 1 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
-Remv bar [1]
-Inst foo [1] (2 versioned [amd64])
+Remv foo [1]
+Inst bar [1] (2 versioned [amd64])
 Inst baz (2 versioned [amd64])
-Conf foo (2 versioned [amd64])
+Conf bar (2 versioned [amd64])
 Conf baz (2 versioned [amd64])' aptget install baz -st versioned
 
 # recreating the exact situation is hard, so we pull tricks to get the score

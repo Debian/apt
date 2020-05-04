@@ -51,6 +51,12 @@
 
 class OpProgress;
 class pkgVersioningSystem;
+namespace APT
+{
+template <class Container>
+class PackageContainer;
+using PackageVector = PackageContainer<std::vector<pkgCache::PkgIterator>>;
+} // namespace APT
 
 class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
 {
@@ -511,6 +517,12 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
 
    APT_HIDDEN bool IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
 			unsigned long const Depth, bool const FromUser);
+
+   APT_HIDDEN bool MarkInstall_StateChange(PkgIterator const &Pkg, bool AutoInst, bool FromUser);
+   APT_HIDDEN bool MarkInstall_CollectDependencies(pkgCache::VerIterator const &PV, std::vector<pkgCache::DepIterator> &toInstall, std::vector<pkgCache::DepIterator> &toRemove);
+   APT_HIDDEN bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgCache::VerIterator const &PV, unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade);
+   APT_HIDDEN bool MarkInstall_UpgradeOrRemoveConflicts(bool const propagateProtected, unsigned long Depth, bool const ForceImportantDeps, APT::PackageVector &toUpgrade);
+   APT_HIDDEN bool MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, std::vector<pkgCache::DepIterator> &toInstall, APT::PackageVector *const toMoveAuto, bool const propagateProtected);
 };
 
 #endif
