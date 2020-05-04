@@ -233,3 +233,37 @@ testsuccessequal "Listing..." apt list '?x-name-fnmatch(1)'
 testsuccessequal "Listing...
 automatic1/now 1.0 i386 [installed,local]
 manual1/now 1.0 i386 [installed,local]" apt list '?x-name-fnmatch(*1)'
+
+
+# * wildcards should still work
+testsuccessequal "Listing...
+automatic1/now 1.0 i386 [installed,local]
+automatic2/now 1.0 i386 [installed,local]" apt list 'automatic*'
+
+testfailureequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+Note, selecting 'automatic1' for glob 'automatic*'
+Note, selecting 'automatic2' for glob 'automatic*'
+automatic1 is already the newest version (1.0).
+automatic1 set to manually installed.
+automatic2 is already the newest version (1.0).
+automatic2 set to manually installed.
+You might want to run 'apt --fix-broken install' to correct these.
+The following packages have unmet dependencies:
+ broken : Depends: does-not-exist but it is not installable
+E: Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution)." apt install -s 'automatic*'
+
+# other wildcards should fail
+
+testfailureequal "Listing...
+E: input:0-10: error: Expected pattern
+   automatic?
+   ^^^^^^^^^^" apt list 'automatic?'
+
+
+
+testfailureequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+E: Unable to locate package automatic?" apt install -s 'automatic?'
