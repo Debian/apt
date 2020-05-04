@@ -1,3 +1,26 @@
+apt (2.1.0) unstable; urgency=medium
+
+  [ Frans Spiesschaert ]
+  * Dutch manpages translation update (Closes: #956313)
+
+  [ David Kalnischkies ]
+  * Refactor MarkInstall fixing various or-group handling issues
+    - Discard impossible candidate versions also for non-installed
+    - Explore or-groups for Recommends further than first
+    - Refactor and reorder MarkInstall code
+    - Discard candidate if its dependencies can't be satisfied
+    - Split up MarkInstall into private helper methods
+    - Fail earlier on impossible Conflicts in MarkInstall
+    - Propagate Protected flag to single-option dependencies
+    - Prefer upgrading installed orgroup members
+    - Protect a package while resolving in MarkInstall
+
+  [ Julian Andres Klode ]
+  * Reinstate * wildcards (Closes: #953531) (LP: #1872200)
+  * apt list: Fix behavior of regex vs fnmatch vs wildcards
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 04 May 2020 15:58:24 +0200
+
 apt (2.0.2) unstable; urgency=medium
 
   [ Boyuan Yang ]
