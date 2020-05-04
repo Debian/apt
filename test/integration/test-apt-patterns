@@ -256,10 +256,10 @@ E: Unmet dependencies. Try 'apt --fix-broken install' with no packages (or speci
 
 # other wildcards should fail
 
-# FIXME: This should fail
-testsuccessequal "Listing...
-automatic1/now 1.0 i386 [installed,local]
-automatic2/now 1.0 i386 [installed,local]" apt list 'automatic?'
+testfailureequal "Listing...
+E: input:0-10: error: Expected pattern
+   automatic?
+   ^^^^^^^^^^" apt list 'automatic?'
 
 
 

@@ -39,6 +39,7 @@ struct PackageSortAlphabetic						/*{{{*/
 
 class PackageNameMatcher : public Matcher
 {
+   static constexpr const char *const isfnmatch_strict = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-.:*";
    pkgCacheFile &cacheFile;
   public:
    explicit PackageNameMatcher(pkgCacheFile &cacheFile, const char **patterns)
@@ -48,12 +49,12 @@ class PackageNameMatcher : public Matcher
       {
          std::string pattern = patterns[i];
          APT::CacheFilter::Matcher *cachefilter = NULL;
-	 if (pattern.size() > 0 && (pattern[0] == '?' || pattern[0] == '~'))
-	    cachefilter = APT::CacheFilter::ParsePattern(pattern, &cacheFile).release();
-         else if(_config->FindB("APT::Cmd::Use-Regexp", false) == true)
+         if(_config->FindB("APT::Cmd::Use-Regexp", false) == true)
             cachefilter = new APT::CacheFilter::PackageNameMatchesRegEx(pattern);
-         else
+         else if (pattern.find_first_not_of(isfnmatch_strict) == std::string::npos)
             cachefilter = new APT::CacheFilter::PackageNameMatchesFnmatch(pattern);
+	 else
+	    cachefilter = APT::CacheFilter::ParsePattern(pattern, &cacheFile).release();
 
          if (cachefilter == nullptr) {
             return;
