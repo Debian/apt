@@ -189,8 +189,11 @@ bool CacheSetHelper::PackageFromFnmatch(PackageContainerInterface * const pci,
                                        pkgCacheFile &Cache, std::string pattern)
 {
 	static const char * const isfnmatch = ".?*[]!";
-	if (_config->FindB("APT::Cmd::Pattern-Only", false))
-		return false;
+	// Whitelist approach: Anything not in here is not a valid pattern
+	static const char *const isfnmatch_strict = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-.:*";
+
+	if (_config->FindB("APT::Cmd::Pattern-Only", false) && pattern.find_first_not_of(isfnmatch_strict) != std::string::npos)
+	   return false;
 	if (pattern.find_first_of(isfnmatch) == std::string::npos)
 		return false;
 
