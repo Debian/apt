@@ -1,4 +1,4 @@
-FROM debian:unstable
+FROM ubuntu:focal
 COPY . /tmp
 WORKDIR /tmp
 RUN sed -i s#://deb.debian.org#://cdn-fastly.deb.debian.org# /etc/apt/sources.list \
