@@ -41,15 +41,23 @@ insertfoos 'r' 'Recommends'
 
 setupaptarchive
 
-testsuccessheadequal() {
-	msggroup 'testsuccessheadequal'
+_testsuccessheadtailequal() {
+	local TYPE="$1"
+	shift
+	msggroup "testsuccess${TYPE}equal"
 	local HEADLINES="$1"
 	local CMP="$2"
 	shift 2
 	testsuccesswithglobalerror 'testsuccess' 'EW' "$@"
-	cp "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccessheadequal.output"
-	testsuccessequal "$CMP" head -n "$HEADLINES" "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccessheadequal.output"
+	cp "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess${TYPE}equal.output"
+	testsuccessequal "$CMP" "${TYPE}" -n "$HEADLINES" "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess${TYPE}equal.output"
 	msggroup
+}
+testsuccessheadequal() {
+	_testsuccessheadtailequal 'head' "$@"
+}
+testsuccesstailequal() {
+	_testsuccessheadtailequal 'tail' "$@"
 }
 checkfoos() {
 	msgmsg 'Install checks with foos dependency type' "$2"
@@ -82,3 +90,41 @@ The following NEW packages will be installed:
 }
 checkfoos 'd' 'Depends'
 checkfoos 'r' 'Recommends'
+
+TEST_WITH_APTITUDE=false
+msgtest 'Check if aptitude is available for additional tests'
+if dpkg-checkbuilddeps -d 'aptitude' /dev/null >/dev/null 2>&1; then
+	TEST_WITH_APTITUDE=true
+	# we don't document aptitude config options
+	sed -i -e '/^#x-apt-configure-index/ d' "$(getaptconfig)"
+	msgpass
+else
+	msgskip 'not installed'
+fi
+
+if $TEST_WITH_APTITUDE; then
+	OKAYAPTITUDE='0 packages upgraded, 2 newly installed, 0 to remove and 3 not upgraded.
+Need to get 0 B of archives. After unpacking 86.0 kB will be used.
+Would download/install/remove packages.'
+	testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-d-level2 -sy
+	testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-r-level2 -sy
+	testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-d-conflict -sy
+	testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-r-conflict -sy
+fi
+
+testfailure apt install bad-upgrade-level1 -s
+testfailure apt install bad-conflict-level2 -s
+
+if $TEST_WITH_APTITUDE; then
+	testsuccesstailequal 6 'The following packages have been kept back:
+  bad-upgrade-level1 
+No packages will be installed, upgraded, or removed.
+0 packages upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+Need to get 0 B of archives. After unpacking 0 B will be used.
+Would download/install/remove packages.' aptitude install bad-upgrade-level1 -sy
+	# aptitude does not show the kept back message in this case…
+	testsuccesstailequal 4 'No packages will be installed, upgraded, or removed.
+0 packages upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
+Need to get 0 B of archives. After unpacking 0 B will be used.
+Would download/install/remove packages.' aptitude install bad-conflict-level2 -sy
+fi

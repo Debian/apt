@@ -1196,7 +1196,7 @@ bool pkgDepCache::MarkInstall_UpgradeOrRemoveConflicts(bool const propagateProct
    return true;
 }
 									/*}}}*/
-bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, std::vector<pkgCache::DepIterator> &toInstall, APT::PackageVector *const toMoveAuto, bool const propagateProctected) /*{{{*/
+bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, std::vector<pkgCache::DepIterator> &toInstall, APT::PackageVector *const toMoveAuto, bool const propagateProctected, bool const FromUser) /*{{{*/
 {
    auto const IsSatisfiedByInstalled = [&](auto const D) { return (DepState[D.ID] & DepInstall) == DepInstall; };
    for (auto &&Dep : toInstall)
@@ -1303,7 +1303,7 @@ bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsign
       }
       if (not foundSolution && IsCriticalDep)
       {
-	 if (not propagateProctected)
+	 if (not propagateProctected && not FromUser)
 	 {
 	    StateCache &State = PkgState[Pkg->ID];
 	    RemoveSizes(Pkg);
@@ -1354,6 +1354,10 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
    if (not IsInstallOk(Pkg, AutoInst, Depth, FromUser))
       return false;
 
+   ActionGroup group(*this);
+   if (FromUser && not MarkInstall_StateChange(Pkg, AutoInst, FromUser))
+      return false;
+
    bool const AutoSolve = AutoInst && _config->Find("APT::Solver", "internal") == "internal";
 
    std::vector<pkgCache::DepIterator> toInstall, toRemove;
@@ -1370,8 +1374,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
 	 return false;
    }
 
-   ActionGroup group(*this);
-   if (not MarkInstall_StateChange(Pkg, AutoInst, FromUser))
+   if (not FromUser && not MarkInstall_StateChange(Pkg, AutoInst, FromUser))
       return false;
 
    if (not AutoSolve)
@@ -1419,7 +1422,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
    }();
 
    APT::PackageVector toMoveAuto;
-   if (not MarkInstall_InstallDependencies(Pkg, Depth, ForceImportantDeps, toInstall, MoveAutoBitToDependencies ? &toMoveAuto : nullptr, propagateProctected))
+   if (not MarkInstall_InstallDependencies(Pkg, Depth, ForceImportantDeps, toInstall, MoveAutoBitToDependencies ? &toMoveAuto : nullptr, propagateProctected, FromUser))
       return false;
 
    if (MoveAutoBitToDependencies)
