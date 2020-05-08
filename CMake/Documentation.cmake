@@ -318,7 +318,7 @@ function(add_update_po4a target pot header)
     add_custom_target(${target}
         COMMAND po4a --previous --no-backups --force --no-translations
                 --msgmerge-opt --add-location=file
-                --porefs noline,wrap
+                --porefs noline
                 --package-name=${PROJECT_NAME}-doc --package-version=${PACKAGE_VERSION}
                 --msgid-bugs-address=${PACKAGE_MAIL} po4a.conf
         ${WRITE_HEADER}
