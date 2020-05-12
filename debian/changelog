@@ -1,3 +1,16 @@
+apt (1.2.32ubuntu0.1) xenial-security; urgency=high
+
+  * SECURITY UPDATE: Out of bounds read in ar, tar implementations (LP: #1878177)
+    - apt-pkg/contrib/arfile.cc: Fix out-of-bounds read in member name
+    - apt-pkg/contrib/arfile.cc: Fix out-of-bounds read on unterminated
+      member names in error path
+    - apt-pkg/contrib/extracttar.cc: Fix out-of-bounds read on unterminated
+      member names in error path
+    - CVE-2020-3810
+  * Add .gitlab-ci.yml for CI testing on Salsa
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Tue, 12 May 2020 20:42:53 +0200
+
 apt (1.2.32) xenial; urgency=medium
 
   * Add test case for local-only packages pinned to never
