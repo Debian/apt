@@ -305,7 +305,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 
 	 default:
 	 BadRecord = true;
-	 _error->Warning(_("Unknown TAR header type %u, member %s"),(unsigned)Tar->LinkFlag,Tar->Name);
+	 _error->Warning(_("Unknown TAR header type %u"), (unsigned)Tar->LinkFlag);
 	 break;
       }
       
