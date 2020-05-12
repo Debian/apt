@@ -1,0 +1,32 @@
+image: ubuntu:xenial
+variables:
+  DEBIAN_FRONTEND: noninteractive
+
+test as root:
+  stage: test
+  script:
+    - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
+    - rm -f /etc/dpkg/dpkg.cfg.d/excludes
+    - apt-get update
+    - apt-get install -qq build-essential expect sudo moreutils
+    - chmod -R o+rwX $PWD
+    - ./prepare-release travis-ci
+    - sudo -u travis mkdir -p .ccache
+    - sudo -u travis make
+    - make test
+    - unbuffer ./test/integration/run-tests -q -j 4
+
+test as user:
+  stage: test
+  script:
+    - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
+    - rm -f /etc/dpkg/dpkg.cfg.d/excludes
+    - apt-get update
+    - apt-get install -qq build-essential expect sudo moreutils
+    - chmod 755 /root
+    - chmod -R o+rwX $PWD
+    - ./prepare-release travis-ci
+    - sudo -u travis mkdir -p .ccache
+    - sudo -u travis make
+    - sudo -u travis make test
+    - sudo -u travis unbuffer ./test/integration/run-tests -q -j 4
