@@ -1,3 +1,19 @@
+apt (2.1.2) unstable; urgency=critical
+
+  [ Julian Andres Klode ]
+  * SECURITY UPDATE: Out of bounds read in ar, tar implementations (LP: #1878177)
+    - apt-pkg/contrib/arfile.cc: Fix out-of-bounds read in member name
+    - apt-pkg/contrib/arfile.cc: Fix out-of-bounds read on unterminated
+      member names in error path
+    - apt-pkg/contrib/extracttar.cc: Fix out-of-bounds read on unterminated
+      member names in error path
+    - CVE-2020-3810
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #960186)
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 12 May 2020 22:50:19 +0200
+
 apt (2.1.1) unstable; urgency=medium
 
   [ David Kalnischkies ]
