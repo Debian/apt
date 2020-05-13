@@ -42,7 +42,7 @@ static std::vector<pkgCache::DescIterator> const TranslatedDescriptionsList(pkgC
          Descriptions.push_back(Desc);
    }
 
-   if (Descriptions.empty())
+   if (Descriptions.empty() && V.TranslatedDescription().IsGood())
       Descriptions.push_back(V.TranslatedDescription());
 
    return Descriptions;
