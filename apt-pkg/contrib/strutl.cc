@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <array>
 #include <iomanip>
+#include <limits>
 #include <locale>
 #include <sstream>
 #include <sstream>
@@ -1139,34 +1140,24 @@ bool FTPMDTMStrToTime(const char* const str,time_t &time)
 									/*}}}*/
 // StrToNum - Convert a fixed length string to a number			/*{{{*/
 // ---------------------------------------------------------------------
-/* This is used in decoding the crazy fixed length string headers in 
+/* This is used in decoding the crazy fixed length string headers in
    tar and ar files. */
 bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base)
 {
-   char S[30];
-   if (Len >= sizeof(S))
+   unsigned long long BigRes;
+   if (not StrToNum(Str, BigRes, Len, Base))
       return false;
-   memcpy(S,Str,Len);
-   S[Len] = 0;
-   
-   // All spaces is a zero
-   Res = 0;
-   unsigned I;
-   for (I = 0; S[I] == ' '; I++);
-   if (S[I] == 0)
-      return true;
-   
-   char *End;
-   Res = strtoul(S,&End,Base);
-   if (End == S)
+
+   if (std::numeric_limits<unsigned long>::max() < BigRes)
       return false;
-   
+
+   Res = BigRes;
    return true;
 }
 									/*}}}*/
 // StrToNum - Convert a fixed length string to a number			/*{{{*/
 // ---------------------------------------------------------------------
-/* This is used in decoding the crazy fixed length string headers in 
+/* This is used in decoding the crazy fixed length string headers in
    tar and ar files. */
 bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base)
 {
@@ -1175,20 +1166,20 @@ bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base
       return false;
    memcpy(S,Str,Len);
    S[Len] = 0;
-   
+
    // All spaces is a zero
    Res = 0;
    unsigned I;
-   for (I = 0; S[I] == ' '; I++);
+   for (I = 0; S[I] == ' '; ++I);
    if (S[I] == 0)
       return true;
-   
-   char *End;
-   Res = strtoull(S,&End,Base);
-   if (End == S)
+   if (S[I] == '-')
       return false;
-   
-   return true;
+
+   char *End;
+   errno = 0;
+   Res = strtoull(S,&End,Base);
+   return not (End == S || errno != 0);
 }
 									/*}}}*/
 

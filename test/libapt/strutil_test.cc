@@ -1,6 +1,8 @@
 #include <config.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -255,6 +257,60 @@ TEST(StrUtilTest,QuoteString)
    EXPECT_EQ("~-_$#|uäöŦ™⅞±Æẞªß", DeQuoteString(QuoteString("~-_$#|uäöŦ™⅞±Æẞªß", "")));
    EXPECT_EQ("%45ltvill%65%2d%45rbach", QuoteString("Eltville-Erbach", "E-Ae"));
    EXPECT_EQ("Eltville-Erbach", DeQuoteString(QuoteString("Eltville-Erbach", "")));
+}
+
+static void EXPECT_STRTONUM(APT::StringView const str, bool const success, unsigned long const expected, unsigned const base)
+{
+   SCOPED_TRACE(std::string(str.data(), str.length()));
+   SCOPED_TRACE(base);
+   unsigned long N1 = 1000;
+   unsigned long long N2 = 1000;
+   if (not success)
+   {
+      EXPECT_FALSE(StrToNum(str.data(), N1, str.length(), base));
+      EXPECT_FALSE(StrToNum(str.data(), N2, str.length(), base));
+      return;
+   }
+   EXPECT_TRUE(StrToNum(str.data(), N1, str.length(), base));
+   EXPECT_EQ(expected, N1);
+
+   EXPECT_TRUE(StrToNum(str.data(), N2, str.length(), base));
+   EXPECT_EQ(expected, N2);
+}
+TEST(StrUtilTest,StrToNum)
+{
+   EXPECT_STRTONUM("", true, 0, 10);
+   EXPECT_STRTONUM("  ", true, 0, 10);
+   EXPECT_STRTONUM("0", true, 0, 10);
+   EXPECT_STRTONUM("1", true, 1, 10);
+   EXPECT_STRTONUM(" 1 ", true, 1, 10);
+   EXPECT_STRTONUM("1", true, 1, 8);
+   EXPECT_STRTONUM("10", true, 10, 10);
+   EXPECT_STRTONUM("10", true, 8, 8);
+   EXPECT_STRTONUM("010", true, 8, 8);
+   EXPECT_STRTONUM(" 010 ", true, 8, 8);
+   EXPECT_STRTONUM("-1", false, 0, 10);
+   EXPECT_STRTONUM(" -1 ", false, 0, 10);
+   EXPECT_STRTONUM("11", true, 3, 2);
+
+   unsigned long long bigN = 0;
+   unsigned long smallN = 0;
+   auto bigLimit = std::to_string(std::numeric_limits<unsigned long long>::max());
+   if (std::numeric_limits<unsigned long>::max() < std::numeric_limits<unsigned long long>::max())
+   {
+      EXPECT_TRUE(StrToNum(bigLimit.c_str(), bigN, bigLimit.length(), 10));
+      EXPECT_EQ(std::numeric_limits<unsigned long long>::max(), bigN);
+      EXPECT_FALSE(StrToNum(bigLimit.c_str(), smallN, bigLimit.length(), 10));
+   }
+   bigLimit.append("0");
+   EXPECT_FALSE(StrToNum(bigLimit.c_str(), bigN, bigLimit.length(), 10));
+   EXPECT_FALSE(StrToNum(bigLimit.c_str(), smallN, bigLimit.length(), 10));
+
+   auto const smallLimit = std::to_string(std::numeric_limits<unsigned long>::max());
+   EXPECT_TRUE(StrToNum(smallLimit.c_str(), bigN, smallLimit.length(), 10));
+   EXPECT_EQ(std::numeric_limits<unsigned long>::max(), bigN);
+   EXPECT_TRUE(StrToNum(smallLimit.c_str(), smallN, smallLimit.length(), 10));
+   EXPECT_EQ(std::numeric_limits<unsigned long>::max(), smallN);
 }
 
 TEST(StrUtilTest,RFC1123StrToTime)
