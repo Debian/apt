@@ -276,7 +276,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 {
 	    if (Fd > 0)
 	    {
-	       if (write(Fd,Junk,Read) != (signed)Read)
+	       if (not FileFd::Write(Fd, Junk, Read))
 		  return Stream.Fail(Itm,Fd);
 	    }
 	    else
