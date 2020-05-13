@@ -10,19 +10,19 @@ setupaptarchive
 # this used to crash, but it should treat it as an invalid member header
 touch ' '
 ar -q test.deb ' '
-testsuccessequal "E: Invalid archive member header" ${BUILDDIRECTORY}/../test/interactive-helper/testdeb test.deb
+testsuccessequal "E: Invalid archive member header" ${APTTESTHELPERSBINDIR}/testdeb test.deb
 
 
 rm test.deb
 touch 'x'
 ar -q test.deb 'x'
-testsuccessequal "E: This is not a valid DEB archive, missing 'debian-binary' member" ${BUILDDIRECTORY}/../test/interactive-helper/testdeb test.deb
+testsuccessequal "E: This is not a valid DEB archive, missing 'debian-binary' member" ${APTTESTHELPERSBINDIR}/testdeb test.deb
 
 
 # <name><size> [ other fields] - name is not nul terminated here, it ends in .
 msgmsg "Unterminated ar member name"
 printf '!<arch>\0120123456789ABCDE.A123456789A.01234.01234.0123456.012345678.0.' > test.deb
-testsuccessequal "E: Invalid archive member header" ${BUILDDIRECTORY}/../test/interactive-helper/testdeb test.deb
+testsuccessequal "E: Invalid archive member header" ${APTTESTHELPERSBINDIR}/testdeb test.deb
 
 
 # unused source code for generating $tar below
@@ -85,4 +85,4 @@ cp control.tar.gz data.tar.gz
 touch debian-binary
 rm test.deb
 ar -q test.deb debian-binary control.tar.gz data.tar.gz
-testsuccessequal "W: Unknown TAR header type 88" ${BUILDDIRECTORY}/../test/interactive-helper/testdeb test.deb
+testsuccessequal "W: Unknown TAR header type 88" ${APTTESTHELPERSBINDIR}/testdeb test.deb
