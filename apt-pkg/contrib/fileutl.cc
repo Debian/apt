@@ -3154,11 +3154,18 @@ FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * co
    FileFd * const Fd = TmpFd == nullptr ? new FileFd() : TmpFd;
 
    std::string const tempdir = GetTempDir();
-   snprintf(fn, sizeof(fn), "%s/%s.XXXXXX",
-            tempdir.c_str(), Prefix.c_str());
-   int const fd = mkstemp(fn);
+   int fd = -1;
+#ifdef O_TMPFILE
    if (ImmediateUnlink)
-      unlink(fn);
+      fd = open(tempdir.c_str(), O_RDWR|O_TMPFILE|O_EXCL|O_CLOEXEC, 0600);
+   if (fd < 0)
+#endif
+   {
+      snprintf(fn, sizeof(fn), "%s/%s.XXXXXX", tempdir.c_str(), Prefix.c_str());
+      fd = mkstemp(fn);
+      if (ImmediateUnlink)
+	 unlink(fn);
+   }
    if (fd < 0)
    {
       _error->Errno("GetTempFile",_("Unable to mkstemp %s"), fn);
@@ -3173,7 +3180,7 @@ FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * co
 	 delete Fd;
       return nullptr;
    }
-   if (ImmediateUnlink == false)
+   if (not ImmediateUnlink)
       Fd->SetFileName(fn);
    return Fd;
 }
