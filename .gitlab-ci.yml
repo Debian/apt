@@ -1,0 +1,10 @@
+image: debian:jessie
+variables:
+  DEBIAN_FRONTEND: noninteractive
+
+autopkgtest:
+  stage: test
+  script:
+    - apt-get update
+    - apt install -qq -y autopkgtest
+    - adt-run --unbuilt-tree . --- chroot /
