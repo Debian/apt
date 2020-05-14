@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-22 12:26+0000\n"
+"POT-Creation-Date: 2020-05-14 12:24+0000\n"
 "PO-Revision-Date: 2012-07-28 21:53+0200\n"
 "Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -719,27 +719,6 @@ msgstr ""
 "Więcej informacji można znaleźć na stronach podręcznika apt-cache(8)\n"
 "oraz apt.conf(5).\n"
 
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
-msgstr ""
-
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "Proszę wprowadzić nazwę dla tej płyty, np. \"Debian 5.0.3 Disk 1\""
 
@@ -1182,6 +1161,27 @@ msgstr ""
 "  -o=? Ustawia dowolną opcję konfiguracji, np. -o dir::cache=/tmp\n"
 "Proszę zapoznać się ze stronami podręcznika systemowego apt-mark(8)\n"
 "i apt.conf(5), aby uzyskać więcej informacji."
+
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"CLI for apt.\n"
+"Basic commands: \n"
+" list - list packages based on package names\n"
+" search - search in package descriptions\n"
+" show - show package details\n"
+"\n"
+" update - update list of available packages\n"
+"\n"
+" install - install packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
+"\n"
+" edit-sources - edit the source information file\n"
+msgstr ""
 
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1907,10 +1907,6 @@ msgstr "Nieprawidłowy podpis archiwum"
 msgid "Error reading archive member header"
 msgstr "Błąd przy czytaniu nagłówka składnika archiwum"
 
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "Nieprawidłowy nagłówek składnika archiwum: %s"
-
 msgid "Invalid archive member header"
 msgstr "Nieprawidłowy nagłówek składnika archiwum"
 
@@ -1932,8 +1928,8 @@ msgstr "Uszkodzone archiwum"
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Niepoprawna suma kontrolna tar, archiwum jest uszkodzone"
 
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
+#, fuzzy, c-format
+msgid "Unknown TAR header type %u"
 msgstr "Nieznany typ nagłówka TAR %u, składnik %s"
 
 #, c-format
@@ -2019,32 +2015,6 @@ msgstr "Podwójne dodanie ominięcia %s -> %s"
 #, c-format
 msgid "Duplicate conf file %s/%s"
 msgstr "Zduplikowany plik konfiguracyjny %s/%s"
-
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Brakuje katalogu list %spartial."
-
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Brakuje katalogu archiwów %spartial."
-
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Nie udało się zablokować katalogu %s"
-
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "Plik indeksu typu \"%s\" nie jest obsługiwany"
-
-#. only show the ETA if it makes sense
-#. two days
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Pobieranie pliku %li z %li (pozostało %s)"
-
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Pobieranie pliku %li z %li"
 
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
@@ -2133,6 +2103,32 @@ msgstr "Metoda %s nie uruchomiła się poprawnie"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Proszę włożyć do napędu \"%s\" dysk o nazwie: \"%s\" i nacisnąć enter."
+
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Brakuje katalogu list %spartial."
+
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Brakuje katalogu archiwów %spartial."
+
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Nie udało się zablokować katalogu %s"
+
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "Plik indeksu typu \"%s\" nie jest obsługiwany"
+
+#. only show the ETA if it makes sense
+#. two days
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Pobieranie pliku %li z %li (pozostało %s)"
+
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Pobieranie pliku %li z %li"
 
 #, c-format
 msgid ""
@@ -3027,6 +3023,9 @@ msgstr ""
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Blok producenta %s nie zawiera odcisku"
+
+#~ msgid "Invalid archive member header %s"
+#~ msgstr "Nieprawidłowy nagłówek składnika archiwum: %s"
 
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"

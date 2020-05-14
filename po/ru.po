@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt rev2227.1.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-22 12:26+0000\n"
+"POT-Creation-Date: 2020-05-14 12:24+0000\n"
 "PO-Revision-Date: 2012-06-30 08:47+0400\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -711,27 +711,6 @@ msgstr ""
 "  -o=? Задать значение произвольной настройки, например, -o dir::cache=/tmp\n"
 "Подробности в справочных страницах apt-cache(8) и apt.conf(5).\n"
 
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
-msgstr ""
-
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "Задайте имя для этого диска, например «Debian 5.0.3 Disk 1»"
 
@@ -1171,6 +1150,27 @@ msgstr ""
 "       например, -o dir::cache=/tmp\n"
 "В справочных страницах apt-mark(8) и apt.conf(5)\n"
 "содержится подробная информация и описание параметров."
+
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"CLI for apt.\n"
+"Basic commands: \n"
+" list - list packages based on package names\n"
+" search - search in package descriptions\n"
+" show - show package details\n"
+"\n"
+" update - update list of available packages\n"
+"\n"
+" install - install packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
+"\n"
+" edit-sources - edit the source information file\n"
+msgstr ""
 
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1900,10 +1900,6 @@ msgstr "Неверная сигнатура архива"
 msgid "Error reading archive member header"
 msgstr "Ошибка чтения заголовка элемента архива"
 
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "Неправильный заголовок элемента архива %s"
-
 msgid "Invalid archive member header"
 msgstr "Неправильный заголовок элемента архива"
 
@@ -1925,8 +1921,8 @@ msgstr "Повреждённый архив"
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Неправильная контрольная сумма Tar, архив повреждён"
 
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
+#, fuzzy, c-format
+msgid "Unknown TAR header type %u"
 msgstr "Неизвестный заголовок в архиве TAR. Тип %u, элемент %s"
 
 #, c-format
@@ -2014,32 +2010,6 @@ msgid "Duplicate conf file %s/%s"
 msgstr "Повторно указан файл настройки %s/%s"
 
 #, c-format
-msgid "List directory %spartial is missing."
-msgstr "Каталог списка %spartial отсутствует."
-
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Архивный каталог %spartial отсутствует."
-
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Невозможно заблокировать каталог %s"
-
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "Не поддерживается индексный файл типа «%s»"
-
-#. only show the ETA if it makes sense
-#. two days
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Скачивается файл %li из %li (осталось %s)"
-
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Скачивается файл %li из %li"
-
-#, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "переименовать не удалось, %s (%s -> %s)."
 
@@ -2125,6 +2095,32 @@ msgstr "Метод %s запустился не корректно"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Вставьте диск с меткой «%s» в устройство «%s» и нажмите ввод."
+
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Каталог списка %spartial отсутствует."
+
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Архивный каталог %spartial отсутствует."
+
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Невозможно заблокировать каталог %s"
+
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "Не поддерживается индексный файл типа «%s»"
+
+#. only show the ETA if it makes sense
+#. two days
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Скачивается файл %li из %li (осталось %s)"
+
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Скачивается файл %li из %li"
 
 #, c-format
 msgid ""
@@ -3026,6 +3022,9 @@ msgstr ""
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Блок поставщика %s не содержит отпечатка (fingerprint)"
+
+#~ msgid "Invalid archive member header %s"
+#~ msgstr "Неправильный заголовок элемента архива %s"
 
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"

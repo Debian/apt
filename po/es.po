@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-22 12:26+0000\n"
+"POT-Creation-Date: 2020-05-14 12:24+0000\n"
 "PO-Revision-Date: 2014-11-20 02:25+0100\n"
 "Last-Translator: Manuel \"Venturi\" Porras Peralta <venturi@openmailbox."
 "org>\n"
@@ -751,45 +751,6 @@ msgstr ""
 "cache=/tmp\n"
 "Vea las páginas del manual apt-cache(8) y apt.conf(5) para más información.\n"
 
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
-msgstr ""
-"Uso: apt [opciones] orden\n"
-"\n"
-"Interfaz de línea de órdenes (CLI) para apt.\n"
-"Órdenes básicas: \n"
-" list - lista los paquetes según los nombres\n"
-" search - busca en las descripciones de los paquetes\n"
-" show - muestra detalles del paquete\n"
-"\n"
-" update - actualiza la lista de paquetes disponibles\n"
-"\n"
-" install - instala paquetes\n"
-" remove  - elimina paquetes\n"
-"\n"
-" upgrade - actualiza el sistema instalando/actualizando paquetes\n"
-" full-upgrade - actualiza el sistema eliminando/instalando/actualizando "
-"paquetes\n"
-"\n"
-" edit-sources - edita el fichero de información de fuentes\n"
-
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr ""
 "Proporcione un nombre para este disco, como pueda ser «Debian 5.0.3 Disco 1»"
@@ -1250,6 +1211,45 @@ msgstr ""
 "  -o=? Establece una opción de configuración arbitraria, p. ej.\n"
 "       -o dir::cache=/tmp\n"
 "Ver las páginas de manual de apt-mark(8) y apt.conf(5) para más información."
+
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"CLI for apt.\n"
+"Basic commands: \n"
+" list - list packages based on package names\n"
+" search - search in package descriptions\n"
+" show - show package details\n"
+"\n"
+" update - update list of available packages\n"
+"\n"
+" install - install packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
+"\n"
+" edit-sources - edit the source information file\n"
+msgstr ""
+"Uso: apt [opciones] orden\n"
+"\n"
+"Interfaz de línea de órdenes (CLI) para apt.\n"
+"Órdenes básicas: \n"
+" list - lista los paquetes según los nombres\n"
+" search - busca en las descripciones de los paquetes\n"
+" show - muestra detalles del paquete\n"
+"\n"
+" update - actualiza la lista de paquetes disponibles\n"
+"\n"
+" install - instala paquetes\n"
+" remove  - elimina paquetes\n"
+"\n"
+" upgrade - actualiza el sistema instalando/actualizando paquetes\n"
+" full-upgrade - actualiza el sistema eliminando/instalando/actualizando "
+"paquetes\n"
+"\n"
+" edit-sources - edita el fichero de información de fuentes\n"
 
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1979,10 +1979,6 @@ msgstr "Firma del archivo inválida"
 msgid "Error reading archive member header"
 msgstr "Error leyendo la cabecera de miembro del archivo"
 
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "Cabecera de miembro del archivo inválida %s"
-
 msgid "Invalid archive member header"
 msgstr "Cabecera de miembro del archivo inválida"
 
@@ -2005,8 +2001,8 @@ msgid "Tar checksum failed, archive corrupted"
 msgstr ""
 "Se produjo un fallo al calcular la suma de control de tar, archivo dañado"
 
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
+#, fuzzy, c-format
+msgid "Unknown TAR header type %u"
 msgstr "Cabecera del TAR tipo %u desconocida, miembro %s"
 
 #, c-format
@@ -2092,32 +2088,6 @@ msgstr "Doble suma de desviación %s -> %s"
 #, c-format
 msgid "Duplicate conf file %s/%s"
 msgstr "Fichero de configuración duplicado %s/%s"
-
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Falta el directorio de listas %spartial."
-
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Falta el directorio de archivos %spartial."
-
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "No se pudo bloquear el directorio %s"
-
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "No se admite la limpieza de «%s»"
-
-#. only show the ETA if it makes sense
-#. two days
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Descargando fichero %li de %li (falta %s)"
-
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Descargando fichero %li de %li"
 
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
@@ -2211,6 +2181,32 @@ msgstr "El método %s no se inició correctamente"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Inserte el disco con etiqueta «%s» en la unidad «%s» y pulse Intro."
+
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Falta el directorio de listas %spartial."
+
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Falta el directorio de archivos %spartial."
+
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "No se pudo bloquear el directorio %s"
+
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "No se admite la limpieza de «%s»"
+
+#. only show the ETA if it makes sense
+#. two days
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Descargando fichero %li de %li (falta %s)"
+
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Descargando fichero %li de %li"
 
 #, c-format
 msgid ""
@@ -3116,6 +3112,9 @@ msgstr ""
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Bloque de fabricante %s sin huella digital"
+
+#~ msgid "Invalid archive member header %s"
+#~ msgstr "Cabecera de miembro del archivo inválida %s"
 
 #~ msgid "Is stdout a terminal?"
 #~ msgstr "¿Es «stdout» una terminal?"

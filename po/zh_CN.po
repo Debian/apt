@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-22 12:26+0000\n"
+"POT-Creation-Date: 2020-05-14 12:24+0000\n"
 "PO-Revision-Date: 2014-12-04 04:42+0000\n"
 "Last-Translator: Zhou Mo <cdluminate@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -663,44 +663,6 @@ msgstr ""
 "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
 "若要了解更多信息，您还可以查阅 apt-cache(8) 和 apt.conf(5) 参考手册。\n"
 
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
-msgstr ""
-"用法： apt [选项] 命令\n"
-"\n"
-"apt 的命令行界面。\n"
-"基本命令：\n"
-" list - 根据名称列出软件包\n"
-" search - 搜索软件包描述\n"
-" show - 显示软件包细节\n"
-"\n"
-" update - 更新可用软件包列表\n"
-"\n"
-" install - 安装软件包\n"
-" remove  - 移除软件包\n"
-"\n"
-" upgrade - 通过 安装/升级 软件来更新系统\n"
-" full-upgrade - 通过 卸载/安装/升级 来更新系统\n"
-"\n"
-" edit-sources - 编辑软件源信息文件\n"
-
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "请给这张盘片起个名字，比如“Debian 5.0.3 Disk 1”"
 
@@ -1132,6 +1094,44 @@ msgstr ""
 "  -c=? 读取指定的配置文件\n"
 "  -o=? 任意设置一个配置项，比如 -o dir::cache=/tmp\n"
 "更多细节请参见 the apt-mark(8) 和 apt.conf(5) 的 man 手册。"
+
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"CLI for apt.\n"
+"Basic commands: \n"
+" list - list packages based on package names\n"
+" search - search in package descriptions\n"
+" show - show package details\n"
+"\n"
+" update - update list of available packages\n"
+"\n"
+" install - install packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
+"\n"
+" edit-sources - edit the source information file\n"
+msgstr ""
+"用法： apt [选项] 命令\n"
+"\n"
+"apt 的命令行界面。\n"
+"基本命令：\n"
+" list - 根据名称列出软件包\n"
+" search - 搜索软件包描述\n"
+" show - 显示软件包细节\n"
+"\n"
+" update - 更新可用软件包列表\n"
+"\n"
+" install - 安装软件包\n"
+" remove  - 移除软件包\n"
+"\n"
+" upgrade - 通过 安装/升级 软件来更新系统\n"
+" full-upgrade - 通过 卸载/安装/升级 来更新系统\n"
+"\n"
+" edit-sources - 编辑软件源信息文件\n"
 
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1838,10 +1838,6 @@ msgstr "无效的归档签名"
 msgid "Error reading archive member header"
 msgstr "读取归档成员文件头出错"
 
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "归档文件中成员文件头 %s 无效"
-
 msgid "Invalid archive member header"
 msgstr "归档文件中成员文件头无效"
 
@@ -1863,8 +1859,8 @@ msgstr "包文件已被损坏"
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Tar 的校验和不符，文件已损坏"
 
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
+#, fuzzy, c-format
+msgid "Unknown TAR header type %u"
 msgstr "未知的 TAR 数据头类型 %u，成员 %s"
 
 #, c-format
@@ -1952,32 +1948,6 @@ msgid "Duplicate conf file %s/%s"
 msgstr "重复的配置文件 %s/%s"
 
 #, c-format
-msgid "List directory %spartial is missing."
-msgstr "软件包列表的目录 %spartial 缺失。"
-
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "仓库目录 %spartial 确实。"
-
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "无法对目录 %s 加锁"
-
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "%s 的 Clean (清理)不被支持"
-
-#. only show the ETA if it makes sense
-#. two days
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "正在下载第 %li 个文件，共 %li 个(还剩 %s 个)"
-
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "正在下载第 %li 个文件，共 %li 个"
-
-#, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "无法重命名文件，%s (%s -> %s)。"
 
@@ -2059,6 +2029,32 @@ msgstr "获取软件包的渠道 %s 所需的驱动程序没有正常启动。"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "请把标有“%s”的盘片插入驱动器“%s”再按回车键。"
+
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "软件包列表的目录 %spartial 缺失。"
+
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "仓库目录 %spartial 确实。"
+
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "无法对目录 %s 加锁"
+
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "%s 的 Clean (清理)不被支持"
+
+#. only show the ETA if it makes sense
+#. two days
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "正在下载第 %li 个文件，共 %li 个(还剩 %s 个)"
+
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "正在下载第 %li 个文件，共 %li 个"
 
 #, c-format
 msgid ""
@@ -2903,6 +2899,9 @@ msgstr "部分索引文件下载失败。如果忽略它们，那将转而使用
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "软件提供者数据块内 %s 没有包含指纹信息"
+
+#~ msgid "Invalid archive member header %s"
+#~ msgstr "归档文件中成员文件头 %s 无效"
 
 #~ msgid "Is stdout a terminal?"
 #~ msgstr "stdout 是终端吗？"

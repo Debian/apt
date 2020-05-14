@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ro\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-22 12:26+0000\n"
+"POT-Creation-Date: 2020-05-14 12:24+0000\n"
 "PO-Revision-Date: 2008-11-15 02:21+0200\n"
 "Last-Translator: Eddy Petrișor <eddy.petrisor@gmail.com>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -697,27 +697,6 @@ msgstr ""
 "  -o=? Ajustează o opțiune de configurare arbitrară, ex. -o dir::cache=/tmp\n"
 "Vedeți manualele apt-cache(8) și apt.conf(5) pentru mai multe informații.\n"
 
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
-msgstr ""
-
 #, fuzzy
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "Furnizați un nume pentru acest disc, de exemplu „Debian 2.1r1 Disk 1”"
@@ -1121,6 +1100,27 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+msgstr ""
+
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"CLI for apt.\n"
+"Basic commands: \n"
+" list - list packages based on package names\n"
+" search - search in package descriptions\n"
+" show - show package details\n"
+"\n"
+" update - update list of available packages\n"
+"\n"
+" install - install packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
+"\n"
+" edit-sources - edit the source information file\n"
 msgstr ""
 
 #, c-format
@@ -1857,10 +1857,6 @@ msgstr "Semnătură de arhivă necorespunzătoare"
 msgid "Error reading archive member header"
 msgstr "Eroare la citirea antetului membrului arhivei"
 
-#, fuzzy, c-format
-msgid "Invalid archive member header %s"
-msgstr "Antet de membru de arhivă necorespunzător"
-
 msgid "Invalid archive member header"
 msgstr "Antet de membru de arhivă necorespunzător"
 
@@ -1883,8 +1879,8 @@ msgid "Tar checksum failed, archive corrupted"
 msgstr ""
 "Suma de control a arhivei tar nu s-a verificat, arhiva este deteriorată"
 
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
+#, fuzzy, c-format
+msgid "Unknown TAR header type %u"
 msgstr "Tip antet TAR %u necunoscut, membrul %s"
 
 #, c-format
@@ -1973,32 +1969,6 @@ msgstr "Adăugare dublă de redirectare %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "Fișier „conf” duplicat %s/%s"
 
-#, fuzzy, c-format
-msgid "List directory %spartial is missing."
-msgstr "Directorul de liste %spartial lipsește."
-
-#, fuzzy, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Directorul de arhive %spartial lipsește."
-
-#, fuzzy, c-format
-msgid "Unable to lock directory %s"
-msgstr "Nu pot încuia directorul cu lista"
-
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "Tipul de fișier index '%s' nu este suportat"
-
-#. only show the ETA if it makes sense
-#. two days
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Se descarcă fișierul %li din %li (%s rămas)"
-
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Se descarcă fișierul %li din %li"
-
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "redenumire eșuată, %s (%s -> %s)."
@@ -2084,6 +2054,32 @@ msgstr "Metoda %s nu s-a lansat corect"
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
 "Vă rog introduceți discul numit: '%s' în unitatea '%s' și apăsați Enter."
+
+#, fuzzy, c-format
+msgid "List directory %spartial is missing."
+msgstr "Directorul de liste %spartial lipsește."
+
+#, fuzzy, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Directorul de arhive %spartial lipsește."
+
+#, fuzzy, c-format
+msgid "Unable to lock directory %s"
+msgstr "Nu pot încuia directorul cu lista"
+
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "Tipul de fișier index '%s' nu este suportat"
+
+#. only show the ETA if it makes sense
+#. two days
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Se descarcă fișierul %li din %li (%s rămas)"
+
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Se descarcă fișierul %li din %li"
 
 #, c-format
 msgid ""
@@ -2941,6 +2937,10 @@ msgstr ""
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Blocul vânzător %s nu conține amprentă"
+
+#, fuzzy
+#~ msgid "Invalid archive member header %s"
+#~ msgstr "Antet de membru de arhivă necorespunzător"
 
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"

@@ -1,3 +1,15 @@
+apt (1.0.9.8.6) jessie-security; urgency=high
+
+  * SECURITY UPDATE: Out of bounds read in ar, tar implementations (LP: #1878177)
+    - apt-pkg/contrib/arfile.cc: Fix out-of-bounds read in member name
+    - apt-pkg/contrib/arfile.cc: Fix out-of-bounds read on unterminated
+      member names in error path
+    - apt-pkg/contrib/extracttar.cc: Fix out-of-bounds read on unterminated
+      member names in error path
+    - CVE-2020-3810
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 14 May 2020 16:49:11 +0200
+
 apt (1.0.9.8.5) jessie-security; urgency=medium
 
   * SECURITY UPDATE: content injection in http method (CVE-2019-3462)

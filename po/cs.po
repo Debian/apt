@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-22 12:26+0000\n"
+"POT-Creation-Date: 2020-05-14 12:24+0000\n"
 "PO-Revision-Date: 2014-10-05 06:09+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -690,44 +690,6 @@ msgstr ""
 "  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
 "Více informací viz manuálové stránky apt-cache(8) a apt.conf(5).\n"
 
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
-msgstr ""
-"Použití: apt [volby] příkaz\n"
-"\n"
-"Řádkové rozhraní pro apt.\n"
-"Základní příkazy:\n"
-" list - vypíše balíky podle jmen\n"
-" search - hledá v popisech balíků\n"
-" show - zobrazí podrobnosti balíku\n"
-"\n"
-" update - aktualizuje seznam dostupných balíků\n"
-"\n"
-" install - nainstaluje balíky\n"
-" remove  - odstraní balíky\n"
-"\n"
-" upgrade - aktualizuje systém instalací/aktualizací balíků\n"
-" full-upgrade - aktualizuje systém instalací/aktualizací/odstraněním balíků\n"
-"\n"
-" edit-sources - upraví soubor se zdroji balíků\n"
-
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "Zadejte prosím název tohoto média, např. „Debian 5.0.3 Disk 1“"
 
@@ -1168,6 +1130,44 @@ msgstr ""
 "  -c=? Načte daný konfigurační soubor\n"
 "  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
 "Více informací viz manuálové stránky apt-mark(8) a apt.conf(5)."
+
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"CLI for apt.\n"
+"Basic commands: \n"
+" list - list packages based on package names\n"
+" search - search in package descriptions\n"
+" show - show package details\n"
+"\n"
+" update - update list of available packages\n"
+"\n"
+" install - install packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
+"\n"
+" edit-sources - edit the source information file\n"
+msgstr ""
+"Použití: apt [volby] příkaz\n"
+"\n"
+"Řádkové rozhraní pro apt.\n"
+"Základní příkazy:\n"
+" list - vypíše balíky podle jmen\n"
+" search - hledá v popisech balíků\n"
+" show - zobrazí podrobnosti balíku\n"
+"\n"
+" update - aktualizuje seznam dostupných balíků\n"
+"\n"
+" install - nainstaluje balíky\n"
+" remove  - odstraní balíky\n"
+"\n"
+" upgrade - aktualizuje systém instalací/aktualizací balíků\n"
+" full-upgrade - aktualizuje systém instalací/aktualizací/odstraněním balíků\n"
+"\n"
+" edit-sources - upraví soubor se zdroji balíků\n"
 
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1879,10 +1879,6 @@ msgstr "Neplatný podpis archivu"
 msgid "Error reading archive member header"
 msgstr "Chyba při čtení záhlaví prvku archivu"
 
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "Neplatné záhlaví prvku archivu %s"
-
 msgid "Invalid archive member header"
 msgstr "Neplatné záhlaví prvku archivu"
 
@@ -1904,8 +1900,8 @@ msgstr "Porušený archiv"
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Kontrolní součet taru selhal, archiv je poškozený"
 
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
+#, fuzzy, c-format
+msgid "Unknown TAR header type %u"
 msgstr "Neznámá hlavička TARu typ %u, člen %s"
 
 #, c-format
@@ -1993,32 +1989,6 @@ msgid "Duplicate conf file %s/%s"
 msgstr "Duplicitní konfigurační soubor %s/%s"
 
 #, c-format
-msgid "List directory %spartial is missing."
-msgstr "Adresář seznamů %spartial chybí."
-
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Archivní adresář %spartial chybí."
-
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Nelze uzamknout adresář %s"
-
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "Vyčištění %s není podporováno"
-
-#. only show the ETA if it makes sense
-#. two days
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Stahuje se soubor %li z %li (zbývá %s)"
-
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Stahuje se soubor %li z %li"
-
-#, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "přejmenování selhalo, %s (%s -> %s)."
 
@@ -2104,6 +2074,32 @@ msgstr "Metoda %s nebyla spuštěna správně"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Vložte prosím disk nazvaný „%s“ do mechaniky „%s“ a stiskněte enter."
+
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Adresář seznamů %spartial chybí."
+
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Archivní adresář %spartial chybí."
+
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Nelze uzamknout adresář %s"
+
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "Vyčištění %s není podporováno"
+
+#. only show the ETA if it makes sense
+#. two days
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Stahuje se soubor %li z %li (zbývá %s)"
+
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Stahuje se soubor %li z %li"
 
 #, c-format
 msgid ""
@@ -2968,6 +2964,9 @@ msgstr ""
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Blok výrobce %s neobsahuje otisk klíče"
+
+#~ msgid "Invalid archive member header %s"
+#~ msgstr "Neplatné záhlaví prvku archivu %s"
 
 #~ msgid "Is stdout a terminal?"
 #~ msgstr "Je standardní výstup terminál?"

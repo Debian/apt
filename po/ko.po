@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-22 12:26+0000\n"
+"POT-Creation-Date: 2020-05-14 12:24+0000\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -678,27 +678,6 @@ msgstr ""
 "  -o=? 임의의 옵션을 설정합니다. 예를 들어 -o dir::cache=/tmp\n"
 "좀 더 자세한 정보는 apt-cache(8) 및 apt.conf(5) 매뉴얼 페이지를 보십시오.\n"
 
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
-msgstr ""
-
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "이 디스크의 이름을 정하십시오 (예: 'Debian 5.0.3 Disk 1')"
 
@@ -1101,6 +1080,27 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+msgstr ""
+
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"CLI for apt.\n"
+"Basic commands: \n"
+" list - list packages based on package names\n"
+" search - search in package descriptions\n"
+" show - show package details\n"
+"\n"
+" update - update list of available packages\n"
+"\n"
+" install - install packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
+"\n"
+" edit-sources - edit the source information file\n"
 msgstr ""
 
 #, c-format
@@ -1818,10 +1818,6 @@ msgstr "아카이브 서명이 틀렸습니다"
 msgid "Error reading archive member header"
 msgstr "아카이브 멤버 헤더를 읽는데 오류가 발생했습니다"
 
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "아카이브 멤버 헤더 %s이(가) 잘못되었습니다"
-
 msgid "Invalid archive member header"
 msgstr "아카이브 멤버 헤더가 잘못되었습니다"
 
@@ -1843,8 +1839,8 @@ msgstr "아카이브가 손상되었습니다"
 msgid "Tar checksum failed, archive corrupted"
 msgstr "tar 체크섬 실패, 아카이브가 손상되었습니다"
 
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
+#, fuzzy, c-format
+msgid "Unknown TAR header type %u"
 msgstr "알 수 없는 TAR 헤더 타입 %u, 멤버 %s"
 
 #, c-format
@@ -1932,32 +1928,6 @@ msgid "Duplicate conf file %s/%s"
 msgstr "%s/%s 설정 파일이 중복되었습니다"
 
 #, c-format
-msgid "List directory %spartial is missing."
-msgstr "목록 디렉터리 %spartial이 빠졌습니다."
-
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "아카이브 디렉터리 %spartial이 빠졌습니다."
-
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "%s 디렉터리를 잠글 수 없습니다"
-
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "인덱스 파일 타입 '%s' 타입은 지원하지 않습니다"
-
-#. only show the ETA if it makes sense
-#. two days
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "파일 받아오는 중: %2$li 중 %1$li (%3$s 남았음)"
-
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "파일 받아오는 중: %2$li 중 %1$li"
-
-#, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "이름 바꾸기가 실패했습니다. %s (%s -> %s)."
 
@@ -2041,6 +2011,32 @@ msgstr "설치 방법 %s이(가) 올바르게 시작하지 않았습니다"
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
 "'%2$s' 드라이브에 '%1$s'(으)로 표기된 디스크를 넣고 Enter를 누르십시오."
+
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "목록 디렉터리 %spartial이 빠졌습니다."
+
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "아카이브 디렉터리 %spartial이 빠졌습니다."
+
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "%s 디렉터리를 잠글 수 없습니다"
+
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "인덱스 파일 타입 '%s' 타입은 지원하지 않습니다"
+
+#. only show the ETA if it makes sense
+#. two days
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "파일 받아오는 중: %2$li 중 %1$li (%3$s 남았음)"
+
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "파일 받아오는 중: %2$li 중 %1$li"
 
 #, c-format
 msgid ""
@@ -2898,6 +2894,9 @@ msgstr ""
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "벤더 블럭 %s의 핑거프린트가 없습니다"
+
+#~ msgid "Invalid archive member header %s"
+#~ msgstr "아카이브 멤버 헤더 %s이(가) 잘못되었습니다"
 
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"

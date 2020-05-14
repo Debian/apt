@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-22 12:26+0000\n"
+"POT-Creation-Date: 2020-05-14 12:24+0000\n"
 "PO-Revision-Date: 2012-06-28 20:49+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -703,27 +703,6 @@ msgstr ""
 "Ďalšie informácie nájdete v manuálových stránkach apt-cache(8)\n"
 "a apt.conf(5).\n"
 
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
-msgstr ""
-
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "Prosím, zadajte názov tohto disku, napríklad „Debian 5.0.3 Disk 1“"
 
@@ -1151,6 +1130,27 @@ msgstr ""
 "  -c=? Načítať tento konfiguračný súbor\n"
 "  -o=? Nastaviť ľubovoľný konfiguračnú voľbu, napr. -o dir::cache=/tmp\n"
 "Ďalšie informácie nájdete na manuálových stránkach apt-mark(8) a apt.conf(5)."
+
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"CLI for apt.\n"
+"Basic commands: \n"
+" list - list packages based on package names\n"
+" search - search in package descriptions\n"
+" show - show package details\n"
+"\n"
+" update - update list of available packages\n"
+"\n"
+" install - install packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
+"\n"
+" edit-sources - edit the source information file\n"
+msgstr ""
 
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1864,10 +1864,6 @@ msgstr "Neplatný podpis archívu"
 msgid "Error reading archive member header"
 msgstr "Chyba pri čítaní záhlavia prvku archívu"
 
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "Neplatná hlavička prvku archívu %s"
-
 msgid "Invalid archive member header"
 msgstr "Neplatné záhlavie prvku archívu"
 
@@ -1889,8 +1885,8 @@ msgstr "Porušený archív"
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Kontrolný súčet pre tar zlyhal, archív je poškodený"
 
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
+#, fuzzy, c-format
+msgid "Unknown TAR header type %u"
 msgstr "Neznáma TAR hlavička typu %u, člen %s"
 
 #, c-format
@@ -1978,32 +1974,6 @@ msgid "Duplicate conf file %s/%s"
 msgstr "Duplicitný konfiguračný súbor %s/%s"
 
 #, c-format
-msgid "List directory %spartial is missing."
-msgstr "Adresár zoznamov %spartial chýba."
-
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Archívny adresár %spartial chýba."
-
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Adresár %s sa nedá zamknúť"
-
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "Indexový súbor typu „%s“ nie je podporovaný"
-
-#. only show the ETA if it makes sense
-#. two days
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Sťahuje sa %li. súbor z %li (zostáva %s)"
-
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Sťahuje sa %li. súbor z %li"
-
-#, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "premenovanie zlyhalo, %s (%s -> %s)."
 
@@ -2089,6 +2059,32 @@ msgstr "Spôsob %s nebol správne spustený"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Vložte disk nazvaný „%s“ do mechaniky „%s“ a stlačte Enter."
+
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Adresár zoznamov %spartial chýba."
+
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Archívny adresár %spartial chýba."
+
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Adresár %s sa nedá zamknúť"
+
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "Indexový súbor typu „%s“ nie je podporovaný"
+
+#. only show the ETA if it makes sense
+#. two days
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Sťahuje sa %li. súbor z %li (zostáva %s)"
+
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Sťahuje sa %li. súbor z %li"
 
 #, c-format
 msgid ""
@@ -2960,6 +2956,9 @@ msgstr ""
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Blok výrobcu %s neobsahuje otlačok (fingerprint)"
+
+#~ msgid "Invalid archive member header %s"
+#~ msgstr "Neplatná hlavička prvku archívu %s"
 
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"

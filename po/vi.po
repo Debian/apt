@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-22 12:26+0000\n"
+"POT-Creation-Date: 2020-05-14 12:24+0000\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -685,45 +685,6 @@ msgstr ""
 "Để tìm thông tin thêm, xem hai trang hướng dẫn\n"
 "                 apt-cache(8) và apt.conf(5).\n"
 
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
-msgstr ""
-"Cách dùng: apt [các tùy chọn] lệnh\n"
-"\n"
-"CLI (giao diện dòng lệnh) dành cho apt.\n"
-"Các lệnh cơ bản:\n"
-" list - liệt kê các gói dựa trên cơ sở là tên gói\n"
-" search - tìm trong phần mô tả của gói\n"
-" show - hiển thị thông tin chi tiết về gói\n"
-"\n"
-" update - cập nhật danh sánh các gói sẵn có\n"
-"\n"
-" install - cài đặt các gói\n"
-" remove - gỡ bỏ các gói\n"
-"\n"
-" upgrade - nâng cấp các gói trong hệ thống\n"
-" full-upgrade - nâng cấp hệ thống bằng cách gỡ bỏ, cài đặt, nâng cấp các "
-"gói\n"
-"\n"
-" edit-sources - sửa tập tin thông tin gói nguồn\n"
-
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "Hãy cung cấp tên cho Đĩa này, kiểu như là: “Debian 5.0.3 Đĩa 1”"
 
@@ -1181,6 +1142,45 @@ msgstr ""
 "  -o=? Đặt một tùy chọn cấu hình tùy ý, v.d. -o dir::cache=/tmp\n"
 "Để tìm thông tin thêm, xem hai trang man (hướng dẫn)\n"
 "                          apt-mark(8) và apt.conf(5)"
+
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"CLI for apt.\n"
+"Basic commands: \n"
+" list - list packages based on package names\n"
+" search - search in package descriptions\n"
+" show - show package details\n"
+"\n"
+" update - update list of available packages\n"
+"\n"
+" install - install packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
+"\n"
+" edit-sources - edit the source information file\n"
+msgstr ""
+"Cách dùng: apt [các tùy chọn] lệnh\n"
+"\n"
+"CLI (giao diện dòng lệnh) dành cho apt.\n"
+"Các lệnh cơ bản:\n"
+" list - liệt kê các gói dựa trên cơ sở là tên gói\n"
+" search - tìm trong phần mô tả của gói\n"
+" show - hiển thị thông tin chi tiết về gói\n"
+"\n"
+" update - cập nhật danh sánh các gói sẵn có\n"
+"\n"
+" install - cài đặt các gói\n"
+" remove - gỡ bỏ các gói\n"
+"\n"
+" upgrade - nâng cấp các gói trong hệ thống\n"
+" full-upgrade - nâng cấp hệ thống bằng cách gỡ bỏ, cài đặt, nâng cấp các "
+"gói\n"
+"\n"
+" edit-sources - sửa tập tin thông tin gói nguồn\n"
 
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1922,10 +1922,6 @@ msgstr "Chữ ký kho không hợp lệ"
 msgid "Error reading archive member header"
 msgstr "Gặp lỗi khi đọc phần đầu thành viên kho"
 
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "Phần đầu thành viên kho lưu không hợp lệ %s"
-
 msgid "Invalid archive member header"
 msgstr "Phần đầu thành viên kho không hợp lê"
 
@@ -1947,8 +1943,8 @@ msgstr "Kho bị hỏng."
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Gặp lỗi khi tổng kiểm “tar”, kho bị hỏng"
 
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
+#, fuzzy, c-format
+msgid "Unknown TAR header type %u"
 msgstr "Không rõ kiểu phần đầu tar %u, thành viên %s"
 
 #, c-format
@@ -2034,32 +2030,6 @@ msgstr "Sự trệch đi được thêm hai lần %s → %s"
 #, c-format
 msgid "Duplicate conf file %s/%s"
 msgstr "Tập tin cấu hình (conf) trùng lặp %s/%s"
-
-#, c-format
-msgid "List directory %spartial is missing."
-msgstr "Thiếu thư mục danh sách %spartial."
-
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Thiếu thư mục kho lưu %spartial."
-
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Không thể khoá thư mục %s"
-
-#, c-format
-msgid "Clean of %s is not supported"
-msgstr "Không hỗ trợ việc xóa %s"
-
-#. only show the ETA if it makes sense
-#. two days
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Đang tải tập tin thứ %li trong tổng số %li (còn lại %s)"
-
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Đang tải tập tin %li trong tổng số %li"
 
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
@@ -2149,6 +2119,32 @@ msgstr "Phương thức %s đã không khởi chạy đúng đắn."
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Hãy cho đĩa có nhãn “%s” vào ổ “%s” rồi bấm nút Enter."
+
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Thiếu thư mục danh sách %spartial."
+
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Thiếu thư mục kho lưu %spartial."
+
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Không thể khoá thư mục %s"
+
+#, c-format
+msgid "Clean of %s is not supported"
+msgstr "Không hỗ trợ việc xóa %s"
+
+#. only show the ETA if it makes sense
+#. two days
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Đang tải tập tin thứ %li trong tổng số %li (còn lại %s)"
+
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Đang tải tập tin %li trong tổng số %li"
 
 #, c-format
 msgid ""
@@ -3038,6 +3034,9 @@ msgstr ""
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Khối nhà bán %s không chứa vân tay"
+
+#~ msgid "Invalid archive member header %s"
+#~ msgstr "Phần đầu thành viên kho lưu không hợp lệ %s"
 
 #~ msgid "Is stdout a terminal?"
 #~ msgstr "Đầu ra là thiết bị cuối?"

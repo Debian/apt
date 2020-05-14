@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2019-01-22 12:26+0000\n"
+"POT-Creation-Date: 2020-05-14 12:24+0000\n"
 "PO-Revision-Date: 2014-07-06 23:51+0200\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <debian-l10n-danish@lists.debian.org>\n"
@@ -696,45 +696,6 @@ msgstr ""
 "  -o=? Angiv et opsætningstilvalg. F.eks. -o dir::cache=/tmp\n"
 "Se manualsiderne for apt-cache(8) og apt.conf(5) for flere oplysninger.\n"
 
-msgid ""
-"Usage: apt [options] command\n"
-"\n"
-"CLI for apt.\n"
-"Basic commands: \n"
-" list - list packages based on package names\n"
-" search - search in package descriptions\n"
-" show - show package details\n"
-"\n"
-" update - update list of available packages\n"
-"\n"
-" install - install packages\n"
-" remove  - remove packages\n"
-"\n"
-" upgrade - upgrade the system by installing/upgrading packages\n"
-" full-upgrade - upgrade the system by removing/installing/upgrading "
-"packages\n"
-"\n"
-" edit-sources - edit the source information file\n"
-msgstr ""
-"Brug: apt [tilvalg] kommando\n"
-"\n"
-"CLI for apt.\n"
-"Kommandoer: \n"
-" list - vis pakker baseret på pakkenavn\n"
-" search - søg i pakkebeskrivelser\n"
-" show - vis pakkedetaljer\n"
-"\n"
-" update - opdater listen over tilgængelige pakker\n"
-"\n"
-" install - installer pakker\n"
-" remove - fjern pakker\n"
-"\n"
-" upgrade - opgradere systemet ved at installere/opgradere pakker\n"
-" full-upgrade - opgradere systemet ved at fjerne/installere/opgradere "
-"pakker\n"
-"\n"
-" edit-sources - rediger source-informationsfilen (kildefilen)\n"
-
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr ""
 "Angiv venligst et navn for denne disk, som f.eks. »Debian 5.0.3 Disk 1«"
@@ -1179,6 +1140,45 @@ msgstr ""
 "  -o=? Angiv en arbitrær konfigurationsindstilling, f.eks. -o dir::cache=/"
 "tmp\n"
 "Se manualsiderne apt-mark(8) og apt.conf(5) for yderligere information."
+
+msgid ""
+"Usage: apt [options] command\n"
+"\n"
+"CLI for apt.\n"
+"Basic commands: \n"
+" list - list packages based on package names\n"
+" search - search in package descriptions\n"
+" show - show package details\n"
+"\n"
+" update - update list of available packages\n"
+"\n"
+" install - install packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
+"\n"
+" edit-sources - edit the source information file\n"
+msgstr ""
+"Brug: apt [tilvalg] kommando\n"
+"\n"
+"CLI for apt.\n"
+"Kommandoer: \n"
+" list - vis pakker baseret på pakkenavn\n"
+" search - søg i pakkebeskrivelser\n"
+" show - vis pakkedetaljer\n"
+"\n"
+" update - opdater listen over tilgængelige pakker\n"
+"\n"
+" install - installer pakker\n"
+" remove - fjern pakker\n"
+"\n"
+" upgrade - opgradere systemet ved at installere/opgradere pakker\n"
+" full-upgrade - opgradere systemet ved at fjerne/installere/opgradere "
+"pakker\n"
+"\n"
+" edit-sources - rediger source-informationsfilen (kildefilen)\n"
 
 #, c-format
 msgid "Unable to read the cdrom database %s"
@@ -1901,10 +1901,6 @@ msgstr "Ugyldig arkivsignatur"
 msgid "Error reading archive member header"
 msgstr "Fejl under læsning af arkivelements hoved"
 
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "Ugyldigt arkivelementhoved %s"
-
 msgid "Invalid archive member header"
 msgstr "Ugyldigt arkivelementhoved"
 
@@ -1926,8 +1922,8 @@ msgstr "Ødelagt arkiv"
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Tar-tjeksum fejlede, arkivet er ødelagt"
 
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
+#, fuzzy, c-format
+msgid "Unknown TAR header type %u"
 msgstr "Ukendt TAR-hovedtype %u, element %s"
 
 #, c-format
@@ -2015,32 +2011,6 @@ msgid "Duplicate conf file %s/%s"
 msgstr "Dobbelt opsætningsfil %s/%s"
 
 #, c-format
-msgid "List directory %spartial is missing."
-msgstr "Listemappen %spartial mangler."
-
-#, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "Arkivmappen %spartial mangler."
-
-#, c-format
-msgid "Unable to lock directory %s"
-msgstr "Kunne ikke låse mappen %s"
-
-#, fuzzy, c-format
-msgid "Clean of %s is not supported"
-msgstr "Indeksfiler af typen »%s« understøttes ikke"
-
-#. only show the ETA if it makes sense
-#. two days
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "Henter fil %li ud af %li (%s tilbage)"
-
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr "Henter fil %li ud af %li"
-
-#, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "omdøbning mislykkedes, %s (%s -> %s)."
 
@@ -2126,6 +2096,32 @@ msgstr "Metoden %s startede ikke korrekt"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Indsæt disken med navnet: »%s« i drevet »%s« og tryk retur."
+
+#, c-format
+msgid "List directory %spartial is missing."
+msgstr "Listemappen %spartial mangler."
+
+#, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "Arkivmappen %spartial mangler."
+
+#, c-format
+msgid "Unable to lock directory %s"
+msgstr "Kunne ikke låse mappen %s"
+
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "Indeksfiler af typen »%s« understøttes ikke"
+
+#. only show the ETA if it makes sense
+#. two days
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "Henter fil %li ud af %li (%s tilbage)"
+
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr "Henter fil %li ud af %li"
 
 #, c-format
 msgid ""
@@ -2993,6 +2989,9 @@ msgstr ""
 #, c-format
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Leverandørblok %s inderholder intet fingeraftryk"
+
+#~ msgid "Invalid archive member header %s"
+#~ msgstr "Ugyldigt arkivelementhoved %s"
 
 #~ msgid "Is stdout a terminal?"
 #~ msgstr "Er standardud en terminal?"
