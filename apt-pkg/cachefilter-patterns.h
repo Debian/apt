@@ -48,6 +48,7 @@ struct APT_PUBLIC PatternTreeParser
 
       virtual std::ostream &render(std::ostream &os) { return os; };
       std::nullptr_t error(std::string message);
+      virtual ~Node() = default;
    };
 
    struct Error : public std::exception
