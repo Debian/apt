@@ -87,4 +87,6 @@ cp control.tar.gz data.tar.gz
 touch debian-binary
 rm test.deb
 ar -q test.deb debian-binary control.tar.gz data.tar.gz
-testequal "W: Unknown TAR header type 88" runapt ${APTTESTHELPERSBINDIR}/testdeb test.deb
+testsuccess runapt ${APTTESTHELPERSBINDIR}/testdeb test.deb
+cp rootdir/tmp/testsuccess.output terminal.output
+testsuccess grep "W: Unknown TAR header type 88" terminal.output
