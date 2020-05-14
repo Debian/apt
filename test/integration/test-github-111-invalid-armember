@@ -1,0 +1,88 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture "amd64"
+setupaptarchive
+
+# this used to crash, but it should treat it as an invalid member header
+touch ' '
+ar -q test.deb ' '
+testsuccessequal "E: Invalid archive member header" ${APTTESTHELPERSBINDIR}/testdeb test.deb
+
+
+rm test.deb
+touch 'x'
+ar -q test.deb 'x'
+testsuccessequal "E: This is not a valid DEB archive, missing 'debian-binary' member" ${APTTESTHELPERSBINDIR}/testdeb test.deb
+
+
+# <name><size> [ other fields] - name is not nul terminated here, it ends in .
+msgmsg "Unterminated ar member name"
+printf '!<arch>\0120123456789ABCDE.A123456789A.01234.01234.0123456.012345678.0.' > test.deb
+testsuccessequal "E: Invalid archive member header" ${APTTESTHELPERSBINDIR}/testdeb test.deb
+
+
+# unused source code for generating $tar below
+maketar() {
+	cat > maketar.c << EOF
+	#include <stdio.h>
+	#include <string.h>
+	struct tar {
+	   char Name[100];
+	   char Mode[8];
+	   char UserID[8];
+	   char GroupID[8];
+	   char Size[12];
+	   char MTime[12];
+	   char Checksum[8];
+	   char LinkFlag;
+	   char LinkName[100];
+	   char MagicNumber[8];
+	   char UserName[32];
+	   char GroupName[32];
+	   char Major[8];
+	   char Minor[8];
+	};
+
+	int main(void)
+	{
+		union {
+			struct tar t;
+			char buf[512];
+		} t;
+		for (int i = 0; i < sizeof(t.buf); i++)
+			t.buf[i] = '7';
+		memcpy(t.t.Name, "unterminatedName", 16);
+		memcpy(t.t.UserName, "userName", 8);
+		memcpy(t.t.GroupName, "thisIsAGroupNamethisIsAGroupName", 32);
+		t.t.LinkFlag = 'X'; // I AM BROKEN
+		memcpy(t.t.Size, "000000000000", sizeof(t.t.Size));
+		memset(t.t.Checksum,' ',sizeof(t.t.Checksum));
+
+		unsigned long sum = 0;
+		for (int i = 0; i < sizeof(t.buf); i++)
+			sum += t.buf[i];
+
+		int written = sprintf(t.t.Checksum, "%lo", sum);
+		for (int i = written; i < sizeof(t.t.Checksum); i++)
+			t.t.Checksum[i] = ' ';
+		fwrite(t.buf, sizeof(t.buf), 1, stdout);
+	}
+EOF
+
+	gcc maketar.c -o maketar -Wall
+	./maketar
+}
+
+
+#
+tar="unterminatedName77777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777700000000000077777777777773544   X777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777userName777777777777777777777777thisIsAGroupNamethisIsAGroupName777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
+printf '%s' "$tar" | gzip > control.tar.gz
+cp control.tar.gz data.tar.gz
+touch debian-binary
+rm test.deb
+ar -q test.deb debian-binary control.tar.gz data.tar.gz
+testsuccessequal "W: Unknown TAR header type 88" ${APTTESTHELPERSBINDIR}/testdeb test.deb
