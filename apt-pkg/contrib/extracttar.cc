@@ -257,50 +257,50 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 _error->Warning(_("Unknown TAR header type %u"), (unsigned)Tar->LinkFlag);
 	 break;
       }
-      
+
       int Fd = -1;
-      if (BadRecord == false)
-	 if (Stream.DoItem(Itm,Fd) == false)
-	    return false;
-      
-      // Copy the file over the FD
-      unsigned long long Size = Itm.Size;
-      while (Size != 0)
+      if (not BadRecord && not Stream.DoItem(Itm, Fd))
+	 return false;
+
+      if (Fd == -1 || Fd < -2 || BadRecord)
       {
-	 unsigned char Junk[32*1024];
-	 unsigned long Read = min(Size, (unsigned long long)sizeof(Junk));
-	 if (InFd.Read(Junk,((Read+511)/512)*512) == false)
+	 if (Itm.Size > 0 && not InFd.Skip(((Itm.Size + (sizeof(Block) - 1)) / sizeof(Block)) * sizeof(Block)))
 	    return false;
-	 
-	 if (BadRecord == false)
+      }
+      else if (Itm.Size != 0)
+      {
+	 // Copy the file over the FD
+	 auto Size = Itm.Size;
+	 unsigned char Junk[32*1024];
+	 do
 	 {
+	    auto const Read = std::min<unsigned long long>(Size, sizeof(Junk));
+	    if (not InFd.Read(Junk, ((Read + (sizeof(Block) - 1)) / sizeof(Block)) * sizeof(Block)))
+	       return false;
+
 	    if (Fd > 0)
 	    {
 	       if (not FileFd::Write(Fd, Junk, Read))
-		  return Stream.Fail(Itm,Fd);
+		  return Stream.Fail(Itm, Fd);
 	    }
-	    else
+	    // An Fd of -2 means to send to a special processing function
+	    else if (Fd == -2)
 	    {
-	       /* An Fd of -2 means to send to a special processing
-		  function */
-	       if (Fd == -2)
-		  if (Stream.Process(Itm,Junk,Read,Itm.Size - Size) == false)
-		     return Stream.Fail(Itm,Fd);
+	       if (not Stream.Process(Itm, Junk, Read, Itm.Size - Size))
+		  return Stream.Fail(Itm, Fd);
 	    }
-	 }
-	 
-	 Size -= Read;
+
+	    Size -= Read;
+	 } while (Size != 0);
       }
-      
+
       // And finish up
-      if (BadRecord == false)
-	 if (Stream.FinishedFile(Itm,Fd) == false)
-	    return false;
-      
+      if (not BadRecord && not Stream.FinishedFile(Itm, Fd))
+	 return false;
       LastLongName.erase();
       LastLongLink.erase();
    }
-   
+
    return Done();
 }
 									/*}}}*/
