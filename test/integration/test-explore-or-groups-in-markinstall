@@ -9,16 +9,17 @@ configarchitecture 'amd64'
 insertpackage 'unstable' 'okay' 'all' '1'
 insertpackage 'unstable' 'upgrade' 'all' '2'
 insertpackage 'unstable' 'unneeded' 'all' '1'
+insertpackage 'unstable' 'unneeded2' 'all' '1' 'Depends: bad-level1'
 insertpackage 'unstable' 'later' 'all' '1'
 
 insertpackage 'unstable' 'bad-level0' 'all' '1' 'Depends: unneeded, unknown'
 insertpackage 'unstable' 'bad-level1' 'all' '1' 'Depends: bad-level0'
 insertpackage 'unstable' 'bad-upgrade-level0' 'all' '2' 'Depends: unneeded, unknown'
-insertpackage 'unstable' 'bad-upgrade-level1' 'all' '2' 'Depends: bad-upgrade-level0 (>= 2)'
+insertpackage 'unstable' 'bad-upgrade-level1' 'all' '2' 'Depends: bad-upgrade-level0 (>= 2), unneeded2'
 insertpackage 'unstable' 'bad-conflict-level0' 'all' '1' 'Depends: unneeded
 Conflicts: bad-conflict-level2'
 insertpackage 'unstable' 'bad-conflict-level1' 'all' '1' 'Depends: bad-conflict-level0'
-insertpackage 'unstable' 'bad-conflict-level2' 'all' '1' 'Depends: bad-conflict-level1'
+insertpackage 'unstable' 'bad-conflict-level2' 'all' '1' 'Depends: bad-conflict-level1, unneeded2'
 
 insertinstalledpackage 'upgrade' 'all' '1'
 insertinstalledpackage 'bad-upgrade' 'all' '1'
@@ -112,8 +113,25 @@ Would download/install/remove packages.'
 	testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-r-conflict -sy
 fi
 
-testfailure apt install bad-upgrade-level1 -s
-testfailure apt install bad-conflict-level2 -s
+BADSOLVETEXT='Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+'
+
+testfailureequal "$BADSOLVETEXT
+The following packages have unmet dependencies:
+ bad-level0 : Depends: unknown but it is not installable
+ bad-upgrade-level0 : Depends: unknown but it is not installable
+E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages." apt install bad-upgrade-level1 -s
+testfailureequal "$BADSOLVETEXT
+The following packages have unmet dependencies:
+ bad-conflict-level0 : Conflicts: bad-conflict-level2 but 1 is to be installed
+ bad-level0 : Depends: unknown but it is not installable
+E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages." apt install bad-conflict-level2 -s
 
 if $TEST_WITH_APTITUDE; then
 	testsuccesstailequal 6 'The following packages have been kept back:

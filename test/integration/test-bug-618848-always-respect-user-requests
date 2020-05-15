@@ -13,11 +13,12 @@ insertpackage 'unstable' 'exim4-daemon-heavy' 'all' '1.0' 'Depends: libdb4.8'
 
 setupaptarchive
 
-testsuccessequal 'Reading package lists...
+testsuccessequal "Reading package lists...
 Building dependency tree...
   MarkDelete libdb4.8:i386 < 1.0 @ii pmK > FU=1
   MarkDelete exim4-daemon-light:i386 < 1.0 @ii mK Ib > FU=0
     MarkInstall exim4-daemon-heavy:i386 < none -> 1.0 @un uN Ib > FU=0
+      exim4-daemon-heavy:i386 Depends on libdb4.8:i386 < 1.0 @ii pmR > can't be satisfied! (dep)
   MarkDelete exim4:i386 < 1.0 @ii mK Ib > FU=0
 The following packages will be REMOVED:
   exim4 exim4-daemon-light libdb4.8
@@ -27,4 +28,4 @@ Remv exim4 [1.0]
   MarkDelete exim4-daemon-light:i386 < 1.0 @ii K > FU=1
 Remv exim4-daemon-light [1.0]
   MarkDelete libdb4.8:i386 < 1.0 @ii K > FU=1
-Remv libdb4.8 [1.0]' aptget remove libdb4.8 -s -o Debug::pkgDepCache::Marker=1
+Remv libdb4.8 [1.0]" aptget remove libdb4.8 -s -o Debug::pkgDepCache::Marker=1

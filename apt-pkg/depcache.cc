@@ -1138,11 +1138,12 @@ bool pkgDepCache::MarkInstall_CollectDependencies(pkgCache::VerIterator const &P
    return true;
 }
 									/*}}}*/
-bool pkgDepCache::MarkInstall_RemoveConflictsIfNotUpgradeable(pkgCache::VerIterator const &PV, unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade) /*{{{*/
+bool pkgDepCache::MarkInstall_RemoveConflictsIfNotUpgradeable(pkgCache::VerIterator const &PV, unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade, bool const propagateProctected, bool const FromUser) /*{{{*/
 {
    /* Negative dependencies have no or-group
       If the dependency isn't versioned, we try if an upgrade might solve the problem.
       Otherwise we remove the offender if needed */
+   bool failedToRemoveSomething = false;
    for (auto const &D : toRemove)
    {
       std::unique_ptr<Version *[]> List(D.AllTargets());
@@ -1167,40 +1168,51 @@ bool pkgDepCache::MarkInstall_RemoveConflictsIfNotUpgradeable(pkgCache::VerItera
 	    toUpgrade.push_back(Pkg);
 	 else
 	 {
-	    if(DebugAutoInstall == true)
+	    if(DebugAutoInstall)
 	       std::clog << OutputInDepth(Depth) << " Removing: " << Pkg.Name() << " as upgrade is not an option for " << PV.ParentPkg().FullName() << "(" << PV.VerStr() << ")\n";
 	    if (not MarkDelete(Pkg, false, Depth + 1, false))
-	       return false;
-	    if (PkgState[PV.ParentPkg()->ID].Protect())
+	    {
+	       failedToRemoveSomething = true;
+	       if (not propagateProctected && not FromUser)
+		  break;
+	    }
+	    if (propagateProctected)
 	       MarkProtected(Pkg);
 	 }
       }
    }
    toRemove.clear();
-   return true;
+   return not failedToRemoveSomething;
 }
 									/*}}}*/
-bool pkgDepCache::MarkInstall_UpgradeOrRemoveConflicts(bool const propagateProctected, unsigned long Depth, bool const ForceImportantDeps, APT::PackageVector &toUpgrade) /*{{{*/
+bool pkgDepCache::MarkInstall_UpgradeOrRemoveConflicts(unsigned long Depth, bool const ForceImportantDeps, APT::PackageVector &toUpgrade, bool const propagateProctected, bool const FromUser) /*{{{*/
 {
+   bool failedToRemoveSomething = false;
    for (auto const &InstPkg : toUpgrade)
       if (not MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
       {
 	 if (DebugAutoInstall)
 	    std::clog << OutputInDepth(Depth) << " Removing: " << InstPkg.FullName() << " as upgrade is not possible\n";
 	 if (not MarkDelete(InstPkg, false, Depth + 1, false))
-	    return false;
-	 if (propagateProctected)
+	 {
+	    failedToRemoveSomething = true;
+	    if (not propagateProctected && not FromUser)
+	       break;
+	 }
+	 else if (propagateProctected)
 	    MarkProtected(InstPkg);
       }
    toUpgrade.clear();
-   return true;
+   return not failedToRemoveSomething;
 }
 									/*}}}*/
 bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, std::vector<pkgCache::DepIterator> &toInstall, APT::PackageVector *const toMoveAuto, bool const propagateProctected, bool const FromUser) /*{{{*/
 {
    auto const IsSatisfiedByInstalled = [&](auto const D) { return (DepState[D.ID] & DepInstall) == DepInstall; };
+   bool failedToInstallSomething = false;
    for (auto &&Dep : toInstall)
    {
+      auto const Copy = Dep;
       pkgDepCache::DepIterator Start, End;
       Dep.GlobOr(Start, End);
       if (std::any_of(Start, Dep, IsSatisfiedByInstalled))
@@ -1301,8 +1313,11 @@ bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsign
 	 foundSolution = true;
 	 break;
       }
+      if (DebugMarker && not foundSolution)
+	 std::clog << OutputInDepth(Depth+1) << APT::PrettyDep(this, Copy) << " can't be satisfied! (dep)\n";
       if (not foundSolution && IsCriticalDep)
       {
+	 failedToInstallSomething = true;
 	 if (not propagateProctected && not FromUser)
 	 {
 	    StateCache &State = PkgState[Pkg->ID];
@@ -1317,12 +1332,12 @@ bool pkgDepCache::MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsign
 	    AddStates(Pkg);
 	    Update(Pkg);
 	    AddSizes(Pkg);
+	    break;
 	 }
-	 return false;
       }
    }
    toInstall.clear();
-   return true;
+   return not failedToInstallSomething;
 }
 									/*}}}*/
 // DepCache::MarkInstall - Put the package in the install state		/*{{{*/
@@ -1359,6 +1374,8 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
       return false;
 
    bool const AutoSolve = AutoInst && _config->Find("APT::Solver", "internal") == "internal";
+   bool const failEarly = not P.Protect() && not FromUser;
+   bool hasFailed = false;
 
    std::vector<pkgCache::DepIterator> toInstall, toRemove;
    APT::PackageVector toUpgrade;
@@ -1370,15 +1387,19 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
       if (not MarkInstall_CollectDependencies(PV, toInstall, toRemove))
 	 return false;
 
-      if (not MarkInstall_RemoveConflictsIfNotUpgradeable(PV, Depth, toRemove, toUpgrade))
-	 return false;
+      if (not MarkInstall_RemoveConflictsIfNotUpgradeable(PV, Depth, toRemove, toUpgrade, P.Protect(), FromUser))
+      {
+	 if (failEarly)
+	    return false;
+	 hasFailed = true;
+      }
    }
 
    if (not FromUser && not MarkInstall_StateChange(Pkg, AutoInst, FromUser))
       return false;
 
    if (not AutoSolve)
-      return true;
+      return not hasFailed;
 
    if (DebugMarker)
       std::clog << OutputInDepth(Depth) << "MarkInstall " << APT::PrettyPkg(this, Pkg) << " FU=" << FromUser << '\n';
@@ -1402,8 +1423,12 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
       operator bool() noexcept { return already; }
    } propagateProctected{PkgState[Pkg->ID]};
 
-   if (not MarkInstall_UpgradeOrRemoveConflicts(propagateProctected, Depth, ForceImportantDeps, toUpgrade))
-      return false;
+   if (not MarkInstall_UpgradeOrRemoveConflicts(Depth, ForceImportantDeps, toUpgrade, propagateProctected, FromUser))
+   {
+      if (failEarly)
+	 return false;
+      hasFailed = true;
+   }
 
    bool const MoveAutoBitToDependencies = [&]() {
       VerIterator const PV = P.InstVerIter(*this);
@@ -1423,7 +1448,11 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
 
    APT::PackageVector toMoveAuto;
    if (not MarkInstall_InstallDependencies(Pkg, Depth, ForceImportantDeps, toInstall, MoveAutoBitToDependencies ? &toMoveAuto : nullptr, propagateProctected, FromUser))
-      return false;
+   {
+      if (failEarly)
+	 return false;
+      hasFailed = true;
+   }
 
    if (MoveAutoBitToDependencies)
    {
@@ -1438,7 +1467,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
 	 MarkAuto(InstPkg, false);
       }
    }
-   return true;
+   return not hasFailed;
 }
 									/*}}}*/
 // DepCache::IsInstallOk - check if it is ok to install this package	/*{{{*/
