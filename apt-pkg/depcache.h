@@ -368,6 +368,7 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
    inline StateCache &operator [](PkgIterator const &I) {return PkgState[I->ID];};
    inline StateCache &operator [](PkgIterator const &I) const {return PkgState[I->ID];};
    inline unsigned char &operator [](DepIterator const &I) {return DepState[I->ID];};
+   inline unsigned char const &operator [](DepIterator const &I) const {return DepState[I->ID];};
 
    /** \return A function identifying packages in the root set other
     *  than manually installed packages and essential packages, or \b
@@ -519,10 +520,7 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
 			unsigned long const Depth, bool const FromUser);
 
    APT_HIDDEN bool MarkInstall_StateChange(PkgIterator const &Pkg, bool AutoInst, bool FromUser);
-   APT_HIDDEN bool MarkInstall_CollectDependencies(pkgCache::VerIterator const &PV, std::vector<pkgCache::DepIterator> &toInstall, std::vector<pkgCache::DepIterator> &toRemove);
-   APT_HIDDEN bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgCache::VerIterator const &PV, unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade, bool const propagateProtected, bool const FromUser);
-   APT_HIDDEN bool MarkInstall_UpgradeOrRemoveConflicts(unsigned long Depth, bool const ForceImportantDeps, APT::PackageVector &toUpgrade, bool const propagateProtected, bool const FromUser);
-   APT_HIDDEN bool MarkInstall_InstallDependencies(PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, std::vector<pkgCache::DepIterator> &toInstall, APT::PackageVector *const toMoveAuto, bool const propagateProtected, bool const FromUser);
+   APT_HIDDEN bool MarkInstall_Discard(PkgIterator const &Pkg);
 };
 
 #endif
