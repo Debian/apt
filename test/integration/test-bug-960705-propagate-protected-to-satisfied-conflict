@@ -1,0 +1,31 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'runit-init' 'all' '1' 'Conflicts: systemd-sysv, sysvinit-core, runit-init'
+# note how the rest do not know of runit-init
+insertpackage 'unstable' 'sysvinit-core' 'all' '1' 'Conflicts: systemd-sysv, sysvinit-core'
+insertpackage 'unstable,installed' 'systemd-sysv' 'all' '1' 'Conflicts: systemd-sysv, sysvinit-core'
+insertpackage 'unstable,installed' 'init' 'all' '1' 'Pre-Depends: systemd-sysv | sysvinit-core
+Important: yes'
+
+setupaptarchive
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  init systemd-sysv
+The following NEW packages will be installed:
+  runit-init
+WARNING: The following essential packages will be removed.
+This should NOT be done unless you know exactly what you are doing!
+  init systemd-sysv (due to init)
+0 upgraded, 1 newly installed, 2 to remove and 0 not upgraded.
+Remv init [1]
+Remv systemd-sysv [1]
+Inst runit-init (1 unstable [all])
+Conf runit-init (1 unstable [all])" apt install runit-init -s

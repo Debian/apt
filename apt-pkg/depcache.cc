@@ -1129,6 +1129,7 @@ bool pkgDepCache::MarkInstall_Discard(pkgCache::PkgIterator const &Pkg)	/*{{{*/
 									/*}}}*/
 static bool MarkInstall_CollectDependencies(pkgDepCache const &Cache, pkgCache::VerIterator const &PV, std::vector<pkgCache::DepIterator> &toInstall, std::vector<pkgCache::DepIterator> &toRemove) /*{{{*/
 {
+   auto const propagateProctected = Cache[PV.ParentPkg()].Protect();
    for (auto Dep = PV.DependsList(); not Dep.end();)
    {
       auto const Start = Dep;
@@ -1140,7 +1141,7 @@ static bool MarkInstall_CollectDependencies(pkgDepCache const &Cache, pkgCache::
 	 if ((Cache[Dep] & pkgDepCache::DepInstall) == pkgDepCache::DepInstall)
 	    foundSolution = true;
       }
-      if (foundSolution)
+      if (foundSolution && (not propagateProctected || not Start.IsNegative()))
 	 continue;
 
       /* Check if this dep should be consider for install.
@@ -1160,47 +1161,98 @@ static bool MarkInstall_CollectDependencies(pkgDepCache const &Cache, pkgCache::
    return true;
 }
 									/*}}}*/
+static APT::VersionVector getAllPossibleSolutions(pkgDepCache &Cache, pkgCache::DepIterator Start, pkgCache::DepIterator const &End, APT::CacheSetHelper::VerSelector const selector, bool const sorted) /*{{{*/
+{
+      pkgCacheFile CacheFile{&Cache};
+      APT::VersionVector toUpgrade, toNewInstall;
+      do
+      {
+	 APT::VersionVector verlist = APT::VersionVector::FromDependency(CacheFile, Start, selector);
+	 if (not sorted)
+	 {
+	    std::move(verlist.begin(), verlist.end(), std::back_inserter(toUpgrade));
+	    continue;
+	 }
+	 std::sort(verlist.begin(), verlist.end(), CompareProviders{Cache, Start});
+	 for (auto &&Ver : verlist)
+	 {
+	    auto P = Ver.ParentPkg();
+	    if (P->CurrentVer != 0)
+	       toUpgrade.emplace_back(std::move(Ver));
+	    else
+	       toNewInstall.emplace_back(std::move(Ver));
+	 }
+      } while (Start++ != End);
+      std::move(toNewInstall.begin(), toNewInstall.end(), std::back_inserter(toUpgrade));
+  return toUpgrade;
+}
+									/*}}}*/
+static bool MarkInstall_MarkDeleteForNotUpgradeable(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long const Depth, pkgCache::PkgIterator const &Pkg, bool const propagateProctected)/*{{{*/
+{
+   auto &State = Cache[Pkg];
+   if (not State.Delete())
+   {
+      if(DebugAutoInstall)
+	 std::clog << OutputInDepth(Depth) << " Removing: " << Pkg.Name() << " as upgrade is not an option for " << PV.ParentPkg().FullName() << " (" << PV.VerStr() << ")\n";
+      if (not Cache.MarkDelete(Pkg, false, Depth + 1, false))
+	 return false;
+   }
+   if (propagateProctected)
+   {
+      State.CandidateVer = nullptr;
+      Cache.MarkProtected(Pkg);
+   }
+   return true;
+}
+									/*}}}*/
 static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade, bool const propagateProctected, bool const FromUser) /*{{{*/
 {
    /* Negative dependencies have no or-group
-      If the dependency isn't versioned, we try if an upgrade might solve the problem.
-      Otherwise we remove the offender if needed */
+      If the candidate is effected try to keep current and discard candidate
+      If the current is effected try upgrading to candidate or remove it */
    bool failedToRemoveSomething = false;
    for (auto const &D : toRemove)
    {
-      std::unique_ptr<pkgCache::Version *[]> List(D.AllTargets());
-      pkgCache::PkgIterator TrgPkg = D.TargetPkg();
-      for (pkgCache::Version **I = List.get(); *I != 0; I++)
+      for (auto const &Ver : getAllPossibleSolutions(Cache, D, D, APT::CacheSetHelper::CANDIDATE, true))
       {
-	 pkgCache::VerIterator const Ver(Cache, *I);
-	 pkgCache::PkgIterator const Pkg = Ver.ParentPkg();
-
-	 auto const PkgInstallVer = Cache[Pkg].InstallVer;
-	 /* The List includes all packages providing this dependency,
-	    even providers which are not installed, so skip them. */
-	 if (PkgInstallVer == 0)
-	    continue;
-
-	 // Ignore negative dependencies on versions that are not going to get installed
-	 if (PkgInstallVer != *I)
-	    continue;
-
-	 if ((D->Version != 0 || TrgPkg != Pkg) &&
-	     Cache[Pkg].CandidateVer != PkgInstallVer &&
-	     Cache[Pkg].CandidateVer != *I)
-	    toUpgrade.push_back(Pkg);
-	 else
+	 auto const Pkg = Ver.ParentPkg();
+	 auto &State = Cache[Pkg];
+	 if (Pkg.CurrentVer() != Ver)
 	 {
-	    if(DebugAutoInstall)
-	       std::clog << OutputInDepth(Depth) << " Removing: " << Pkg.Name() << " as upgrade is not an option for " << PV.ParentPkg().FullName() << "(" << PV.VerStr() << ")\n";
-	    if (not Cache.MarkDelete(Pkg, false, Depth + 1, false))
+	    if (State.Install() && not Cache.MarkKeep(Pkg, false, false, Depth))
 	    {
 	       failedToRemoveSomething = true;
 	       if (not propagateProctected && not FromUser)
 		  break;
 	    }
-	    if (propagateProctected)
-	       Cache.MarkProtected(Pkg);
+	    else if (propagateProctected)
+	    {
+	       if (Pkg->CurrentVer != 0)
+		  State.CandidateVer = Pkg.CurrentVer();
+	       else
+		  State.CandidateVer = nullptr;
+	       if (Pkg->CurrentVer == 0)
+		  Cache.MarkProtected(Pkg);
+	    }
+	 }
+	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProctected))
+	 {
+	    failedToRemoveSomething = true;
+	    if (not propagateProctected && not FromUser)
+	       break;
+	 }
+      }
+      for (auto const &Ver : getAllPossibleSolutions(Cache, D, D, APT::CacheSetHelper::INSTALLED, true))
+      {
+	 auto const Pkg = Ver.ParentPkg();
+	 auto &State = Cache[Pkg];
+	 if (State.CandidateVer != Ver && State.CandidateVer != nullptr)
+	    toUpgrade.push_back(Pkg);
+	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProctected))
+	 {
+	    failedToRemoveSomething = true;
+	    if (not propagateProctected && not FromUser)
+	       break;
 	 }
       }
    }
@@ -1212,7 +1264,7 @@ static bool MarkInstall_UpgradeOrRemoveConflicts(pkgDepCache &Cache, bool const 
 {
    bool failedToRemoveSomething = false;
    for (auto const &InstPkg : toUpgrade)
-      if (not Cache.MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
+      if (not Cache[InstPkg].Install() && not Cache.MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
       {
 	 if (DebugAutoInstall)
 	    std::clog << OutputInDepth(Depth) << " Removing: " << InstPkg.FullName() << " as upgrade is not possible\n";
