@@ -1,0 +1,45 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+# without requires-foo it is sadly not as clear cut what should happen
+insertpackage 'unstable' 'foobar' 'all' '1' 'Depends: foo | bar, requires-foo, conflicts-foo | fine-foo'
+insertpackage 'unstable' 'foo' 'all' '1' 'Depends: foo-depends'
+insertpackage 'unstable' 'foo-depends' 'all' '1'
+insertpackage 'unstable' 'bar' 'all' '1'
+insertpackage 'unstable' 'requires-foo' 'all' '1' 'Depends: foo'
+insertpackage 'unstable' 'conflicts-foo' 'all' '1' 'Conflicts: foo'
+insertpackage 'unstable' 'fine-foo' 'all' '1'
+
+
+setupaptarchive
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+  Installing foo:amd64 as Depends of foobar:amd64
+    Installing foo-depends:amd64 as Depends of foo:amd64
+  Installing requires-foo:amd64 as Depends of foobar:amd64
+  Installing conflicts-foo:amd64 as Depends of foobar:amd64
+  Installing fine-foo:amd64 as Depends of foobar:amd64
+Starting pkgProblemResolver with broken count: 0
+Starting 2 pkgProblemResolver with broken count: 0
+Done
+The following additional packages will be installed:
+  fine-foo foo foo-depends requires-foo
+The following NEW packages will be installed:
+  fine-foo foo foo-depends foobar requires-foo
+0 upgraded, 5 newly installed, 0 to remove and 0 not upgraded.
+Inst fine-foo (1 unstable [all])
+Inst foo-depends (1 unstable [all])
+Inst foo (1 unstable [all])
+Inst requires-foo (1 unstable [all])
+Inst foobar (1 unstable [all])
+Conf fine-foo (1 unstable [all])
+Conf foo-depends (1 unstable [all])
+Conf foo (1 unstable [all])
+Conf requires-foo (1 unstable [all])
+Conf foobar (1 unstable [all])" apt install foobar -so Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::AutoInstall=1

@@ -1074,6 +1074,9 @@ struct CompareProviders							/*{{{*/
 bool pkgDepCache::MarkInstall_StateChange(pkgCache::PkgIterator const &Pkg, bool AutoInst, bool FromUser) /*{{{*/
 {
    auto &P = (*this)[Pkg];
+   if (P.Protect() && P.InstallVer == P.CandidateVer)
+      return true;
+
    P.iFlags &= ~pkgDepCache::AutoKept;
 
    /* Target the candidate version and remove the autoflag. We reset the
@@ -1141,7 +1144,7 @@ static bool MarkInstall_CollectDependencies(pkgDepCache const &Cache, pkgCache::
 	 if ((Cache[Dep] & pkgDepCache::DepInstall) == pkgDepCache::DepInstall)
 	    foundSolution = true;
       }
-      if (foundSolution && (not propagateProctected || not Start.IsNegative()))
+      if (foundSolution && not propagateProctected)
 	 continue;
 
       /* Check if this dep should be consider for install.
@@ -1290,9 +1293,26 @@ static bool MarkInstall_InstallDependencies(pkgDepCache &Cache, bool const Debug
       auto const Copy = Dep;
       pkgCache::DepIterator Start, End;
       Dep.GlobOr(Start, End);
-      if (std::any_of(Start, Dep, IsSatisfiedByInstalled))
+      bool foundSolution = std::any_of(Start, Dep, IsSatisfiedByInstalled);
+      if (foundSolution && not propagateProctected)
 	 continue;
       bool const IsCriticalDep = Start.IsCritical();
+      if (foundSolution)
+      {
+	 // try propagating protected to this satisfied dependency
+	 if (not IsCriticalDep)
+	    continue;
+	 auto const possibleSolutions = getAllPossibleSolutions(Cache, Start, End, APT::CacheSetHelper::CANDANDINST, false);
+	 if (possibleSolutions.size() != 1)
+	    continue;
+	 auto const InstPkg = possibleSolutions.begin().ParentPkg();
+	 if (Cache[InstPkg].Protect())
+	    continue;
+	 Cache.MarkProtected(InstPkg);
+	 if (not Cache.MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps))
+	    failedToInstallSomething = true;
+	 continue;
+      }
 
       /* Check if any ImportantDep() (but not Critical) were added
        * since we installed the package.  Also check for deps that
@@ -1345,35 +1365,16 @@ static bool MarkInstall_InstallDependencies(pkgDepCache &Cache, bool const Debug
 	 }
       }
 
-      pkgCacheFile CacheFile{&Cache};
-      APT::PackageVector toUpgrade, toNewInstall;
-      do
+      auto const possibleSolutions = getAllPossibleSolutions(Cache, Start, End, APT::CacheSetHelper::CANDIDATE, true);
+      for (auto const &InstVer : possibleSolutions)
       {
-	 if ((Cache[Start] & pkgDepCache::DepCVer) != pkgDepCache::DepCVer)
-	    continue;
-
-	 APT::VersionVector verlist = APT::VersionVector::FromDependency(CacheFile, Start, APT::CacheSetHelper::CANDIDATE);
-	 std::sort(verlist.begin(), verlist.end(), CompareProviders{Cache, Start});
-	 for (auto const &Ver : verlist)
-	 {
-	    auto P = Ver.ParentPkg();
-	    if (P->CurrentVer != 0)
-	       toUpgrade.emplace_back(std::move(P));
-	    else
-	       toNewInstall.emplace_back(std::move(P));
-	 }
-      } while (Start++ != End);
-
-      std::move(toNewInstall.begin(), toNewInstall.end(), std::back_inserter(toUpgrade));
-      bool foundSolution = false;
-      for (auto const &InstPkg : toUpgrade)
-      {
+	 auto const InstPkg = InstVer.ParentPkg();
 	 if (Cache[InstPkg].CandidateVer == nullptr || Cache[InstPkg].CandidateVer == InstPkg.CurrentVer())
 	    continue;
 	 if (DebugAutoInstall)
 	    std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.FullName()
 		      << " as " << End.DepType() << " of " << Pkg.FullName() << '\n';
-	 if (propagateProctected && IsCriticalDep && toUpgrade.size() == 1)
+	 if (propagateProctected && IsCriticalDep && possibleSolutions.size() == 1)
 	 {
 	    if (not Cache.MarkInstall(InstPkg, false, Depth + 1, false, ForceImportantDeps))
 	       continue;
@@ -1415,15 +1416,17 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
    if (P.CandidateVer == 0)
       return false;
 
-   /* Check that it is not already marked for install and that it can be 
-      installed */
-   if ((not P.InstPolicyBroken() && not P.InstBroken()) &&
-       (P.Mode == ModeInstall ||
-	P.CandidateVer == (Version *)Pkg.CurrentVer()))
+   // Check that it is not already marked for install and that it can be installed
+   if (not P.Protect() && not P.InstPolicyBroken() && not P.InstBroken())
    {
-      if (P.CandidateVer == (Version *)Pkg.CurrentVer() && P.InstallVer == 0)
-	 return MarkKeep(Pkg, false, FromUser, Depth + 1);
-      return true;
+      if (P.CandidateVer == Pkg.CurrentVer())
+      {
+	 if (P.InstallVer == 0)
+	    return MarkKeep(Pkg, false, FromUser, Depth + 1);
+	 return true;
+      }
+      else if (P.Mode == ModeInstall)
+	 return true;
    }
 
    // check if we are allowed to install the package

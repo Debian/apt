@@ -59,12 +59,10 @@ The following package was automatically installed and is no longer required:
   libvtk5.4
 Use '$AUTOREMOVE' to remove it.
 The following additional packages will be installed:
-  libavcodec52 libopenal-dev libvtk5.4
+  libavcodec52 libopenal-dev
 The following NEW packages will be installed:
   dummy-archive libavcodec52 libopenal-dev
-The following packages will be upgraded:
-  libvtk5.4
-1 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+0 upgraded, 3 newly installed, 0 to remove and 1 not upgraded.
 After this operation, 129 kB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation." aptget install dummy-archive --trivial-only
 testequal "Reading package lists...
@@ -73,12 +71,10 @@ Reading state information...
 1 package was automatically installed and is no longer required.
 Use '$AUTOREMOVE' to remove it.
 The following additional packages will be installed:
-  libavcodec52 libopenal-dev libvtk5.4
+  libavcodec52 libopenal-dev
 The following NEW packages will be installed:
   dummy-archive libavcodec52 libopenal-dev
-The following packages will be upgraded:
-  libvtk5.4
-1 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+0 upgraded, 3 newly installed, 0 to remove and 1 not upgraded.
 After this operation, 129 kB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation." aptget install dummy-archive --trivial-only -o APT::Get::HideAutoRemove=small
 
@@ -88,12 +84,11 @@ rm -f rootdir/var/lib/apt/extended_states
 CONFLICTING='Reading package lists...
 Building dependency tree...
   MarkInstall dummy-archive:i386 < none -> 0.invalid.0 @un puN Ib > FU=1
-    MarkInstall libvtk5-dev:i386 < none -> 5.4.2-8 @un uN Ib > FU=0
-      MarkInstall libvtk5.4:i386 < none -> 5.4.2-8 @un uN > FU=0
-  MarkKeep libvtk5-dev:i386 < none -> 5.4.2-8 @un uN > FU=0
-  MarkKeep libvtk5-dev:i386 < none -> 5.4.2-8 @un uN > FU=0
+    MarkInstall libavcodec52:i386 < none -> 4:0.5.2-6 @un puN > FU=0
+    MarkInstall libopenal-dev:i386 < none -> 1:1.12.854-2 @un puN > FU=0
+  Ignore MarkGarbage of libopenal-dev:i386 < none -> 1:1.12.854-2 @un puN > as its mode (Install) is protected
   Ignore MarkGarbage of libavcodec52:i386 < none -> 4:0.5.2-6 @un puN > as its mode (Install) is protected
-  MarkDelete libvtk5.4:i386 < none -> 5.4.2-8 @un ugN > FU=0
+  Ignore MarkGarbage of libopenal-dev:i386 < none -> 1:1.12.854-2 @un puN > as its mode (Install) is protected
   Ignore MarkGarbage of libavcodec52:i386 < none -> 4:0.5.2-6 @un puN > as its mode (Install) is protected
 The following additional packages will be installed:
   libavcodec52 libopenal-dev
