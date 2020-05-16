@@ -583,74 +583,54 @@ bool VersionContainerInterface::FromDependency(VersionContainerInterface * const
 					       CacheSetHelper &helper)
 {
 	bool found = false;
-	switch(selector) {
-	case CacheSetHelper::ALL:
-	{
-		pkgCache::PkgIterator const T = D.TargetPkg();
-		for (pkgCache::VerIterator Ver = T.VersionList(); Ver.end() == false; ++Ver)
+	auto const insertVersion = [&](pkgCache::PkgIterator const &TP, pkgCache::VerIterator const &TV) {
+		if (not TV.end() && not D.IsIgnorable(TP) && D.IsSatisfied(TV))
 		{
-		   if (D.IsSatisfied(Ver) == true)
+		   vci->insert(TV);
+		   found = true;
+		}
+	};
+	pkgCache::PkgIterator const T = D.TargetPkg();
+	auto const insertAllTargetVersions = [&](auto const &getTargetVersion) {
+		insertVersion(T, getTargetVersion(T));
+		for (auto Prv = T.ProvidesList(); not Prv.end(); ++Prv)
+		{
+		   if (D.IsIgnorable(Prv))
+		      continue;
+		   auto const OP = Prv.OwnerPkg();
+		   auto const TV = getTargetVersion(OP);
+		   if (Prv.OwnerVer() == TV && D.IsSatisfied(TV))
 		   {
-		      vci->insert(Ver);
-		      found = true;
-		   }
-		   for (pkgCache::PrvIterator Prv = T.ProvidesList(); Prv.end() != true; ++Prv)
-		   {
-		      pkgCache::VerIterator const V = Prv.OwnerVer();
-		      if (unlikely(V.end() == true) || D.IsSatisfied(Prv) == false)
-			 continue;
-		      vci->insert(V);
+		      vci->insert(TV);
 		      found = true;
 		   }
 		}
 		return found;
-	}
+	};
+	switch(selector) {
+	case CacheSetHelper::ALL:
+		for (auto Ver = T.VersionList(); not Ver.end(); ++Ver)
+		{
+		   insertVersion(T, Ver);
+		   for (pkgCache::PrvIterator Prv = T.ProvidesList(); not Prv.end(); ++Prv)
+		      if (not D.IsIgnorable(Prv))
+		      {
+			 vci->insert(Prv.OwnerVer());
+			 found = true;
+		      }
+		}
+		return found;
 	case CacheSetHelper::CANDANDINST:
-	{
 		found = FromDependency(vci, Cache, D, CacheSetHelper::CANDIDATE, helper);
 		found &= FromDependency(vci, Cache, D, CacheSetHelper::INSTALLED, helper);
 		return found;
-	}
 	case CacheSetHelper::CANDIDATE:
-	{
-		pkgCache::PkgIterator const T = D.TargetPkg();
-		pkgCache::VerIterator const Cand = Cache[T].CandidateVerIter(Cache);
-		if (Cand.end() == false && D.IsSatisfied(Cand) == true)
-		{
-		   vci->insert(Cand);
-		   found = true;
-		}
-		for (pkgCache::PrvIterator Prv = T.ProvidesList(); Prv.end() != true; ++Prv)
-		{
-		   pkgCache::VerIterator const V = Prv.OwnerVer();
-		   pkgCache::VerIterator const Cand = Cache[Prv.OwnerPkg()].CandidateVerIter(Cache);
-		   if (Cand.end() == true || V != Cand || D.IsSatisfied(Prv) == false)
-		      continue;
-		   vci->insert(Cand);
-		   found = true;
-		}
-		return found;
-	}
+		// skip looking if we have already cached that we will find nothing
+		if (((Cache[D] & pkgDepCache::DepCVer) == 0) != D.IsNegative())
+		   return found;
+		return insertAllTargetVersions([&](pkgCache::PkgIterator const &OP) { return Cache[OP].CandidateVerIter(Cache); });
 	case CacheSetHelper::INSTALLED:
-	{
-		pkgCache::PkgIterator const T = D.TargetPkg();
-		pkgCache::VerIterator const Cand = T.CurrentVer();
-		if (Cand.end() == false && D.IsSatisfied(Cand) == true)
-		{
-		   vci->insert(Cand);
-		   found = true;
-		}
-		for (pkgCache::PrvIterator Prv = T.ProvidesList(); Prv.end() != true; ++Prv)
-		{
-		   pkgCache::VerIterator const V = Prv.OwnerVer();
-		   pkgCache::VerIterator const Cand = Prv.OwnerPkg().CurrentVer();
-		   if (Cand.end() == true || V != Cand || D.IsSatisfied(Prv) == false)
-		      continue;
-		   vci->insert(Cand);
-		   found = true;
-		}
-		return found;
-	}
+		return insertAllTargetVersions([&](pkgCache::PkgIterator const &OP) { return OP.CurrentVer(); });
 	case CacheSetHelper::CANDINST:
 		return FromDependency(vci, Cache, D, CacheSetHelper::CANDIDATE, helper) ||
 		   FromDependency(vci, Cache, D, CacheSetHelper::INSTALLED, helper);
@@ -658,25 +638,7 @@ bool VersionContainerInterface::FromDependency(VersionContainerInterface * const
 		return FromDependency(vci, Cache, D, CacheSetHelper::INSTALLED, helper) ||
 		   FromDependency(vci, Cache, D, CacheSetHelper::CANDIDATE, helper);
 	case CacheSetHelper::NEWEST:
-	{
-		pkgCache::PkgIterator const T = D.TargetPkg();
-		pkgCache::VerIterator const Cand = T.VersionList();
-		if (Cand.end() == false && D.IsSatisfied(Cand) == true)
-		{
-		   vci->insert(Cand);
-		   found = true;
-		}
-		for (pkgCache::PrvIterator Prv = T.ProvidesList(); Prv.end() != true; ++Prv)
-		{
-		   pkgCache::VerIterator const V = Prv.OwnerVer();
-		   pkgCache::VerIterator const Cand = Prv.OwnerPkg().VersionList();
-		   if (Cand.end() == true || V != Cand || D.IsSatisfied(Prv) == false)
-		      continue;
-		   vci->insert(Cand);
-		   found = true;
-		}
-		return found;
-	}
+		return insertAllTargetVersions([&](pkgCache::PkgIterator const &OP) { return OP.VersionList(); });
 	case CacheSetHelper::RELEASE:
 	case CacheSetHelper::VERSIONNUMBER:
 		// both make no sense here, so always false
