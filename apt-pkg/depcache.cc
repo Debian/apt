@@ -983,13 +983,16 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
 									/*}}}*/
 struct CompareProviders							/*{{{*/
 {
+   pkgDepCache const &Cache;
    pkgCache::PkgIterator const Pkg;
-   explicit CompareProviders(pkgCache::DepIterator const &Dep) : Pkg(Dep.TargetPkg()) {};
-   //bool operator() (APT::VersionList::iterator const &AV, APT::VersionList::iterator const &BV)
+   explicit CompareProviders(pkgDepCache const &pCache, pkgCache::DepIterator const &Dep) : Cache{pCache}, Pkg{Dep.TargetPkg()} {}
    bool operator() (pkgCache::VerIterator const &AV, pkgCache::VerIterator const &BV)
    {
       pkgCache::PkgIterator const A = AV.ParentPkg();
       pkgCache::PkgIterator const B = BV.ParentPkg();
+      // Deal with protected first as if they don't work we usually have a problem
+      if (Cache[A].Protect() != Cache[B].Protect())
+	 return Cache[A].Protect();
       // Prefer MA:same packages if other architectures for it are installed
       if ((AV->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same ||
 	  (BV->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
@@ -1298,7 +1301,7 @@ static bool MarkInstall_InstallDependencies(pkgDepCache &Cache, bool const Debug
 	    continue;
 
 	 APT::VersionVector verlist = APT::VersionVector::FromDependency(CacheFile, Start, APT::CacheSetHelper::CANDIDATE);
-	 std::sort(verlist.begin(), verlist.end(), CompareProviders{Start});
+	 std::sort(verlist.begin(), verlist.end(), CompareProviders{Cache, Start});
 	 for (auto const &Ver : verlist)
 	 {
 	    auto P = Ver.ParentPkg();
