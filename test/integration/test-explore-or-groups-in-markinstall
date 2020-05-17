@@ -126,12 +126,12 @@ testfailureequal "$BADSOLVETEXT
 The following packages have unmet dependencies:
  bad-level0 : Depends: unknown but it is not installable
  bad-upgrade-level0 : Depends: unknown but it is not installable
-E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages." apt install bad-upgrade-level1 -s
+E: Unable to correct problems, you have held broken packages." apt install bad-upgrade-level1 -s
 testfailureequal "$BADSOLVETEXT
 The following packages have unmet dependencies:
  bad-conflict-level0 : Conflicts: bad-conflict-level2 but 1 is to be installed
  bad-level0 : Depends: unknown but it is not installable
-E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages." apt install bad-conflict-level2 -s
+E: Unable to correct problems, you have held broken packages." apt install bad-conflict-level2 -s
 
 if $TEST_WITH_APTITUDE; then
 	testsuccesstailequal 6 'The following packages have been kept back:
