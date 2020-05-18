@@ -14,9 +14,7 @@
 
 TEST(SourceListTest,ParseFileDeb822)
 {
-   FileFd fd;
-   std::string tempfile;
-   createTemporaryFile("parsefiledeb822.XXXXXX.sources", fd, &tempfile,
+   auto const file = createTemporaryFile("parsefiledeb822.XXXXXX.sources",
       "Types: deb\n"
       "URIs: http://ftp.debian.org/debian\n"
       "Suites: stable\n"
@@ -28,12 +26,8 @@ TEST(SourceListTest,ParseFileDeb822)
       "URIs: http://ftp.debian.org/debian\n"
       "Suites: unstable\n"
       "Components: main non-free\n");
-   fd.Close();
 
    pkgSourceList sources;
-   EXPECT_EQ(true, sources.Read(tempfile));
+   EXPECT_TRUE(sources.Read(file.Name()));
    EXPECT_EQ(2u, sources.size());
-
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
 }

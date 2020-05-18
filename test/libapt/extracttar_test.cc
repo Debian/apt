@@ -12,24 +12,32 @@ class Stream : public pkgDirStream
    public:
     int count;
     Stream () { count = 0; }
-    virtual bool DoItem(Item &Itm,int &Fd) { (void)Itm; (void)Fd; count++; return true; }
-    virtual bool Fail(Item &Itm,int Fd) { (void)Itm; (void)Fd; return true; }
-    virtual bool FinishedFile(Item &Itm,int Fd) { (void)Itm; (void)Fd; return true; }
-    virtual bool Process(Item &Itm,const unsigned char * Data, unsigned long Size,unsigned long Pos) { (void)Itm; (void) Data; (void) Size; (void) Pos; return true; }
-    virtual ~Stream() {}
+    bool DoItem(Item &Itm,int &Fd) APT_OVERRIDE { (void)Itm; (void)Fd; count++; return true; }
+    bool Fail(Item &Itm,int Fd) APT_OVERRIDE { (void)Itm; (void)Fd; return true; }
+    bool FinishedFile(Item &Itm,int Fd) APT_OVERRIDE { (void)Itm; (void)Fd; return true; }
+    ~Stream() {}
 };
 
 TEST(ExtractTar, ExtractTar)
 {
-    EXPECT_EQ(system("tar c /etc/passwd 2>/dev/null | gzip > tar.tgz"), 0);
+   FileFd tgz;
+   ASSERT_NE(nullptr, GetTempFile("extracttar", false, &tgz));
+   ASSERT_TRUE(tgz.Close());
+   ASSERT_FALSE(tgz.Name().empty());
+   // FIXME: We should do the right thing… but its a test and nobody will ever…
+   // Proposal: The first one who sees this assert fail will have to write a patch.
+   ASSERT_EQ(std::string::npos, tgz.Name().find('\''));
+   EXPECT_EQ(0, system(("tar c /etc/passwd 2>/dev/null | gzip > " + tgz.Name()).c_str()));
 
-    FileFd fd("tar.tgz", FileFd::ReadOnly);
-    unlink("tar.tgz");
+    FileFd fd(tgz.Name(), FileFd::ReadOnly);
+    RemoveFile("ExtractTarTest", tgz.Name());
+    ASSERT_TRUE(fd.IsOpen());
     ExtractTar tar(fd, -1, "gzip");
 
     // Run multiple times, because we want to check not only that extraction
     // works, but also that it works multiple times (important for python-apt)
     for (int i = 0; i < 5; i++) {
+       SCOPED_TRACE(i);
         Stream stream;
         fd.Seek(0);
         tar.Go(stream);

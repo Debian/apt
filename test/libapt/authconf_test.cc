@@ -20,7 +20,7 @@ TEST(NetRCTest, Parsing)
    EXPECT_EQ("file.not", U.Host);
    EXPECT_EQ("/open", U.Path);
 
-   createTemporaryFile("doublesignedfile", fd, nullptr, R"apt(
+   openTemporaryFile("doublesignedfile", fd, R"apt(
 machine example.netter login bar password foo
 machine example.net login foo password bar
 
@@ -138,7 +138,7 @@ machine socks5h://example.last/debian login debian password rules)apt");
 TEST(NetRCTest, BadFileNoMachine)
 {
    FileFd fd;
-   createTemporaryFile("doublesignedfile", fd, nullptr, R"apt(
+   openTemporaryFile("doublesignedfile", fd, R"apt(
 foo example.org login foo1 password bar
 machin example.org login foo2 password bar
 machine2 example.org login foo3 password bar
@@ -152,7 +152,7 @@ machine2 example.org login foo3 password bar
 TEST(NetRCTest, BadFileEndsMachine)
 {
    FileFd fd;
-   createTemporaryFile("doublesignedfile", fd, nullptr, R"apt(
+   openTemporaryFile("doublesignedfile", fd, R"apt(
 machine example.org login foo1 password bar
 machine)apt");
 
@@ -176,7 +176,7 @@ machine)apt");
 TEST(NetRCTest, BadFileEndsLogin)
 {
    FileFd fd;
-   createTemporaryFile("doublesignedfile", fd, nullptr, R"apt(
+   openTemporaryFile("doublesignedfile", fd, R"apt(
 machine example.org login foo1 password bar
 machine example.net login)apt");
 
@@ -200,7 +200,7 @@ machine example.net login)apt");
 TEST(NetRCTest, BadFileEndsPassword)
 {
    FileFd fd;
-   createTemporaryFile("doublesignedfile", fd, nullptr, R"apt(
+   openTemporaryFile("doublesignedfile", fd, R"apt(
 machine example.org login foo1 password bar
 machine example.net password)apt");
 
@@ -225,7 +225,7 @@ machine example.net password)apt");
 TEST(NetRCTest, MatchesOnlyHTTPS)
 {
    FileFd fd;
-   createTemporaryFile("doublesignedfile", fd, nullptr, R"apt(
+   openTemporaryFile("doublesignedfile", fd, R"apt(
 machine https.example login foo1 password bar
 machine http://http.example login foo1 password bar
 )apt");

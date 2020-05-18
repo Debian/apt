@@ -198,9 +198,8 @@ TEST(ConfigurationTest,Merge)
 TEST(ConfigurationTest, Parsing)
 {
    Configuration Cnf;
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("doublesignedfile", fd, &tempfile, R"apt(
+   {
+      auto const file = createTemporaryFile("doublesignedfile", R"apt(
 SimpleOption "true";
 /* SimpleOption "false"; */
 Answer::Simple "42";
@@ -213,9 +212,8 @@ List::Option2 { "Multi";
 }; Trailing "true";
 /* Commented::Out "true"; */
 )apt");
-   EXPECT_TRUE(ReadConfigFile(Cnf, tempfile));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
+      EXPECT_TRUE(ReadConfigFile(Cnf, file.Name()));
+   }
    EXPECT_TRUE(Cnf.FindB("SimpleOption"));
    EXPECT_EQ(42, Cnf.FindI("Answer::Simple"));
    EXPECT_TRUE(Cnf.Exists("List::Option"));

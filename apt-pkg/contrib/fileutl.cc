@@ -3150,9 +3150,7 @@ FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * co
 }
 FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * const TmpFd, bool Buffered)
 {
-   char fn[512];
-   FileFd * const Fd = TmpFd == nullptr ? new FileFd() : TmpFd;
-
+   std::string fn;
    std::string const tempdir = GetTempDir();
    int fd = -1;
 #ifdef O_TMPFILE
@@ -3161,21 +3159,35 @@ FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * co
    if (fd < 0)
 #endif
    {
-      snprintf(fn, sizeof(fn), "%s/%s.XXXXXX", tempdir.c_str(), Prefix.c_str());
-      fd = mkstemp(fn);
-      if (ImmediateUnlink)
-	 unlink(fn);
+      auto const suffix = Prefix.find(".XXXXXX.");
+      std::vector<char> buffer(tempdir.length() + 1 + Prefix.length() + (suffix == std::string::npos ? 7 : 0) + 1, '\0');
+      if (suffix != std::string::npos)
+      {
+	 if (snprintf(buffer.data(), buffer.size(), "%s/%s", tempdir.c_str(), Prefix.c_str()) > 0)
+	 {
+	    ssize_t const suffixlen = (buffer.size() - 1) - (tempdir.length() + 1 + suffix + 7);
+	    if (likely(suffixlen > 0))
+	       fd = mkstemps(buffer.data(), suffixlen);
+	 }
+      }
+      else
+      {
+	 if (snprintf(buffer.data(), buffer.size(), "%s/%s.XXXXXX", tempdir.c_str(), Prefix.c_str()) > 0)
+	    fd = mkstemp(buffer.data());
+      }
+      fn.assign(buffer.data(), buffer.size() - 1);
+      if (ImmediateUnlink && fd != -1)
+	 unlink(fn.c_str());
    }
    if (fd < 0)
    {
-      _error->Errno("GetTempFile",_("Unable to mkstemp %s"), fn);
-      if (TmpFd == nullptr)
-	 delete Fd;
+      _error->Errno("GetTempFile",_("Unable to mkstemp %s"), fn.c_str());
       return nullptr;
    }
-   if (!Fd->OpenDescriptor(fd, FileFd::ReadWrite | (Buffered ? FileFd::BufferedWrite : 0), FileFd::None, true))
+   FileFd * const Fd = TmpFd == nullptr ? new FileFd() : TmpFd;
+   if (not Fd->OpenDescriptor(fd, FileFd::ReadWrite | (Buffered ? FileFd::BufferedWrite : 0), FileFd::None, true))
    {
-      _error->Errno("GetTempFile",_("Unable to write to %s"),fn);
+      _error->Errno("GetTempFile",_("Unable to write to %s"),fn.c_str());
       if (TmpFd == nullptr)
 	 delete Fd;
       return nullptr;

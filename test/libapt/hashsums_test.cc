@@ -29,15 +29,10 @@ static void getSummationString(char const * const type, std::string &sum)
       summation is a compressor – and open the 'compressed' file later on directly to
       read out the summation sum calculated by it */
    APT::Configuration::Compressor compress(type, ".ext", type, NULL, NULL, 99);
-   std::string name("apt-test-");
-   name.append("hashsums").append(".XXXXXX");
-   char * tempfile = strdup(name.c_str());
-   int tempfile_fd = mkstemp(tempfile);
-   close(tempfile_fd);
-   ASSERT_NE(-1, tempfile_fd);
 
    FileFd fd;
-   ASSERT_TRUE(fd.Open(tempfile, FileFd::WriteOnly | FileFd::Empty, compress));
+   auto const file = createTemporaryFile("hashsums");
+   ASSERT_TRUE(fd.Open(file.Name(), FileFd::WriteOnly | FileFd::Empty, compress));
    ASSERT_TRUE(fd.IsOpen());
    FileFd input("/etc/os-release", FileFd::ReadOnly);
    ASSERT_TRUE(input.IsOpen());
@@ -48,12 +43,10 @@ static void getSummationString(char const * const type, std::string &sum)
    ASSERT_FALSE(fd.Failed());
    input.Close();
    fd.Close();
-   ASSERT_TRUE(fd.Open(tempfile, FileFd::ReadOnly, FileFd::None));
+   ASSERT_TRUE(fd.Open(file.Name(), FileFd::ReadOnly, FileFd::None));
    ASSERT_TRUE(fd.IsOpen());
    ASSERT_NE(0u, fd.FileSize());
    ASSERT_FALSE(fd.Failed());
-   unlink(tempfile);
-   free(tempfile);
    char readback[2000];
    unsigned long long actual;
    ASSERT_TRUE(fd.Read(readback, sizeof(readback)/sizeof(readback[0]), &actual));

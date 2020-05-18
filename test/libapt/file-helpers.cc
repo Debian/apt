@@ -53,31 +53,31 @@ void helperCreateLink(std::string const &dir, std::string const &targetname, std
    link.append(linkname);
    ASSERT_EQ(0, symlink(target.c_str(), link.c_str()));
 }
-void helperCreateTemporaryFile(std::string const &id, FileFd &fd, std::string * const filename, char const * const content)
-{
-   std::string name("apt-test-");
-   name.append(id);
-   size_t const giventmp = name.find(".XXXXXX.");
-   if (giventmp == std::string::npos)
-      name.append(".XXXXXX");
-   char * tempfile = strdup(name.c_str());
-   ASSERT_STRNE(NULL, tempfile);
-   int tempfile_fd;
-   if (giventmp == std::string::npos)
-      tempfile_fd = mkstemp(tempfile);
-   else
-      tempfile_fd = mkstemps(tempfile, name.length() - (giventmp + 7));
-   ASSERT_NE(-1, tempfile_fd);
-   if (filename != NULL)
-      *filename = tempfile;
-   else
-      unlink(tempfile);
-   free(tempfile);
 
-   EXPECT_TRUE(fd.OpenDescriptor(tempfile_fd, FileFd::ReadWrite, true));
-   if (content != NULL)
+void openTemporaryFile(std::string const &id, FileFd &fd, char const * const content, bool const ImmediateUnlink)
+{
+   EXPECT_NE(nullptr, GetTempFile("apt-" + id, ImmediateUnlink, &fd));
+   EXPECT_TRUE(ImmediateUnlink || not fd.Name().empty());
+   if (content != nullptr)
    {
-      ASSERT_TRUE(fd.Write(content, strlen(content)));
+      EXPECT_TRUE(fd.Write(content, strlen(content)));
+      EXPECT_TRUE(fd.Sync());
       fd.Seek(0);
    }
+}
+ScopedFileDeleter::ScopedFileDeleter(std::string const &filename) : _filename{filename} {}
+ScopedFileDeleter::ScopedFileDeleter(ScopedFileDeleter &&sfd) = default;
+ScopedFileDeleter& ScopedFileDeleter::operator=(ScopedFileDeleter &&sfd) = default;
+ScopedFileDeleter::~ScopedFileDeleter() {
+   if (not _filename.empty())
+      RemoveFile("ScopedFileDeleter", _filename.c_str());
+}
+[[nodiscard]] ScopedFileDeleter createTemporaryFile(std::string const &id, char const * const content)
+{
+   FileFd fd;
+   openTemporaryFile(id, fd, content, false);
+   EXPECT_TRUE(fd.IsOpen());
+   EXPECT_TRUE(fd.Close());
+   EXPECT_FALSE(fd.Name().empty());
+   return ScopedFileDeleter{fd.Name()};
 }

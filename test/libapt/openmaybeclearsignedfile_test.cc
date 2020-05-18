@@ -13,12 +13,21 @@
 /* The test files are created with the 'Joe Sixpack' and 'Marvin Paranoid'
    test key included in the integration testing framework */
 
+static void EXPECT_SUCCESSFUL_PARSE(std::string const &tempfile)
+{
+   FileFd fd;
+   EXPECT_TRUE(OpenMaybeClearSignedFile(tempfile, fd));
+   EXPECT_TRUE(fd.IsOpen());
+   char buffer[100];
+   EXPECT_TRUE(fd.ReadLine(buffer, sizeof(buffer)));
+   EXPECT_STREQ(buffer, "Test");
+   EXPECT_TRUE(fd.Eof());
+}
+
 TEST(OpenMaybeClearSignedFileTest,SimpleSignedFile)
 {
-   std::string tempfile;
-   FileFd fd;
    // Using c++11 raw-strings would be nifty, but travis doesn't support it…
-   createTemporaryFile("simplesignedfile", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE-----\n"
+   auto const file = createTemporaryFile("simplesignedfile", "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Hash: SHA512\n"
 "\n"
 "Test\n"
@@ -33,23 +42,14 @@ TEST(OpenMaybeClearSignedFileTest,SimpleSignedFile)
 "JQt/+gJCPxHUJphy8sccBKhW29CLELJIIafvU30E1nWn9szh2Xjq\n"
 "=TB1F\n"
 "-----END PGP SIGNATURE-----\n");
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_TRUE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_TRUE(fd.IsOpen());
-   char buffer[100];
-   EXPECT_TRUE(fd.ReadLine(buffer, sizeof(buffer)));
-   EXPECT_STREQ(buffer, "Test");
-   EXPECT_TRUE(fd.Eof());
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_SUCCESSFUL_PARSE(file.Name());
 }
 
 TEST(OpenMaybeClearSignedFileTest,WhitespaceSignedFile)
 {
-   std::string tempfile;
-   FileFd fd;
    // no raw-string here to protect the whitespace from cleanup
-   createTemporaryFile("simplesignedfile", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE----- \t    \n"
+   auto const file = createTemporaryFile("simplesignedfile", "-----BEGIN PGP SIGNED MESSAGE----- \t    \n"
 "Hash:    SHA512     \n"
 "	   \n"
 "Test	\n"
@@ -64,22 +64,13 @@ TEST(OpenMaybeClearSignedFileTest,WhitespaceSignedFile)
 "JQt/+gJCPxHUJphy8sccBKhW29CLELJIIafvU30E1nWn9szh2Xjq			\n"
 "=TB1F	\n"
 "-----END PGP SIGNATURE-----");
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_TRUE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_TRUE(fd.IsOpen());
-   char buffer[100];
-   EXPECT_TRUE(fd.ReadLine(buffer, sizeof(buffer)));
-   EXPECT_STREQ(buffer, "Test");
-   EXPECT_TRUE(fd.Eof());
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_SUCCESSFUL_PARSE(file.Name());
 }
 
 TEST(OpenMaybeClearSignedFileTest,SignedFileWithContentHeaders)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("headerssignedfile", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE-----\n"
+   auto const file = createTemporaryFile("headerssignedfile", "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Version: 0.8.15~exp1\n"
 "Hash: SHA512\n"
 "Comment: I love you!\n"
@@ -100,22 +91,13 @@ TEST(OpenMaybeClearSignedFileTest,SignedFileWithContentHeaders)
 "JQt/+gJCPxHUJphy8sccBKhW29CLELJIIafvU30E1nWn9szh2Xjq\n"
 "=TB1F\n"
 "-----END PGP SIGNATURE-----\n");
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_TRUE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_TRUE(fd.IsOpen());
-   char buffer[100];
-   EXPECT_TRUE(fd.ReadLine(buffer, sizeof(buffer)));
-   EXPECT_STREQ(buffer, "Test");
-   EXPECT_TRUE(fd.Eof());
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_SUCCESSFUL_PARSE(file.Name());
 }
 
 TEST(OpenMaybeClearSignedFileTest,SignedFileWithTwoSignatures)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("doublesignedfile", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE-----\n"
+   auto const file = createTemporaryFile("doublesignedfile", "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Hash: SHA512\n"
 "\n"
 "Test\n"
@@ -141,23 +123,29 @@ TEST(OpenMaybeClearSignedFileTest,SignedFileWithTwoSignatures)
 "ASc9hsAZRG0xHuRU0F94V/XrkWw8QYAobJ/yxvs4L0EuA4optbSqawDB\n"
 "=CP8j\n"
 "-----END PGP SIGNATURE-----\n");
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_TRUE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_TRUE(fd.IsOpen());
-   char buffer[100];
-   EXPECT_TRUE(fd.ReadLine(buffer, sizeof(buffer)));
-   EXPECT_STREQ(buffer, "Test");
-   EXPECT_TRUE(fd.Eof());
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_SUCCESSFUL_PARSE(file.Name());
+}
+
+
+static void EXPECT_FAILED_PARSE(std::string const &tempfile, std::string const &error)
+{
+   EXPECT_TRUE(_error->empty());
+   FileFd fd;
+   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
+   EXPECT_FALSE(_error->empty());
+   EXPECT_FALSE(fd.IsOpen());
+   ASSERT_TRUE(_error->PendingError());
+
+   std::string msg;
+   EXPECT_TRUE(_error->PopMessage(msg));
+   EXPECT_EQ(msg, error);
 }
 
 TEST(OpenMaybeClearSignedFileTest,TwoSimpleSignedFile)
 {
-   std::string tempfile;
-   FileFd fd;
    // read only the first message
-   createTemporaryFile("twosimplesignedfile", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE-----\n"
+   auto const file = createTemporaryFile("twosimplesignedfile", "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Hash: SHA512\n"
 "\n"
 "Test\n"
@@ -188,41 +176,21 @@ TEST(OpenMaybeClearSignedFileTest,TwoSimpleSignedFile)
 "=TB1F\n"
 "-----END PGP SIGNATURE-----");
    EXPECT_TRUE(_error->empty());
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_FALSE(_error->empty());
-   EXPECT_FALSE(fd.IsOpen());
-
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
    // technically they are signed, but we just want one message
-   EXPECT_TRUE(_error->PendingError());
-   std::string msg;
-   EXPECT_TRUE(_error->PopMessage(msg));
-   EXPECT_EQ("Clearsigned file '" + tempfile + "' contains unsigned lines.", msg);
+   EXPECT_FAILED_PARSE(file.Name(), "Clearsigned file '" + file.Name() + "' contains unsigned lines.");
 }
 
 TEST(OpenMaybeClearSignedFileTest,UnsignedFile)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("unsignedfile", fd, &tempfile, "Test");
-   EXPECT_FALSE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_TRUE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_TRUE(fd.IsOpen());
-   char buffer[100];
-   EXPECT_TRUE(fd.ReadLine(buffer, sizeof(buffer)));
-   EXPECT_STREQ(buffer, "Test");
-   EXPECT_TRUE(fd.Eof());
+   auto const file = createTemporaryFile("unsignedfile", "Test");
+   EXPECT_FALSE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_SUCCESSFUL_PARSE(file.Name());
 }
 
 TEST(OpenMaybeClearSignedFileTest,GarbageTop)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("garbagetop", fd, &tempfile, "Garbage\n"
+   auto const file = createTemporaryFile("garbagetop", "Garbage\n"
 "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Hash: SHA512\n"
 "\n"
@@ -238,25 +206,13 @@ TEST(OpenMaybeClearSignedFileTest,GarbageTop)
 "JQt/+gJCPxHUJphy8sccBKhW29CLELJIIafvU30E1nWn9szh2Xjq\n"
 "=TB1F\n"
 "-----END PGP SIGNATURE-----\n");
-   EXPECT_FALSE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_TRUE(_error->empty());
-   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_FALSE(fd.IsOpen());
-   ASSERT_FALSE(_error->empty());
-   ASSERT_TRUE(_error->PendingError());
-
-   std::string msg;
-   EXPECT_TRUE(_error->PopMessage(msg));
-   EXPECT_EQ("Clearsigned file '" + tempfile + "' does not start with a signed message block.", msg);
+   EXPECT_FALSE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_FAILED_PARSE(file.Name(), "Clearsigned file '" + file.Name() + "' does not start with a signed message block.");
 }
 
 TEST(OpenMaybeClearSignedFileTest,GarbageHeader)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("garbageheader", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE----- Garbage\n"
+   auto const file = createTemporaryFile("garbageheader", "-----BEGIN PGP SIGNED MESSAGE----- Garbage\n"
 "Hash: SHA512\n"
 "\n"
 "Test\n"
@@ -271,11 +227,10 @@ TEST(OpenMaybeClearSignedFileTest,GarbageHeader)
 "JQt/+gJCPxHUJphy8sccBKhW29CLELJIIafvU30E1nWn9szh2Xjq\n"
 "=TB1F\n"
 "-----END PGP SIGNATURE-----\n");
-   EXPECT_FALSE(StartsWithGPGClearTextSignature(tempfile));
+   EXPECT_FALSE(StartsWithGPGClearTextSignature(file.Name()));
    // beware: the file will be successfully opened as unsigned file
-   EXPECT_TRUE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
+   FileFd fd;
+   EXPECT_TRUE(OpenMaybeClearSignedFile(file.Name(), fd));
    EXPECT_TRUE(fd.IsOpen());
    char buffer[100];
    EXPECT_TRUE(fd.ReadLine(buffer, sizeof(buffer)));
@@ -285,9 +240,7 @@ TEST(OpenMaybeClearSignedFileTest,GarbageHeader)
 
 TEST(OpenMaybeClearSignedFileTest,GarbageBottom)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("garbagebottom", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE-----\n"
+   auto const file = createTemporaryFile("garbagebottom", "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Hash: SHA512\n"
 "\n"
 "Test\n"
@@ -303,68 +256,34 @@ TEST(OpenMaybeClearSignedFileTest,GarbageBottom)
 "=TB1F\n"
 "-----END PGP SIGNATURE-----\n"
 "Garbage");
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_TRUE(_error->empty());
-   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_FALSE(fd.IsOpen());
-   ASSERT_FALSE(_error->empty());
-   ASSERT_TRUE(_error->PendingError());
-
-   std::string msg;
-   EXPECT_TRUE(_error->PopMessage(msg));
-   EXPECT_EQ("Clearsigned file '" + tempfile + "' contains unsigned lines.", msg);
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_FAILED_PARSE(file.Name(), "Clearsigned file '" + file.Name() + "' contains unsigned lines.");
 }
 
 TEST(OpenMaybeClearSignedFileTest,BogusNoSig)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("bogusnosig", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE-----\n"
+   auto const file = createTemporaryFile("bogusnosig", "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Hash: SHA512\n"
 "\n"
 "Test");
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_TRUE(_error->empty());
-   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_FALSE(_error->empty());
-   EXPECT_FALSE(fd.IsOpen());
-
-   std::string msg;
-   _error->PopMessage(msg);
-   EXPECT_EQ("Splitting of clearsigned file " + tempfile + " failed as it doesn't contain all expected parts", msg);
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_FAILED_PARSE(file.Name(), "Splitting of clearsigned file " + file.Name() + " failed as it doesn't contain all expected parts");
 }
 
 TEST(OpenMaybeClearSignedFileTest,BogusSigStart)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("bogusnosig", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE-----\n"
+   auto const file = createTemporaryFile("bogusnosig", "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Hash: SHA512\n"
 "\n"
 "Test\n"
 "-----BEGIN PGP SIGNATURE-----");
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_TRUE(_error->empty());
-   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_FALSE(_error->empty());
-   EXPECT_FALSE(fd.IsOpen());
-
-   std::string msg;
-   _error->PopMessage(msg);
-   EXPECT_EQ("Signature in file " + tempfile + " wasn't closed", msg);
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_FAILED_PARSE(file.Name(), "Signature in file " + file.Name() + " wasn't closed");
 }
 
 TEST(OpenMaybeClearSignedFileTest,DashedSignedFile)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("dashedsignedfile", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE-----\n"
+   auto const file = createTemporaryFile("dashedsignedfile", "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Hash: SHA512\n"
 "\n"
 "- Test\n"
@@ -379,21 +298,12 @@ TEST(OpenMaybeClearSignedFileTest,DashedSignedFile)
 "JQt/+gJCPxHUJphy8sccBKhW29CLELJIIafvU30E1nWn9szh2Xjq\n"
 "=TB1F\n"
 "-----END PGP SIGNATURE-----\n");
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_TRUE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_TRUE(fd.IsOpen());
-   char buffer[100];
-   EXPECT_TRUE(fd.ReadLine(buffer, sizeof(buffer)));
-   EXPECT_STREQ(buffer, "Test");
-   EXPECT_TRUE(fd.Eof());
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_SUCCESSFUL_PARSE(file.Name());
 }
 TEST(OpenMaybeClearSignedFileTest,StrangeDashArmorFile)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("strangedashfile", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE-----\n"
+   auto const file = createTemporaryFile("strangedashfile", "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Hash: SHA512\n"
 "-Hash: SHA512\n"
 "\n"
@@ -409,23 +319,12 @@ TEST(OpenMaybeClearSignedFileTest,StrangeDashArmorFile)
 "JQt/+gJCPxHUJphy8sccBKhW29CLELJIIafvU30E1nWn9szh2Xjq\n"
 "=TB1F\n"
 "-----END PGP SIGNATURE-----\n");
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_FALSE(_error->empty());
-   EXPECT_FALSE(fd.IsOpen());
-
-   std::string msg;
-   EXPECT_TRUE(_error->PendingError());
-   EXPECT_TRUE(_error->PopMessage(msg));
-   EXPECT_EQ("Clearsigned file '" + tempfile + "' contains unexpected line starting with a dash (armor)", msg);
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_FAILED_PARSE(file.Name(), "Clearsigned file '" + file.Name() + "' contains unexpected line starting with a dash (armor)");
 }
 TEST(OpenMaybeClearSignedFileTest,StrangeDashMsgFile)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("strangedashfile", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE-----\n"
+   auto const file = createTemporaryFile("strangedashfile", "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Hash: SHA512\n"
 "\n"
 "-Test\n"
@@ -440,23 +339,12 @@ TEST(OpenMaybeClearSignedFileTest,StrangeDashMsgFile)
 "JQt/+gJCPxHUJphy8sccBKhW29CLELJIIafvU30E1nWn9szh2Xjq\n"
 "=TB1F\n"
 "-----END PGP SIGNATURE-----\n");
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_FALSE(_error->empty());
-   EXPECT_FALSE(fd.IsOpen());
-
-   std::string msg;
-   EXPECT_TRUE(_error->PendingError());
-   EXPECT_TRUE(_error->PopMessage(msg));
-   EXPECT_EQ("Clearsigned file '" + tempfile + "' contains unexpected line starting with a dash (msg)", msg);
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_FAILED_PARSE(file.Name(), "Clearsigned file '" + file.Name() + "' contains unexpected line starting with a dash (msg)");
 }
 TEST(OpenMaybeClearSignedFileTest,StrangeDashSigFile)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("strangedashfile", fd, &tempfile, "-----BEGIN PGP SIGNED MESSAGE-----\n"
+   auto const file = createTemporaryFile("strangedashfile", "-----BEGIN PGP SIGNED MESSAGE-----\n"
 "Hash: SHA512\n"
 "\n"
 "Test\n"
@@ -471,15 +359,6 @@ TEST(OpenMaybeClearSignedFileTest,StrangeDashSigFile)
 "JQt/+gJCPxHUJphy8sccBKhW29CLELJIIafvU30E1nWn9szh2Xjq\n"
 "=TB1F\n"
 "-----END PGP SIGNATURE-----\n");
-   EXPECT_TRUE(StartsWithGPGClearTextSignature(tempfile));
-   EXPECT_FALSE(OpenMaybeClearSignedFile(tempfile, fd));
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
-   EXPECT_FALSE(_error->empty());
-   EXPECT_FALSE(fd.IsOpen());
-
-   std::string msg;
-   EXPECT_TRUE(_error->PendingError());
-   EXPECT_TRUE(_error->PopMessage(msg));
-   EXPECT_EQ("Clearsigned file '" + tempfile + "' contains unexpected line starting with a dash (sig)", msg);
+   EXPECT_TRUE(StartsWithGPGClearTextSignature(file.Name()));
+   EXPECT_FAILED_PARSE(file.Name(), "Clearsigned file '" + file.Name() + "' contains unexpected line starting with a dash (sig)");
 }

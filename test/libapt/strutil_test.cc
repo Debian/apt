@@ -187,7 +187,7 @@ static void ReadMessagesTestWithNewLine(char const * const nl, char const * cons
       "Description:\n"
       " ccc";
 
-   createTemporaryFile("readmessage", fd, NULL, (pkgA + nl + pkgB + nl + pkgC + nl).c_str());
+   openTemporaryFile("readmessage", fd, (pkgA + nl + pkgB + nl + pkgC + nl).c_str());
    std::vector<std::string> list;
    EXPECT_TRUE(ReadMessages(fd.Fd(), list));
    EXPECT_EQ(3u, list.size());
@@ -196,7 +196,7 @@ static void ReadMessagesTestWithNewLine(char const * const nl, char const * cons
    EXPECT_EQ(pkgC, list[2]);
 
    size_t const msgsize = 63990;
-   createTemporaryFile("readmessage", fd, NULL, NULL);
+   openTemporaryFile("readmessage", fd);
    for (size_t j = 0; j < msgsize; ++j)
       fd.Write(ab, strlen(ab));
    for (size_t i = 0; i < 21; ++i)

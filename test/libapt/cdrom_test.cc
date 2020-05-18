@@ -91,16 +91,14 @@ TEST(CDROMTest,ReduceSourcelist)
 }
 TEST(CDROMTest, FindMountPointForDevice)
 {
-   std::string tempfile;
-   FileFd fd;
-   createTemporaryFile("mountpoints", fd, &tempfile,
+   auto const file = createTemporaryFile("mountpoints",
 	 "rootfs / rootfs rw 0 0\n"
 	 "sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0\n"
 	 "sysfs0 /sys0 sysfs rw,nosuid,nodev,noexec,relatime 0 0\n"
 	 "/dev/disk/by-uuid/fadcbc52-6284-4874-aaaa-dcee1f05fe21 / ext4 rw,relatime,errors=remount-ro,data=ordered 0 0\n"
 	 "/dev/sda1 /boot/efi vfat rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro,rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro,rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro,rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro 0 0\n"
 	 "tmpfs /tmp tmpfs rw,nosuid,nodev,relatime 0 0\n");
-   _config->Set("Dir::state::Mountpoints", tempfile);
+   _config->Set("Dir::state::Mountpoints", file.Name());
 
    EXPECT_EQ("/", FindMountPointForDevice("rootfs"));
    EXPECT_EQ("/", FindMountPointForDevice("/dev/disk/by-uuid/fadcbc52-6284-4874-aaaa-dcee1f05fe21"));
@@ -108,7 +106,4 @@ TEST(CDROMTest, FindMountPointForDevice)
    EXPECT_EQ("/sys0", FindMountPointForDevice("sysfs0"));
    EXPECT_EQ("/boot/efi", FindMountPointForDevice("/dev/sda1"));
    EXPECT_EQ("/tmp", FindMountPointForDevice("tmpfs"));
-
-   if (tempfile.empty() == false)
-      unlink(tempfile.c_str());
 }

@@ -22,8 +22,20 @@ void helperCreateDirectory(std::string const &dir, std::string const &name);
 #define createLink(dir, targetname, linkname) \
    ASSERT_NO_FATAL_FAILURE(helperCreateLink(dir, targetname, linkname))
 void helperCreateLink(std::string const &dir, std::string const &targetname, std::string const &linkname);
-#define createTemporaryFile(id, fd, filename, content) \
-   ASSERT_NO_FATAL_FAILURE(helperCreateTemporaryFile(id, fd, filename, content))
-void helperCreateTemporaryFile(std::string const &id, FileFd &fd, std::string * const filename, char const * const content);
+
+class ScopedFileDeleter {
+   std::string _filename;
+public:
+   ScopedFileDeleter(std::string const &filename);
+   ScopedFileDeleter(ScopedFileDeleter const &) = delete;
+   ScopedFileDeleter(ScopedFileDeleter &&);
+   ScopedFileDeleter& operator=(ScopedFileDeleter const &) = delete;
+   ScopedFileDeleter& operator=(ScopedFileDeleter &&);
+   ~ScopedFileDeleter();
+
+   std::string Name() const { return _filename; }
+};
+void openTemporaryFile(std::string const &id, FileFd &fd, char const * const content = nullptr, bool const ImmediateUnlink = true);
+ScopedFileDeleter createTemporaryFile(std::string const &id, char const * const content = nullptr);
 
 #endif

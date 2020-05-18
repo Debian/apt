@@ -16,7 +16,7 @@
 TEST(TagFileTest,SingleField)
 {
    FileFd fd;
-   createTemporaryFile("singlefield", fd, NULL, "FieldA-12345678: the value of the field");
+   openTemporaryFile("singlefield", fd, "FieldA-12345678: the value of the field");
 
    pkgTagFile tfile(&fd);
    pkgTagSection section;
@@ -41,7 +41,7 @@ TEST(TagFileTest,SingleField)
    EXPECT_FALSE(section.Exists("FieldA-12345678"));
    EXPECT_FALSE(section.Exists("FieldB-12345678"));
 
-   createTemporaryFile("emptyfile", fd, NULL, NULL);
+   openTemporaryFile("emptyfile", fd);
    ASSERT_FALSE(tfile.Step(section));
    EXPECT_EQ(0u, section.Count());
 }
@@ -49,7 +49,7 @@ TEST(TagFileTest,SingleField)
 TEST(TagFileTest,MultipleSections)
 {
    FileFd fd;
-   createTemporaryFile("bigsection", fd, NULL, "Package: pkgA\n"
+   openTemporaryFile("bigsection", fd, "Package: pkgA\n"
 	 "Version: 1\n"
 	 "Size: 100\n"
 	 "Description: aaa\n"
@@ -140,7 +140,7 @@ TEST(TagFileTest,BigSection)
       content << "Field-" << i << ": " << (2000 + i) << std::endl;
 
    FileFd fd;
-   createTemporaryFile("bigsection", fd, NULL, content.str().c_str());
+   openTemporaryFile("bigsection", fd, content.str().c_str());
 
    pkgTagFile tfile(&fd);
    pkgTagSection section;
@@ -230,7 +230,7 @@ TEST(TagFileTest, SpacesEverywhere)
 TEST(TagFileTest, Comments)
 {
    FileFd fd;
-   createTemporaryFile("commentfile", fd, NULL, "# Leading comments should be ignored.\n"
+   openTemporaryFile("commentfile", fd, "# Leading comments should be ignored.\n"
 "\n"
 "# A wild second comment appears!\n"
 "\n"
@@ -289,7 +289,7 @@ TEST(TagFileTest, Comments)
 TEST(TagFileTest, EmptyTagName)
 {
    FileFd fd;
-   createTemporaryFile("emptytagname", fd, NULL, "0:\n"
+   openTemporaryFile("emptytagname", fd, "0:\n"
 "PACKAGE:0\n"
 "\n"
 ":\n"

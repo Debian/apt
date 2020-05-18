@@ -23,15 +23,12 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
    strprintf(trace, "TestFileFd: Compressor: %s umask: %#o permission: %#o mode: %d", compressor.Name.c_str(), a_umask, ExpectedFilePermission, filemode);
    SCOPED_TRACE(trace);
 
-   static const char* fname = "apt-filefd-test.txt";
-   if (FileExists(fname) == true)
-   {
-      EXPECT_EQ(0, unlink(fname));
-   }
+   auto const file = createTemporaryFile("filefd-test");
+   EXPECT_TRUE(RemoveFile("TestFileFd", file.Name()));
 
    FileFd f;
    umask(a_umask);
-   EXPECT_TRUE(f.Open(fname, filemode, compressor));
+   EXPECT_TRUE(f.Open(file.Name(), filemode, compressor));
    EXPECT_TRUE(f.IsOpen());
    EXPECT_FALSE(f.Failed());
    EXPECT_EQ(umask(a_umask), a_umask);
@@ -45,7 +42,7 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
    EXPECT_FALSE(f.IsOpen());
    EXPECT_FALSE(f.Failed());
 
-   EXPECT_TRUE(f.Open(fname, FileFd::ReadOnly, compressor));
+   EXPECT_TRUE(f.Open(file.Name(), FileFd::ReadOnly, compressor));
    EXPECT_TRUE(f.IsOpen());
    EXPECT_FALSE(f.Failed());
    EXPECT_FALSE(f.Eof());
@@ -172,8 +169,7 @@ static void TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission
 
    // regression test for permission bug LP: #1304657
    struct stat buf;
-   EXPECT_EQ(0, stat(fname, &buf));
-   EXPECT_EQ(0, unlink(fname));
+   EXPECT_EQ(0, stat(file.Name().c_str(), &buf));
    EXPECT_EQ(ExpectedFilePermission, buf.st_mode & 0777);
 }
 
@@ -385,24 +381,19 @@ static void TestFailingAtomicKeepsFile(char const * const label, std::string con
 }
 TEST(FileUtlTest, FailingAtomic)
 {
-   FileFd fd;
-   std::string filename;
-   createTemporaryFile("failingatomic", fd, &filename, TESTSTRING);
-   TestFailingAtomicKeepsFile("init", filename);
+   auto const file = createTemporaryFile("failingatomic", TESTSTRING);
+   TestFailingAtomicKeepsFile("init", file.Name());
 
    FileFd f;
-   EXPECT_TRUE(f.Open(filename, FileFd::ReadWrite | FileFd::Atomic));
+   EXPECT_TRUE(f.Open(file.Name(), FileFd::ReadWrite | FileFd::Atomic));
    f.EraseOnFailure();
    EXPECT_FALSE(f.Failed());
    EXPECT_TRUE(f.IsOpen());
-   TestFailingAtomicKeepsFile("before-fail", filename);
+   TestFailingAtomicKeepsFile("before-fail", file.Name());
    EXPECT_TRUE(f.Write("Bad file write", 10));
    f.OpFail();
    EXPECT_TRUE(f.Failed());
-   TestFailingAtomicKeepsFile("after-fail", filename);
+   TestFailingAtomicKeepsFile("after-fail", file.Name());
    EXPECT_TRUE(f.Close());
-   TestFailingAtomicKeepsFile("closed", filename);
-
-   if (filename.empty() == false)
-      unlink(filename.c_str());
+   TestFailingAtomicKeepsFile("closed", file.Name());
 }
