@@ -1,0 +1,34 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'autopkgtest-satdep' 'amd64' '1' 'stable' 'Depends: debhelper-compat (= 12)'
+buildsimplenativepackage 'debhelper' 'all' '1' 'stable' 'Provides: debhelper-compat (= 12)'
+
+setupaptarchive
+
+testfailure dpkg -i incoming/autopkgtest-*.deb
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Correcting dependencies...  MarkInstall autopkgtest-satdep:amd64 < 1 @iU mK Nb Ib > FU=0
+    MarkInstall debhelper:amd64 < none -> 1 @un uN > FU=0
+Starting pkgProblemResolver with broken count: 0
+Starting 2 pkgProblemResolver with broken count: 0
+Done
+ Done
+Starting pkgProblemResolver with broken count: 0
+Starting 2 pkgProblemResolver with broken count: 0
+Done
+The following additional packages will be installed:
+  debhelper
+The following NEW packages will be installed:
+  debhelper
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+1 not fully installed or removed.
+Inst debhelper (1 stable [all])
+Conf debhelper (1 stable [all])
+Conf autopkgtest-satdep (1 stable [amd64])' apt install -fso Debug::pkgProblemResolver=1 -o DEbug::pkgDepCache::Marker=1

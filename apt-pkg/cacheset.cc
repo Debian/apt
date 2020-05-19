@@ -599,7 +599,7 @@ bool VersionContainerInterface::FromDependency(VersionContainerInterface * const
 		      continue;
 		   auto const OP = Prv.OwnerPkg();
 		   auto const TV = getTargetVersion(OP);
-		   if (Prv.OwnerVer() == TV && D.IsSatisfied(TV))
+		   if (Prv.OwnerVer() == TV && D.IsSatisfied(Prv))
 		   {
 		      vci->insert(TV);
 		      found = true;
