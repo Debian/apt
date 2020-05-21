@@ -214,8 +214,6 @@ map_id_t pkgCache::sHash(StringView Str) const
    return Hash % HeaderP->GetHashTableSize();
 }
 
-#if defined(HAVE_FMV_SSE42_AND_CRC32)
-
 #ifdef HAVE_FMV_SSE42_AND_CRC32
 __attribute__((target("sse4.2"))) static uint32_t hash32(uint32_t crc32, const unsigned char *input, size_t size)
 {
@@ -253,7 +251,6 @@ __attribute__((target("sse4.2"))) static uint32_t hash32(uint32_t crc32, const u
    crc32 ^= 0xffffffffU;
    return crc32;
 }
-#endif
 
 __attribute__((target("default")))
 #endif

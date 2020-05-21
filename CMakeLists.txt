@@ -198,8 +198,8 @@ endif()
 
 # Check multiversioning
 include(CheckCxxTarget)
-check_cxx_target(HAVE_FMV_SSE42_AND_CRC32 "sse4.2" "__builtin_ia32_crc32si(0, 1llu);")
-check_cxx_target(HAVE_FMV_SSE42_AND_CRC32DI "sse4.2" "__builtin_ia32_crc32di(0, 1llu);")
+check_cxx_target(HAVE_FMV_SSE42_AND_CRC32 "sse4.2" "__builtin_ia32_crc32si(0,i)|__builtin_ia32_crc32hi(0,i)|__builtin_ia32_crc32qi(0,i)")
+check_cxx_target(HAVE_FMV_SSE42_AND_CRC32DI "sse4.2" "__builtin_ia32_crc32di(0,i)")
 
 # Configure some variables like package, version and architecture.
 set(PACKAGE ${PROJECT_NAME})

@@ -25,11 +25,12 @@
 # SOFTWARE.
 
 
+include(CheckCXXSourceCompiles)
 function(check_cxx_target var target code)
 	check_cxx_source_compiles(
 	"
-	__attribute__((target(\"${target}\"))) static int foo() { ${code} return 1; }
-	__attribute__((target(\"default\"))) static int foo() { ${code} return 0; }
-	int main() { return foo(); }
+	__attribute__((target(\"${target}\"))) static int foo(int i) { return ${code}; }
+	__attribute__((target(\"default\"))) static int foo(int i) { return i; }
+	int main(int i, char **) { return foo(i); }
 	"  ${var})
 endfunction()
