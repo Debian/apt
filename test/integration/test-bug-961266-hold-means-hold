@@ -1,0 +1,130 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertinstalledpackage 'git' 'amd64' '1:2.25.1-1' 'Multi-Arch: foreign'
+insertinstalledpackage 'git-cvs' 'amd64' '1:2.25.1-1' 'Depends: git (>> 1:2.25.1), git (<< 1:2.25.1-.)'
+
+
+insertpackage 'unstable' 'git' 'amd64,i386' '1:2.26.2-1' 'Multi-Arch: foreign'
+insertpackage 'unstable' 'git-cvs' 'amd64,i386' '1:2.26.2-1' 'Depends: git (>> 1:2.26.2), git (<< 1:2.26.2-.)'
+insertpackage 'unstable' 'git-ng' 'amd64,i386' '1:2.26.2-1' 'Depends: git (>> 1:2.26.2), git (<< 1:2.26.2-.)'
+
+setupaptarchive
+
+msgmsg 'The setup is' 'fine'
+UPGRADE='Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be upgraded:
+  git git-cvs
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst git-cvs [1:2.25.1-1] (1:2.26.2-1 unstable [amd64]) []
+Inst git [1:2.25.1-1] (1:2.26.2-1 unstable [amd64])
+Conf git-cvs (1:2.26.2-1 unstable [amd64])
+Conf git (1:2.26.2-1 unstable [amd64])'
+testsuccessequal "$UPGRADE" apt upgrade -s
+testsuccessequal "$UPGRADE" aptget upgrade -s
+testsuccessequal "$UPGRADE" apt full-upgrade -s
+testsuccessequal "$UPGRADE" aptget dist-upgrade -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  git git-cvs
+The following NEW packages will be installed:
+  git-ng
+The following packages will be upgraded:
+  git git-cvs
+2 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst git-cvs [1:2.25.1-1] (1:2.26.2-1 unstable [amd64]) []
+Inst git [1:2.25.1-1] (1:2.26.2-1 unstable [amd64])
+Inst git-ng (1:2.26.2-1 unstable [amd64])
+Conf git-cvs (1:2.26.2-1 unstable [amd64])
+Conf git (1:2.26.2-1 unstable [amd64])
+Conf git-ng (1:2.26.2-1 unstable [amd64])' apt install git-ng -s
+
+
+msgmsg 'Now mix it up by' 'holding git'
+testsuccessequal 'git set on hold.' aptmark hold git
+testsuccessequal 'git' aptmark showholds
+
+NOUPGRADE='Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages have been kept back:
+  git
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.'
+NOUPGRADE2='Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages have been kept back:
+  git git-cvs
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.'
+
+testsuccessequal "$NOUPGRADE" apt upgrade -s
+testsuccessequal "$NOUPGRADE" apt full-upgrade -s
+testsuccessequal "$NOUPGRADE" aptget dist-upgrade -s
+testsuccessequal "$NOUPGRADE2" aptget upgrade -s
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ git-ng : Depends: git (> 1:2.26.2)
+E: Unable to correct problems, you have held broken packages.' apt install git-ng -s
+
+
+msgmsg 'Now mix it up by' 'holding git-cvs'
+testsuccessequal 'Canceled hold on git.' aptmark unhold git
+testsuccessequal 'git-cvs set on hold.' aptmark hold git-cvs
+testsuccessequal 'git-cvs' aptmark showholds
+
+testsuccessequal "$NOUPGRADE2" apt upgrade -s
+testsuccessequal "$NOUPGRADE2" apt full-upgrade -s
+testsuccessequal "$NOUPGRADE2" aptget upgrade -s
+testsuccessequal "$NOUPGRADE2" aptget dist-upgrade -s
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ git-cvs : Depends: git (< 1:2.25.1-.)
+E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.' apt install git-ng -s
+
+
+msgmsg 'Now mix it up by' 'holding both'
+testsuccessequal 'git set on hold.' aptmark hold git
+testsuccessequal 'git
+git-cvs' aptmark showholds
+
+testsuccessequal "$NOUPGRADE2" apt upgrade -s
+testsuccessequal "$NOUPGRADE2" apt full-upgrade -s
+testsuccessequal "$NOUPGRADE2" aptget upgrade -s
+testsuccessequal "$NOUPGRADE2" aptget dist-upgrade -s
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ git-ng : Depends: git (> 1:2.26.2)
+E: Unable to correct problems, you have held broken packages.' apt install git-ng -s

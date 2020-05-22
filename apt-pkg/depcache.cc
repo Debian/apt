@@ -1111,7 +1111,15 @@ bool pkgDepCache::MarkInstall_StateChange(pkgCache::PkgIterator const &Pkg, bool
    return true;
 }
 									/*}}}*/
-bool pkgDepCache::MarkInstall_Discard(pkgCache::PkgIterator const &Pkg)	/*{{{*/
+static bool MarkInstall_DiscardCandidate(pkgDepCache &Cache, pkgCache::PkgIterator const &Pkg) /*{{{*/
+{
+   auto &State = Cache[Pkg];
+   State.CandidateVer = State.InstallVer;
+   State.Update(Pkg, Cache);
+   return true;
+}
+									/*}}}*/
+bool pkgDepCache::MarkInstall_DiscardInstall(pkgCache::PkgIterator const &Pkg) /*{{{*/
 {
    StateCache &State = PkgState[Pkg->ID];
    if (State.Mode == ModeKeep && State.InstallVer == State.CandidateVer && State.CandidateVer == Pkg.CurrentVer())
@@ -1119,15 +1127,14 @@ bool pkgDepCache::MarkInstall_Discard(pkgCache::PkgIterator const &Pkg)	/*{{{*/
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
    if (Pkg->CurrentVer != 0)
-      State.InstallVer = State.CandidateVer = Pkg.CurrentVer();
+      State.InstallVer = Pkg.CurrentVer();
    else
-      State.InstallVer = State.CandidateVer = nullptr;
+      State.InstallVer = nullptr;
    State.Mode = ModeKeep;
-   State.Update(Pkg, *this);
    AddStates(Pkg);
    Update(Pkg);
    AddSizes(Pkg);
-   return true;
+   return MarkInstall_DiscardCandidate(*this, Pkg);
 }
 									/*}}}*/
 static bool MarkInstall_CollectDependencies(pkgDepCache const &Cache, pkgCache::VerIterator const &PV, std::vector<pkgCache::DepIterator> &toInstall, std::vector<pkgCache::DepIterator> &toRemove) /*{{{*/
@@ -1202,7 +1209,7 @@ static bool MarkInstall_MarkDeleteForNotUpgradeable(pkgDepCache &Cache, bool con
    }
    if (propagateProctected)
    {
-      State.CandidateVer = nullptr;
+      MarkInstall_DiscardCandidate(Cache, Pkg);
       Cache.MarkProtected(Pkg);
    }
    return true;
@@ -1230,10 +1237,7 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
 	    }
 	    else if (propagateProctected)
 	    {
-	       if (Pkg->CurrentVer != 0)
-		  State.CandidateVer = Pkg.CurrentVer();
-	       else
-		  State.CandidateVer = nullptr;
+	       MarkInstall_DiscardCandidate(Cache, Pkg);
 	       if (Pkg->CurrentVer == 0)
 		  Cache.MarkProtected(Pkg);
 	    }
@@ -1491,7 +1495,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
    {
       if (failEarly)
       {
-	 MarkInstall_Discard(Pkg);
+	 MarkInstall_DiscardInstall(Pkg);
 	 return false;
       }
       hasFailed = true;
@@ -1519,7 +1523,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
    {
       if (failEarly)
       {
-	 MarkInstall_Discard(Pkg);
+	 MarkInstall_DiscardInstall(Pkg);
 	 return false;
       }
       hasFailed = true;

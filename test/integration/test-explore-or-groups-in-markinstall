@@ -70,6 +70,7 @@ The following additional packages will be installed:
 The following NEW packages will be installed:
   foo-${1}-level${level} okay
 0 upgraded, 2 newly installed, 0 to remove and 3 not upgraded." apt install foo-${1}-level${level} -s
+		if [ "$level" = '0' ]; then NOT=2; else NOT=1; fi
 		testsuccessheadequal 9 "Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
@@ -78,7 +79,7 @@ The following NEW packages will be installed:
   foo-${1}-upgrade-level${level}
 The following packages will be upgraded:
   upgrade
-1 upgraded, 1 newly installed, 0 to remove and $((2-${level})) not upgraded." apt install foo-${1}-upgrade-level${level} -s
+1 upgraded, 1 newly installed, 0 to remove and $NOT not upgraded." apt install foo-${1}-upgrade-level${level} -s
 	done
 
 	testsuccessheadequal 7 "Reading package lists...
@@ -137,7 +138,7 @@ if $TEST_WITH_APTITUDE; then
 	testsuccesstailequal 6 'The following packages have been kept back:
   bad-upgrade-level1 
 No packages will be installed, upgraded, or removed.
-0 packages upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+0 packages upgraded, 0 newly installed, 0 to remove and 3 not upgraded.
 Need to get 0 B of archives. After unpacking 0 B will be used.
 Would download/install/remove packages.' aptitude install bad-upgrade-level1 -sy
 	# aptitude does not show the kept back message in this case…
