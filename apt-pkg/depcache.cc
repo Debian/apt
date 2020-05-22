@@ -1221,6 +1221,7 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
       If the candidate is effected try to keep current and discard candidate
       If the current is effected try upgrading to candidate or remove it */
    bool failedToRemoveSomething = false;
+   APT::PackageVector badCandidate;
    for (auto const &D : toRemove)
    {
       for (auto const &Ver : getAllPossibleSolutions(Cache, D, D, APT::CacheSetHelper::CANDIDATE, true))
@@ -1241,6 +1242,8 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
 	       if (Pkg->CurrentVer == 0)
 		  Cache.MarkProtected(Pkg);
 	    }
+	    else
+	       badCandidate.push_back(Pkg);
 	 }
 	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProctected))
 	 {
@@ -1249,11 +1252,14 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
 	       break;
 	 }
       }
+      if (failedToRemoveSomething && not propagateProctected && not FromUser)
+	 break;
       for (auto const &Ver : getAllPossibleSolutions(Cache, D, D, APT::CacheSetHelper::INSTALLED, true))
       {
 	 auto const Pkg = Ver.ParentPkg();
 	 auto &State = Cache[Pkg];
-	 if (State.CandidateVer != Ver && State.CandidateVer != nullptr)
+	 if (State.CandidateVer != Ver && State.CandidateVer != nullptr &&
+	     std::find(badCandidate.cbegin(), badCandidate.cend(), Pkg) == badCandidate.end())
 	    toUpgrade.push_back(Pkg);
 	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProctected))
 	 {
@@ -1262,6 +1268,8 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
 	       break;
 	 }
       }
+      if (failedToRemoveSomething && not propagateProctected && not FromUser)
+	 break;
    }
    toRemove.clear();
    return not failedToRemoveSomething;
