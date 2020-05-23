@@ -2010,22 +2010,24 @@ void pkgDepCache::StateCache::Update(PkgIterator Pkg,pkgCache &Cache)
 {
    // Some info
    VerIterator Ver = CandidateVerIter(Cache);
-   
+
    // Use a null string or the version string
    if (Ver.end() == true)
       CandVersion = "";
    else
       CandVersion = Ver.VerStr();
-   
+
    // Find the current version
-   CurVersion = "";
    if (Pkg->CurrentVer != 0)
       CurVersion = Pkg.CurrentVer().VerStr();
+   else
+      CurVersion = "";
 
    // Figure out if its up or down or equal
-   Status = Ver.CompareVer(Pkg.CurrentVer());
    if (Pkg->CurrentVer == 0 || Pkg->VersionList == 0 || CandidateVer == 0)
-     Status = 2;      
+      Status = 2;
+   else
+      Status = Ver.CompareVer(Pkg.CurrentVer());
 }
 									/*}}}*/
 // Policy::GetCandidateVer - Returns the Candidate install version	/*{{{*/
