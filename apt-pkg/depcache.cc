@@ -827,15 +827,15 @@ void pkgDepCache::Update(PkgIterator const &Pkg)
    Update(Pkg.RevDependsList());
 
    // Update the provides map for the current ver
-   if (Pkg->CurrentVer != 0)
-      for (PrvIterator P = Pkg.CurrentVer().ProvidesList(); 
-	   P.end() != true; ++P)
+   auto const CurVer = Pkg.CurrentVer();
+   if (not CurVer.end())
+      for (PrvIterator P = CurVer.ProvidesList(); not P.end(); ++P)
 	 Update(P.ParentPkg().RevDependsList());
 
    // Update the provides map for the candidate ver
-   if (PkgState[Pkg->ID].CandidateVer != 0)
-      for (PrvIterator P = PkgState[Pkg->ID].CandidateVerIter(*this).ProvidesList();
-	   P.end() != true; ++P)
+   auto const CandVer = PkgState[Pkg->ID].CandidateVerIter(*this);
+   if (not CandVer.end() && CandVer != CurVer)
+      for (PrvIterator P = CandVer.ProvidesList(); not P.end(); ++P)
 	 Update(P.ParentPkg().RevDependsList());
 }
 									/*}}}*/
