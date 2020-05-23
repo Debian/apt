@@ -57,19 +57,13 @@ NOUPGRADE='Reading package lists...
 Building dependency tree...
 Calculating upgrade...
 The following packages have been kept back:
-  git
-0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.'
-NOUPGRADE2='Reading package lists...
-Building dependency tree...
-Calculating upgrade...
-The following packages have been kept back:
   git git-cvs
 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.'
 
 testsuccessequal "$NOUPGRADE" apt upgrade -s
 testsuccessequal "$NOUPGRADE" apt full-upgrade -s
 testsuccessequal "$NOUPGRADE" aptget dist-upgrade -s
-testsuccessequal "$NOUPGRADE2" aptget upgrade -s
+testsuccessequal "$NOUPGRADE" aptget upgrade -s
 
 testfailureequal 'Reading package lists...
 Building dependency tree...
@@ -89,10 +83,10 @@ testsuccessequal 'Canceled hold on git.' aptmark unhold git
 testsuccessequal 'git-cvs set on hold.' aptmark hold git-cvs
 testsuccessequal 'git-cvs' aptmark showholds
 
-testsuccessequal "$NOUPGRADE2" apt upgrade -s
-testsuccessequal "$NOUPGRADE2" apt full-upgrade -s
-testsuccessequal "$NOUPGRADE2" aptget upgrade -s
-testsuccessequal "$NOUPGRADE2" aptget dist-upgrade -s
+testsuccessequal "$NOUPGRADE" apt upgrade -s
+testsuccessequal "$NOUPGRADE" apt full-upgrade -s
+testsuccessequal "$NOUPGRADE" aptget upgrade -s
+testsuccessequal "$NOUPGRADE" aptget dist-upgrade -s
 
 testfailureequal 'Reading package lists...
 Building dependency tree...
@@ -112,10 +106,10 @@ testsuccessequal 'git set on hold.' aptmark hold git
 testsuccessequal 'git
 git-cvs' aptmark showholds
 
-testsuccessequal "$NOUPGRADE2" apt upgrade -s
-testsuccessequal "$NOUPGRADE2" apt full-upgrade -s
-testsuccessequal "$NOUPGRADE2" aptget upgrade -s
-testsuccessequal "$NOUPGRADE2" aptget dist-upgrade -s
+testsuccessequal "$NOUPGRADE" apt upgrade -s
+testsuccessequal "$NOUPGRADE" apt full-upgrade -s
+testsuccessequal "$NOUPGRADE" aptget upgrade -s
+testsuccessequal "$NOUPGRADE" aptget dist-upgrade -s
 
 testfailureequal 'Reading package lists...
 Building dependency tree...

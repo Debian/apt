@@ -1115,7 +1115,9 @@ static bool MarkInstall_DiscardCandidate(pkgDepCache &Cache, pkgCache::PkgIterat
 {
    auto &State = Cache[Pkg];
    State.CandidateVer = State.InstallVer;
+   auto const oldStatus = State.Status;
    State.Update(Pkg, Cache);
+   State.Status = oldStatus;
    return true;
 }
 									/*}}}*/
