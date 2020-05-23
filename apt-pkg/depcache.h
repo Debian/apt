@@ -502,6 +502,8 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
    pkgDepCache(pkgCache * const Cache,Policy * const Plcy = 0);
    virtual ~pkgDepCache();
 
+   bool CheckConsistency(char const *const msgtag = "");
+
    protected:
    // methods call by IsInstallOk
    bool IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
@@ -521,6 +523,8 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
 
    APT_HIDDEN bool MarkInstall_StateChange(PkgIterator const &Pkg, bool AutoInst, bool FromUser);
    APT_HIDDEN bool MarkInstall_DiscardInstall(PkgIterator const &Pkg);
+
+   APT_HIDDEN void PerformDependencyPass(OpProgress * const Prog);
 };
 
 #endif

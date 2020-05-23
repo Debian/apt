@@ -118,6 +118,88 @@ pkgDepCache::~pkgDepCache()
    delete delLocalPolicy;
 }
 									/*}}}*/
+bool pkgDepCache::CheckConsistency(char const *const msgtag)		/*{{{*/
+{
+   auto const OrigPkgState = PkgState;
+   auto const OrigDepState = DepState;
+
+   PkgState = new StateCache[Head().PackageCount];
+   DepState = new unsigned char[Head().DependsCount];
+   memset(PkgState,0,sizeof(*PkgState)*Head().PackageCount);
+   memset(DepState,0,sizeof(*DepState)*Head().DependsCount);
+
+   auto const origUsrSize = iUsrSize;
+   auto const origDownloadSize = iDownloadSize;
+   auto const origInstCount = iInstCount;
+   auto const origDelCount = iDelCount;
+   auto const origKeepCount = iKeepCount;
+   auto const origBrokenCount = iBrokenCount;
+   auto const origPolicyBrokenCount = iPolicyBrokenCount;
+   auto const origBadCount = iBadCount;
+
+   for (PkgIterator I = PkgBegin(); not I.end(); ++I)
+   {
+      auto &State = PkgState[I->ID];
+      auto const &OrigState = OrigPkgState[I->ID];
+      State.iFlags = OrigState.iFlags;
+
+      State.CandidateVer = OrigState.CandidateVer;
+      State.InstallVer = OrigState.InstallVer;
+      State.Mode = OrigState.Mode;
+      State.Update(I,*this);
+      State.Status = OrigState.Status;
+   }
+   PerformDependencyPass(nullptr);
+
+   _error->PushToStack();
+#define APT_CONSISTENCY_CHECK(VAR,STR) \
+   if (orig##VAR != i##VAR) \
+      _error->Warning("Internal Inconsistency in pkgDepCache: " #VAR " " STR " vs " STR " (%s)", i##VAR, orig##VAR, msgtag)
+   APT_CONSISTENCY_CHECK(UsrSize, "%lld");
+   APT_CONSISTENCY_CHECK(DownloadSize, "%lld");
+   APT_CONSISTENCY_CHECK(InstCount, "%lu");
+   APT_CONSISTENCY_CHECK(DelCount, "%lu");
+   APT_CONSISTENCY_CHECK(KeepCount, "%lu");
+   APT_CONSISTENCY_CHECK(BrokenCount, "%lu");
+   APT_CONSISTENCY_CHECK(PolicyBrokenCount, "%lu");
+   APT_CONSISTENCY_CHECK(BadCount, "%lu");
+#undef APT_CONSISTENCY_CHECK
+
+   for (PkgIterator P = PkgBegin(); not P.end(); ++P)
+   {
+      auto const &State = PkgState[P->ID];
+      auto const &OrigState = OrigPkgState[P->ID];
+      if (State.Status != OrigState.Status)
+	 _error->Warning("Internal Inconsistency in pkgDepCache: Status of %s is %d vs %d (%s)", P.FullName().c_str(), State.Status, OrigState.Status, msgtag);
+      if (State.NowBroken() != OrigState.NowBroken())
+	 _error->Warning("Internal Inconsistency in pkgDepCache: Now broken for %s is %d vs %d (%s)", P.FullName().c_str(), static_cast<int>(State.DepState), static_cast<int>(OrigState.DepState), msgtag);
+      if (State.NowPolicyBroken() != OrigState.NowPolicyBroken())
+	 _error->Warning("Internal Inconsistency in pkgDepCache: Now policy broken for %s is %d vs %d (%s)", P.FullName().c_str(), static_cast<int>(State.DepState), static_cast<int>(OrigState.DepState), msgtag);
+      if (State.InstBroken() != OrigState.InstBroken())
+	 _error->Warning("Internal Inconsistency in pkgDepCache: Install broken for %s is %d vs %d (%s)", P.FullName().c_str(), static_cast<int>(State.DepState), static_cast<int>(OrigState.DepState), msgtag);
+      if (State.InstPolicyBroken() != OrigState.InstPolicyBroken())
+	 _error->Warning("Internal Inconsistency in pkgDepCache: Install broken for %s is %d vs %d (%s)", P.FullName().c_str(), static_cast<int>(State.DepState), static_cast<int>(OrigState.DepState), msgtag);
+   }
+
+   auto inconsistent = _error->PendingError();
+   _error->MergeWithStack();
+
+   delete[] PkgState;
+   delete[] DepState;
+   PkgState = OrigPkgState;
+   DepState = OrigDepState;
+   iUsrSize = origUsrSize;
+   iDownloadSize = origDownloadSize;
+   iInstCount = origInstCount;
+   iDelCount = origDelCount;
+   iKeepCount = origKeepCount;
+   iBrokenCount = origBrokenCount;
+   iPolicyBrokenCount = origPolicyBrokenCount;
+   iBadCount = origBadCount;
+
+   return not inconsistent;
+}
+									/*}}}*/
 // DepCache::Init - Generate the initial extra structures.		/*{{{*/
 // ---------------------------------------------------------------------
 /* This allocats the extension buffers and initializes them. */
@@ -655,8 +737,8 @@ void pkgDepCache::UpdateVerState(PkgIterator const &Pkg)
 // ---------------------------------------------------------------------
 /* This will figure out the state of all the packages and all the 
    dependencies based on the current policy. */
-void pkgDepCache::Update(OpProgress * const Prog)
-{   
+void pkgDepCache::PerformDependencyPass(OpProgress * const Prog)
+{
    iUsrSize = 0;
    iDownloadSize = 0;
    iInstCount = 0;
@@ -666,7 +748,6 @@ void pkgDepCache::Update(OpProgress * const Prog)
    iPolicyBrokenCount = 0;
    iBadCount = 0;
 
-   // Perform the depends pass
    int Done = 0;
    for (PkgIterator I = PkgBegin(); I.end() != true; ++I, ++Done)
    {
@@ -699,10 +780,12 @@ void pkgDepCache::Update(OpProgress * const Prog)
       UpdateVerState(I);
       AddStates(I);
    }
-
    if (Prog != 0)
       Prog->Progress(Done);
-
+}
+void pkgDepCache::Update(OpProgress * const Prog)
+{
+   PerformDependencyPass(Prog);
    readStateFile(Prog);
 }
 									/*}}}*/

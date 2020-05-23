@@ -58,6 +58,8 @@ pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
    string Jnk = "SIMULATE";
    for (decltype(PackageCount) I = 0; I != PackageCount; ++I)
       FileNames[I] = Jnk;
+
+   Cache->CheckConsistency("simulate");
 }
 									/*}}}*/
 // Simulate::~Simulate - Destructor					/*{{{*/
@@ -721,6 +723,9 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 {
    pkgDepCache::ActionGroup group(Cache);
 
+   if (Debug)
+      Cache.CheckConsistency("resolve start");
+
    // Record which packages are marked for install
    bool Again = false;
    do
@@ -1152,6 +1157,8 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
       }
    }
 
+   if (Debug)
+      Cache.CheckConsistency("resolve done");
 
    return true;
 }
@@ -1210,6 +1217,9 @@ bool pkgProblemResolver::ResolveByKeep(OpProgress * const Progress)
 bool pkgProblemResolver::ResolveByKeepInternal()
 {
    pkgDepCache::ActionGroup group(Cache);
+
+   if (Debug)
+      Cache.CheckConsistency("keep start");
 
    MakeScores();
 
@@ -1341,6 +1351,10 @@ bool pkgProblemResolver::ResolveByKeepInternal()
    }
 
    delete[] PList;
+
+   if (Debug)
+      Cache.CheckConsistency("keep done");
+
    return true;
 }
 									/*}}}*/
