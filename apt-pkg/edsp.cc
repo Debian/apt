@@ -335,9 +335,8 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output,
    }
    bool Okay = WriteOkay(output, "Request: EDSP 0.5\n");
 
-   const char *arch = _config->Find("APT::Architecture").c_str();
    std::vector<string> archs = APT::Configuration::getArchitectures();
-   WriteOkay(Okay, output, "Architecture: ", arch, "\n",
+   WriteOkay(Okay, output, "Architecture: ", _config->Find("APT::Architecture").c_str(), "\n",
 	 "Architectures:");
    for (std::vector<string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
        WriteOkay(Okay, output, " ", *a);
@@ -858,9 +857,8 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
    }
    bool Okay = WriteOkay(output, "Request: EIPP 0.1\n");
 
-   const char *arch = _config->Find("APT::Architecture").c_str();
    std::vector<string> archs = APT::Configuration::getArchitectures();
-   WriteOkay(Okay, output, "Architecture: ", arch, "\n",
+   WriteOkay(Okay, output, "Architecture: ", _config->Find("APT::Architecture").c_str(), "\n",
 	 "Architectures:");
    for (std::vector<string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
        WriteOkay(Okay, output, " ", *a);
