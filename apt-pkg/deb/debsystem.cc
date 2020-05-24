@@ -270,7 +270,7 @@ static std::string getDpkgStatusLocation(Configuration const &Cnf) {
    Configuration PathCnf;
    PathCnf.Set("Dir", Cnf.Find("Dir", "/"));
    PathCnf.Set("Dir::State::status", "status");
-   auto const cnfstatedir = Cnf.Find("Dir::State", STATE_DIR + 1);
+   auto const cnfstatedir = Cnf.Find("Dir::State", &STATE_DIR[1]);
    // if the state dir ends in apt, replace it with dpkg -
    // for the default this gives us the same as the fallback below.
    // This can't be a ../dpkg as that would play bad with symlinks

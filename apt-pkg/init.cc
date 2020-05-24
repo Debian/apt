@@ -134,18 +134,18 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir","/");
    
    // State
-   Cnf.CndSet("Dir::State", STATE_DIR + 1);
+   Cnf.CndSet("Dir::State", &STATE_DIR[1]);
    Cnf.CndSet("Dir::State::lists","lists/");
    Cnf.CndSet("Dir::State::cdroms","cdroms.list");
 
    // Cache
-   Cnf.CndSet("Dir::Cache", CACHE_DIR + 1);
+   Cnf.CndSet("Dir::Cache", &CACHE_DIR[1]);
    Cnf.CndSet("Dir::Cache::archives","archives/");
    Cnf.CndSet("Dir::Cache::srcpkgcache","srcpkgcache.bin");
    Cnf.CndSet("Dir::Cache::pkgcache","pkgcache.bin");
 
    // Configuration
-   Cnf.CndSet("Dir::Etc", CONF_DIR + 1);
+   Cnf.CndSet("Dir::Etc", &CONF_DIR[1]);
    Cnf.CndSet("Dir::Etc::sourcelist","sources.list");
    Cnf.CndSet("Dir::Etc::sourceparts","sources.list.d");
    Cnf.CndSet("Dir::Etc::main","apt.conf");
@@ -162,7 +162,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Media::MountPath","/media/apt");
 
    // State
-   Cnf.CndSet("Dir::Log", LOG_DIR + 1);
+   Cnf.CndSet("Dir::Log", &LOG_DIR[1]);
    Cnf.CndSet("Dir::Log::Terminal","term.log");
    Cnf.CndSet("Dir::Log::History","history.log");
    Cnf.CndSet("Dir::Log::Planner","eipp.log.xz");
