@@ -337,6 +337,32 @@ E: Unable to correct problems, you have held broken packages." aptget install ne
 	fi
 
 	testsuccessequal "$HEADER
+The following NEW packages will be installed:
+  selfprov
+0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+Inst selfprov (2 unstable [amd64])
+Conf selfprov (2 unstable [amd64])" apt install selfprov -s --solver $solver
+	if [ "$solver" = 'apt' ]; then
+		HEADER_POST_NL="
+$HEADER_POST"
+	else
+		HEADER_POST_NL=''
+	fi
+	testsuccessequal "$HEADER_PRE
+Selected version '2' (unstable [amd64]) for 'selfprov'$HEADER_POST_NL
+The following NEW packages will be installed:
+  selfprov
+0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+Inst selfprov (2 unstable [amd64])
+Conf selfprov (2 unstable [amd64])" apt install selfprov=1 -s --solver $solver
+	testsuccessequal "$HEADER
+The following NEW packages will be installed:
+  selfprov
+0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+Inst selfprov (2 unstable [amd64])
+Conf selfprov (2 unstable [amd64])" apt install selfprov=2 -s --solver $solver
+
+	testsuccessequal "$HEADER
 The following additional packages will be installed:
   selfprov
 The following NEW packages will be installed:
