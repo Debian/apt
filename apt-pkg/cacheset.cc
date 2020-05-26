@@ -488,14 +488,12 @@ bool VersionContainerInterface::FromString(VersionContainerInterface * const vci
 			pkgVersionMatch Match(ver, (verIsRel == true ? pkgVersionMatch::Release :
 					pkgVersionMatch::Version));
 			V = Match.Find(P);
-			if (V.end() == true) {
+			helper.setLastVersionMatcher(ver);
+			if (V.end()) {
 				if (verIsRel == true)
-					_error->Error(_("Release '%s' for '%s' was not found"),
-							ver.c_str(), P.FullName(true).c_str());
+					V = helper.canNotGetVersion(CacheSetHelper::RELEASE, Cache, P);
 				else
-					_error->Error(_("Version '%s' for '%s' was not found"),
-							ver.c_str(), P.FullName(true).c_str());
-				continue;
+					V = helper.canNotGetVersion(CacheSetHelper::VERSIONNUMBER, Cache, P);
 			}
 		}
 		if (V.end() == true)
@@ -568,9 +566,25 @@ bool VersionContainerInterface::FromPackage(VersionContainerInterface * const vc
 			helper.canNotFindVersion(CacheSetHelper::NEWEST, vci, Cache, P);
 		break;
 	case CacheSetHelper::RELEASE:
+		{
+		pkgVersionMatch Match(helper.getLastVersionMatcher(), pkgVersionMatch::Release);
+		V = Match.Find(P);
+		if (not V.end())
+			found |= vci->insert(V);
+		else
+			helper.canNotFindVersion(CacheSetHelper::RELEASE, vci, Cache, P);
+		}
+		break;
 	case CacheSetHelper::VERSIONNUMBER:
-		// both make no sense here, so always false
-		return false;
+		{
+		pkgVersionMatch Match(helper.getLastVersionMatcher(), pkgVersionMatch::Version);
+		V = Match.Find(P);
+		if (not V.end())
+			found |= vci->insert(V);
+		else
+			helper.canNotFindVersion(CacheSetHelper::VERSIONNUMBER, vci, Cache, P);
+		}
+		break;
 	}
 	return found;
 }
@@ -728,10 +742,8 @@ void CacheSetHelper::canNotFindVersion(enum VerSelector const select, VersionCon
 	case CANDIDATE: canNotFindCandidateVer(Cache, Pkg); break;
 	case INSTALLED: canNotFindInstalledVer(Cache, Pkg); break;
 	case CANDANDINST: canNotGetCandInstVer(Cache, Pkg); break;
-	case RELEASE:
-	case VERSIONNUMBER:
-		// invalid in this branch
-		break;
+	case RELEASE: canNotGetVerFromRelease(Cache, Pkg, getLastVersionMatcher()); break;
+	case VERSIONNUMBER: canNotGetVerFromVersionNumber(Cache, Pkg, getLastVersionMatcher()); break;
 	}
 }
 // canNotFindAllVer							/*{{{*/
@@ -762,10 +774,10 @@ pkgCache::VerIterator CacheSetHelper::canNotGetVersion(enum VerSelector const se
 	case INSTALLED: return canNotFindInstalledVer(Cache, Pkg);
 	case CANDINST: return canNotGetCandInstVer(Cache, Pkg);
 	case INSTCAND: return canNotGetInstCandVer(Cache, Pkg);
+	case RELEASE: return canNotGetVerFromRelease(Cache, Pkg, getLastVersionMatcher());
+	case VERSIONNUMBER: return canNotGetVerFromVersionNumber(Cache, Pkg, getLastVersionMatcher());
 	case ALL:
 	case CANDANDINST:
-	case RELEASE:
-	case VERSIONNUMBER:
 		// invalid in this branch
 		return pkgCache::VerIterator(Cache, 0);
 	}
@@ -808,6 +820,20 @@ pkgCache::VerIterator CacheSetHelper::canNotGetCandInstVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
 		_error->Insert(ErrorType, _("Can't select installed nor candidate version from package '%s' as it has neither of them"), Pkg.FullName(true).c_str());
+	return pkgCache::VerIterator(Cache, 0);
+}
+									/*}}}*/
+// canNotFindMatchingVer						/*{{{*/
+pkgCache::VerIterator CacheSetHelper::canNotGetVerFromRelease(pkgCacheFile &Cache,
+		pkgCache::PkgIterator const &Pkg, std::string const &release) {
+	if (ShowError == true)
+		_error->Insert(ErrorType, _("Release '%s' for '%s' was not found"), release.c_str(), Pkg.FullName(true).c_str());
+	return pkgCache::VerIterator(Cache, 0);
+}
+pkgCache::VerIterator CacheSetHelper::canNotGetVerFromVersionNumber(pkgCacheFile &Cache,
+		pkgCache::PkgIterator const &Pkg, std::string const &verstr) {
+	if (ShowError == true)
+		_error->Insert(ErrorType, _("Version '%s' for '%s' was not found"), verstr.c_str(), Pkg.FullName(true).c_str());
 	return pkgCache::VerIterator(Cache, 0);
 }
 									/*}}}*/
@@ -875,9 +901,16 @@ void CacheSetHelper::showSelectedVersion(pkgCache::PkgIterator const &/*Pkg*/,
 }
 									/*}}}*/
 
+class CacheSetHelper::Private {
+public:
+   std::string version_or_release;
+};
+std::string CacheSetHelper::getLastVersionMatcher() const { return d->version_or_release; }
+void CacheSetHelper::setLastVersionMatcher(std::string const &matcher) { d->version_or_release = matcher; }
+
 CacheSetHelper::CacheSetHelper(bool const ShowError, GlobalError::MsgType ErrorType) :
-   ShowError(ShowError), ErrorType(ErrorType), d(NULL) {}
-CacheSetHelper::~CacheSetHelper() {}
+   ShowError(ShowError), ErrorType(ErrorType), d(new Private{}) {}
+CacheSetHelper::~CacheSetHelper() { delete d; }
 
 PackageContainerInterface::PackageContainerInterface() : ConstructedBy(CacheSetHelper::UNKNOWN), d(NULL) {}
 PackageContainerInterface::PackageContainerInterface(PackageContainerInterface const &by) : PackageContainerInterface() { *this = by; }
