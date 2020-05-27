@@ -1474,5 +1474,5 @@ pkgAcquire::UriIterator::UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), C
 }
 
 pkgAcquire::UriIterator::~UriIterator() {}
-pkgAcquire::MethodConfig::~MethodConfig() {}
+pkgAcquire::MethodConfig::~MethodConfig() { delete d; }
 pkgAcquireStatus::~pkgAcquireStatus() {}
