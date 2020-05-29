@@ -1043,7 +1043,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		  }
 
 		  // Skip adding to the kill list if it is protected
-		  if (Cache[Pkg].Protect())
+		  if (Cache[Pkg].Protect() && Cache[Pkg].Mode != pkgDepCache::ModeDelete)
 		     continue;
 		
 		  if (Debug == true)
