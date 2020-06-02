@@ -841,7 +841,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	 pkgCache::DepIterator End;
 	 size_t OldSize = 0;
 
-	 KillList.resize(0);
+	 KillList.clear();
 	 
 	 enum {OrRemove,OrKeep} OrOp = OrRemove;
 	 for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList();
@@ -1099,33 +1099,38 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	 // Apply the kill list now
 	 if (Cache[I].InstallVer != 0)
 	 {
-	    for (auto J = KillList.begin(); J != KillList.end(); J++)
+	    for (auto const &J : KillList)
 	    {
-	       Change = true;
-	       if ((Cache[J->Dep] & pkgDepCache::DepGNow) == 0)
+	       bool foundSomething = false;
+	       if ((Cache[J.Dep] & pkgDepCache::DepGNow) == 0)
 	       {
-		  if (J->Dep.IsNegative() == true)
+		  if (J.Dep.IsNegative() && Cache.MarkDelete(J.Pkg, false, 0, false))
 		  {
-		     if (Debug == true)
-			clog << "  Fixing " << I.FullName(false) << " via remove of " << J->Pkg.FullName(false) << endl;
-		     Cache.MarkDelete(J->Pkg, false, 0, false);
+		     if (Debug)
+			std::clog << "  Fixing " << I.FullName(false) << " via remove of " << J.Pkg.FullName(false) << '\n';
+		     foundSomething = true;
 		  }
 	       }
-	       else
+	       else if (Cache.MarkKeep(J.Pkg, false, false))
 	       {
-		  if (Debug == true)
-		     clog << "  Fixing " << I.FullName(false) << " via keep of " << J->Pkg.FullName(false) << endl;
-		  Cache.MarkKeep(J->Pkg, false, false);
+		  if (Debug)
+		     std::clog << "  Fixing " << I.FullName(false) << " via keep of " << J.Pkg.FullName(false) << '\n';
+		  foundSomething = true;
 	       }
 
-	       if (Counter > 1)
+	       if (not foundSomething || Counter > 1)
 	       {
-		  if (Scores[I->ID] > Scores[J->Pkg->ID])		  
-		     Scores[J->Pkg->ID] = Scores[I->ID];
-	       }	       
-	    }      
+		  if (Scores[I->ID] > Scores[J.Pkg->ID])
+		  {
+		     Scores[J.Pkg->ID] = Scores[I->ID];
+		     Change = true;
+		  }
+	       }
+	       if (foundSomething)
+		  Change = true;
+	    }
 	 }
-      }      
+      }
    }
 
    if (Debug == true)
