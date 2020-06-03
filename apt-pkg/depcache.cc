@@ -1258,28 +1258,31 @@ static bool MarkInstall_CollectDependencies(pkgDepCache const &Cache, pkgCache::
 									/*}}}*/
 static APT::VersionVector getAllPossibleSolutions(pkgDepCache &Cache, pkgCache::DepIterator Start, pkgCache::DepIterator const &End, APT::CacheSetHelper::VerSelector const selector, bool const sorted) /*{{{*/
 {
-      pkgCacheFile CacheFile{&Cache};
-      APT::VersionVector toUpgrade, toNewInstall;
-      do
+   pkgCacheFile CacheFile{&Cache};
+   APT::VersionVector toUpgrade, toNewInstall;
+   do
+   {
+      APT::VersionVector verlist = APT::VersionVector::FromDependency(CacheFile, Start, selector);
+      if (not sorted)
       {
-	 APT::VersionVector verlist = APT::VersionVector::FromDependency(CacheFile, Start, selector);
-	 if (not sorted)
-	 {
-	    std::move(verlist.begin(), verlist.end(), std::back_inserter(toUpgrade));
-	    continue;
-	 }
-	 std::sort(verlist.begin(), verlist.end(), CompareProviders{Cache, Start});
-	 for (auto &&Ver : verlist)
-	 {
-	    auto P = Ver.ParentPkg();
-	    if (P->CurrentVer != 0)
-	       toUpgrade.emplace_back(std::move(Ver));
-	    else
-	       toNewInstall.emplace_back(std::move(Ver));
-	 }
-      } while (Start++ != End);
-      std::move(toNewInstall.begin(), toNewInstall.end(), std::back_inserter(toUpgrade));
-  return toUpgrade;
+	 std::move(verlist.begin(), verlist.end(), std::back_inserter(toUpgrade));
+	 continue;
+      }
+      std::sort(verlist.begin(), verlist.end(), CompareProviders{Cache, Start});
+      for (auto &&Ver : verlist)
+      {
+	 auto P = Ver.ParentPkg();
+	 if (P->CurrentVer != 0)
+	    toUpgrade.emplace_back(std::move(Ver));
+	 else
+	    toNewInstall.emplace_back(std::move(Ver));
+      }
+   } while (Start++ != End);
+   std::move(toNewInstall.begin(), toNewInstall.end(), std::back_inserter(toUpgrade));
+   if (not sorted)
+      std::sort(toUpgrade.begin(), toUpgrade.end(), [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) { return A->ID < B->ID; });
+   toUpgrade.erase(std::unique(toUpgrade.begin(), toUpgrade.end()), toUpgrade.end());
+   return toUpgrade;
 }
 									/*}}}*/
 static bool MarkInstall_MarkDeleteForNotUpgradeable(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long const Depth, pkgCache::PkgIterator const &Pkg, bool const propagateProctected)/*{{{*/
@@ -1313,6 +1316,8 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
       {
 	 auto const Pkg = Ver.ParentPkg();
 	 auto &State = Cache[Pkg];
+	 if (State.CandidateVer != Ver)
+	    continue;
 	 if (Pkg.CurrentVer() != Ver)
 	 {
 	    if (State.Install() && not Cache.MarkKeep(Pkg, false, false, Depth))
@@ -1466,7 +1471,7 @@ static bool MarkInstall_InstallDependencies(pkgDepCache &Cache, bool const Debug
       for (auto const &InstVer : possibleSolutions)
       {
 	 auto const InstPkg = InstVer.ParentPkg();
-	 if (Cache[InstPkg].CandidateVer == nullptr || Cache[InstPkg].CandidateVer == InstPkg.CurrentVer())
+	 if (Cache[InstPkg].CandidateVer != InstVer)
 	    continue;
 	 if (DebugAutoInstall)
 	    std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.FullName()
