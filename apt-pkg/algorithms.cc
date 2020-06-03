@@ -793,8 +793,9 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
       changing a breaks c) */
    bool Change = true;
    bool const TryFixByInstall = _config->FindB("pkgProblemResolver::FixByInstall", true);
+   int const MaxCounter = _config->FindI("pkgProblemResolver::MaxCounter", 20);
    std::vector<PackageKill> KillList;
-   for (int Counter = 0; Counter != 10 && Change == true; Counter++)
+   for (int Counter = 0; Counter < MaxCounter && Change; ++Counter)
    {
       Change = false;
       for (pkgCache::Package **K = PList.get(); K != PEnd; K++)
