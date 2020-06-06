@@ -105,18 +105,18 @@ static bool SetupAPTPartialDirectory(std::string const &grand, std::string const
 	 {
 	    // chown the partial dir
 	    if(chown(partial.c_str(), pw->pw_uid, gr->gr_gid) != 0)
-	       _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of directory %s failed", SandboxUser.c_str(), partial.c_str());
+	       _error->WarningE("SetupAPTPartialDirectory", "chown to %s:%s of directory %s failed", SandboxUser.c_str(), ROOT_GROUP, partial.c_str());
 	 }
       }
       if (chmod(partial.c_str(), mode) != 0)
-	 _error->WarningE("SetupAPTPartialDirectory", "chmod 0700 of directory %s failed", partial.c_str());
+	 _error->WarningE("SetupAPTPartialDirectory", "chmod 0%03o of directory %s failed", mode, partial.c_str());
 
    }
    else if (chmod(partial.c_str(), mode) != 0)
    {
       // if we haven't created the dir and aren't root, it is kinda expected that chmod doesn't work
       if (partialExists == false)
-	 _error->WarningE("SetupAPTPartialDirectory", "chmod 0700 of directory %s failed", partial.c_str());
+	 _error->WarningE("SetupAPTPartialDirectory", "chmod 0%03o of directory %s failed", mode, partial.c_str());
    }
 
    _error->PushToStack();
