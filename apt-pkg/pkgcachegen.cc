@@ -156,13 +156,14 @@ pkgCacheGenerator::~pkgCacheGenerator()
    Map.Sync(0,sizeof(pkgCache::Header));
 }
 									/*}}}*/
-void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newMap, size_t oldSize) {/*{{{*/
+void pkgCacheGenerator::ReMap(void const * const oldMap, void * const newMap, size_t oldSize) {/*{{{*/
+   if (oldMap == newMap)
+      return;
+
    // Prevent multiple remaps of the same iterator. If seen.insert(iterator)
    // returns (something, true) the iterator was not yet seen and we can
    // remap it.
    std::unordered_set<void *> seen;
-   if (oldMap == newMap)
-      return;
 
    if (_config->FindB("Debug::pkgCacheGen", false))
       std::clog << "Remapping from " << oldMap << " to " << newMap << std::endl;
@@ -170,42 +171,24 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
    Cache.ReMap(false);
 
    if (CurrentFile != nullptr)
-      CurrentFile += static_cast<pkgCache::PackageFile const *>(newMap) - static_cast<pkgCache::PackageFile const *>(oldMap);
+      CurrentFile = static_cast<pkgCache::PackageFile *>(newMap) + (CurrentFile - static_cast<pkgCache::PackageFile const *>(oldMap));
    if (CurrentRlsFile != nullptr)
-      CurrentRlsFile += static_cast<pkgCache::ReleaseFile const *>(newMap) - static_cast<pkgCache::ReleaseFile const *>(oldMap);
+      CurrentRlsFile = static_cast<pkgCache::ReleaseFile *>(newMap) + (CurrentRlsFile - static_cast<pkgCache::ReleaseFile const *>(oldMap));
 
-   for (std::vector<pkgCache::GrpIterator*>::const_iterator i = Dynamic<pkgCache::GrpIterator>::toReMap.begin();
-	i != Dynamic<pkgCache::GrpIterator>::toReMap.end(); ++i)
-      if (std::get<1>(seen.insert(*i)) == true)
-	 (*i)->ReMap(oldMap, newMap);
-   for (std::vector<pkgCache::PkgIterator*>::const_iterator i = Dynamic<pkgCache::PkgIterator>::toReMap.begin();
-	i != Dynamic<pkgCache::PkgIterator>::toReMap.end(); ++i)
-      if (std::get<1>(seen.insert(*i)) == true)
-	 (*i)->ReMap(oldMap, newMap);
-   for (std::vector<pkgCache::VerIterator*>::const_iterator i = Dynamic<pkgCache::VerIterator>::toReMap.begin();
-	i != Dynamic<pkgCache::VerIterator>::toReMap.end(); ++i)
-      if (std::get<1>(seen.insert(*i)) == true)
-	 (*i)->ReMap(oldMap, newMap);
-   for (std::vector<pkgCache::DepIterator*>::const_iterator i = Dynamic<pkgCache::DepIterator>::toReMap.begin();
-	i != Dynamic<pkgCache::DepIterator>::toReMap.end(); ++i)
-	if (std::get<1>(seen.insert(*i)) == true)
-	 (*i)->ReMap(oldMap, newMap);
-   for (std::vector<pkgCache::DescIterator*>::const_iterator i = Dynamic<pkgCache::DescIterator>::toReMap.begin();
-	i != Dynamic<pkgCache::DescIterator>::toReMap.end(); ++i)
-      if (std::get<1>(seen.insert(*i)) == true)
-	 (*i)->ReMap(oldMap, newMap);
-   for (std::vector<pkgCache::PrvIterator*>::const_iterator i = Dynamic<pkgCache::PrvIterator>::toReMap.begin();
-	i != Dynamic<pkgCache::PrvIterator>::toReMap.end(); ++i)
-      if (std::get<1>(seen.insert(*i)) == true)
-	 (*i)->ReMap(oldMap, newMap);
-   for (std::vector<pkgCache::PkgFileIterator*>::const_iterator i = Dynamic<pkgCache::PkgFileIterator>::toReMap.begin();
-	i != Dynamic<pkgCache::PkgFileIterator>::toReMap.end(); ++i)
-      if (std::get<1>(seen.insert(*i)) == true)
-	 (*i)->ReMap(oldMap, newMap);
-   for (std::vector<pkgCache::RlsFileIterator*>::const_iterator i = Dynamic<pkgCache::RlsFileIterator>::toReMap.begin();
-	i != Dynamic<pkgCache::RlsFileIterator>::toReMap.end(); ++i)
-      if (std::get<1>(seen.insert(*i)) == true)
-	 (*i)->ReMap(oldMap, newMap);
+#define APT_REMAP(TYPE) \
+   for (auto * const i : Dynamic<TYPE>::toReMap) \
+      if (seen.insert(i).second) \
+	 i->ReMap(oldMap, newMap)
+   APT_REMAP(pkgCache::GrpIterator);
+   APT_REMAP(pkgCache::PkgIterator);
+   APT_REMAP(pkgCache::VerIterator);
+   APT_REMAP(pkgCache::DepIterator);
+   APT_REMAP(pkgCache::DescIterator);
+   APT_REMAP(pkgCache::PrvIterator);
+   APT_REMAP(pkgCache::PkgFileIterator);
+   APT_REMAP(pkgCache::RlsFileIterator);
+#undef APT_REMAP
+
    for (APT::StringView* ViewP : Dynamic<APT::StringView>::toReMap) {
       if (std::get<1>(seen.insert(ViewP)) == false)
 	 continue;
@@ -453,7 +436,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 			   Pkg.Name(), "NewVersion", 1);
 
    if (oldMap != Map.Data())
-	 LastVer += static_cast<map_pointer<pkgCache::Version> const *>(Map.Data()) - static_cast<map_pointer<pkgCache::Version> const *>(oldMap);
+	 LastVer = static_cast<map_pointer<pkgCache::Version> *>(Map.Data()) + (LastVer - static_cast<map_pointer<pkgCache::Version> const *>(oldMap));
    *LastVer = verindex;
 
    if (unlikely(List.NewVersion(Ver) == false))
@@ -1073,7 +1056,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
       for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; ++D)
 	 OldDepLast = &D->NextDepends;
    } else if (oldMap != Map.Data())
-      OldDepLast += static_cast<map_pointer<pkgCache::Dependency> const *>(Map.Data()) - static_cast<map_pointer<pkgCache::Dependency> const *>(oldMap);
+      OldDepLast = static_cast<map_pointer<pkgCache::Dependency> *>(Map.Data()) + (OldDepLast - static_cast<map_pointer<pkgCache::Dependency> const *>(oldMap));
 
    Dep->NextDepends = *OldDepLast;
    *OldDepLast = Dependency;

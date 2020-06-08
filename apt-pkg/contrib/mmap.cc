@@ -393,7 +393,7 @@ unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
       bool const newError = _error->PendingError();
       _error->MergeWithStack();
       if (Pools != oldPools)
-	 I += Pools - oldPools;
+	 I = Pools + (I - oldPools);
 
       // Does the allocation failed ?
       if (Result == 0 && newError)
