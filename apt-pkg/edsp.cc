@@ -262,7 +262,7 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress *Progres
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false && likely(Okay); ++Pkg)
    {
       std::string const arch = Pkg.Arch();
-      if (std::find(archs.begin(), archs.end(), arch) == archs.end())
+      if (Pkg->CurrentVer == 0 && std::find(archs.begin(), archs.end(), arch) == archs.end())
 	 continue;
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false && likely(Okay); ++Ver, ++p)
       {
