@@ -292,3 +292,21 @@ echo 'Error: instant-exit
 Message: This solver exits instantly'
 exit 1" 'E: External solver failed with: This solver exits instantly
 E: Sub-process exit1withmsg returned an error code (1)'
+
+configarchitecture 'amd64' 'i386'
+buildsimplenativepackage 'dummy-webserver' 'all' '1' 'unstable' 'Provides: httpd
+Multi-Arch: foreign'
+testfailure apt install -s dummy-webserver
+testsuccess apt install -s ./incoming/dummy-webserver_1_all.deb
+testsuccess apt install -s ./incoming/dummy-webserver_1_all.deb --solver apt
+testfailure apt install -s ./incoming/dummy-webserver_1_all.deb --solver dump
+
+testsuccess aptcache showpkg dummy-webserver --with-source ./incoming/dummy-webserver_1_all.deb
+cp -a rootdir/tmp/testsuccess.output showpkg.output
+testequal 'Reverse Depends: 
+Dependencies: 
+1 - 
+Provides: 
+1 - ./incoming/dummy-webserver_1_all.deb (= 1) httpd (= ) 
+Reverse Provides: ' tail -n 6 showpkg.output
+testsuccessequal 'Provides: httpd' grep 'Provides:' "$APT_EDSP_DUMP_FILENAME"
