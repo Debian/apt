@@ -29,8 +29,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <array>
 #include <limits>
+#include <sstream>
 #include <string>
 
 #include <apti18n.h>
@@ -119,19 +121,25 @@ static bool WriteScenarioDependency(FileFd &output, pkgCache::VerIterator const 
    for (size_t i = 1; i < dependencies.size(); ++i)
       if (dependencies[i].empty() == false)
 	 WriteOkay(Okay, output, "\n", DepMap[i], ": ", dependencies[i]);
-   string provides;
-   for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
+   std::vector<std::string> provides;
+   for (auto Prv = Ver.ProvidesList(); not Prv.end(); ++Prv)
    {
-      if (Prv.IsMultiArchImplicit() == true)
+      if (Prv.IsMultiArchImplicit())
 	 continue;
-      if (provides.empty() == false)
-	 provides.append(", ");
-      provides.append(Prv.Name());
+      std::string provide = Prv.Name();
       if (Prv->ProvideVersion != 0)
-	 provides.append(" (= ").append(Prv.ProvideVersion()).append(")");
+	 provide.append(" (= ").append(Prv.ProvideVersion()).append(")");
+      if ((Ver->MultiArch & pkgCache::Version::Foreign) != 0 && std::find(provides.cbegin(), provides.cend(), provide) != provides.cend())
+	 continue;
+      provides.emplace_back(std::move(provide));
    }
-   if (provides.empty() == false)
-      WriteOkay(Okay, output, "\nProvides: ", provides);
+   if (not provides.empty())
+   {
+      std::ostringstream out;
+      std::copy(provides.begin(), provides.end() - 1, std::ostream_iterator<std::string>(out, ", "));
+      out << provides.back();
+      WriteOkay(Okay, output, "\nProvides: ", out.str());
+   }
    return WriteOkay(Okay, output, "\n");
 }
 									/*}}}*/
