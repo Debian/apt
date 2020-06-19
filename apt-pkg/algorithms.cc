@@ -517,18 +517,37 @@ void pkgProblemResolver::MakeScores()
 	 Score += PrioInstalledAndNotObsolete;
 
       // propagate score points along dependencies
-      for (pkgCache::DepIterator D = InstVer.DependsList(); D.end() == false; ++D)
+      for (pkgCache::DepIterator D = InstVer.DependsList(); not D.end(); ++D)
       {
 	 if (DepMap[D->Type] == 0)
 	    continue;
 	 pkgCache::PkgIterator const T = D.TargetPkg();
-	 if (D->Version != 0)
+	 if (not D.IsIgnorable(T))
 	 {
-	    pkgCache::VerIterator const IV = Cache[T].InstVerIter(Cache);
-	    if (IV.end() == true || D.IsSatisfied(IV) == false)
-	       continue;
+	    if (D->Version != 0)
+	    {
+	       pkgCache::VerIterator const IV = Cache[T].InstVerIter(Cache);
+	       if (IV.end() || not D.IsSatisfied(IV))
+		  continue;
+	    }
+	    Scores[T->ID] += DepMap[D->Type];
 	 }
-	 Scores[T->ID] += DepMap[D->Type];
+
+	 std::vector<map_id_t> providers;
+	 for (auto Prv = T.ProvidesList(); not Prv.end(); ++Prv)
+	 {
+	    if (D.IsIgnorable(Prv))
+	       continue;
+	    auto const PV = Prv.OwnerVer();
+	    auto const PP = PV.ParentPkg();
+	    if (PV != Cache[PP].InstVerIter(Cache) || not D.IsSatisfied(Prv))
+	       continue;
+	    providers.push_back(PP->ID);
+	 }
+	 std::sort(providers.begin(), providers.end());
+	 providers.erase(std::unique(providers.begin(), providers.end()), providers.end());
+	 for (auto const prv : providers)
+	    Scores[prv] += DepMap[D->Type];
       }
    }
 
@@ -564,13 +583,25 @@ void pkgProblemResolver::MakeScores()
       provide important packages extremely important */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
    {
-      for (pkgCache::PrvIterator P = I.ProvidesList(); P.end() == false; ++P)
+      auto const transfer = abs(Scores[I->ID] - OldScores[I->ID]);
+      if (transfer == 0)
+	 continue;
+
+      std::vector<map_id_t> providers;
+      for (auto Prv = I.ProvidesList(); not Prv.end(); ++Prv)
       {
-	 // Only do it once per package
-	 if ((pkgCache::Version *)P.OwnerVer() != Cache[P.OwnerPkg()].InstallVer)
+	 if (Prv.IsMultiArchImplicit())
 	    continue;
-	 Scores[P.OwnerPkg()->ID] += abs(Scores[I->ID] - OldScores[I->ID]);
+	 auto const PV = Prv.OwnerVer();
+	 auto const PP = PV.ParentPkg();
+	 if (PV != Cache[PP].InstVerIter(Cache))
+	    continue;
+	 providers.push_back(PP->ID);
       }
+      std::sort(providers.begin(), providers.end());
+      providers.erase(std::unique(providers.begin(), providers.end()), providers.end());
+      for (auto const prv : providers)
+	 Scores[prv] += transfer;
    }
 
    /* Protected things are pushed really high up. This number should put them
