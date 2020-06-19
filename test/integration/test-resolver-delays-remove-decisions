@@ -1,0 +1,74 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertinstalledpackage 'stuff' 'all' '1'
+
+insertpackage 'unstable' 'foobar' 'all' '1' 'Depends: foo | bar'
+insertpackage 'unstable' 'foo' 'all' '1' 'Conflicts: stuff
+Depends: foo-dep'
+insertpackage 'unstable' 'foo-dep' 'all' '1' 'Depends: uninstallable'
+
+insertpackage 'unstable' 'bar' 'all' '1'
+
+setupaptarchive
+
+# We are needlessly removing "stuff" if we don't delay its marking here
+# as we do not question the remove later on
+testsuccessequal "Reading package lists...
+Building dependency tree...
+  MarkInstall foobar:amd64 < none -> 1 @un puN Ib > FU=1
+  Installing foo:amd64 as Depends of foobar:amd64
+     Delayed Removing: stuff:amd64 as upgrade is not an option for foo:amd64 (1)
+    MarkInstall foo:amd64 < none -> 1 @un uN Ib > FU=0
+    Installing foo-dep:amd64 as Depends of foo:amd64
+      foo-dep:amd64 Depends on uninstallable:amd64 < none @un H > can't be satisfied!
+      foo:amd64 Depends on foo-dep:amd64 < none @un H > can't be satisfied! (dep)
+  Installing bar:amd64 as Depends of foobar:amd64
+    MarkInstall bar:amd64 < none -> 1 @un uN > FU=0
+Starting pkgProblemResolver with broken count: 0
+Starting 2 pkgProblemResolver with broken count: 0
+Done
+The following additional packages will be installed:
+  bar
+The following NEW packages will be installed:
+  bar foobar
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1 unstable [all])
+Inst foobar (1 unstable [all])
+Conf bar (1 unstable [all])
+Conf foobar (1 unstable [all])" apt install foobar -s -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
+
+insertinstalledpackage 'uninstallable' 'all' '1'
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+  MarkInstall foobar:amd64 < none -> 1 @un puN Ib > FU=1
+  Installing foo:amd64 as Depends of foobar:amd64
+     Delayed Removing: stuff:amd64 as upgrade is not an option for foo:amd64 (1)
+    MarkInstall foo:amd64 < none -> 1 @un uN Ib > FU=0
+    Installing foo-dep:amd64 as Depends of foo:amd64
+      MarkInstall foo-dep:amd64 < none -> 1 @un uN > FU=0
+    MarkDelete stuff:amd64 < 1 @ii mK > FU=0
+Starting pkgProblemResolver with broken count: 0
+Starting 2 pkgProblemResolver with broken count: 0
+Done
+The following additional packages will be installed:
+  foo foo-dep
+The following packages will be REMOVED:
+  stuff
+The following NEW packages will be installed:
+  foo foo-dep foobar
+  MarkDelete stuff:amd64 < 1 @ii K > FU=1
+0 upgraded, 3 newly installed, 1 to remove and 0 not upgraded.
+Remv stuff [1]
+Inst foo-dep (1 unstable [all])
+Inst foo (1 unstable [all])
+Inst foobar (1 unstable [all])
+Conf foo-dep (1 unstable [all])
+Conf foo (1 unstable [all])
+Conf foobar (1 unstable [all])" apt install foobar -s -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1

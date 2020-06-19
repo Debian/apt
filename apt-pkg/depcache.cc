@@ -839,13 +839,73 @@ void pkgDepCache::Update(PkgIterator const &Pkg)
 	 Update(P.ParentPkg().RevDependsList());
 }
 									/*}}}*/
+// DepCache::IsModeChangeOk - check if it is ok to change the mode	/*{{{*/
+// ---------------------------------------------------------------------
+/* this is used by all Mark methods on the very first line to check sanity
+   and prevents mode changes for packages on hold for example.
+   If you want to check Mode specific stuff you can use the virtual public
+   Is<Mode>Ok methods instead */
+static char const* PrintMode(char const mode)
+{
+	 switch (mode)
+	 {
+	 case pkgDepCache::ModeInstall: return "Install";
+	 case pkgDepCache::ModeKeep: return "Keep";
+	 case pkgDepCache::ModeDelete: return "Delete";
+	 case pkgDepCache::ModeGarbage: return "Garbage";
+	 default: return "UNKNOWN";
+	 }
+}
+static bool IsModeChangeOk(pkgDepCache &Cache, pkgDepCache::ModeList const mode, pkgCache::PkgIterator const &Pkg,
+			   unsigned long const Depth, bool const FromUser, bool const DebugMarker)
+{
+   // we are not trying to hard…
+   if (unlikely(Depth > 100))
+      return false;
+
+   // general sanity
+   if (unlikely(Pkg.end() == true || Pkg->VersionList == 0))
+      return false;
+
+   // the user is always right
+   if (FromUser == true)
+      return true;
+
+   auto &P = Cache[Pkg];
+   // not changing the mode is obviously also fine as we might want to call
+   // e.g. MarkInstall multiple times with different arguments for the same package
+   if (P.Mode == mode)
+      return true;
+
+   // if previous state was set by user only user can reset it
+   if ((P.iFlags & pkgDepCache::Protected) == pkgDepCache::Protected)
+   {
+      if (unlikely(DebugMarker == true))
+	 std::clog << OutputInDepth(Depth) << "Ignore Mark" << PrintMode(mode)
+		   << " of " << APT::PrettyPkg(&Cache, Pkg) << " as its mode (" << PrintMode(P.Mode)
+		   << ") is protected" << std::endl;
+      return false;
+   }
+   // enforce dpkg holds
+   else if (mode != pkgDepCache::ModeKeep && Pkg->SelectedState == pkgCache::State::Hold &&
+	    _config->FindB("APT::Ignore-Hold",false) == false)
+   {
+      if (unlikely(DebugMarker == true))
+	 std::clog << OutputInDepth(Depth) << "Hold prevents Mark" << PrintMode(mode)
+		   << " of " << APT::PrettyPkg(&Cache, Pkg) << std::endl;
+      return false;
+   }
+
+   return true;
+}
+									/*}}}*/
 // DepCache::MarkKeep - Put the package in the keep state		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
                            unsigned long Depth)
 {
-   if (IsModeChangeOk(ModeKeep, Pkg, Depth, FromUser) == false)
+   if (not IsModeChangeOk(*this, ModeKeep, Pkg, Depth, FromUser, DebugMarker))
       return false;
 
    /* Reject an attempt to keep a non-source broken installed package, those
@@ -905,7 +965,7 @@ bool pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
 bool pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
                              unsigned long Depth, bool FromUser)
 {
-   if (IsModeChangeOk(ModeDelete, Pkg, Depth, FromUser) == false)
+   if (not IsModeChangeOk(*this, ModeDelete, Pkg, Depth, FromUser, DebugMarker))
       return false;
 
    StateCache &P = PkgState[Pkg->ID];
@@ -1001,66 +1061,6 @@ bool pkgDepCache::IsDeleteOkProtectInstallRequests(PkgIterator const &Pkg,
 	 return false;
       }
    }
-   return true;
-}
-									/*}}}*/
-// DepCache::IsModeChangeOk - check if it is ok to change the mode	/*{{{*/
-// ---------------------------------------------------------------------
-/* this is used by all Mark methods on the very first line to check sanity
-   and prevents mode changes for packages on hold for example.
-   If you want to check Mode specific stuff you can use the virtual public
-   Is<Mode>Ok methods instead */
-static char const* PrintMode(char const mode)
-{
-	 switch (mode)
-	 {
-	 case pkgDepCache::ModeInstall: return "Install";
-	 case pkgDepCache::ModeKeep: return "Keep";
-	 case pkgDepCache::ModeDelete: return "Delete";
-	 case pkgDepCache::ModeGarbage: return "Garbage";
-	 default: return "UNKNOWN";
-	 }
-}
-bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
-				 unsigned long const Depth, bool const FromUser)
-{
-   // we are not trying to hard…
-   if (unlikely(Depth > 100))
-      return false;
-
-   // general sanity
-   if (unlikely(Pkg.end() == true || Pkg->VersionList == 0))
-      return false;
-
-   // the user is always right
-   if (FromUser == true)
-      return true;
-
-   StateCache &P = PkgState[Pkg->ID];
-   // not changing the mode is obviously also fine as we might want to call
-   // e.g. MarkInstall multiple times with different arguments for the same package
-   if (P.Mode == mode)
-      return true;
-
-   // if previous state was set by user only user can reset it
-   if ((P.iFlags & Protected) == Protected)
-   {
-      if (unlikely(DebugMarker == true))
-	 std::clog << OutputInDepth(Depth) << "Ignore Mark" << PrintMode(mode)
-		   << " of " << APT::PrettyPkg(this, Pkg) << " as its mode (" << PrintMode(P.Mode)
-		   << ") is protected" << std::endl;
-      return false;
-   }
-   // enforce dpkg holds
-   else if (mode != ModeKeep && Pkg->SelectedState == pkgCache::State::Hold &&
-	    _config->FindB("APT::Ignore-Hold",false) == false)
-   {
-      if (unlikely(DebugMarker == true))
-	 std::clog << OutputInDepth(Depth) << "Hold prevents Mark" << PrintMode(mode)
-		   << " of " << APT::PrettyPkg(this, Pkg) << std::endl;
-      return false;
-   }
-
    return true;
 }
 									/*}}}*/
@@ -1285,25 +1285,35 @@ static APT::VersionVector getAllPossibleSolutions(pkgDepCache &Cache, pkgCache::
    return toUpgrade;
 }
 									/*}}}*/
-static bool MarkInstall_MarkDeleteForNotUpgradeable(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long const Depth, pkgCache::PkgIterator const &Pkg, bool const propagateProctected)/*{{{*/
+static bool MarkInstall_MarkDeleteForNotUpgradeable(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long const Depth, pkgCache::PkgIterator const &Pkg, bool const propagateProctected, APT::PackageVector &delayedRemove)/*{{{*/
 {
    auto &State = Cache[Pkg];
+   if (not propagateProctected)
+   {
+      if (State.Delete())
+	 return true;
+      if(DebugAutoInstall)
+	 std::clog << OutputInDepth(Depth) << " Delayed Removing: " << Pkg.FullName() << " as upgrade is not an option for " << PV.ParentPkg().FullName() << " (" << PV.VerStr() << ")\n";
+      if (not IsModeChangeOk(Cache, pkgDepCache::ModeDelete, Pkg, Depth, false, DebugAutoInstall) ||
+	  not Cache.IsDeleteOk(Pkg, false, Depth, false))
+	 return false;
+      delayedRemove.push_back(Pkg);
+      return true;
+   }
+
    if (not State.Delete())
    {
       if(DebugAutoInstall)
-	 std::clog << OutputInDepth(Depth) << " Removing: " << Pkg.Name() << " as upgrade is not an option for " << PV.ParentPkg().FullName() << " (" << PV.VerStr() << ")\n";
+	 std::clog << OutputInDepth(Depth) << " Removing: " << Pkg.FullName() << " as upgrade is not an option for " << PV.ParentPkg().FullName() << " (" << PV.VerStr() << ")\n";
       if (not Cache.MarkDelete(Pkg, false, Depth + 1, false))
 	 return false;
    }
-   if (propagateProctected)
-   {
-      MarkInstall_DiscardCandidate(Cache, Pkg);
-      Cache.MarkProtected(Pkg);
-   }
+   MarkInstall_DiscardCandidate(Cache, Pkg);
+   Cache.MarkProtected(Pkg);
    return true;
 }
 									/*}}}*/
-static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade, bool const propagateProctected, bool const FromUser) /*{{{*/
+static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade, APT::PackageVector &delayedRemove, bool const propagateProctected, bool const FromUser) /*{{{*/
 {
    /* Negative dependencies have no or-group
       If the candidate is effected try to keep current and discard candidate
@@ -1335,7 +1345,7 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
 	    else
 	       badCandidate.push_back(Pkg);
 	 }
-	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProctected))
+	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProctected, delayedRemove))
 	 {
 	    failedToRemoveSomething = true;
 	    if (not propagateProctected && not FromUser)
@@ -1351,7 +1361,9 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
 	 if (State.CandidateVer != Ver && State.CandidateVer != nullptr &&
 	     std::find(badCandidate.cbegin(), badCandidate.cend(), Pkg) == badCandidate.end())
 	    toUpgrade.push_back(Pkg);
-	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProctected))
+	 else if (State.CandidateVer == Pkg.CurrentVer())
+	    ; // already done in the first loop above
+	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProctected, delayedRemove))
 	 {
 	    failedToRemoveSomething = true;
 	    if (not propagateProctected && not FromUser)
@@ -1509,7 +1521,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
 			      unsigned long Depth, bool FromUser,
 			      bool ForceImportantDeps)
 {
-   if (IsModeChangeOk(ModeInstall, Pkg, Depth, FromUser) == false)
+   if (not IsModeChangeOk(*this, ModeInstall, Pkg, Depth, FromUser, DebugMarker))
       return false;
 
    StateCache &P = PkgState[Pkg->ID];
@@ -1544,7 +1556,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
    bool hasFailed = false;
 
    std::vector<pkgCache::DepIterator> toInstall, toRemove;
-   APT::PackageVector toUpgrade;
+   APT::PackageVector toUpgrade, delayedRemove;
    if (AutoSolve)
    {
       VerIterator const PV = P.CandidateVerIter(*this);
@@ -1553,7 +1565,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
       if (not MarkInstall_CollectDependencies(*this, PV, toInstall, toRemove))
 	 return false;
 
-      if (not MarkInstall_RemoveConflictsIfNotUpgradeable(*this, DebugAutoInstall, PV, Depth, toRemove, toUpgrade, P.Protect(), FromUser))
+      if (not MarkInstall_RemoveConflictsIfNotUpgradeable(*this, DebugAutoInstall, PV, Depth, toRemove, toUpgrade, delayedRemove, P.Protect(), FromUser))
       {
 	 if (failEarly)
 	    return false;
@@ -1625,6 +1637,19 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
 	 return false;
       }
       hasFailed = true;
+   }
+
+   for (auto const &R : delayedRemove)
+   {
+      if (not MarkDelete(R, false, Depth, false))
+      {
+	 if (failEarly)
+	 {
+	    MarkInstall_DiscardInstall(Pkg);
+	    return false;
+	 }
+	 hasFailed = true;
+      }
    }
 
    if (MoveAutoBitToDependencies)
@@ -2182,7 +2207,7 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 	 reason = "Required";
       else if (userFunc.InRootSet(P))
 	 reason = "Blacklisted [APT::NeverAutoRemove]";
-      else if (IsModeChangeOk(ModeGarbage, P, 0, false) == false)
+      else if (not IsModeChangeOk(*this, ModeGarbage, P, 0, false, DebugMarker))
 	 reason = "Hold";
       else
 	 continue;

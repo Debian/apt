@@ -518,9 +518,6 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
    private:
    void * const d;
 
-   APT_HIDDEN bool IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
-			unsigned long const Depth, bool const FromUser);
-
    APT_HIDDEN bool MarkInstall_StateChange(PkgIterator const &Pkg, bool AutoInst, bool FromUser);
    APT_HIDDEN bool MarkInstall_DiscardInstall(PkgIterator const &Pkg);
 
