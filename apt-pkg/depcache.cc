@@ -1278,10 +1278,23 @@ static APT::VersionVector getAllPossibleSolutions(pkgDepCache &Cache, pkgCache::
 	    toNewInstall.emplace_back(std::move(Ver));
       }
    } while (Start++ != End);
-   std::move(toNewInstall.begin(), toNewInstall.end(), std::back_inserter(toUpgrade));
+   if (toUpgrade.empty())
+      toUpgrade = std::move(toNewInstall);
+   else
+      std::move(toNewInstall.begin(), toNewInstall.end(), std::back_inserter(toUpgrade));
+
    if (not sorted)
       std::sort(toUpgrade.begin(), toUpgrade.end(), [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) { return A->ID < B->ID; });
    toUpgrade.erase(std::unique(toUpgrade.begin(), toUpgrade.end()), toUpgrade.end());
+
+   if (not End.IsNegative())
+      toUpgrade.erase(std::remove_if(toUpgrade.begin(), toUpgrade.end(), [&Cache](pkgCache::VerIterator const &V) {
+			 auto const P = V.ParentPkg();
+			 auto const &State = Cache[P];
+			 return State.Protect() && (State.Delete() || (State.Keep() && P->CurrentVer == 0));
+		      }),
+		      toUpgrade.end());
+
    return toUpgrade;
 }
 									/*}}}*/
@@ -1521,10 +1534,12 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
 			      unsigned long Depth, bool FromUser,
 			      bool ForceImportantDeps)
 {
-   if (not IsModeChangeOk(*this, ModeInstall, Pkg, Depth, FromUser, DebugMarker))
+   StateCache &P = PkgState[Pkg->ID];
+   if (P.Protect() && P.Keep() && P.CandidateVer != nullptr && P.CandidateVer == Pkg.CurrentVer())
+      ; // we are here to mark our dependencies as protected, no state is changed
+   else if (not IsModeChangeOk(*this, ModeInstall, Pkg, Depth, FromUser, DebugMarker))
       return false;
 
-   StateCache &P = PkgState[Pkg->ID];
 
    // See if there is even any possible installation candidate
    if (P.CandidateVer == 0)
