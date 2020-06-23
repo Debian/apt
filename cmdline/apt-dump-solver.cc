@@ -134,11 +134,10 @@ int main(int argc,const char *argv[])					/*{{{*/
       return WriteError("ERR_READ_ERROR", out, stdoutfd, Solver);
    }
 
-   constexpr size_t BufSize = 64 * 1024;
-   std::unique_ptr<char[]> Buf(new char[BufSize]);
+   std::unique_ptr<char[]> Buf(new char[APT_BUFFER_SIZE]);
    unsigned long long ToRead = 0;
    do {
-      if (input.Read(Buf.get(),BufSize, &ToRead) == false)
+      if (input.Read(Buf.get(), APT_BUFFER_SIZE, &ToRead) == false)
       {
 	 std::ostringstream out;
 	 out << "Writing EDSP solver input to file '" << filename << "' failed as reading from stdin failed!\n";

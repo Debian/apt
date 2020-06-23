@@ -407,7 +407,7 @@ static ResultState UnwrapHTTPConnect(std::string Host, int Port, URI Proxy, std:
 									/*}}}*/
 
 // HttpServerState::HttpServerState - Constructor			/*{{{*/
-HttpServerState::HttpServerState(URI Srv,HttpMethod *Owner) : ServerState(Srv, Owner), In(Owner, 64*1024), Out(Owner, 4*1024)
+HttpServerState::HttpServerState(URI Srv, HttpMethod *Owner) : ServerState(Srv, Owner), In(Owner, APT_BUFFER_SIZE), Out(Owner, 4 * 1024)
 {
    TimeOut = Owner->ConfigFindI("Timeout", TimeOut);
    ServerFd = MethodFd::FromFd(-1);
