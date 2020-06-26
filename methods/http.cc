@@ -23,6 +23,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/proxy.h>
+#include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
 
 #include <chrono>
@@ -979,15 +980,18 @@ void HttpMethod::SendReq(FetchItem *Itm)
 		"Debian APT-HTTP/1.3 (" PACKAGE_VERSION ")");
 
 #ifdef HAVE_SYSTEMD
-   char *unit = nullptr;
-   sd_pid_get_unit(getpid(), &unit);
-   if (unit != nullptr && *unit != '\0' && not APT::String::Startswith(unit, "user@") // user@ _is_ interactive
-       && unit != "packagekit.service"s						      // packagekit likely is interactive
-       && unit != "dbus.service"s						      // aptdaemon and qapt don't have systemd services
-       && ConfigFindB("User-Agent-Non-Interactive", false))
-      Req << " non-interactive";
+   if (ConfigFindB("User-Agent-Non-Interactive", false))
+   {
+      using APT::operator""_sv;
+      char *unit = nullptr;
+      sd_pid_get_unit(getpid(), &unit);
+      if (unit != nullptr && *unit != '\0' && not APT::String::Startswith(unit, "user@") // user@ _is_ interactive
+	  && "packagekit.service"_sv != unit						 // packagekit likely is interactive
+	  && "dbus.service"_sv != unit)							 // aptdaemon and qapt don't have systemd services
+	 Req << " non-interactive";
 
-   free(unit);
+      free(unit);
+   }
 #endif
 
    Req << "\r\n";
