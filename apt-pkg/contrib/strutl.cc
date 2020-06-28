@@ -26,6 +26,7 @@
 #include <limits>
 #include <locale>
 #include <sstream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -1414,13 +1415,12 @@ unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
 // ---------------------------------------------------------------------
 /* This is used to make the internationalization strings easier to translate
    and to allow reordering of parameters */
-static bool iovprintf(ostream &out, const char *format,
+bool iovprintf(std::ostream &out, const char *format,
 		      va_list &args, ssize_t &size) {
-   char *S = (char*)malloc(size);
-   ssize_t const n = vsnprintf(S, size, format, args);
+   auto S = std::unique_ptr<char,decltype(&free)>{static_cast<char*>(malloc(size)), &free};
+   ssize_t const n = vsnprintf(S.get(), size, format, args);
    if (n > -1 && n < size) {
-      out << S;
-      free(S);
+      out << S.get();
       return true;
    } else {
       if (n > -1)
@@ -1428,7 +1428,6 @@ static bool iovprintf(ostream &out, const char *format,
       else
 	 size *= 2;
    }
-   free(S);
    return false;
 }
 void ioprintf(ostream &out,const char *format,...)

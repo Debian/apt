@@ -325,7 +325,11 @@ protected:
 
       rc = seccomp_load(ctx);
       if (rc == -EINVAL)
-	 Warning("aptMethod::Configuration: could not load seccomp policy: %s", strerror(-rc));
+      {
+	 std::string msg;
+	 strprintf(msg, "aptMethod::Configuration: could not load seccomp policy: %s", strerror(-rc));
+	 Warning(std::move(msg));
+      }
       else if (rc != 0)
 	 return _error->FatalE("aptMethod::Configuration", "could not load seccomp policy: %s", strerror(-rc));
 
@@ -380,12 +384,17 @@ protected:
       return true;
    }
 
-   void Warning(const char *Format,...)
+   void Warning(std::string &&msg)
    {
-      va_list args;
-      va_start(args,Format);
-      PrintStatus("104 Warning", Format, args);
-      va_end(args);
+      std::unordered_map<std::string, std::string> fields;
+      if (Queue != 0)
+	 fields.emplace("URI", Queue->Uri);
+      else
+	 fields.emplace("URI", "<UNKNOWN>");
+      if (not UsedMirror.empty())
+	 fields.emplace("UsedMirror", UsedMirror);
+      fields.emplace("Message", std::move(msg));
+      SendMessage("104 Warning", std::move(fields));
    }
 
    std::vector<std::string> methodNames;
@@ -560,14 +569,11 @@ class aptAuthConfMethod : public aptMethod
 	 result &= MaybeAddAuth(*authconf, uri);
       }
 
-      if (not _error->empty())
+      while (not _error->empty())
       {
 	 std::string message;
-	 while (not _error->empty())
-	 {
-	    _error->PopMessage(message);
-	    Warning("%s", message.c_str());
-	 }
+	 _error->PopMessage(message);
+	 Warning(std::move(message));
       }
       _error->RevertToStack();
 

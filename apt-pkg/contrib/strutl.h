@@ -117,6 +117,8 @@ APT_PUBLIC std::vector<std::string> StringSplit(std::string const &input,
                                      std::string const &sep, 
                                      unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) APT_PURE;
 
+
+APT_HIDDEN bool iovprintf(std::ostream &out, const char *format, va_list &args, ssize_t &size);
 APT_PUBLIC void ioprintf(std::ostream &out,const char *format,...) APT_PRINTF(2);
 APT_PUBLIC void strprintf(std::string &out,const char *format,...) APT_PRINTF(2);
 APT_PUBLIC char *safe_snprintf(char *Buffer,char *End,const char *Format,...) APT_PRINTF(3);

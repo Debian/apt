@@ -762,7 +762,9 @@ int BaseHttpMethod::Loop()
 			// yes, he did! Disable pipelining and rewrite queue
 			if (Server->Pipeline == true)
 			{
-			   Warning(_("Automatically disabled %s due to incorrect response from server/proxy. (man 5 apt.conf)"), "Acquire::http::Pipeline-Depth");
+			   std::string msg;
+			   strprintf(msg, _("Automatically disabled %s due to incorrect response from server/proxy. (man 5 apt.conf)"), "Acquire::http::Pipeline-Depth");
+			   Warning(std::move(msg));
 			   Server->Pipeline = false;
 			   Server->PipelineAllowed = false;
 			   // we keep the PipelineDepth value so that the rest of the queue can be fixed up as well
