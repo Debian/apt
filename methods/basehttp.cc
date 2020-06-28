@@ -110,6 +110,9 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 	 if (sscanf(Line.c_str(),"HTTP %3u%359[^\n]",&Result,Code) != 2)
 	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
+      auto const CodeLen = strlen(Code);
+      auto const CodeEnd = std::remove_if(Code, Code + CodeLen, [](char c) { return isprint(c) == 0; });
+      *CodeEnd = '\0';
 
       /* Check the HTTP response header to get the default persistence
          state. */
