@@ -783,13 +783,11 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
 				ToFile == false))
       return ResultState::TRANSIENT_ERROR;
 
-   // Handle server IO
-   if (ServerFd->HasPending() && In.ReadSpace() == true)
-   {
-      errno = 0;
-      if (In.Read(ServerFd) == false)
-	 return Die(Req);
-   }
+   // Record if we have data pending to read in the server, so that we can
+   // skip the wait in select(). This can happen if data has already been
+   // read into a methodfd's buffer - the TCP queue might be empty at that
+   // point.
+   bool ServerPending = ServerFd->HasPending();
 
    fd_set rfds,wfds;
    FD_ZERO(&rfds);
@@ -821,7 +819,7 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
 
    // Select
    struct timeval tv;
-   tv.tv_sec = TimeOut;
+   tv.tv_sec = ServerPending ? 0 : TimeOut;
    tv.tv_usec = 0;
    int Res = 0;
    if ((Res = select(MaxFd+1,&rfds,&wfds,0,&tv)) < 0)
@@ -832,14 +830,14 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
       return ResultState::TRANSIENT_ERROR;
    }
    
-   if (Res == 0)
+   if (Res == 0 && not ServerPending)
    {
       _error->Error(_("Connection timed out"));
       return ResultState::TRANSIENT_ERROR;
    }
    
    // Handle server IO
-   if (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &rfds))
+   if (ServerPending || (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &rfds)))
    {
       errno = 0;
       if (In.Read(ServerFd) == false)
