@@ -318,6 +318,8 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
 	 return false;
    if (Section.FindFlag(pkgTagSection::Key::Important,Pkg->Flags,pkgCache::Flag::Important) == false)
       return false;
+   if (Section.FindFlag(pkgTagSection::Key::Protected, Pkg->Flags, pkgCache::Flag::Important) == false)
+      return false;
 
    if (std::find(forceEssential.begin(), forceEssential.end(), Pkg.Name()) != forceEssential.end())
    {

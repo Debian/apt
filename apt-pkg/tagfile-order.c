@@ -11,7 +11,7 @@ static const char *iTFRewritePackageOrder[] = {
    "Architecture",
    "Subarchitecture", // Used only by d-i
    "Version",
-   "Revision",	 // Obsolete (warning in dpkg)
+   "Revision",	       // Obsolete (warning in dpkg)
    "Package-Revision", // Obsolete (warning in dpkg)
    "Package_Revision", // Obsolete (warning in dpkg)
    "Kernel-Version",   // Used only by d-i
@@ -23,6 +23,7 @@ static const char *iTFRewritePackageOrder[] = {
    "Priority",
    "Class", // dpkg nickname for Priority
    "Build-Essential",
+   "Protected",
    "Essential",
    "Installer-Menu-Item", // Used only by d-i
    "Section",
