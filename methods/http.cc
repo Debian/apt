@@ -94,6 +94,7 @@ void CircleBuf::Reset()
    is non-blocking.. */
 bool CircleBuf::Read(std::unique_ptr<MethodFd> const &Fd)
 {
+   size_t ReadThisCycle = 0;
    while (1)
    {
       // Woops, buffer is full
@@ -131,7 +132,7 @@ bool CircleBuf::Read(std::unique_ptr<MethodFd> const &Fd)
 	 CircleBuf::BwTickReadData += Res;
     
       if (Res == 0)
-	 return false;
+	 return ReadThisCycle != 0;
       if (Res < 0)
       {
 	 if (errno == EAGAIN)
@@ -140,6 +141,7 @@ bool CircleBuf::Read(std::unique_ptr<MethodFd> const &Fd)
       }
 
       InP += Res;
+      ReadThisCycle += Res;
    }
 }
 									/*}}}*/
@@ -204,8 +206,6 @@ bool CircleBuf::Write(std::unique_ptr<MethodFd> const &Fd)
       ssize_t Res;
       Res = Fd->Write(Buf + (OutP % Size), LeftWrite());
 
-      if (Res == 0)
-	 return false;
       if (Res < 0)
       {
 	 if (errno == EAGAIN)
@@ -215,7 +215,7 @@ bool CircleBuf::Write(std::unique_ptr<MethodFd> const &Fd)
       }
 
       TotalWriten += Res;
-      
+
       if (Hash != NULL)
 	 Hash->Add(Buf + (OutP%Size),Res);
       
