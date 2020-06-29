@@ -711,6 +711,8 @@ ResultState HttpServerState::Die(RequestState &Req)
       // can't be set
       if (Req.File.Name() != "/dev/null")
 	 SetNonBlock(Req.File.Fd(),false);
+      if (not In.WriteSpace())
+	 return ResultState::SUCCESSFUL;
       while (In.WriteSpace() == true)
       {
 	 if (In.Write(MethodFd::FromFd(Req.File.Fd())) == false)
@@ -723,6 +725,9 @@ ResultState HttpServerState::Die(RequestState &Req)
 	 if (In.IsLimit() == true)
 	    return ResultState::SUCCESSFUL;
       }
+
+      if (In.IsLimit() == true || Persistent == false)
+	 return ResultState::SUCCESSFUL;
    }
 
    // See if this is because the server finished the data stream
