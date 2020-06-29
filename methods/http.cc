@@ -846,13 +846,6 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
 	 return Die(Req);
    }
 
-   if (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &wfds))
-   {
-      errno = 0;
-      if (Out.Write(ServerFd) == false)
-	 return Die(Req);
-   }
-
    // Send data to the file
    if (FileFD->Fd() != -1 && FD_ISSET(FileFD->Fd(), &wfds))
    {
@@ -861,6 +854,13 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
 	 _error->Errno("write", _("Error writing to output file"));
 	 return ResultState::TRANSIENT_ERROR;
       }
+   }
+
+   if (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &wfds))
+   {
+      errno = 0;
+      if (Out.Write(ServerFd) == false)
+	 return Die(Req);
    }
 
    if (Req.MaximumSize > 0 && Req.File.IsOpen() && Req.File.Failed() == false && Req.File.Tell() > Req.MaximumSize)
