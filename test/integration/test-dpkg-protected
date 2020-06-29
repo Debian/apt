@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'protected-package' 'native' '1' 'Protected: yes'
+
+setupaptarchive
+
+
+if dpkg --assert-protected-field 2>/dev/null; then
+	testsuccess aptget remove protected-package "$@" -o Debug::pkgDpkgPm=1 -y --allow-remove-essential
+	cp rootdir/tmp/testsuccess.output rootdir/tmp/output
+	testsuccess grep -- '--force-remove-protected' rootdir/tmp/output
+else
+	msgskip "dpkg does not support protected field"
+fi
