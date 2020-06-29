@@ -705,29 +705,14 @@ ResultState HttpServerState::Die(RequestState &Req)
    // Dump the buffer to the file
    if (Req.State == RequestState::Data)
    {
-      if (Req.File.IsOpen() == false)
-	 return ResultState::SUCCESSFUL;
       // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
       // can't be set
       if (Req.File.Name() != "/dev/null")
 	 SetNonBlock(Req.File.Fd(),false);
-      if (not In.WriteSpace())
-	 return ResultState::SUCCESSFUL;
-      while (In.WriteSpace() == true)
-      {
-	 if (In.Write(MethodFd::FromFd(Req.File.Fd())) == false)
-	 {
-	    _error->Errno("write", _("Error writing to the file"));
-	    return ResultState::TRANSIENT_ERROR;
-	 }
-
-	 // Done
-	 if (In.IsLimit() == true)
-	    return ResultState::SUCCESSFUL;
+      if (In.WriteSpace()) {
+	 _error->Error(_("Data left in buffer"));
+	 return ResultState::TRANSIENT_ERROR;
       }
-
-      if (In.IsLimit() == true || Persistent == false)
-	 return ResultState::SUCCESSFUL;
    }
 
    // See if this is because the server finished the data stream
