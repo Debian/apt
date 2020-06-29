@@ -50,7 +50,7 @@ class debSystem : public pkgSystem
    APT_HIDDEN static pid_t ExecDpkg(std::vector<std::string> const &sArgs, int * const inputFd, int * const outputFd, bool const DiscardOutput);
    APT_HIDDEN static bool SupportsMultiArch();
    APT_HIDDEN static std::vector<std::string> SupportedArchitectures();
-
+   APT_HIDDEN static bool AssertFeature(std::string const &Feature);
    APT_HIDDEN bool LockInner();
    APT_HIDDEN bool UnLockInner(bool NoErrors=false);
    APT_HIDDEN bool IsLocked();
