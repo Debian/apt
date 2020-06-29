@@ -835,7 +835,7 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
    if (Res == 0)
    {
       _error->Error(_("Connection timed out"));
-      return Die(Req);
+      return ResultState::TRANSIENT_ERROR;
    }
    
    // Handle server IO
