@@ -700,6 +700,8 @@ ResultState HttpServerState::Die(RequestState &Req)
 {
    unsigned int LErrno = errno;
 
+   Close();
+
    // Dump the buffer to the file
    if (Req.State == RequestState::Data)
    {
@@ -727,7 +729,6 @@ ResultState HttpServerState::Die(RequestState &Req)
    if (In.IsLimit() == false && Req.State != RequestState::Header &&
        Persistent == true)
    {
-      Close();
       if (LErrno == 0)
       {
 	 _error->Error(_("Error reading from server. Remote end closed connection"));
@@ -746,7 +747,6 @@ ResultState HttpServerState::Die(RequestState &Req)
 	 return ResultState::TRANSIENT_ERROR;
 
       // We may have got multiple responses back in one packet..
-      Close();
       return ResultState::SUCCESSFUL;
    }
 
