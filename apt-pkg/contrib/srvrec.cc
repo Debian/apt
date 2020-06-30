@@ -137,17 +137,12 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
    // sort them by priority
    std::stable_sort(Result.begin(), Result.end());
 
-   for(std::vector<SrvRec>::iterator I = Result.begin();
-      I != Result.end(); ++I)
-   {
-      if (_config->FindB("Debug::Acquire::SrvRecs", false) == true)
-      {
-         std::cerr << "SrvRecs: got " << I->target
-                   << " prio: " << I->priority
-                   << " weight: " << I->weight
-                   << std::endl;
-      }
-   }
+   if (_config->FindB("Debug::Acquire::SrvRecs", false))
+      for(auto const &R : Result)
+	 std::cerr << "SrvRecs: got " << R.target
+		   << " prio: " << R.priority
+		   << " weight: " << R.weight
+		   << '\n';
 
    return true;
 }
