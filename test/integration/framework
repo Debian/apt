@@ -585,10 +585,14 @@ configdpkg() {
 		# the arch apt treats as native might be foreign for dpkg
 		for ARCH in ${ARCHS}; do
 			if [ "${ARCH}" != "${DPKGARCH}" ]; then
-				if ! dpkg --add-architecture ${ARCH} >/dev/null 2>&1; then
-					# old-style used e.g. in Ubuntu-P – and as it seems travis
-					echo "DPKG::options:: \"--foreign-architecture\";" >> rootdir/etc/apt/apt.conf.d/00foreigndpkg
-					echo "DPKG::options:: \"${ARCH}\";"  >> rootdir/etc/apt/apt.conf.d/00foreigndpkg
+				if ! dpkg --add-architecture ${ARCH} >rootdir/tmp/dpkgaddarch.output 2>&1; then
+					if grep -q 'pkg-config-dpkghook' rootdir/tmp/dpkgaddarch.output; then
+						msgwarn 'Ignoring failure of dpkg --add-architecture as it is likely due to pkg-config-dpkghook (see #824774)'
+					else
+						# old-style used e.g. in Ubuntu-P – and as it seems travis
+						echo "DPKG::options:: \"--foreign-architecture\";" >> rootdir/etc/apt/apt.conf.d/00foreigndpkg
+						echo "DPKG::options:: \"${ARCH}\";"  >> rootdir/etc/apt/apt.conf.d/00foreigndpkg
+					fi
 				fi
 			fi
 		done
