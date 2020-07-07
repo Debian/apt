@@ -40,7 +40,7 @@ testsuccess aptget install -y fdleaks -qq < /dev/null
 
 checkfdleak() {
 	msgtest 'Check if fds were not' "leaked: expect $1"
-	if [ "$(grep 'root root' rootdir/tmp/testsuccess.output | wc -l)" = "$1" ]; then
+	if [ "$(grep -e 'root root' -e "$(id -un) $(id -gn)" rootdir/tmp/testsuccess.output | wc -l)" = "$1" ]; then
 		msgpass
 	else
 		echo
