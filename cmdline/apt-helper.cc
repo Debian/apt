@@ -287,6 +287,14 @@ static bool AnalyzePattern(CommandLine &CmdL)				/*{{{*/
    return true;
 }
 									/*}}}*/
+static bool DoQuoteString(CommandLine &CmdL)				/*{{{*/
+{
+   if (CmdL.FileSize() != 3)
+      return _error->Error("Expect two arguments, a string to quote and a string of additional characters to quote");
+   std::cout << QuoteString(CmdL.FileList[1], CmdL.FileList[2]) << '\n';
+   return true;
+}
+									/*}}}*/
 static bool ShowHelp(CommandLine &)					/*{{{*/
 {
    std::cout <<
@@ -310,6 +318,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
        {"drop-privs", &DropPrivsAndRun, _("drop privileges before running given command")},
        {"analyze-pattern", &AnalyzePattern, _("analyse a pattern")},
        {"analyse-pattern", &AnalyzePattern, nullptr},
+       {"quote-string", &DoQuoteString, nullptr},
        {nullptr, nullptr, nullptr}};
 }
 									/*}}}*/
