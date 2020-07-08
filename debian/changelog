@@ -1,3 +1,33 @@
+apt (2.1.7) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * Do not hardcode (wrong) group and mode in setup warning (Closes: #962310)
+  * Do not sent our filename-provides trick to EDSP solvers (Closes: #962741)
+  * Tell EDSP solvers about all installed pkgs ignoring arch
+  * Deduplicate EDSP Provides line of M-A:foreign packages
+  * Delay removals due to Conflicts until Depends are resolved
+  * Filter out impossible solutions for protected propagation
+  * Add dependency points in the resolver also to providers
+  * Reorder config check before checking systemd for non-interactive http
+  * Reorder config check before result looping for SRV parsing debug
+  * Fix test due to display change in ls (coreutils 8.32)
+  * Detect pkg-config-dpkghook failure in tests to avoid fallback (Closes: #964475)
+
+  [ Américo Monteiro ]
+  * Portuguese manpages translation update (Closes: #962483)
+
+  [ Julian Andres Klode ]
+  * Replace some magic 64*1024 with APT_BUFFER_SIZE
+  * Add basic support for the Protected field
+
+  [ Sergio Oller Moreno ]
+  * Minor Catalan grammar typo
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #963008)
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 08 Jul 2020 09:38:35 +0200
+
 apt (2.1.6) unstable; urgency=medium
 
   [ David Kalnischkies ]
