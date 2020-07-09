@@ -363,6 +363,8 @@ class APT_PUBLIC pkgAcquire
     */
    virtual ~pkgAcquire();
 
+   APT_HIDDEN static std::string URIEncode(std::string const &part);
+
    private:
    APT_HIDDEN void Initialize();
 };
@@ -680,6 +682,8 @@ struct APT_PUBLIC pkgAcquire::MethodConfig
 
    APT_HIDDEN bool GetAuxRequests() const;
    APT_HIDDEN void SetAuxRequests(bool const value);
+   APT_HIDDEN bool GetSendURIEncoded() const;
+   APT_HIDDEN void SetSendURIEncoded(bool const value);
 
    virtual ~MethodConfig();
 };

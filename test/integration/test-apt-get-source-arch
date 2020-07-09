@@ -28,8 +28,8 @@ APTARCHIVE=$(readlink -f ./aptarchive)
 
 HEADER='Reading package lists...'
 DOWNLOAD10="Need to get 0 B/25 B of source archives.
-'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 11 SHA256:ed7c25c832596339bee13e4e7c45cf49f869b60d2bf57252f18191d75866c2a7
-'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 14 SHA256:f3da8c6ebc62c8ef2dae439a498dddcdacc1a07f45ff67ad12f44b6e2353c239"
+'file:${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 11 SHA256:ed7c25c832596339bee13e4e7c45cf49f869b60d2bf57252f18191d75866c2a7
+'file:${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 14 SHA256:f3da8c6ebc62c8ef2dae439a498dddcdacc1a07f45ff67ad12f44b6e2353c239"
 
 # pick :amd64
 testsuccessequal "$HEADER
@@ -38,15 +38,15 @@ $DOWNLOAD10" aptget source -q --print-uris foo:amd64
 # pick :i386
 testsuccessequal "$HEADER
 Need to get 0 B/25 B of source archives.
-'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 11 SHA256:0fcb803ffbeef26db884625aaf06e75f3eda5c994634980e7c20fd37ed1fc104
-'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 14 SHA256:ca9b0b828ca22372502af2b80f61f0bd9063910ece9fc34eeaf9d9e31aa8195a" aptget source -q --print-uris foo:i386
+'file:${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 11 SHA256:0fcb803ffbeef26db884625aaf06e75f3eda5c994634980e7c20fd37ed1fc104
+'file:${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 14 SHA256:ca9b0b828ca22372502af2b80f61f0bd9063910ece9fc34eeaf9d9e31aa8195a" aptget source -q --print-uris foo:i386
 
 # pick :i386 by release
 testsuccessequal "$HEADER
 Selected version '0.1' (oldstable) for foo
 Need to get 0 B/25 B of source archives.
-'file://${APTARCHIVE}/foo_0.1.dsc' foo_0.1.dsc 11 SHA256:72af24b0290fe1d13a3e25fddd2633e43c87ff79d249bc850009e47bcce73565
-'file://${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 14 SHA256:ec748ad88a71f98bfdc012e1a7632377d05fe3ebbf9c0922e0691fe4d79c0585" aptget source -q --print-uris foo:i386/oldstable
+'file:${APTARCHIVE}/foo_0.1.dsc' foo_0.1.dsc 11 SHA256:72af24b0290fe1d13a3e25fddd2633e43c87ff79d249bc850009e47bcce73565
+'file:${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 14 SHA256:ec748ad88a71f98bfdc012e1a7632377d05fe3ebbf9c0922e0691fe4d79c0585" aptget source -q --print-uris foo:i386/oldstable
 
 # pick :i386 by version
 testsuccessequal "$HEADER

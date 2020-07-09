@@ -63,17 +63,17 @@ APTARCHIVE=$(readlink -f ./aptarchive)
 # normal operation gets highest version number
 HEADER='Reading package lists...'
 DOWNLOAD1="Need to get 0 B/25 B of source archives.
-'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 11 SHA256:ed7c25c832596339bee13e4e7c45cf49f869b60d2bf57252f18191d75866c2a7
-'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 14 SHA256:f3da8c6ebc62c8ef2dae439a498dddcdacc1a07f45ff67ad12f44b6e2353c239"
+'file:${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 11 SHA256:ed7c25c832596339bee13e4e7c45cf49f869b60d2bf57252f18191d75866c2a7
+'file:${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 14 SHA256:f3da8c6ebc62c8ef2dae439a498dddcdacc1a07f45ff67ad12f44b6e2353c239"
 DOWNLOAD2="Need to get 0 B/25 B of source archives.
-'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 11 SHA256:0fcb803ffbeef26db884625aaf06e75f3eda5c994634980e7c20fd37ed1fc104
-'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 14 SHA256:ca9b0b828ca22372502af2b80f61f0bd9063910ece9fc34eeaf9d9e31aa8195a"
+'file:${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 11 SHA256:0fcb803ffbeef26db884625aaf06e75f3eda5c994634980e7c20fd37ed1fc104
+'file:${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 14 SHA256:ca9b0b828ca22372502af2b80f61f0bd9063910ece9fc34eeaf9d9e31aa8195a"
 DOWNLOAD3="Need to get 0 B/25 B of source archives.
-'file://${APTARCHIVE}/baz_1.0.dsc' baz_1.0.dsc 11 SHA256:322245f56092b466801dda62d79c8687bba9724af6d16d450d655d29e41d3d7b
-'file://${APTARCHIVE}/baz_1.0.tar.gz' baz_1.0.tar.gz 14 SHA256:0870bc73164ff5ba1f52153fdcb48e140137f9c7c122d57592cea136a57f73c0"
+'file:${APTARCHIVE}/baz_1.0.dsc' baz_1.0.dsc 11 SHA256:322245f56092b466801dda62d79c8687bba9724af6d16d450d655d29e41d3d7b
+'file:${APTARCHIVE}/baz_1.0.tar.gz' baz_1.0.tar.gz 14 SHA256:0870bc73164ff5ba1f52153fdcb48e140137f9c7c122d57592cea136a57f73c0"
 DOWNLOAD4="Need to get 0 B/25 B of source archives.
-'file://${APTARCHIVE}/baz_2.0.dsc' baz_2.0.dsc 11 SHA256:47d062d29070b3f592d1c8aed8c1e7913804bbb67ca1d64877c8219dac5e0420
-'file://${APTARCHIVE}/baz_2.0.tar.gz' baz_2.0.tar.gz 14 SHA256:11c1b202c94a64ab6433d9f0ed5515fce1dc7b20e6bcf51cec9ef8b9455f5a41"
+'file:${APTARCHIVE}/baz_2.0.dsc' baz_2.0.dsc 11 SHA256:47d062d29070b3f592d1c8aed8c1e7913804bbb67ca1d64877c8219dac5e0420
+'file:${APTARCHIVE}/baz_2.0.tar.gz' baz_2.0.tar.gz 14 SHA256:11c1b202c94a64ab6433d9f0ed5515fce1dc7b20e6bcf51cec9ef8b9455f5a41"
 testsuccessequal "$HEADER
 $DOWNLOAD2" apt source -q --print-uris foo
 testsuccessequal "$HEADER
@@ -138,8 +138,8 @@ testsuccessequal "$(getbuilddep 'foo')" apt build-dep foo=1.0 -s
 # select by release with no binary package (Bug#731102) but ensure to get
 # highest version
 DOWNLOAD01="Need to get 0 B/25 B of source archives.
-'file://${APTARCHIVE}/foo_0.1.dsc' foo_0.1.dsc 11 SHA256:72af24b0290fe1d13a3e25fddd2633e43c87ff79d249bc850009e47bcce73565
-'file://${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 14 SHA256:ec748ad88a71f98bfdc012e1a7632377d05fe3ebbf9c0922e0691fe4d79c0585"
+'file:${APTARCHIVE}/foo_0.1.dsc' foo_0.1.dsc 11 SHA256:72af24b0290fe1d13a3e25fddd2633e43c87ff79d249bc850009e47bcce73565
+'file:${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 14 SHA256:ec748ad88a71f98bfdc012e1a7632377d05fe3ebbf9c0922e0691fe4d79c0585"
 testsuccessequal "$HEADER
 Selected version '0.1' (wheezy) for foo
 $DOWNLOAD01" apt source -q --print-uris foo/wheezy
@@ -155,8 +155,8 @@ E: Unable to find a source package for foo=9.9-not-there" apt build-dep -s foo=9
 
 # version and release
 DOWNLOAD001="Need to get 0 B/29 B of source archives.
-'file://${APTARCHIVE}/foo_0.0.1.dsc' foo_0.0.1.dsc 13 SHA256:649dfe03bbb70cebdfe7c6bf9036f9f2472510b8f52e823bdf5ade362ebaa76f
-'file://${APTARCHIVE}/foo_0.0.1.tar.gz' foo_0.0.1.tar.gz 16 SHA256:ab7ba789d178362ecc808e49705e2338988a7f5b9410ec11a6c9555c017de907"
+'file:${APTARCHIVE}/foo_0.0.1.dsc' foo_0.0.1.dsc 13 SHA256:649dfe03bbb70cebdfe7c6bf9036f9f2472510b8f52e823bdf5ade362ebaa76f
+'file:${APTARCHIVE}/foo_0.0.1.tar.gz' foo_0.0.1.tar.gz 16 SHA256:ab7ba789d178362ecc808e49705e2338988a7f5b9410ec11a6c9555c017de907"
 testsuccessequal "$HEADER
 $DOWNLOAD001" apt source -q --print-uris -t unstable foo=0.0.1
 testsuccessequal "$(getbuilddep 'foo')" apt build-dep foo=0.0.1 -s

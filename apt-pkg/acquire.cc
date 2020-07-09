@@ -51,6 +51,12 @@
 
 using namespace std;
 
+std::string pkgAcquire::URIEncode(std::string const &part)		/*{{{*/
+{
+   // The "+" is encoded as a workaround for an S3 bug (LP#1003633 and LP#1086997)
+   return QuoteString(part, _config->Find("Acquire::URIEncode", "+~ ").c_str());
+}
+									/*}}}*/
 // Acquire::pkgAcquire - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* We grab some runtime state from the configuration space */
@@ -662,10 +668,11 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
 	 if (_config->Exists(conf) == true)
 	    continue;
 
-	 if (IsAccessibleBySandboxUser(source.Path, false) == false)
+	 auto const filepath = DeQuoteString(source.Path);
+	 if (not IsAccessibleBySandboxUser(filepath, false))
 	 {
 	    _error->NoticeE("pkgAcquire::Run", _("Download is performed unsandboxed as root as file '%s' couldn't be accessed by user '%s'."),
-		  source.Path.c_str(), SandboxUser.c_str());
+			    filepath.c_str(), SandboxUser.c_str());
 	    _config->CndSet("Binary::file::APT::Sandbox::User", "root");
 	    _config->CndSet("Binary::copy::APT::Sandbox::User", "root");
 	 }
@@ -880,6 +887,7 @@ class pkgAcquire::MethodConfig::Private
 {
    public:
    bool AuxRequests = false;
+   bool SendURIEncoded = false;
 };
 pkgAcquire::MethodConfig::MethodConfig() : d(new Private()), Next(0), SingleInstance(false),
 					   Pipeline(false), SendConfig(false), LocalOnly(false), NeedsCleanup(false),
@@ -897,6 +905,17 @@ void pkgAcquire::MethodConfig::SetAuxRequests(bool const value) /*{{{*/
    d->AuxRequests = value;
 }
 									/*}}}*/
+bool pkgAcquire::MethodConfig::GetSendURIEncoded() const		/*{{{*/
+{
+   return d->SendURIEncoded;
+}
+									/*}}}*/
+void pkgAcquire::MethodConfig::SetSendURIEncoded(bool const value)	/*{{{*/
+{
+   d->SendURIEncoded = value;
+}
+									/*}}}*/
+
 // Queue::Queue - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1073,10 +1092,25 @@ bool pkgAcquire::Queue::Shutdown(bool Final)
 /* */
 pkgAcquire::Queue::QItem *pkgAcquire::Queue::FindItem(string URI,pkgAcquire::Worker *Owner)
 {
-   for (QItem *I = Items; I != 0; I = I->Next)
-      if (I->URI == URI && I->Worker == Owner)
-	 return I;
-   return 0;
+   if (Owner->Config->GetSendURIEncoded())
+   {
+      for (QItem *I = Items; I != nullptr; I = I->Next)
+	 if (I->URI == URI && I->Worker == Owner)
+	    return I;
+   }
+   else
+   {
+      for (QItem *I = Items; I != nullptr; I = I->Next)
+      {
+	 if (I->Worker != Owner)
+	    continue;
+	 ::URI tmpuri{I->URI};
+	 tmpuri.Path = DeQuoteString(tmpuri.Path);
+	 if (URI == std::string(tmpuri))
+	    return I;
+      }
+   }
+   return nullptr;
 }
 									/*}}}*/
 // Queue::ItemDone - Item has been completed				/*{{{*/

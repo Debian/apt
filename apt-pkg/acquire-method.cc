@@ -75,6 +75,9 @@ pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
    if ((Flags & AuxRequests) == AuxRequests)
       try_emplace(fields, "AuxRequests", "true");
 
+   if ((Flags & SendURIEncoded) == SendURIEncoded)
+      try_emplace(fields, "Send-URI-Encoded", "true");
+
    SendMessage("100 Capabilities", std::move(fields));
 
    SetNonBlock(STDIN_FILENO,true);

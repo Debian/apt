@@ -21,11 +21,11 @@ testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.d
 testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 " aptget dist-upgrade -qq --print-uris
 testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 " aptget install apt -qq --print-uris
 testsuccessequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 SHA256:0000000000000000000000000000000000000000000000000000000000000000" aptget download apt -qq --print-uris
-testsuccessequal "'file://${APTARCHIVE}/apt_2.dsc' apt_2.dsc 9 SHA256:7776436a6d741497f1cd958014e1a05b352224231428152aae39da3c17fd2fd4
-'file://${APTARCHIVE}/apt_2.tar.gz' apt_2.tar.gz 12 SHA256:f57f565eabe3fde0ec6e6e0bcc8db1d86fe2b4d6344a380a23520ddbb7728e99" aptget source apt -qq --print-uris
+testsuccessequal "'file:${APTARCHIVE}/apt_2.dsc' apt_2.dsc 9 SHA256:7776436a6d741497f1cd958014e1a05b352224231428152aae39da3c17fd2fd4
+'file:${APTARCHIVE}/apt_2.tar.gz' apt_2.tar.gz 12 SHA256:f57f565eabe3fde0ec6e6e0bcc8db1d86fe2b4d6344a380a23520ddbb7728e99" aptget source apt -qq --print-uris
 testsuccessequal "'https://metadata.ftp-master.debian.org/changelogs/main/a/apt/apt_2_changelog' apt.changelog" aptget changelog apt -qq --print-uris
 
-testsuccessequal "'file://${APTARCHIVE}/apt_2.dsc' apt_2.dsc 9 SHA256:7776436a6d741497f1cd958014e1a05b352224231428152aae39da3c17fd2fd4
-'file://${APTARCHIVE}/apt_2.tar.gz' apt_2.tar.gz 12 SHA256:f57f565eabe3fde0ec6e6e0bcc8db1d86fe2b4d6344a380a23520ddbb7728e99
-'file://${APTARCHIVE}/apt2_1.dsc' apt2_1.dsc 10 SHA256:5693ba5efbfa21216f13661d344611aabe70ce3c343554ab46d4d9c24fdfd13a
-'file://${APTARCHIVE}/apt2_1.tar.gz' apt2_1.tar.gz 13 SHA256:1464c609fd09934c270ec629020d5e248b080607f715e47ef088cc8ab8480541" aptget source apt apt2 -qq --print-uris
+testsuccessequal "'file:${APTARCHIVE}/apt_2.dsc' apt_2.dsc 9 SHA256:7776436a6d741497f1cd958014e1a05b352224231428152aae39da3c17fd2fd4
+'file:${APTARCHIVE}/apt_2.tar.gz' apt_2.tar.gz 12 SHA256:f57f565eabe3fde0ec6e6e0bcc8db1d86fe2b4d6344a380a23520ddbb7728e99
+'file:${APTARCHIVE}/apt2_1.dsc' apt2_1.dsc 10 SHA256:5693ba5efbfa21216f13661d344611aabe70ce3c343554ab46d4d9c24fdfd13a
+'file:${APTARCHIVE}/apt2_1.tar.gz' apt2_1.tar.gz 13 SHA256:1464c609fd09934c270ec629020d5e248b080607f715e47ef088cc8ab8480541" aptget source apt apt2 -qq --print-uris
