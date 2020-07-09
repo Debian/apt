@@ -901,9 +901,8 @@ void HttpMethod::SendReq(FetchItem *Itm)
    else
       requesturi = Uri;
 
-   // The "+" is encoded as a workaround for a amazon S3 bug
-   // see LP bugs #1003633 and #1086997.
-   requesturi = QuoteString(requesturi, "+~ ");
+   if (not _config->FindB("Acquire::Send-URI-Encoded", false))
+      requesturi = URIEncode(requesturi);
 
    /* Build the request. No keep-alive is included as it is the default
       in 1.1, can cause problems with proxies, and we are an HTTP/1.1
@@ -1022,7 +1021,7 @@ BaseHttpMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &R
    return FILE_IS_OPEN;
 }
 									/*}}}*/
-HttpMethod::HttpMethod(std::string &&pProg) : BaseHttpMethod(std::move(pProg), "1.2", Pipeline | SendConfig) /*{{{*/
+HttpMethod::HttpMethod(std::string &&pProg) : BaseHttpMethod(std::move(pProg), "1.2", Pipeline | SendConfig | SendURIEncoded) /*{{{*/
 {
    SeccompFlags = aptMethod::BASE | aptMethod::NETWORK;
 

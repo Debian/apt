@@ -97,7 +97,7 @@ class MirrorMethod : public aptMethod /*{{{*/
    void DealWithPendingItems(std::vector<std::string> const &baseuris, MirrorListInfo const &info, FetchItem *const Itm, std::function<void()> handler);
 
    public:
-   explicit MirrorMethod(std::string &&pProg) : aptMethod(std::move(pProg), "2.0", SingleInstance | Pipeline | SendConfig | AuxRequests), genrng(clock())
+   explicit MirrorMethod(std::string &&pProg) : aptMethod(std::move(pProg), "2.0", SingleInstance | Pipeline | SendConfig | AuxRequests | SendURIEncoded), genrng(clock())
    {
       SeccompFlags = aptMethod::BASE | aptMethod::DIRECTORY;
    }

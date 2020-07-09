@@ -123,7 +123,7 @@ class GPGVMethod : public aptMethod
    protected:
    virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
    public:
-   GPGVMethod() : aptMethod("gpgv", "1.1", SingleInstance | SendConfig){};
+   GPGVMethod() : aptMethod("gpgv", "1.1", SingleInstance | SendConfig | SendURIEncoded){};
 };
 static void PushEntryWithKeyID(std::vector<std::string> &Signers, char * const buffer, bool const Debug)
 {
@@ -419,7 +419,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 {
    URI const Get(Itm->Uri);
-   string const Path = Get.Host + Get.Path; // To account for relative paths
+   std::string const Path = DecodeSendURI(Get.Host + Get.Path); // To account for relative paths
    SignersStorage Signers;
 
    std::vector<std::string> keyFpts, keyFiles;

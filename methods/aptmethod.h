@@ -475,6 +475,18 @@ protected:
 	 QueueBack = Queue;
       delete Tmp;
    }
+   static std::string URIEncode(std::string const &part)
+   {
+      // The "+" is encoded as a workaround for an S3 bug (LP#1003633 and LP#1086997)
+      return QuoteString(part, _config->Find("Acquire::URIEncode", "+~ ").c_str());
+   }
+
+   static std::string DecodeSendURI(std::string const &part)
+   {
+      if (_config->FindB("Acquire::Send-URI-Encoded", false))
+	 return DeQuoteString(part);
+      return part;
+   }
 
    aptMethod(std::string &&Binary, char const *const Ver, unsigned long const Flags) APT_NONNULL(3)
        : pkgAcqMethod(Ver, Flags), Binary(Binary), SeccompFlags(0), methodNames({Binary})

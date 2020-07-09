@@ -283,6 +283,14 @@ void ServerState::Reset()						/*{{{*/
 /* We look at the header data we got back from the server and decide what
    to do. Returns DealWithHeadersResult (see http.h for details).
  */
+static std::string fixURIEncoding(std::string const &part)
+{
+   // if the server sends a space this is not an encoded URI
+   // so other clients seem to encode it and we do it as well
+   if (part.find_first_of(" ") != std::string::npos)
+      return aptMethod::URIEncode(part);
+   return part;
+}
 BaseHttpMethod::DealWithHeadersResult
 BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 {
@@ -318,7 +326,10 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
             NextURI = URI::SiteOnly(Uri);
 	 else
 	    NextURI.clear();
-	 NextURI.append(DeQuoteString(Req.Location));
+	 if (_config->FindB("Acquire::Send-URI-Encoded", false))
+	    NextURI.append(fixURIEncoding(Req.Location));
+	 else
+	    NextURI.append(DeQuoteString(Req.Location));
 	 if (Queue->Uri == NextURI)
 	 {
 	    SetFailReason("RedirectionLoop");
@@ -331,8 +342,12 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
       }
       else
       {
-	 NextURI = DeQuoteString(Req.Location);
-	 URI tmpURI(NextURI);
+	 bool const SendURIEncoded = _config->FindB("Acquire::Send-URI-Encoded", false);
+	 if (not SendURIEncoded)
+	    Req.Location = DeQuoteString(Req.Location);
+	 URI tmpURI(Req.Location);
+	 if (SendURIEncoded)
+	    tmpURI.Path = fixURIEncoding(tmpURI.Path);
 	 if (tmpURI.Access.find('+') != std::string::npos)
 	 {
 	    _error->Error("Server tried to trick us into using a specific implementation: %s", tmpURI.Access.c_str());
@@ -340,6 +355,7 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 	       return ERROR_WITH_CONTENT_PAGE;
 	    return ERROR_UNRECOVERABLE;
 	 }
+	 NextURI = tmpURI;
 	 URI Uri(Queue->Uri);
 	 if (Binary.find('+') != std::string::npos)
 	 {

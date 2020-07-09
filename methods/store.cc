@@ -36,7 +36,7 @@ class StoreMethod : public aptMethod
 
    public:
 
-   explicit StoreMethod(std::string &&pProg) : aptMethod(std::move(pProg),"1.2",SingleInstance | SendConfig)
+   explicit StoreMethod(std::string &&pProg) : aptMethod(std::move(pProg),"1.2",SingleInstance | SendConfig | SendURIEncoded)
    {
       SeccompFlags = aptMethod::BASE;
       if (Binary != "store")
@@ -64,7 +64,7 @@ static bool OpenFileWithCompressorByName(FileFd &fileFd, std::string const &File
 bool StoreMethod::Fetch(FetchItem *Itm)					/*{{{*/
 {
    URI Get(Itm->Uri);
-   std::string Path = Get.Host + Get.Path; // To account for relative paths
+   std::string Path = DecodeSendURI(Get.Host + Get.Path); // To account for relative paths
    
    FetchResult Res;
    Res.Filename = Itm->DestFile;

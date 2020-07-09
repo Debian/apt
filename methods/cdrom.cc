@@ -57,7 +57,7 @@ class CDROMMethod : public aptMethod
 /* */
 CDROMMethod::CDROMMethod() : aptMethod("cdrom", "1.0",SingleInstance | LocalOnly |
 					  SendConfig | NeedsCleanup |
-					  Removable),
+					  Removable | SendURIEncoded),
                                           DatabaseLoaded(false),
 					  Debug(false),
                                           MountedByApt(false)
@@ -175,7 +175,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
    FetchResult Res;
 
    URI Get(Itm->Uri);
-   string File = Get.Path;
+   std::string const File = DecodeSendURI(Get.Path);
    Debug = DebugEnabled();
 
    if (Debug)
