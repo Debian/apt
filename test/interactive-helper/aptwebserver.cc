@@ -630,7 +630,7 @@ static bool handleOnTheFlyReconfiguration(std::ostream &log, int const client,/*
    size_t const pcount = EncodedParts.size();
    std::vector<std::string> parts(pcount);
    for (size_t i = 0; i < pcount; ++i)
-      parts[i] = DeQuoteString(DeQuoteString(EncodedParts[i]));
+      parts[i] = DeQuoteString(EncodedParts[i]);
    if (pcount == 4 && parts[1] == "set")
    {
       _config->Set(parts[2], parts[3]);

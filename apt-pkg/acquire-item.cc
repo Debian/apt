@@ -3860,7 +3860,8 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *const Owner, string const &URI, HashStringLis
       DestFile = flNotDir(URI);
 
    ::URI url{URI};
-   url.Path = pkgAcquire::URIEncode(url.Path);
+   if (url.Path.find(' ') != std::string::npos || url.Path.find('%') == std::string::npos)
+      url.Path = pkgAcquire::URIEncode(url.Path);
 
    // Create the item
    Desc.URI = std::string(url);
