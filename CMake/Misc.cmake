@@ -51,17 +51,17 @@ function(add_vendor_file)
 endfunction()
 
 # Add symbolic links to a file
-function(add_slaves destination master)
-    set(slaves "")
-    foreach(slave ${ARGN})
-        add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${slave}
-                           COMMAND ${CMAKE_COMMAND} -E create_symlink ${master} ${CMAKE_CURRENT_BINARY_DIR}/${slave})
-        list(APPEND slaves ${CMAKE_CURRENT_BINARY_DIR}/${slave})
+function(add_links directory target)
+    set(link_names "")
+    foreach(link_name ${ARGN})
+        add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${link_name}
+                           COMMAND ${CMAKE_COMMAND} -E create_symlink ${target} ${CMAKE_CURRENT_BINARY_DIR}/${link_name})
+        list(APPEND link_names ${CMAKE_CURRENT_BINARY_DIR}/${link_name})
     endforeach()
 
-    STRING(REPLACE "/" "-" master "${master}")
-    add_custom_target(${master}-slaves ALL DEPENDS ${slaves})
-    install(FILES ${slaves} DESTINATION ${destination})
+    STRING(REPLACE "/" "-" target "${target}")
+    add_custom_target(${target}-link_names ALL DEPENDS ${link_names})
+    install(FILES ${link_names} DESTINATION ${directory})
 endfunction()
 
 # Generates a simple version script versioning everything with current SOVERSION
