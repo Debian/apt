@@ -994,7 +994,7 @@ apt (1.6~alpha3) unstable; urgency=medium
 
 apt (1.6~alpha2) unstable; urgency=medium
 
-  * seccomp: Conditionalize statx() whitelisting
+  * seccomp: Conditionalize statx() allowlisting
   * CMake: methods: Cleanup link libraries, use OBJECT libraries
   * methods: Enable additional syscalls (SYSV IPC) in fakeroot (Closes: #879662)
   * Don't segfault if receiving a method warning on empty queue
@@ -1363,7 +1363,7 @@ apt (1.4~rc1) unstable; urgency=medium
   * make the moo reproducible.
     Thanks to Chris Lamb for initial patch and guru meditation (Closes: #848721)
   * update release mappings in documentation
-  * avoid malloc if option whitelist is disabled (default)
+  * avoid malloc if option allowlist is disabled (default)
 
   [ Julian Andres Klode ]
   * basehttp: Only read Content-Range on 416 and 206 responses (LP: #1657567)
@@ -1413,7 +1413,7 @@ apt (1.4~beta3) unstable; urgency=medium
     Thanks to Kristian Glass for initial patch! (Closes: #709092)
   * separating state variables regarding server/request (Closes: #440057)
   * fix minimum pkgs option for dpkg --recursive usage
-  * allow warning generation for non-whitelisted options
+  * allow warning generation for non-allowlisted options
 
   [ Oriol Debian ]
   * Catalan program translation update (Closes: #846514)
@@ -4310,7 +4310,7 @@ apt (0.9.9.3) unstable; urgency=low
   [ Ben Hutchings ]
   * debian/apt.auto-removal.sh:
     - do not include debug symbol packages for the kernel in the
-      blacklist (closes: #717616)
+      denylist (closes: #717616)
 
   [ Michael Vogt ]
   * debian/apt.postinst:
@@ -6627,7 +6627,7 @@ apt (0.8.11) unstable; urgency=low
   * methods/{gzip,bzip}.cc:
     - print a good error message if FileSize() is zero
   * apt-pkg/aptconfiguration.cc:
-    - remove the inbuilt Translation files whitelist
+    - remove the inbuilt Translation files allowlist
   * cmdline/apt-cache.cc:
     - remove not implemented 'apt-cache add' command
   * doc/apt-cache.8.xml:

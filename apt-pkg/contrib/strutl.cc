@@ -1771,7 +1771,7 @@ URI::operator string()
       {
 	 // FIXME: Technically userinfo is permitted even less
 	 // characters than these, but this is not conveniently
-	 // expressed with a blacklist.
+	 // expressed with a denylist.
 	 Res << QuoteString(User, ":/?#[]@");
 	 if (Password.empty() == false)
 	    Res << ":" << QuoteString(Password, ":/?#[]@");

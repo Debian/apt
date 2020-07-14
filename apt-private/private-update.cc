@@ -110,7 +110,7 @@ bool DoUpdate(CommandLine &CmdL)
 	 if (uri.User.empty() && uri.Password.empty())
 	    continue;
 	 // we can't really predict if a +http method supports everything http does,
-	 // so we play it safe and use a whitelist here.
+	 // so we play it safe and use an allowlist here.
 	 char const *const affected[] = {"http", "https", "tor+http", "tor+https", "ftp"};
 	 if (std::find(std::begin(affected), std::end(affected), uri.Access) != std::end(affected))
 	    // TRANSLATOR: the first two are manpage references, the last the URI from a sources.list

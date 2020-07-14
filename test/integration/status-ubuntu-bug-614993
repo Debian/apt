@@ -488,11 +488,11 @@ Depends: libc6 (>= 2.8), upstart-job
 Breaks: initramfs-tools (<< 0.92bubuntu23)
 Conffiles:
  /etc/depmod.d/ubuntu.conf 7c8439ef36b12e5f226b5dbfa20b8c2d
- /etc/modprobe.d/blacklist-ath_pci.conf d1da9bb08c2b0f56f3be93fd0e37946b
- /etc/modprobe.d/blacklist-firewire.conf cb8a4c10a5dddd1d67092198b1ae415f
- /etc/modprobe.d/blacklist-framebuffer.conf b46c9509180b5a76145f08be46b1aff5
- /etc/modprobe.d/blacklist-watchdog.conf 55327f9270c8a6257a833c4d127a39e1
- /etc/modprobe.d/blacklist.conf bc6754fa320733c6d239a4bb0148ffd7
+ /etc/modprobe.d/denylist-ath_pci.conf d1da9bb08c2b0f56f3be93fd0e37946b
+ /etc/modprobe.d/denylist-firewire.conf cb8a4c10a5dddd1d67092198b1ae415f
+ /etc/modprobe.d/denylist-framebuffer.conf b46c9509180b5a76145f08be46b1aff5
+ /etc/modprobe.d/denylist-watchdog.conf 55327f9270c8a6257a833c4d127a39e1
+ /etc/modprobe.d/denylist.conf bc6754fa320733c6d239a4bb0148ffd7
  /etc/init/module-init-tools.conf 48db1b767c3148fd83eba59d12fc9a5e
 Description: tools for managing Linux kernel modules
  This package contains a set of programs for loading, inserting, and
@@ -4886,7 +4886,7 @@ Version: 2.11.1-0ubuntu7
 Replaces: libc0.1, libc0.3, libc6, libc6.1
 Breaks: libc0.1 (<< 2.10), libc0.3 (<< 2.10), libc6 (<< 2.10), libc6.1 (<< 2.10)
 Conffiles:
- /etc/bindresvport.blacklist 154db0e55fa99051ff1bd99e5b2c0584
+ /etc/bindresvport.denylist 154db0e55fa99051ff1bd99e5b2c0584
  /etc/ld.so.conf.d/libc.conf d4d833fd095fb7b90e1bb4a547f16de6
  /etc/gai.conf 4b3389be7132a6a8805f3df8d0ff00f6
 Description: Embedded GNU C Library: Binaries
