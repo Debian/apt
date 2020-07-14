@@ -136,8 +136,8 @@ function(apt_add_update_po)
         list(APPEND potfiles ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot)
     endforeach()
 
-    get_filename_component(master_name ${output} NAME_WE)
-    add_custom_target(nls-${master_name}
+    get_filename_component(primary_name ${output} NAME_WE)
+    add_custom_target(nls-${primary_name}
                        COMMAND msgcomm --sort-by-file --add-location=file
                                         --more-than=0 --output=${output}
                                 ${potfiles}
@@ -154,11 +154,11 @@ function(apt_add_update_po)
             endif()
             add_custom_target(update-po-${langcode}
                 COMMAND msgmerge -q --previous --update --backup=none ${translation} ${output}
-                DEPENDS nls-${master_name}
+                DEPENDS nls-${primary_name}
             )
             add_dependencies(update-po update-po-${langcode})
     endforeach()
-    add_dependencies(update-po nls-${master_name})
+    add_dependencies(update-po nls-${primary_name})
 endfunction()
 
 function(apt_add_po_statistics excluded)
