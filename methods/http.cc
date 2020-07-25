@@ -94,6 +94,7 @@ void CircleBuf::Reset()
    is non-blocking.. */
 bool CircleBuf::Read(std::unique_ptr<MethodFd> const &Fd)
 {
+   size_t ReadThisCycle = 0;
    while (1)
    {
       // Woops, buffer is full
@@ -131,7 +132,7 @@ bool CircleBuf::Read(std::unique_ptr<MethodFd> const &Fd)
 	 CircleBuf::BwTickReadData += Res;
     
       if (Res == 0)
-	 return false;
+	 return ReadThisCycle != 0;
       if (Res < 0)
       {
 	 if (errno == EAGAIN)
@@ -140,6 +141,7 @@ bool CircleBuf::Read(std::unique_ptr<MethodFd> const &Fd)
       }
 
       InP += Res;
+      ReadThisCycle += Res;
    }
 }
 									/*}}}*/
@@ -204,8 +206,6 @@ bool CircleBuf::Write(std::unique_ptr<MethodFd> const &Fd)
       ssize_t Res;
       Res = Fd->Write(Buf + (OutP % Size), LeftWrite());
 
-      if (Res == 0)
-	 return false;
       if (Res < 0)
       {
 	 if (errno == EAGAIN)
@@ -215,7 +215,7 @@ bool CircleBuf::Write(std::unique_ptr<MethodFd> const &Fd)
       }
 
       TotalWriten += Res;
-      
+
       if (Hash != NULL)
 	 Hash->Add(Buf + (OutP%Size),Res);
       
@@ -700,26 +700,18 @@ ResultState HttpServerState::Die(RequestState &Req)
 {
    unsigned int LErrno = errno;
 
+   Close();
+
    // Dump the buffer to the file
    if (Req.State == RequestState::Data)
    {
-      if (Req.File.IsOpen() == false)
-	 return ResultState::SUCCESSFUL;
       // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
       // can't be set
       if (Req.File.Name() != "/dev/null")
 	 SetNonBlock(Req.File.Fd(),false);
-      while (In.WriteSpace() == true)
-      {
-	 if (In.Write(MethodFd::FromFd(Req.File.Fd())) == false)
-	 {
-	    _error->Errno("write", _("Error writing to the file"));
-	    return ResultState::TRANSIENT_ERROR;
-	 }
-
-	 // Done
-	 if (In.IsLimit() == true)
-	    return ResultState::SUCCESSFUL;
+      if (In.WriteSpace()) {
+	 _error->Error(_("Data left in buffer"));
+	 return ResultState::TRANSIENT_ERROR;
       }
    }
 
@@ -727,7 +719,6 @@ ResultState HttpServerState::Die(RequestState &Req)
    if (In.IsLimit() == false && Req.State != RequestState::Header &&
        Persistent == true)
    {
-      Close();
       if (LErrno == 0)
       {
 	 _error->Error(_("Error reading from server. Remote end closed connection"));
@@ -746,7 +737,6 @@ ResultState HttpServerState::Die(RequestState &Req)
 	 return ResultState::TRANSIENT_ERROR;
 
       // We may have got multiple responses back in one packet..
-      Close();
       return ResultState::SUCCESSFUL;
    }
 
@@ -793,13 +783,11 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
 				ToFile == false))
       return ResultState::TRANSIENT_ERROR;
 
-   // Handle server IO
-   if (ServerFd->HasPending() && In.ReadSpace() == true)
-   {
-      errno = 0;
-      if (In.Read(ServerFd) == false)
-	 return Die(Req);
-   }
+   // Record if we have data pending to read in the server, so that we can
+   // skip the wait in select(). This can happen if data has already been
+   // read into a methodfd's buffer - the TCP queue might be empty at that
+   // point.
+   bool ServerPending = ServerFd->HasPending();
 
    fd_set rfds,wfds;
    FD_ZERO(&rfds);
@@ -831,7 +819,7 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
 
    // Select
    struct timeval tv;
-   tv.tv_sec = TimeOut;
+   tv.tv_sec = ServerPending ? 0 : TimeOut;
    tv.tv_usec = 0;
    int Res = 0;
    if ((Res = select(MaxFd+1,&rfds,&wfds,0,&tv)) < 0)
@@ -842,24 +830,17 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
       return ResultState::TRANSIENT_ERROR;
    }
    
-   if (Res == 0)
+   if (Res == 0 && not ServerPending)
    {
       _error->Error(_("Connection timed out"));
-      return Die(Req);
+      return ResultState::TRANSIENT_ERROR;
    }
    
    // Handle server IO
-   if (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &rfds))
+   if (ServerPending || (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &rfds)))
    {
       errno = 0;
       if (In.Read(ServerFd) == false)
-	 return Die(Req);
-   }
-
-   if (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &wfds))
-   {
-      errno = 0;
-      if (Out.Write(ServerFd) == false)
 	 return Die(Req);
    }
 
@@ -871,6 +852,13 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
 	 _error->Errno("write", _("Error writing to output file"));
 	 return ResultState::TRANSIENT_ERROR;
       }
+   }
+
+   if (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &wfds))
+   {
+      errno = 0;
+      if (Out.Write(ServerFd) == false)
+	 return Die(Req);
    }
 
    if (Req.MaximumSize > 0 && Req.File.IsOpen() && Req.File.Failed() == false && Req.File.Tell() > Req.MaximumSize)
