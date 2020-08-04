@@ -545,6 +545,16 @@
      Configuration Item: <literal>APT::Get::Trivial-Only</literal>.</para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>--mark-auto</option></term>
+     <listitem><para>
+     After successful installation, mark all freshly installed packages as
+     automatically installed, which will cause each of the packages to be
+     removed when no more manually installed packages depend on this package.
+     This is equally to running <command>apt-mark auto</command> for all
+     installed packages.
+     Configuration Item: <literal>APT::Get::Mark-Auto</literal>.</para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>--no-remove</option></term>
      <listitem><para>If any packages are to be removed apt-get immediately aborts without
      prompting. 

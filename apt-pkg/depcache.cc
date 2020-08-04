@@ -1156,6 +1156,7 @@ struct CompareProviders							/*{{{*/
 									/*}}}*/
 bool pkgDepCache::MarkInstall_StateChange(pkgCache::PkgIterator const &Pkg, bool AutoInst, bool FromUser) /*{{{*/
 {
+   bool AlwaysMarkAsAuto = _config->FindB("APT::Get::Mark-Auto", false) == true;
    auto &P = (*this)[Pkg];
    if (P.Protect() && P.InstallVer == P.CandidateVer)
       return true;
@@ -1171,7 +1172,7 @@ bool pkgDepCache::MarkInstall_StateChange(pkgCache::PkgIterator const &Pkg, bool
    P.Mode = pkgDepCache::ModeInstall;
    P.InstallVer = P.CandidateVer;
 
-   if(FromUser)
+   if(FromUser && !AlwaysMarkAsAuto)
      {
        // Set it to manual if it's a new install or already installed,
        // but only if its not marked by the autoremover (aptitude depend on this behavior)

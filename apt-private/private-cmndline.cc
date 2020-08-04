@@ -276,6 +276,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    addArg(0,"force-yes","APT::Get::force-yes",0);
    addArg(0,"print-uris","APT::Get::Print-URIs",0);
    addArg(0,"trivial-only","APT::Get::Trivial-Only",0);
+   addArg(0,"mark-auto","APT::Get::Mark-Auto",0);
    addArg(0,"remove","APT::Get::Remove",0);
    addArg(0,"only-source","APT::Get::Only-Source",0);
    addArg(0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0);
