@@ -1,3 +1,27 @@
+apt (2.1.8) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Fully deprecate apt-key, schedule removal for Q2/2022
+  * apt-key: Allow depending on gpg instead of gnupg
+  * Removal of racist terminology, except for two cases that still need consensus
+  * Various fixes to http code:
+    - http: Always Close() the connection in Die()
+    - http: Die(): Merge flushing code from Flush()
+    - http: Only return false for EOF if we actually did not read anything
+    - http: Die(): Do not flush the buffer, error out instead
+    - http: Finish copying data from server to file before sending stuff to server
+    - http: On select timeout, error out directly, do not call Die()
+    - http: Redesign reading of pending data
+    - http: Always write to the file if there's something to write; this fixes
+      a regression from removing the buffer flushing code
+    Overall, there's hope this Closes: #959518. It reproduced a bit, but eventually
+    snapshot.d.o ratelimiting kicked in and broke the test case.
+
+  [ Nicolas Schier ]
+  * Support marking all newly installed packages as automatically installed
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 04 Aug 2020 12:41:28 +0200
+
 apt (2.1.7) unstable; urgency=medium
 
   [ David Kalnischkies ]

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.1.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-06-14 10:17+0200\n"
+"POT-Creation-Date: 2020-08-04 12:40+0200\n"
 "PO-Revision-Date: 2020-06-08 17:06+0000\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <>\n"
@@ -1985,6 +1985,16 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
 msgid ""
+"After successful installation, mark all freshly installed packages as "
+"automatically installed, which will cause each of the packages to be removed "
+"when no more manually installed packages depend on this package.  This is "
+"equally to running <command>apt-mark auto</command> for all installed "
+"packages.  Configuration Item: <literal>APT::Get::Mark-Auto</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
 "If any packages are to be removed apt-get immediately aborts without "
 "prompting.  Configuration Item: <literal>APT::Get::Remove</literal>."
 msgstr ""
@@ -2844,7 +2854,9 @@ msgstr ""
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-key.8.xml
-msgid "APT key management utility"
+#, fuzzy
+#| msgid "APT key management utility"
+msgid "Deprecated APT key management utility"
 msgstr "Utilitário de gestão de chaves do APT"
 
 #. type: Content of: <refentry><refsect1><para>
@@ -2861,23 +2873,17 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
 msgid ""
-"Note that if usage of <command>apt-key</command> is desired the additional "
-"installation of the GNU Privacy Guard suite (packaged in <package>gnupg</"
-"package>) is required. For this reason alone the programmatic usage "
-"(especially in package maintainer scripts!) is strongly discouraged.  "
-"Further more the output format of all commands is undefined and can and does "
-"change whenever the underlying commands change. <command>apt-key</command> "
-"will try to detect such usage and generates warnings on stderr in these "
-"cases."
+"Use of <command>apt-key</command> is deprecated, except for the use of "
+"<command>apt-key del</command> in maintainer scripts to remove existing keys "
+"from the main keyring.  If such usage of <command>apt-key</command> is "
+"desired the additional installation of the GNU Privacy Guard suite (packaged "
+"in <package>gnupg</package>) is required."
 msgstr ""
-"Note que se a utilização do <command>apt-key</command> for desejada, é "
-"necessária a instalação adicional da suite GNU Privacy Guard (empacotada no "
-"<package>gnupg</package>). Apenas por esta razão a utilização programática é "
-"fortemente desencorajada (especialmente no pacote maintainerscripts!). Mais "
-"ainda o formato de saída de todos os comandos não está definido e pode "
-"alterar (e altera mesmo) sempre que os comandos subjacentes mudam. O "
-"<command>apt-key</command> irá tentar detectar tal utilização e gerar avisos "
-"no stderr nestes casos."
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-key.8.xml
+msgid "apt-key(8) will last be available in Debian 11 and Ubuntu 22.04."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
@@ -2919,6 +2925,11 @@ msgstr ""
 msgid "Commands"
 msgstr "Comandos"
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-key.8.xml
+msgid "(deprecated)"
+msgstr "(descontinuado)"
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
 msgid ""
@@ -2955,6 +2966,13 @@ msgstr ""
 "filename> com um nome descritivo e com \"<literal>gpg</literal>\" ou "
 "\"<literal>asc</literal>\" como extensão de ficheiro."
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-key.8.xml
+#, fuzzy
+#| msgid "(deprecated)"
+msgid "(mostly deprecated)"
+msgstr "(descontinuado)"
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
 msgid "Remove a key from the list of trusted keys."
@@ -2988,11 +3006,6 @@ msgstr ""
 "para o conjunto de chaves de confiança. Note que <emphasis>não</emphasis> "
 "são feitas verificações, portanto é fácil enfraquecer completamente a "
 "infraestrutura &apt-secure; se for usado sem cuidado."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml
-msgid "(deprecated)"
-msgstr "(descontinuado)"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -13272,6 +13285,25 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 #: offline.dbk
 msgid "Which will use the already fetched archives on the disc."
 msgstr "O qual irá usar os arquivos já obtidos e que estão no disco."
+
+#~ msgid ""
+#~ "Note that if usage of <command>apt-key</command> is desired the "
+#~ "additional installation of the GNU Privacy Guard suite (packaged in "
+#~ "<package>gnupg</package>) is required. For this reason alone the "
+#~ "programmatic usage (especially in package maintainer scripts!) is "
+#~ "strongly discouraged.  Further more the output format of all commands is "
+#~ "undefined and can and does change whenever the underlying commands "
+#~ "change. <command>apt-key</command> will try to detect such usage and "
+#~ "generates warnings on stderr in these cases."
+#~ msgstr ""
+#~ "Note que se a utilização do <command>apt-key</command> for desejada, é "
+#~ "necessária a instalação adicional da suite GNU Privacy Guard (empacotada "
+#~ "no <package>gnupg</package>). Apenas por esta razão a utilização "
+#~ "programática é fortemente desencorajada (especialmente no pacote "
+#~ "maintainerscripts!). Mais ainda o formato de saída de todos os comandos "
+#~ "não está definido e pode alterar (e altera mesmo) sempre que os comandos "
+#~ "subjacentes mudam. O <command>apt-key</command> irá tentar detectar tal "
+#~ "utilização e gerar avisos no stderr nestes casos."
 
 #~ msgid ""
 #~ "<literal>http::Proxy</literal> sets the default proxy to use for HTTP "

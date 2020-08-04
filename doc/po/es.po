@@ -38,7 +38,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-02-26 21:29+0100\n"
+"POT-Creation-Date: 2020-08-04 12:40+0200\n"
 "PO-Revision-Date: 2014-07-04 01:31+0200\n"
 "Last-Translator: Omar Campagne <ocampagne@gmail.com>\n"
 "Language-Team: Debian l10n Spanish <debian-l10n-spanish@lists.debian.org>\n"
@@ -790,8 +790,8 @@ msgstr ""
 msgid ""
 "Performs the requested action on one or more packages specified via &regex;, "
 "&glob; or exact match. The requested action can be overridden for specific "
-"packages by appending a plus (+) to the package name to install this package or "
-"a minus (-) to remove it."
+"packages by appending a plus (+) to the package name to install this package "
+"or a minus (-) to remove it."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -2032,6 +2032,16 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
 msgid ""
+"After successful installation, mark all freshly installed packages as "
+"automatically installed, which will cause each of the packages to be removed "
+"when no more manually installed packages depend on this package.  This is "
+"equally to running <command>apt-mark auto</command> for all installed "
+"packages.  Configuration Item: <literal>APT::Get::Mark-Auto</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
 "If any packages are to be removed apt-get immediately aborts without "
 "prompting.  Configuration Item: <literal>APT::Get::Remove</literal>."
 msgstr ""
@@ -2886,7 +2896,9 @@ msgstr ""
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-key.8.xml
-msgid "APT key management utility"
+#, fuzzy
+#| msgid "APT key management utility"
+msgid "Deprecated APT key management utility"
 msgstr "Herramienta para gestionar las claves de APT"
 
 #. type: Content of: <refentry><refsect1><para>
@@ -2903,14 +2915,16 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
 msgid ""
-"Note that if usage of <command>apt-key</command> is desired the additional "
-"installation of the GNU Privacy Guard suite (packaged in <package>gnupg</"
-"package>) is required. For this reason alone the programmatic usage "
-"(especially in package maintainer scripts!) is strongly discouraged.  "
-"Further more the output format of all commands is undefined and can and does "
-"change whenever the underlying commands change. <command>apt-key</command> "
-"will try to detect such usage and generates warnings on stderr in these "
-"cases."
+"Use of <command>apt-key</command> is deprecated, except for the use of "
+"<command>apt-key del</command> in maintainer scripts to remove existing keys "
+"from the main keyring.  If such usage of <command>apt-key</command> is "
+"desired the additional installation of the GNU Privacy Guard suite (packaged "
+"in <package>gnupg</package>) is required."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-key.8.xml
+msgid "apt-key(8) will last be available in Debian 11 and Ubuntu 22.04."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
@@ -2942,6 +2956,11 @@ msgstr ""
 msgid "Commands"
 msgstr "Órdenes"
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-key.8.xml
+msgid "(deprecated)"
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
 msgid ""
@@ -2968,6 +2987,11 @@ msgid ""
 "placed directly in the <filename>/etc/apt/trusted.gpg.d/</filename> "
 "directory with a descriptive name and either \"<literal>gpg</literal>\" or "
 "\"<literal>asc</literal>\" as file extension."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-key.8.xml
+msgid "(mostly deprecated)"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -2999,11 +3023,6 @@ msgid ""
 "e.g. download key from keyservers directly into the trusted set of keys. "
 "Note that there are <emphasis>no</emphasis> checks performed, so it is easy "
 "to completely undermine the &apt-secure; infrastructure if used without care."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml
-msgid "(deprecated)"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-02-26 21:29+0100\n"
+"POT-Creation-Date: 2020-08-04 12:40+0200\n"
 "PO-Revision-Date: 2017-01-06 04:50+0900\n"
 "Last-Translator: Takuma Yamada <tyamada@takumayamada.com>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -774,8 +774,8 @@ msgstr ","
 msgid ""
 "Performs the requested action on one or more packages specified via &regex;, "
 "&glob; or exact match. The requested action can be overridden for specific "
-"packages by appending a plus (+) to the package name to install this package or "
-"a minus (-) to remove it."
+"packages by appending a plus (+) to the package name to install this package "
+"or a minus (-) to remove it."
 msgstr ""
 "&regex;、&glob; または 完全な一致で指定された 1 つ以上のパッケージに対して要"
 "求された処理を実行します。要求された処理は、特定のパッケージに対してパッケー"
@@ -1932,6 +1932,16 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
 msgid ""
+"After successful installation, mark all freshly installed packages as "
+"automatically installed, which will cause each of the packages to be removed "
+"when no more manually installed packages depend on this package.  This is "
+"equally to running <command>apt-mark auto</command> for all installed "
+"packages.  Configuration Item: <literal>APT::Get::Mark-Auto</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
 "If any packages are to be removed apt-get immediately aborts without "
 "prompting.  Configuration Item: <literal>APT::Get::Remove</literal>."
 msgstr ""
@@ -2745,7 +2755,9 @@ msgstr ""
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-key.8.xml
-msgid "APT key management utility"
+#, fuzzy
+#| msgid "APT key management utility"
+msgid "Deprecated APT key management utility"
 msgstr "APT キー管理ユーティリティ"
 
 #. type: Content of: <refentry><refsect1><para>
@@ -2762,22 +2774,17 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
 msgid ""
-"Note that if usage of <command>apt-key</command> is desired the additional "
-"installation of the GNU Privacy Guard suite (packaged in <package>gnupg</"
-"package>) is required. For this reason alone the programmatic usage "
-"(especially in package maintainer scripts!) is strongly discouraged.  "
-"Further more the output format of all commands is undefined and can and does "
-"change whenever the underlying commands change. <command>apt-key</command> "
-"will try to detect such usage and generates warnings on stderr in these "
-"cases."
+"Use of <command>apt-key</command> is deprecated, except for the use of "
+"<command>apt-key del</command> in maintainer scripts to remove existing keys "
+"from the main keyring.  If such usage of <command>apt-key</command> is "
+"desired the additional installation of the GNU Privacy Guard suite (packaged "
+"in <package>gnupg</package>) is required."
 msgstr ""
-"<command>apt-key</command> を利用するためには GNU Privacy Guard suite "
-"(<package>gnupg</package> に収録) を追加でインストールする必要があることに注"
-"意してください。そのため、プログラム単体での用途に (特にパッケージのメンテナ"
-"スクリプトで!) 使うことは全く勧められません。さらに、このプログラムのコマンド"
-"の出力形式はどれも規定されておらず、根本となるコマンドに変更があればこちらも"
-"変わるということになります。<command>apt-key</command> はそういった使い方の検"
-"出を試み、その場合には標準エラーに警告を出します。"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-key.8.xml
+msgid "apt-key(8) will last be available in Debian 11 and Ubuntu 22.04."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
@@ -2818,6 +2825,11 @@ msgstr ""
 msgid "Commands"
 msgstr "コマンド"
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-key.8.xml
+msgid "(deprecated)"
+msgstr "(非推奨)"
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
 msgid ""
@@ -2853,6 +2865,13 @@ msgstr ""
 "けて、ファイルの拡張子を「<literal>gpg</literal>」または「<literal>asc</"
 "literal>」として <filename>/etc/apt/trusted.gpg.d/</filename> ディレクトリに"
 "直接配置する方法もあります。"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-key.8.xml
+#, fuzzy
+#| msgid "(deprecated)"
+msgid "(mostly deprecated)"
+msgstr "(非推奨)"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -2893,11 +2912,6 @@ msgstr ""
 "て、例えば、キーサーバーから信頼されたキーに直接キーをダウンロードすることが"
 "できます。チェックが<emphasis>行われない</emphasis>ことに注意してください。注"
 "意せず使用するなら、容易に &apt-secure; インフラを完全に傷つけます。"
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-key.8.xml
-msgid "(deprecated)"
-msgstr "(非推奨)"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -12604,6 +12618,24 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 #: offline.dbk
 msgid "Which will use the already fetched archives on the disc."
 msgstr "これで、ディスクにある取得済みのアーカイブを使用するようになります。"
+
+#~ msgid ""
+#~ "Note that if usage of <command>apt-key</command> is desired the "
+#~ "additional installation of the GNU Privacy Guard suite (packaged in "
+#~ "<package>gnupg</package>) is required. For this reason alone the "
+#~ "programmatic usage (especially in package maintainer scripts!) is "
+#~ "strongly discouraged.  Further more the output format of all commands is "
+#~ "undefined and can and does change whenever the underlying commands "
+#~ "change. <command>apt-key</command> will try to detect such usage and "
+#~ "generates warnings on stderr in these cases."
+#~ msgstr ""
+#~ "<command>apt-key</command> を利用するためには GNU Privacy Guard suite "
+#~ "(<package>gnupg</package> に収録) を追加でインストールする必要があることに"
+#~ "注意してください。そのため、プログラム単体での用途に (特にパッケージのメン"
+#~ "テナスクリプトで!) 使うことは全く勧められません。さらに、このプログラムの"
+#~ "コマンドの出力形式はどれも規定されておらず、根本となるコマンドに変更があれ"
+#~ "ばこちらも変わるということになります。<command>apt-key</command> はそう"
+#~ "いった使い方の検出を試み、その場合には標準エラーに警告を出します。"
 
 #~ msgid ""
 #~ "<literal>http::Proxy</literal> sets the default proxy to use for HTTP "
