@@ -25,7 +25,7 @@
  <!-- Man page title -->
  <refnamediv>
     <refname>apt-key</refname>
-    <refpurpose>APT key management utility</refpurpose>
+    <refpurpose>Deprecated APT key management utility</refpurpose>
  </refnamediv>
 
  &synopsis-command-apt-key;
@@ -37,13 +37,15 @@
    authenticated using these keys will be considered trusted.
    </para>
    <para>
-   Note that if usage of <command>apt-key</command> is desired the additional
+   Use of <command>apt-key</command> is deprecated, except for the use of
+   <command>apt-key del</command> in maintainer scripts to remove existing
+   keys from the main keyring.
+   If such usage of <command>apt-key</command> is desired the additional
    installation of the GNU Privacy Guard suite (packaged in
-   <package>gnupg</package>) is required. For this reason alone the programmatic
-   usage (especially in package maintainer scripts!) is strongly discouraged.
-   Further more the output format of all commands is undefined and can and does
-   change whenever the underlying commands change. <command>apt-key</command> will
-   try to detect such usage and generates warnings on stderr in these cases.
+   <package>gnupg</package>) is required.
+   </para>
+   <para>
+   apt-key(8) will last be available in Debian 11 and Ubuntu 22.04.
    </para>
 </refsect1>
 
@@ -63,7 +65,7 @@
 
 <refsect1><title>Commands</title>
    <variablelist>
-     <varlistentry><term><option>add</option> <option>&synopsis-param-filename;</option></term>
+     <varlistentry><term><option>add</option> <option>&synopsis-param-filename;</option>  (deprecated)</term>
      <listitem>
      <para>
        Add a new key to the list of trusted keys.
@@ -85,7 +87,7 @@
      </listitem>
      </varlistentry>
 
-     <varlistentry><term><option>del</option> <option>&synopsis-param-keyid;</option></term>
+     <varlistentry><term><option>del</option> <option>&synopsis-param-keyid;</option>  (mostly deprecated)</term>
      <listitem>
      <para>
 
@@ -96,7 +98,7 @@
      </listitem>
      </varlistentry>
 
-     <varlistentry><term><option>export</option> <option>&synopsis-param-keyid;</option></term>
+     <varlistentry><term><option>export</option> <option>&synopsis-param-keyid;</option>  (deprecated)</term>
      <listitem>
      <para>
 
@@ -107,7 +109,7 @@
      </listitem>
      </varlistentry>
 
-     <varlistentry><term><option>exportall</option></term>
+     <varlistentry><term><option>exportall</option>  (deprecated)</term>
      <listitem>
      <para>
 
@@ -118,7 +120,7 @@
      </listitem>
      </varlistentry>
 
-     <varlistentry><term><option>list</option>, <option>finger</option></term>
+     <varlistentry><term><option>list</option>, <option>finger</option>  (deprecated)</term>
      <listitem>
      <para>
 
@@ -129,7 +131,7 @@
      </listitem>
      </varlistentry>
 
-     <varlistentry><term><option>adv</option></term>
+     <varlistentry><term><option>adv</option>  (deprecated)</term>
      <listitem>
      <para>
      Pass advanced options to gpg. With <command>adv --recv-key</command> you
@@ -160,7 +162,7 @@
      </listitem>
      </varlistentry>
      
-     <varlistentry><term><option>net-update</option></term>
+     <varlistentry><term><option>net-update</option>  (deprecated)</term>
      <listitem>
      <para>
 
@@ -183,7 +185,7 @@
  <refsect1><title>Options</title>
 <para>Note that options need to be defined before the commands described in the previous section.</para>
    <variablelist>
-      <varlistentry><term><option>--keyring</option> <option>&synopsis-param-filename;</option></term>
+      <varlistentry><term><option>--keyring</option> <option>&synopsis-param-filename;</option>  (deprecated)</term>
       <listitem><para>With this option it is possible to specify a particular keyring
       file the command should operate on. The default is that a command is executed
       on the <filename>trusted.gpg</filename> file as well as on all parts in the

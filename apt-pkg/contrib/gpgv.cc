@@ -251,6 +251,9 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       setenv("APT_CONFIG", conf.get(), 1);
    }
 
+   // Tell apt-key not to emit warnings
+   setenv("APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE", "1", 1);
+
    if (releaseSignature == DETACHED)
    {
       auto detached = make_unique_FILE(FileGPG, "r");
