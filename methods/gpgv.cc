@@ -307,13 +307,13 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	    }
 	    else if (exactKey == false)
 	    {
-	       auto const master = SubKeyMapping.find(l);
-	       if (master == SubKeyMapping.end())
+	       auto const primary = SubKeyMapping.find(l);
+	       if (primary == SubKeyMapping.end())
 		  continue;
-	       auto const validsubkeysig = std::find_if(master->second.cbegin(), master->second.cend(), [&](auto const subkey) {
+	       auto const validsubkeysig = std::find_if(primary->second.cbegin(), primary->second.cend(), [&](auto const subkey) {
 		  return IsTheSameKey(subkey, good) && std::find(Signers.Valid.cbegin(), Signers.Valid.cend(), subkey) != Signers.Valid.cend();
 	       });
-	       if (validsubkeysig != master->second.cend())
+	       if (validsubkeysig != primary->second.cend())
 	       {
 		  found = true;
 		  Signers.SignedBy.push_back(l);

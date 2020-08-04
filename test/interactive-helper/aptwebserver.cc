@@ -960,7 +960,8 @@ int main(int const argc, const char * argv[])
    // create socket, bind and listen to it {{{
    // ignore SIGPIPE, this can happen on write() if the socket closes connection
    signal(SIGPIPE, SIG_IGN);
-   // we don't care for our slaves, so ignore their death
+   // ignore worker processes exiting, as we don't want to cause them to stay
+   // around as zombies because we're busy.
    signal(SIGCHLD, SIG_IGN);
 
    int sock = socket(AF_INET6, SOCK_STREAM, 0);
@@ -1051,9 +1052,9 @@ int main(int const argc, const char * argv[])
 
    std::clog << "Serving ANY file on port: " << port << std::endl;
 
-   int const slaves = _config->FindI("aptwebserver::slaves", SOMAXCONN);
-   std::cerr << "SLAVES: " << slaves << std::endl;
-   listen(sock, slaves);
+   int const workers = _config->FindI("aptwebserver::workers", SOMAXCONN);
+   std::cerr << "WORKERS: " << workers << std::endl;
+   listen(sock, workers);
    /*}}}*/
 
    _config->CndSet("aptwebserver::response-header::Server", "APT webserver");

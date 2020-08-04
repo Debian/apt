@@ -53,7 +53,7 @@ install(TARGETS apt-helper RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/apt/)
 install(TARGETS apt-dump-solver apt-internal-solver RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/apt/solvers)
 install(TARGETS apt-internal-planner RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/apt/planners)
 
-add_slaves(${CMAKE_INSTALL_LIBEXECDIR}/apt/planners ../solvers/dump planners/dump)
+add_links(${CMAKE_INSTALL_LIBEXECDIR}/apt/planners ../solvers/dump planners/dump)
 
 # Install the not-to-be-compiled programs
 INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/apt-key DESTINATION ${CMAKE_INSTALL_BINDIR})
