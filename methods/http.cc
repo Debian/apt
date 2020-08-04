@@ -845,7 +845,8 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
    }
 
    // Send data to the file
-   if (FileFD->Fd() != -1 && FD_ISSET(FileFD->Fd(), &wfds))
+   if (FileFD->Fd() != -1 && ((In.WriteSpace() == true && ToFile == true) ||
+			      FD_ISSET(FileFD->Fd(), &wfds)))
    {
       if (In.Write(FileFD) == false)
       {
