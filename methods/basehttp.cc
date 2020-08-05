@@ -770,21 +770,11 @@ int BaseHttpMethod::Loop()
 	    }
 	    else
 	    {
-	       if (Server->IsOpen() == false)
+	       if (Server->IsOpen() == false && FailCounter < 1)
 	       {
 		  FailCounter++;
 		  Server->Close();
-
-		  
-		  if (FailCounter >= 2)
-		  {
-		     Fail(true);
-		     FailCounter = 0;
-		  }
-		  else
-		  {
-		     _error->Discard();
-		  }
+		  _error->Discard();
 
 		  // Reset the pipeline
 		  QueueBack = Queue;
@@ -794,6 +784,7 @@ int BaseHttpMethod::Loop()
 	       else
                {
                   Server->Close();
+		  FailCounter = 0;
 		  switch (Result)
 		  {
 		  case ResultState::TRANSIENT_ERROR:
