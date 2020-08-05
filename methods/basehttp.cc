@@ -773,16 +773,23 @@ int BaseHttpMethod::Loop()
 	       if (Server->IsOpen() == false)
 	       {
 		  FailCounter++;
-		  _error->Discard();
 		  Server->Close();
+
 		  
 		  if (FailCounter >= 2)
 		  {
-		     Fail(_("Connection failed"),true);
+		     Fail(true);
 		     FailCounter = 0;
 		  }
-		  
+		  else
+		  {
+		     _error->Discard();
+		  }
+
+		  // Reset the pipeline
 		  QueueBack = Queue;
+		  Server->PipelineAnswersReceived = 0;
+		  continue;
 	       }
 	       else
                {
