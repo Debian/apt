@@ -1828,7 +1828,7 @@ bool pkgAcqMetaBase::VerifyVendor(string const &)			/*{{{*/
 	 { "Origin", AllowInfoChange, &metaIndex::GetOrigin },
 	 { "Label", AllowInfoChange, &metaIndex::GetLabel },
 	 { "Version", true, &metaIndex::GetVersion }, // numbers change all the time, that is okay
-	 { "Suite", AllowInfoChange, &metaIndex::GetSuite },
+	 { "Suite", true, &metaIndex::GetSuite },
 	 { "Codename", AllowInfoChange, &metaIndex::GetCodename },
 	 { nullptr, false, nullptr }
       };
