@@ -78,3 +78,17 @@ testsuccesswithnotice apt update --allow-releaseinfo-change-defaultpin
 testequal "All packages are up to date.
 N: Repository 'file:$APTARCHIVE earth InRelease' changed its default priority for apt_preferences(5) from 1 to 500.
 N: More information about this can be found online in the Release notes at: https://example.org/mars/release-notes" tail -n 3 rootdir/tmp/testsuccesswithnotice.output
+
+# Suite testing also needs codename adjustment, otherwise complaints about
+# mismatch between sources.list and Release file.
+sed -i -e 's#^Suite: earth#Suite: mars#' $(find ./aptarchive -name 'Release')
+sed -i -e 's#^Codename: colony#Codename: earth#' $(find ./aptarchive -name 'Release')
+signreleasefiles
+testfailuremsg "E: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Suite' value from 'earth' to 'mars'
+E: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Codename' value from 'colony' to 'earth'
+N: More information about this can be found online in the Release notes at: https://example.org/mars/release-notes
+N: This must be accepted explicitly before updates for this repository can be applied. See apt-secure(8) manpage for details." apt update --no-allow-releaseinfo-change-suite
+testsuccesswithnotice apt update --allow-releaseinfo-change-codename
+testequal "N: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Suite' value from 'earth' to 'mars'
+N: Repository 'file:$APTARCHIVE earth InRelease' changed its 'Codename' value from 'colony' to 'earth'
+N: More information about this can be found online in the Release notes at: https://example.org/mars/release-notes" tail -n 3 rootdir/tmp/testsuccesswithnotice.output
