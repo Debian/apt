@@ -1,0 +1,272 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+echo 'Debug::Phasing "1";' > rootdir/etc/apt/apt.conf.d/debug-phasing
+configarchitecture 'i386' 'armel'
+
+
+insertinstalledpackage 'phased1' 'all' '1'
+insertinstalledpackage 'phased2' 'all' '1'
+
+insertpackage 'unstable' 'phased1' 'all' '10' 'Phased-Update-Percentage: 10'
+insertpackage 'unstable' 'phased2' 'all' '10' 'Phased-Update-Percentage: 10'
+insertpackage 'unstable' 'phased3' 'all' '10' 'Phased-Update-Percentage: 10'
+
+insertpackage 'unstable' 'phased1' 'all' '100' 'Phased-Update-Percentage: 100'
+insertpackage 'unstable' 'phased2' 'all' '100' 'Phased-Update-Percentage: 100'
+insertpackage 'unstable' 'phased3' 'all' '100' 'Phased-Update-Percentage: 100'
+
+insertpackage 'unstable' 'phased1' 'all' '50' 'Phased-Update-Percentage: 50'
+insertpackage 'unstable' 'phased2' 'all' '50' 'Phased-Update-Percentage: 50'
+insertpackage 'unstable' 'phased3' 'all' '50' 'Phased-Update-Percentage: 50'
+
+setupaptarchive
+
+msgmsg "Basic test"
+testsuccessequal "phased1:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 1 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+phased2:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 1 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 1 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+phased3:
+  Installed: (none)
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 500 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages" aptcache policy phased1 phased2 phased3
+
+msgmsg "Test for always-include-phased-updates"
+for always in Update-Manager::Always-Include-Phased-Updates APT::Get::Always-Include-Phased-Updates; do
+testsuccessequal "phased1:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 500 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+phased2:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 500 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+phased3:
+  Installed: (none)
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 500 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages" aptcache policy phased1 phased2 phased3 -o $always=true
+done
+
+msgmsg "Test for never-include-phased-updates"
+for never in Update-Manager::Never-Include-Phased-Updates APT::Get::Never-Include-Phased-Updates; do
+testsuccessequal "phased1:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 1 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 1 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+phased2:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 1 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 1 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+phased3:
+  Installed: (none)
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 500 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages" aptcache policy phased1 phased2 phased3 -o $never=true
+done
+
+msgmsg "Test that being in a chroot equals always-include-phased-updates"
+testsuccessequal "phased1:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 500 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+phased2:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 500 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy phased1 phased2 -o Dir::Bin::ischroot=/bin/true
+
+msgmsg "Test that empty machine-id equals always-include-phased-updates"
+testsuccessequal "phased1:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 500 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+phased2:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 500 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy phased1 phased2 -o Dir::Etc::machine-id=/dev/null -o APT::Machine-Id=""
+
+msgmsg "Test that never-include-phased-updates trumps empty machine-id"
+testsuccessequal "phased1:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 1 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 1 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+phased2:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 1 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 1 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy phased1 phased2 -o Dir::Etc::machine-id=/dev/null -o APT::Machine-Id="" -o APT::Get::Never-Include-Phased-Updates=1
+
+
+msgmsg "Test that SOURCE_DATE_EPOCH set equals always-include-phased-updates"
+export SOURCE_DATE_EPOCH=0
+testsuccessequal "phased1:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 500 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+phased2:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 500 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy phased1 phased2
+unset SOURCE_DATE_EPOCH
+
+msgmsg "Test that different machine-id produces different outcome"
+testsuccessequal "phased1:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 1 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+phased2:
+  Installed: 1
+  Candidate: 100
+  Version table:
+     100 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     50 500 (phased 50%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+     10 1 (phased 10%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy phased1 phased2 -o apt::machine-id="00000000000000000000000000000000"

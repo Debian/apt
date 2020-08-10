@@ -338,6 +338,13 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
    else if (std::find(forceImportant.begin(), forceImportant.end(), Pkg.Name()) != forceImportant.end())
       Pkg->Flags |= pkgCache::Flag::Important;
 
+   auto phased = Section.FindULL(pkgTagSection::Key::Phased_Update_Percentage, 100);
+   if (phased != 100)
+   {
+      if (not Ver.PhasedUpdatePercentage(phased))
+	 _error->Warning("Ignoring invalid Phased-Update-Percentage value");
+   }
+
    if (ParseStatus(Pkg,Ver) == false)
       return false;
    return true;

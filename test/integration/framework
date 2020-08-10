@@ -484,6 +484,8 @@ EOF
 	# Allow release files to be 10 hours in the future, rather than 10 seconds
 	echo 'Acquire::Max-FutureTime "'$((10 * 60 * 60))'";' > rootdir/etc/apt/apt.conf.d/future-time
 
+	echo 'APT::Machine-ID "912e43bd1c1d4ba481f9f8ccab25f9ee";' > rootdir/etc/apt/apt.conf.d/machine-id
+
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 	confighashes 'SHA256' # these are tests, not security best-practices
 
@@ -505,6 +507,7 @@ EOF
 
 	# Make dpkg inherit testing path
 	echo 'DPkg::Path "";' >> aptconfig.conf
+	echo 'Dir::Bin::ischroot "/bin/false";' >> aptconfig.conf
 
 	# Make gcov shut up
 	export GCOV_ERROR_FILE=/dev/null

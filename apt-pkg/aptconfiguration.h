@@ -122,7 +122,12 @@ namespace Configuration {							/*{{{*/
 	APT_PUBLIC std::vector<std::string> const getBuildProfiles();
 	/** \return Return a comma-separated list of enabled build profile specifications */
 	APT_PUBLIC std::string const getBuildProfilesString();
-									/*}}}*/
+
+	std::string const getMachineID();
+
+	/** \return Whether we are running in a chroot */
+	bool isChroot();
+	/*}}}*/
 }
 									/*}}}*/
 }

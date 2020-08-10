@@ -623,6 +623,8 @@ struct pkgCache::DescFile
     or handled as separate versions based on the Hash value. */
 struct pkgCache::Version
 {
+   struct Extra;
+
    /** \brief complete version string */
    map_stringitem_t VerStr;
    /** \brief section this version is filled in */
@@ -688,8 +690,16 @@ struct pkgCache::Version
    map_pointer<Version> NextInSource;
 
    /** \brief Private pointer */
-   map_pointer<void> d;
+   map_pointer<Extra> d;
 };
+
+#ifdef APT_COMPILING_APT
+/// \brief Extra information for packages. APT-internal use only.
+struct pkgCache::Version::Extra
+{
+   uint8_t PhasedUpdatePercentage;
+};
+#endif
 									/*}}}*/
 // Description structure						/*{{{*/
 /** \brief datamember of a linked list of available description for a version */

@@ -563,7 +563,13 @@ bool Policy(CommandLine &CmdL)
 	 else
 	    std::cout << "     " << V.VerStr();
 
-	 std::cout << " " << Plcy->GetPriority(V) << std::endl;
+	 std::cout << " " << Plcy->GetPriority(V);
+
+	 if (V.PhasedUpdatePercentage() != 100)
+	    std::cout << " "
+		      << "(" << _("phased") << " " << V.PhasedUpdatePercentage() << "%)";
+
+	 std::cout << std::endl;
 	 for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; ++VF)
 	 {
 	    // Locate the associated index files so we can derive a description

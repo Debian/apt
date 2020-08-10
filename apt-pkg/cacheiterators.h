@@ -242,6 +242,20 @@ class APT_PUBLIC pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	bool Automatic() const;
 	VerFileIterator NewestFile() const;
 
+#ifdef APT_COMPILING_APT
+	inline unsigned int PhasedUpdatePercentage() const
+	{
+	   return (static_cast<Version::Extra *>(Owner->Map.Data()) + S->d)->PhasedUpdatePercentage;
+	}
+	inline bool PhasedUpdatePercentage(unsigned int percentage)
+	{
+	   if (percentage > 100)
+	      return false;
+	   (static_cast<Version::Extra *>(Owner->Map.Data()) + S->d)->PhasedUpdatePercentage = static_cast<uint8_t>(percentage);
+	   return true;
+	}
+#endif
+
 	inline VerIterator(pkgCache &Owner,Version *Trg = 0) : Iterator<Version, VerIterator>(Owner, Trg) {
 		if (S == 0)
 			S = OwnerPointer();

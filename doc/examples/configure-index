@@ -101,6 +101,8 @@ APT
      Upgrade "<BOOL>";
      Only-Upgrade "<BOOL>";
      Upgrade-Allow-New "<BOOL>";
+     Always-Include-Phased-Updates "<BOOL>";
+     Never-Include-Phased-Updates "<BOOL>";
      Purge "<BOOL>";
      ReInstall "<BOOL>";
      Compile "<BOOL>";
@@ -219,6 +221,8 @@ APT
 
   // control parameters for cron jobs by /etc/cron.daily/apt documented there
   Periodic {};
+
+  Machine-ID "<STRING>"; // Value of /etc/machine-id
 };
 
 // Options for the downloading routines
@@ -417,6 +421,7 @@ Dir "<DIR>"
      SourceParts "<DIR>";
      Trusted "<FILE>";
      TrustedParts "<DIR>";
+     Machine-ID "<FILE>";   // by default points to ../machine-id effectively
   };
 
   // Locations of binaries
@@ -434,6 +439,7 @@ Dir "<DIR>"
      bzip2 "<PROGRAM_PATH>";
      lzma "<PROGRAM_PATH>";
      uncompressed "<PROGRAM_PATH>";
+     ischroot "<PROGRAM_PATH>";
 
      solvers "<LIST>"; // of directories
      planners "<LIST>"; // of directories
@@ -561,6 +567,7 @@ Debug
   APT::Progress::PackageManagerFd "<BOOL>";
   SetupAPTPartialDirectory::AssumeGood "<BOOL>";
   Locking "<BOOL>";
+  Phasing "<BOOL>";
 };
 
 pkgCacheGen
@@ -843,3 +850,6 @@ Rred::Compress "<STRING>";
 
 APT::Internal::OpProgress::Absolute "<BOOL>";
 APT::Color "<BOOL>";
+
+update-manager::always-include-phased-updates "<BOOL>";
+update-manager::never-include-phased-updates "<BOOL>";
