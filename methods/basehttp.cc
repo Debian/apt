@@ -770,33 +770,24 @@ int BaseHttpMethod::Loop()
 	    }
 	    else
 	    {
-	       if (Server->IsOpen() == false)
+	       if (not Server->IsOpen())
 	       {
-		  FailCounter++;
-		  _error->Discard();
-		  Server->Close();
-		  
-		  if (FailCounter >= 2)
-		  {
-		     Fail(_("Connection failed"),true);
-		     FailCounter = 0;
-		  }
-		  
+		  // Reset the pipeline
 		  QueueBack = Queue;
+		  Server->PipelineAnswersReceived = 0;
 	       }
-	       else
-               {
-                  Server->Close();
-		  switch (Result)
-		  {
-		  case ResultState::TRANSIENT_ERROR:
-		     Fail(true);
-		     break;
-		  case ResultState::FATAL_ERROR:
-		  case ResultState::SUCCESSFUL:
-		     Fail(false);
-		     break;
-		  }
+
+	       Server->Close();
+	       FailCounter = 0;
+	       switch (Result)
+	       {
+	       case ResultState::TRANSIENT_ERROR:
+		  Fail(true);
+		  break;
+	       case ResultState::FATAL_ERROR:
+	       case ResultState::SUCCESSFUL:
+		  Fail(false);
+		  break;
 	       }
 	    }
 	    break;
