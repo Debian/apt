@@ -702,40 +702,30 @@ ResultState HttpServerState::Die(RequestState &Req)
 
    Close();
 
-   // Dump the buffer to the file
-   if (Req.State == RequestState::Data)
+   switch (Req.State)
    {
-      if (not In.WriteSpace() || In.IsLimit() == true || Persistent == false)
-        return ResultState::SUCCESSFUL;
-
-      _error->Error(_("Data left in buffer"));
-      return ResultState::TRANSIENT_ERROR;
-   }
-
-   // See if this is because the server finished the data stream
-   if (In.IsLimit() == false && Req.State != RequestState::Header &&
-       Persistent == true)
-   {
-      if (LErrno == 0)
-      {
-	 _error->Error(_("Error reading from server. Remote end closed connection"));
-	 return ResultState::TRANSIENT_ERROR;
-      }
-      errno = LErrno;
-      _error->Errno("read", _("Error reading from server"));
-      return ResultState::TRANSIENT_ERROR;
-   }
-   else
-   {
+   case RequestState::Data:
+      // We have read all data we could, or the connection is not persistent
+      if (In.IsLimit() == true || Persistent == false)
+	 return ResultState::SUCCESSFUL;
+      break;
+   case RequestState::Header:
       In.Limit(-1);
-
-      // Nothing left in the buffer
-      if (In.WriteSpace() == false)
-	 return ResultState::TRANSIENT_ERROR;
-
-      // We may have got multiple responses back in one packet..
-      return ResultState::SUCCESSFUL;
+      // We have read some headers, but we might also have read the content
+      // and an EOF and hence reached this point. This is fine.
+      if (In.WriteSpace())
+	 return ResultState::SUCCESSFUL;
+      break;
    }
+
+   // We have reached an actual error, tell the user about it.
+   if (LErrno == 0)
+   {
+      _error->Error(_("Error reading from server. Remote end closed connection"));
+      return ResultState::TRANSIENT_ERROR;
+   }
+   errno = LErrno;
+   _error->Errno("read", _("Error reading from server"));
 
    return ResultState::TRANSIENT_ERROR;
 }
