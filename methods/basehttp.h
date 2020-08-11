@@ -107,7 +107,7 @@ struct ServerState
    virtual bool Close() = 0;
    virtual bool InitHashes(HashStringList const &ExpectedHashes) = 0;
    virtual ResultState Die(RequestState &Req) = 0;
-   virtual bool Flush(FileFd * const File) = 0;
+   virtual bool Flush(FileFd *const File, bool MustComplete = false) = 0;
    virtual ResultState Go(bool ToFile, RequestState &Req) = 0;
    virtual Hashes * GetHashes() = 0;
 

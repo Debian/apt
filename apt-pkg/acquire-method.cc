@@ -139,27 +139,30 @@ void pkgAcqMethod::SendMessage(std::string const &header, std::unordered_map<std
 /* */
 void pkgAcqMethod::Fail(bool Transient)
 {
-   string Err = "Undetermined Error";
-   if (_error->empty() == false)
+
+   Fail("", Transient);
+}
+									/*}}}*/
+// AcqMethod::Fail - A fetch has failed					/*{{{*/
+void pkgAcqMethod::Fail(string Err, bool Transient)
+{
+
+   if (not _error->empty())
    {
-      Err.clear();
-      while (_error->empty() == false)
+      while (not _error->empty())
       {
 	 std::string msg;
 	 if (_error->PopMessage(msg))
 	 {
-	    if (Err.empty() == false)
+	    if (not Err.empty())
 	       Err.append("\n");
 	    Err.append(msg);
 	 }
       }
    }
-   Fail(Err, Transient);
-}
-									/*}}}*/
-// AcqMethod::Fail - A fetch has failed					/*{{{*/
-void pkgAcqMethod::Fail(string Err,bool Transient)
-{
+   if (Err.empty())
+      Err = "Undetermined Error";
+
    // Strip out junk from the error messages
    std::transform(Err.begin(), Err.end(), Err.begin(), [](char const c) {
       if (c == '\r' || c == '\n')

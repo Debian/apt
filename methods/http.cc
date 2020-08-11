@@ -702,43 +702,30 @@ ResultState HttpServerState::Die(RequestState &Req)
 
    Close();
 
-   // Dump the buffer to the file
-   if (Req.State == RequestState::Data)
+   switch (Req.State)
    {
-      // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
-      // can't be set
-      if (Req.File.Name() != "/dev/null")
-	 SetNonBlock(Req.File.Fd(),false);
-      if (In.WriteSpace()) {
-	 _error->Error(_("Data left in buffer"));
-	 return ResultState::TRANSIENT_ERROR;
-      }
+   case RequestState::Data:
+      // We have read all data we could, or the connection is not persistent
+      if (In.IsLimit() == true || Persistent == false)
+	 return ResultState::SUCCESSFUL;
+      break;
+   case RequestState::Header:
+      In.Limit(-1);
+      // We have read some headers, but we might also have read the content
+      // and an EOF and hence reached this point. This is fine.
+      if (In.WriteSpace())
+	 return ResultState::SUCCESSFUL;
+      break;
    }
 
-   // See if this is because the server finished the data stream
-   if (In.IsLimit() == false && Req.State != RequestState::Header &&
-       Persistent == true)
+   // We have reached an actual error, tell the user about it.
+   if (LErrno == 0)
    {
-      if (LErrno == 0)
-      {
-	 _error->Error(_("Error reading from server. Remote end closed connection"));
-	 return ResultState::TRANSIENT_ERROR;
-      }
-      errno = LErrno;
-      _error->Errno("read", _("Error reading from server"));
+      _error->Error(_("Error reading from server. Remote end closed connection"));
       return ResultState::TRANSIENT_ERROR;
    }
-   else
-   {
-      In.Limit(-1);
-
-      // Nothing left in the buffer
-      if (In.WriteSpace() == false)
-	 return ResultState::TRANSIENT_ERROR;
-
-      // We may have got multiple responses back in one packet..
-      return ResultState::SUCCESSFUL;
-   }
+   errno = LErrno;
+   _error->Errno("read", _("Error reading from server"));
 
    return ResultState::TRANSIENT_ERROR;
 }
@@ -747,14 +734,10 @@ ResultState HttpServerState::Die(RequestState &Req)
 // ---------------------------------------------------------------------
 /* This takes the current input buffer from the Server FD and writes it
    into the file */
-bool HttpServerState::Flush(FileFd * const File)
+bool HttpServerState::Flush(FileFd *const File, bool MustComplete)
 {
    if (File != nullptr)
    {
-      // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
-      // can't be set
-      if (File->Name() != "/dev/null")
-	 SetNonBlock(File->Fd(),false);
       if (In.WriteSpace() == false)
 	 return true;
       
@@ -766,7 +749,7 @@ bool HttpServerState::Flush(FileFd * const File)
 	    return true;
       }
 
-      if (In.IsLimit() == true || Persistent == false)
+      if (In.IsLimit() == true || Persistent == false || not MustComplete)
 	 return true;
    }
    return false;
@@ -800,20 +783,23 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
    if (In.ReadSpace() == true && ServerFd->Fd() != -1)
       FD_SET(ServerFd->Fd(), &rfds);
 
-   // Add the file
-   auto FileFD = MethodFd::FromFd(-1);
-   if (Req.File.IsOpen())
-      FileFD = MethodFd::FromFd(Req.File.Fd());
-
-   if (In.WriteSpace() == true && ToFile == true && FileFD->Fd() != -1)
-      FD_SET(FileFD->Fd(), &wfds);
+   // Add the file. Note that we need to add the file to the select and
+   // then write before we read from the server so we do not have content
+   // left to write if the server closes the connection when we read from it.
+   //
+   // An alternative would be to just flush the file in those circumstances
+   // and then return. Because otherwise we might end up blocking indefinitely
+   // in the select() call if we were to continue but all that was left to do
+   // was write to the local file.
+   if (In.WriteSpace() == true && ToFile == true && Req.File.IsOpen())
+      FD_SET(Req.File.Fd(), &wfds);
 
    // Add stdin
    if (Owner->ConfigFindB("DependOnSTDIN", true) == true)
       FD_SET(STDIN_FILENO,&rfds);
 	  
    // Figure out the max fd
-   int MaxFd = FileFD->Fd();
+   int MaxFd = Req.File.Fd();
    if (MaxFd < ServerFd->Fd())
       MaxFd = ServerFd->Fd();
 
@@ -835,7 +821,15 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
       _error->Error(_("Connection timed out"));
       return ResultState::TRANSIENT_ERROR;
    }
-   
+
+   // Flush any data before talking to the server, in case the server
+   // closed the connection, we want to be done writing.
+   if (Req.File.IsOpen() && FD_ISSET(Req.File.Fd(), &wfds))
+   {
+      if (not Flush(&Req.File, false))
+	 return ResultState::TRANSIENT_ERROR;
+   }
+
    // Handle server IO
    if (ServerPending || (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &rfds)))
    {
@@ -845,14 +839,10 @@ ResultState HttpServerState::Go(bool ToFile, RequestState &Req)
    }
 
    // Send data to the file
-   if (FileFD->Fd() != -1 && ((In.WriteSpace() == true && ToFile == true) ||
-			      FD_ISSET(FileFD->Fd(), &wfds)))
+   if (In.WriteSpace() == true && ToFile == true && Req.File.IsOpen())
    {
-      if (In.Write(FileFD) == false)
-      {
-	 _error->Errno("write", _("Error writing to output file"));
+      if (not Flush(&Req.File, false))
 	 return ResultState::TRANSIENT_ERROR;
-      }
    }
 
    if (ServerFd->Fd() != -1 && FD_ISSET(ServerFd->Fd(), &wfds))
@@ -1029,7 +1019,6 @@ BaseHttpMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &R
    if (Req.StartPos > 0)
       Res.ResumePoint = Req.StartPos;
 
-   SetNonBlock(Req.File.Fd(),true);
    return FILE_IS_OPEN;
 }
 									/*}}}*/
