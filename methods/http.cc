@@ -705,11 +705,6 @@ ResultState HttpServerState::Die(RequestState &Req)
    // Dump the buffer to the file
    if (Req.State == RequestState::Data)
    {
-      // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
-      // can't be set
-      if (Req.File.Name() != "/dev/null")
-	 SetNonBlock(Req.File.Fd(),false);
-
       if (not In.WriteSpace() || In.IsLimit() == true || Persistent == false)
         return ResultState::SUCCESSFUL;
 
@@ -753,10 +748,6 @@ bool HttpServerState::Flush(FileFd * const File)
 {
    if (File != nullptr)
    {
-      // on GNU/kFreeBSD, apt dies on /dev/null because non-blocking
-      // can't be set
-      if (File->Name() != "/dev/null")
-	 SetNonBlock(File->Fd(),false);
       if (In.WriteSpace() == false)
 	 return true;
       
@@ -1031,7 +1022,6 @@ BaseHttpMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &R
    if (Req.StartPos > 0)
       Res.ResumePoint = Req.StartPos;
 
-   SetNonBlock(Req.File.Fd(),true);
    return FILE_IS_OPEN;
 }
 									/*}}}*/
