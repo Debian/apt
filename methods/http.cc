@@ -709,10 +709,12 @@ ResultState HttpServerState::Die(RequestState &Req)
       // can't be set
       if (Req.File.Name() != "/dev/null")
 	 SetNonBlock(Req.File.Fd(),false);
-      if (In.WriteSpace()) {
-	 _error->Error(_("Data left in buffer"));
-	 return ResultState::TRANSIENT_ERROR;
-      }
+
+      if (not In.WriteSpace() || In.IsLimit() == true || Persistent == false)
+        return ResultState::SUCCESSFUL;
+
+      _error->Error(_("Data left in buffer"));
+      return ResultState::TRANSIENT_ERROR;
    }
 
    // See if this is because the server finished the data stream
