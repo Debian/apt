@@ -1,3 +1,21 @@
+apt (2.1.10) unstable; urgency=medium
+
+  * Default Acquire::AllowReleaseInfoChange::Suite to "true" (Closes: #931566)
+  * acquire: Do not hide _error messages in Fail()
+  * Further improvements to HTTP method (Closes: #968220, verified against
+    that server and the Canonical infra where it blocked buildds)
+    - Do not use non-blocking local I/O - they don't do anything anyway,
+      and we can't really use non-blocking I/O here because we need to be able
+      to flush it.
+    - Restore successful exits from Die() and rewrite Die() in a more
+      comprehensible way, after careful code path analysis
+    - http: Fully flush local file both before/after server read, avoiding
+      both partial flush before sending requests to the server, as well as
+      preventing leftover data before receiving from the server, which cause
+      data left in the buffer.
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 11 Aug 2020 14:28:07 +0200
+
 apt (2.1.9) unstable; urgency=medium
 
   [ Julian Andres Klode ]
