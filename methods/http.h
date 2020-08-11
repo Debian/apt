@@ -114,7 +114,7 @@ struct HttpServerState: public ServerState
    virtual bool InitHashes(HashStringList const &ExpectedHashes) APT_OVERRIDE;
    virtual Hashes * GetHashes() APT_OVERRIDE;
    virtual ResultState Die(RequestState &Req) APT_OVERRIDE;
-   virtual bool Flush(FileFd * const File) APT_OVERRIDE;
+   virtual bool Flush(FileFd *const File, bool MustComplete = true) APT_OVERRIDE;
    virtual ResultState Go(bool ToFile, RequestState &Req) APT_OVERRIDE;
 
    HttpServerState(URI Srv, HttpMethod *Owner);
