@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 2.1.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-08-04 12:40+0200\n"
-"PO-Revision-Date: 2020-05-24 16:39+0200\n"
+"POT-Creation-Date: 2020-09-10 22:28+0200\n"
+"PO-Revision-Date: 2020-08-18 22:34+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -1979,7 +1979,7 @@ msgid ""
 "Re-install packages that are already installed and at the newest version.  "
 "Configuration Item: <literal>APT::Get::ReInstall</literal>."
 msgstr ""
-"Pakketten die reeds met hun nieuwste versie geïnstalleerd zijn opnieuw "
+"Pakketten die reeds met hun nieuwste versie geïnstalleerd zijn, opnieuw "
 "installeren. Configuratie-item: <literal>APT::Get::ReInstall</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -2032,10 +2032,10 @@ msgid ""
 "option> will answer yes to any prompt, <option>--trivial-only</option> will "
 "answer no.  Configuration Item: <literal>APT::Get::Trivial-Only</literal>."
 msgstr ""
-"Voer enkel 'banale' operaties uit. Logisch gezien kan men dit beschouwen als "
-"gerelateerd aan <option>--assume-yes</option>. Waar <option>--assume-yes</"
-"option> op elke vraag ja antwoordt, zal <option>--trivial-only</option> nee "
-"antwoorden. Configuratie-item: <literal>APT::Get::Trivial-Only</literal>."
+"Enkel 'banale' operaties uitvoeren. Logisch gezien kan men dit beschouwen "
+"als gerelateerd aan <option>--assume-yes</option>. Waar <option>--assume-"
+"yes</option> op elke vraag ja antwoordt, zal <option>--trivial-only</option> "
+"nee antwoorden. Configuratie-item: <literal>APT::Get::Trivial-Only</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -2046,6 +2046,12 @@ msgid ""
 "equally to running <command>apt-mark auto</command> for all installed "
 "packages.  Configuration Item: <literal>APT::Get::Mark-Auto</literal>."
 msgstr ""
+"Na een succesvolle installatie alle pas geïnstalleerde pakketten markeren "
+"als automatisch geïnstalleerd. Dit heeft als effect dat al deze pakketten "
+"verwijderd zullen worden wanneer geen handmatig geïnstalleerde pakketten "
+"deze nog vereisen. Dit is hetzelfde als het commando <command>apt-mark auto</"
+"command> uitvoeren voor alle geïnstalleerde pakketten. Configuratie-item: "
+"<literal>APT::Get::Mark-Auto</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -2923,10 +2929,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-key.8.xml
-#, fuzzy
-#| msgid "APT key management utility"
 msgid "Deprecated APT key management utility"
-msgstr "Hulpprogramma voor het beheer van de sleutels van APT"
+msgstr "Verouderd hulpprogramma voor het beheer van de sleutels van APT"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -2949,11 +2953,18 @@ msgid ""
 "desired the additional installation of the GNU Privacy Guard suite (packaged "
 "in <package>gnupg</package>) is required."
 msgstr ""
+"Het gebruik van <command>apt-key</command> is verouderd, behalve voor het "
+"gebruik van <command>apt-key del</command> in scripts van pakketonderhouders "
+"om bestaande sleutels te verwijderen uit de hoofdsleutelbos. Indien een "
+"dergelijk gebruik van <command>apt-key</command> gewenst is, is bijkomend de "
+"installatie vereist van de suite GNU Privacy Guard (verpakt in "
+"<package>gnupg</package>)."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
 msgid "apt-key(8) will last be available in Debian 11 and Ubuntu 22.04."
 msgstr ""
+"apt-key(8) zal voor het laatst beschikbaar zijn in Debian 11 en Ubuntu 22.04."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
@@ -3041,10 +3052,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-key.8.xml
-#, fuzzy
-#| msgid "(deprecated)"
 msgid "(mostly deprecated)"
-msgstr "(verouderd)"
+msgstr "(meestal verouderd)"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
@@ -3285,6 +3294,12 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml
+#, fuzzy
+#| msgid ""
+#| "Read/Write package stats from the filename given with the parameter "
+#| "&synopsis-param-filename; instead of from the default location, which is "
+#| "<filename>extended_status</filename> in the directory defined by the "
+#| "Configuration Item: <literal>Dir::State</literal>."
 msgid ""
 "Read/Write package stats from the filename given with the parameter "
 "&synopsis-param-filename; instead of from the default location, which is "
@@ -13666,24 +13681,3 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 msgid "Which will use the already fetched archives on the disc."
 msgstr ""
 "En dit zal gebruik maken van de reeds opgehaalde archieven op de schijf."
-
-#~ msgid ""
-#~ "Note that if usage of <command>apt-key</command> is desired the "
-#~ "additional installation of the GNU Privacy Guard suite (packaged in "
-#~ "<package>gnupg</package>) is required. For this reason alone the "
-#~ "programmatic usage (especially in package maintainer scripts!) is "
-#~ "strongly discouraged.  Further more the output format of all commands is "
-#~ "undefined and can and does change whenever the underlying commands "
-#~ "change. <command>apt-key</command> will try to detect such usage and "
-#~ "generates warnings on stderr in these cases."
-#~ msgstr ""
-#~ "Merk op dat als het gebruik van het commando <command>apt-key</command> "
-#~ "gewenst is, dan ook de installatie van de GNU Privacy Guard suite "
-#~ "(verpakt in het pakket <package>gnupg</package>) vereist is. Enkel "
-#~ "omwille daarvan al wordt het gebruik ervan in programma's (zeker in "
-#~ "scripts voor pakketonderhoud) sterk afgeraden. Daarenboven wordt de "
-#~ "indeling van de uitvoer van alle commando's onvoorspelbaar en kan die "
-#~ "wijzigen telkens wanneer de achterliggende commando's wijzigen. "
-#~ "<command>apt-key</command> zal een dergelijk gebruik trachten te "
-#~ "detecteren en geeft in dergelijke gevallen waarschuwingen op de standaard "
-#~ "foutuitvoer."
