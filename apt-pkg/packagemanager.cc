@@ -610,7 +610,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 
    List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
 
-   if ((Cache[Pkg].InstVerIter(Cache)->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
+   if ((Cache[Pkg].InstVerIter(Cache)->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same &&
+       not List->IsFlag(Pkg, pkgOrderList::Immediate))
       for (PkgIterator P = Pkg.Group().PackageList();
 	   P.end() == false; P = Pkg.Group().NextPkg(P))
       {
