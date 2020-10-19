@@ -94,7 +94,12 @@ bool ARArchive::LoadHeaders()
 	 delete Memb;
 	 return _error->Error(_("Invalid archive member header"));
       }
-	 
+
+      if (Left < 0 || Memb->Size > static_cast<unsigned long long>(Left))
+      {
+	 delete Memb;
+	 return _error->Error(_("Invalid archive member header"));
+      }
       // Check for an extra long name string
       if (memcmp(Head.Name,"#1/",3) == 0)
       {
@@ -106,6 +111,13 @@ bool ARArchive::LoadHeaders()
 	    delete Memb;
 	    return _error->Error(_("Invalid archive member header"));
 	 }
+
+	 if (Len > Memb->Size)
+	 {
+	    delete Memb;
+	    return _error->Error(_("Invalid archive member header"));
+	 }
+
 	 if (File.Read(S,Len) == false)
 	 {
 	    delete Memb;
