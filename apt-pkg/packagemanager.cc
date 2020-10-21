@@ -1007,7 +1007,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
    if (Immediate == true) {
       // Perform immediate configuration of the package. 
          if (SmartConfigure(Pkg, Depth + 1) == false)
-            _error->Error(_("Could not perform immediate configuration on '%s'. "
+            _error->Warning(_("Could not perform immediate configuration on '%s'. "
                "Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.FullName().c_str(),2);
    }
    
