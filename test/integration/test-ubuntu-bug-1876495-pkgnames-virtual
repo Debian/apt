@@ -1,0 +1,23 @@
+
+#!/bin/sh
+
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'i386'
+
+insertinstalledpackage 'coolstuff' 'all' '1.0' 'Provides: virtual-package
+Source: source-package'
+
+setupaptarchive
+changetowebserver
+
+testsuccess aptget update -o Debug::Acquire::gpg=1
+testsuccessequal "coolstuff
+dpkg" aptcache pkgnames
+
+testsuccessequal "source-package
+coolstuff
+dpkg" aptcache pkgnames --all-names
