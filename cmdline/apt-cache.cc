@@ -980,7 +980,7 @@ static bool ShowPkgNames(CommandLine &CmdL)
    if (unlikely(CacheFile.BuildCaches(NULL, false) == false))
       return false;
    pkgCache::GrpIterator I = CacheFile.GetPkgCache()->GrpBegin();
-   bool const All = _config->FindB("APT::Cache::AllNames","false");
+   bool const All = _config->FindB("APT::Cache::AllNames", false);
 
    if (CmdL.FileList[1] != 0)
    {
