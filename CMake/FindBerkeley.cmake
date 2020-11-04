@@ -1,10 +1,10 @@
 # - Try to find Berkeley DB
 # Once done this will define
 #
-#  BERKELEY_DB_FOUND - system has Berkeley DB
-#  BERKELEY_DB_INCLUDE_DIRS - the Berkeley DB include directory
-#  BERKELEY_DB_LIBRARIES - Link these to use Berkeley DB
-#  BERKELEY_DB_DEFINITIONS - Compiler switches required for using Berkeley DB
+#  BERKELEY_FOUND - system has Berkeley DB
+#  BERKELEY_INCLUDE_DIRS - the Berkeley DB include directory
+#  BERKELEY_LIBRARIES - Link these to use Berkeley DB
+#  BERKELEY_DEFINITIONS - Compiler switches required for using Berkeley DB
 
 # Copyright (c) 2006, Alexander Dymo, <adymo@kdevelop.org>
 # Copyright (c) 2016, Julian Andres Klode <jak@debian.org>
@@ -35,7 +35,7 @@
 
 # We need NO_DEFAULT_PATH here, otherwise CMake helpfully picks up the wrong
 # db.h on BSD systems instead of the Berkeley DB one.
-find_path(BERKELEY_DB_INCLUDE_DIRS db.h
+find_path(BERKELEY_INCLUDE_DIRS db.h
   ${CMAKE_INSTALL_FULL_INCLUDEDIR}/db5
   /usr/local/include/db5
   /usr/include/db5
@@ -51,9 +51,9 @@ find_path(BERKELEY_DB_INCLUDE_DIRS db.h
   NO_DEFAULT_PATH
 )
 
-find_library(BERKELEY_DB_LIBRARIES NAMES db db-5)
+find_library(BERKELEY_LIBRARIES NAMES db db-5)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Berkeley "Could not find Berkeley DB >= 4.1" BERKELEY_DB_INCLUDE_DIRS BERKELEY_DB_LIBRARIES)
-# show the BERKELEY_DB_INCLUDE_DIRS and BERKELEY_DB_LIBRARIES variables only in the advanced view
-mark_as_advanced(BERKELEY_DB_INCLUDE_DIRS BERKELEY_DB_LIBRARIES)
+find_package_handle_standard_args(Berkeley "Could not find Berkeley DB >= 4.1" BERKELEY_INCLUDE_DIRS BERKELEY_LIBRARIES)
+# show the BERKELEY_INCLUDE_DIRS and BERKELEY_LIBRARIES variables only in the advanced view
+mark_as_advanced(BERKELEY_INCLUDE_DIRS BERKELEY_LIBRARIES)

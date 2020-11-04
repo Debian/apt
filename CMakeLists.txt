@@ -80,8 +80,8 @@ add_optional_compile_options(Wsuggest-override)
 add_optional_compile_options(Werror=suggest-override)
 add_optional_compile_options(Werror=return-type)
 # apt-ftparchive dependencies
-find_package(BerkeleyDB REQUIRED)
-if (BERKELEY_DB_FOUND)
+find_package(Berkeley REQUIRED)
+if (BERKELEY_FOUND)
   set(HAVE_BDB 1)
 endif()
 
@@ -113,7 +113,7 @@ if (LZ4_FOUND)
   set(HAVE_LZ4 1)
 endif()
 
-find_package(Zstd)
+find_package(ZSTD)
 if (ZSTD_FOUND)
   set(HAVE_ZSTD 1)
 endif()
@@ -129,12 +129,12 @@ if (SYSTEMD_FOUND)
   set(HAVE_SYSTEMD 1)
 endif()
 
-find_package(Seccomp)
+find_package(SECCOMP)
 if (SECCOMP_FOUND)
   set(HAVE_SECCOMP 1)
 endif()
 
-find_package(Gcrypt REQUIRED)
+find_package(GCRYPT REQUIRED)
 
 # Mount()ing and stat()ing and friends
 check_symbol_exists(statfs sys/vfs.h HAVE_VFS_H)
