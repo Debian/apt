@@ -5,10 +5,10 @@
 # Américo Monteiro <a_monteiro@gmx.com>, 2014 - 2020.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.1.6\n"
+"Project-Id-Version: apt 2.1.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-08-04 12:40+0200\n"
-"PO-Revision-Date: 2020-06-08 17:06+0000\n"
+"POT-Creation-Date: 2020-11-04 15:54+0100\n"
+"PO-Revision-Date: 2020-08-14 23:28+0000\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <>\n"
 "Language: pt\n"
@@ -1991,6 +1991,12 @@ msgid ""
 "equally to running <command>apt-mark auto</command> for all installed "
 "packages.  Configuration Item: <literal>APT::Get::Mark-Auto</literal>."
 msgstr ""
+"Após instalação com sucesso, marca todos os pacotes de instalação recente "
+"como instalados automaticamente, o que irá fazer com que cada um dos pacotes "
+"seja removido quando mais nenhum pacote instalado manualmente depender "
+"deste. Isto é igual a correr <command>apt-mark auto</command> para todos os "
+"pacotes instalados. Item de configuração: <literal>APT::Get::Mark-Auto</"
+"literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -2854,10 +2860,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-key.8.xml
-#, fuzzy
-#| msgid "APT key management utility"
 msgid "Deprecated APT key management utility"
-msgstr "Utilitário de gestão de chaves do APT"
+msgstr "Utilitário de gestão de chaves do APT descontinuado"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -2879,11 +2883,16 @@ msgid ""
 "desired the additional installation of the GNU Privacy Guard suite (packaged "
 "in <package>gnupg</package>) is required."
 msgstr ""
+"O uso de <command>apt-key</command> está descontinuado, excepto para o uso "
+"de <command>apt-key del</command> em scripts de maintainer para remover "
+"chaves existentes do chaveiro principal. Se tal utilização do <command>apt-"
+"key</command> é desejada, é requerida a instalação adicional da suite GNU "
+"Privacy Guard (empacotada em <package>gnupg</package>)."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
 msgid "apt-key(8) will last be available in Debian 11 and Ubuntu 22.04."
-msgstr ""
+msgstr "apt-key(8) estará disponível por último em Debian 11 e Ubuntu 22.04."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
@@ -2968,10 +2977,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-key.8.xml
-#, fuzzy
-#| msgid "(deprecated)"
 msgid "(mostly deprecated)"
-msgstr "(descontinuado)"
+msgstr "(maioritariamente descontinuado)"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml
