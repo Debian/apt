@@ -366,6 +366,7 @@ static bool addArgumentsRred(std::vector<CommandLine::Args> &Args, char const * 
 {
    addArg('t', nullptr, "Rred::T", 0);
    addArg('f', nullptr, "Rred::F", 0);
+   addArg('C', "compress", "Rred::Compress",CommandLine::HasArg);
    return true;
 }
 									/*}}}*/

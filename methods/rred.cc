@@ -756,6 +756,19 @@ class RredMethod : public aptMethod {
    }
 };
 
+static const APT::Configuration::Compressor *FindCompressor(std::vector<APT::Configuration::Compressor> const &compressors, std::string const &name) /*{{{*/
+{
+   APT::Configuration::Compressor const * compressor = nullptr;
+   for (auto const & c : compressors)
+   {
+      if (compressor != nullptr && c.Cost >= compressor->Cost)
+         continue;
+      if (c.Name == name || c.Extension == name || (!c.Extension.empty() && c.Extension.substr(1) == name))
+         compressor = &c;
+   }
+   return compressor;
+}
+									/*}}}*/
 static std::vector<aptDispatchWithHelp> GetCommands()
 {
    return {{nullptr, nullptr, nullptr}};
@@ -773,6 +786,19 @@ int main(int argc, const char *argv[])
    auto const argmax = CmdL.FileSize();
    bool const quiet = _config->FindI("quiet", 0) >= 2;
 
+   std::string const compressorName = _config->Find("Rred::Compress", "");
+   auto const compressors = APT::Configuration::getCompressors();
+   APT::Configuration::Compressor const * compressor = nullptr;
+   if (not compressorName.empty())
+   {
+      compressor = FindCompressor(compressors, compressorName);
+      if (compressor == nullptr)
+      {
+	 std::cerr << "E: Could not find compressor: " << compressorName << '\n';
+	 return 101;
+      }
+   }
+
    bool just_diff = false;
    if (_config->FindB("Rred::T", false))
    {
@@ -784,12 +810,18 @@ int main(int argc, const char *argv[])
       if (not quiet)
 	 std::clog << "Patching " << CmdL.FileList[0] << " into " << CmdL.FileList[1] << "\n";
       input.Open(CmdL.FileList[0], FileFd::ReadOnly,FileFd::Extension);
-      output.Open(CmdL.FileList[1], FileFd::WriteOnly | FileFd::Create | FileFd::Empty | FileFd::BufferedWrite, FileFd::Extension);
+      if (compressor == nullptr)
+	 output.Open(CmdL.FileList[1], FileFd::WriteOnly | FileFd::Create | FileFd::Empty | FileFd::BufferedWrite, FileFd::Extension);
+      else
+	 output.Open(CmdL.FileList[1], FileFd::WriteOnly | FileFd::Create | FileFd::Empty | FileFd::BufferedWrite, *compressor);
       argi = 2;
    }
    else
    {
-      output.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create | FileFd::BufferedWrite);
+      if (compressor == nullptr)
+	 output.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create | FileFd::BufferedWrite);
+      else
+	 output.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create | FileFd::BufferedWrite, *compressor);
       if (_config->FindB("Rred::F", false))
 	 input.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly);
       else

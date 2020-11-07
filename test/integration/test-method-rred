@@ -198,9 +198,13 @@ failrred 'End before start' '7,6d'
 
 # deal correctly with patch merging
 mergepatches() {
-	testsuccess runapt "${METHODSDIR}/rred" Packages.ed-*
+	local CONTENT="$1"
+	shift
+	testsuccess runapt "${METHODSDIR}/rred" Packages.ed-* "$@"
 	cp -a rootdir/tmp/testsuccess.output patch.ed
-	testfileequal 'patch.ed' "$1"
+	if [ "$#" = '0' ]; then
+		testfileequal 'patch.ed' "$CONTENT"
+	fi
 }
 createpatch() {
 	echo "$2"
@@ -223,7 +227,14 @@ mergepatches '11,19c
 Package: extra-kittens
 Version: unavailable
 .
+6d' -C 'gzip'
+mv patch.ed patch.ed.gz
+mergepatches '11,19c
+Package: extra-kittens
+Version: unavailable
+.
 6d'
+testfileequal patch.ed "$(apt-helper cat-file patch.ed.gz)"
 testrred 'Apply' 'merged patch' "$(cat patch.ed)" 'Package: coolstuff
 Version: 0.8.15
 Description: collection of stuff
