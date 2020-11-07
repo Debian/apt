@@ -806,7 +806,7 @@ int main(int argc, const char *argv[])
    for (; argi < argmax; ++argi)
    {
       FileFd patch;
-      if (not patch.Open(CmdL.FileList[argi], FileFd::ReadOnly))
+      if (not patch.Open(CmdL.FileList[argi], FileFd::ReadOnly, FileFd::Extension))
       {
 	 _error->DumpErrors(std::cerr);
 	 return 1;

@@ -215,6 +215,9 @@ Description: fix later
 .' > Packages.ed-0
 createpatch 'Remove more stuff and fix later' '23d,
 6d' > Packages.ed-1
+testsuccess apthelper cat-file --compress gzip Packages.ed-1
+mv rootdir/tmp/testsuccess.output Packages.ed-1.gz
+testsuccess rm Packages.ed-1
 createpatch 'Remove (old) dog paragraph' '10,19d' > Packages.ed-2
 mergepatches '11,19c
 Package: extra-kittens
