@@ -15,6 +15,8 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/strutl.h>
 
+#include <apt-private/private-cmndline.h>
+
 #include <iostream>
 #include <list>
 #include <string>
@@ -32,6 +34,33 @@
 #include <apti18n.h>
 
 #define BLOCK_SIZE (512*1024)
+
+static bool ShowHelp(CommandLine &)
+{
+   std::cout <<
+      "Usage: rred [options] -t input output patch-1 … patch-N\n"
+      "       rred [options] -f patch-1 … patch-N < input > output\n"
+      "       rred [options] patch-1 … patch-N > merged-patch\n"
+      "\n"
+      "The main use of this binary is by APTs acquire system, a mode reached\n"
+      "by calling it without any arguments and driven via messages on stdin.\n"
+      "\n"
+      "For the propose of testing as well as simpler direct usage the above\n"
+      "mentioned modes to work with \"reversed restricted ed\" patches as well.\n"
+      "\n"
+      "The arguments used above are:\n"
+      "* input: denotes a file you want to patch.\n"
+      "* output: a file you want to store the patched content in.\n"
+      "* patch-1 … patch-N: One or more files containing a patch.\n"
+      "* merged-patch: All changes by patch-1 … patch-N in one patch.\n"
+      "\n"
+      "This rred supports the commands 'a', 'c' and 'd', both single as well\n"
+      "as multi line. Other commands are not supported (hence 'restricted').\n"
+      "The command to patch the last line must appear first in the patch\n"
+      "(hence 'reversed'). Such a patch can e.g. be produced with 'diff --ed'.\n"
+      ;
+   return true;
+}
 
 class MemBlock {
    char *start;
@@ -727,62 +756,74 @@ class RredMethod : public aptMethod {
    }
 };
 
-int main(int argc, char **argv)
+static std::vector<aptDispatchWithHelp> GetCommands()
 {
-   int i;
-   bool just_diff = true;
-   bool test = false;
-   Patch patch;
-
-   if (argc <= 1) {
+   return {{nullptr, nullptr, nullptr}};
+}
+int main(int argc, const char *argv[])
+{
+   if (argc <= 1)
       return RredMethod().Run();
-   }
 
-   // Usage: rred -t input output diff ...
-   if (argc > 1 && strcmp(argv[1], "-t") == 0) {
-      // Read config files so we see compressors.
-      pkgInitConfig(*_config);
-      just_diff = false;
-      test = true;
-      i = 4;
-   } else if (argc > 1 && strcmp(argv[1], "-f") == 0) {
-      just_diff = false;
-      i = 2;
-   } else {
-      i = 1;
-   }
+   CommandLine CmdL;
+   auto const Cmds = ParseCommandLine(CmdL, APT_CMD::RRED, &_config, nullptr, argc, argv, &ShowHelp, &GetCommands);
 
-   for (; i < argc; i++) {
-      FileFd p;
-      if (p.Open(argv[i], FileFd::ReadOnly) == false) {
-	 _error->DumpErrors(std::cerr);
-	 exit(1);
+   FileFd input, output;
+   unsigned int argi = 0;
+   auto const argmax = CmdL.FileSize();
+   bool const quiet = _config->FindI("quiet", 0) >= 2;
+
+   bool just_diff = false;
+   if (_config->FindB("Rred::T", false))
+   {
+      if (argmax < 3)
+      {
+	 std::cerr << "E: Not enough filenames given on the command line for mode 't'\n";
+	 return 101;
       }
-      if (patch.read_diff(p, NULL) == false)
+      if (not quiet)
+	 std::clog << "Patching " << CmdL.FileList[0] << " into " << CmdL.FileList[1] << "\n";
+      input.Open(CmdL.FileList[0], FileFd::ReadOnly,FileFd::Extension);
+      output.Open(CmdL.FileList[1], FileFd::WriteOnly | FileFd::Create | FileFd::Empty | FileFd::BufferedWrite, FileFd::Extension);
+      argi = 2;
+   }
+   else
+   {
+      output.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create | FileFd::BufferedWrite);
+      if (_config->FindB("Rred::F", false))
+	 input.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly);
+      else
+	 just_diff = true;
+   }
+
+   if (argi + 1 > argmax)
+   {
+	 std::cerr << "E: At least one patch needs to be given on the command line\n";
+	 return 101;
+   }
+
+   Patch merged_patch;
+   for (; argi < argmax; ++argi)
+   {
+      FileFd patch;
+      if (not patch.Open(CmdL.FileList[argi], FileFd::ReadOnly))
       {
 	 _error->DumpErrors(std::cerr);
-	 exit(2);
+	 return 1;
+      }
+      if (not merged_patch.read_diff(patch, nullptr))
+      {
+	 _error->DumpErrors(std::cerr);
+	 return 2;
       }
    }
 
-   if (test) {
-      FileFd out, inp;
-      std::cerr << "Patching " << argv[2] << " into " << argv[3] << "\n";
-      inp.Open(argv[2], FileFd::ReadOnly,FileFd::Extension);
-      out.Open(argv[3], FileFd::WriteOnly | FileFd::Create | FileFd::Empty | FileFd::BufferedWrite, FileFd::Extension);
-      patch.apply_against_file(out, inp);
-      out.Close();
-   } else if (just_diff) {
-      FileFd out;
-      out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create);
-      patch.write_diff(out);
-      out.Close();
-   } else {
-      FileFd out, inp;
-      out.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly | FileFd::Create | FileFd::BufferedWrite);
-      inp.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly);
-      patch.apply_against_file(out, inp);
-      out.Close();
-   }
-   return 0;
+   if (just_diff)
+      merged_patch.write_diff(output);
+   else
+      merged_patch.apply_against_file(output, input);
+
+   output.Close();
+   input.Close();
+   return DispatchCommandLine(CmdL, {});
 }

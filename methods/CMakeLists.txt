@@ -23,6 +23,8 @@ target_include_directories(http PRIVATE $<$<BOOL:${SYSTEMD_FOUND}>:${SYSTEMD_INC
 target_link_libraries(http ${GNUTLS_LIBRARIES} $<$<BOOL:${SYSTEMD_FOUND}>:${SYSTEMD_LIBRARIES}>)
 target_link_libraries(ftp ${GNUTLS_LIBRARIES})
 
+target_link_libraries(rred apt-private)
+
 # Install the library
 install(TARGETS file copy store gpgv cdrom http ftp rred rsh mirror
         RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/apt/methods)

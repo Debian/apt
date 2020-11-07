@@ -49,7 +49,11 @@ for CMD in 'apt-cache' 'apt-cdrom' 'apt-config' \
 	checkoptions "$cmd"
 done
 
-for CMD in 'apt-dump-solver'  'apt-internal-solver' 'apt-internal-planner'; do
+
+rred() {
+	runapt "${METHODSDIR}/rred" "$@"
+}
+for CMD in 'apt-dump-solver'  'apt-internal-solver' 'apt-internal-planner' 'rred'; do
 	checkoptions "$(echo "$CMD" | tr -d '-')"
 done
 

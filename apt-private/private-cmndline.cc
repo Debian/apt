@@ -362,6 +362,13 @@ static bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * c
    return true;
 }
 									/*}}}*/
+static bool addArgumentsRred(std::vector<CommandLine::Args> &Args, char const * const /*Cmd*/)/*{{{*/
+{
+   addArg('t', nullptr, "Rred::T", 0);
+   addArg('f', nullptr, "Rred::F", 0);
+   return true;
+}
+									/*}}}*/
 std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const * const Cmd)/*{{{*/
 {
    std::vector<CommandLine::Args> Args;
@@ -384,6 +391,7 @@ std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const 
 	 case APT_CMD::APT_INTERNAL_SOLVER: addArgumentsAPTInternalSolver(Args, Cmd); break;
 	 case APT_CMD::APT_MARK: addArgumentsAPTMark(Args, Cmd); break;
 	 case APT_CMD::APT_SORTPKG: addArgumentsAPTSortPkgs(Args, Cmd); break;
+	 case APT_CMD::RRED: addArgumentsRred(Args, Cmd); break;
       }
 
    // options without a command
@@ -441,11 +449,12 @@ static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, std::vector<
       case APT_CMD::APT_INTERNAL_SOLVER: cmd = nullptr; break;
       case APT_CMD::APT_MARK: cmd = "apt-mark(8)"; break;
       case APT_CMD::APT_SORTPKG: cmd = "apt-sortpkgs(1)"; break;
+      case APT_CMD::RRED: cmd = nullptr; break;
    }
    if (cmd != nullptr)
       ioprintf(std::cout, _("See %s for more information about the available commands."), cmd);
    if (Binary != APT_CMD::APT_DUMP_SOLVER && Binary != APT_CMD::APT_INTERNAL_SOLVER &&
-	 Binary != APT_CMD::APT_INTERNAL_PLANNER)
+	 Binary != APT_CMD::APT_INTERNAL_PLANNER && Binary != APT_CMD::RRED)
       std::cout << std::endl <<
 	 _("Configuration options and syntax is detailed in apt.conf(5).\n"
 	       "Information about how to configure sources can be found in sources.list(5).\n"
