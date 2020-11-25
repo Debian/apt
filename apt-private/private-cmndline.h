@@ -23,6 +23,7 @@ enum class APT_CMD {
    APT_SORTPKG,
    APT_DUMP_SOLVER,
    APT_INTERNAL_PLANNER,
+   RRED,
 };
 struct aptDispatchWithHelp
 {

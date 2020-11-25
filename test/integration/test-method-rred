@@ -195,3 +195,54 @@ Package: supercoolstuff
 failrred 'Wrong order of commands' '7d
 17d'
 failrred 'End before start' '7,6d'
+
+# deal correctly with patch merging
+mergepatches() {
+	local CONTENT="$1"
+	shift
+	testsuccess runapt "${METHODSDIR}/rred" Packages.ed-* "$@"
+	cp -a rootdir/tmp/testsuccess.output patch.ed
+	if [ "$#" = '0' ]; then
+		testfileequal 'patch.ed' "$CONTENT"
+	fi
+}
+createpatch() {
+	echo "$2"
+}
+
+createpatch 'Change dog to cat + kitties' '19c
+ And a cat!
+
+Package: extra-kittens
+Version: unavailable
+Description: fix later
+.' > Packages.ed-0
+createpatch 'Remove more stuff and fix later' '23d,
+6d' > Packages.ed-1
+testsuccess apthelper cat-file --compress gzip Packages.ed-1
+mv rootdir/tmp/testsuccess.output Packages.ed-1.gz
+testsuccess rm Packages.ed-1
+createpatch 'Remove (old) dog paragraph' '10,19d' > Packages.ed-2
+mergepatches '11,19c
+Package: extra-kittens
+Version: unavailable
+.
+6d' -C 'gzip'
+mv patch.ed patch.ed.gz
+mergepatches '11,19c
+Package: extra-kittens
+Version: unavailable
+.
+6d'
+testfileequal patch.ed "$(apt-helper cat-file patch.ed.gz)"
+testrred 'Apply' 'merged patch' "$(cat patch.ed)" 'Package: coolstuff
+Version: 0.8.15
+Description: collection of stuff
+ A lot, too much to iterate all, but at least this:
+ - stuff
+ - even more stuff
+ .
+ And a cow.
+
+Package: extra-kittens
+Version: unavailable'
