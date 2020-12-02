@@ -24,9 +24,12 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>
 
+#include <algorithm>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <string.h>
 #include <sys/stat.h>
@@ -105,42 +108,48 @@ const ARArchive::Member *debDebFile::GotoMember(const char *Name)
 /* Simple wrapper around tar.. */
 bool debDebFile::ExtractTarMember(pkgDirStream &Stream,const char *Name)
 {
-   // Get the archive member
-   const ARArchive::Member *Member = NULL;
    std::string Compressor;
+   auto const Compressors = APT::Configuration::getCompressors();
 
-   std::vector<APT::Configuration::Compressor> compressor = APT::Configuration::getCompressors();
-   for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
-	c != compressor.end(); ++c)
+   ARArchive::Member const *Member = AR.FindMember(Name);
+   if (Member != nullptr)
    {
-      Member = AR.FindMember(std::string(Name).append(c->Extension).c_str());
-      if (Member == NULL)
-	 continue;
-      Compressor = c->Name;
-      break;
+      auto const found = std::find_if(Compressors.cbegin(), Compressors.cend(), [&](auto const &c) {
+	 return not c.Extension.empty() && APT::String::Endswith(Name, c.Extension);
+      });
+      if (found != Compressors.cend())
+	 Compressor = found->Name;
    }
-
-   if (Member == NULL)
-      Member = AR.FindMember(std::string(Name).c_str());
-
-   if (Member == NULL)
+   else
    {
-      std::string ext = std::string(Name) + ".{";
-      for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
-	   c != compressor.end(); ++c) {
-	 if (!c->Extension.empty())
-	    ext.append(c->Extension.substr(1));
+      for (auto const &c : Compressors)
+      {
+	 if (c.Extension.empty())
+	    continue;
+	 Member = AR.FindMember(std::string(Name).append(c.Extension).c_str());
+	 if (Member == nullptr)
+	    continue;
+	 Compressor = c.Name;
+	 break;
       }
-      ext.append("}");
-      return _error->Error(_("Internal error, could not locate member %s"), ext.c_str());
    }
 
-   if (File.Seek(Member->Start) == false)
+   if (Member == nullptr)
+   {
+      std::ostringstream ext;
+      ext << Name << '{';
+      for (auto const &c : Compressors)
+	 if (not c.Extension.empty())
+	    ext << c.Extension << ',';
+      ext << '}';
+      return _error->Error(_("Internal error, could not locate member %s"), ext.str().c_str());
+   }
+
+   if (not File.Seek(Member->Start))
       return false;
 
-   // Prepare Tar
    ExtractTar Tar(File,Member->Size,Compressor);
-   if (_error->PendingError() == true)
+   if (_error->PendingError())
       return false;
    return Tar.Go(Stream);
 }
