@@ -597,7 +597,7 @@ string Base64Encode(const string &S)
       base64.  */
    for (string::const_iterator I = S.begin(); I < S.end(); I += 3)
    {
-      char Bits[3] = {0,0,0};
+      uint8_t Bits[3] = {0,0,0};
       Bits[0] = I[0];
       if (I + 1 < S.end())
 	 Bits[1] = I[1];
