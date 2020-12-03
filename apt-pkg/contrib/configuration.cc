@@ -861,26 +861,8 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
       // The input line with comments stripped.
       std::string Fragment;
 
-      // Expand tabs in the input line and remove leading and trailing
-      // whitespace.
-      {
-	const int BufferSize = Input.size() * 8 + 1;
-	char *Buffer = new char[BufferSize];
-	try
-	  {
-	    memcpy(Buffer, Input.c_str(), Input.size() + 1);
-
-	    _strtabexpand(Buffer, BufferSize);
-	    _strstrip(Buffer);
-	    Input = Buffer;
-	  }
-	catch(...)
-	  {
-	    delete[] Buffer;
-	    throw;
-	  }
-	delete[] Buffer;
-      }
+      // Expand tabs in the input line and remove leading and trailing whitespace.
+      Input = APT::String::Strip(SubstVar(Input, "\t", "        "));
       CurLine++;
 
       // Now strip comments; if the whole line is contained in a
