@@ -361,3 +361,20 @@ TEST(StrUtilTest, LookupTag)
    EXPECT_EQ("Value4", LookupTag(msg, "Field4", ""));
    EXPECT_EQ("Value5", LookupTag(msg, "Field5", ""));
 }
+
+TEST(StrUtilTest, DisplayLength)
+{
+   EXPECT_EQ(0, APT::String::DisplayLength(""));
+   EXPECT_EQ(1, APT::String::DisplayLength("a"));
+   EXPECT_EQ(3, APT::String::DisplayLength("apt"));
+   EXPECT_EQ(1, APT::String::DisplayLength("@"));
+   EXPECT_EQ(3, APT::String::DisplayLength("き"));
+
+   EXPECT_EQ(1, APT::String::DisplayLength("$"));
+   EXPECT_EQ(2, APT::String::DisplayLength("¢"));
+   EXPECT_EQ(3, APT::String::DisplayLength("ह"));
+   EXPECT_EQ(3, APT::String::DisplayLength("€"));
+   EXPECT_EQ(3, APT::String::DisplayLength("한"));
+   EXPECT_EQ(4, APT::String::DisplayLength("𐍈"));
+   EXPECT_EQ(16, APT::String::DisplayLength("𐍈한€ह¢$"));
+}
