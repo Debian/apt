@@ -167,6 +167,10 @@ TEST(StrUtilTest,Base64Encode)
    EXPECT_EQ("ZS4=", Base64Encode("e."));
    EXPECT_EQ("Lg==", Base64Encode("."));
    EXPECT_EQ("", Base64Encode(""));
+   EXPECT_EQ("IA==", Base64Encode("\x20"));
+   EXPECT_EQ("/w==", Base64Encode("\xff"));
+   EXPECT_EQ("/A==", Base64Encode("\xfc"));
+   EXPECT_EQ("//8=", Base64Encode("\xff\xff"));
 }
 static void ReadMessagesTestWithNewLine(char const * const nl, char const * const ab)
 {
