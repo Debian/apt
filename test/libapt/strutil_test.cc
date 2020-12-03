@@ -21,6 +21,12 @@ TEST(StrUtilTest,DeEscapeString)
    // double slashes
    EXPECT_EQ("foo\\ x", DeEscapeString("foo\\\\ x"));
    EXPECT_EQ("\\foo\\", DeEscapeString("\\\\foo\\\\"));
+
+   // FIXME: the input is bad, the output as well, but we have no indicator for it
+   EXPECT_EQ("aa", DeEscapeString("aa\\x"));
+   EXPECT_EQ("aa0", DeEscapeString("aa\\x0"));
+   EXPECT_EQ("aa", DeEscapeString("aa\\0"));
+   EXPECT_EQ("aaa", DeEscapeString("aa\\0a"));
 }
 TEST(StrUtilTest,StringStrip)
 {

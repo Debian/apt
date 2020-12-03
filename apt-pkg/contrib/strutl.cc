@@ -1611,22 +1611,26 @@ string DeEscapeString(const string &input)
       switch (*it)
       {
          case '0':
-            if (it + 2 <= input.end()) {
+            if (it + 2 < input.end()) {
                tmp[0] = it[1];
                tmp[1] = it[2];
                tmp[2] = 0;
                output += (char)strtol(tmp, 0, 8);
                it += 2;
-            }
+            } else {
+	       // FIXME: raise exception here?
+	    }
             break;
          case 'x':
-            if (it + 2 <= input.end()) {
+            if (it + 2 < input.end()) {
                tmp[0] = it[1];
                tmp[1] = it[2];
                tmp[2] = 0;
                output += (char)strtol(tmp, 0, 16);
                it += 2;
-            }
+            } else {
+	       // FIXME: raise exception here?
+	    }
             break;
          default:
             // FIXME: raise exception here?
