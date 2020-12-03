@@ -1150,10 +1150,13 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 bool ReadConfigDir(Configuration &Conf,const string &Dir,
 		   bool const &AsSectional, unsigned const &Depth)
 {
+   _error->PushToStack();
    auto const files = GetListOfFilesInDir(Dir, "conf", true, true);
+   auto const successfulList = not _error->PendingError();
+   _error->MergeWithStack();
    return std::accumulate(files.cbegin(), files.cend(), true, [&](bool good, auto const &file) {
       return ReadConfigFile(Conf, file, AsSectional, Depth) && good;
-   });
+   }) && successfulList;
 }
 									/*}}}*/
 // MatchAgainstConfig Constructor					/*{{{*/
