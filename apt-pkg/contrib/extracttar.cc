@@ -55,7 +55,12 @@ struct ExtractTar::TarHeader
    char Major[8];
    char Minor[8];      
 };
-   
+
+// We need to read long names (names and link targets) into memory, so let's
+// have a limit (shamelessly stolen from libarchive) to avoid people OOMing
+// us with large streams.
+static const unsigned long long APT_LONGNAME_LIMIT = 1048576llu;
+
 // ExtractTar::ExtractTar - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -218,6 +223,8 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 {
 	    unsigned long long Length = Itm.Size;
 	    unsigned char Block[512];
+	    if (Length > APT_LONGNAME_LIMIT)
+	       return _error->Error("Long name to large: %llu bytes > %llu bytes", Length, APT_LONGNAME_LIMIT);
 	    while (Length > 0)
 	    {
 	       if (InFd.Read(Block,sizeof(Block),true) == false)
@@ -237,6 +244,8 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 {
 	    unsigned long long Length = Itm.Size;
 	    unsigned char Block[512];
+	    if (Length > APT_LONGNAME_LIMIT)
+	       return _error->Error("Long name to large: %llu bytes > %llu bytes", Length, APT_LONGNAME_LIMIT);
 	    while (Length > 0)
 	    {
 	       if (InFd.Read(Block,sizeof(Block),true) == false)
