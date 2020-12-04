@@ -411,6 +411,7 @@ static APT_PURE std::string HexDigest(gcry_md_hd_t hd, int algo)
        'c', 'd', 'e', 'f'};
 
    auto Size = gcry_md_get_algo_dlen(algo);
+   assert(Size <= 512/8);
    char Result[((Size)*2) + 1];
    Result[(Size)*2] = 0;
 
