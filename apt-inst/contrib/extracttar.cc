@@ -61,6 +61,11 @@ struct ExtractTar::TarHeader
 // us with large streams.
 static const unsigned long long APT_LONGNAME_LIMIT = 1048576llu;
 
+// A file size limit that we allow extracting. Currently, that's 128 GB.
+// We also should leave some wiggle room for code adding files to it, and
+// possibly conversion for signed, so this should not be larger than like 2**62.
+static const unsigned long long APT_FILESIZE_LIMIT = 1llu << 37;
+
 // ExtractTar::ExtractTar - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -174,6 +179,11 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	  StrToNum(Tar->Major,Itm.Major,sizeof(Tar->Major),8) == false ||
 	  StrToNum(Tar->Minor,Itm.Minor,sizeof(Tar->Minor),8) == false)
 	 return _error->Error(_("Corrupted archive"));
+
+      // Security check. Prevents overflows below the code when rounding up in skip/copy code,
+      // and provides modest protection against decompression bombs.
+      if (Itm.Size > APT_FILESIZE_LIMIT)
+	 return _error->Error("Tar member too large: %llu > %llu bytes", Itm.Size, APT_FILESIZE_LIMIT);
 
       // Grab the filename and link target: use last long name if one was
       // set, otherwise use the header value as-is, but remember that it may
