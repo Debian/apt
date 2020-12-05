@@ -184,11 +184,23 @@ bool debDebFile::ControlExtract::DoItem(Item &Itm,int &Fd)
 // ---------------------------------------------------------------------
 /* This sets up to extract the control block member file into a memory 
    block of just the right size. All other files go into the bit bucket. */
+
+// Upper size limit for control files. Two reasons for having a limit here:
+//
+// 1. We read those files into memory and want to avoid being killed by OOM
+//
+// 2. We allocate (Itm.Size+2)-large arrays, so this can overflow if Itm.Size
+// becomes 2**64-2 or larger. This is obviously
+//
+// 64 MiB seems like a terribly large size that everyone should be happy with.
+static const unsigned long long DEB_CONTROL_SIZE_LIMIT = 64 * 1024 * 1024;
 bool debDebFile::MemControlExtract::DoItem(Item &Itm,int &Fd)
 {
    // At the control file, allocate buffer memory.
    if (Member == Itm.Name)
    {
+      if (Itm.Size > DEB_CONTROL_SIZE_LIMIT)
+	 return _error->Error("Control file too large: %llu > %llu bytes", Itm.Size, DEB_CONTROL_SIZE_LIMIT);
       delete [] Control;
       Control = new char[Itm.Size+2];
       IsControl = true;
@@ -237,6 +249,9 @@ bool debDebFile::MemControlExtract::Read(debDebFile &Deb)
    record. */
 bool debDebFile::MemControlExtract::TakeControl(const void *Data,unsigned long long Size)
 {
+   if (Size > DEB_CONTROL_SIZE_LIMIT)
+      return _error->Error("Control file too large: %llu > %llu bytes", Size, DEB_CONTROL_SIZE_LIMIT);
+
    delete [] Control;
    Control = new char[Size+2];
    Length = Size;
