@@ -219,4 +219,6 @@ TEST(TreeParserTest, ParseShortPattern)
    EXPECT_PATTERN_EQ("?A|?B?C", "?or(?A, ?and(?B, ?C))");
    EXPECT_PATTERN_EQ("?A|(?B?C)", "?or(?A, ?and(?B, ?C))");
    EXPECT_PATTERN_EQ("(?B?C)|?A", "?or(?and(?B, ?C), ?A)");
+   EXPECT_PATTERN_EQ("~napt~nfoo", "?and(?name(apt),?name(foo))");
+   EXPECT_PATTERN_EQ("~napt!~nfoo", "?and(?name(apt),?not(?name(foo)))");
 }
