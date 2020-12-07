@@ -1,3 +1,17 @@
+apt (1.8.2.2) buster-security; urgency=high
+
+  * SECURITY UPDATE: Integer overflow in parsing (LP: #1899193)
+    - apt-pkg/contrib/arfile.cc: add extra checks.
+    - apt-pkg/contrib/tarfile.cc: limit tar item sizes to 128 GiB
+    - apt-pkg/deb/debfile.cc: limit control file sizes to 64 MiB
+    - test/*: add tests.
+    - CVE-2020-27350
+  * Additional hardening:
+    - apt-pkg/contrib/tarfile.cc: Limit size of long names and links to 1 MiB
+  * Fix autopkgtest regression in 1.8.2.1 security update
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 07 Dec 2020 12:31:04 +0100
+
 apt (1.8.2.1) buster-security; urgency=high
 
   * SECURITY UPDATE: Out of bounds read in ar, tar implementations (LP: #1878177)
