@@ -333,9 +333,12 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseQuotedWord()
 // Parse a bare word atom
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord(bool shrt)
 {
+   // Characters not allowed at the start of a word (also see ..._SHRT)
    static const constexpr auto DISALLOWED_START = "!?~|,() \0"_sv;
+   // Characters terminating a word inside a long pattern
    static const constexpr auto DISALLOWED_LONG = "|,()\0"_sv;
-   static const constexpr auto DISALLOWED_SHRT = "|,() ?\0"_sv;
+   // Characters terminating a word as a short form argument, should contain all of START.
+   static const constexpr auto DISALLOWED_SHRT = "!?~|,() \0"_sv;
    const auto DISALLOWED = shrt ? DISALLOWED_SHRT : DISALLOWED_LONG;
 
    if (DISALLOWED_START.find(sentence[state.offset]) != APT::StringView::npos)
