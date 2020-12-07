@@ -1,3 +1,17 @@
+apt (2.1.10ubuntu0.1) groovy-security; urgency=high
+
+  * SECURITY UPDATE: Integer overflow in parsing (LP: #1899193)
+    - apt-pkg/contrib/arfile.cc: add extra checks.
+    - apt-pkg/contrib/tarfile.cc: limit tar item sizes to 128 GiB
+    - apt-pkg/deb/debfile.cc: limit control file sizes to 64 MiB
+    - test/*: add tests.
+    - CVE-2020-27350
+  * Additional hardening:
+    - apt-pkg/contrib/tarfile.cc: Limit size of long names and links to 1 MiB
+  * .gitlab-ci.yml: Test on groovy, not unstable
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Mon, 07 Dec 2020 12:02:40 +0100
+
 apt (2.1.10) unstable; urgency=medium
 
   * Default Acquire::AllowReleaseInfoChange::Suite to "true" (Closes: #931566)
