@@ -1,9 +1,33 @@
-apt (2.1.13) UNRELEASED; urgency=medium
+apt (2.1.13) unstable; urgency=medium
 
+  [ Debian Janitor ]
   * Apply multi-arch hints.
     + apt-doc, libapt-pkg-doc: Add Multi-Arch: foreign.
 
- -- Debian Janitor <janitor@jelmer.uk>  Mon, 23 Nov 2020 17:47:17 -0000
+  [ Jordi Mallach ]
+  * Fix typo in Catalan translation.
+
+  [ David Kalnischkies ]
+  * Prepare rred binary for external usage
+  * Support reading compressed patches in rred direct call modes
+  * Support compressed output from rred similar to apt-helper cat-file
+
+  [ Julian Andres Klode ]
+  * gitignore: Add /build and /obj-* build dirs
+  * gitignore: Add .*.swp files
+  * HexDigest: Silence -Wstringop-overflow
+  * patterns: Terminate short pattern by ~ and !
+  * SECURITY UPDATE: Integer overflow in parsing (LP: #1899193)
+    - apt-pkg/contrib/arfile.cc: add extra checks.
+    - apt-pkg/contrib/tarfile.cc: limit tar item sizes to 128 GiB
+    - apt-pkg/deb/debfile.cc: limit control file sizes to 64 MiB
+    - test/*: add tests.
+    - CVE-2020-27350
+  * Additional hardening:
+    - apt-pkg/contrib/tarfile.cc: Limit size of long names and links to 1 MiB
+  * Raise APT::Cache-HashtableSize to 196613
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 10 Dec 2020 15:40:27 +0100
 
 apt (2.1.12) unstable; urgency=medium
 
