@@ -31,7 +31,6 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/version.h>
 
-#include <zlib.h>
 #include <algorithm>
 #include <sstream>
 #include <string>
@@ -39,6 +38,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <xxhash.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -213,79 +213,35 @@ map_id_t pkgCache::sHash(StringView Str) const
       Hash = 33 * Hash + tolower_ascii_unsafe(*I);
    return Hash % HeaderP->GetHashTableSize();
 }
-
-#ifdef HAVE_FMV_SSE42_AND_CRC32
-__attribute__((target("sse4.2"))) static uint32_t hash32(uint32_t crc32, const unsigned char *input, size_t size)
-{
-   if (input == nullptr)
-      return 0;
-
-   crc32 ^= 0xffffffffU;
-#ifdef HAVE_FMV_SSE42_AND_CRC32DI
-   while (size >= 8) {
-      crc32 = __builtin_ia32_crc32di(crc32, *(uint64_t *)input);
-      input += 8;
-      size -= 8;
-   }
-
-   if (size >= 4) {
-#else
-   while (size >= 4) {
-#endif
-      crc32 = __builtin_ia32_crc32si(crc32, *(uint32_t *)input);
-      input += 4;
-      size -= 4;
-   }
-
-   if (size >= 2) {
-      crc32 = __builtin_ia32_crc32hi(crc32, *(uint16_t *)input);
-      input += 2;
-      size -= 2;
-   }
-
-   if (size >= 1) {
-      crc32 = __builtin_ia32_crc32qi(crc32, *(uint8_t *)input);
-      input += 1;
-      size -= 1;
-   }
-   crc32 ^= 0xffffffffU;
-   return crc32;
-}
-
-__attribute__((target("default")))
-#endif
-static uint32_t hash32(uint32_t crc32, const unsigned char *input, size_t size)
-{
-   return adler32(crc32, input, size);
-}
-
 uint32_t pkgCache::CacheHash()
 {
    pkgCache::Header header = {};
-   uLong adler = hash32(0L, Z_NULL, 0);
+   XXH3_state_t *state = XXH3_createState();
 
    if (Map.Size() < sizeof(header))
-      return adler;
+      return 0;
+
+   XXH3_64bits_reset(state);
    memcpy(&header, GetMap().Data(), sizeof(header));
 
    header.Dirty = false;
    header.CacheFileSize = 0;
 
-   adler = hash32(adler,
-		  reinterpret_cast<const unsigned char *>(PACKAGE_VERSION),
-		  APT_ARRAY_SIZE(PACKAGE_VERSION));
+   XXH3_64bits_update(state,
+		      reinterpret_cast<const unsigned char *>(PACKAGE_VERSION),
+		      APT_ARRAY_SIZE(PACKAGE_VERSION));
 
-   adler = hash32(adler,
-		  reinterpret_cast<const unsigned char *>(&header),
-		  sizeof(header));
+   XXH3_64bits_update(state,
+		      reinterpret_cast<const unsigned char *>(&header),
+		      sizeof(header));
 
    if (Map.Size() > sizeof(header)) {
-      adler = hash32(adler,
-		     static_cast<const unsigned char *>(GetMap().Data()) + sizeof(header),
-		     GetMap().Size() - sizeof(header));
+      XXH3_64bits_update(state,
+			 static_cast<const unsigned char *>(GetMap().Data()) + sizeof(header),
+			 GetMap().Size() - sizeof(header));
    }
 
-   return adler;
+   return XXH3_64bits_digest(state) & 0xFFFFFFFF;
 }
 									/*}}}*/
 // Cache::FindPkg - Locate a package by name				/*{{{*/

@@ -135,6 +135,7 @@ if (SECCOMP_FOUND)
 endif()
 
 find_package(GCRYPT REQUIRED)
+find_package(XXHASH REQUIRED)
 
 # Mount()ing and stat()ing and friends
 check_symbol_exists(statfs sys/vfs.h HAVE_VFS_H)

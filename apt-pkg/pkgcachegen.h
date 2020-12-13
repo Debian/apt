@@ -29,6 +29,8 @@
 #endif
 #include <apt-pkg/string_view.h>
 
+#include <xxhash.h>
+
 class FileFd;
 class pkgSourceList;
 class OpProgress;
@@ -63,11 +65,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    };
    struct hash {
       uint32_t operator()(string_pointer const &that) const {
-	 uint32_t Hash = 5381;
-	 const char * const end = that.data() + that.size;
-	 for (const char *I = that.data(); I != end; ++I)
-	    Hash = 33 * Hash + *I;
-	 return Hash;
+	 return XXH3_64bits(that.data(), that.size) & 0xFFFFFFFF;
       }
    };
 
