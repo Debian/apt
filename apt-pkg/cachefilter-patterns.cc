@@ -28,6 +28,17 @@ static const constexpr struct
    {"M"_sv, "?automatic"_sv, false},
    {"b"_sv, "?broken"_sv, false},
    {"c"_sv, "?config-files"_sv, false},
+   // FIXME: The words after ~D should be case-insensitive
+   {"DDepends:"_sv, "?depends"_sv, true},
+   {"DPre-Depends:"_sv, "?pre-depends"_sv, true},
+   {"DSuggests:"_sv, "?suggests"_sv, true},
+   {"DRecommends:"_sv, "?recommends"_sv, true},
+   {"DConflicts:"_sv, "?conflicts"_sv, true},
+   {"DReplaces:"_sv, "?replaces"_sv, true},
+   {"DObsoletes:"_sv, "?obsoletes"_sv, true},
+   {"DBreaks:"_sv, "?breaks"_sv, true},
+   {"DEnhances:"_sv, "?enhances"_sv, true},
+   {"D"_sv, "?depends"_sv, true},
    {"E"_sv, "?essential"_sv, false},
    {"F"_sv, "?false"_sv, false},
    {"g"_sv, "?garbage"_sv, false},
@@ -418,6 +429,24 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<Patterns::PackageIsBroken>(file);
    if (node->matches("?config-files", 0, 0))
       return std::make_unique<Patterns::PackageIsConfigFiles>();
+   if (node->matches("?depends", 1, 1))
+      return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]));
+   if (node->matches("?predepends", 1, 1))
+      return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::PreDepends);
+   if (node->matches("?suggests", 1, 1))
+      return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Suggests);
+   if (node->matches("?recommends", 1, 1))
+      return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Recommends);
+   if (node->matches("?conflicts", 1, 1))
+      return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Conflicts);
+   if (node->matches("?replaces", 1, 1))
+      return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Replaces);
+   if (node->matches("?obsoletes", 1, 1))
+      return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Obsoletes);
+   if (node->matches("?breaks", 1, 1))
+      return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::DpkgBreaks);
+   if (node->matches("?enhances", 1, 1))
+      return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Enhances);
    if (node->matches("?essential", 0, 0))
       return std::make_unique<Patterns::PackageIsEssential>();
    if (node->matches("?exact-name", 1, 1))
