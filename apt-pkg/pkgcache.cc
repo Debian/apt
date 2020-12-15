@@ -209,8 +209,22 @@ bool pkgCache::ReMap(bool const &Errorchecks)
 map_id_t pkgCache::sHash(StringView Str) const
 {
    uint32_t Hash = 5381;
-   for (auto I = Str.begin(); I != Str.end(); ++I)
-      Hash = 33 * Hash + tolower_ascii_unsafe(*I);
+   auto I = Str.begin();
+   auto End = Str.end();
+   for (; I + 7 < End; I += 8)
+   {
+      Hash = (33u * 33u * 33u * 33u * 33u * 33u * 33u * 33u * Hash +
+	      33u * 33u * 33u * 33u * 33u * 33u * 33u * tolower_ascii_unsafe(I[0]) +
+	      33u * 33u * 33u * 33u * 33u * 33u * tolower_ascii_unsafe(I[1]) +
+	      33u * 33u * 33u * 33u * 33u * tolower_ascii_unsafe(I[2]) +
+	      33u * 33u * 33u * 33u * tolower_ascii_unsafe(I[3]) +
+	      33u * 33u * 33u * tolower_ascii_unsafe(I[4]) +
+	      33u * 33u * tolower_ascii_unsafe(I[5]) +
+	      33u * tolower_ascii_unsafe(I[6]) +
+	      tolower_ascii_unsafe(I[7]));
+   }
+   for (; I != End; ++I)
+      Hash = 33u * Hash + tolower_ascii_unsafe(*I);
    return Hash % HeaderP->GetHashTableSize();
 }
 uint32_t pkgCache::CacheHash()
