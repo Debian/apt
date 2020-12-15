@@ -40,7 +40,7 @@ testsuccessequal 'Request: EIPP 0.1
 Architecture: amd64
 Architectures: amd64
 Remove: bar:amd64
-Install: libfoo:amd64 foo:amd64
+Install: foo:amd64 libfoo:amd64
 Planner: internal' head -n 6 "$EIPPLOG"
 aptinternalplanner < "$EIPPLOG" > planner.log || true
 testsuccessequal 'Remove: 7

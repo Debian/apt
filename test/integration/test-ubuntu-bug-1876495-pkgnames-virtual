@@ -1,4 +1,3 @@
-
 #!/bin/sh
 
 set -e
@@ -15,10 +14,10 @@ setupaptarchive
 changetowebserver
 
 testsuccess aptget update -o Debug::Acquire::gpg=1
-testsuccessequal "coolstuff
-dpkg" aptcache pkgnames
+testsuccessequal "dpkg
+coolstuff" aptcache pkgnames
 
-testsuccessequal "source-package
-coolstuff
-dpkg
-virtual-package" aptcache pkgnames --all-names
+testsuccessequal "dpkg
+source-package
+virtual-package
+coolstuff" aptcache pkgnames --all-names
