@@ -29,7 +29,9 @@
 #endif
 #include <apt-pkg/string_view.h>
 
+#ifdef APT_COMPILING_APT
 #include <xxhash.h>
+#endif
 
 class FileFd;
 class pkgSourceList;
@@ -48,7 +50,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    }
 
    // Dirty hack for public users that do not use C++11 yet
-#if __cplusplus >= 201103L
+#if __cplusplus >= 201103L && defined(APT_COMPILING_APT)
    struct string_pointer {
       const char *data_;
       size_t size;
