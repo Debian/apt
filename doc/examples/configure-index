@@ -80,7 +80,9 @@ APT
      Remove "<BOOL>";
      AllowUnauthenticated "<BOOL>"; // skip security
 
-     AutomaticRemove "<BOOL>";
+     AutomaticRemove "<BOOL>" {
+        "Kernels" "<BOOL>";     // Allow removing kernels even if not removing other packages (true for dist-upgrade)
+     };
      HideAutoRemove "<STRING_OR_BOOL>"; // yes, no, small
 
      Simulate "<BOOL>";

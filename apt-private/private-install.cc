@@ -406,7 +406,14 @@ bool DoAutomaticRemove(CacheFile &Cache)
 {
    bool Debug = _config->FindB("Debug::pkgAutoRemove",false);
    bool doAutoRemove = _config->FindB("APT::Get::AutomaticRemove", false);
+   bool doAutoRemoveKernels = _config->FindB("APT::Get::AutomaticRemove::Kernels", false);
    bool hideAutoRemove = _config->FindB("APT::Get::HideAutoRemove");
+
+   std::unique_ptr<APT::CacheFilter::Matcher> kernelAutoremovalMatcher;
+   if (doAutoRemoveKernels && !doAutoRemove)
+   {
+      kernelAutoremovalMatcher = APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(Cache, true);
+   }
 
    pkgDepCache::ActionGroup group(*Cache);
    if(Debug)
@@ -436,7 +443,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    if(Debug)
 	       std::cout << "We could delete " <<  APT::PrettyPkg(Cache, Pkg) << std::endl;
 
-	 if (doAutoRemove)
+	 if (doAutoRemove || (kernelAutoremovalMatcher != nullptr && (*kernelAutoremovalMatcher)(Pkg)))
 	 {
 	    if(Pkg.CurrentVer() != 0 &&
 	       Pkg->CurrentState != pkgCache::State::ConfigFiles)
@@ -691,6 +698,9 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
 	 // Call the scored problem resolver
 	 OpTextProgress Progress(*_config);
 	 bool const distUpgradeMode = strcmp(CmdL.FileList[0], "dist-upgrade") == 0 || strcmp(CmdL.FileList[0], "full-upgrade") == 0;
+
+	 if (distUpgradeMode)
+	    _config->CndSet("APT::Get::AutomaticRemove::Kernels", "true");
 
 	 bool resolver_fail = false;
 	 if (distUpgradeMode == true || UpgradeMode != APT::Upgrade::ALLOW_EVERYTHING)
