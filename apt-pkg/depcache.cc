@@ -9,6 +9,7 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/algorithms.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
@@ -43,6 +44,23 @@
 
 using std::string;
 
+// helper for kernel autoremoval				  	/*{{{*/
+
+/** \brief Returns \b true for packages matching a regular
+ *  expression in APT::NeverAutoRemove.
+ */
+class APT_PUBLIC DefaultRootSetFunc2 : public pkgDepCache::DefaultRootSetFunc
+{
+   std::unique_ptr<APT::CacheFilter::Matcher> Kernels;
+
+   public:
+   DefaultRootSetFunc2(pkgCache *cache) : Kernels(APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(cache)){};
+   virtual ~DefaultRootSetFunc2(){};
+
+   bool InRootSet(const pkgCache::PkgIterator &pkg) APT_OVERRIDE { return pkg.end() == false && ((*Kernels)(pkg) || DefaultRootSetFunc::InRootSet(pkg)); };
+};
+
+									/*}}}*/
 // helper for Install-Recommends-Sections and Never-MarkAuto-Sections	/*{{{*/
 static bool 
 ConfigValueInSubTree(const char* SubTree, const char *needle)
@@ -2153,14 +2171,14 @@ APT_PURE signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator
 									/*}}}*/
 pkgDepCache::InRootSetFunc *pkgDepCache::GetRootSetFunc()		/*{{{*/
 {
-  DefaultRootSetFunc *f = new DefaultRootSetFunc;
-  if(f->wasConstructedSuccessfully())
-    return f;
-  else
-    {
+   DefaultRootSetFunc *f = new DefaultRootSetFunc2(&GetCache());
+   if (f->wasConstructedSuccessfully())
+      return f;
+   else
+   {
       delete f;
       return NULL;
-    }
+   }
 }
 
 pkgDepCache::InRootSetFunc *pkgDepCache::GetCachedRootSetFunc()
