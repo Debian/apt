@@ -1528,7 +1528,7 @@ std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
 	 std::clog << "Keeping latest kernel " << latest->first << std::endl;
       keep.insert(latest->first);
    }
-   if (previous != version2unames.rend())
+   if (keep.size() < 3 && previous != version2unames.rend())
    {
       if (Debug)
 	 std::clog << "Keeping previous kernel " << previous->first << std::endl;
