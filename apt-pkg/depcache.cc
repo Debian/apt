@@ -95,10 +95,14 @@ pkgDepCache::ActionGroup::~ActionGroup()
 // DepCache::pkgDepCache - Constructors					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDepCache::pkgDepCache(pkgCache * const pCache,Policy * const Plcy) :
-  group_level(0), Cache(pCache), PkgState(0), DepState(0),
-   iUsrSize(0), iDownloadSize(0), iInstCount(0), iDelCount(0), iKeepCount(0),
-   iBrokenCount(0), iPolicyBrokenCount(0), iBadCount(0), d(NULL)
+
+struct pkgDepCache::Private
+{
+   std::unique_ptr<InRootSetFunc> inRootSetFunc;
+};
+pkgDepCache::pkgDepCache(pkgCache *const pCache, Policy *const Plcy) : group_level(0), Cache(pCache), PkgState(0), DepState(0),
+								       iUsrSize(0), iDownloadSize(0), iInstCount(0), iDelCount(0), iKeepCount(0),
+								       iBrokenCount(0), iPolicyBrokenCount(0), iBadCount(0), d(new Private)
 {
    DebugMarker = _config->FindB("Debug::pkgDepCache::Marker", false);
    DebugAutoInstall = _config->FindB("Debug::pkgDepCache::AutoInstall", false);
@@ -116,6 +120,7 @@ pkgDepCache::~pkgDepCache()
    delete [] PkgState;
    delete [] DepState;
    delete delLocalPolicy;
+   delete d;
 }
 									/*}}}*/
 bool pkgDepCache::CheckConsistency(char const *const msgtag)		/*{{{*/
@@ -2157,6 +2162,13 @@ pkgDepCache::InRootSetFunc *pkgDepCache::GetRootSetFunc()		/*{{{*/
       return NULL;
     }
 }
+
+pkgDepCache::InRootSetFunc *pkgDepCache::GetCachedRootSetFunc()
+{
+   if (d->inRootSetFunc == nullptr)
+      d->inRootSetFunc.reset(GetRootSetFunc());
+   return d->inRootSetFunc.get();
+}
 									/*}}}*/
 bool pkgDepCache::MarkFollowsRecommends()
 {
@@ -2369,9 +2381,9 @@ bool pkgDepCache::MarkAndSweep(InRootSetFunc &rootFunc)
 }
 bool pkgDepCache::MarkAndSweep()
 {
-   std::unique_ptr<InRootSetFunc> f(GetRootSetFunc());
-   if(f.get() != NULL)
-      return MarkAndSweep(*f.get());
+   InRootSetFunc *f(GetCachedRootSetFunc());
+   if (f != NULL)
+      return MarkAndSweep(*f);
    else
       return false;
 }

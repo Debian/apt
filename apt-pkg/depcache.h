@@ -380,6 +380,9 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
     */
    virtual InRootSetFunc *GetRootSetFunc();
 
+   /** This should return const really - do not delete. */
+   InRootSetFunc *GetCachedRootSetFunc() APT_HIDDEN;
+
    /** \return \b true if the garbage collector should follow recommendations.
     */
    virtual bool MarkFollowsRecommends();
@@ -516,7 +519,8 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
 	 bool const rPurge, unsigned long const Depth, bool const FromUser);
 
    private:
-   void * const d;
+   struct Private;
+   Private *const d;
 
    APT_HIDDEN bool MarkInstall_StateChange(PkgIterator const &Pkg, bool AutoInst, bool FromUser);
    APT_HIDDEN bool MarkInstall_DiscardInstall(PkgIterator const &Pkg);
