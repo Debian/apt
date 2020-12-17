@@ -11,6 +11,7 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/algorithms.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/configuration.h>
@@ -246,7 +247,12 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    
    if (ParseProvides(Ver) == false)
       return false;
-   
+   if (not APT::KernelAutoRemoveHelper::getUname(Ver.ParentPkg().Name()).empty())
+   {
+      if (not NewProvides(Ver, "$kernel", "any", Ver.VerStr(), pkgCache::Flag::MultiArchImplicit))
+	 return false;
+   }
+
    return true;
 }
 									/*}}}*/

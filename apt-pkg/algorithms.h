@@ -29,11 +29,13 @@
 #ifndef PKGLIB_ALGORITHMS_H
 #define PKGLIB_ALGORITHMS_H
 
+#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
 
 #include <iostream>
+#include <memory>
 #include <string>
 
 #include <apt-pkg/macros.h>
@@ -146,5 +148,17 @@ APT_PUBLIC bool pkgFixBroken(pkgDepCache &Cache);
 
 APT_PUBLIC void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);
 
+namespace APT
+{
+namespace KernelAutoRemoveHelper
+{
+// Public for linking to apt-private, but no A{P,B}I guarantee.
+APT_PUBLIC std::unique_ptr<APT::CacheFilter::Matcher> GetProtectedKernelsFilter(pkgCache *cache, bool returnRemove = false);
+std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove = false);
+std::string getUname(std::string const &packageName);
+
+} // namespace KernelAutoRemoveHelper
+
+} // namespace APT
 
 #endif
