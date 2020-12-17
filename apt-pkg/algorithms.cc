@@ -17,20 +17,32 @@
 #include <config.h>
 
 #include <apt-pkg/algorithms.h>
+#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/dpkgpm.h>
 #include <apt-pkg/edsp.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/macros.h>
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/string_view.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/version.h>
+
 #include <apt-pkg/prettyprinters.h>
 
 #include <cstdlib>
 #include <iostream>
+#include <map>
+#include <regex>
+#include <set>
+#include <sstream>
 #include <string>
 #include <utility>
+#include <vector>
 #include <string.h>
+#include <sys/utsname.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -1417,3 +1429,174 @@ void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
    std::sort(List,List+Count,PrioComp(Cache));
 }
 									/*}}}*/
+
+namespace APT
+{
+
+namespace KernelAutoRemoveHelper
+{
+
+// \brief Returns the uname from a kernel package name, or "" for non-kernel packages.
+std::string getUname(std::string const &packageName)
+{
+
+   static const constexpr char *const prefixes[] = {
+      "linux-image-",
+      "kfreebsd-image-",
+      "gnumach-image-",
+   };
+
+   for (auto prefix : prefixes)
+   {
+      if (likely(not APT::String::Startswith(packageName, prefix)))
+	 continue;
+      if (unlikely(APT::String::Endswith(packageName, "-dbgsym")))
+	 continue;
+      if (unlikely(APT::String::Endswith(packageName, "-dbg")))
+	 continue;
+
+      auto aUname = packageName.substr(strlen(prefix));
+
+      // aUname must start with [0-9]+\.
+      if (aUname.length() < 2)
+	 continue;
+      if (strchr("0123456789", aUname[0]) == nullptr)
+	 continue;
+      auto dot = aUname.find_first_not_of("0123456789");
+      if (dot == aUname.npos || aUname[dot] != '.')
+	 continue;
+
+      return aUname;
+   }
+
+   return "";
+}
+std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
+{
+   if (_config->FindB("APT::Protect-Kernels", true) == false)
+      return "";
+
+   struct CompareKernel
+   {
+      pkgCache *cache;
+      bool operator()(const std::string &a, const std::string &b) const
+      {
+	 return cache->VS->CmpVersion(a, b) < 0;
+      }
+   };
+   bool Debug = _config->FindB("Debug::pkgAutoRemove", false);
+   // kernel version -> list of unames
+   std::map<std::string, std::vector<std::string>, CompareKernel> version2unames(CompareKernel{cache});
+   // needs to be initialized to 0s, might not be set up.
+   utsname uts{};
+   std::string bootedVersion;
+   std::string lastInstalledVersion;
+
+   std::string lastInstalledUname = _config->Find("APT::LastInstalledKernel");
+
+   // Get currently booted version, but only when not on reproducible build.
+   if (getenv("SOURCE_DATE_EPOCH") == 0)
+   {
+      if (uname(&uts) != 0)
+	 abort();
+   }
+
+   auto VirtualKernelPkg = cache->FindPkg("$kernel", "any");
+   if (VirtualKernelPkg.end())
+      return "";
+
+   for (pkgCache::PrvIterator Prv = VirtualKernelPkg.ProvidesList(); Prv.end() == false; ++Prv)
+   {
+      auto Pkg = Prv.OwnerPkg();
+      if (likely(Pkg->CurrentVer == 0))
+	 continue;
+
+      auto pkgUname = APT::KernelAutoRemoveHelper::getUname(Pkg.Name());
+      auto pkgVersion = Pkg.CurrentVer().VerStr();
+
+      if (pkgUname.empty())
+	 continue;
+
+      if (Debug)
+	 std::clog << "Found kernel " << pkgUname << "(" << pkgVersion << ")" << std::endl;
+
+      version2unames[pkgVersion].push_back(pkgUname);
+
+      if (pkgUname == uts.release)
+	 bootedVersion = pkgVersion;
+      if (pkgUname == lastInstalledUname)
+	 lastInstalledVersion = pkgVersion;
+   }
+
+   if (version2unames.size() == 0)
+      return "";
+
+   auto latest = version2unames.rbegin();
+   auto previous = latest;
+   ++previous;
+
+   std::set<std::string> keep;
+
+   if (not bootedVersion.empty())
+   {
+      if (Debug || false)
+	 std::clog << "Keeping booted kernel " << bootedVersion << std::endl;
+      keep.insert(bootedVersion);
+   }
+   if (not lastInstalledVersion.empty())
+   {
+      if (Debug || false)
+	 std::clog << "Keeping installed kernel " << lastInstalledVersion << std::endl;
+      keep.insert(lastInstalledVersion);
+   }
+   if (latest != version2unames.rend())
+   {
+      if (Debug || false)
+	 std::clog << "Keeping latest kernel " << latest->first << std::endl;
+      keep.insert(latest->first);
+   }
+   if (previous != version2unames.rend())
+   {
+      if (Debug)
+	 std::clog << "Keeping previous kernel " << previous->first << std::endl;
+      keep.insert(previous->first);
+   }
+
+   std::regex special("([\\.\\+])");
+   std::ostringstream ss;
+   for (auto &pattern : _config->FindVector("APT::VersionedKernelPackages"))
+   {
+      // Legacy compatibility: Always protected the booted uname and last installed uname
+      if (not lastInstalledUname.empty())
+	 ss << "|^" << pattern << "-" << std::regex_replace(lastInstalledUname, special, "\\$1") << "$";
+      if (*uts.release)
+	 ss << "|^" << pattern << "-" << std::regex_replace(uts.release, special, "\\$1") << "$";
+      for (auto const &kernel : version2unames)
+      {
+	 if (ReturnRemove ? keep.find(kernel.first) == keep.end() : keep.find(kernel.first) != keep.end())
+	 {
+	    for (auto const &uname : kernel.second)
+	       ss << "|^" << pattern << "-" << std::regex_replace(uname, special, "\\$1") << "$";
+	 }
+      }
+   }
+
+   auto re = ss.str().substr(1);
+   if (Debug)
+      std::clog << "Kernel protection regex: " << re << "\n";
+
+   return re;
+}
+
+std::unique_ptr<APT::CacheFilter::Matcher> GetProtectedKernelsFilter(pkgCache *cache, bool returnRemove)
+{
+   auto regex = GetProtectedKernelsRegex(cache, returnRemove);
+
+   if (regex.empty())
+      return std::make_unique<APT::CacheFilter::FalseMatcher>();
+
+   return std::make_unique<APT::CacheFilter::PackageNameMatchesRegEx>(regex);
+}
+
+} // namespace KernelAutoRemoveHelper
+} // namespace APT

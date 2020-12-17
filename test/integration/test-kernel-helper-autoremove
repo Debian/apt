@@ -38,9 +38,8 @@ testprotected() {
 	testsuccess --nomsg test -e rootdir/etc/apt/apt.conf.d/01autoremove-kernels
 	testfilestats 'rootdir/etc/apt/apt.conf.d/01autoremove-kernels' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:444"
 
-	msgtest 'Check kernel autoremoval protection list' 'can be dumped'
-	testsuccess --nomsg aptconfig dump --no-empty --format '%v%n' 'APT::NeverAutoRemove'
-	cp rootdir/tmp/testsuccess.output protected.list
+    testsuccess --nomsg apt -o Debug::PkgAutoRemove=1 autoremove -s
+    grep "Kernel protection regex" rootdir/tmp/testsuccess.output | cut -f2- -d: | tr '|' '\n' | sed 's/\s*//g' | sort -u > protected.list
 
 	msgtest 'Check kernel autoremoval protection list' 'can be parsed'
 	testfailure --nomsg grep '^[A-Z]: ' protected.list
@@ -71,7 +70,7 @@ The following packages were automatically installed and are no longer required:
    ${CURRENTKERNEL}-686-pae:i386 (5-1)
    ${CURRENTKERNEL}-dbg (5-1)
 Use '$AUTOREMOVE' to remove them.
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -sV
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -sV -o APT::Protect-Kernels=0
 testsuccessequal "Reading package lists...
 Building dependency tree...
 Reading state information...
@@ -85,13 +84,13 @@ The following packages were automatically installed and are no longer required:
    ${CURRENTKERNEL}-dbg (5-1)
    ${CURRENTKERNEL}-rt (5-1)
 Use '$AUTOREMOVE' to remove them.
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -sV --ignore-hold
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -sV --ignore-hold -o APT::Protect-Kernels=0
 testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 7 packages were automatically installed and are no longer required.
 Use '$AUTOREMOVE' to remove them.
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -s -o APT::Get::HideAutoRemove=small
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -s -o APT::Get::HideAutoRemove=small -o APT::Protect-Kernels=0
 testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
@@ -110,7 +109,7 @@ Remv linux-image-100.0.0-1-generic [100.0.0-1]
 Remv $CURRENTKERNEL [5-1]
 Remv ${CURRENTKERNEL}+variant [5-1]
 Remv ${CURRENTKERNEL}-686-pae:i386 [5-1]
-Remv ${CURRENTKERNEL}-dbg [5-1]" aptget autoremove -sV
+Remv ${CURRENTKERNEL}-dbg [5-1]" aptget autoremove -sV -o APT::Protect-Kernels=0
 
 msgmsg "run without parameter"
 testprotected
@@ -168,7 +167,7 @@ Remv ${CURRENTKERNEL}-dbg [5-1]" aptget autoremove -s
 unset COLUMNS
 
 # rt kernel was put on hold while the protected list was generated
-testsuccess aptmark unhold "${CURRENTKERNEL}-rt"
+testsuccess aptmark hold "${CURRENTKERNEL}-rt"
 export COLUMNS=99999
 testsuccessequal "Reading package lists...
 Building dependency tree...
