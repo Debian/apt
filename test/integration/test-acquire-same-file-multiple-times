@@ -12,8 +12,8 @@ APTARCHIVE="$(readlink -f ./aptarchive)"
 
 filedown() {
 	msgtest 'Downloading the same URI twice over file' "$1"
-	testsuccess --nomsg apthelper download-file "file:///$APTARCHIVE/foo" './downloaded/foo1' '' \
-		"file:///$APTARCHIVE/foo" './downloaded/foo2' '' -o Debug::pkgAcquire::Worker=1
+	testsuccess --nomsg apthelper download-file "file://$APTARCHIVE/foo" './downloaded/foo1' '' \
+		"file://$APTARCHIVE/foo" './downloaded/foo2' '' -o Debug::pkgAcquire::Worker=1
 	cp rootdir/tmp/testsuccess.output download.log
 	testsuccess cmp "$TESTFILE" ./downloaded/foo1
 	testsuccess cmp ./downloaded/foo1 ./downloaded/foo2

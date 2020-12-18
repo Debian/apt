@@ -112,7 +112,8 @@ class APT_PUBLIC pkgAcqMethod
       LocalOnly = (1 << 3),
       NeedsCleanup = (1 << 4),
       Removable = (1 << 5),
-      AuxRequests = (1 << 6)
+      AuxRequests = (1 << 6),
+      SendURIEncoded = (1 << 7),
    };
 
    void Log(const char *Format,...);

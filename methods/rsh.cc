@@ -382,7 +382,7 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
 									/*}}}*/
 
 // RSHMethod::RSHMethod - Constructor					/*{{{*/
-RSHMethod::RSHMethod(std::string &&pProg) : aptMethod(std::move(pProg),"1.0",SendConfig)
+RSHMethod::RSHMethod(std::string &&pProg) : aptMethod(std::move(pProg),"1.0",SendConfig | SendURIEncoded)
 {
    signal(SIGTERM,SigTerm);
    signal(SIGINT,SigTerm);
@@ -434,7 +434,7 @@ void RSHMethod::SigTerm(int)
 bool RSHMethod::Fetch(FetchItem *Itm)
 {
    URI Get(Itm->Uri);
-   const char *File = Get.Path.c_str();
+   auto const File = DecodeSendURI(Get.Path);
    FetchResult Res;
    Res.Filename = Itm->DestFile;
    Res.IMSHit = false;
@@ -458,8 +458,8 @@ bool RSHMethod::Fetch(FetchItem *Itm)
 
    // Get the files information
    unsigned long long Size;
-   if (Server->Size(File,Size) == false ||
-       Server->ModTime(File,FailTime) == false)
+   if (not Server->Size(File.c_str(), Size) ||
+       not Server->ModTime(File.c_str(), FailTime))
    {
       //Fail(true);
       //_error->Error(_("File not found")); // Will be handled by Size
@@ -505,7 +505,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
       FailFd = Fd.Fd();
 
       bool Missing;
-      if (Server->Get(File,Fd,Res.ResumePoint,Hash,Missing,Res.Size) == false)
+      if (not Server->Get(File.c_str(), Fd, Res.ResumePoint, Hash, Missing, Res.Size))
       {
 	 Fd.Close();
 

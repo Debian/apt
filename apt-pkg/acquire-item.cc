@@ -1380,7 +1380,7 @@ string pkgAcqMetaBase::Custom600Headers() const
 void pkgAcqMetaBase::QueueForSignatureVerify(pkgAcqTransactionItem * const I, std::string const &File, std::string const &Signature)
 {
    AuthPass = true;
-   I->Desc.URI = "gpgv:" + Signature;
+   I->Desc.URI = "gpgv:" + pkgAcquire::URIEncode(Signature);
    I->DestFile = File;
    QueueURI(I->Desc);
    I->SetActiveSubprocess("gpgv");
@@ -1415,7 +1415,7 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
    if (FileName != I->DestFile && RealFileExists(I->DestFile) == false)
    {
       I->Local = true;
-      I->Desc.URI = "copy:" + FileName;
+      I->Desc.URI = "copy:" + pkgAcquire::URIEncode(FileName);
       I->QueueURI(I->Desc);
       return false;
    }
@@ -2888,9 +2888,10 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    }
 
    // queue the right diff
-   Desc.URI = Target.URI + ".diff/" + available_patches[0].file + ".gz";
+   auto const BaseFileURI = Target.URI + ".diff/" + pkgAcquire::URIEncode(available_patches[0].file);
+   Desc.URI = BaseFileURI + ".gz";
    Desc.Description = Target.Description + " " + available_patches[0].file + string(".pdiff");
-   DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI + ".diff/" + available_patches[0].file), Target);
+   DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(BaseFileURI), Target);
 
    if(Debug)
       std::clog << "pkgAcqIndexDiffs::QueueNextDiff(): " << Desc.URI << std::endl;
@@ -2923,7 +2924,7 @@ void pkgAcqIndexDiffs::Done(string const &Message, HashStringList const &Hashes,
 	    std::clog << "Sending to rred method: " << UnpatchedFile << std::endl;
 	 State = StateApplyDiff;
 	 Local = true;
-	 Desc.URI = "rred:" + UnpatchedFile;
+	 Desc.URI = "rred:" + pkgAcquire::URIEncode(UnpatchedFile);
 	 QueueURI(Desc);
 	 SetActiveSubprocess("rred");
 	 return;
@@ -2979,9 +2980,9 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *const Owner,
 
    Desc.Owner = this;
    Desc.ShortDesc = Target.ShortDesc;
-   Desc.URI = Target.URI + ".diff/" + patch.file + ".gz";
+   Desc.URI = Target.URI + ".diff/" + pkgAcquire::URIEncode(patch.file) + ".gz";
    Desc.Description = Target.Description + " " + patch.file + ".pdiff";
-   DestFile = GetPartialFileNameFromURI(Target.URI + ".diff/" + patch.file + ".gz");
+   DestFile = GetPartialFileNameFromURI(Desc.URI);
 
    if(Debug)
       std::clog << "pkgAcqIndexMergeDiffs: " << Desc.URI << std::endl;
@@ -3068,7 +3069,7 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
 	    std::clog << "Sending to rred method: " << UnpatchedFile << std::endl;
 	 State = StateApplyDiff;
 	 Local = true;
-	 Desc.URI = "rred:" + UnpatchedFile;
+	 Desc.URI = "rred:" + pkgAcquire::URIEncode(UnpatchedFile);
 	 QueueURI(Desc);
 	 SetActiveSubprocess("rred");
 	 return;
@@ -3270,7 +3271,7 @@ void pkgAcqIndex::StageDownloadDone(string const &Message)
       if (symlink(Filename.c_str(), DestFile.c_str()) != 0)
 	 _error->WarningE("pkgAcqIndex::StageDownloadDone", "Symlinking file %s to %s failed", Filename.c_str(), DestFile.c_str());
       Stage = STAGE_DECOMPRESS_AND_VERIFY;
-      Desc.URI = "store:" + DestFile;
+      Desc.URI = "store:" + pkgAcquire::URIEncode(DestFile);
       QueueURI(Desc);
       SetActiveSubprocess(::URI(Desc.URI).Access);
       return;
@@ -3299,9 +3300,9 @@ void pkgAcqIndex::StageDownloadDone(string const &Message)
    Stage = STAGE_DECOMPRESS_AND_VERIFY;
    DestFile = GetKeepCompressedFileName(GetPartialFileNameFromURI(Target.URI), Target);
    if (Filename != DestFile && flExtension(Filename) == flExtension(DestFile))
-      Desc.URI = "copy:" + Filename;
+      Desc.URI = "copy:" + pkgAcquire::URIEncode(Filename);
    else
-      Desc.URI = "store:" + Filename;
+      Desc.URI = "store:" + pkgAcquire::URIEncode(Filename);
    if (DestFile == Filename)
    {
       if (CurrentCompressionExtension == "uncompressed")
@@ -3627,7 +3628,7 @@ void pkgAcqChangelog::Init(std::string const &DestDir, std::string const &DestFi
 	 DestFile = SrcName + ".changelog";
       else
 	 DestFile = DestFilename;
-      Desc.URI = "changelog:/" + DestFile;
+      Desc.URI = "changelog:/" + pkgAcquire::URIEncode(DestFile);
       return;
    }
 
@@ -3792,13 +3793,13 @@ std::string pkgAcqChangelog::URI(std::string const &Template,
       return "";
 
    // the path is: COMPONENT/SRC/SRCNAME/SRCNAME_SRCVER, e.g. main/a/apt/apt_1.1 or contrib/liba/libapt/libapt_2.0
-   std::string Src = SrcName;
-   std::string path = APT::String::Startswith(SrcName, "lib") ? Src.substr(0, 4) : Src.substr(0,1);
-   path.append("/").append(Src).append("/");
-   path.append(Src).append("_").append(StripEpoch(SrcVersion));
+   std::string const Src{SrcName};
+   std::string path = pkgAcquire::URIEncode(APT::String::Startswith(SrcName, "lib") ? Src.substr(0, 4) : Src.substr(0,1));
+   path.append("/").append(pkgAcquire::URIEncode(Src)).append("/");
+   path.append(pkgAcquire::URIEncode(Src)).append("_").append(pkgAcquire::URIEncode(StripEpoch(SrcVersion)));
    // we omit component for releases without one (= flat-style repositories)
    if (Component != NULL && strlen(Component) != 0)
-      path = std::string(Component) + "/" + path;
+      path = pkgAcquire::URIEncode(Component) + "/" + path;
 
    return SubstVar(Template, "@CHANGEPATH@", path);
 }
@@ -3858,8 +3859,12 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *const Owner, string const &URI, HashStringLis
    else
       DestFile = flNotDir(URI);
 
+   ::URI url{URI};
+   if (url.Path.find(' ') != std::string::npos || url.Path.find('%') == std::string::npos)
+      url.Path = pkgAcquire::URIEncode(url.Path);
+
    // Create the item
-   Desc.URI = URI;
+   Desc.URI = std::string(url);
    Desc.Description = Dsc;
    Desc.Owner = this;
 
@@ -3901,7 +3906,7 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
       if (_config->FindB("Acquire::Source-Symlinks",true) == false ||
 	  Cnf->Removable == true)
       {
-	 Desc.URI = "copy:" + FileName;
+	 Desc.URI = "copy:" + pkgAcquire::URIEncode(FileName);
 	 QueueURI(Desc);
 	 return;
       }

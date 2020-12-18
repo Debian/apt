@@ -87,6 +87,8 @@ bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval,
       ::URI uri((*I)->DescURI());
       uri.User.clear();
       uri.Password.clear();
+      if ((*I)->Local)
+	 uri.Path = DeQuoteString(uri.Path);
       std::string const descUri = std::string(uri);
       // Show an error for non-transient failures, otherwise only warn
       if ((*I)->Status == pkgAcquire::Item::StatTransientNetworkError)

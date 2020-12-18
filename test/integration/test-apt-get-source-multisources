@@ -20,10 +20,10 @@ APTARCHIVE=$(readlink -f ./aptarchive)
 HEADER='Reading package lists...'
 testsuccessequal "$HEADER
 Need to get 0 B/43 B of source archives.
-'file://${APTARCHIVE}/adduser_3.113+nmu3.dsc' adduser_3.113+nmu3.dsc 22 SHA256:19cc1abe85063976bf71c033f62f3e6bf6621647fe44a6ee31ed687e3fa5cbb7
-'file://${APTARCHIVE}/python-fll_0.9.11.dsc' python-fll_0.9.11.dsc 21 SHA256:51429e835ded66abf6bbc157865af29920435e74aea2836ba1f46443feae9285" aptget source -qdy --print-uris --dsc-only adduser=3.113 python-fll=0.9.11
+'file:${APTARCHIVE}/adduser_3.113%2bnmu3.dsc' adduser_3.113+nmu3.dsc 22 SHA256:19cc1abe85063976bf71c033f62f3e6bf6621647fe44a6ee31ed687e3fa5cbb7
+'file:${APTARCHIVE}/python-fll_0.9.11.dsc' python-fll_0.9.11.dsc 21 SHA256:51429e835ded66abf6bbc157865af29920435e74aea2836ba1f46443feae9285" aptget source -qdy --print-uris --dsc-only adduser=3.113 python-fll=0.9.11
 
 testsuccessequal "$HEADER
 Need to get 0 B/43 B of source archives.
-'file://${APTARCHIVE}/python-fll_0.9.11.dsc' python-fll_0.9.11.dsc 21 SHA256:51429e835ded66abf6bbc157865af29920435e74aea2836ba1f46443feae9285
-'file://${APTARCHIVE}/adduser_3.113+nmu3.dsc' adduser_3.113+nmu3.dsc 22 SHA256:19cc1abe85063976bf71c033f62f3e6bf6621647fe44a6ee31ed687e3fa5cbb7" aptget source -qdy --print-uris --dsc-only python-fll=0.9.11 adduser=3.113
+'file:${APTARCHIVE}/python-fll_0.9.11.dsc' python-fll_0.9.11.dsc 21 SHA256:51429e835ded66abf6bbc157865af29920435e74aea2836ba1f46443feae9285
+'file:${APTARCHIVE}/adduser_3.113%2bnmu3.dsc' adduser_3.113+nmu3.dsc 22 SHA256:19cc1abe85063976bf71c033f62f3e6bf6621647fe44a6ee31ed687e3fa5cbb7" aptget source -qdy --print-uris --dsc-only python-fll=0.9.11 adduser=3.113

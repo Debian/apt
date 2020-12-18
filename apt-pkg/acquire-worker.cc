@@ -307,8 +307,17 @@ bool pkgAcquire::Worker::RunMessages()
                break;
             }
 
-	    std::string const NewURI = LookupTag(Message,"New-URI",URI.c_str());
-            Itm->URI = NewURI;
+	    std::string const GotNewURI = LookupTag(Message,"New-URI",URI.c_str());
+	    if (Config->GetSendURIEncoded())
+	       Itm->URI = GotNewURI;
+	    else
+	    {
+	       ::URI tmpuri{GotNewURI};
+	       tmpuri.Path = pkgAcquire::URIEncode(tmpuri.Path);
+	       Itm->URI = tmpuri;
+	    }
+	    auto NewURI = Itm->URI;
+
 	    auto const AltUris = VectorizeString(LookupTag(Message, "Alternate-URIs"), '\n');
 
 	    ItemDone();
@@ -323,18 +332,37 @@ bool pkgAcquire::Worker::RunMessages()
 	    Itm = nullptr;
 	    for (auto const &Owner: ItmOwners)
 	    {
-	       for (auto alt = AltUris.crbegin(); alt != AltUris.crend(); ++alt)
-		  Owner->PushAlternativeURI(std::string(*alt), {}, false);
-
 	       pkgAcquire::ItemDesc &desc = Owner->GetItemDesc();
+
 	       // for a simplified retry a method might redirect without URI change
 	       // see also IsRedirectionLoop implementation
-	       if (desc.URI != NewURI)
+	       bool simpleRetry = false;
+	       if (Config->GetSendURIEncoded())
 	       {
-		  auto newuri = NewURI;
-		  if (Owner->IsGoodAlternativeURI(newuri) == false && Owner->PopAlternativeURI(newuri) == false)
-		     newuri.clear();
-		  if (newuri.empty() || Owner->IsRedirectionLoop(newuri))
+		  for (auto alt = AltUris.crbegin(); alt != AltUris.crend(); ++alt)
+		     Owner->PushAlternativeURI(std::string(*alt), {}, false);
+		  if (desc.URI == GotNewURI)
+		     simpleRetry = true;
+	       }
+	       else
+	       {
+		  for (auto alt = AltUris.crbegin(); alt != AltUris.crend(); ++alt)
+		  {
+		     ::URI tmpuri{*alt};
+		     tmpuri.Path = pkgAcquire::URIEncode(tmpuri.Path);
+		     Owner->PushAlternativeURI(std::string(tmpuri), {}, false);
+		  }
+		  ::URI tmpuri{desc.URI};
+		  tmpuri.Path = DeQuoteString(tmpuri.Path);
+		  if (GotNewURI == std::string(tmpuri))
+		     simpleRetry = true;
+	       }
+
+	       if (not simpleRetry)
+	       {
+		  if (Owner->IsGoodAlternativeURI(NewURI) == false && Owner->PopAlternativeURI(NewURI) == false)
+		     NewURI.clear();
+		  if (NewURI.empty() || Owner->IsRedirectionLoop(NewURI))
 		  {
 		     std::string msg = Message;
 		     msg.append("\nFailReason: RedirectionLoop");
@@ -665,12 +693,18 @@ bool pkgAcquire::Worker::Capabilities(string Message)
    Config->NeedsCleanup = StringToBool(LookupTag(Message,"Needs-Cleanup"),false);
    Config->Removable = StringToBool(LookupTag(Message,"Removable"),false);
    Config->SetAuxRequests(StringToBool(LookupTag(Message, "AuxRequests"), false));
+   if (_config->FindB("Acquire::Send-URI-Encoded", true))
+      Config->SetSendURIEncoded(StringToBool(LookupTag(Message, "Send-URI-Encoded"), false));
 
    // Some debug text
    if (Debug == true)
    {
       clog << "Configured access method " << Config->Access << endl;
-      clog << "Version:" << Config->Version << " SingleInstance:" << Config->SingleInstance << " Pipeline:" << Config->Pipeline << " SendConfig:" << Config->SendConfig << " LocalOnly: " << Config->LocalOnly << " NeedsCleanup: " << Config->NeedsCleanup << " Removable: " << Config->Removable << " AuxRequests: " << Config->GetAuxRequests() << endl;
+      clog << "Version:" << Config->Version << " SingleInstance:" << Config->SingleInstance
+	   << " Pipeline:" << Config->Pipeline << " SendConfig:" << Config->SendConfig
+	   << " LocalOnly: " << Config->LocalOnly << " NeedsCleanup: " << Config->NeedsCleanup
+	   << " Removable: " << Config->Removable << " AuxRequests: " << Config->GetAuxRequests()
+	   << " SendURIEncoded: " << Config->GetSendURIEncoded() << '\n';
    }
 
    return true;
@@ -737,6 +771,8 @@ bool pkgAcquire::Worker::SendConfiguration()
       configuration tree */
    std::ostringstream Message;
    Message << "601 Configuration\n";
+   if (not _config->Exists("Acquire::Send-URI-Encoded"))
+      Message << "Config-Item: Acquire::Send-URI-Encoded=1\n";
    _config->Dump(Message, NULL, "Config-Item: %F=%V\n", false);
    Message << '\n';
 
@@ -763,10 +799,16 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
 
    string Message = "600 URI Acquire\n";
    Message.reserve(300);
-   Message += "URI: " + Item->URI;
+   URI URL(Item->URI);
+   if (Config->GetSendURIEncoded())
+      Message += "URI: " + Item->URI;
+   else
+   {
+      URL.Path = DeQuoteString(URL.Path);
+      Message += "URI: " + std::string(URL);
+   }
    Message += "\nFilename: " + Item->Owner->DestFile;
 
-   URI URL(Item->URI);
    // FIXME: We should not hard code proxy protocols here.
    if (URL.Access == "http" || URL.Access == "https")
    {

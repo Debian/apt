@@ -573,6 +573,11 @@ static bool parseFirstLine(std::ostream &log, int const client, std::string cons
       params = filename.substr(paramspos + 1);
       filename.erase(paramspos);
    }
+   else if (APT::String::Startswith(filename, "/_config/"))
+   {
+      filename.erase(0, 1);
+      return true;
+   }
 
    filename = DeQuoteString(filename);
 
@@ -620,11 +625,12 @@ static bool parseFirstLine(std::ostream &log, int const client, std::string cons
 }
 									/*}}}*/
 static bool handleOnTheFlyReconfiguration(std::ostream &log, int const client,/*{{{*/
-      std::string const &request, std::vector<std::string> parts, std::list<std::string> &headers)
+      std::string const &request, std::vector<std::string> const &EncodedParts, std::list<std::string> &headers)
 {
-   size_t const pcount = parts.size();
+   size_t const pcount = EncodedParts.size();
+   std::vector<std::string> parts(pcount);
    for (size_t i = 0; i < pcount; ++i)
-      parts[i] = DeQuoteString(parts[i]);
+      parts[i] = DeQuoteString(EncodedParts[i]);
    if (pcount == 4 && parts[1] == "set")
    {
       _config->Set(parts[2], parts[3]);
@@ -707,7 +713,7 @@ static void * handleClient(int const client, size_t const id)		/*{{{*/
 	 // special webserver command request
 	 if (filename.length() > 1 && filename[0] == '_')
 	 {
-	    std::vector<std::string> parts = VectorizeString(filename, '/');
+	    auto const parts = VectorizeString(filename, '/');
 	    if (parts[0] == "_config")
 	    {
 	       handleOnTheFlyReconfiguration(log, client, *m, parts, headers);

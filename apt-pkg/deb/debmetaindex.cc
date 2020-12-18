@@ -142,10 +142,10 @@ static std::string constructMetaIndexURI(std::string URI, std::string const &Dis
    if (Dist == "/")
       ;
    else if (Dist[Dist.size()-1] == '/')
-      URI += Dist;
+      URI += pkgAcquire::URIEncode(Dist);
    else
-      URI += "dists/" + Dist + "/";
-   return URI + Type;
+      URI += "dists/" + pkgAcquire::URIEncode(Dist) + "/";
+   return URI + pkgAcquire::URIEncode(Type);
 }
 std::string debReleaseIndex::MetaIndexURI(const char *Type) const
 {
@@ -418,6 +418,13 @@ void debReleaseIndex::AddComponent(std::string const &sourcesEntry,	/*{{{*/
       d->DebSrcEntries.push_back(entry);
    else
       d->DebEntries.push_back(entry);
+}
+									/*}}}*/
+std::string debReleaseIndex::ArchiveURI(std::string const &File) const	/*{{{*/
+{
+   if (File.empty())
+      return URI;
+   return URI + pkgAcquire::URIEncode(File);
 }
 									/*}}}*/
 

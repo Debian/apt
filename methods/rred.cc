@@ -604,7 +604,7 @@ class RredMethod : public aptMethod {
       virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE {
 	 Debug = DebugEnabled();
 	 URI Get(Itm->Uri);
-	 std::string Path = Get.Host + Get.Path; // rred:/path - no host
+	 std::string Path = DecodeSendURI(Get.Host + Get.Path); // rred:/path - no host
 
 	 FetchResult Res;
 	 Res.Filename = Itm->DestFile;
@@ -750,7 +750,7 @@ class RredMethod : public aptMethod {
       }
 
    public:
-   RredMethod() : aptMethod("rred", "2.0", SendConfig), Debug(false)
+   RredMethod() : aptMethod("rred", "2.0", SendConfig | SendURIEncoded), Debug(false)
    {
       SeccompFlags = aptMethod::BASE | aptMethod::DIRECTORY;
    }

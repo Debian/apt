@@ -1327,14 +1327,13 @@ webserverconfig() {
 	local DOWNLOG="${TMPWORKINGDIRECTORY}/rootdir/tmp/download-testfile.log"
 	local STATUS="${TMPWORKINGDIRECTORY}/downloaded/webserverconfig.status"
 	rm -f "$STATUS" "$DOWNLOG"
-	# very very basic URI encoding
 	local URI
 	if [ -n "$2" ]; then
 		msgtest "Set webserver config option '${1}' to" "$2"
-		URI="${WEBSERVER}/_config/set/$(echo "${1}" | sed -e 's/\//%2f/g')/$(echo "${2}" | sed -e 's/\//%2f/g')"
+		URI="${WEBSERVER}/_config/set/$(apthelper quote-string "${1}" '/?#')/$(apthelper quote-string "${2}" '/?#')"
 	else
 		msgtest 'Clear webserver config option' "${1}"
-		URI="${WEBSERVER}/_config/clear/$(echo "${1}" | sed -e 's/\//%2f/g')"
+		URI="${WEBSERVER}/_config/clear/$(apthelper quote-string "${1}" '/?#')"
 	fi
 	if downloadfile "$URI" "$STATUS" > "$DOWNLOG"; then
 		msgpass

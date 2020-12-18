@@ -29,7 +29,7 @@ class CopyMethod : public aptMethod
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
 
    public:
-   CopyMethod() : aptMethod("copy", "1.0", SingleInstance | SendConfig)
+   CopyMethod() : aptMethod("copy", "1.0", SingleInstance | SendConfig | SendURIEncoded)
    {
       SeccompFlags = aptMethod::BASE;
    }
@@ -41,7 +41,7 @@ class CopyMethod : public aptMethod
 bool CopyMethod::Fetch(FetchItem *Itm)
 {
    // this ensures that relative paths work in copy
-   std::string const File = Itm->Uri.substr(Itm->Uri.find(':')+1);
+   std::string const File = DecodeSendURI(Itm->Uri.substr(Itm->Uri.find(':')+1));
 
    // Stat the file and send a start message
    struct stat Buf;

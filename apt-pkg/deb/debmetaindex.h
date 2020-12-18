@@ -32,7 +32,7 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    debReleaseIndex(std::string const &URI, std::string const &Dist, bool const Trusted, std::map<std::string,std::string> const &Options);
    virtual ~debReleaseIndex();
 
-   virtual std::string ArchiveURI(std::string const &File) const APT_OVERRIDE {return URI + File;};
+   virtual std::string ArchiveURI(std::string const &File) const APT_OVERRIDE;
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) APT_OVERRIDE;
    virtual std::vector<IndexTarget> GetIndexTargets() const APT_OVERRIDE;
 
