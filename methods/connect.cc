@@ -349,12 +349,9 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
 {
    if (ConnectionAllowed(Service, Host) == false)
       return ResultState::FATAL_ERROR;
-   // Convert the port name/number
-   char ServStr[300];
-   if (Port != 0)
-      snprintf(ServStr,sizeof(ServStr),"%i", Port);
-   else
-      snprintf(ServStr,sizeof(ServStr),"%s", Service);
+
+   // Used by getaddrinfo(); prefer port if given, else fallback to service
+   std::string ServiceNameOrPort = Port != 0 ? std::to_string(Port) : Service;
    
    /* We used a cached address record.. Yes this is against the spec but
       the way we have setup our rotating dns suggests that this is more
@@ -405,14 +402,14 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
       while (1)
       {
 	 int Res;
-	 if ((Res = getaddrinfo(Host.c_str(),ServStr,&Hints,&LastHostAddr)) != 0 ||
+	 if ((Res = getaddrinfo(Host.c_str(), ServiceNameOrPort.c_str(), &Hints, &LastHostAddr)) != 0 ||
 	     LastHostAddr == 0)
 	 {
 	    if (Res == EAI_NONAME || Res == EAI_SERVICE)
 	    {
 	       if (DefPort != 0)
 	       {
-		  snprintf(ServStr, sizeof(ServStr), "%i", DefPort);
+		  ServiceNameOrPort = std::to_string(DefPort);
 		  DefPort = 0;
 		  continue;
 	       }
@@ -431,10 +428,10 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
 	    }
 	    if (Res == EAI_SYSTEM)
 	       _error->Errno("getaddrinfo", _("System error resolving '%s:%s'"),
-			     Host.c_str(), ServStr);
+			     Host.c_str(), ServiceNameOrPort.c_str());
 	    else
 	       _error->Error(_("Something wicked happened resolving '%s:%s' (%i - %s)"),
-			     Host.c_str(), ServStr, Res, gai_strerror(Res));
+			     Host.c_str(), ServiceNameOrPort.c_str(), Res, gai_strerror(Res));
 	    return ResultState::TRANSIENT_ERROR;
 	 }
 	 break;
@@ -469,7 +466,7 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
       return Result;
    if (_error->PendingError() == true)
       return ResultState::FATAL_ERROR;
-   _error->Error(_("Unable to connect to %s:%s:"), Host.c_str(), ServStr);
+   _error->Error(_("Unable to connect to %s:%s:"), Host.c_str(), ServiceNameOrPort.c_str());
    return ResultState::TRANSIENT_ERROR;
 }
 									/*}}}*/
