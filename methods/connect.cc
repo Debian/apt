@@ -45,7 +45,7 @@
 									/*}}}*/
 
 static std::string LastHost;
-static int LastPort = 0;
+static std::string LastService;
 static struct addrinfo *LastHostAddr = 0;
 static struct addrinfo *LastUsed = 0;
 
@@ -356,7 +356,7 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
    /* We used a cached address record.. Yes this is against the spec but
       the way we have setup our rotating dns suggests that this is more
       sensible */
-   if (LastHost != Host || LastPort != Port)
+   if (LastHost != Host || LastService != ServiceNameOrPort)
    {
       Owner->Status(_("Connecting to %s"),Host.c_str());
 
@@ -438,7 +438,7 @@ static ResultState ConnectToHostname(std::string const &Host, int const Port,
       }
       
       LastHost = Host;
-      LastPort = Port;
+      LastService = ServiceNameOrPort;
    }
 
    // When we have an IP rotation stay with the last IP.
@@ -483,7 +483,10 @@ ResultState Connect(std::string Host, int Port, const char *Service,
    if (ConnectionAllowed(Service, Host) == false)
       return ResultState::FATAL_ERROR;
 
-   if(LastHost != Host || LastPort != Port)
+   // Used by getaddrinfo(); prefer port if given, else fallback to service
+   std::string ServiceNameOrPort = Port != 0 ? std::to_string(Port) : Service;
+
+   if(LastHost != Host || LastService != ServiceNameOrPort)
    {
       SrvRecords.clear();
       if (_config->FindB("Acquire::EnableSrvRecords", true) == true)
