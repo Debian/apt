@@ -94,7 +94,7 @@ struct ServerState
    /** \brief Get the headers before the data */
    RunHeadersResult RunHeaders(RequestState &Req, const std::string &Uri);
 
-   bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
+   bool Comp(URI Other) const {return Other.Access == ServerName.Access && Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    virtual void Reset();
    virtual bool WriteResponse(std::string const &Data) = 0;
 
