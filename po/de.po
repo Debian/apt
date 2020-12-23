@@ -1,5 +1,6 @@
 # German messages for the apt suite.
 # Copyright (C) 1997, 1998, 1999 Jason Gunthorpe and others.
+# Helge Kreutzmann <debian@helgefjell.de>, 2020.
 # Holger Wansing <linux@wansing-online.de>, 2008, 2009, 2010, 2012, 2014, 2017, 2018.
 # Jens Seidel <jensseidel@users.sf.net>, 2008.
 # Michael Piefel <piefel@informatik.hu-berlin.de>, 2001, 2002, 2003, 2004, 2006.
@@ -8,11 +9,11 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.6\n"
+"Project-Id-Version: apt 2.1.14\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2020-08-11 14:34+0200\n"
-"PO-Revision-Date: 2018-01-11 21:11+0100\n"
-"Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
+"PO-Revision-Date: 2020-12-23 07:28+0100\n"
+"Last-Translator: Helge Kreutzmann <debian@helgefjell.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -196,15 +197,12 @@ msgstr ""
 #. the time until the file will be valid - formatted in the same way as in
 #. the download progress display (e.g. 7d 3h 42min 1s)
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Release file for %s is expired (invalid since %s). Updates for this "
-#| "repository will not be applied."
+#, c-format
 msgid ""
 "Release file for %s is not valid yet (invalid for another %s). Updates for "
 "this repository will not be applied."
 msgstr ""
-"Release-Datei für %s ist abgelaufen (ungültig seit %s). Aktualisierungen für "
+"Release-Datei für %s ist noch nicht gültig (ungültig für weitere %s). Aktualisierungen für "
 "dieses Depot werden nicht angewendet."
 
 #: apt-pkg/acquire-item.cc
@@ -278,6 +276,9 @@ msgid ""
 "The method '%s' is unsupported and disabled by default. Consider switching "
 "to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
 msgstr ""
+"Die Methode »%s« wird nicht unterstützt und ist standardmäßig deaktiviert. "
+"Wechseln Sie, falls möglich, auf http(s). Um sie wieder zu aktivieren, setzen "
+"Sie Dir::Bin::Methods::%s auf »%s«."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -485,7 +486,7 @@ msgstr "Zeile %u in Quellliste %s zu lang."
 
 #: apt-pkg/cdrom.cc
 msgid "Unmounting CD-ROM...\n"
-msgstr "Einbindung der CD-ROM wird gelöst ...\n"
+msgstr "Einbindung der CD-ROM wird gelöst …\n"
 
 #: apt-pkg/cdrom.cc
 #, c-format
@@ -494,15 +495,15 @@ msgstr "Verwendeter CD-ROM-Einbindungspunkt: %s\n"
 
 #: apt-pkg/cdrom.cc
 msgid "Waiting for disc...\n"
-msgstr "Warten auf Medium ...\n"
+msgstr "Warten auf Medium …\n"
 
 #: apt-pkg/cdrom.cc
 msgid "Mounting CD-ROM...\n"
-msgstr "CD-ROM wird eingebunden ...\n"
+msgstr "CD-ROM wird eingebunden …\n"
 
 #: apt-pkg/cdrom.cc
 msgid "Identifying... "
-msgstr "Identifizieren ... "
+msgstr "Identifizieren … "
 
 #: apt-pkg/cdrom.cc
 #, c-format
@@ -511,7 +512,7 @@ msgstr "Gespeicherte Kennzeichnung: %s\n"
 
 #: apt-pkg/cdrom.cc
 msgid "Scanning disc for index files...\n"
-msgstr "Durchsuchen des Mediums nach Index-Dateien ...\n"
+msgstr "Durchsuchen des Mediums nach Index-Dateien …\n"
 
 #: apt-pkg/cdrom.cc
 #, c-format
@@ -550,7 +551,7 @@ msgstr ""
 
 #: apt-pkg/cdrom.cc
 msgid "Copying package lists..."
-msgstr "Kopieren der Paketlisten ..."
+msgstr "Kopieren der Paketlisten …"
 
 #: apt-pkg/cdrom.cc
 msgid "Writing new source list\n"
@@ -714,10 +715,9 @@ msgid "Tar checksum failed, archive corrupted"
 msgstr "Tar-Prüfsumme fehlgeschlagen, Archiv beschädigt"
 
 #: apt-pkg/contrib/extracttar.cc
-#, fuzzy, c-format
-#| msgid "Unknown TAR header type %u, member %s"
+#, c-format
 msgid "Unknown TAR header type %u"
-msgstr "Unbekannter Tar-Kopfzeilen-Typ %u, Bestandteil %s"
+msgstr "Unbekannter Tar-Kopfzeilen-Typ %u"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -740,26 +740,27 @@ msgid "Not using locking for nfs mounted lock file %s"
 msgstr "Es wird keine Sperre für per NFS eingebundene Sperrdatei %s verwendet."
 
 #: apt-pkg/contrib/fileutl.cc
-#, fuzzy, c-format
-#| msgid "Could not get lock %s"
+#, c-format
 msgid "Could not get lock %s. It is held by process %d"
-msgstr "Konnte Sperre %s nicht bekommen"
+msgstr "Sperre %s konnte nicht erlangt werden. Sie wird von Prozess %d gehalten."
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Could not get lock %s. It is held by process %d (%s)"
-msgstr ""
+msgstr "Sperre %s konnte nicht erlangt werden. Sie wird von Prozess %d (%s) gehalten."
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Could not get lock %s"
-msgstr "Konnte Sperre %s nicht bekommen"
+msgstr "Sperre %s konnte nicht erlangt werden."
 
 #: apt-pkg/contrib/fileutl.cc
 msgid ""
 "Be aware that removing the lock file is not a solution and may break your "
 "system."
 msgstr ""
+"Beachten Sie, dass das Entfernen der Sperrdatei keine Lösung ist und Ihr "
+"System beschädigen kann."
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -949,37 +950,37 @@ msgid ""
 "%s: Credentials for %s match, but the protocol is not encrypted. Annotate "
 "with %s:// to use."
 msgstr ""
+"%s: Zugangsdaten für %s passen, aber das Protokoll ist nicht verschlüsselt. "
+"Versehen Sie es mit %s:// zur Verwendung."
 
 #: apt-pkg/contrib/progress.cc
 #, c-format
 msgid "%c%s... Error!"
-msgstr "%c%s... Fehler!"
+msgstr "%c%s… Fehler!"
 
 #: apt-pkg/contrib/progress.cc
 #, c-format
 msgid "%c%s... Done"
-msgstr "%c%s... Fertig"
+msgstr "%c%s… Fertig"
 
 #: apt-pkg/contrib/progress.cc
 msgid "..."
-msgstr "..."
+msgstr "…"
 
 #: apt-pkg/contrib/progress.cc
-#, fuzzy, c-format
-#| msgid "%c%s... %u%%"
+#, c-format
 msgid "%c%s... %llu/%llus"
-msgstr "%c%s... %u%%"
+msgstr "%c%s... %llu/%llus"
 
 #: apt-pkg/contrib/progress.cc
-#, fuzzy, c-format
-#| msgid "%c%s... %u%%"
+#, c-format
 msgid "%c%s... %llus"
-msgstr "%c%s... %u%%"
+msgstr "%c%s… %llus"
 
 #: apt-pkg/contrib/progress.cc
 #, c-format
 msgid "%c%s... %u%%"
-msgstr "%c%s... %u%%"
+msgstr "%c%s… %u%%"
 
 #. TRANSLATOR: d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc
@@ -1025,10 +1026,9 @@ msgid "Unparsable control file"
 msgstr "Auswerten der »control«-Datei nicht möglich"
 
 #: apt-pkg/deb/debindexfile.cc
-#, fuzzy, c-format
-#| msgid "Could not get lock %s"
+#, c-format
 msgid "Could not read meta data from %s"
-msgstr "Konnte Sperre %s nicht bekommen"
+msgstr "Metadaten aus %s konnten nicht gelesen werden"
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; another identifier like Contents;
@@ -1102,28 +1102,23 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Paketdatei %s konnte nicht verarbeitet werden (%d)."
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid "Waiting for headers"
+#, c-format
 msgid "Waiting for cache lock: %s"
-msgstr "Warten auf Kopfzeilen"
+msgstr "Warten auf Sperre für Zwischenspeicher: %s"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Unable to lock the administration directory (%s), is another process "
-#| "using it?"
+#, c-format
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
 msgstr ""
-"Sperren des Administrationsverzeichnisses (%s) nicht möglich, wird es von "
+"Erlangen der Sperre für die Dpkg-Oberfläche (%s) nicht möglich; wird sie von "
 "einem anderen Prozess verwendet?"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid "Unable to lock the administration directory (%s), are you root?"
+#, c-format
 msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
 msgstr ""
-"Sperren des Administrationsverzeichnisses (%s) nicht möglich, sind Sie root?"
+"Erlangen der Sperre für die Dpkg-Oberfläche (%s) nicht möglich; sind Sie root?"
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -1141,14 +1136,14 @@ msgid ""
 "Unable to lock the administration directory (%s), is another process using "
 "it?"
 msgstr ""
-"Sperren des Administrationsverzeichnisses (%s) nicht möglich, wird es von "
+"Sperren des Administrationsverzeichnisses (%s) nicht möglich; wird es von "
 "einem anderen Prozess verwendet?"
 
 #: apt-pkg/deb/debsystem.cc
 #, c-format
 msgid "Unable to lock the administration directory (%s), are you root?"
 msgstr ""
-"Sperren des Administrationsverzeichnisses (%s) nicht möglich, sind Sie root?"
+"Sperren des Administrationsverzeichnisses (%s) nicht möglich; sind Sie root?"
 
 #: apt-pkg/deb/debsystem.cc
 msgid "Not locked"
@@ -1602,6 +1597,8 @@ msgstr "Pinning-Typ %s kann nicht interpretiert werden."
 msgid ""
 "%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
 msgstr ""
+"%s: Die besondere »Pin-Priority: %s« kann nur für »Package: *«-Datensätze "
+"verwendet werden."
 
 #: apt-pkg/policy.cc
 #, c-format
@@ -1642,14 +1639,12 @@ msgstr "Typ »%s« ist in Absatz %u der Quellliste %s ist unbekannt."
 #: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
-msgstr "Nicht unterstützte Datei %s auf Befehlszeile angegeben"
+msgstr "Nicht unterstützte Datei %s auf Befehlszeile angegeben."
 
 #: apt-pkg/srcrecords.cc
-#, fuzzy
-#| msgid "You must put some 'source' URIs in your sources.list"
 msgid "You must put some 'deb-src' URIs in your sources.list"
 msgstr ""
-"Sie müssen einige »source«-URIs für Quellpakete in die sources.list-Datei "
+"Sie müssen einige »deb-src«-URIs für Quellpakete in die sources.list-Datei "
 "eintragen."
 
 #: apt-pkg/tagfile.cc
@@ -1726,7 +1721,7 @@ msgstr ""
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
-msgstr "Abhängigkeiten werden korrigiert ..."
+msgstr "Abhängigkeiten werden korrigiert …"
 
 #: apt-private/private-cachefile.cc
 msgid " failed."
@@ -1995,7 +1990,7 @@ msgstr "Interner Fehler, Anordnung beendete nicht"
 #: apt-private/private-install.cc
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
-"Wie merkwürdig ... die Größen haben nicht übereingestimmt; schreiben Sie "
+"Wie merkwürdig … die Größen haben nicht übereingestimmt; schreiben Sie "
 "eine E-Mail an apt@packages.debian.org (auf Englisch bitte)."
 
 #. TRANSLATOR: The required space between number and unit is already included
@@ -2582,6 +2577,8 @@ msgstr ""
 msgid ""
 "Invalid operator '%c' at offset %d, did you mean '%c%c' or '%c='? - in: %s"
 msgstr ""
+"Ungültiger Operator »%c« bei Versatz %d, meinten Sie »%c%c« oder »%c=«? - "
+"in: %s"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -2734,7 +2731,7 @@ msgid ""
 "availability of the configured sources (e.g. offline).\n"
 msgstr ""
 "Aufruf: apt-cache [Optionen] befehl\n"
-"        apt-cache [Optionen] show paket1 [paket2 ...]\n"
+"        apt-cache [Optionen] show paket1 [paket2 …]\n"
 "\n"
 "apt-cache ermöglicht die Abfrage und Anzeige verfügbarer Informationen über\n"
 "installierte und installierbare Pakete. Es arbeitet ausschließlich mit den\n"
@@ -2872,7 +2869,7 @@ msgid ""
 "from debian packages. It is used mainly by debconf(1) to prompt for\n"
 "configuration questions before installation of packages.\n"
 msgstr ""
-"Aufruf: apt-extracttemplates datei1 [datei2 ...]\n"
+"Aufruf: apt-extracttemplates datei1 [datei2 …]\n"
 "\n"
 "apt-extracttemplates wird verwendet, um Konfigurations- und Vorlagendateien\n"
 "(Templates) aus Debian-Paketen zu extrahieren.\n"
@@ -2922,8 +2919,8 @@ msgid ""
 "with their dependencies.\n"
 msgstr ""
 "Aufruf: apt-get [Optionen] befehl\n"
-"        apt-get [Optionen] install|remove paket1 [paket2 ...]\n"
-"        apt-get [Optionen] source paket1 [paket2 ...]\n"
+"        apt-get [Optionen] install|remove paket1 [paket2 …]\n"
+"        apt-get [Optionen] source paket1 [paket2 …]\n"
 "\n"
 "apt-get ist ein Befehlszeilenwerkzeug zum Herunterladen von Paketen (und\n"
 "Informationen zu diesen Paketen) von authentifizierten Paketquellen sowie\n"
@@ -2943,10 +2940,8 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "neue Pakete installieren (paket ist libc6, nicht libc6.deb)"
 
 #: cmdline/apt-get.cc
-#, fuzzy
-#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
-msgstr "neue Pakete installieren (paket ist libc6, nicht libc6.deb)"
+msgstr "Pakete erneut installieren (paket ist libc6, nicht libc6.deb)"
 
 #: cmdline/apt-get.cc
 msgid "Remove packages"
@@ -2975,10 +2970,8 @@ msgid "Configure build-dependencies for source packages"
 msgstr "Bauabhängigkeiten für Quellpakete konfigurieren"
 
 #: cmdline/apt-get.cc
-#, fuzzy
-#| msgid "Building dependency tree"
 msgid "Satisfy dependency strings"
-msgstr "Abhängigkeitsbaum wird aufgebaut."
+msgstr "Abhängigkeitszeichenketten erfüllen"
 
 #: cmdline/apt-get.cc
 msgid "Erase downloaded archive files"
@@ -3031,7 +3024,7 @@ msgid ""
 "e.g. the same proxy configuration or acquire system as APT would.\n"
 msgstr ""
 "Aufruf: apt-helper [Optionen] befehl\n"
-"        apt-helper [Optionen] cat-file datei ...\n"
+"        apt-helper [Optionen] cat-file datei …\n"
 "        apt-helper [Optionen] download-file URI Zielpfad\n"
 "\n"
 "apt-helper vereint eine Vielzahl von Befehlen zur Shell-Skript-"
@@ -3062,11 +3055,11 @@ msgstr "warten, bis das System online ist"
 
 #: cmdline/apt-helper.cc
 msgid "drop privileges before running given command"
-msgstr ""
+msgstr "Privilegien vor der Ausführung des Befehls abgeben"
 
 #: cmdline/apt-helper.cc
 msgid "analyse a pattern"
-msgstr ""
+msgstr "Muster analysieren"
 
 #: cmdline/apt-internal-planner.cc
 msgid ""
@@ -3114,13 +3107,11 @@ msgstr "%s wurde bereits auf automatisch installiert gesetzt.\n"
 
 #: cmdline/apt-mark.cc
 msgid "No changes necessary"
-msgstr ""
+msgstr "Keine Änderungen notwendig"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
-#| msgid "The following NEW packages will be installed:"
 msgid "The following packages will be marked as automatically installed:"
-msgstr "Die folgenden NEUEN Pakete werden installiert:"
+msgstr "Die folgenden Pakete werden als automatisch installiert markiert:"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -3170,7 +3161,7 @@ msgid ""
 "manipulate the dpkg(1) selection states of packages, and to list\n"
 "all packages with or without a certain marking.\n"
 msgstr ""
-"Aufruf: apt-mark [Optionen] {auto|manual} paket1 [paket2 ...]\n"
+"Aufruf: apt-mark [Optionen] {auto|manual} paket1 [paket2 …]\n"
 "\n"
 "apt-mark ist ein einfaches Befehlszeilenprogramm, um Pakete als manuell "
 "oder\n"
@@ -3188,10 +3179,8 @@ msgid "Mark the given packages as manually installed"
 msgstr "das angegebene Paket als »Manuell installiert« markieren"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
-#| msgid "Mark the given packages as automatically installed"
 msgid "Mark all dependencies of meta packages as automatically installed."
-msgstr "das angegebene Paket als »Automatisch installiert« markieren"
+msgstr "alle Abhängigkeiten von Metapaketen als »Automatisch installiert« markieren"
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3225,7 +3214,7 @@ msgid ""
 "By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
-"Aufruf: apt-sortpkgs [options] datei1 [datei2 ...]\n"
+"Aufruf: apt-sortpkgs [Optionen] datei1 [datei2 …]\n"
 "\n"
 "apt-sortpkgs ist ein einfaches Werkzeug zur Sortierung von "
 "Paketinformations-\n"
@@ -3273,10 +3262,8 @@ msgid "install packages"
 msgstr "Pakete installieren"
 
 #: cmdline/apt.cc
-#, fuzzy
-#| msgid "install packages"
 msgid "reinstall packages"
-msgstr "Pakete installieren"
+msgstr "Pakete erneut installieren"
 
 #: cmdline/apt.cc
 msgid "remove packages"
@@ -3303,10 +3290,8 @@ msgid "edit the source information file"
 msgstr "die Datei für die Paketquellen bearbeiten"
 
 #: cmdline/apt.cc
-#, fuzzy
-#| msgid "Failed to satisfy %s dependency for %s: %s"
 msgid "satisfy dependency strings"
-msgstr "»%s«-Abhängigkeit für %s konnte nicht erfüllt werden: %s"
+msgstr "Abhängigkeitszeichenketten erfüllen"
 
 #: dselect/install
 msgid "Bad default setting!"
@@ -4174,10 +4159,6 @@ msgstr "Leere Dateien können kein gültiges Archiv sein."
 #~ msgstr ""
 #~ "Es gibt keine öffentlichen Schlüssel für die folgenden Schlüssel-IDs:\n"
 
-#, fuzzy
-#~ msgid "The repository is insufficiently signed by key %s (%s)"
-#~ msgstr "Das Verzeichnis %s ist umgeleitet."
-
 #~ msgid ""
 #~ "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 #~ "packages"
@@ -4230,9 +4211,9 @@ msgstr "Leere Dateien können kein gültiges Archiv sein."
 #~ "from APT's binary cache files\n"
 #~ msgstr ""
 #~ "Aufruf: apt-cache [Optionen] befehl\n"
-#~ "        apt-cache [Optionen] show paket1 [paket2 ...]\n"
+#~ "        apt-cache [Optionen] show paket1 [paket2 …]\n"
 #~ "\n"
-#~ "apt-cache ist ein untergeordnetes Werkzeug, um Informationen aus den\n"
+#~ "apt-cache ist ein systemnahes Werkzeug, um Informationen aus den\n"
 #~ "binären Zwischenspeicher-Dateien von APT abzufragen.\n"
 
 #~ msgid "Commands:"
@@ -4269,32 +4250,6 @@ msgstr "Leere Dateien können kein gültiges Archiv sein."
 #~ "Aufruf: apt [Optionen] Befehl\n"
 #~ "\n"
 #~ "Befehlszeilen-Schnittstelle (CLI) für apt.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Options:\n"
-#~ "  -h   This help text\n"
-#~ "  -d   CD-ROM mount point\n"
-#~ "  -r   Rename a recognized CD-ROM\n"
-#~ "  -m   No mounting\n"
-#~ "  -f   Fast mode, don't check package files\n"
-#~ "  -a   Thorough scan mode\n"
-#~ "  --no-auto-detect Do not try to auto detect drive and mount point\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See fstab(5)\n"
-#~ msgstr ""
-#~ "Optionen:\n"
-#~ "  -h   dieser Hilfetext\n"
-#~ "  -q   protokollierbare Ausgabe – keine Fortschrittsanzeige\n"
-#~ "  -qq  keine Ausgabe, außer bei Fehlern\n"
-#~ "  -s   nichts tun, nur eine Simulation der Aktionen durchführen\n"
-#~ "  -f   Autom./Manuell-Markierung in der angegebenen Datei lesen/"
-#~ "schreiben\n"
-#~ "  -c=? Diese Konfigurationsdatei benutzen\n"
-#~ "  -o=? Beliebige Konfigurationsoption setzen, z.B. -o dir::cache=/tmp\n"
-#~ "Siehe auch die Handbuchseiten apt-mark(8) und apt.conf(5) bezüglich\n"
-#~ "weitergehender Informationen."
 
 #~ msgid ""
 #~ "Options:\n"
@@ -4344,7 +4299,7 @@ msgstr "Leere Dateien können kein gültiges Archiv sein."
 #~ "  -c=? Read this configuration file\n"
 #~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 #~ msgstr ""
-#~ "Aufruf: apt-sortpkgs [optionen] datei1 [datei2 ...]\n"
+#~ "Aufruf: apt-sortpkgs [optionen] datei1 [datei2 …]\n"
 #~ "\n"
 #~ "apt-sortpkgs ist ein einfaches Werkzeug, um Paketdateien zu sortieren. "
 #~ "Die\n"
@@ -4360,10 +4315,6 @@ msgstr "Leere Dateien können kein gültiges Archiv sein."
 
 #~ msgid "Child process failed"
 #~ msgstr "Kindprozess fehlgeschlagen"
-
-#, fuzzy
-#~ msgid "Must specifc at least one srv record"
-#~ msgstr "Es muss mindestens ein URL/Dateinamen-Paar angegeben werden"
 
 #~ msgid "Failed to create pipes"
 #~ msgstr "Pipes (Weiterleitungen) konnten nicht erzeugt werden."
@@ -4424,10 +4375,6 @@ msgstr "Leere Dateien können kein gültiges Archiv sein."
 
 #~ msgid "Collecting File Provides"
 #~ msgstr "Sammeln der angebotenen Funktionalitäten (Provides) aus den Dateien"
-
-#, fuzzy
-#~ msgid "Does not start with a cleartext signature"
-#~ msgstr "Datei %s beginnt nicht mit einer Klartext-signierten Nachricht."
 
 #~ msgid "Unable to find hash sum for '%s' in Release file"
 #~ msgstr "Hash-Summe für »%s« kann in Release-Datei nicht gefunden werden."
@@ -4659,3 +4606,4 @@ msgstr "Leere Dateien können kein gültiges Archiv sein."
 
 #~ msgid "Release file expired, ignoring %s (invalid since %s)"
 #~ msgstr "Release-Datei abgelaufen, %s wird ignoriert (ungültig seit %s)"
+
