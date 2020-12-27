@@ -39,6 +39,16 @@ static const constexpr struct
    {"DBreaks:"_sv, "?breaks"_sv, true},
    {"DEnhances:"_sv, "?enhances"_sv, true},
    {"D"_sv, "?depends"_sv, true},
+   {"RDepends:"_sv, "?reverse-depends"_sv, true},
+   {"RPre-Depends:"_sv, "?reverse-pre-depends"_sv, true},
+   {"RSuggests:"_sv, "?reverse-suggests"_sv, true},
+   {"RRecommends:"_sv, "?reverse-recommends"_sv, true},
+   {"RConflicts:"_sv, "?reverse-conflicts"_sv, true},
+   {"RReplaces:"_sv, "?reverse-replaces"_sv, true},
+   {"RObsoletes:"_sv, "?reverse-obsoletes"_sv, true},
+   {"RBreaks:"_sv, "?reverse-breaks"_sv, true},
+   {"REnhances:"_sv, "?reverse-enhances"_sv, true},
+   {"R"_sv, "?reverse-depends"_sv, true},
    {"E"_sv, "?essential"_sv, false},
    {"F"_sv, "?false"_sv, false},
    {"g"_sv, "?garbage"_sv, false},
@@ -447,6 +457,24 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::DpkgBreaks);
    if (node->matches("?enhances", 1, 1))
       return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Enhances);
+   if (node->matches("?reverse-depends", 1, 1))
+      return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]));
+   if (node->matches("?reverse-predepends", 1, 1))
+      return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]), pkgCache::Dep::PreDepends);
+   if (node->matches("?reverse-suggests", 1, 1))
+      return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Suggests);
+   if (node->matches("?reverse-recommends", 1, 1))
+      return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Recommends);
+   if (node->matches("?reverse-conflicts", 1, 1))
+      return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Conflicts);
+   if (node->matches("?reverse-replaces", 1, 1))
+      return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Replaces);
+   if (node->matches("?reverse-obsoletes", 1, 1))
+      return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Obsoletes);
+   if (node->matches("?reverse-breaks", 1, 1))
+      return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]), pkgCache::Dep::DpkgBreaks);
+   if (node->matches("?reverse-enhances", 1, 1))
+      return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Enhances);
    if (node->matches("?essential", 0, 0))
       return std::make_unique<Patterns::PackageIsEssential>();
    if (node->matches("?exact-name", 1, 1))

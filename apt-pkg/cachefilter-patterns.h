@@ -317,6 +317,27 @@ struct APT_HIDDEN VersionDepends : public VersionAnyMatcher
    }
 };
 
+struct APT_HIDDEN PackageReverseDepends : public PackageMatcher
+{
+   std::unique_ptr<APT::CacheFilter::Matcher> base;
+   pkgCache::Dep::DepType type;
+   PackageReverseDepends(std::unique_ptr<APT::CacheFilter::Matcher> base, pkgCache::Dep::DepType type = pkgCache::Dep::Depends) : base(std::move(base)), type(type) {}
+   bool operator()(pkgCache::PkgIterator const &Pkg) override
+   {
+      for (auto D = Pkg.RevDependsList(); not D.end(); D++)
+      {
+	 if (D.IsImplicit())
+	    continue;
+	 if (D->Type != type)
+	    continue;
+	 if ((*base)(D.ParentVer()))
+	    return true;
+      }
+
+      return false;
+   }
+};
+
 struct APT_HIDDEN VersionIsAnyVersion : public VersionAnyMatcher
 {
    std::unique_ptr<APT::CacheFilter::Matcher> base;
