@@ -42,7 +42,8 @@ entity file in the manpages xml source, so the syntax has to be valid!
 The keyring-* settings are additionally used also in the creation of the
 apt-key script and the keyring-package in particular as a dependency for apt.
 
-The field current-codename is optional and can be used in sources.list.in.
+The fields you define here starting with `vendor-` and can be reused in
+this file as well as in sources.list.in.
 
 The fields sourceslist-list-format and sourceslist-sources-format are used as
 examples in the sources.list manpage and the first one is additionally
@@ -62,7 +63,11 @@ You can use some placeholders in this file, namely:
 * &sourceslist-list-format;
 with the value you would expect based on the name.
 
-The placeholder &current-codename; is yours and can be set in apt-vendor.ent
+The fields starting with `vendor-` defined in your apt-vendor.ent can be
+used here. If you have e.g. defined a `vendor-codename` field you can
+use its value with `&vendor-codename;`. Note that currently new fields
+are only picked up on a clean rebuild. This could be fixed with some
+work on the build system: Patches welcome!
 
 
 == apt.conf-*

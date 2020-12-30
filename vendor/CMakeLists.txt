@@ -9,16 +9,21 @@ else()
     message(STATUS "Detected vendor: ${CURRENT_VENDOR} (cached)")
 endif()
 
+execute_process(COMMAND ${PROJECT_SOURCE_DIR}/vendor/getinfo
+                        --vendor ${CURRENT_VENDOR} vendorfields
+                COMMAND tr "\n" ";"
+                OUTPUT_VARIABLE VENDORFIELDS OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 # Handle sources.list example
 add_vendor_file(OUTPUT sources.list
                 INPUT "${CURRENT_VENDOR}/sources.list.in"
                 MODE 644
                 VARIABLES sourceslist-list-format
+                          ${VENDORFIELDS}
                           debian-stable-codename
                           debian-oldstable-codename
                           debian-testing-codename
-                          ubuntu-codename
-                          current-codename)
+                          ubuntu-codename)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/sources.list
         DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
 
