@@ -39,11 +39,21 @@ function(add_vendor_file)
         COMMAND chmod ${AVF_MODE} ${out}
         DEPENDS ${in}
                 ${PROJECT_SOURCE_DIR}/doc/apt-verbatim.ent
-                ${PROJECT_SOURCE_DIR}/vendor/${CURRENT_VENDOR}/apt-vendor.ent
                 ${PROJECT_SOURCE_DIR}/vendor/getinfo
                 ${PROJECT_SOURCE_DIR}/CMake/vendor_substitute.cmake
         VERBATIM
     )
+    if (EXISTS "${PROJECT_SOURCE_DIR}/vendor/${CURRENT_VENDOR}/apt-vendor.ent")
+        add_custom_command(
+            OUTPUT ${out}
+            DEPENDS "${PROJECT_SOURCE_DIR}/vendor/${CURRENT_VENDOR}/apt-vendor.ent"
+            APPEND)
+    elseif (EXISTS "${PROJECT_BINARY_DIR}/vendor/${CURRENT_VENDOR}/apt-vendor.ent")
+        add_custom_command(
+            OUTPUT ${out}
+            DEPENDS "${PROJECT_BINARY_DIR}/vendor/${CURRENT_VENDOR}/apt-vendor.ent"
+            APPEND)
+    endif()
 
     # Would like to use ${AVF_OUTPUT} as target name, but then ninja gets
     # cycles.

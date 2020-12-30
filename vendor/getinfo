@@ -36,18 +36,37 @@ getcurrent() {
 	return 0
 }
 
-if [ "$1" = "--vendor" ]; then
-	CURRENT_VENDOR="$2"
-	shift 2
-else
+while [ -n "$1" ]; do
+	if [ "$1" = "--vendor" ]; then
+		CURRENT_VENDOR="$2"
+		shift 2
+	elif [ "$1" = "--build" ]; then
+		CURRENT_BUILD="$2"
+		shift 2
+	else
+		break
+	fi
+done
+if [ -z "$CURRENT_VENDOR" ]; then
 	CURRENT_VENDOR=$(getcurrent)
 fi
-INFO="$(readlink -f "${BASEDIR}/$CURRENT_VENDOR/apt-vendor.ent")"
+aptvendorfilename() {
+	echo "${1}/${CURRENT_VENDOR}/apt-vendor.ent"
+}
+if [ -r "$(aptvendorfilename "$BASEDIR")" ]; then
+	INFO="$(readlink -f "$(aptvendorfilename "$BASEDIR")")"
+elif [ -n "$CURRENT_BUILD" -a -r "$(aptvendorfilename "${CURRENT_BUILD}/vendor")" ]; then
+	INFO="$(readlink -f "$(aptvendorfilename "${CURRENT_BUILD}/vendor")")"
+elif [ -r "$(aptvendorfilename "$BASEDIR").sh" ]; then
+	INFO="$(readlink -f "$(find "${BASEDIR}/.." -name 'apt-vendor.ent' | grep -m 1 "/${CURRENT_VENDOR}/apt-vendor.ent")")"
+fi
 VERBATIM="${BASEDIR}/../doc/apt-verbatim.ent"
 
-if [ -z "$INFO" ] || [ ! -e "$INFO" ]; then
-	echo >&2 'The current vendor is not valid or not chosen by the buildsystem yet.'
-	exit 1
+if [ -z "$INFO" ] || [ ! -r "$INFO" ]; then
+	if [ ! -r "$(aptvendorfilename "${BASEDIR}").sh" ]; then
+		echo >&2 'The current vendor is not valid or not chosen by the buildsystem yet.'
+		exit 1
+	fi
 fi
 
 getrawfield() {

@@ -141,6 +141,7 @@ function(xsltproc_one)
         --stringparam chunk.quietly yes
         --stringparam man.output.quietly yes
         --path ${PROJECT_SOURCE_DIR}/vendor/${CURRENT_VENDOR}/
+        --path ${PROJECT_BINARY_DIR}/vendor/${CURRENT_VENDOR}/
         --path ${CMAKE_CURRENT_SOURCE_DIR}/
     )
 

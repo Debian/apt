@@ -1,6 +1,7 @@
 # Determine the current vendor, export to CURRENT_VENDOR
 if (NOT DEFINED CURRENT_VENDOR)
-    execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/getinfo current
+    execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/getinfo
+                            --build "${PROJECT_BINARY_DIR}" current
                     OUTPUT_VARIABLE CURRENT_VENDOR_OUT OUTPUT_STRIP_TRAILING_WHITESPACE)
 
     set(CURRENT_VENDOR "${CURRENT_VENDOR_OUT}" CACHE STRING "Select the system vendor")
@@ -9,7 +10,12 @@ else()
     message(STATUS "Detected vendor: ${CURRENT_VENDOR} (cached)")
 endif()
 
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CURRENT_VENDOR}/CMakeLists.txt")
+    add_subdirectory(${CURRENT_VENDOR})
+endif()
+
 execute_process(COMMAND ${PROJECT_SOURCE_DIR}/vendor/getinfo
+                        --build "${PROJECT_BINARY_DIR}"
                         --vendor ${CURRENT_VENDOR} vendorfields
                 COMMAND tr "\n" ";"
                 OUTPUT_VARIABLE VENDORFIELDS OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -36,7 +42,3 @@ foreach(file ${conffiles})
             DESTINATION "${CMAKE_INSTALL_SYSCONFDIR}/apt/apt.conf.d/"
             RENAME "${confname}")
 endforeach()
-
-if (EXISTS "${CURRENT_VENDOR}/CMakeLists.txt")
-    add_subdirectory(${CURRENT_VENDOR})
-endif()

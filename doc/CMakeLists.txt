@@ -16,10 +16,17 @@ set(TRANSLATED_ENTITIES
     apt.ent
 )
 
-set(ENTITIES
-    apt-verbatim.ent
-    ../vendor/${CURRENT_VENDOR}/apt-vendor.ent
-)
+if (EXISTS "${PROJECT_SOURCE_DIR}/vendor/${CURRENT_VENDOR}/apt-vendor.ent")
+    set(ENTITIES
+        apt-verbatim.ent
+        "${PROJECT_SOURCE_DIR}/vendor/${CURRENT_VENDOR}/apt-vendor.ent"
+    )
+elseif (EXISTS "${PROJECT_BINARY_DIR}/vendor/${CURRENT_VENDOR}/apt-vendor.ent")
+    set(ENTITIES
+        apt-verbatim.ent
+        "${PROJECT_BINARY_DIR}/vendor/${CURRENT_VENDOR}/apt-vendor.ent"
+    )
+endif()
 
 if(WITH_DOC)
 add_docbook(apt-doc HTML TEXT ALL
