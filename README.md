@@ -213,3 +213,4 @@ targeted at developers of related programs or only of special interest.
 * [Download and package installation progress reporting details](./doc/progress-reporting.md)
 * [Remarks on DNS SRV record support in APT](./doc/srv-records-support.md)
 * [Protocol specification of APT interfacing with external hooks via JSON](./doc/json-hooks-protocol.md)
+* [Vendor system to avoid forking for distro-specific configuration](./vendor/README.md)
