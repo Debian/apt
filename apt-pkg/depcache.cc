@@ -9,6 +9,7 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/algorithms.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
@@ -43,6 +44,23 @@
 
 using std::string;
 
+// helper for kernel autoremoval				  	/*{{{*/
+
+/** \brief Returns \b true for packages matching a regular
+ *  expression in APT::NeverAutoRemove.
+ */
+class APT_PUBLIC DefaultRootSetFunc2 : public pkgDepCache::DefaultRootSetFunc
+{
+   std::unique_ptr<APT::CacheFilter::Matcher> Kernels;
+
+   public:
+   DefaultRootSetFunc2(pkgCache *cache) : Kernels(APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(cache)){};
+   virtual ~DefaultRootSetFunc2(){};
+
+   bool InRootSet(const pkgCache::PkgIterator &pkg) APT_OVERRIDE { return pkg.end() == false && ((*Kernels)(pkg) || DefaultRootSetFunc::InRootSet(pkg)); };
+};
+
+									/*}}}*/
 // helper for Install-Recommends-Sections and Never-MarkAuto-Sections	/*{{{*/
 static bool 
 ConfigValueInSubTree(const char* SubTree, const char *needle)
@@ -95,10 +113,14 @@ pkgDepCache::ActionGroup::~ActionGroup()
 // DepCache::pkgDepCache - Constructors					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgDepCache::pkgDepCache(pkgCache * const pCache,Policy * const Plcy) :
-  group_level(0), Cache(pCache), PkgState(0), DepState(0),
-   iUsrSize(0), iDownloadSize(0), iInstCount(0), iDelCount(0), iKeepCount(0),
-   iBrokenCount(0), iPolicyBrokenCount(0), iBadCount(0), d(NULL)
+
+struct pkgDepCache::Private
+{
+   std::unique_ptr<InRootSetFunc> inRootSetFunc;
+};
+pkgDepCache::pkgDepCache(pkgCache *const pCache, Policy *const Plcy) : group_level(0), Cache(pCache), PkgState(0), DepState(0),
+								       iUsrSize(0), iDownloadSize(0), iInstCount(0), iDelCount(0), iKeepCount(0),
+								       iBrokenCount(0), iPolicyBrokenCount(0), iBadCount(0), d(new Private)
 {
    DebugMarker = _config->FindB("Debug::pkgDepCache::Marker", false);
    DebugAutoInstall = _config->FindB("Debug::pkgDepCache::AutoInstall", false);
@@ -116,6 +138,7 @@ pkgDepCache::~pkgDepCache()
    delete [] PkgState;
    delete [] DepState;
    delete delLocalPolicy;
+   delete d;
 }
 									/*}}}*/
 bool pkgDepCache::CheckConsistency(char const *const msgtag)		/*{{{*/
@@ -2148,14 +2171,21 @@ APT_PURE signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator
 									/*}}}*/
 pkgDepCache::InRootSetFunc *pkgDepCache::GetRootSetFunc()		/*{{{*/
 {
-  DefaultRootSetFunc *f = new DefaultRootSetFunc;
-  if(f->wasConstructedSuccessfully())
-    return f;
-  else
-    {
+   DefaultRootSetFunc *f = new DefaultRootSetFunc2(&GetCache());
+   if (f->wasConstructedSuccessfully())
+      return f;
+   else
+   {
       delete f;
       return NULL;
-    }
+   }
+}
+
+pkgDepCache::InRootSetFunc *pkgDepCache::GetCachedRootSetFunc()
+{
+   if (d->inRootSetFunc == nullptr)
+      d->inRootSetFunc.reset(GetRootSetFunc());
+   return d->inRootSetFunc.get();
 }
 									/*}}}*/
 bool pkgDepCache::MarkFollowsRecommends()
@@ -2369,9 +2399,9 @@ bool pkgDepCache::MarkAndSweep(InRootSetFunc &rootFunc)
 }
 bool pkgDepCache::MarkAndSweep()
 {
-   std::unique_ptr<InRootSetFunc> f(GetRootSetFunc());
-   if(f.get() != NULL)
-      return MarkAndSweep(*f.get());
+   InRootSetFunc *f(GetCachedRootSetFunc());
+   if (f != NULL)
+      return MarkAndSweep(*f);
    else
       return false;
 }

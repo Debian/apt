@@ -54,6 +54,9 @@ APT
   Build-Profiles "<STRING_OR_LIST>";
 
   NeverAutoRemove "<LIST>";  // list of package name regexes
+  LastInstalledKernel "<STRING>"; // last installed kernel version
+  VersionedKernelPackages "<LIST>"; // regular expressions to be protected from autoremoval (kernel uname will be appended)
+  Protect-Kernels "<BOOL>"; // whether to protect installed kernels against autoremoval (default: true)
 
   // Options for apt-get
   Get
@@ -77,7 +80,9 @@ APT
      Remove "<BOOL>";
      AllowUnauthenticated "<BOOL>"; // skip security
 
-     AutomaticRemove "<BOOL>";
+     AutomaticRemove "<BOOL>" {
+        "Kernels" "<BOOL>";     // Allow removing kernels even if not removing other packages (true for dist-upgrade)
+     };
      HideAutoRemove "<STRING_OR_BOOL>"; // yes, no, small
 
      Simulate "<BOOL>";
