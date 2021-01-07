@@ -153,7 +153,31 @@
    </variablelist>
  </refsect1>
 
+ <refsect1><title>Package relationship patterns</title>
+   <para>These patterns match specific package versions that depend/conflict with some other packages.</para>
+   <variablelist>
+     <varlistentry>
+     <term><code>?depends(PATTERN)</code></term><term><code>~DPATTERN</code></term>
+     <term><code>?pre-depends(PATTERN)</code></term><term><code>~DPre-Depends:PATTERN</code></term>
+     <term><code>?suggests(PATTERN)</code></term><term><code>~DSuggests:PATTERN</code></term>
+     <term><code>?conflicts(PATTERN)</code></term><term><code>~DConflicts:PATTERN</code></term>
+     <term><code>?replaces(PATTERN)</code></term><term><code>~DReplaces:PATTERN</code></term>
+     <term><code>?obsoletes(PATTERN)</code></term><term><code>~DObsoletes:PATTERN</code></term>
+     <term><code>?breaks(PATTERN)</code></term><term><code>~DBreaks:PATTERN</code></term>
+     <term><code>?enhances(PATTERN)</code></term><term><code>~DEnhances:PATTERN</code></term>
+     <listitem><para>Selects versions depending/pre-depending/suggesting/conflicting/etc on/with/ packages matching PATTERN.</para></listitem>
+     </varlistentry>
+     <varlistentry>
+       <term><code>?reverse-<emphasis>depType</emphasis>(PATTERN)</code></term>
+       <term><code>~R<emphasis>DepType</emphasis>:PATTERN</code></term>
+       <listitem><para>Opposite of <code>?depends</code> and friends - selects all packages that have reverse-dependencies (versions) matching PATTERN.</para>
+         <para><emphasis>depType</emphasis> is one of the dependency types such as <code>depends</code>, so that we don't have to repeat the entire list from the first paragraph here.</para>
+       </listitem>
+     </varlistentry>
 
+  </variablelist>
+
+ </refsect1>
  <refsect1><title>Examples</title>
    <variablelist>
      <varlistentry><term><code>apt remove ?garbage</code></term>
@@ -205,6 +229,9 @@
       <listitem>
           <para>Grouping patterns with <code>(...)</code> or writing <code>?or(A,B)</code> as <code>A|B</code> are not supported. We
           do not believe that the use of <code>|</code> is that common, and the grouping is not necessary without it.</para>
+      </listitem>
+      <listitem>
+         <para>Dependency types for ~D and related operators need to be specified in the canonical case.</para>
       </listitem>
    </itemizedlist>
  </refsect1>
