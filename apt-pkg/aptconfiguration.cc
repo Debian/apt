@@ -481,7 +481,7 @@ std::string const Configuration::getBuildProfilesString() {
 }
 									/*}}}*/
 
-// getMachineID - supported data.tar extensions		/*{{{*/
+// getMachineID - read /etc/machine-id into a string		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 std::string const Configuration::getMachineID()
