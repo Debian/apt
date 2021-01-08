@@ -1512,19 +1512,19 @@ std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
 
    if (not bootedVersion.empty())
    {
-      if (Debug || false)
+      if (Debug)
 	 std::clog << "Keeping booted kernel " << bootedVersion << std::endl;
       keep.insert(bootedVersion);
    }
    if (not lastInstalledVersion.empty())
    {
-      if (Debug || false)
+      if (Debug)
 	 std::clog << "Keeping installed kernel " << lastInstalledVersion << std::endl;
       keep.insert(lastInstalledVersion);
    }
    if (latest != version2unames.rend())
    {
-      if (Debug || false)
+      if (Debug)
 	 std::clog << "Keeping latest kernel " << latest->first << std::endl;
       keep.insert(latest->first);
    }
