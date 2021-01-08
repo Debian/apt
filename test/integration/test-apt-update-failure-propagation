@@ -88,3 +88,9 @@ testwarning aptget update -o Dir::Bin::Methods::https="${OLDMETHODS}/https"
 testsuccess grep '^W: Failed to fetch https://localhost:666/dists/stable/InRelease ' rootdir/tmp/testwarning.output
 testequal 'W: Some index files failed to download. They have been ignored, or old ones used instead.' tail -n 1 rootdir/tmp/testwarning.output
 posttest
+
+pretest 'error-mode=any' 'doom port'
+testfailure aptget update -o Dir::Bin::Methods::https="${OLDMETHODS}/https" -eany
+testsuccess grep '^E: Failed to fetch https://localhost:666/dists/stable/InRelease ' rootdir/tmp/testfailure.output
+testequal 'E: Some index files failed to download. They have been ignored, or old ones used instead.' tail -n 1 rootdir/tmp/testfailure.output
+posttest

@@ -206,6 +206,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "allow-releaseinfo-change-codename", "Acquire::AllowReleaseInfoChange::Codename", 0);
       addArg(0, "allow-releaseinfo-change-suite", "Acquire::AllowReleaseInfoChange::Suite", 0);
       addArg(0, "allow-releaseinfo-change-defaultpin", "Acquire::AllowReleaseInfoChange::DefaultPin", 0);
+      addArg('e', "error-on", "APT::Update::Error-Mode", CommandLine::HasArg);
    }
    else if (CmdMatches("source"))
    {
