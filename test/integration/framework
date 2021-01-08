@@ -204,6 +204,9 @@ aptinternalplanner() { runapt "${APTINTERNALPLANNER}" "$@"; }
 dpkg() {
 	"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "$@"
 }
+dpkgquery() {
+	command dpkg-query --admindir="${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg" "$@"
+}
 dpkg_version() {
 	command perl -MDpkg -E 'say $Dpkg::PROGVERSION'
 }
@@ -372,7 +375,8 @@ setupenvironment() {
 	mkdir -p usr/bin var/cache var/lib var/log var/crash tmp
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	mkdir -p usr/lib/apt/solvers usr/lib/apt/planners
-	touch var/lib/dpkg/available
+	touch var/lib/dpkg/available var/lib/dpkg/lock
+	echo '1' > var/lib/dpkg/info/format
 	ln -s "${METHODSDIR}" usr/lib/apt/methods
 	ln -s "${APTDUMPSOLVER}" usr/lib/apt/solvers/dump
 	ln -s "${APTDUMPSOLVER}" usr/lib/apt/planners/dump
@@ -1049,10 +1053,12 @@ Version: $VERSION" >> "$FILE"
 		test -z "$DEPENDENCIES" || printf "%b\n" "$DEPENDENCIES" >> "$FILE"
 		printf "%b\n" "Description: $DESCRIPTION" >> "$FILE"
 		echo >> "$FILE"
-		if [ "$(dpkg-query -W --showformat='${Multi-Arch}')" = 'same' ]; then
+		if [ "$(dpkgquery -W --showformat='${Multi-Arch}' "${NAME}:${arch}" 2>/dev/null)" = 'same' ]; then
 			echo -n > "${INFO}/${NAME}:${arch}.list"
+			echo -n > "${INFO}/${NAME}:${arch}.md5sums"
 		else
 			echo -n > "${INFO}/${NAME}.list"
+			echo -n > "${INFO}/${NAME}.md5sums"
 		fi
 	done
 }

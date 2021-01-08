@@ -252,6 +252,7 @@ testfailureequal "$NEEDSFOO2NATIVE" aptget install needsfoover2 -s
 solveableinsinglearch2
 solveableinsinglearch3
 
+testempty dpkg -C
 msgmsg 'multi-arch with barbarian archs'
 configarchitecture 'amd64' 'i386'
 insertinstalledpackage 'foo' 'armel' '1' 'Multi-Arch: allowed'
