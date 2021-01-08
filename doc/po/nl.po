@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 2.1.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-09-10 22:28+0200\n"
+"POT-Creation-Date: 2021-01-08 22:11+0100\n"
 "PO-Revision-Date: 2020-08-18 22:34+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -2220,6 +2220,16 @@ msgstr ""
 "Voegt het opgegeven bestand toe als een metadatabron. Kan herhaald worden om "
 "meerdere bestanden toe te voegen. Zie voor verdere details de beschrijving "
 "van de optie <option>--with-source</option> in &apt-cache;."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term><option><replaceable>
+#: apt-get.8.xml
+msgid "any"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid "Fail the update command if any error occured, even a transient one."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml apt-cache.8.xml apt-key.8.xml apt-mark.8.xml apt.conf.5.xml
@@ -6489,11 +6499,18 @@ msgstr "prioriteit 1"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml
+#, fuzzy
+#| msgid ""
+#| "to the versions coming from archives which in their <filename>Release</"
+#| "filename> files are marked as \"NotAutomatic: yes\" but <emphasis>not</"
+#| "emphasis> as \"ButAutomaticUpgrades: yes\" like the Debian "
+#| "<literal>experimental</literal> archive."
 msgid ""
 "to the versions coming from archives which in their <filename>Release</"
 "filename> files are marked as \"NotAutomatic: yes\" but <emphasis>not</"
 "emphasis> as \"ButAutomaticUpgrades: yes\" like the Debian "
-"<literal>experimental</literal> archive."
+"<literal>experimental</literal> archive, as well as versions that are not "
+"phased on this systems."
 msgstr ""
 "aan de versies die afkomstig zijn uit archieven die volgens hun "
 "<filename>Release</filename>-bestanden gemarkeerd staan als \"NotAutomatic: "
@@ -6668,6 +6685,40 @@ msgstr ""
 "command> of <command>apt-get upgrade</command> uitgevoerd wordt, omdat "
 "minstens <emphasis>een</emphasis> van de beschikbare versies een hogere "
 "prioriteit heeft dan de geïnstalleerde versie."
+
+#. type: Content of: <refentry><refsect1><refsect2><title>
+#: apt_preferences.5.xml
+msgid "Phased Updates"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"APT understands a field called <literal>Phased-Update-Percentage</literal> "
+"which can be used to control the rollout of a new version. It is an integer "
+"between 0 and 100."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"A system's eligibility to a phased update is determined by seeding random "
+"number generator with the package source name, the version number, and /etc/"
+"machine-id, and then calculating an integer in the range [0, 100].  If this "
+"integer is larger than the <literal>Phased-Update-Percentage</literal>, the "
+"version is pinned to 1, and thus held back. Otherwise, normal policy rules "
+"apply."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"In case you have multiple systems that you want to receive the same set of "
+"updates, you can set <code>APT::Machine-ID</code> to a UUID such that they "
+"all phase the same, or set <code>APT::Get::Never-Include-Phased-Updates</"
+"code> or <code>APT::Get::Always-Include-Phased-Updates</code> to true such "
+"that APT will never/always consider phased updates."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
@@ -11893,6 +11944,168 @@ msgstr ""
 "Selecteert versies waarvan de versietekenreeks overeenkomt met de opgegeven "
 "reguliere expressie."
 
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "Package patterns"
+msgid "Package relationship patterns"
+msgstr "Pakketpatronen"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "These patterns select specific versions of a package."
+msgid ""
+"These patterns match specific package versions that depend/conflict with "
+"some other packages."
+msgstr "Deze patronen selecteren specifieke versies van een pakket."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>?not(PATTERN)</code>"
+msgid "<code>?depends(PATTERN)</code>"
+msgstr "<code>?not(PATROON)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>!PATTERN</code>"
+msgid "<code>~DPATTERN</code>"
+msgstr "<code>!PATROON</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>?not(PATTERN)</code>"
+msgid "<code>?pre-depends(PATTERN)</code>"
+msgstr "<code>?not(PATROON)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>!PATTERN</code>"
+msgid "<code>~DPre-Depends:PATTERN</code>"
+msgstr "<code>!PATROON</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>?not(PATTERN)</code>"
+msgid "<code>?suggests(PATTERN)</code>"
+msgstr "<code>?not(PATROON)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>!PATTERN</code>"
+msgid "<code>~DSuggests:PATTERN</code>"
+msgstr "<code>!PATROON</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>?not(PATTERN)</code>"
+msgid "<code>?conflicts(PATTERN)</code>"
+msgstr "<code>?not(PATROON)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>?not(PATTERN)</code>"
+msgid "<code>~DConflicts:PATTERN</code>"
+msgstr "<code>?not(PATROON)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>(PATTERN)</code>"
+msgid "<code>?replaces(PATTERN)</code>"
+msgstr "<code>(PATROON)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>!PATTERN</code>"
+msgid "<code>~DReplaces:PATTERN</code>"
+msgstr "<code>!PATROON</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>?not(PATTERN)</code>"
+msgid "<code>?obsoletes(PATTERN)</code>"
+msgstr "<code>?not(PATROON)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>?not(PATTERN)</code>"
+msgid "<code>~DObsoletes:PATTERN</code>"
+msgstr "<code>?not(PATROON)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>(PATTERN)</code>"
+msgid "<code>?breaks(PATTERN)</code>"
+msgstr "<code>(PATROON)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>!PATTERN</code>"
+msgid "<code>~DBreaks:PATTERN</code>"
+msgstr "<code>!PATROON</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>?not(PATTERN)</code>"
+msgid "<code>?enhances(PATTERN)</code>"
+msgstr "<code>?not(PATROON)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>!PATTERN</code>"
+msgid "<code>~DEnhances:PATTERN</code>"
+msgstr "<code>!PATROON</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions depending/pre-depending/suggesting/conflicting/etc on/with/ "
+"packages matching PATTERN."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?reverse-<replaceable>depType</replaceable>(PATTERN)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<optional><replaceable>&synopsis-prefix;</replaceable></optional>"
+msgid "<code>~R<replaceable>DepType</replaceable>:PATTERN</code>"
+msgstr "<optional><replaceable>&synopsis-prefix;</replaceable></optional>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Opposite of <code>?depends</code> and friends - selects all packages that "
+"have reverse-dependencies (versions) matching PATTERN."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"<replaceable>depType</replaceable> is one of the dependency types such as "
+"<code>depends</code>, so that we don't have to repeat the entire list from "
+"the first paragraph here."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
 msgid "<code>apt remove ?garbage</code>"
@@ -12023,6 +12236,13 @@ msgstr ""
 "schrijven als <code>A|B</code> worden niet ondersteund. We zijn niet van "
 "mening dat het gebruik van <code>|</code> erg verspreid is en dat zonder dit "
 "de groepering niet noodzakelijk is."
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Dependency types for ~D and related operators need to be specified in the "
+"canonical case."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-patterns.7.xml

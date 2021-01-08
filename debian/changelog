@@ -1,3 +1,41 @@
+apt (2.1.16) unstable; urgency=medium
+
+  [ Faidon Liambotis ]
+  * Various fixes to http and connect method
+    - basehttp: also consider Access when a Server's URI
+    - connect: convert a C-style string to std::string
+    - connect: use ServiceNameOrPort, not Port, as the cache key
+
+  [ Julian Andres Klode ]
+  * patterns: Add dependency patterns ?depends, ?conflicts, etc.
+    Note that the -broken- variants are not implemented yet.
+  * Rewrite of the kernel autoremoval code:
+    - Determine autoremovable kernels at run-time (LP: #1615381), this fixes the
+      issue where apt could consider a running kernel autoremovable
+    - Automatically remove unused kernels on apt {full,dist}-upgrade.
+      This helps ensuring that we don't run out of /boot space.
+    - Only keep up to 3 (not 4) kernels.
+      Ubuntu boot partitions were sized for 3 kernels, not 4.
+  * Bump codenames to bullseye/hirsute and adjust -security codename for
+    bullseye (Closes: #969932)
+  * Ignore failures from immediate configuration. This does not change the
+    actual installation ordering - we never passed the return code to the
+    caller and installation went underway anyway if it could be ordered at a
+    later stage, this just removes spurious after-the-fact errors.
+    (Closes: #973305, #188161, #211075, #649588) (LP: #1871268)
+  * Add support for Phased-Update-Percentage, previously used only by
+    update-manager.
+  * Implement update --error-on=any so that scripts can reliably check for
+    transient failures as well. (Closes: #594813)
+
+  [ Demi M. Obenour ]
+  * test/integration/framework: Be compatible with Bash
+
+  [ Vangelis Skarmoutsos ]
+  * Greek program translation update
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 08 Jan 2021 21:49:15 +0100
+
 apt (2.1.15) unstable; urgency=medium
 
   [ Julian Andres Klode ]

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2020-08-04 12:40+0200\n"
+"POT-Creation-Date: 2021-01-08 22:11+0100\n"
 "PO-Revision-Date: 2017-03-27 19:05+0200\n"
 "Last-Translator: Beatrice Torracca <beatricet@libero.it>\n"
 "Language-Team: Italian <debian-l10n-italian@lists.debian.org>\n"
@@ -2156,6 +2156,16 @@ msgstr ""
 "Aggiunge il file specificato come fonte per metadati. Può essere ripetuto "
 "per aggiungere più file. Vedere la descrizione di <option>--with-source</"
 "option> in &apt-cache; per ulteriori dettagli."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term><option><replaceable>
+#: apt-get.8.xml
+msgid "any"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid "Fail the update command if any error occured, even a transient one."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml apt-cache.8.xml apt-key.8.xml apt-mark.8.xml apt.conf.5.xml
@@ -6326,11 +6336,18 @@ msgstr "priorità 1"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml
+#, fuzzy
+#| msgid ""
+#| "to the versions coming from archives which in their <filename>Release</"
+#| "filename> files are marked as \"NotAutomatic: yes\" but <emphasis>not</"
+#| "emphasis> as \"ButAutomaticUpgrades: yes\" like the Debian "
+#| "<literal>experimental</literal> archive."
 msgid ""
 "to the versions coming from archives which in their <filename>Release</"
 "filename> files are marked as \"NotAutomatic: yes\" but <emphasis>not</"
 "emphasis> as \"ButAutomaticUpgrades: yes\" like the Debian "
-"<literal>experimental</literal> archive."
+"<literal>experimental</literal> archive, as well as versions that are not "
+"phased on this systems."
 msgstr ""
 "alle versioni che provengono da archivi che, nei loro file "
 "<filename>Release</filename>, sono contrassegnati come «NotAutomatic: yes», "
@@ -6503,6 +6520,40 @@ msgstr ""
 "pacchetto</replaceable></command> o <command>apt-get upgrade</command>, "
 "perché almeno <emphasis>una</emphasis> delle versioni disponibili ha una "
 "priorità più alta di quella installata."
+
+#. type: Content of: <refentry><refsect1><refsect2><title>
+#: apt_preferences.5.xml
+msgid "Phased Updates"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"APT understands a field called <literal>Phased-Update-Percentage</literal> "
+"which can be used to control the rollout of a new version. It is an integer "
+"between 0 and 100."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"A system's eligibility to a phased update is determined by seeding random "
+"number generator with the package source name, the version number, and /etc/"
+"machine-id, and then calculating an integer in the range [0, 100].  If this "
+"integer is larger than the <literal>Phased-Update-Percentage</literal>, the "
+"version is pinned to 1, and thus held back. Otherwise, normal policy rules "
+"apply."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"In case you have multiple systems that you want to receive the same set of "
+"updates, you can set <code>APT::Machine-ID</code> to a UUID such that they "
+"all phase the same, or set <code>APT::Get::Never-Include-Phased-Updates</"
+"code> or <code>APT::Get::Always-Include-Phased-Updates</code> to true such "
+"that APT will never/always consider phased updates."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
@@ -11402,6 +11453,168 @@ msgid ""
 "expression."
 msgstr ""
 
+#. type: Content of: <refentry><refsect1><title>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "Packages"
+msgid "Package relationship patterns"
+msgstr "Packages"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-patterns.7.xml
+msgid ""
+"These patterns match specific package versions that depend/conflict with "
+"some other packages."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?depends(PATTERN)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~DPATTERN</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?pre-depends(PATTERN)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~DPre-Depends:PATTERN</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?suggests(PATTERN)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~DSuggests:PATTERN</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?conflicts(PATTERN)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~DConflicts:PATTERN</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?replaces(PATTERN)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~DReplaces:PATTERN</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?obsoletes(PATTERN)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~DObsoletes:PATTERN</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?breaks(PATTERN)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~DBreaks:PATTERN</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?enhances(PATTERN)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~DEnhances:PATTERN</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions depending/pre-depending/suggesting/conflicting/etc on/with/ "
+"packages matching PATTERN."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "depends <replaceable>pkg(s)</replaceable>"
+msgid "<code>?reverse-<replaceable>depType</replaceable>(PATTERN)</code>"
+msgstr "depends <replaceable>pacchetti</replaceable>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "depends <replaceable>pkg(s)</replaceable>"
+msgid "<code>~R<replaceable>DepType</replaceable>:PATTERN</code>"
+msgstr "depends <replaceable>pacchetti</replaceable>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Opposite of <code>?depends</code> and friends - selects all packages that "
+"have reverse-dependencies (versions) matching PATTERN."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"<replaceable>depType</replaceable> is one of the dependency types such as "
+"<code>depends</code>, so that we don't have to repeat the entire list from "
+"the first paragraph here."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
 msgid "<code>apt remove ?garbage</code>"
@@ -11506,6 +11719,13 @@ msgid ""
 "Grouping patterns with <code>(...)</code> or writing <code>?or(A,B)</code> "
 "as <code>A|B</code> are not supported. We do not believe that the use of "
 "<code>|</code> is that common, and the grouping is not necessary without it."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Dependency types for ~D and related operators need to be specified in the "
+"canonical case."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
@@ -14614,9 +14834,6 @@ msgstr "che userà gli archivi già scaricati e presenti sul disco."
 #~ "soddisfa la ricerca; se viene fornita l'opzione <option>--names-only</"
 #~ "option> la ricerca viene fatta solo sul nome del pacchetto e non sulla "
 #~ "descrizione lunga."
-
-#~ msgid "depends <replaceable>pkg(s)</replaceable>"
-#~ msgstr "depends <replaceable>pacchetti</replaceable>"
 
 #~ msgid "rdepends <replaceable>pkg(s)</replaceable>"
 #~ msgstr "rdepends <replaceable>pacchetti</replaceable>"

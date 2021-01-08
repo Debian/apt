@@ -1,7 +1,8 @@
-apt (2.1.16) UNRELEASED; urgency=medium
+apt (2.1.16) unstable; urgency=medium
 
-  Automatically remove unused kernels on dist-upgrade. To revert to previous
-  behavior, set APT::Get::AutomaticRemove::Kernels to false.
+  Automatically remove unused kernels on apt {dist,full}-upgrade. To revert
+  to previous behavior, set APT::Get::AutomaticRemove::Kernels to false or
+  pass --no-auto-remove to the command. apt-get remains unchanged.
 
   Packages files can now set the Phased-Update-Percentage field to restrict
   update rollout to a specified percentage of machines. Previously, this has
@@ -10,7 +11,7 @@ apt (2.1.16) UNRELEASED; urgency=medium
   the same updates. Phased updates are disabled in chroots for now to not
   break buildd-style setups.
 
- -- Julian Andres Klode <jak@debian.org>  Mon, 04 Jan 2021 10:47:14 +0100
+ -- Julian Andres Klode <jak@debian.org>  Fri, 08 Jan 2021 22:01:50 +0100
 
 apt (1.9.11) experimental; urgency=medium
 
