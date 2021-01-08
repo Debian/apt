@@ -506,8 +506,7 @@ static void BinaryCommandSpecificConfiguration(char const * const Binary, char c
       // we support it anyhow, but allow it on the commandline to take effect
       // even through it isn't documented as a user who doesn't want it wouldn't
       // ask for it
-      _config->Set("Binary::apt-get::APT::Get::AutomaticRemove", false);
-      _config->Set("Binary::apt::APT::Get::AutomaticRemove", false);
+      _config->Set("APT::Get::AutomaticRemove", "");
    }
 }
 #undef CmdMatches
