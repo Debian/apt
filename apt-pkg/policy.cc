@@ -301,7 +301,7 @@ static inline bool ExcludePhased(std::string machineID, pkgCache::VerIterator co
        || APT::Configuration::isChroot())
       return false;
 
-   std::string seedStr = std::string(Ver.SourcePkgName()) + "-" + Ver.VerStr() + "-" + machineID;
+   std::string seedStr = std::string(Ver.SourcePkgName()) + "-" + Ver.SourceVerStr() + "-" + machineID;
    std::seed_seq seed(seedStr.begin(), seedStr.end());
    std::minstd_rand rand(seed);
    std::uniform_int_distribution<unsigned int> dist(0, 100);
