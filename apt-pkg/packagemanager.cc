@@ -1029,10 +1029,18 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
       return false;
 
    if (Immediate == true) {
-      // Perform immediate configuration of the package. 
-         if (SmartConfigure(Pkg, Depth + 1) == false)
-            _error->Warning(_("Could not perform immediate configuration on '%s'. "
-               "Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.FullName().c_str(),2);
+      // Perform immediate configuration of the package.
+      _error->PushToStack();
+      bool configured = SmartConfigure(Pkg, Depth + 1);
+      _error->RevertToStack();
+
+      if (not configured && Debug) {
+	 clog << OutputInDepth(Depth);
+	 ioprintf(clog, _("Could not perform immediate configuration on '%s'. "
+			   "Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),
+			 Pkg.FullName().c_str(), 2);
+	 clog << endl;
+      }
    }
    
    return true;
