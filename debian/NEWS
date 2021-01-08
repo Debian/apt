@@ -3,6 +3,13 @@ apt (2.1.16) UNRELEASED; urgency=medium
   Automatically remove unused kernels on dist-upgrade. To revert to previous
   behavior, set APT::Get::AutomaticRemove::Kernels to false.
 
+  Packages files can now set the Phased-Update-Percentage field to restrict
+  update rollout to a specified percentage of machines. Previously, this has
+  only been available to users of Ubuntu's update-manager tool. See
+  apt_preferences(5) for details and how to configure multiple systems to get
+  the same updates. Phased updates are disabled in chroots for now to not
+  break buildd-style setups.
+
  -- Julian Andres Klode <jak@debian.org>  Mon, 04 Jan 2021 10:47:14 +0100
 
 apt (1.9.11) experimental; urgency=medium

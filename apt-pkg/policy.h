@@ -83,7 +83,8 @@ class APT_PUBLIC pkgPolicy : public pkgDepCache::Policy
    explicit pkgPolicy(pkgCache *Owner);
    virtual ~pkgPolicy();
    private:
-   void * const d;
+   struct Private;
+   Private *const d;
 };
 
 APT_PUBLIC bool ReadPinFile(pkgPolicy &Plcy, std::string File = "");

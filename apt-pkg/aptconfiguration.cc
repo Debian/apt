@@ -480,4 +480,65 @@ std::string const Configuration::getBuildProfilesString() {
 	return list;
 }
 									/*}}}*/
+
+// getMachineID - supported data.tar extensions		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+std::string const Configuration::getMachineID()
+{
+   std::string id = _config->Find("APT::Machine-ID");
+
+   if (id.empty())
+   {
+      std::string file = _config->FindFile("Dir::Etc::machine-id");
+
+      if (file.empty())
+      {
+	 file = flCombine(_config->FindDir("Dir::Etc"), "../machine-id");
+      }
+      FileFd fd;
+      _error->PushToStack();
+
+      if (not OpenConfigurationFileFd(file, fd) || not fd.ReadLine(id))
+      {
+	 if (_config->FindB("Debug::Phasing", false))
+	 {
+	    _error->DumpErrors(std::clog);
+	 }
+      }
+
+      _error->RevertToStack();
+   }
+
+   return id;
+}
+									/*}}}*/
+// isChroot - whether we are inside a chroot			     	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool Configuration::isChroot()
+{
+   static struct once
+   {
+      bool res = false;
+      once()
+      {
+	 pid_t child = ExecFork();
+	 if (child == 0)
+	 {
+	    auto binary = _config->FindFile("Dir::Bin::ischroot", "/usr/bin/ischroot");
+	    const char *const Args[] = {
+	       binary.c_str(),
+	       nullptr};
+	    execvp(Args[0], const_cast<char **>(Args));
+	    _exit(127);
+	 }
+
+	 res = ExecWait(child, "ischroot", true);
+      }
+   } once;
+
+   return once.res;
+}
+									/*}}}*/
 }

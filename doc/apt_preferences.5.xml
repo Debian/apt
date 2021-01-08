@@ -102,7 +102,8 @@ algorithm to set the priorities of the versions of a package.  Assign:
 <term>priority 1</term>
 <listitem><simpara>to the versions coming from archives which in their <filename>Release</filename>
 files are marked as "NotAutomatic: yes" but <emphasis>not</emphasis> as "ButAutomaticUpgrades: yes"
-like the Debian <literal>experimental</literal> archive.</simpara></listitem>
+like the Debian <literal>experimental</literal> archive.</simpara></listitem>,
+as well as versions that are not phased on this systems.
 </varlistentry>
 
 <varlistentry>
@@ -175,6 +176,22 @@ because at least <emphasis>one</emphasis> of the available versions has a higher
 priority than the installed version.</para>
 </refsect2>
 
+<refsect2><title>Phased Updates</title>
+<para>APT understands a field called <literal>Phased-Update-Percentage</literal>
+which can be used to control the rollout of a new version. It is an integer between
+0 and 100.</para>
+
+<para>A system's eligibility to a phased update is determined by seeding
+random number generator with the package source name, the version number,
+and /etc/machine-id, and then calculating an integer in the range [0, 100].
+If this integer is larger than the <literal>Phased-Update-Percentage</literal>,
+the version is pinned to 1, and thus held back. Otherwise, normal policy rules apply.
+</para>
+
+<para>In case you have multiple systems that you want to receive the same set of updates, you can set
+<code>APT::Machine-ID</code> to a UUID such that they all phase the same, or set <code>APT::Get::Never-Include-Phased-Updates</code>
+or <code>APT::Get::Always-Include-Phased-Updates</code> to true such that APT will never/always consider phased updates.</para>
+</refsect2>
 <refsect2><title>The Effect of APT Preferences</title>
 
 <para>The APT preferences file allows the system administrator to control the

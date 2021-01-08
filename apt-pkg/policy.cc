@@ -14,6 +14,7 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
@@ -26,6 +27,7 @@
 #include <apt-pkg/versionmatch.h>
 
 #include <iostream>
+#include <random>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -40,12 +42,17 @@ using namespace std;
 
 constexpr short NEVER_PIN = std::numeric_limits<short>::min();
 
+struct pkgPolicy::Private
+{
+   std::string machineID;
+};
+
 // Policy::Init - Startup and bind to a cache				/*{{{*/
 // ---------------------------------------------------------------------
 /* Set the defaults for operation. The default mode with no loaded policy
    file matches the V0 policy engine. */
 pkgPolicy::pkgPolicy(pkgCache *Owner) : VerPins(nullptr),
-   PFPriority(nullptr), Cache(Owner), d(NULL)
+					PFPriority(nullptr), Cache(Owner), d(new Private)
 {
    if (Owner == 0)
       return;
@@ -77,6 +84,8 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : VerPins(nullptr),
 	 CreatePin(pkgVersionMatch::Release,"",DefRel,990);
    }
    InitDefaults();
+
+   d->machineID = APT::Configuration::getMachineID();
 }
 									/*}}}*/
 // Policy::InitDefaults - Compute the default selections		/*{{{*/
@@ -274,8 +283,38 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 // Policy::GetPriority - Get the priority of the package pin		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+// Returns true if this update is excluded by phasing.
+static inline bool ExcludePhased(std::string machineID, pkgCache::VerIterator const &Ver)
+{
+   // The order and fallbacks for the always/never checks come from update-manager and exist
+   // to preserve compatibility.
+   if (_config->FindB("APT::Get::Always-Include-Phased-Updates",
+		      _config->FindB("Update-Manager::Always-Include-Phased-Updates", false)))
+      return false;
+
+   if (_config->FindB("APT::Get::Never-Include-Phased-Updates",
+		      _config->FindB("Update-Manager::Never-Include-Phased-Updates", false)))
+      return true;
+
+   if (machineID.empty()			 // no machine-id
+       || getenv("SOURCE_DATE_EPOCH") != nullptr // reproducible build - always include
+       || APT::Configuration::isChroot())
+      return false;
+
+   std::string seedStr = std::string(Ver.SourcePkgName()) + "-" + Ver.SourceVerStr() + "-" + machineID;
+   std::seed_seq seed(seedStr.begin(), seedStr.end());
+   std::minstd_rand rand(seed);
+   std::uniform_int_distribution<unsigned int> dist(0, 100);
+
+   return dist(rand) > Ver.PhasedUpdatePercentage();
+}
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, bool ConsiderFiles)
 {
+   if (Ver.ParentPkg()->CurrentVer && Ver.PhasedUpdatePercentage() != 100)
+   {
+      if (ExcludePhased(d->machineID, Ver))
+	 return 1;
+   }
    if (VerPins[Ver->ID].Type != pkgVersionMatch::None)
    {
       // If all sources are never pins, the never pin wins.
@@ -454,4 +493,9 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
 }
 									/*}}}*/
 
-pkgPolicy::~pkgPolicy() {delete [] PFPriority; delete [] VerPins; }
+pkgPolicy::~pkgPolicy()
+{
+   delete[] PFPriority;
+   delete[] VerPins;
+   delete d;
+}
