@@ -46,6 +46,20 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval,
 		   bool const RunUpdateScripts, bool const ListCleanup)
 {
+   enum class ErrorMode
+   {
+      Persistent,
+      Any
+   };
+   std::string errorModeS = _config->Find("APT::Update::Error-Mode", "persistent");
+   ErrorMode errorMode = ErrorMode::Persistent;
+   if (errorModeS == "persistent")
+      errorMode = ErrorMode::Persistent;
+   else if (errorModeS == "any")
+      errorMode = ErrorMode::Any;
+   else
+      return _error->Error("Unknown update error mode %s", errorModeS.c_str());
+
    // Run scripts
    if (RunUpdateScripts == true)
       RunScripts("APT::Update::Pre-Invoke");
@@ -69,7 +83,10 @@ bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval,
 	    AllFailed = false;
 	    continue;
 	 case pkgAcquire::Item::StatTransientNetworkError:
-	    TransientNetworkFailure = true;
+	    if (errorMode == ErrorMode::Any)
+	       Failed = true;
+	    else
+	       TransientNetworkFailure = true;
 	    break;
 	 case pkgAcquire::Item::StatIdle:
 	 case pkgAcquire::Item::StatFetching:
@@ -89,7 +106,7 @@ bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval,
       uri.Password.clear();
       std::string const descUri = std::string(uri);
       // Show an error for non-transient failures, otherwise only warn
-      if ((*I)->Status == pkgAcquire::Item::StatTransientNetworkError)
+      if ((*I)->Status == pkgAcquire::Item::StatTransientNetworkError && errorMode != ErrorMode::Any)
 	 _error->Warning(_("Failed to fetch %s  %s"), descUri.c_str(),
 			(*I)->ErrorText.c_str());
       else
