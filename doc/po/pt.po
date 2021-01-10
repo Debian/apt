@@ -2,13 +2,13 @@
 # Copyright (C) 2009 Free Software Foundation, Inc.
 # This file is distributed under the same license as the apt package.
 #
-# Américo Monteiro <a_monteiro@gmx.com>, 2014 - 2020.
+# Américo Monteiro <a_monteiro@gmx.com>, 2014 to 2021.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.1.10\n"
+"Project-Id-Version: apt 2.1.16\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2021-01-08 22:11+0100\n"
-"PO-Revision-Date: 2020-08-14 23:28+0000\n"
+"POT-Creation-Date: 2021-01-10 22:41+0100\n"
+"PO-Revision-Date: 2021-01-10 19:51+0000\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <>\n"
 "Language: pt\n"
@@ -2166,12 +2166,14 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term><option><replaceable>
 #: apt-get.8.xml
 msgid "any"
-msgstr ""
+msgstr "qualquer"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
 msgid "Fail the update command if any error occured, even a transient one."
 msgstr ""
+"Falha o comando de actualização se ocorrer qualquer erro, mesmo sendo um "
+"transitório."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml apt-cache.8.xml apt-key.8.xml apt-mark.8.xml apt.conf.5.xml
@@ -6305,12 +6307,6 @@ msgstr "priority 1"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml
-#, fuzzy
-#| msgid ""
-#| "to the versions coming from archives which in their <filename>Release</"
-#| "filename> files are marked as \"NotAutomatic: yes\" but <emphasis>not</"
-#| "emphasis> as \"ButAutomaticUpgrades: yes\" like the Debian "
-#| "<literal>experimental</literal> archive."
 msgid ""
 "to the versions coming from archives which in their <filename>Release</"
 "filename> files are marked as \"NotAutomatic: yes\" but <emphasis>not</"
@@ -6321,7 +6317,8 @@ msgstr ""
 "para as versões vindas de arquivos cujos ficheiros <filename>Release</"
 "filename> estejam marcados como \"NotAutomatic: yes\" mas <emphasis>não</"
 "emphasis> como \"ButAutomaticUpgrades: yes\" como o arquivo "
-"<literal>experimental</literal> da Debian."
+"<literal>experimental</literal> da Debian, assim como versões que não "
+"estejam faseadas nestes sistemas."
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><term>
 #: apt_preferences.5.xml
@@ -6489,7 +6486,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
 msgid "Phased Updates"
-msgstr ""
+msgstr "Actualizações Faseadas"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
@@ -6498,6 +6495,9 @@ msgid ""
 "which can be used to control the rollout of a new version. It is an integer "
 "between 0 and 100."
 msgstr ""
+"O APT compreende um campo chamado <literal>Phased-Update-Percentage</"
+"literal> que pode ser usado para controlar o lançamento de uma nova versão. "
+"É um número inteiro entre 0 e 100."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
@@ -6509,6 +6509,12 @@ msgid ""
 "version is pinned to 1, and thus held back. Otherwise, normal policy rules "
 "apply."
 msgstr ""
+"A elegibilidade do sistema para uma actualização faseada é determinada ao "
+"semear a geração de número aleatório com o nome do pacote fonte, o número de "
+"versão, e /etc/id-de-máquina, e depois calcular um inteiro na gama [0, 100]. "
+"Se este inteiro for maior que <literal>Phased-Update-Percentage</literal>, a "
+"versão é fixada a 1, e assim mantida retida. Caso contrário, aplicam-se as "
+"regras políticas normais."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
@@ -6519,6 +6525,12 @@ msgid ""
 "code> or <code>APT::Get::Always-Include-Phased-Updates</code> to true such "
 "that APT will never/always consider phased updates."
 msgstr ""
+"No caso de você ter vários sistemas em que deseja receber o mesmo conjunto "
+"de actualizações, você pode definir <code>APT::Machine-ID</code> para um "
+"UUID tal que eles todos faseem o mesmo, ou definir <code>APT::Get::Never-"
+"Include-Phased-Updates</code> ou <code>APT::Get::Always-Include-Phased-"
+"Updates</code> para verdadeiro de modo a que o APT nunca/sempre considere "
+"actualizações faseadas."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
@@ -9934,7 +9946,7 @@ msgstr ""
 #: apt-ftparchive.1.xml
 #, no-wrap
 msgid "<command>apt-ftparchive</command> packages <replaceable>directory</replaceable> | <command>gzip</command> > <filename>Packages.gz</filename>\n"
-msgstr "<command>apt-ftparchive</command> pacotes <replaceable>directório</replaceable> | <command>gzip</command> > <filename>Packages.gz</filename>\n"
+msgstr "<command>apt-ftparchive</command> packages <replaceable>directório</replaceable> | <command>gzip</command> > <filename>Packages.gz</filename>\n"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-ftparchive.1.xml
@@ -11625,131 +11637,97 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "Package patterns"
 msgid "Package relationship patterns"
-msgstr "Padrões de pacotes"
+msgstr "Padrões de relacionamento de pacotes"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "These patterns select specific versions of a package."
 msgid ""
 "These patterns match specific package versions that depend/conflict with "
 "some other packages."
-msgstr "Estes padrões selecionam versões específicas de um pacote."
+msgstr ""
+"Estes padrões correspondem a versões específicas de um pacote que dependem "
+"ou entram em conflito com outros pacotes."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?depends(PATTERN)</code>"
-msgstr "<code>?not(PATTERN)</code>"
+msgstr "<code>?depends(PATTERN)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DPATTERN</code>"
-msgstr "<code>!PATTERN</code>"
+msgstr "<code>~DPATTERN</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?pre-depends(PATTERN)</code>"
-msgstr "<code>?not(PATTERN)</code>"
+msgstr "<code>?pre-depends(PATTERN)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DPre-Depends:PATTERN</code>"
-msgstr "<code>!PATTERN</code>"
+msgstr "<code>~DPre-Depends:PATTERN</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?suggests(PATTERN)</code>"
-msgstr "<code>?not(PATTERN)</code>"
+msgstr "<code>?suggests(PATTERN)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DSuggests:PATTERN</code>"
-msgstr "<code>!PATTERN</code>"
+msgstr "<code>~DSuggests:PATTERN</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?conflicts(PATTERN)</code>"
-msgstr "<code>?not(PATTERN)</code>"
+msgstr "<code>?conflicts(PATTERN)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>~DConflicts:PATTERN</code>"
-msgstr "<code>?not(PATTERN)</code>"
+msgstr "<code>~DConflicts:PATTERN</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>(PATTERN)</code>"
 msgid "<code>?replaces(PATTERN)</code>"
-msgstr "<code>(PATTERN)</code>"
+msgstr "<code>?replaces(PATTERN)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DReplaces:PATTERN</code>"
-msgstr "<code>!PATTERN</code>"
+msgstr "<code>~DReplaces:PATTERN</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?obsoletes(PATTERN)</code>"
-msgstr "<code>?not(PATTERN)</code>"
+msgstr "<code>?obsoletes(PATTERN)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>~DObsoletes:PATTERN</code>"
-msgstr "<code>?not(PATTERN)</code>"
+msgstr "<code>~DObsoletes:PATTERN</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>(PATTERN)</code>"
 msgid "<code>?breaks(PATTERN)</code>"
-msgstr "<code>(PATTERN)</code>"
+msgstr "<code>?breaks(PATTERN)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DBreaks:PATTERN</code>"
-msgstr "<code>!PATTERN</code>"
+msgstr "<code>~DBreaks:PATTERN</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?enhances(PATTERN)</code>"
-msgstr "<code>?not(PATTERN)</code>"
+msgstr "<code>?enhances(PATTERN)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DEnhances:PATTERN</code>"
-msgstr "<code>!PATTERN</code>"
+msgstr "<code>~DEnhances:PATTERN</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-patterns.7.xml
@@ -11757,18 +11735,18 @@ msgid ""
 "Selects versions depending/pre-depending/suggesting/conflicting/etc on/with/ "
 "packages matching PATTERN."
 msgstr ""
+"Seleciona versões que dependem/pré-dependem/sugerem/entram em conflito/etc "
+"de/com pacotes que correspondem ao padrão PATTERN."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
 msgid "<code>?reverse-<replaceable>depType</replaceable>(PATTERN)</code>"
-msgstr ""
+msgstr "<code>?reverse-<replaceable>depType</replaceable>(PATTERN)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<optional><replaceable>&synopsis-prefix;</replaceable></optional>"
 msgid "<code>~R<replaceable>DepType</replaceable>:PATTERN</code>"
-msgstr "<optional><replaceable>&synopsis-prefix;</replaceable></optional>"
+msgstr "<code>~R<replaceable>DepType</replaceable>:PATTERN</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-patterns.7.xml
@@ -11776,6 +11754,8 @@ msgid ""
 "Opposite of <code>?depends</code> and friends - selects all packages that "
 "have reverse-dependencies (versions) matching PATTERN."
 msgstr ""
+"O oposto de <code>?depends</code> e amigos - seleciona todos os pacotes têm "
+"dependências-reversas (versões) que correspondem a PATTERN."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-patterns.7.xml
@@ -11784,6 +11764,9 @@ msgid ""
 "<code>depends</code>, so that we don't have to repeat the entire list from "
 "the first paragraph here."
 msgstr ""
+"<replaceable>depType</replaceable> é um dos tipos de dependência tal como "
+"<code>depends</code>, para que não tenhamos que repetir aqui a lista inteira "
+"do primeiro parágrafo."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
@@ -11919,6 +11902,8 @@ msgid ""
 "Dependency types for ~D and related operators need to be specified in the "
 "canonical case."
 msgstr ""
+"Os tipos de dependência para ~D e operadores relacionados precisam de ser "
+"especificados no caso canônico."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-patterns.7.xml
