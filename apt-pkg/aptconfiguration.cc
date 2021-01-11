@@ -529,6 +529,7 @@ bool Configuration::isChroot()
 	    auto binary = _config->FindFile("Dir::Bin::ischroot", "/usr/bin/ischroot");
 	    const char *const Args[] = {
 	       binary.c_str(),
+	       "-t",
 	       nullptr};
 	    execvp(Args[0], const_cast<char **>(Args));
 	    _exit(127);
