@@ -1554,7 +1554,12 @@ std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
       }
    }
 
-   auto re = ss.str().substr(1);
+   auto re_with_leading_or = ss.str();
+
+   if (re_with_leading_or.empty())
+      return "";
+
+   auto re = re_with_leading_or.substr(1);
    if (Debug)
       std::clog << "Kernel protection regex: " << re << "\n";
 
