@@ -14,6 +14,20 @@ apt (2.0.3) focal; urgency=medium
 
  -- Julian Andres Klode <juliank@ubuntu.com>  Tue, 05 May 2020 13:20:26 +0200
 
+apt (2.0.2ubuntu0.2) focal-security; urgency=high
+
+  * SECURITY UPDATE: Integer overflow in parsing (LP: #1899193)
+    - apt-pkg/contrib/arfile.cc: add extra checks.
+    - apt-pkg/contrib/tarfile.cc: limit tar item sizes to 128 GiB
+    - apt-pkg/deb/debfile.cc: limit control file sizes to 64 MiB
+    - test/*: add tests.
+    - CVE-2020-27350
+  * Additional hardening:
+    - apt-pkg/contrib/tarfile.cc: Limit size of long names and links to 1 MiB
+  * .gitlab-ci.yml: Test on focal, not unstable
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Mon, 07 Dec 2020 12:08:43 +0100
+
 apt (2.0.2ubuntu0.1) focal-security; urgency=high
 
   * SECURITY UPDATE: Out of bounds read in ar, tar implementations (LP: #1878177)

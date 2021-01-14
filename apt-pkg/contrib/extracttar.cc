@@ -55,7 +55,17 @@ struct ExtractTar::TarHeader
    char Major[8];
    char Minor[8];      
 };
-   
+
+// We need to read long names (names and link targets) into memory, so let's
+// have a limit (shamelessly stolen from libarchive) to avoid people OOMing
+// us with large streams.
+static const unsigned long long APT_LONGNAME_LIMIT = 1048576llu;
+
+// A file size limit that we allow extracting. Currently, that's 128 GB.
+// We also should leave some wiggle room for code adding files to it, and
+// possibly conversion for signed, so this should not be larger than like 2**62.
+static const unsigned long long APT_FILESIZE_LIMIT = 1llu << 37;
+
 // ExtractTar::ExtractTar - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -166,6 +176,11 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	  StrToNum(Tar->Minor,Itm.Minor,sizeof(Tar->Minor),8) == false)
 	 return _error->Error(_("Corrupted archive"));
 
+      // Security check. Prevents overflows below the code when rounding up in skip/copy code,
+      // and provides modest protection against decompression bombs.
+      if (Itm.Size > APT_FILESIZE_LIMIT)
+	 return _error->Error("Tar member too large: %llu > %llu bytes", Itm.Size, APT_FILESIZE_LIMIT);
+
       // Grab the filename and link target: use last long name if one was
       // set, otherwise use the header value as-is, but remember that it may
       // fill the entire 100-byte block and needs to be zero-terminated.
@@ -218,6 +233,8 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 {
 	    unsigned long long Length = Itm.Size;
 	    unsigned char Block[512];
+	    if (Length > APT_LONGNAME_LIMIT)
+	       return _error->Error("Long name to large: %llu bytes > %llu bytes", Length, APT_LONGNAME_LIMIT);
 	    while (Length > 0)
 	    {
 	       if (InFd.Read(Block,sizeof(Block),true) == false)
@@ -237,6 +254,8 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 {
 	    unsigned long long Length = Itm.Size;
 	    unsigned char Block[512];
+	    if (Length > APT_LONGNAME_LIMIT)
+	       return _error->Error("Long name to large: %llu bytes > %llu bytes", Length, APT_LONGNAME_LIMIT);
 	    while (Length > 0)
 	    {
 	       if (InFd.Read(Block,sizeof(Block),true) == false)
