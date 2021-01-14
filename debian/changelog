@@ -1,3 +1,38 @@
+apt (2.1.10ubuntu0.2) groovy; urgency=medium
+
+  [ JCGoran ]
+  * Fix "extended_states" typo in apt-mark(8) (Closes: #969086)
+
+  [ Jordi Mallach ]
+  * Fix typo in Catalan translation.
+
+  [ Julian Andres Klode ]
+  * doc: Bump Ubuntu release from focal to groovy
+  * pkgnames: Correctly set the default for AllNames to false, and do not
+    exclude virtual packages if --all-names is specified (LP: #1876495)
+  * Remove expired domain that became nsfw from debian/changelog
+  * patterns: Terminate short pattern by ~ and ! (LP: #1911676)
+  * Improve immediate configuration handling (LP: #1871268)
+    - Do not immediately configure m-a: same packages in lockstep
+    - Ignore failures from immediate configuration. This does not change the
+      actual installation ordering - we never passed the return code to the
+      caller and installation went underway anyway if it could be ordered at a
+      later stage, this just removes spurious after-the-fact errors.
+
+  [ Frans Spiesschaert ]
+  * Dutch manpages translation update (Closes: #970037)
+
+  [ Américo Monteiro ]
+  * Portuguese manpages translation update (Closes: #968414)
+
+  [ Helge Kreutzmann ]
+  * German program translation update (Closes: #977938)
+
+  [ Vangelis Skarmoutsos ]
+  * Greek program translation update
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Thu, 14 Jan 2021 12:29:25 +0100
+
 apt (2.1.10ubuntu0.1) groovy-security; urgency=high
 
   * SECURITY UPDATE: Integer overflow in parsing (LP: #1899193)
