@@ -420,7 +420,7 @@ pid_t debSystem::ExecDpkg(std::vector<std::string> const &sArgs, int * const inp
 
    pid_t const dpkg = ExecFork();
    if (dpkg == 0) {
-      int const nullfd = open("/dev/null", O_RDONLY);
+      int const nullfd = open("/dev/null", O_RDWR);
       if (inputFd == nullptr)
 	 dup2(nullfd, STDIN_FILENO);
       else
