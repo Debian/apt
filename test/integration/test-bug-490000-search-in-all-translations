@@ -62,6 +62,19 @@ setupaptarchive
 #
 # ===========================
 
+# ---- LP: #1907850 - check that we actually include the translations we have in the cache, even if config changed  ---
+configure_languages en zz
+testsuccess aptcache showpkg ${PKG_NAME}
+cp rootdir/tmp/testsuccess.output showpkg.output
+
+testsuccess grep -qE Translation-zz showpkg.output
+rm rootdir/etc/apt/apt.conf.d/languages.conf
+rm rootdir/var/cache/apt/*.bin
+
+testsuccess aptcache showpkg ${PKG_NAME}
+cp rootdir/tmp/testsuccess.output showpkg.output
+testsuccess grep -qE Translation-zz showpkg.output
+
 # ----------[ apt ]----------
 
 # Test that all translations are searched, but the short
