@@ -27,10 +27,13 @@
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
 
+#include <limits>
 #include <memory>
 #include <string>
 #include <vector>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include <apti18n.h>
@@ -288,15 +291,27 @@ bool pkgCacheFile::AddIndexFile(pkgIndexFile * const File)		/*{{{*/
 // CacheFile::RemoveCaches - remove all cache files from disk		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+static void SetCacheStartBeforeRemovingCache(std::string const &cache)
+{
+   if (cache.empty())
+      return;
+   auto const CacheStart = _config->FindI("APT::Cache-Start", 0);
+   constexpr auto CacheStartDefault = 24 * 1024 * 1024;
+   struct stat Buf;
+   if (stat(cache.c_str(), &Buf) == 0 && (Buf.st_mode & S_IFREG) != 0)
+   {
+      RemoveFile("RemoveCaches", cache);
+      if (CacheStart == 0 && std::numeric_limits<decltype(CacheStart)>::max() >= Buf.st_size && Buf.st_size > CacheStartDefault)
+	 _config->Set("APT::Cache-Start", Buf.st_size);
+   }
+}
 void pkgCacheFile::RemoveCaches()
 {
    std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
+   SetCacheStartBeforeRemovingCache(pkgcache);
    std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
+   SetCacheStartBeforeRemovingCache(srcpkgcache);
 
-   if (pkgcache.empty() == false && RealFileExists(pkgcache) == true)
-      RemoveFile("RemoveCaches", pkgcache);
-   if (srcpkgcache.empty() == false && RealFileExists(srcpkgcache) == true)
-      RemoveFile("RemoveCaches", srcpkgcache);
    if (pkgcache.empty() == false)
    {
       std::string cachedir = flNotFile(pkgcache);

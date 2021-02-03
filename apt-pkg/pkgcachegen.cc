@@ -37,6 +37,8 @@
 
 #include <apti18n.h>
 									/*}}}*/
+constexpr auto APT_CACHE_START_DEFAULT = 24 * 1024 * 1024;
+
 template<class T> using Dynamic = pkgCacheGenerator::Dynamic<T>;
 typedef std::vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
@@ -1383,6 +1385,13 @@ static bool CheckValidity(FileFd &CacheFile, std::string const &CacheFileName,
       return false;
    }
 
+   if (_config->FindI("APT::Cache-Start", 0) == 0)
+   {
+      auto const size = CacheFile.FileSize();
+      if (std::numeric_limits<int>::max() >= size && size > APT_CACHE_START_DEFAULT)
+	 _config->Set("APT::Cache-Start", size);
+   }
+
    if (List.GetLastModifiedTime() > CacheFile.ModificationTime())
    {
       if (Debug == true)
@@ -1591,7 +1600,7 @@ static bool BuildCache(pkgCacheGenerator &Gen,
    where it builds the cache 'fast' into a memory buffer. */
 static DynamicMMap* CreateDynamicMMap(FileFd * const CacheF, unsigned long Flags)
 {
-   map_filesize_t const MapStart = _config->FindI("APT::Cache-Start", 24*1024*1024);
+   map_filesize_t const MapStart = _config->FindI("APT::Cache-Start", APT_CACHE_START_DEFAULT);
    map_filesize_t const MapGrow = _config->FindI("APT::Cache-Grow", 1*1024*1024);
    map_filesize_t const MapLimit = _config->FindI("APT::Cache-Limit", 0);
    Flags |= MMap::Moveable;
