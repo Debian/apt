@@ -21,6 +21,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/string_view.h>
 
 #include <ctype.h>
 #include <regex.h>
@@ -867,83 +868,76 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 
       // Now strip comments; if the whole line is contained in a
       // comment, skip this line.
+      APT::StringView Line{Input.data(), Input.size()};
 
-      // The first meaningful character in the current fragment; will
-      // be adjusted below as we remove bytes from the front.
-      std::string::const_iterator Start = Input.begin();
-      // The last meaningful character in the current fragment.
-      std::string::const_iterator End = Input.end();
-
-      // Multi line comment
-      if (InComment == true)
+      // continued Multi line comment
+      if (InComment)
       {
-	for (std::string::const_iterator I = Start;
-	     I != End; ++I)
+	 size_t end = Line.find("*/");
+	 if (end != APT::StringView::npos)
 	 {
-	    if (*I == '*' && I + 1 != End && I[1] == '/')
-	    {
-	       Start = I + 2;
-	       InComment = false;
-	       break;
-	    }
+	    Line.remove_prefix(end + 2);
+	    InComment = false;
 	 }
-	 if (InComment == true)
+	 else
 	    continue;
       }
 
       // Discard single line comments
-      bool InQuote = false;
-      for (std::string::const_iterator I = Start;
-	   I != End; ++I)
       {
-	 if (*I == '"')
-	    InQuote = !InQuote;
-	 if (InQuote == true)
-	    continue;
-
-	 if ((*I == '/' && I + 1 != End && I[1] == '/') ||
-	     (*I == '#' && strcmp(string(I,I+6).c_str(),"#clear") != 0 &&
-	      strcmp(string(I,I+8).c_str(),"#include") != 0 &&
-	      strcmp(string(I,I+strlen("#x-apt-configure-index")).c_str(), "#x-apt-configure-index") != 0))
+	 size_t start = 0;
+	 while ((start = Line.find("//", start)) != APT::StringView::npos)
 	 {
-	    End = I;
+	    if (std::count(Line.begin(), Line.begin() + start, '"') % 2 != 0)
+	    {
+	       ++start;
+	       continue;
+	    }
+	    Line.remove_suffix(Line.length() - start);
+	    break;
+	 }
+	 using APT::operator""_sv;
+	 constexpr std::array<APT::StringView, 3> magicComments { "clear"_sv, "include"_sv, "x-apt-configure-index"_sv };
+	 start = 0;
+	 while ((start = Line.find('#', start)) != APT::StringView::npos)
+	 {
+	    if (std::count(Line.begin(), Line.begin() + start, '"') % 2 != 0 ||
+		std::any_of(magicComments.begin(), magicComments.end(), [&](auto const m) { return Line.compare(start+1, m.length(), m) == 0; }))
+	    {
+	       ++start;
+	       continue;
+	    }
+	    Line.remove_suffix(Line.length() - start);
 	    break;
 	 }
       }
 
       // Look for multi line comments and build up the
       // fragment.
-      Fragment.reserve(End - Start);
-      InQuote = false;
-      for (std::string::const_iterator I = Start;
-	   I != End; ++I)
+      Fragment.reserve(Line.length());
       {
-	 if (*I == '"')
-	    InQuote = !InQuote;
-	 if (InQuote == true)
-	   Fragment.push_back(*I);
-	 else if (*I == '/' && I + 1 != End && I[1] == '*')
-         {
-	    InComment = true;
-	    for (std::string::const_iterator J = I;
-		 J != End; ++J)
+	 size_t start = 0;
+	 while ((start = Line.find("/*", start)) != APT::StringView::npos)
+	 {
+	    if (std::count(Line.begin(), Line.begin() + start, '"') % 2 != 0)
 	    {
-	       if (*J == '*' && J + 1 != End && J[1] == '/')
-	       {
-		  // Pretend we just finished walking over the
-		  // comment, and don't add anything to the output
-		  // fragment.
-		  I = J + 1;
-		  InComment = false;
-		  break;
-	       }
+	       start += 2;
+	       continue;
 	    }
-
-	    if (InComment == true)
-	      break;
+	    Fragment.append(Line.data(), start);
+	    auto const end = Line.find("*/", start + 2);
+	    if (end == APT::StringView::npos)
+	    {
+	       Line.clear();
+	       InComment = true;
+	       break;
+	    }
+	    else
+	       Line.remove_prefix(end + 2);
+	    start = 0;
 	 }
-	 else
-	   Fragment.push_back(*I);
+	 if (not Line.empty())
+	    Fragment.append(Line.data(), Line.length());
       }
 
       // Skip blank lines.
@@ -951,9 +945,9 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	 continue;
 
       // The line has actual content; interpret what it means.
-      InQuote = false;
-      Start = Fragment.begin();
-      End = Fragment.end();
+      bool InQuote = false;
+      auto Start = Fragment.cbegin();
+      auto End = Fragment.cend();
       for (std::string::const_iterator I = Start;
 	   I != End; ++I)
       {
