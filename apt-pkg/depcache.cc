@@ -290,8 +290,11 @@ bool pkgDepCache::readStateFile(OpProgress * const Prog)		/*{{{*/
       state_file.Open(state, FileFd::ReadOnly, FileFd::Extension);
       off_t const file_size = state_file.Size();
       if(Prog != NULL)
+      {
+	 Prog->Done();
 	 Prog->OverallProgress(0, file_size, 1,
 			       _("Reading state information"));
+      }
 
       pkgTagFile tagfile(&state_file);
       pkgTagSection section;
