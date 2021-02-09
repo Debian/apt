@@ -82,10 +82,10 @@ template<typename Str, typename Itr> class APT_PUBLIC pkgCache::Iterator :
 	inline unsigned long Index() const {return S - OwnerPointer();}
 	inline map_pointer<Str> MapPointer() const {return map_pointer<Str>(Index()) ;}
 
-	void ReMap(void const * const oldMap, void const * const newMap) {
+	void ReMap(void const * const oldMap, void * const newMap) {
 		if (Owner == 0 || S == 0)
 			return;
-		S += static_cast<Str const *>(newMap) - static_cast<Str const *>(oldMap);
+		S = static_cast<Str *>(newMap) + (S - static_cast<Str const *>(oldMap));
 	}
 
 	// Constructors - look out for the variable assigning
@@ -350,12 +350,12 @@ class APT_PUBLIC pkgCache::DepIterator : public Iterator<Dependency, DepIterator
 	};
 	inline DependencyProxy operator->() const {return (DependencyProxy) { S2->Version, S2->Package, S->ID, S2->Type, S2->CompareOp, S->ParentVer, S->DependencyData, S->NextRevDepends, S->NextDepends, S2->NextData };}
 	inline DependencyProxy operator->() {return (DependencyProxy) { S2->Version, S2->Package, S->ID, S2->Type, S2->CompareOp, S->ParentVer, S->DependencyData, S->NextRevDepends, S->NextDepends, S2->NextData };}
-	void ReMap(void const * const oldMap, void const * const newMap)
+	void ReMap(void const * const oldMap, void * const newMap)
 	{
 		Iterator<Dependency, DepIterator>::ReMap(oldMap, newMap);
 		if (Owner == 0 || S == 0 || S2 == 0)
 			return;
-		S2 += static_cast<DependencyData const *>(newMap) - static_cast<DependencyData const *>(oldMap);
+		S2 = static_cast<DependencyData *>(newMap) + (S2 - static_cast<DependencyData const *>(oldMap));
 	}
 
 	//Nice printable representation

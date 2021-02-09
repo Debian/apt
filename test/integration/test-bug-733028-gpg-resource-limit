@@ -17,6 +17,7 @@ testaptkeys 'Joe Sixpack'
 
 testsuccess aptget update
 msgtest 'Test for no gpg errors/warnings in' 'apt-get update'
+sed -i -e "s#${TMPWORKINGDIRECTORY}#/tmp/tmp.XXXXXX#g" rootdir/tmp/testsuccess.output
 if grep -iq 'GPG' rootdir/tmp/testsuccess.output; then
 	cat rootdir/tmp/testsuccess.output
 	msgfail

@@ -39,6 +39,10 @@ public:
     StringView(const char *data) : data_(data), size_(strlen(data)) {}
     StringView(std::string const & str): data_(str.data()), size_(str.size()) {}
 
+    /* Modifiers */
+    void remove_prefix(size_t n) { data_ += n; size_ -= n; }
+    void remove_suffix(size_t n) { size_ -= n; }
+    void clear() { size_ = 0; }
 
     /* Viewers */
     constexpr StringView substr(size_t pos, size_t n = npos) const {
@@ -74,6 +78,28 @@ public:
             return npos;
 
         return found - data_;
+    }
+
+    size_t find(APT::StringView const needle) const {
+       if (needle.empty())
+	  return npos;
+       if (needle.length() == 1)
+	  return find(*needle.data());
+       size_t found = 0;
+       while ((found = find(*needle.data(), found)) != npos) {
+	  if (compare(found, needle.length(), needle) == 0)
+	     return found;
+	  ++found;
+       }
+       return found;
+    }
+    size_t find(APT::StringView const needle, size_t pos) const {
+       if (pos == 0)
+	  return find(needle);
+       size_t const found = substr(pos).find(needle);
+       if (found == npos)
+	  return npos;
+       return pos + found;
     }
 
     /* Conversions */

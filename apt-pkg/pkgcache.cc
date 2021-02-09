@@ -255,7 +255,9 @@ uint32_t pkgCache::CacheHash()
 			 GetMap().Size() - sizeof(header));
    }
 
-   return XXH3_64bits_digest(state) & 0xFFFFFFFF;
+   auto const digest = XXH3_64bits_digest(state);
+   XXH3_freeState(state);
+   return digest & 0xFFFFFFFF;
 }
 									/*}}}*/
 // Cache::FindPkg - Locate a package by name				/*{{{*/

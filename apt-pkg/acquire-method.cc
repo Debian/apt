@@ -482,9 +482,25 @@ void pkgAcqMethod::PrintStatus(char const * const header, const char* Format,
 void pkgAcqMethod::Log(const char *Format,...)
 {
    va_list args;
-   va_start(args,Format);
-   PrintStatus("101 Log", Format, args);
-   va_end(args);
+   ssize_t size = 400;
+   std::ostringstream outstr;
+   while (true) {
+      bool ret;
+      va_start(args,Format);
+      ret = iovprintf(outstr, Format, args, size);
+      va_end(args);
+      if (ret == true)
+	 break;
+   }
+   std::unordered_map<std::string, std::string> fields;
+   if (Queue != 0)
+      try_emplace(fields, "URI", Queue->Uri);
+   else
+      try_emplace(fields, "URI", "<UNKNOWN>");
+   if (not UsedMirror.empty())
+      try_emplace(fields, "UsedMirror", UsedMirror);
+   try_emplace(fields, "Message", outstr.str());
+   SendMessage("101 Log", std::move(fields));
 }
 									/*}}}*/
 // AcqMethod::Status - Send a status message				/*{{{*/
@@ -493,9 +509,25 @@ void pkgAcqMethod::Log(const char *Format,...)
 void pkgAcqMethod::Status(const char *Format,...)
 {
    va_list args;
-   va_start(args,Format);
-   PrintStatus("102 Status", Format, args);
-   va_end(args);
+   ssize_t size = 400;
+   std::ostringstream outstr;
+   while (true) {
+      bool ret;
+      va_start(args,Format);
+      ret = iovprintf(outstr, Format, args, size);
+      va_end(args);
+      if (ret == true)
+	 break;
+   }
+   std::unordered_map<std::string, std::string> fields;
+   if (Queue != 0)
+      try_emplace(fields, "URI", Queue->Uri);
+   else
+      try_emplace(fields, "URI", "<UNKNOWN>");
+   if (not UsedMirror.empty())
+      try_emplace(fields, "UsedMirror", UsedMirror);
+   try_emplace(fields, "Message", outstr.str());
+   SendMessage("102 Status", std::move(fields));
 }
 									/*}}}*/
 // AcqMethod::Redirect - Send a redirect message                       /*{{{*/

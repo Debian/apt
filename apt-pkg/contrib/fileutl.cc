@@ -1774,9 +1774,8 @@ public:
 #endif
 };
 									/*}}}*/
-
-class APT_HIDDEN ZstdFileFdPrivate : public FileFdPrivate
-{ /*{{{*/
+class APT_HIDDEN ZstdFileFdPrivate : public FileFdPrivate		/*{{{*/
+{
 #ifdef HAVE_ZSTD
    ZSTD_DStream *dctx;
    ZSTD_CStream *cctx;
@@ -1986,7 +1985,7 @@ class APT_HIDDEN ZstdFileFdPrivate : public FileFdPrivate
 #endif
 };
 									/*}}}*/
-class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {				/*{{{*/
+class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {		/*{{{*/
 #ifdef HAVE_LZMA
    struct LZMAFILE {
       FILE* file;
@@ -2092,17 +2091,9 @@ public:
       }
       else
       {
-	 uint64_t const memlimit = UINT64_MAX;
-	 if (compressor.Name == "xz")
-	 {
-	    if (lzma_auto_decoder(&lzma->stream, memlimit, 0) != LZMA_OK)
-	       return false;
-	 }
-	 else
-	 {
-	    if (lzma_alone_decoder(&lzma->stream, memlimit) != LZMA_OK)
-	       return false;
-	 }
+	 uint64_t constexpr memlimit = 1024 * 1024 * 500;
+	 if (lzma_auto_decoder(&lzma->stream, memlimit, 0) != LZMA_OK)
+	    return false;
 	 lzma->compressing = false;
       }
       return true;

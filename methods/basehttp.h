@@ -60,7 +60,7 @@ struct RequestState
    bool AddPartialFileToHashes(FileFd &File);
 
    RequestState(BaseHttpMethod * const Owner, ServerState * const Server) :
-      Owner(Owner), Server(Server) { time(&Date); }
+      Owner(Owner), Server(Server) { time(&Date); Code[0] = '\0'; }
 };
 struct ServerState
 {

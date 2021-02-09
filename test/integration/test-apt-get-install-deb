@@ -23,7 +23,7 @@ mv foo.rpm foo.deb
 for exe in apt aptget; do
 	for cmd in install remove purge upgrade full-upgrade; do
 		testfailuremsg "E: Invalid archive signature
-E: Internal error, could not locate member control.tar.{zstlz4gzxzbz2lzma}
+E: Internal error, could not locate member control.tar{.zst,.lz4,.gz,.xz,.bz2,.lzma,}
 E: Could not read meta data from ${TMPWORKINGDIRECTORY}/foo.deb
 E: The package lists or status file could not be parsed or opened." $exe $cmd ./foo.deb
 	done

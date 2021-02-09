@@ -2604,14 +2604,32 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       return false;
    }
 
+   /* decide if we should download patches one by one or in one go:
+      The first is good if the server merges patches, but many don't so client
+      based merging can be attempt in which case the second is better.
+      "bad things" will happen if patches are merged on the server,
+      but client side merging is attempt as well */
+   pdiff_merge = _config->FindB("Acquire::PDiffs::Merge", true);
+   if (pdiff_merge == true)
+   {
+      // reprepro and dak add this flag if they merge patches on the server
+      std::string const precedence = Tags.FindS("X-Patch-Precedence");
+      pdiff_merge = (precedence != "merged");
+   }
+
    // calculate the size of all patches we have to get
    unsigned short const sizeLimitPercent = _config->FindI("Acquire::PDiffs::SizeLimit", 100);
    if (sizeLimitPercent > 0)
    {
-      unsigned long long downloadSize = std::accumulate(available_patches.begin(),
-	    available_patches.end(), 0llu, [](unsigned long long const T, DiffInfo const &I) {
-	    return T + I.download_hashes.FileSize();
-	    });
+      unsigned long long downloadSize = 0;
+      if (pdiff_merge)
+	 downloadSize = std::accumulate(available_patches.begin(), available_patches.end(), 0llu,
+					[](unsigned long long const T, DiffInfo const &I) {
+					   return T + I.download_hashes.FileSize();
+					});
+      // if server-side merging, assume we will need only the first patch
+      else if (not available_patches.empty())
+	 downloadSize = available_patches.front().download_hashes.FileSize();
       if (downloadSize != 0)
       {
 	 unsigned long long downloadSizeIdx = 0;
@@ -2634,19 +2652,6 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 	    return false;
 	 }
       }
-   }
-
-   /* decide if we should download patches one by one or in one go:
-      The first is good if the server merges patches, but many don't so client
-      based merging can be attempt in which case the second is better.
-      "bad things" will happen if patches are merged on the server,
-      but client side merging is attempt as well */
-   pdiff_merge = _config->FindB("Acquire::PDiffs::Merge", true);
-   if (pdiff_merge == true)
-   {
-      // reprepro adds this flag if it has merged patches on the server
-      std::string const precedence = Tags.FindS("X-Patch-Precedence");
-      pdiff_merge = (precedence != "merged");
    }
 
    // clean the plate

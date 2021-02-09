@@ -42,7 +42,7 @@ namespace APT {
 APT_PUBLIC bool UTF8ToCodeset(const char *codeset, const std::string &orig, std::string *dest);
 APT_PUBLIC char *_strstrip(char *String);
 APT_PUBLIC char *_strrstrip(char *String); // right strip only
-APT_PUBLIC char *_strtabexpand(char *String,size_t Len);
+APT_DEPRECATED_MSG("Use SubstVar to avoid memory headaches") APT_PUBLIC char *_strtabexpand(char *String,size_t Len);
 APT_PUBLIC bool ParseQuoteWord(const char *&String,std::string &Res);
 APT_PUBLIC bool ParseCWord(const char *&String,std::string &Res);
 APT_PUBLIC std::string QuoteString(const std::string &Str,const char *Bad);
@@ -117,6 +117,8 @@ APT_PUBLIC std::vector<std::string> StringSplit(std::string const &input,
                                      std::string const &sep, 
                                      unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) APT_PURE;
 
+
+APT_HIDDEN bool iovprintf(std::ostream &out, const char *format, va_list &args, ssize_t &size);
 APT_PUBLIC void ioprintf(std::ostream &out,const char *format,...) APT_PRINTF(2);
 APT_PUBLIC void strprintf(std::string &out,const char *format,...) APT_PRINTF(2);
 APT_PUBLIC char *safe_snprintf(char *Buffer,char *End,const char *Format,...) APT_PRINTF(3);
