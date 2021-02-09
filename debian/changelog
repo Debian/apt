@@ -1,3 +1,12 @@
+apt (2.1.20) unstable; urgency=medium
+
+  * CI: Run test as user on i386
+  * Fix test suite regression from StrToNum fixes. The tests started failing
+    on 32-bit because the values were actually out of range, but we did not
+    test errno before the last version, so it was not treated as an error.
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 10 Feb 2021 00:03:05 +0100
+
 apt (2.1.19) unstable; urgency=medium
 
   [ Helge Kreutzmann ]
