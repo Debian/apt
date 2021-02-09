@@ -1,3 +1,47 @@
+apt (2.1.19) unstable; urgency=medium
+
+  [ Helge Kreutzmann ]
+  * German program translation update (Closes: #979848)
+
+  [ Youfu Zhang ]
+  * dpkg: fix passing readonly /dev/null fd as stdout/stderr
+
+  [ Diederik de Haas ]
+  * Fix apt-acquire-additional-files entity's location.
+
+  [ Wolfgang Schweer ]
+  * vendor: Adjust Debian -security codename
+
+  [ Julian Andres Klode ]
+  * Include all translations when building the cache (LP: #1907850)
+
+  [ David Kalnischkies ]
+  * Various patches uplifted from unfinished fuzzer branches
+    - Use 500 MB memory limit for xz/lzma decoding
+    - Guess compressor only if no AR nember with exact name exists
+    - Free XXH3 state to avoid leak in cache hashing
+    - Fail ConfigDir reading if directory listing failed
+    - Retire and deprecate _strtabexpand
+    - Fix incorrect base64 encoding due to int promotion
+    - Don't parse \x and \0 past the end in DeEscapeString
+    - Remove Word size limit from ParseQuote and CWord
+    - Forbid negative values in unsigned StrToNum explicitly
+    - Avoid overstepping bounds in config file parsing
+    - Show 'Done' always for 'Building dependency tree'
+    - Avoid undefined pointer arithmetic while growing mmap
+    - Use error reporting instead of assert in rred patching
+    - Replace PrintStatus with SendMessage usage
+    - Ensure HTTP status code text has sensible content
+    - Limit on first patch size only for server-merged patches
+    - Use size of the old cache as APT::Cache-Start default
+    - Remove spurious periods on progress strings in po/de.po
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #981885)
+  * Dutch manpages translation update (Closes: #981883)
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 09 Feb 2021 10:41:53 +0100
+
 apt (2.1.18) unstable; urgency=high
 
   * pkgcachegen: Avoid write to old cache for Version::Extra (Closes: #980037)
