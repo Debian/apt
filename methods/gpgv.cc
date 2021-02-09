@@ -264,7 +264,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	    SubKeyMapping[tokens[9]].emplace_back(sig);
       }
       else if (strncmp(buffer, APTKEYWARNING, sizeof(APTKEYWARNING)-1) == 0)
-         Warning("%s", buffer + sizeof(APTKEYWARNING));
+         Warning(buffer + sizeof(APTKEYWARNING));
       else if (strncmp(buffer, APTKEYERROR, sizeof(APTKEYERROR)-1) == 0)
 	 _error->Error("%s", buffer + sizeof(APTKEYERROR));
    }
@@ -442,8 +442,12 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 	    }))
    {
       for (auto const & Signer : Signers.SoonWorthless)
+      {
+	 std::string msg;
          // TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
-         Warning(_("Signature by key %s uses weak digest algorithm (%s)"), Signer.key.c_str(), Signer.note.c_str());
+	 strprintf(msg, _("Signature by key %s uses weak digest algorithm (%s)"), Signer.key.c_str(), Signer.note.c_str());
+         Warning(std::move(msg));
+      }
    }
 
    if (Signers.Good.empty() || !Signers.Bad.empty() || !Signers.NoPubKey.empty())

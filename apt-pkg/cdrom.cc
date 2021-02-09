@@ -464,14 +464,12 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
 
    string File = _config->FindFile("Dir::Etc::sourcelist");
 
-   // Open the stream for reading
-   ifstream F((FileExists(File)?File.c_str():"/dev/null"),
-	      ios::in );
-   if (F.fail() == true)
-      return _error->Errno("ifstream::ifstream","Opening %s",File.c_str());
+   FileFd F(FileExists(File) ? File : "/dev/null", FileFd::ReadOnly);
+   if (not F.IsOpen() || F.Failed())
+      return _error->Errno("WriteSourceList", "Opening %s failed", File.c_str());
 
    string NewFile = File + ".new";
-   RemoveFile("WriteDatabase", NewFile);
+   RemoveFile("WriteSourceList", NewFile);
    ofstream Out(NewFile.c_str());
    if (!Out)
       return _error->Errno("ofstream::ofstream",
@@ -487,21 +485,16 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    else
       Type = "deb";
 
-   char Buffer[300];
    int CurLine = 0;
    bool First = true;
-   while (F.eof() == false)
+   std::string Buffer;
+   while (F.ReadLine(Buffer))
    {
-      F.getline(Buffer,sizeof(Buffer));
-      CurLine++;
-      if (F.fail() && !F.eof())
-	 return _error->Error(_("Line %u too long in source list %s."),
-			      CurLine,File.c_str());
-      _strtabexpand(Buffer,sizeof(Buffer));
-      _strstrip(Buffer);
-            
+      ++CurLine;
+      auto const Cleaned = APT::String::Strip(SubstVar(Buffer, "\t", "        "));
+
       // Comment or blank
-      if (Buffer[0] == '#' || Buffer[0] == 0)
+      if (Cleaned.empty() || Cleaned[0] == '#')
       {
 	 Out << Buffer << endl;
 	 continue;
@@ -523,7 +516,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
       // Grok it
       string cType;
       string URI;
-      const char *C = Buffer;
+      const char *C = Cleaned.c_str();
       if (ParseQuoteWord(C,cType) == false ||
 	  ParseQuoteWord(C,URI) == false)
       {

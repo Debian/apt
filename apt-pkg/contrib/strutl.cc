@@ -23,8 +23,10 @@
 #include <algorithm>
 #include <array>
 #include <iomanip>
+#include <limits>
 #include <locale>
 #include <sstream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -310,11 +312,11 @@ bool ParseQuoteWord(const char *&String,string &Res)
    }
 
    // Now de-quote characters
-   char Buffer[1024];
+   Res.clear();
+   Res.reserve(C - String);
    char Tmp[3];
    const char *Start = String;
-   char *I;
-   for (I = Buffer; I < Buffer + sizeof(Buffer) && Start != C; I++)
+   while (Start != C)
    {
       if (*Start == '%' && Start + 2 < C &&
 	  isxdigit(Start[1]) && isxdigit(Start[2]))
@@ -322,19 +324,15 @@ bool ParseQuoteWord(const char *&String,string &Res)
 	 Tmp[0] = Start[1];
 	 Tmp[1] = Start[2];
 	 Tmp[2] = 0;
-	 *I = (char)strtol(Tmp,0,16);
+	 Res.push_back(static_cast<char>(strtol(Tmp, 0, 16)));
 	 Start += 3;
 	 continue;
       }
       if (*Start != '"')
-	 *I = *Start;
-      else
-	 I--;
-      Start++;
+	 Res.push_back(*Start);
+      ++Start;
    }
-   *I = 0;
-   Res = Buffer;
-   
+
    // Skip ending white space
    for (; isspace(*C) != 0; C++)
       ;
@@ -354,33 +352,28 @@ bool ParseCWord(const char *&String,string &Res)
       ;
    if (*C == 0)
       return false;
-   
-   char Buffer[1024];
-   char *Buf = Buffer;
-   if (strlen(String) >= sizeof(Buffer))
-       return false;
-       
-   for (; *C != 0; C++)
+
+   Res.clear();
+   Res.reserve(strlen(String));
+   for (; *C != 0; ++C)
    {
       if (*C == '"')
       {
 	 for (C++; *C != 0 && *C != '"'; C++)
-	    *Buf++ = *C;
-	 
+	    Res.push_back(*C);
+
 	 if (*C == 0)
 	    return false;
-	 
+
 	 continue;
-      }      
-      
+      }
+
       if (C != String && isspace(*C) != 0 && isspace(C[-1]) != 0)
 	 continue;
       if (isspace(*C) == 0)
 	 return false;
-      *Buf++ = ' ';
+      Res.push_back(' ');
    }
-   *Buf = 0;
-   Res = Buffer;
    String = C;
    return true;
 }
@@ -597,7 +590,7 @@ string Base64Encode(const string &S)
       base64.  */
    for (string::const_iterator I = S.begin(); I < S.end(); I += 3)
    {
-      char Bits[3] = {0,0,0};
+      uint8_t Bits[3] = {0,0,0};
       Bits[0] = I[0];
       if (I + 1 < S.end())
 	 Bits[1] = I[1];
@@ -1148,34 +1141,24 @@ bool FTPMDTMStrToTime(const char* const str,time_t &time)
 									/*}}}*/
 // StrToNum - Convert a fixed length string to a number			/*{{{*/
 // ---------------------------------------------------------------------
-/* This is used in decoding the crazy fixed length string headers in 
+/* This is used in decoding the crazy fixed length string headers in
    tar and ar files. */
 bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base)
 {
-   char S[30];
-   if (Len >= sizeof(S))
+   unsigned long long BigRes;
+   if (not StrToNum(Str, BigRes, Len, Base))
       return false;
-   memcpy(S,Str,Len);
-   S[Len] = 0;
-   
-   // All spaces is a zero
-   Res = 0;
-   unsigned I;
-   for (I = 0; S[I] == ' '; I++);
-   if (S[I] == 0)
-      return true;
-   
-   char *End;
-   Res = strtoul(S,&End,Base);
-   if (End == S)
+
+   if (std::numeric_limits<unsigned long>::max() < BigRes)
       return false;
-   
+
+   Res = BigRes;
    return true;
 }
 									/*}}}*/
 // StrToNum - Convert a fixed length string to a number			/*{{{*/
 // ---------------------------------------------------------------------
-/* This is used in decoding the crazy fixed length string headers in 
+/* This is used in decoding the crazy fixed length string headers in
    tar and ar files. */
 bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base)
 {
@@ -1184,20 +1167,20 @@ bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base
       return false;
    memcpy(S,Str,Len);
    S[Len] = 0;
-   
+
    // All spaces is a zero
    Res = 0;
    unsigned I;
-   for (I = 0; S[I] == ' '; I++);
+   for (I = 0; S[I] == ' '; ++I);
    if (S[I] == 0)
       return true;
-   
-   char *End;
-   Res = strtoull(S,&End,Base);
-   if (End == S)
+   if (S[I] == '-')
       return false;
-   
-   return true;
+
+   char *End;
+   errno = 0;
+   Res = strtoull(S,&End,Base);
+   return not (End == S || errno != 0);
 }
 									/*}}}*/
 
@@ -1432,13 +1415,12 @@ unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
 // ---------------------------------------------------------------------
 /* This is used to make the internationalization strings easier to translate
    and to allow reordering of parameters */
-static bool iovprintf(ostream &out, const char *format,
+bool iovprintf(std::ostream &out, const char *format,
 		      va_list &args, ssize_t &size) {
-   char *S = (char*)malloc(size);
-   ssize_t const n = vsnprintf(S, size, format, args);
+   auto S = std::unique_ptr<char,decltype(&free)>{static_cast<char*>(malloc(size)), &free};
+   ssize_t const n = vsnprintf(S.get(), size, format, args);
    if (n > -1 && n < size) {
-      out << S;
-      free(S);
+      out << S.get();
       return true;
    } else {
       if (n > -1)
@@ -1446,7 +1428,6 @@ static bool iovprintf(ostream &out, const char *format,
       else
 	 size *= 2;
    }
-   free(S);
    return false;
 }
 void ioprintf(ostream &out,const char *format,...)
@@ -1611,22 +1592,26 @@ string DeEscapeString(const string &input)
       switch (*it)
       {
          case '0':
-            if (it + 2 <= input.end()) {
+            if (it + 2 < input.end()) {
                tmp[0] = it[1];
                tmp[1] = it[2];
                tmp[2] = 0;
                output += (char)strtol(tmp, 0, 8);
                it += 2;
-            }
+            } else {
+	       // FIXME: raise exception here?
+	    }
             break;
          case 'x':
-            if (it + 2 <= input.end()) {
+            if (it + 2 < input.end()) {
                tmp[0] = it[1];
                tmp[1] = it[2];
                tmp[2] = 0;
                output += (char)strtol(tmp, 0, 16);
                it += 2;
-            }
+            } else {
+	       // FIXME: raise exception here?
+	    }
             break;
          default:
             // FIXME: raise exception here?
