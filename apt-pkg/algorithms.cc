@@ -34,7 +34,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <map>
-#include <regex>
 #include <set>
 #include <sstream>
 #include <string>
@@ -1586,22 +1585,27 @@ std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
 	 std::clog << "Keeping previous kernel " << previous->first << std::endl;
       keep.insert(previous->first);
    }
-
-   std::regex special("([\\.\\+])");
+   // Escape special characters '.' and '+' in version strings so we can build a regular expression
+   auto escapeSpecial = [](std::string input) -> std::string {
+      for (size_t pos = 0; (pos = input.find_first_of(".+", pos)) != input.npos; pos += 2) {
+	 input.insert(pos, 1, '\\');
+      }
+      return input;
+   };
    std::ostringstream ss;
    for (auto &pattern : _config->FindVector("APT::VersionedKernelPackages"))
    {
       // Legacy compatibility: Always protected the booted uname and last installed uname
       if (not lastInstalledUname.empty())
-	 ss << "|^" << pattern << "-" << std::regex_replace(lastInstalledUname, special, "\\$1") << "$";
+	 ss << "|^" << pattern << "-" << escapeSpecial(lastInstalledUname) << "$";
       if (*uts.release)
-	 ss << "|^" << pattern << "-" << std::regex_replace(uts.release, special, "\\$1") << "$";
+	 ss << "|^" << pattern << "-" << escapeSpecial(uts.release) << "$";
       for (auto const &kernel : version2unames)
       {
 	 if (ReturnRemove ? keep.find(kernel.first) == keep.end() : keep.find(kernel.first) != keep.end())
 	 {
 	    for (auto const &uname : kernel.second)
-	       ss << "|^" << pattern << "-" << std::regex_replace(uname, special, "\\$1") << "$";
+	       ss << "|^" << pattern << "-" << escapeSpecial(uname) << "$";
 	 }
       }
    }
