@@ -49,7 +49,7 @@ using std::string;
 /** \brief Returns \b true for packages matching a regular
  *  expression in APT::NeverAutoRemove.
  */
-class APT_PUBLIC DefaultRootSetFunc2 : public pkgDepCache::DefaultRootSetFunc
+class DefaultRootSetFunc2 : public pkgDepCache::DefaultRootSetFunc
 {
    std::unique_ptr<APT::CacheFilter::Matcher> Kernels;
 
