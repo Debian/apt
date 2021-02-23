@@ -18,37 +18,100 @@ Breaks: sysvinit-core'
 
 buildsimplenativepackage 'systemd-sysv' 'native' '2~break' 'sid-break' 'Breaks: sysvinit (<< 2), sysvinit-core'
 
+# one more time, with Protected
+insertinstalledpackage 'protected-sysvinit' 'native' '1' 'Protected: yes'
+
+buildsimplenativepackage 'protected-sysvinit' 'native' '2' 'sid' 'Pre-Depends: protected-sysvinit-core | protected-systemd-sysv
+Protected: yes'
+buildsimplenativepackage 'protected-sysvinit-core' 'native' '2' 'sid'
+
+buildsimplenativepackage 'protected-systemd-sysv' 'native' '2~conflict' 'sid-conflict' 'Conflicts: protected-sysvinit (<< 2)
+Breaks: protected-sysvinit-core'
+
+buildsimplenativepackage 'protected-systemd-sysv' 'native' '2~break' 'sid-break' 'Breaks: protected-sysvinit (<< 2), protected-sysvinit-core'
+
+
 setupaptarchive
 
 cp -a rootdir/var/lib/dpkg/status dpkg.status.backup
 
 testforcebreak() {
+	package="sid-$1"
+	prefix="$2"
 	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
 	rm -f rootdir/var/lib/apt/extended_states
 	testfailureequal "Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
-  sysvinit
+  ${prefix}sysvinit
 The following NEW packages will be installed:
-  systemd-sysv
+  ${prefix}systemd-sysv
 The following packages will be upgraded:
-  sysvinit
-1 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
-E: This installation run will require temporarily removing the essential package sysvinit:$(getarchitecture 'native') due to a Conflicts/Pre-Depends loop. This is often bad, but if you really want to do it, activate the APT::Force-LoopBreak option.
-E: Internal Error, Could not early remove sysvinit:$(dpkg --print-architecture) (2)" aptget install systemd-sysv -t "$1" -s
+  ${prefix}sysvinit
+1 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+E: This installation run will require temporarily removing the essential package ${prefix}sysvinit:$(getarchitecture 'native') due to a Conflicts/Pre-Depends loop. This is often bad, but if you really want to do it, activate the APT::Force-LoopBreak option.
+E: Internal Error, Could not early remove ${prefix}sysvinit:$(dpkg --print-architecture) (2)" aptget install ${prefix}systemd-sysv -t "$package" -s
 	# ensure that really nothing happens
-	testfailure aptget install systemd-sysv -y -t "$1"
-	testdpkginstalled 'sysvinit'
-	testdpkgnotinstalled 'systemd-sysv'
+	testfailure aptget install ${prefix}systemd-sysv -y -t "$package"
+	testdpkginstalled "${prefix}sysvinit"
+	testdpkgnotinstalled "${prefix}systemd-sysv"
 
 	# with enough force however …
 	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
-	testsuccess aptget install systemd-sysv -y -t "$1" -o APT::Force-LoopBreak=1 -o Debug::pkgDpkgPm=1
+	testsuccess aptget install ${prefix}systemd-sysv -y -t "$package" -o APT::Force-LoopBreak=1 -o Debug::pkgDpkgPm=1
 	cp rootdir/tmp/testsuccess.output apt.output
-	testsuccess grep -- '--force-remove-essential --remove sysvinit' apt.output
-	testsuccess aptget install systemd-sysv -y -t "$1" -o APT::Force-LoopBreak=1
-	testdpkginstalled 'sysvinit' 'systemd-sysv'
+	if [ "$prefix" = "protected-" ]; then
+		if dpkg --assert-protected-field 2>/dev/null; then
+			testsuccess grep -- "--force-remove-protected --remove ${prefix}sysvinit" apt.output
+		fi
+    else
+		testsuccess grep -- "--force-remove-essential --remove ${prefix}sysvinit" apt.output
+	fi
+	testsuccess aptget install ${prefix}systemd-sysv -y -t "$package" -o APT::Force-LoopBreak=1
+	testdpkginstalled "${prefix}sysvinit" "${prefix}systemd-sysv"
 }
 
-testforcebreak 'sid-conflict'
-testforcebreak 'sid-break'
+testforcebreak 'conflict'
+testforcebreak 'break'
+
+testnoforcebreak() {
+	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
+	rm -f rootdir/var/lib/apt/extended_states
+	testequalor2 "Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  protected-sysvinit
+The following NEW packages will be installed:
+  protected-systemd-sysv
+The following packages will be upgraded:
+  protected-sysvinit
+1 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst protected-systemd-sysv (2~$1 sid-$1 [$(getarchitecture 'native')]) [protected-systemd-sysv:$(getarchitecture 'native') on protected-sysvinit:$(getarchitecture 'native')] []
+Conf protected-systemd-sysv:$(getarchitecture 'native') broken
+ Breaks:protected-sysvinit:$(getarchitecture 'native')
+ []
+Inst protected-sysvinit [1] (2 sid [$(getarchitecture 'native')])
+Conf protected-sysvinit (2 sid [$(getarchitecture 'native')])
+E: Conf Broken protected-systemd-sysv:$(getarchitecture 'native')" "Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  protected-sysvinit
+The following NEW packages will be installed:
+  protected-systemd-sysv
+The following packages will be upgraded:
+  protected-sysvinit
+1 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Remv protected-sysvinit [1]
+Inst protected-systemd-sysv (2~conflict sid-conflict [$(getarchitecture 'native')])
+Conf protected-systemd-sysv (2~conflict sid-conflict [$(getarchitecture 'native')])
+Inst protected-sysvinit [1] (2 sid [$(getarchitecture 'native')])
+Conf protected-sysvinit (2 sid [$(getarchitecture 'native')])" aptget install protected-systemd-sysv -t "sid-$1" -s
+
+    # we check with 'real' packages here as the simulation reports a 'Conf broken'
+	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
+	testsuccess aptget install protected-systemd-sysv -y -t "sid-$1"
+	testdpkginstalled 'protected-sysvinit' 'protected-systemd-sysv'
+}
+
+testforcebreak 'conflict' 'protected-'
+testnoforcebreak 'break'
