@@ -1824,6 +1824,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 case Item::Install:
 	 ADDARGC("--unpack");
 	 ADDARGC("--auto-deconfigure");
+	 // dpkg < 1.20.8 needs --force-remove-protected to deconfigure protected packages
+	 if (dpkgProtectedField)
+	    ADDARGC("--force-remove-protected");
 	 break;
       }
 
