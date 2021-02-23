@@ -652,8 +652,7 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg, DepIterator const * const D
 
    // Essential packages get special treatment
    bool IsEssential = false;
-   if ((Pkg->Flags & pkgCache::Flag::Essential) != 0 ||
-       (Pkg->Flags & pkgCache::Flag::Important) != 0)
+   if ((Pkg->Flags & pkgCache::Flag::Essential) != 0)
       IsEssential = true;
 
    /* Check for packages that are the dependents of essential packages and
@@ -663,8 +662,7 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg, DepIterator const * const D
       for (pkgCache::DepIterator D = Pkg.RevDependsList(); D.end() == false &&
 	   IsEssential == false; ++D)
 	 if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
-	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0 ||
-	        (D.ParentPkg()->Flags & pkgCache::Flag::Important) != 0)
+	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0)
 	       IsEssential = true;
    }
 
