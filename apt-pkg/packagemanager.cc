@@ -652,9 +652,11 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg, DepIterator const * const D
 
    // Essential packages get special treatment
    bool IsEssential = false;
-   if ((Pkg->Flags & pkgCache::Flag::Essential) != 0 ||
-       (Pkg->Flags & pkgCache::Flag::Important) != 0)
+   if ((Pkg->Flags & pkgCache::Flag::Essential) != 0)
       IsEssential = true;
+   bool IsProtected = false;
+   if ((Pkg->Flags & pkgCache::Flag::Important) != 0)
+      IsProtected = true;
 
    /* Check for packages that are the dependents of essential packages and
       promote them too */
@@ -662,14 +664,17 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg, DepIterator const * const D
    {
       for (pkgCache::DepIterator D = Pkg.RevDependsList(); D.end() == false &&
 	   IsEssential == false; ++D)
-	 if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
-	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0 ||
-	        (D.ParentPkg()->Flags & pkgCache::Flag::Important) != 0)
+	 if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends) {
+	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0)
 	       IsEssential = true;
+	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Important) != 0)
+	       IsProtected = true;
+	 }
    }
 
    if (IsEssential == true)
    {
+      // FIXME: Unify messaging with Protected below.
       if (_config->FindB("APT::Force-LoopBreak",false) == false)
 	 return _error->Error(_("This installation run will require temporarily "
 				"removing the essential package %s due to a "
@@ -680,6 +685,16 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg, DepIterator const * const D
    // dpkg will auto-deconfigure it, no need for the big remove hammer
    else if (Dep != NULL && (*Dep)->Type == pkgCache::Dep::DpkgBreaks)
       return true;
+   else if (IsProtected == true)
+   {
+      // FIXME: Message should talk about Protected, not Essential, and unified.
+      if (_config->FindB("APT::Force-LoopBreak",false) == false)
+	 return _error->Error(_("This installation run will require temporarily "
+				"removing the essential package %s due to a "
+				"Conflicts/Pre-Depends loop. This is often bad, "
+				"but if you really want to do it, activate the "
+				"APT::Force-LoopBreak option."),Pkg.FullName().c_str());
+   }
 
    bool Res = SmartRemove(Pkg);
    if (Cache[Pkg].Delete() == false)

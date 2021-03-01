@@ -31,6 +31,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <array>
 #include <fstream>
 #include <iterator>
 #include <numeric>
