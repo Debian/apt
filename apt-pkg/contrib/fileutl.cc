@@ -140,10 +140,6 @@ bool RunScripts(const char *Cnf)
       return _error->Errno("waitpid","Couldn't wait for subprocess");
    }
 
-   // Restore sig int/quit
-   signal(SIGQUIT,SIG_DFL);
-   signal(SIGINT,SIG_DFL);   
-
    // Check for an error code.
    if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
    {
