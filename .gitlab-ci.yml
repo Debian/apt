@@ -1,4 +1,4 @@
-image: debian:bullseye
+image: debian:unstable
 variables:
   DEBIAN_FRONTEND: noninteractive
   CCACHE_DIR: $CI_PROJECT_DIR/.ccache
@@ -23,7 +23,7 @@ test as root:
     - unbuffer ./test/integration/run-tests -q -j 4
 
 test as user:
-  image: i386/debian:bullseye
+  image: i386/debian:unstable
   stage: test
   script:
     - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
