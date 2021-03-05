@@ -71,7 +71,7 @@ The following packages were automatically installed and are no longer required:
    ${CURRENTKERNEL}-686-pae:i386 (5-1)
    ${CURRENTKERNEL}-dbg (5-1)
 Use '$AUTOREMOVE' to remove them.
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -sV
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -sV -o APT::Protect-Kernels=0
 testsuccessequal "Reading package lists...
 Building dependency tree...
 Reading state information...
@@ -85,13 +85,13 @@ The following packages were automatically installed and are no longer required:
    ${CURRENTKERNEL}-dbg (5-1)
    ${CURRENTKERNEL}-rt (5-1)
 Use '$AUTOREMOVE' to remove them.
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -sV --ignore-hold
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -sV --ignore-hold -o APT::Protect-Kernels=0
 testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 7 packages were automatically installed and are no longer required.
 Use '$AUTOREMOVE' to remove them.
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -s -o APT::Get::HideAutoRemove=small
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -s -o APT::Get::HideAutoRemove=small -o APT::Protect-Kernels=0
 testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
@@ -110,7 +110,22 @@ Remv linux-image-100.0.0-1-generic [100.0.0-1]
 Remv $CURRENTKERNEL [5-1]
 Remv ${CURRENTKERNEL}+variant [5-1]
 Remv ${CURRENTKERNEL}-686-pae:i386 [5-1]
-Remv ${CURRENTKERNEL}-dbg [5-1]" aptget autoremove -sV
+Remv ${CURRENTKERNEL}-dbg [5-1]" aptget autoremove -sV -o APT::Protect-Kernels=0
+
+msgmsg "test current kernel protected at runtime"
+# note that {CURRENTKERNEL} is removed, but variants of it are not, this is a least effort solution.
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages were automatically installed and are no longer required:
+   linux-headers-1000000-1-generic (100.0.0-1)
+   linux-image-1.0.0-2-generic (1.0.0-2)
+   linux-image-100.0.0-1-generic (100.0.0-1)
+   ${CURRENTKERNEL}+variant (5-1)
+   ${CURRENTKERNEL}-686-pae:i386 (5-1)
+   ${CURRENTKERNEL}-dbg (5-1)
+Use '$AUTOREMOVE' to remove them.
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget install -sV
 
 msgmsg "run without parameter"
 testprotected
