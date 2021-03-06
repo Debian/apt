@@ -206,8 +206,13 @@ static bool DoDSelectUpgrade(CommandLine &)
       ShowBroken(c1out,Cache,false);
       return _error->Error(_("Internal error, problem resolver broke stuff"));
    }
-   
-   return InstallPackages(Cache,false);
+
+   APT::PackageVector HeldBackPackages;
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); not Pkg.end(); ++Pkg)
+      if (Pkg->CurrentVer != 0 && Cache[Pkg].Upgradable() && not Cache[Pkg].Upgrade() && not Cache[Pkg].Delete())
+	 HeldBackPackages.push_back(Pkg);
+
+   return InstallPackages(Cache, HeldBackPackages, false);
 }
 									/*}}}*/
 // DoCheck - Perform the check operation				/*{{{*/

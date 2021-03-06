@@ -818,6 +818,7 @@ bool DoBuildDep(CommandLine &CmdL)
       return false;
    pkgProblemResolver Fix(Cache.GetDepCache());
 
+   APT::PackageSet UpgradablePackages;
    APT::PackageVector removeAgain;
    {
       pkgDepCache::ActionGroup group(Cache);
@@ -842,6 +843,11 @@ bool DoBuildDep(CommandLine &CmdL)
 	    continue;
 	 InstallAction(Cache[Pkg].CandidateVerIter(Cache));
 	 removeAgain.push_back(Pkg);
+      }
+
+      {
+	 APT::CacheSetHelper helper;
+	 helper.PackageFrom(APT::CacheSetHelper::PATTERN, &UpgradablePackages, Cache, "?upgradable");
       }
       InstallAction.doAutoInstall();
 
@@ -883,8 +889,15 @@ bool DoBuildDep(CommandLine &CmdL)
 	 Cache->MarkDelete(pkg, false, 0, true);
    }
 
+   APT::PackageVector HeldBackPackages;
+   SortedPackageUniverse Universe(Cache);
+   for (auto const &Pkg: Universe)
+      if (Pkg->CurrentVer != 0 && not Cache[Pkg].Upgrade() && not Cache[Pkg].Delete() &&
+	  UpgradablePackages.find(Pkg) != UpgradablePackages.end())
+	 HeldBackPackages.push_back(Pkg);
+
    pseudoPkgs.clear();
-   if (_error->PendingError() || InstallPackages(Cache, false, true) == false)
+   if (_error->PendingError() || not InstallPackages(Cache, HeldBackPackages, false, true))
       return _error->Error(_("Failed to process build dependencies"));
    return true;
 }

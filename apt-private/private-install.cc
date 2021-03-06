@@ -100,7 +100,7 @@ static void RemoveDownloadNeedingItemsFromFetcher(pkgAcquire &Fetcher, bool &Tra
       I = Fetcher.ItemsBegin();
    }
 }
-bool InstallPackages(CacheFile &Cache, bool ShwKept, bool Ask, bool Safety, std::string const &Hook, CommandLine const &CmdL)
+bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, bool ShwKept, bool Ask, bool Safety, std::string const &Hook, CommandLine const &CmdL)
 {
    if (not RunScripts("APT::Install::Pre-Invoke"))
       return false;
@@ -145,7 +145,21 @@ bool InstallPackages(CacheFile &Cache, bool ShwKept, bool Ask, bool Safety, std:
       if (Missing)
       {
 	 if (_config->FindB("APT::Get::Fix-Missing",false))
+	 {
 	    PM->FixMissing();
+	    SortedPackageUniverse Universe(Cache);
+	    APT::PackageVector NewHeldBackPackages;
+	    for (auto const &Pkg: Universe)
+	    {
+	       if (Pkg->CurrentVer == 0 || Cache[Pkg].Delete())
+		  continue;
+	       if (Cache[Pkg].Upgradable() && not Cache[Pkg].Upgrade())
+		  NewHeldBackPackages.push_back(Pkg);
+	       else if (std::find(HeldBackPackages.begin(), HeldBackPackages.end(), Pkg) != HeldBackPackages.end())
+		  NewHeldBackPackages.push_back(Pkg);
+	    }
+	    std::swap(NewHeldBackPackages, HeldBackPackages);
+	 }
 	 else
 	    return _error->Error(_("Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?"));
       }
@@ -158,8 +172,8 @@ bool InstallPackages(CacheFile &Cache, bool ShwKept, bool Ask, bool Safety, std:
    ShowDel(c1out,Cache);
    ShowNew(c1out,Cache);
    if (ShwKept == true)
-      ShowKept(c1out,Cache);
-   bool const Hold = !ShowHold(c1out,Cache);
+      ShowKept(c1out,Cache, HeldBackPackages);
+   bool const Hold = not ShowHold(c1out,Cache);
    if (_config->FindB("APT::Get::Show-Upgraded",true) == true)
       ShowUpgraded(c1out,Cache);
    bool const Downgrade = !ShowDowngraded(c1out,Cache);
@@ -171,7 +185,7 @@ bool InstallPackages(CacheFile &Cache, bool ShwKept, bool Ask, bool Safety, std:
    if (not Hook.empty())
       RunJsonHook(Hook, "org.debian.apt.hooks.install.package-list", CmdL.FileList, Cache);
 
-   Stats(c1out,Cache);
+   Stats(c1out,Cache, HeldBackPackages);
    if (not Hook.empty())
       RunJsonHook(Hook, "org.debian.apt.hooks.install.statistics", CmdL.FileList, Cache);
 
@@ -578,19 +592,16 @@ bool DoAutomaticRemove(CacheFile &Cache)
 static const unsigned short MOD_REMOVE = 1;
 static const unsigned short MOD_INSTALL = 2;
 
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache, int UpgradeMode)
-{
-   std::vector<PseudoPkg> VolatileCmdL;
-   return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, UpgradeMode);
-}
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache, int UpgradeMode)
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache, int UpgradeMode,
+					APT::PackageVector &HeldBackPackages)
 {
    std::map<unsigned short, APT::VersionSet> verset;
    std::set<std::string> UnknownPackages;
-   return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, UpgradeMode, UnknownPackages);
+   return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, UpgradeMode, UnknownPackages, HeldBackPackages);
 }
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache,
-					std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode, std::set<std::string> &UnknownPackages)
+					std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode,
+					std::set<std::string> &UnknownPackages, APT::PackageVector &HeldBackPackages)
 {
    // Enter the special broken fixing mode if the user specified arguments
    bool BrokenFix = false;
@@ -663,6 +674,7 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
 
   TryToInstall InstallAction(Cache, Fix.get(), BrokenFix);
   TryToRemove RemoveAction(Cache, Fix.get());
+  APT::PackageSet UpgradablePackages;
 
    // new scope for the ActionGroup
    {
@@ -675,6 +687,11 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
 	    InstallAction = std::for_each(verset[MOD_INSTALL].begin(), verset[MOD_INSTALL].end(), InstallAction);
 	 else if (order[i] == MOD_REMOVE)
 	    RemoveAction = std::for_each(verset[MOD_REMOVE].begin(), verset[MOD_REMOVE].end(), RemoveAction);
+      }
+
+      {
+	 APT::CacheSetHelper helper;
+	 helper.PackageFrom(APT::CacheSetHelper::PATTERN, &UpgradablePackages, Cache, "?upgradable");
       }
 
       if (Fix != NULL && _config->FindB("APT::Get::AutoSolving", true) == true)
@@ -731,6 +748,12 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
        Cache->BadCount() == 0 &&
        _config->FindB("APT::Get::Simulate",false) == false)
       Cache->writeStateFile(NULL);
+
+   SortedPackageUniverse Universe(Cache);
+   for (auto const &Pkg: Universe)
+      if (Pkg->CurrentVer != 0 && not Cache[Pkg].Upgrade() && not Cache[Pkg].Delete() &&
+	  UpgradablePackages.find(Pkg) != UpgradablePackages.end())
+	 HeldBackPackages.push_back(Pkg);
 
    return true;
 }
@@ -837,8 +860,9 @@ bool DoInstall(CommandLine &CmdL)
 
    std::map<unsigned short, APT::VersionSet> verset;
    std::set<std::string> UnknownPackages;
+   APT::PackageVector HeldBackPackages;
 
-   if (!DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, 0, UnknownPackages))
+   if (not DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, 0, UnknownPackages, HeldBackPackages))
    {
       RunJsonHook("AptCli::Hooks::Install", "org.debian.apt.hooks.install.fail", CmdL.FileList, Cache, UnknownPackages);
       return false;
@@ -949,9 +973,9 @@ bool DoInstall(CommandLine &CmdL)
    // See if we need to prompt
    // FIXME: check if really the packages in the set are going to be installed
    if (Cache->InstCount() == verset[MOD_INSTALL].size() && Cache->DelCount() == 0)
-      result = InstallPackages(Cache, false, false, true, "AptCli::Hooks::Install", CmdL);
+      result = InstallPackages(Cache, HeldBackPackages, false, false, true, "AptCli::Hooks::Install", CmdL);
    else
-      result = InstallPackages(Cache, false, true, true, "AptCli::Hooks::Install", CmdL);
+      result = InstallPackages(Cache, HeldBackPackages, false, true, true, "AptCli::Hooks::Install", CmdL);
 
    if (result)
       result = RunJsonHook("AptCli::Hooks::Install", "org.debian.apt.hooks.install.post", CmdL.FileList, Cache);
