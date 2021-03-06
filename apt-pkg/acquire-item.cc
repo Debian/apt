@@ -3177,8 +3177,8 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
 /* The only header we use is the last-modified header. */
 string pkgAcqIndex::Custom600Headers() const
 {
-
-   string msg = "\nIndex-File: true";
+   std::string msg = pkgAcqBaseIndex::Custom600Headers();
+   msg.append("\nIndex-File: true");
 
    if (TransactionManager->LastMetaIndexParser == NULL)
    {
@@ -3930,9 +3930,10 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
 									/*}}}*/
 string pkgAcqFile::Custom600Headers() const				/*{{{*/
 {
-   if (IsIndexFile)
-      return "\nIndex-File: true";
-   return "";
+   string Header = pkgAcquire::Item::Custom600Headers();
+   if (not IsIndexFile)
+      return Header;
+   return Header + "\nIndex-File: true";
 }
 									/*}}}*/
 pkgAcqFile::~pkgAcqFile() {}

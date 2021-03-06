@@ -192,6 +192,16 @@ http://localhost:${APTHTTPPORT}/redirectme	type:deb
 testfailure apt update
 testrundownload 'foo=2'
 
+msgmsg 'Mirrors can be filtered by' 'by-hash type'
+echo "http://localhost:${APTHTTPPORT}/failure	type:foobar priority:1
+http://localhost:${APTHTTPPORT}/redirectme	type:index type:deb
+" > aptarchive/mirror.txt
+rm -rf rootdir/var/lib/apt/lists
+testsuccess apt update -o Acquire::By-Hash=force #-o Debug::pkgAcquire::Worker=1
+cp rootdir/tmp/testsuccess.output forcedbyhash.output
+testfailure grep "localhost:${APTHTTPPORT}/failure" forcedbyhash.output
+testrundownload 'foo=2'
+
 msgmsg 'The prefix for the mirrorlist is' 'passed on'
 echo 'Dir::Bin::Methods::foo+mirror+file "mirror";
 Dir::Bin::Methods::foo+mirror+http "mirror";
