@@ -2564,26 +2564,16 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       }
    }
 
-
-   bool foundStart = false;
-   for (std::vector<DiffInfo>::iterator cur = available_patches.begin();
-	 cur != available_patches.end(); ++cur)
    {
-      if (LocalHashes != cur->result_hashes)
-	 continue;
+      auto const foundStart = std::find_if(available_patches.rbegin(), available_patches.rend(),
+	    [&](auto const &cur) { return LocalHashes == cur.result_hashes; });
+      if (foundStart == available_patches.rend() || unlikely(available_patches.empty()))
+      {
+	 ErrorText = "Couldn't find the start of the patch series";
+	 return false;
+      }
+      available_patches.erase(available_patches.begin(), std::prev(foundStart.base()));
 
-      available_patches.erase(available_patches.begin(), cur);
-      foundStart = true;
-      break;
-   }
-
-   if (foundStart == false || unlikely(available_patches.empty() == true))
-   {
-      ErrorText = "Couldn't find the start of the patch series";
-      return false;
-   }
-
-   {
       auto const patch = std::find_if(available_patches.cbegin(), available_patches.cend(), [](auto const &patch) {
 	 return not patch.result_hashes.usable() ||
 		not patch.patch_hashes.usable() ||
