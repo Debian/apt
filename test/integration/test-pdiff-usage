@@ -254,7 +254,7 @@ SHA256-Download:
 	# This should work in at least 4% of the cases...
 	for i in $(seq 25); do
 		testfailure apt update "$@"
-		if ! grep 'rred:600' rootdir/tmp/testfailure.output; then
+		if ! grep -q 'rred:600' rootdir/tmp/testfailure.output; then
 			break
 		fi
 	done
@@ -281,7 +281,8 @@ SHA256-Download:
 	rm "${PATCHFILE}.gz"
 	testsuccess apt update "$@"
 	cp rootdir/tmp/testsuccess.output patchdownload.output
-	testsuccess grep '^Falling back to normal index file acquire' patchdownload.output
+	# it should be anchored on line start, but multiple processes on the same output stream…
+	testsuccess grep 'Falling back to normal index file acquire' patchdownload.output
 	testnopackage oldstuff
 	testsuccessequal "$(cat Packages-future)
 " aptcache show apt newstuff futurestuff
