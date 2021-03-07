@@ -146,6 +146,7 @@ testrred 'Multi line change' 'more' '5,7c
  - even more good stuff
  - bonus good stuff
 $(tail -n 12 ./Packages)"
+testrred 'Patch file' 'empty' '' "$(cat ./Packages)"
 
 failrred() {
 	msgtest 'Failure caused by' "$1"
@@ -161,7 +162,6 @@ failrred 'Bogus content' '<html>
 </html>'
 
 # not a problem per-se, but we want our parser to be really strict
-failrred 'Empty patch file' ''
 failrred 'Empty line patch file' '
 '
 failrred 'Empty line before command' '
@@ -222,7 +222,8 @@ createpatch 'Remove more stuff and fix later' '23d,
 testsuccess apthelper cat-file --compress gzip Packages.ed-1
 mv rootdir/tmp/testsuccess.output Packages.ed-1.gz
 testsuccess rm Packages.ed-1
-createpatch 'Remove (old) dog paragraph' '10,19d' > Packages.ed-2
+touch Packages.ed-2 # an empty patch
+createpatch 'Remove (old) dog paragraph' '10,19d' > Packages.ed-3
 mergepatches '11,19c
 Package: extra-kittens
 Version: unavailable

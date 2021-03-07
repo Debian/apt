@@ -441,8 +441,12 @@ class Patch {
       bool cmdwanted = true;
 
       Change ch(std::numeric_limits<size_t>::max());
-      if (f.ReadLine(buffer, sizeof(buffer)) == NULL)
+      if (f.ReadLine(buffer, sizeof(buffer)) == nullptr)
+      {
+	 if (f.Eof())
+	    return true;
 	 return _error->Error("Reading first line of patchfile %s failed", f.Name().c_str());
+      }
       do {
 	 if (h != NULL)
 	    h->Add(buffer);

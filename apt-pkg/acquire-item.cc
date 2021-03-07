@@ -2564,26 +2564,16 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
       }
    }
 
-
-   bool foundStart = false;
-   for (std::vector<DiffInfo>::iterator cur = available_patches.begin();
-	 cur != available_patches.end(); ++cur)
    {
-      if (LocalHashes != cur->result_hashes)
-	 continue;
+      auto const foundStart = std::find_if(available_patches.rbegin(), available_patches.rend(),
+	    [&](auto const &cur) { return LocalHashes == cur.result_hashes; });
+      if (foundStart == available_patches.rend() || unlikely(available_patches.empty()))
+      {
+	 ErrorText = "Couldn't find the start of the patch series";
+	 return false;
+      }
+      available_patches.erase(available_patches.begin(), std::prev(foundStart.base()));
 
-      available_patches.erase(available_patches.begin(), cur);
-      foundStart = true;
-      break;
-   }
-
-   if (foundStart == false || unlikely(available_patches.empty() == true))
-   {
-      ErrorText = "Couldn't find the start of the patch series";
-      return false;
-   }
-
-   {
       auto const patch = std::find_if(available_patches.cbegin(), available_patches.cend(), [](auto const &patch) {
 	 return not patch.result_hashes.usable() ||
 		not patch.patch_hashes.usable() ||
@@ -3050,14 +3040,11 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
       State = StateErrorDiff;
       return;
    }
-   std::string const PatchFile = GetMergeDiffsPatchFileName(UnpatchedFile, patch.file);
    std::string const PatchedFile = GetKeepCompressedFileName(UncompressedUnpatchedFile, Target);
 
    switch (State)
    {
       case StateFetchDiff:
-	 Rename(DestFile, PatchFile);
-
 	 // check if this is the last completed diff
 	 State = StateDoneDiff;
 	 for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
@@ -3068,6 +3055,8 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
 		  std::clog << "Not the last done diff in the batch: " << Desc.URI << std::endl;
 	       return;
 	    }
+	 for (auto * diff : *allPatches)
+	    Rename(diff->DestFile, GetMergeDiffsPatchFileName(UnpatchedFile, diff->patch.file));
 	 // this is the last completed diff, so we are ready to apply now
 	 DestFile = GetKeepCompressedFileName(UncompressedUnpatchedFile + "-patched", Target);
 	 if(Debug)
@@ -3098,8 +3087,8 @@ void pkgAcqIndexMergeDiffs::Done(string const &Message, HashStringList const &Ha
 	 if(Debug)
 	    std::clog << "allDone: " << DestFile << "\n" << std::endl;
 	 return;
-      case StateDoneDiff: _error->Fatal("Done called for %s which is in an invalid Done state", PatchFile.c_str()); break;
-      case StateErrorDiff: _error->Fatal("Done called for %s which is in an invalid Error state", PatchFile.c_str()); break;
+      case StateDoneDiff: _error->Fatal("Done called for %s which is in an invalid Done state", patch.file.c_str()); break;
+      case StateErrorDiff: _error->Fatal("Done called for %s which is in an invalid Error state", patch.file.c_str()); break;
    }
 }
 									/*}}}*/
@@ -3188,8 +3177,8 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
 /* The only header we use is the last-modified header. */
 string pkgAcqIndex::Custom600Headers() const
 {
-
-   string msg = "\nIndex-File: true";
+   std::string msg = pkgAcqBaseIndex::Custom600Headers();
+   msg.append("\nIndex-File: true");
 
    if (TransactionManager->LastMetaIndexParser == NULL)
    {
@@ -3941,9 +3930,10 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
 									/*}}}*/
 string pkgAcqFile::Custom600Headers() const				/*{{{*/
 {
-   if (IsIndexFile)
-      return "\nIndex-File: true";
-   return "";
+   string Header = pkgAcquire::Item::Custom600Headers();
+   if (not IsIndexFile)
+      return Header;
+   return Header + "\nIndex-File: true";
 }
 									/*}}}*/
 pkgAcqFile::~pkgAcqFile() {}

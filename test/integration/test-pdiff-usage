@@ -100,12 +100,15 @@ testrun() {
 	PATCHINDEX='aptarchive/Packages.diff/Index'
 	echo "SHA256-Current: $(sha256sum "${PKGFILE}-new" | cut -d' ' -f 1) $(stat -c%s "${PKGFILE}-new")
 SHA256-History:
+ $(sha256sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") 2000-08-18-2013.28
  01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b 33053002 2010-08-18-2013.28
  $(sha256sum "$PKGFILE" | cut -d' ' -f 1) $(stat -c%s "$PKGFILE") $(basename "$PATCHFILE")
 SHA256-Patches:
+ $(sha256sum "$PATCHFILE" | cut -d' ' -f 1) $(stat -c%s "$PATCHFILE") 2000-08-18-2013.28
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
  $(sha256sum "$PATCHFILE" | cut -d' ' -f 1) $(stat -c%s "$PATCHFILE") $(basename "$PATCHFILE")
 SHA256-Download:
+ $(sha256sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz") 2000-08-18-2013.28.gz
  d2a1b33187ed2d248eeae3b1223ea71791ea35f2138a713ed371332a6421f467 197 2010-08-18-2013.28.gz
  $(sha256sum "${PATCHFILE}.gz" | cut -d' ' -f 1) $(stat -c%s "${PATCHFILE}.gz") $(basename "${PATCHFILE}.gz")" > "$PATCHINDEX"
 
@@ -254,7 +257,7 @@ SHA256-Download:
 	# This should work in at least 4% of the cases...
 	for i in $(seq 25); do
 		testfailure apt update "$@"
-		if ! grep 'rred:600' rootdir/tmp/testfailure.output; then
+		if ! grep -q 'rred:600' rootdir/tmp/testfailure.output; then
 			break
 		fi
 	done
@@ -281,7 +284,8 @@ SHA256-Download:
 	rm "${PATCHFILE}.gz"
 	testsuccess apt update "$@"
 	cp rootdir/tmp/testsuccess.output patchdownload.output
-	testsuccess grep '^Falling back to normal index file acquire' patchdownload.output
+	# it should be anchored on line start, but multiple processes on the same output stream…
+	testsuccess grep 'Falling back to normal index file acquire' patchdownload.output
 	testnopackage oldstuff
 	testsuccessequal "$(cat Packages-future)
 " aptcache show apt newstuff futurestuff
