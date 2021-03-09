@@ -1765,68 +1765,64 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       if (pipe(fd) != 0)
 	 return _error->Errno("pipe","Failed to create IPC pipe to dpkg");
 
-#define ADDARG(X) Args.push_back(X); Size += strlen(X)
-#define ADDARGC(X) Args.push_back(X); Size += sizeof(X) - 1
+      auto const AddArg = [&](auto const argument) {
+	 Args.push_back(argument);
+	 Size += strlen(argument);
+      };
 
-      ADDARGC("--status-fd");
+      AddArg("--status-fd");
       char status_fd_buf[20];
       snprintf(status_fd_buf,sizeof(status_fd_buf),"%i", fd[1]);
-      ADDARG(status_fd_buf);
+      AddArg(status_fd_buf);
       unsigned long const Op = I->Op;
 
       if (NoTriggers == true && I->Op != Item::TriggersPending &&
 	  (I->Op != Item::ConfigurePending || std::next(I) != List.end()))
-      {
-	 ADDARGC("--no-triggers");
-      }
+	 AddArg("--no-triggers");
 
       switch (I->Op)
       {
 	 case Item::Remove:
 	 case Item::Purge:
-	 ADDARGC("--force-depends");
-	 ADDARGC("--abort-after=1");
+	 AddArg("--force-depends");
+	 AddArg("--abort-after=1");
 	 if (std::any_of(I, J, ItemIsEssential))
-	 {
-	    ADDARGC("--force-remove-essential");
-	 }
+	    AddArg("--force-remove-essential");
 	 if (dpkgProtectedField && std::any_of(I, J, ItemIsProtected))
-	 {
-	    ADDARGC("--force-remove-protected");
-	 }
-	 ADDARGC("--remove");
+	    AddArg("--force-remove-protected");
+	 AddArg("--remove");
 	 break;
 
 	 case Item::Configure:
-	 ADDARGC("--configure");
+	 AddArg("--configure");
 	 break;
 
 	 case Item::ConfigurePending:
-	 ADDARGC("--configure");
-	 ADDARGC("--pending");
+	 AddArg("--configure");
+	 AddArg("--pending");
 	 break;
 
 	 case Item::TriggersPending:
-	 ADDARGC("--triggers-only");
-	 ADDARGC("--pending");
+	 AddArg("--triggers-only");
+	 AddArg("--pending");
 	 break;
 
 	 case Item::RemovePending:
-	 ADDARGC("--remove");
-	 ADDARGC("--pending");
+	 AddArg("--remove");
+	 AddArg("--pending");
 	 break;
 
 	 case Item::PurgePending:
-	 ADDARGC("--purge");
-	 ADDARGC("--pending");
+	 AddArg("--purge");
+	 AddArg("--pending");
 	 break;
 
 	 case Item::Install:
-	 ADDARGC("--unpack");
-	 ADDARGC("--auto-deconfigure");
+	 AddArg("--unpack");
+	 AddArg("--auto-deconfigure");
 	 // dpkg < 1.20.8 needs --force-remove-protected to deconfigure protected packages
 	 if (dpkgProtectedField)
-	    ADDARGC("--force-remove-protected");
+	    AddArg("--force-remove-protected");
 	 break;
       }
 
@@ -1861,8 +1857,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	       if (symlink(I->File.c_str(), linkpath.c_str()) != 0)
 		  return _error->Errno("DPkg::Go", "Symlinking %s to %s failed!", I->File.c_str(), linkpath.c_str());
 	    }
-	    ADDARGC("--recursive");
-	    ADDARG(tmpdir_to_free);
+	    AddArg("--recursive");
+	    AddArg(tmpdir_to_free);
 	 }
 	 else
 	 {
@@ -1916,10 +1912,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    if (dpkgMultiArch == false && (I->Pkg.Arch() == nativeArch ||
 					   strcmp(I->Pkg.Arch(), "all") == 0 ||
 					   strcmp(I->Pkg.Arch(), "none") == 0))
-	    {
-	       char const * const name = I->Pkg.Name();
-	       ADDARG(name);
-	    }
+	       AddArg(I->Pkg.Name());
 	    else
 	    {
 	       pkgCache::VerIterator PkgVer;
@@ -1938,20 +1931,17 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	       if (strcmp(I->Pkg.Arch(), "none") == 0)
 		  ; // never arch-qualify a package without an arch
 	       else if (PkgVer.end() == false)
-                  name.append(":").append(PkgVer.Arch());
-               else
-                  _error->Warning("Can not find PkgVer for '%s'", name.c_str());
-	       char * const fullname = strdup(name.c_str());
-	       Packages.push_back(fullname);
-	       ADDARG(fullname);
+		  name.append(":").append(PkgVer.Arch());
+	       else
+		  _error->Warning("Can not find PkgVer for '%s'", name.c_str());
+	       Packages.push_back(strdup(name.c_str()));
+	       AddArg(Packages.back());
 	    }
 	 }
 	 // skip configure action if all scheduled packages disappeared
 	 if (oldSize == Size)
 	    continue;
       }
-#undef ADDARGC
-#undef ADDARG
 
       J = I;
 
