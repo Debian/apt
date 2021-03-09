@@ -1826,7 +1826,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 break;
       }
 
-      char * tmpdir_to_free = nullptr;
+      std::unique_ptr<char, decltype(&cleanUpTmpDir)> tmpdir_for_dpkg_recursive{nullptr, &cleanUpTmpDir};
 
       // Write in the file or package names
       if (I->Op == Item::Install)
@@ -1836,9 +1836,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 {
 	    std::string tmpdir;
 	    strprintf(tmpdir, "%s/apt-dpkg-install-XXXXXX", GetTempDir().c_str());
-	    tmpdir_to_free = strndup(tmpdir.data(), tmpdir.length());
-	    if (mkdtemp(tmpdir_to_free) == nullptr)
-	       return _error->Errno("DPkg::Go", "mkdtemp of %s failed in preparation of calling dpkg unpack", tmpdir_to_free);
+	    tmpdir_for_dpkg_recursive.reset(strndup(tmpdir.data(), tmpdir.length()));
+	    if (mkdtemp(tmpdir_for_dpkg_recursive.get()) == nullptr)
+	       return _error->Errno("DPkg::Go", "mkdtemp of %s failed in preparation of calling dpkg unpack", tmpdir_for_dpkg_recursive.get());
 
 	    char p = 1;
 	    for (auto c = installsToDo - 1; (c = c/10) != 0; ++p);
@@ -1851,14 +1851,14 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 		  file.append(".deb");
 	       std::string linkpath;
 	       if (dpkg_recursive_install_numbered)
-		  strprintf(linkpath, "%s/%.*lu-%s", tmpdir_to_free, p, n, file.c_str());
+		  strprintf(linkpath, "%s/%.*lu-%s", tmpdir_for_dpkg_recursive.get(), p, n, file.c_str());
 	       else
-		  strprintf(linkpath, "%s/%s", tmpdir_to_free, file.c_str());
+		  strprintf(linkpath, "%s/%s", tmpdir_for_dpkg_recursive.get(), file.c_str());
 	       if (symlink(I->File.c_str(), linkpath.c_str()) != 0)
 		  return _error->Errno("DPkg::Go", "Symlinking %s to %s failed!", I->File.c_str(), linkpath.c_str());
 	    }
 	    AddArg("--recursive");
-	    AddArg(tmpdir_to_free);
+	    AddArg(tmpdir_for_dpkg_recursive.get());
 	 }
 	 else
 	 {
@@ -1957,7 +1957,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 Packages.clear();
 	 close(fd[0]);
 	 close(fd[1]);
-	 cleanUpTmpDir(tmpdir_to_free);
 	 continue;
       }
       Args.push_back(NULL);
@@ -2110,8 +2109,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
       signal(SIGHUP,old_SIGHUP);
-
-      cleanUpTmpDir(tmpdir_to_free);
 
       if (waitpid_failure == true)
       {
