@@ -1758,8 +1758,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       auto Size = StartSize;
       Args.erase(Args.begin() + BaseArgs, Args.end());
       Args.reserve(size);
-      // keep track of allocated strings for multiarch package names
-      std::vector<char *> Packages(size, nullptr);
 
       int fd[2];
       if (pipe(fd) != 0)
@@ -1827,6 +1825,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       }
 
       std::unique_ptr<char, decltype(&cleanUpTmpDir)> tmpdir_for_dpkg_recursive{nullptr, &cleanUpTmpDir};
+      // keep track of allocated strings for multiarch package names
+      std::vector<std::unique_ptr<char, decltype(std::free) *>> Packages;
+      Packages.reserve(size);
 
       // Write in the file or package names
       if (I->Op == Item::Install)
@@ -1934,8 +1935,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 		  name.append(":").append(PkgVer.Arch());
 	       else
 		  _error->Warning("Can not find PkgVer for '%s'", name.c_str());
-	       Packages.push_back(strdup(name.c_str()));
-	       AddArg(Packages.back());
+	       Packages.emplace_back(strdup(name.c_str()), &std::free);
+	       AddArg(Packages.back().get());
 	    }
 	 }
 	 // skip configure action if all scheduled packages disappeared
@@ -1951,10 +1952,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	      a != Args.end(); ++a)
 	    clog << *a << ' ';
 	 clog << endl;
-	 for (std::vector<char *>::const_iterator p = Packages.begin();
-	       p != Packages.end(); ++p)
-	    free(*p);
-	 Packages.clear();
 	 close(fd[0]);
 	 close(fd[1]);
 	 continue;
@@ -2045,9 +2042,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       sigprocmask(SIG_BLOCK,&d->sigmask,&d->original_sigmask);
 
       /* free vectors (and therefore memory) as we don't need the included data anymore */
-      for (std::vector<char *>::const_iterator p = Packages.begin();
-	   p != Packages.end(); ++p)
-	 free(*p);
       Packages.clear();
 
       // the result of the waitpid call
