@@ -1,3 +1,18 @@
+apt (2.2.2) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * Deal with rred shortcomings around empty patch files (LP: #1918112)
+    - Allow merging with empty pdiff patches
+    - Rename pdiff merge patches only after they are all downloaded
+    - Start pdiff patching from the last possible starting point
+    - Ensure all index files sent custom tags to the methods
+  * Harden test for no new acquires after transaction abort (Closes: #984966)
+
+  [ Julian Andres Klode ]
+  * Make ADDARG{,C}() macros expand to single statements
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 12 Mar 2021 09:15:59 +0100
+
 apt (2.2.1) unstable; urgency=medium
 
   [ Julian Andres Klode ]
