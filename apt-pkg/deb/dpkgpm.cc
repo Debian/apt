@@ -1765,8 +1765,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       if (pipe(fd) != 0)
 	 return _error->Errno("pipe","Failed to create IPC pipe to dpkg");
 
-#define ADDARG(X) Args.push_back(X); Size += strlen(X)
-#define ADDARGC(X) Args.push_back(X); Size += sizeof(X) - 1
+#define ADDARG(X) do { const char *arg = (X); Args.push_back(arg); Size += strlen(arg); } while (0)
+#define ADDARGC(X) ADDARG(X)
 
       ADDARGC("--status-fd");
       char status_fd_buf[20];
