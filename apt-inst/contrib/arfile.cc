@@ -92,9 +92,14 @@ bool ARArchive::LoadHeaders()
 	  StrToNum(Head.Size,Memb->Size,sizeof(Head.Size)) == false)
       {
 	 delete Memb;
-	 return _error->Error(_("Invalid archive member header %s"), Head.Name);
+	 return _error->Error(_("Invalid archive member header"));
       }
-	 
+
+      if (Left < 0 || Memb->Size > static_cast<unsigned long long>(Left))
+      {
+	 delete Memb;
+	 return _error->Error(_("Invalid archive member header"));
+      }
       // Check for an extra long name string
       if (memcmp(Head.Name,"#1/",3) == 0)
       {
@@ -106,6 +111,13 @@ bool ARArchive::LoadHeaders()
 	    delete Memb;
 	    return _error->Error(_("Invalid archive member header"));
 	 }
+
+	 if (Len > Memb->Size)
+	 {
+	    delete Memb;
+	    return _error->Error(_("Invalid archive member header"));
+	 }
+
 	 if (File.Read(S,Len) == false)
 	 {
 	    delete Memb;
@@ -119,7 +131,14 @@ bool ARArchive::LoadHeaders()
       else
       {
 	 unsigned int I = sizeof(Head.Name) - 1;
-	 for (; Head.Name[I] == ' ' || Head.Name[I] == '/'; I--);
+	 for (; Head.Name[I] == ' ' || Head.Name[I] == '/'; I--)
+	 {
+	    if (I == 0)
+	    {
+	       delete Memb;
+	       return _error->Error(_("Invalid archive member header"));
+	    }
+	 }
 	 Memb->Name = std::string(Head.Name,I+1);
       }
 
