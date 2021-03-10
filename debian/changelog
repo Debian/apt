@@ -1,3 +1,32 @@
+apt (1.8.5) buster; urgency=medium
+
+  * Merge 1.8.2.z security uploads back into 1.8.y branch; bringing
+    the changes from 1.8.3, 1.8.4 and this upload to buster.
+
+  [ David Kalnischkies ]
+  * Fix incorrect base64 encoding due to int promotion (LP: #1916050)
+  * Harden test for no new acquires after transaction abort (Closes: #984966)
+    (LP: #1918920)
+
+
+  [ Julian Andres Klode ]
+  * Implement update --error-on=any (Closes: #594813) (LP: #1693900)
+  * Include all translations when building the cache (LP: #1907850)
+  * Add basic support for the Protected field, and do not require force-loopbreak
+    on Protected/Important packages (Closes: #983014) (LP: #1916725)
+  * Protect currently running kernel at run-time (LP: #1615381)
+  * Make ADDARG{,C}() macros expand to single statements
+  * Default Acquire::AllowReleaseInfoChange::Suite to "true" (Closes: #931566)
+  * Improve immediate configuration handling (LP: #1871268)
+    - Do not immediately configure m-a: same packages in lockstep
+    - Ignore failures from immediate configuration. This does not change the
+      actual installation ordering - we never passed the return code to the
+      caller and installation went underway anyway if it could be ordered at a
+      later stage, this just removes spurious after-the-fact errors.
+      (Closes: #973305, #188161, #211075, #649588)
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 12 Mar 2021 12:57:44 +0100
+
 apt (1.8.4) unstable; urgency=medium
 
   * CMake: Pass -Werror=return-type to gcc
