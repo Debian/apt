@@ -1,3 +1,23 @@
+apt (2.0.5) focal; urgency=medium
+
+  [ Julian Andres Klode ]
+  * private-search: Only use V.TranslatedDescription() if good (LP: #1877987)
+  * Implement update --error-on=any (Closes: #594813) (LP: #1693900)
+  * Include all translations when building the cache (LP: #1907850)
+  * Add basic support for the Protected field, and do not require force-loopbreak
+    on Protected/Important packages (Closes: #983014) (LP: #1916725)
+  * Protect currently running kernel at run-time (LP: #1615381)
+  * Make ADDARG{,C}() macros expand to single statements
+  * Default Acquire::AllowReleaseInfoChange::Suite to "true" (Closes: #931566)
+    (LP: #1918907)
+
+  [ David Kalnischkies ]
+  * Fix incorrect base64 encoding due to int promotion (LP: #1916050)
+  * Harden test for no new acquires after transaction abort (Closes: #984966)
+    (LP: #1918920)
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Fri, 12 Mar 2021 12:47:30 +0100
+
 apt (2.0.4) focal; urgency=medium
 
   [ Julian Andres Klode ]
