@@ -1,3 +1,34 @@
+apt (1.6.13) bionic; urgency=medium
+
+  [ David Kalnischkies ]
+  * Fix incorrect base64 encoding due to int promotion (LP: #1916050)
+  * Harden test for no new acquires after transaction abort (Closes: #984966)
+    (LP: #1918920)
+
+  [ Julian Andres Klode ]
+  * Implement update --error-on=any (Closes: #594813) (LP: #1693900)
+  * Include all translations when building the cache (LP: #1907850)
+  * Add basic support for the Protected field
+  * Do not require force-loopbreak on Important packages
+    (Closes: #983014) (LP: #1916725)
+  * Protect currently running kernel at run-time (LP: #1615381)
+  * Make ADDARG{,C}() macros expand to single statements
+  * Improve immediate configuration handling (LP: #1871268)
+    - Do not immediately configure m-a: same packages in lockstep
+    - Ignore failures from immediate configuration. This does not change the
+      actual installation ordering - we never passed the return code to the
+      caller and installation went underway anyway if it could be ordered at a
+      later stage, this just removes spurious after-the-fact errors.
+      (Closes: #973305, #188161, #211075, #649588)
+  * Default Acquire::AllowReleaseInfoChange::Suite to "true" (Closes: #931566)
+    (LP: #1918907)
+
+  [ Balint Reczey ]
+  * Set LC_ALL=C.UTF-8 for unattended-upgrades environment when parsing its --help
+    (LP: #1806076)
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Fri, 12 Mar 2021 14:09:15 +0100
+
 apt (1.6.12ubuntu0.2) bionic-security; urgency=high
 
   * SECURITY UPDATE: Integer overflow in parsing (LP: #1899193)
