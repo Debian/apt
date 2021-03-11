@@ -251,16 +251,10 @@ SHA256-Download:
 	cp Packages-future aptarchive/Packages
 	rm -f rootdir/var/lib/apt/lists/*_Contents-*
 	webserverconfig 'aptwebserver::overwrite::.*Contents-.*::filename' '/hacked-i386.gz'
-	# This should work in at least 4% of the cases...
-	for i in $(seq 25); do
-		testfailure apt update "$@"
-		if ! grep 'rred:600' rootdir/tmp/testfailure.output; then
-			break
-		fi
-	done
-	webserverconfig 'aptwebserver::overwrite::.*Contents-.*::filename' '/Contents-i386.gz'
+	testfailure apt update "$@"
 	cp rootdir/tmp/testfailure.output patchdownload.output
-	testfailure grep 'rred:600' patchdownload.output
+	webserverconfig 'aptwebserver::overwrite::.*Contents-.*::filename' '/Contents-i386.gz'
+	testfailure grep -q -z 'AbortTransaction.* [a-zA-Z0-9+-]\+:600%20' patchdownload.output
 	testnopackage newstuff futurestuff
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt oldstuff
