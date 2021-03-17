@@ -135,13 +135,9 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
 	 // or something).
 	 if (rec.Package.empty())
 	 {
-	    // If we are in an OR group, we need to set the "Or" flag of the
-	    // previous entry to our value.
-	    if (BuildDeps.empty() == false && (BuildDeps[BuildDeps.size() - 1].Op & pkgCache::Dep::Or) == pkgCache::Dep::Or)
-	    {
-	       BuildDeps[BuildDeps.size() - 1].Op &= ~pkgCache::Dep::Or;
-	       BuildDeps[BuildDeps.size() - 1].Op |= (rec.Op & pkgCache::Dep::Or);
-	    }
+	    // If this was the last or-group member, close the or-group with the previous entry
+	    if (not BuildDeps.empty() && (BuildDeps.back().Op & pkgCache::Dep::Or) == pkgCache::Dep::Or && (rec.Op & pkgCache::Dep::Or) != pkgCache::Dep::Or)
+	       BuildDeps.back().Op &= ~pkgCache::Dep::Or;
 	 } else {
 	    BuildDeps.emplace_back(std::move(rec));
 	 }
