@@ -123,6 +123,14 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
 
       while (1)
       {
+	 // Strip off leading spaces (is done by ParseDepends, too) and
+	 // superfluous commas (encountered in user-written dsc/control files)
+	 do {
+	    for (;Start != Stop && isspace_ascii(*Start) != 0; ++Start);
+	 } while (*Start == ',' && ++Start != Stop);
+	 if (Start == Stop)
+	    break;
+
 	 BuildDepRec rec;
 	 Start = debListParser::ParseDepends(Start, Stop,
 					     rec.Package, rec.Version, rec.Op, true, StripMultiArch, true);
@@ -141,9 +149,6 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
 	 } else {
 	    BuildDeps.emplace_back(std::move(rec));
 	 }
-
-	 if (Start == Stop)
-	    break;
       }
    }
 
