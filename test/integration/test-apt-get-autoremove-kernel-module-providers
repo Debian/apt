@@ -1,0 +1,103 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'old-kernel-modules-0.8' 'all' '1' 'Depends: linux-image-0.8
+Provides: old-module
+Source: kernel-module'
+insertinstalledpackage 'old-kernel-modules-0.9' 'all' '1' 'Depends: linux-image-0.9
+Provides: old-module
+Source: kernel-module'
+insertinstalledpackage 'kernel-modules-1.0' 'all' '1' 'Depends: linux-image-1.0
+Provides: module
+Source: kernel-module'
+insertinstalledpackage 'kernel-modules-1.1' 'all' '2' 'Depends: linux-image-1.1
+Provides: module
+Source: kernel-module'
+insertinstalledpackage 'kernel-modules-1.2' 'all' '2' 'Depends: linux-image-1.2
+Provides: module
+Source: kernel-module'
+insertinstalledpackage 'kernel-modules-2.0' 'all' '2' 'Depends: linux-image-2.0
+Provides: module
+Source: kernel-module'
+insertinstalledpackage 'kernel-modules-2.1' 'all' '2' 'Depends: linux-image-2.1
+Provides: module
+Source: kernel-module'
+insertinstalledpackage 'texteditor-gtk' 'all' '2' 'Provides: editor
+Source: texteditor'
+insertinstalledpackage 'texteditor-kde' 'all' '2' 'Provides: editor
+Source: texteditor'
+
+insertinstalledpackage 'linux-image-0.8' 'all' '0.8' 'Provides: linux-image
+Source: linux-image'
+insertinstalledpackage 'linux-image-0.9' 'all' '0.9' 'Provides: linux-image
+Source: linux-image'
+insertinstalledpackage 'linux-image-1.0' 'all' '1.0' 'Provides: linux-image
+Source: linux-image'
+insertinstalledpackage 'linux-image-1.1' 'all' '1.1' 'Provides: linux-image
+Source: linux-image'
+insertinstalledpackage 'linux-image-1.2' 'all' '1.2' 'Provides: linux-image
+Source: linux-image'
+insertinstalledpackage 'linux-image-2.0' 'all' '2.0' 'Provides: linux-image
+Source: linux-image'
+insertinstalledpackage 'linux-image-2.1' 'all' '2.1' 'Provides: linux-image
+Source: linux-image'
+insertinstalledpackage 'has-needs' 'all' '1' 'Depends: editor, module, linux-image'
+insertinstalledpackage 'old-needs' 'all' '1' 'Depends: old-module'
+
+testsuccess aptmark auto 'linux-image-*' 'old-kernel-modules-*' 'kernel-modules-*' 'texteditor-*'
+testsuccessequal 'kernel-modules-1.0
+kernel-modules-1.1
+kernel-modules-1.2
+kernel-modules-2.0
+kernel-modules-2.1
+linux-image-0.8
+linux-image-0.9
+linux-image-1.0
+linux-image-1.1
+linux-image-1.2
+linux-image-2.0
+linux-image-2.1
+old-kernel-modules-0.8
+old-kernel-modules-0.9
+texteditor-gtk
+texteditor-kde' aptmark showauto
+
+testsuccess aptget check -s
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  kernel-modules-1.0 kernel-modules-1.1 kernel-modules-1.2 linux-image-1.0
+  linux-image-1.1 linux-image-1.2
+0 upgraded, 0 newly installed, 6 to remove and 0 not upgraded.
+Remv kernel-modules-1.0 [1]
+Remv kernel-modules-1.1 [2]
+Remv kernel-modules-1.2 [2]
+Remv linux-image-1.0 [1.0]
+Remv linux-image-1.1 [1.1]
+Remv linux-image-1.2 [1.2]' apt autoremove -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  kernel-modules-1.0 kernel-modules-1.1 kernel-modules-1.2 linux-image-0.8
+  linux-image-0.9 linux-image-1.0 linux-image-1.1 linux-image-1.2
+  old-kernel-modules-0.8 old-kernel-modules-0.9 old-needs
+0 upgraded, 0 newly installed, 11 to remove and 0 not upgraded.
+Remv kernel-modules-1.0 [1]
+Remv kernel-modules-1.1 [2]
+Remv kernel-modules-1.2 [2]
+Remv old-needs [1]
+Remv old-kernel-modules-0.8 [1]
+Remv linux-image-0.8 [0.8]
+Remv old-kernel-modules-0.9 [1]
+Remv linux-image-0.9 [0.9]
+Remv linux-image-1.0 [1.0]
+Remv linux-image-1.1 [1.1]
+Remv linux-image-1.2 [1.2]' apt autoremove -s old-needs-

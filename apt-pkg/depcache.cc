@@ -12,6 +12,7 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
+#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
@@ -28,10 +29,13 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
+#include <sstream>
 #include <iterator>
 #include <list>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 #include <stdio.h>
@@ -2295,6 +2299,8 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
       std::clog << "Marking: " << Pkg.FullName() << " " << Ver.VerStr()
 		<< " (" << reason << ")" << std::endl;
 
+   std::unique_ptr<APT::CacheFilter::Matcher> IsAVersionedKernelPackage, IsProtectedKernelPackage;
+
    for (auto D = Ver.DependsList(); D.end() == false; ++D)
    {
       auto const T = D.TargetPkg();
@@ -2308,7 +2314,7 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 	 continue;
 
       // handle the virtual part first
-      APT::VersionVector providers;
+      std::unordered_map<std::string, APT::VersionVector> providers_by_source;
       for(auto Prv = T.ProvidesList(); Prv.end() == false; ++Prv)
       {
 	 auto PP = Prv.OwnerPkg();
@@ -2321,36 +2327,62 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 	 if (unlikely(PV.end()) || PV != Prv.OwnerVer() || D.IsSatisfied(Prv) == false)
 	    continue;
 
-	 providers.emplace_back(PV);
+	 providers_by_source[PV.SourcePkgName()].push_back(PV);
       }
-      if (providers.empty() == false)
+      if (providers_by_source.empty() == false)
       {
 	 // sort providers by source version so that only the latest versioned
 	 // binary package of a source package is marked instead of all
-	 std::sort(providers.begin(), providers.end(),
-	    [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) {
-	       auto const nameret = strcmp(A.SourcePkgName(), B.SourcePkgName());
-	       if (nameret != 0)
-	          return nameret < 0;
-	       auto const verret = A.Cache()->VS->CmpVersion(A.SourceVerStr(), B.SourceVerStr());
-	       if (verret != 0)
-	          return verret > 0;
-	       return strcmp(A.ParentPkg().Name(), B.ParentPkg().Name()) < 0;
-	 });
-	 auto const prvsize = providers.size();
-	 providers.erase(std::unique(providers.begin(), providers.end(),
-	    [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) {
-	       return strcmp(A.SourcePkgName(), B.SourcePkgName()) == 0 &&
-	          strcmp(A.SourceVerStr(), B.SourceVerStr()) != 0;
-	    }), providers.end());
-	 for (auto && PV: providers)
+	 auto const sort_by_version = [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) {
+	    auto const verret = A.Cache()->VS->CmpVersion(A.SourceVerStr(), B.SourceVerStr());
+	    if (verret != 0)
+	       return verret > 0;
+	    return A->ID < B->ID;
+	 };
+	 for (auto &providers : providers_by_source)
 	 {
-	    auto const PP = PV.ParentPkg();
-	    if (debug_autoremove)
-	       std::clog << "Following dep: " << APT::PrettyDep(this, D)
-		  << ", provided by " << PP.FullName() << " " << PV.VerStr()
-		  << " (" << providers.size() << "/" << prvsize << ")"<< std::endl;
-	    MarkPackage(PP, PV, follow_recommends, follow_suggests, "Provider");
+	    std::sort(providers.second.begin(), providers.second.end(), sort_by_version);
+	    auto const highestSrcVer = (*providers.second.begin()).SourceVerStr();
+	    auto notThisVer = std::find_if_not(providers.second.begin(), providers.second.end(), [&](auto const &V) { return strcmp(highestSrcVer, V.SourceVerStr()) == 0; });
+	    if (notThisVer != providers.second.end())
+	       providers.second.erase(notThisVer, providers.second.end());
+	    // if the provider is a versioned kernel package mark them only for protected kernels
+	    if (providers.second.size() == 1)
+	       continue;
+	    if (not IsAVersionedKernelPackage)
+	       IsAVersionedKernelPackage = [&]() -> std::unique_ptr<APT::CacheFilter::Matcher> {
+		  auto const patterns = _config->FindVector("APT::VersionedKernelPackages");
+		  if (patterns.empty())
+		     return std::make_unique<APT::CacheFilter::FalseMatcher>();
+		  std::ostringstream regex;
+		  regex << '^';
+		  std::copy(patterns.begin(), patterns.end() - 1, std::ostream_iterator<std::string>(regex, "-.*$|^"));
+		  regex << patterns.back() << "-.*$";
+		  return std::make_unique<APT::CacheFilter::PackageNameMatchesRegEx>(regex.str());
+	       }();
+	    if (not std::all_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*IsAVersionedKernelPackage)(Prv.ParentPkg()); }))
+	       continue;
+	    // … if there is at least one for protected kernels installed
+	    if (not IsProtectedKernelPackage)
+	       IsProtectedKernelPackage = APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(Cache);
+	    if (not std::any_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*IsProtectedKernelPackage)(Prv.ParentPkg()); }))
+	       continue;
+	    providers.second.erase(std::remove_if(providers.second.begin(), providers.second.end(),
+					       [&](auto const &Prv) { return not((*IsProtectedKernelPackage)(Prv.ParentPkg())); }),
+				providers.second.end());
+	 }
+
+	 for (auto const &providers : providers_by_source)
+	 {
+	    for (auto const &PV : providers.second)
+	    {
+	       auto const PP = PV.ParentPkg();
+	       if (debug_autoremove)
+		  std::clog << "Following dep: " << APT::PrettyDep(this, D)
+			    << ", provided by " << PP.FullName() << " " << PV.VerStr()
+			    << " (" << providers_by_source.size() << "/" << providers.second.size() << ")\n";
+	       MarkPackage(PP, PV, follow_recommends, follow_suggests, "Provider");
+	    }
 	 }
       }
 
