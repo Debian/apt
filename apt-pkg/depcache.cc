@@ -126,6 +126,7 @@ struct pkgDepCache::Private
 {
    std::unique_ptr<InRootSetFunc> inRootSetFunc;
    std::vector<bool> fullyExplored;
+   std::unique_ptr<APT::CacheFilter::Matcher> IsAVersionedKernelPackage, IsProtectedKernelPackage;
 };
 pkgDepCache::pkgDepCache(pkgCache *const pCache, Policy *const Plcy) : group_level(0), Cache(pCache), PkgState(0), DepState(0),
 								       iUsrSize(0), iDownloadSize(0), iInstCount(0), iDelCount(0), iKeepCount(0),
@@ -2304,7 +2305,6 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
       std::clog << "Marking: " << Pkg.FullName() << " " << Ver.VerStr()
 		<< " (" << reason << ")" << std::endl;
 
-   std::unique_ptr<APT::CacheFilter::Matcher> IsAVersionedKernelPackage, IsProtectedKernelPackage;
    auto const sort_by_source_version = [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) {
       auto const verret = A.Cache()->VS->CmpVersion(A.SourceVerStr(), B.SourceVerStr());
       if (verret != 0)
@@ -2369,8 +2369,8 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 	 // if the provider is a versioned kernel package mark them only for protected kernels
 	 if (providers.second.size() == 1)
 	    continue;
-	 if (not IsAVersionedKernelPackage)
-	    IsAVersionedKernelPackage = [&]() -> std::unique_ptr<APT::CacheFilter::Matcher> {
+	 if (not d->IsAVersionedKernelPackage)
+	    d->IsAVersionedKernelPackage = [&]() -> std::unique_ptr<APT::CacheFilter::Matcher> {
 	       auto const patterns = _config->FindVector("APT::VersionedKernelPackages");
 	       if (patterns.empty())
 		  return std::make_unique<APT::CacheFilter::FalseMatcher>();
@@ -2380,15 +2380,15 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 	       regex << patterns.back() << "-.*$";
 	       return std::make_unique<APT::CacheFilter::PackageNameMatchesRegEx>(regex.str());
 	    }();
-	 if (not std::all_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*IsAVersionedKernelPackage)(Prv.ParentPkg()); }))
+	 if (not std::all_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*d->IsAVersionedKernelPackage)(Prv.ParentPkg()); }))
 	    continue;
 	 // … if there is at least one for protected kernels installed
-	 if (not IsProtectedKernelPackage)
-	    IsProtectedKernelPackage = APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(Cache);
-	 if (not std::any_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*IsProtectedKernelPackage)(Prv.ParentPkg()); }))
+	 if (not d->IsProtectedKernelPackage)
+	    d->IsProtectedKernelPackage = APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(Cache);
+	 if (not std::any_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*d->IsProtectedKernelPackage)(Prv.ParentPkg()); }))
 	    continue;
 	 providers.second.erase(std::remove_if(providers.second.begin(), providers.second.end(),
-					       [&](auto const &Prv) { return not((*IsProtectedKernelPackage)(Prv.ParentPkg())); }),
+					       [&](auto const &Prv) { return not((*d->IsProtectedKernelPackage)(Prv.ParentPkg())); }),
 				providers.second.end());
       }
 
