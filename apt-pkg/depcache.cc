@@ -88,30 +88,34 @@ ConfigValueInSubTree(const char* SubTree, const char *needle)
 pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :		/*{{{*/
   d(NULL), cache(cache), released(false)
 {
-  ++cache.group_level;
+  cache.IncreaseActionGroupLevel();
 }
 
 void pkgDepCache::ActionGroup::release()
 {
-  if(!released)
-    {
-      if(cache.group_level == 0)
-	std::cerr << "W: Unbalanced action groups, expect badness" << std::endl;
-      else
-	{
-	  --cache.group_level;
-
-	  if(cache.group_level == 0)
-	    cache.MarkAndSweep();
-	}
-
-      released = true;
-    }
+  if(released)
+     return;
+  released = true;
+  if (cache.DecreaseActionGroupLevel() == 0)
+     cache.MarkAndSweep();
 }
 
 pkgDepCache::ActionGroup::~ActionGroup()
 {
   release();
+}
+int pkgDepCache::IncreaseActionGroupLevel()
+{
+   return ++group_level;
+}
+int pkgDepCache::DecreaseActionGroupLevel()
+{
+   if(group_level == 0)
+   {
+      std::cerr << "W: Unbalanced action groups, expect badness\n";
+      return -1;
+   }
+   return --group_level;
 }
 									/*}}}*/
 // DepCache::pkgDepCache - Constructors					/*{{{*/

@@ -652,6 +652,7 @@ bool DoBuildDep(CommandLine &CmdL)
    std::string const pseudoArch = hostArch.empty() ? nativeArch : hostArch;
 
    CacheFile Cache;
+   Cache.InhibitActionGroups(true);
    auto VolatileCmdL = GetPseudoPackages(Cache.GetSourceList(), CmdL, AddVolatileSourceFile, pseudoArch);
    auto AreDoingSatisfy = strcasecmp(CmdL.FileList[0], "satisfy") == 0;
 
@@ -820,7 +821,6 @@ bool DoBuildDep(CommandLine &CmdL)
 
    APT::PackageVector removeAgain;
    {
-      pkgDepCache::ActionGroup group(Cache);
       TryToInstall InstallAction(Cache, &Fix, false);
       std::list<std::pair<pkgCache::VerIterator, std::string>> candSwitch;
       for (auto const &pkg: pseudoPkgs)
@@ -856,7 +856,6 @@ bool DoBuildDep(CommandLine &CmdL)
       return false;
 
    {
-      pkgDepCache::ActionGroup group(Cache);
       if (_config->FindB(AreDoingSatisfy ? "APT::Get::Satisfy-Automatic" : "APT::Get::Build-Dep-Automatic", false) == false)
       {
 	 for (auto const &pkg: removeAgain)
