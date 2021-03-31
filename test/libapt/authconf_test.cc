@@ -1,5 +1,6 @@
 #include <config.h>
 
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/netrc.h>
 #include <apt-pkg/strutl.h>
@@ -235,11 +236,15 @@ machine http://http.example login foo1 password bar
    EXPECT_EQ("foo1", U.User);
    EXPECT_EQ("bar", U.Password);
 
+   _error->PushToStack();
    EXPECT_TRUE(fd.Seek(0));
    U = URI("http://https.example/foo");
    EXPECT_TRUE(MaybeAddAuth(fd, U));
    EXPECT_TRUE(U.User.empty());
    EXPECT_TRUE(U.Password.empty());
+   EXPECT_FALSE(_error->empty());
+   EXPECT_TRUE(U.Password.empty());
+   _error->RevertToStack();
 
    EXPECT_TRUE(fd.Seek(0));
    U = URI("http://http.example/foo");
