@@ -35,6 +35,8 @@ bool DoUpdate(CommandLine &CmdL)
 
    CacheFile Cache;
 
+   RunScripts("APT::Update::On-Launch");
+
    // Get the source list
    if (Cache.BuildSourceList() == false)
       return false;
