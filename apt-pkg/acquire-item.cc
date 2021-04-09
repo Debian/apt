@@ -3474,6 +3474,12 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
 		    Version.VerStr(), Version.ParentPkg().FullName(false).c_str());
       return;
    }
+   if (FileSize == 0 && not _config->FindB("Acquire::AllowUnsizedPackages", false))
+   {
+      _error->Warning("Repository is broken: %s (= %s) has no Size information",
+		      Version.ParentPkg().FullName(false).c_str(),
+		      Version.VerStr());
+   }
 
    // Check if we already downloaded the file
    struct stat Buf;

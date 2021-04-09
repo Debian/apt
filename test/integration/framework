@@ -484,6 +484,10 @@ EOF
 	# Allow release files to be 10 hours in the future, rather than 10 seconds
 	echo 'Acquire::Max-FutureTime "'$((10 * 60 * 60))'";' > rootdir/etc/apt/apt.conf.d/future-time
 
+	# XXX: We really ought to make the packages in the test suite all have Size fields.
+	# But this needs a lot more changes, so let's keep it simple for stable updates.
+	echo 'Acquire::AllowUnsizedPackages "true";' >> rootdir/etc/apt/apt.conf.d/temporary-allow-unsized-packages
+
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 	confighashes 'SHA256' # these are tests, not security best-practices
 
