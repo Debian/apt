@@ -870,7 +870,11 @@ unsigned long long BaseHttpMethod::FindMaximumObjectSizeInQueue() const	/*{{{*/
 {
    unsigned long long MaxSizeInQueue = 0;
    for (FetchItem *I = Queue; I != 0 && I != QueueBack; I = I->Next)
+   {
+      if (I->MaximumSize == 0)
+	 return 0;
       MaxSizeInQueue = std::max(MaxSizeInQueue, I->MaximumSize);
+   }
    return MaxSizeInQueue;
 }
 									/*}}}*/
