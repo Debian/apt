@@ -20,6 +20,8 @@ changetowebserver
 
 # Disable sandbox
 echo 'APT::Sandbox::User "root";' > rootdir/etc/apt/apt.conf.d/no-acquire-sandbox
+# XXX: Remove temporary hack
+rm rootdir/etc/apt/apt.conf.d/temporary-allow-unsized-packages
 
 testsuccess apt update
 
@@ -36,3 +38,6 @@ size_c=$(wc -c aptarchive/pool/c_1.0_all.deb | awk '{print $1}')
 testsuccessequal "Get:1 http://localhost:${APTHTTPPORT} stable/main all a all 1.0 [$size_a B]
 Get:2 http://localhost:${APTHTTPPORT} stable/main all b all 1.0 [$size_b B]
 Get:3 http://localhost:${APTHTTPPORT} stable/main all c all 1.0 [$size_c B]" apt download a b c -o Acquire::AllowUnsizedPackages=true
+
+rm *.deb
+testfailureequal "E: Repository is broken: b:i386 (= 1.0) has no Size information" apt download a b c
