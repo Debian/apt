@@ -1,0 +1,38 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture "i386"
+confighashes 'SHA512'
+
+mkdir tree
+head -c $((5*1024)) /dev/urandom > tree/data-file
+
+buildsimplenativepackage 'a' 'all' '1.0' 'stable'
+buildsimplenativepackage 'b' 'all' '1.0' 'stable' '' '' '' '' "$PWD/tree"
+buildsimplenativepackage 'c' 'all' '1.0' 'stable'
+
+setupaptarchive
+changetowebserver
+
+# Disable sandbox
+echo 'APT::Sandbox::User "root";' > rootdir/etc/apt/apt.conf.d/no-acquire-sandbox
+
+testsuccess apt update
+
+for file in rootdir/var/lib/apt/lists/*Packages; do
+  awk '!(/^Size/ && ++cnt==2)'  $file > $file.new
+  mv $file.new $file
+done
+
+
+size_a=$(wc -c aptarchive/pool/a_1.0_all.deb | awk '{print $1}')
+size_b=$(wc -c aptarchive/pool/b_1.0_all.deb | awk '{print $1}')
+size_c=$(wc -c aptarchive/pool/c_1.0_all.deb | awk '{print $1}')
+
+testsuccessequal "Get:1 http://localhost:${APTHTTPPORT} stable/main all a all 1.0 [$size_a B]
+Get:2 http://localhost:${APTHTTPPORT} stable/main all b all 1.0 [$size_b B]
+Get:3 http://localhost:${APTHTTPPORT} stable/main all c all 1.0 [$size_c B]" apt download a b c -o Acquire::AllowUnsizedPackages=true
