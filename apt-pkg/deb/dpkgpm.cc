@@ -1455,6 +1455,61 @@ bool pkgDPkgPM::ExpandPendingCalls(std::vector<Item> &List, pkgDepCache &Cache)
    }
    return true;
 }
+class APT_HIDDEN BuildDpkgCall {
+   std::vector<char*> args;
+   std::vector<bool> to_free;
+   size_t baseArguments = 0;
+   size_t baseArgumentsLen = 0;
+   size_t len = 0;
+public:
+   void clearCallArguments() {
+      for (size_t i = baseArguments; i < args.size(); ++i)
+	 if (to_free[i])
+	    std::free(args[i]);
+      args.erase(args.begin() + baseArguments, args.end());
+      to_free.erase(to_free.begin() + baseArguments, to_free.end());
+      len = baseArgumentsLen;
+   }
+   void reserve(size_t const n) {
+      args.reserve(n);
+      to_free.reserve(n);
+   }
+   void push_back(char const * const str) {
+      args.push_back(const_cast<char*>(str));
+      to_free.push_back(false);
+      len += strlen(args.back());
+   }
+   void push_back(std::string &&str) {
+      args.push_back(strdup(str.c_str()));
+      to_free.push_back(true);
+      len += str.length();
+   }
+   auto bytes() const { return len; }
+   auto data() const { return args.data(); }
+   auto begin() const { return args.cbegin(); }
+   auto end() const { return args.cend(); }
+   auto& front() const { return args.front(); }
+   APT_NORETURN void execute(char const *const errmsg) {
+      args.push_back(nullptr);
+      execvp(args.front(), &args.front());
+      std::cerr << errmsg << std::endl;
+      _exit(100);
+   }
+   BuildDpkgCall() {
+      for (auto &&arg : debSystem::GetDpkgBaseCommand())
+	 push_back(std::move(arg));
+      baseArguments = args.size();
+      baseArgumentsLen = len;
+   }
+   BuildDpkgCall(BuildDpkgCall const &) = delete;
+   BuildDpkgCall(BuildDpkgCall &&) = delete;
+   BuildDpkgCall& operator=(BuildDpkgCall const &) = delete;
+   BuildDpkgCall& operator=(BuildDpkgCall &&) = delete;
+   ~BuildDpkgCall() {
+      baseArguments = 0;
+      clearCallArguments();
+   }
+};
 bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 {
    struct Inhibitor
@@ -1493,18 +1548,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 
    pkgPackageManager::SigINTStop = false;
    d->progress = progress;
-
-   // Generate the base argument list for dpkg
-   std::vector<std::string> const sArgs = debSystem::GetDpkgBaseCommand();
-   std::vector<const char *> Args(sArgs.size(), NULL);
-   std::transform(sArgs.begin(), sArgs.end(), Args.begin(),
-	 [](std::string const &s) { return s.c_str(); });
-   unsigned long long const StartSize = std::accumulate(sArgs.begin(), sArgs.end(), 0llu,
-	 [](unsigned long long const i, std::string const &s) { return i + s.length(); });
-   size_t const BaseArgs = Args.size();
-
-   fd_set rfds;
-   struct timespec tv;
 
    // try to figure out the max environment size
    int OSArgMax = sysconf(_SC_ARG_MAX);
@@ -1731,6 +1774,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 
    // this loop is runs once per dpkg operation
    vector<Item>::const_iterator I = List.cbegin();
+   BuildDpkgCall Args;
    while (I != List.end())
    {
       // Do all actions with the same Op in one run
@@ -1752,85 +1796,68 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       else
 	 J = std::find_if(J, List.cend(), [&J](Item const &I) { return I.Op != J->Op; });
 
-      auto const size = (J - I) + 10;
-
-      // start with the baseset of arguments
-      auto Size = StartSize;
-      Args.erase(Args.begin() + BaseArgs, Args.end());
-      Args.reserve(size);
-      // keep track of allocated strings for multiarch package names
-      std::vector<char *> Packages(size, nullptr);
+      Args.clearCallArguments();
+      Args.reserve((J - I) + 10);
 
       int fd[2];
       if (pipe(fd) != 0)
 	 return _error->Errno("pipe","Failed to create IPC pipe to dpkg");
 
-#define ADDARG(X) Args.push_back(X); Size += strlen(X)
-#define ADDARGC(X) Args.push_back(X); Size += sizeof(X) - 1
-
-      ADDARGC("--status-fd");
-      char status_fd_buf[20];
-      snprintf(status_fd_buf,sizeof(status_fd_buf),"%i", fd[1]);
-      ADDARG(status_fd_buf);
+      Args.push_back("--status-fd");
+      Args.push_back(std::to_string(fd[1]));
       unsigned long const Op = I->Op;
 
       if (NoTriggers == true && I->Op != Item::TriggersPending &&
 	  (I->Op != Item::ConfigurePending || std::next(I) != List.end()))
-      {
-	 ADDARGC("--no-triggers");
-      }
+	 Args.push_back("--no-triggers");
 
       switch (I->Op)
       {
 	 case Item::Remove:
 	 case Item::Purge:
-	 ADDARGC("--force-depends");
-	 ADDARGC("--abort-after=1");
+	 Args.push_back("--force-depends");
+	 Args.push_back("--abort-after=1");
 	 if (std::any_of(I, J, ItemIsEssential))
-	 {
-	    ADDARGC("--force-remove-essential");
-	 }
+	    Args.push_back("--force-remove-essential");
 	 if (dpkgProtectedField && std::any_of(I, J, ItemIsProtected))
-	 {
-	    ADDARGC("--force-remove-protected");
-	 }
-	 ADDARGC("--remove");
+	    Args.push_back("--force-remove-protected");
+	 Args.push_back("--remove");
 	 break;
 
 	 case Item::Configure:
-	 ADDARGC("--configure");
+	 Args.push_back("--configure");
 	 break;
 
 	 case Item::ConfigurePending:
-	 ADDARGC("--configure");
-	 ADDARGC("--pending");
+	 Args.push_back("--configure");
+	 Args.push_back("--pending");
 	 break;
 
 	 case Item::TriggersPending:
-	 ADDARGC("--triggers-only");
-	 ADDARGC("--pending");
+	 Args.push_back("--triggers-only");
+	 Args.push_back("--pending");
 	 break;
 
 	 case Item::RemovePending:
-	 ADDARGC("--remove");
-	 ADDARGC("--pending");
+	 Args.push_back("--remove");
+	 Args.push_back("--pending");
 	 break;
 
 	 case Item::PurgePending:
-	 ADDARGC("--purge");
-	 ADDARGC("--pending");
+	 Args.push_back("--purge");
+	 Args.push_back("--pending");
 	 break;
 
 	 case Item::Install:
-	 ADDARGC("--unpack");
-	 ADDARGC("--auto-deconfigure");
+	 Args.push_back("--unpack");
+	 Args.push_back("--auto-deconfigure");
 	 // dpkg < 1.20.8 needs --force-remove-protected to deconfigure protected packages
 	 if (dpkgProtectedField)
-	    ADDARGC("--force-remove-protected");
+	    Args.push_back("--force-remove-protected");
 	 break;
       }
 
-      char * tmpdir_to_free = nullptr;
+      std::unique_ptr<char, decltype(&cleanUpTmpDir)> tmpdir_for_dpkg_recursive{nullptr, &cleanUpTmpDir};
 
       // Write in the file or package names
       if (I->Op == Item::Install)
@@ -1840,9 +1867,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 {
 	    std::string tmpdir;
 	    strprintf(tmpdir, "%s/apt-dpkg-install-XXXXXX", GetTempDir().c_str());
-	    tmpdir_to_free = strndup(tmpdir.data(), tmpdir.length());
-	    if (mkdtemp(tmpdir_to_free) == nullptr)
-	       return _error->Errno("DPkg::Go", "mkdtemp of %s failed in preparation of calling dpkg unpack", tmpdir_to_free);
+	    tmpdir_for_dpkg_recursive.reset(strndup(tmpdir.data(), tmpdir.length()));
+	    if (mkdtemp(tmpdir_for_dpkg_recursive.get()) == nullptr)
+	       return _error->Errno("DPkg::Go", "mkdtemp of %s failed in preparation of calling dpkg unpack", tmpdir_for_dpkg_recursive.get());
 
 	    char p = 1;
 	    for (auto c = installsToDo - 1; (c = c/10) != 0; ++p);
@@ -1855,23 +1882,22 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 		  file.append(".deb");
 	       std::string linkpath;
 	       if (dpkg_recursive_install_numbered)
-		  strprintf(linkpath, "%s/%.*lu-%s", tmpdir_to_free, p, n, file.c_str());
+		  strprintf(linkpath, "%s/%.*lu-%s", tmpdir_for_dpkg_recursive.get(), p, n, file.c_str());
 	       else
-		  strprintf(linkpath, "%s/%s", tmpdir_to_free, file.c_str());
+		  strprintf(linkpath, "%s/%s", tmpdir_for_dpkg_recursive.get(), file.c_str());
 	       if (symlink(I->File.c_str(), linkpath.c_str()) != 0)
 		  return _error->Errno("DPkg::Go", "Symlinking %s to %s failed!", I->File.c_str(), linkpath.c_str());
 	    }
-	    ADDARGC("--recursive");
-	    ADDARG(tmpdir_to_free);
+	    Args.push_back("--recursive");
+	    Args.push_back(tmpdir_for_dpkg_recursive.get());
 	 }
 	 else
 	 {
-	    for (;I != J && Size < MaxArgBytes; ++I)
+	    for (;I != J && Args.bytes() < MaxArgBytes; ++I)
 	    {
 	       if (I->File[0] != '/')
 		  return _error->Error("Internal Error, Pathname to install is not absolute '%s'",I->File.c_str());
 	       Args.push_back(I->File.c_str());
-	       Size += I->File.length();
 	    }
 	 }
       }
@@ -1905,8 +1931,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       else
       {
 	 string const nativeArch = _config->Find("APT::Architecture");
-	 unsigned long const oldSize = I->Pkg.end() == false ? Size : 0;
-	 for (;I != J && Size < MaxArgBytes; ++I)
+	 auto const oldSize = I->Pkg.end() ? 0ull : Args.bytes();
+	 for (;I != J && Args.bytes() < MaxArgBytes; ++I)
 	 {
 	    if((*I).Pkg.end() == true)
 	       continue;
@@ -1916,62 +1942,43 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    if (dpkgMultiArch == false && (I->Pkg.Arch() == nativeArch ||
 					   strcmp(I->Pkg.Arch(), "all") == 0 ||
 					   strcmp(I->Pkg.Arch(), "none") == 0))
-	    {
-	       char const * const name = I->Pkg.Name();
-	       ADDARG(name);
-	    }
+	       Args.push_back(I->Pkg.Name());
+	    else if (Op == Item::Purge && I->Pkg->CurrentVer == 0)
+	       continue; // we purge later with --purge --pending, so if it isn't installed (aka rc-only), skip it here
+	    else if (strcmp(I->Pkg.Arch(), "none") == 0)
+	       Args.push_back(I->Pkg.Name()); // never arch-qualify a package without an arch
 	    else
 	    {
 	       pkgCache::VerIterator PkgVer;
-	       std::string name = I->Pkg.Name();
-	       if (Op == Item::Remove)
+	       if (Op == Item::Remove || Op == Item::Purge)
 		  PkgVer = I->Pkg.CurrentVer();
-	       else if (Op == Item::Purge)
-	       {
-		  // we purge later with --purge --pending, so if it isn't installed (aka rc-only), skip it here
-		  PkgVer = I->Pkg.CurrentVer();
-		  if (PkgVer.end() == true)
-		     continue;
-	       }
 	       else
 		  PkgVer = Cache[I->Pkg].InstVerIter(Cache);
-	       if (strcmp(I->Pkg.Arch(), "none") == 0)
-		  ; // never arch-qualify a package without an arch
-	       else if (PkgVer.end() == false)
-                  name.append(":").append(PkgVer.Arch());
-               else
-                  _error->Warning("Can not find PkgVer for '%s'", name.c_str());
-	       char * const fullname = strdup(name.c_str());
-	       Packages.push_back(fullname);
-	       ADDARG(fullname);
+	       if (PkgVer.end())
+	       {
+		  _error->Warning("Can not find PkgVer for '%s'", I->Pkg.Name());
+		  Args.push_back(I->Pkg.Name());
+		  continue;
+	       }
+	       Args.push_back(std::string(I->Pkg.Name()) + ":" + PkgVer.Arch());
 	    }
 	 }
 	 // skip configure action if all scheduled packages disappeared
-	 if (oldSize == Size)
+	 if (oldSize == Args.bytes())
 	    continue;
       }
-#undef ADDARGC
-#undef ADDARG
 
       J = I;
 
       if (noopDPkgInvocation == true)
       {
-	 for (std::vector<const char *>::const_iterator a = Args.begin();
-	      a != Args.end(); ++a)
-	    clog << *a << ' ';
+	 for (auto const a : Args)
+	    clog << a << ' ';
 	 clog << endl;
-	 for (std::vector<char *>::const_iterator p = Packages.begin();
-	       p != Packages.end(); ++p)
-	    free(*p);
-	 Packages.clear();
 	 close(fd[0]);
 	 close(fd[1]);
-	 cleanUpTmpDir(tmpdir_to_free);
 	 continue;
       }
-      Args.push_back(NULL);
-
       cout << flush;
       clog << flush;
       cerr << flush;
@@ -2037,9 +2044,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 if (_config->Find("DPkg::Path", "").empty() == false)
 	    setenv("PATH", _config->Find("DPkg::Path", "").c_str(), 1);
 
-	 execvp(Args[0], (char**) &Args[0]);
-	 cerr << "Could not exec dpkg!" << endl;
-	 _exit(100);
+	 Args.execute("Could not exec dpkg!");
       }
 
       // we read from dpkg here
@@ -2054,12 +2059,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       // setups fds
       sigemptyset(&d->sigmask);
       sigprocmask(SIG_BLOCK,&d->sigmask,&d->original_sigmask);
-
-      /* free vectors (and therefore memory) as we don't need the included data anymore */
-      for (std::vector<char *>::const_iterator p = Packages.begin();
-	   p != Packages.end(); ++p)
-	 free(*p);
-      Packages.clear();
 
       // the result of the waitpid call
       int Status = 0;
@@ -2085,14 +2084,16 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    break;
 
 	 // wait for input or output here
+	 fd_set rfds;
 	 FD_ZERO(&rfds);
 	 if (d->master >= 0 && d->direct_stdin == false && d->stdin_is_dev_null == false)
 	    FD_SET(STDIN_FILENO, &rfds);
 	 FD_SET(_dpkgin, &rfds);
 	 if(d->master >= 0)
 	    FD_SET(d->master, &rfds);
-         tv.tv_sec = 0;
-         tv.tv_nsec = d->progress->GetPulseInterval();
+	 struct timespec tv;
+	 tv.tv_sec = 0;
+	 tv.tv_nsec = d->progress->GetPulseInterval();
 	 auto const select_ret = pselect(max(d->master, _dpkgin)+1, &rfds, NULL, NULL,
 			      &tv, &d->original_sigmask);
          d->progress->Pulse();
@@ -2121,11 +2122,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       signal(SIGINT,old_SIGINT);
       signal(SIGHUP,old_SIGHUP);
 
-      cleanUpTmpDir(tmpdir_to_free);
-
       if (waitpid_failure == true)
       {
-	 strprintf(d->dpkg_error, "Sub-process %s couldn't be waited for.",Args[0]);
+	 strprintf(d->dpkg_error, "Sub-process %s couldn't be waited for.",Args.front());
 	 _error->Error("%s", d->dpkg_error.c_str());
 	 break;
       }
@@ -2139,11 +2138,11 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 bool const stopOnError = _config->FindB("Dpkg::StopOnError",true);
 
 	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV)
-	    strprintf(d->dpkg_error, "Sub-process %s received a segmentation fault.",Args[0]);
+	    strprintf(d->dpkg_error, "Sub-process %s received a segmentation fault.",Args.front());
 	 else if (WIFEXITED(Status) != 0)
-	    strprintf(d->dpkg_error, "Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
+	    strprintf(d->dpkg_error, "Sub-process %s returned an error code (%u)",Args.front(),WEXITSTATUS(Status));
 	 else
-	    strprintf(d->dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
+	    strprintf(d->dpkg_error, "Sub-process %s exited unexpectedly",Args.front());
 	 _error->Error("%s", d->dpkg_error.c_str());
 
 	 if(stopOnError)
