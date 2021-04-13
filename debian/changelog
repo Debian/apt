@@ -1,3 +1,24 @@
+apt (2.3.1) experimental; urgency=medium
+
+  [ David Kalnischkies ]
+  * Replace macro and manual management with lambda and RAII:
+    - Replace multi-statement macro with lambda
+    - Use RAII to clean up tmp dir for dpkg recursive install
+    - Handle multi-arch pkgnames for dpkg call via RAII
+    - Merge the three RAII vectors managing args lifetime
+  * Harden test for no new acquires after transaction abort (Closes: #984966)
+
+  [ Julian Andres Klode ]
+  * Check for and discard expected warning from MaybeAddAuth
+  * Fix downloads of unsized files that are largest in pipeline (LP: #1921626)
+  * Error on packages without a Size field (option Acquire::AllowUnsizedPackages)
+  * debian/gbp.conf: HEAD branch is main now
+
+  [ Cameron Katri ]
+  * add vendor information for Procursus
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 13 Apr 2021 17:23:49 +0200
+
 apt (2.3.0) experimental; urgency=medium
 
   [ David Kalnischkies ]
