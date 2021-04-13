@@ -1,3 +1,16 @@
+apt (2.2.3) unstable; urgency=medium
+
+  * tests: Check for and discard expected warning from MaybeAddAuth. For some
+    reason, this was only noticed with LTO enabled, but should be a general
+    issue.
+  * Fix downloads of unsized files that are largest in pipeline (LP: #1921626)
+  * Warn on packages without a Size field. Such repositories are broken and
+    need to be fixed, as we do not test apt against them, see the bug above
+    for more details. Set Acquire::AllowUnsizedPackages to disable the
+    warning.
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 13 Apr 2021 17:53:32 +0200
+
 apt (2.2.2) unstable; urgency=medium
 
   [ David Kalnischkies ]
