@@ -770,7 +770,7 @@ class APT_HIDDEN CleanupItem : public pkgAcqTransactionItem		/*{{{*/
 // Acquire::Item::Item - Constructor					/*{{{*/
 pkgAcquire::Item::Item(pkgAcquire * const owner) :
    FileSize(0), PartialSize(0), ID(0), Complete(false), Local(false),
-    QueueCounter(0), ExpectedAdditionalItems(0), Retries(_config->FindI("Acquire::Retries", 0)), Owner(owner), d(new Private())
+    QueueCounter(0), ExpectedAdditionalItems(0), Retries(_config->FindI("Acquire::Retries", 3)), Owner(owner), d(new Private())
 {
    Owner->Add(this);
    Status = StatIdle;

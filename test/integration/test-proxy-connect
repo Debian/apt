@@ -19,4 +19,13 @@ echo "Acquire::http::Proxy \"http://localhost:${APTHTTPPORT}\";" > rootdir/etc/a
 
 aptget update >/dev/null 2>&1
 testsuccessequal "CONNECT example.example:443 HTTP/1.1\r
+Host: example.example:443\r
+--
+CONNECT example.example:443 HTTP/1.1\r
+Host: example.example:443\r
+--
+CONNECT example.example:443 HTTP/1.1\r
+Host: example.example:443\r
+--
+CONNECT example.example:443 HTTP/1.1\r
 Host: example.example:443\r" grep -A1 "^CONNECT" aptarchive/webserver.log
