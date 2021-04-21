@@ -10,6 +10,7 @@
 #include <apt-pkg/macros.h>
 #include <apt-private/private-json-hooks.h>
 
+#include <iomanip>
 #include <ostream>
 #include <sstream>
 #include <stack>
@@ -21,7 +22,7 @@
 /**
  * @brief Simple JSON writer
  *
- * This performs no error checking, or string escaping, be careful.
+ * This performs no error checking, so be careful.
  */
 class APT_HIDDEN JsonWriter
 {
@@ -107,22 +108,37 @@ class APT_HIDDEN JsonWriter
       os << '}';
       return *this;
    }
+   std::ostream &encodeString(std::ostream &out, std::string const &str)
+   {
+      out << '"';
+
+      for (std::string::const_iterator c = str.begin(); c != str.end(); c++)
+      {
+	 if (*c <= 0x1F || *c == '"' || *c == '\\')
+	    ioprintf(out, "\\u%04X", *c);
+	 else
+	    out << *c;
+      }
+
+      out << '"';
+      return out;
+   }
    JsonWriter &name(std::string const &name)
    {
       maybeComma();
-      os << '"' << name << '"' << ':';
+      encodeString(os, name) << ':';
       return *this;
    }
    JsonWriter &value(std::string const &value)
    {
       maybeComma();
-      os << '"' << value << '"';
+      encodeString(os, value);
       return *this;
    }
    JsonWriter &value(const char *value)
    {
       maybeComma();
-      os << '"' << value << '"';
+      encodeString(os, value);
       return *this;
    }
    JsonWriter &value(int value)
