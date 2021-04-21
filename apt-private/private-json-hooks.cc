@@ -79,6 +79,7 @@ class APT_HIDDEN JsonWriter
    void popState()
    {
       this->state = old_states.top();
+      old_states.pop();
    }
 
    public:

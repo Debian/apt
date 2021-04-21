@@ -43,3 +43,19 @@ TEST(JsonTest, JsonArrayAndValues)
 
    EXPECT_EQ("[0,\"value\",1,true]", os.str());
 }
+TEST(JsonTest, JsonStackRegression)
+{
+   std::ostringstream os;
+
+   JsonWriter w(os);
+
+   // Nest those things deeply such that we transition states:
+   //    object -> array -> object; -> array -> object
+   // Older versions never popped back and got stuck on array state.
+   w.beginObject();
+   w.name("a").beginArray().beginObject().endObject().endArray();
+   w.name("b").beginArray().beginObject().endObject().endArray();
+   w.endObject();
+
+   EXPECT_EQ("{\"a\":[{}],\"b\":[{}]}", os.str());
+}
