@@ -59,3 +59,11 @@ TEST(JsonTest, JsonStackRegression)
 
    EXPECT_EQ("{\"a\":[{}],\"b\":[{}]}", os.str());
 }
+TEST(JsonTest, JsonNull)
+{
+   std::ostringstream os;
+
+   JsonWriter(os).value(nullptr);
+
+   EXPECT_EQ("null", os.str());
+}
