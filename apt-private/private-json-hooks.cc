@@ -139,7 +139,10 @@ class APT_HIDDEN JsonWriter
    JsonWriter &value(const char *value)
    {
       maybeComma();
-      encodeString(os, value);
+      if (value == nullptr)
+	 os << "null";
+      else
+	 encodeString(os, value);
       return *this;
    }
    JsonWriter &value(int value)
