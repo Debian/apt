@@ -199,6 +199,33 @@ class APT_HIDDEN JsonWriter
 };
 
 /**
+ * @brief Write a VerFileIterator to a JsonWriter
+ */
+static void verFiletoJson(JsonWriter &writer, CacheFile &, pkgCache::VerFileIterator const &vf)
+{
+   auto pf = vf.File(); // Packages file
+   auto rf = pf.ReleaseFile(); // release file
+
+   writer.beginObject();
+   if (not rf.end()) {
+      if (rf->Archive != 0)
+	 writer.name("archive").value(rf.Archive());
+      if (rf->Codename != 0)
+	 writer.name("codename").value(rf.Codename());
+      if (rf->Version != 0)
+	 writer.name("version").value(rf.Version());
+      if (rf->Origin != 0)
+	 writer.name("origin").value(rf.Origin());
+      if (rf->Label != 0)
+	 writer.name("label").value(rf.Label());
+      if (rf->Site != 0)
+	 writer.name("site").value(rf.Site());
+   }
+
+   writer.endObject();
+}
+
+/**
  * @brief Write a VerIterator to a JsonWriter
  */
 static void verIterToJson(JsonWriter &writer, CacheFile &Cache, pkgCache::VerIterator const &Ver)
@@ -208,6 +235,14 @@ static void verIterToJson(JsonWriter &writer, CacheFile &Cache, pkgCache::VerIte
    writer.name("version").value(Ver.VerStr());
    writer.name("architecture").value(Ver.Arch());
    writer.name("pin").value(Cache->GetPolicy().GetPriority(Ver));
+
+   writer.name("origins");
+   writer.beginArray();
+   for (auto vf = Ver.FileList(); !vf.end(); vf++)
+      if ((vf.File()->Flags & pkgCache::Flag::NotSource) == 0)
+         verFiletoJson(writer, Cache, vf);
+   writer.endArray();
+
    writer.endObject();
 }
 
