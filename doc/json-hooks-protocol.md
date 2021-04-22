@@ -106,6 +106,16 @@ install. Each package has the following attributes:
   - *version*: The version as a string
   - *architecture*: Architecture of the version
   - *pin*: The pin priority (optional)
+  - *origins*: Sources from which the package is retrieved (optional, not in older versions)
+
+  Each origin is represented as an object with the following fields:
+
+  - *archive*: string (optional)
+  - *codename*: string (optional)
+  - *version*: string (optional)
+  - *origin*: string (optional)
+  - *label*: string (optional)
+  - *site*: string, empty for local repositories or when using mirror+file:/ method (optional)
 
 #### Example
 

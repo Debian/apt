@@ -4,6 +4,10 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
+getoriginfromsuite() { echo 'Oranges'; }
+getlabelfromsuite() { echo 'Lemons'; }
+getversionfromsuite() { echo 'Volkamer'; }
+
 setupenvironment
 configarchitecture "i386"
 
@@ -107,18 +111,18 @@ Building dependency tree...
 HOOK: HELLO
 HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1"]}}
 HOOK: empty
-HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.pre-prompt","params":{"command":"install","search-terms":["foo"],"unknown-packages":[],"packages":[{"id":1,"name":"foo","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":1,"version":"1.0","architecture":"all","pin":500},"install":{"id":1,"version":"1.0","architecture":"all","pin":500}}}]}}
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.pre-prompt","params":{"command":"install","search-terms":["foo"],"unknown-packages":[],"packages":[{"id":1,"name":"foo","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":1,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":1,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]}}}]}}
 HOOK: empty
 HOOK: BYE
 The following NEW packages will be installed:
   foo
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
-Inst foo (1.0 unstable [all])
-Conf foo (1.0 unstable [all])
+Inst foo (1.0 Lemons:unstable [all])
+Conf foo (1.0 Lemons:unstable [all])
 HOOK: HELLO
 HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1"]}}
 HOOK: empty
-HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.post","params":{"command":"install","search-terms":["foo"],"unknown-packages":[],"packages":[{"id":1,"name":"foo","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":1,"version":"1.0","architecture":"all","pin":500},"install":{"id":1,"version":"1.0","architecture":"all","pin":500}}}]}}
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.post","params":{"command":"install","search-terms":["foo"],"unknown-packages":[],"packages":[{"id":1,"name":"foo","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":1,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":1,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]}}}]}}
 HOOK: empty
 HOOK: BYE' apt install foo -s
 
@@ -203,8 +207,8 @@ Building dependency tree...
 The following NEW packages will be installed:
   foo
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
-Inst foo (1.0 unstable [all])
-Conf foo (1.0 unstable [all])' apt install foo -s
+Inst foo (1.0 Lemons:unstable [all])
+Conf foo (1.0 Lemons:unstable [all])' apt install foo -s
 
 
 
