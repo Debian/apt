@@ -21,6 +21,7 @@ APTARCHIVE="$(readlink -f ./aptarchive)"
 
 cat >> json-hook.sh << EOF
 #!/bin/bash
+set -e
 while true; do
 	read request <&\$APT_HOOK_SOCKET
 	read empty <&\$APT_HOOK_SOCKET
