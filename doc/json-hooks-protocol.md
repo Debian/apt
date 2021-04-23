@@ -57,7 +57,9 @@ method `org.debian.apt.hooks.bye`.
 
 The following methods are supported:
 
-1. `org.debian.apt.hooks.install.pre-prompt` - Run before the y/n prompt
+1. `org.debian.apt.hooks.install.pre-prompt` - Run before the package list and y/n prompt
+1. `org.debian.apt.hooks.install.package-list` - (optional in 0.1) Run after the package list. You could display additional lists of packages here
+1. `org.debian.apt.hooks.install.statistics` - (optional in 0.1) Run after the package list. You could display additional lists of packages here
 1. `org.debian.apt.hooks.install.post` - Run after success
 1. `org.debian.apt.hooks.install.fail` - Run after failed install
 1. `org.debian.apt.hooks.search.pre` - Run before search
@@ -93,6 +95,10 @@ install. Each package has the following attributes:
 - *mode*: One of `install`, `deinstall`, `purge`, or `keep`. `keep`
           is not exposed in 0.1. To determine an upgrade, check
           that a current version is installed.
+- One of the following optional fields may be set to true to indicate a change relative to an installed version:
+  - *downgrade*: true if downgrading
+  - *upgrade*: true if upgrading
+  - *reinstall*: true if reinstall flag is set
 - *automatic*: Whether the package is/will be automatically installed
 - *versions*: An array with up to 3 fields:
 

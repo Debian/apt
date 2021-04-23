@@ -36,8 +36,10 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache, int UpgradeMode);
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache, int UpgradeMode);
 
-APT_PUBLIC bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
-                        bool Safety = true);
+APT_PUBLIC bool InstallPackages(CacheFile &Cache, bool ShwKept, bool Ask = true,
+				bool Safety = true,
+				std::string const &Hook = "",
+				CommandLine const &CmdL = {});
 
 bool CheckNothingBroken(CacheFile &Cache);
 bool DoAutomaticRemove(CacheFile &Cache);

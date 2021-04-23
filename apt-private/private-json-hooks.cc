@@ -277,11 +277,14 @@ static void NotifyHook(std::ostream &os, std::string const &method, const char *
 
    /* Build params */
    jsonWriter.name("params").beginObject();
-   jsonWriter.name("command").value(FileList[0]);
-   jsonWriter.name("search-terms").beginArray();
-   for (int i = 1; FileList[i] != NULL; i++)
-      jsonWriter.value(FileList[i]);
-   jsonWriter.endArray();
+   if (FileList != nullptr)
+   {
+      jsonWriter.name("command").value(FileList[0]);
+      jsonWriter.name("search-terms").beginArray();
+      for (int i = 1; FileList[i] != NULL; i++)
+	 jsonWriter.value(FileList[i]);
+      jsonWriter.endArray();
+   }
    jsonWriter.name("unknown-packages").beginArray();
    for (auto const &PkgName : UnknownPackages)
       jsonWriter.value(PkgName);
