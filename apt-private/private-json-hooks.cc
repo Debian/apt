@@ -11,6 +11,7 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/strutl.h>
 #include <apt-private/private-json-hooks.h>
+#include <apt-private/private-output.h>
 
 #include <iomanip>
 #include <ostream>
@@ -334,6 +335,13 @@ bool RunJsonHook(std::string const &option, std::string const &method, const cha
    if (Opts == 0 || Opts->Child == 0)
       return true;
    Opts = Opts->Child;
+
+   // Flush output before calling hooks
+   std::clog.flush();
+   std::cerr.flush();
+   std::cout.flush();
+   c2out.flush();
+   c1out.flush();
 
    sighandler_t old_sigpipe = signal(SIGPIPE, SIG_IGN);
    sighandler_t old_sigint = signal(SIGINT, SIG_IGN);
