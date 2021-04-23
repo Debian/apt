@@ -1,3 +1,5 @@
+Version: 0.2
+
 ## JSON Hooks
 
 APT 1.6 introduces support for hooks that talk JSON-RPC 2.0. Hooks act
@@ -57,7 +59,9 @@ method `org.debian.apt.hooks.bye`.
 
 The following methods are supported:
 
-1. `org.debian.apt.hooks.install.pre-prompt` - Run before the y/n prompt
+1. `org.debian.apt.hooks.install.pre-prompt` - Run before the package list and y/n prompt
+1. `org.debian.apt.hooks.install.package-list` - (optional in 0.1) Run after the package list. You could display additional lists of packages here
+1. `org.debian.apt.hooks.install.statistics` - (optional in 0.1) Run after the count of packages to upgrade/install. You could display additional information here, such as `5 security upgrades`
 1. `org.debian.apt.hooks.install.post` - Run after success
 1. `org.debian.apt.hooks.install.fail` - Run after failed install
 1. `org.debian.apt.hooks.search.pre` - Run before search
@@ -88,24 +92,39 @@ install. Each package has the following attributes:
 - *id*: An unsigned integer describing the package
 - *name*: The name of the package
 - *architecture*: The architecture of the package. For `"all"` packages, this will be the native architecture;
-                  use per-version architecture fields to see `"all"`.
+			  use per-version architecture fields to see `"all"`.
 
-- *mode*: One of `install`, `deinstall`, `purge`, or `keep`. `keep`
-          is not exposed in 0.1. To determine an upgrade, check
-          that a current version is installed.
+- *mode*: One of `install`, `upgrade`, `downgrade`, `reinstall`, `deinstall`, `purge`, `keep`.
+  Version 0.1 does not implement `upgrade`, `downgrade`, and `reinstall` - all of them are represented
+  as `install`, and you have to compare the `current` version to the `install` version to figure out if
+  is one of those.
+- One of the following optional fields may be set to true to indicate a change relative to an installed version:
+- *downgrade*: true if downgrading
+- *upgrade*: true if upgrading
+- *reinstall*: true if reinstall flag is set
 - *automatic*: Whether the package is/will be automatically installed
 - *versions*: An array with up to 3 fields:
 
-  - *candidate*: The candidate version
-  - *install*: The version to be installed
-  - *current*: The version currently installed
+- *candidate*: The candidate version
+- *install*: The version to be installed
+- *current*: The version currently installed
 
-  Each version is represented as an object with the following fields:
+Each version is represented as an object with the following fields:
 
-  - *id*: An unsigned integer
-  - *version*: The version as a string
-  - *architecture*: Architecture of the version
-  - *pin*: The pin priority (optional)
+- *id*: An unsigned integer
+- *version*: The version as a string
+- *architecture*: Architecture of the version
+- *pin*: The pin priority (optional)
+- *origins*: Sources from which the package is retrieved (since 0.2)
+
+  Each origin is represented as an object with the following fields:
+
+  - *archive*: string (optional)
+  - *codename*: string (optional)
+  - *version*: string (optional)
+  - *origin*: string (optional)
+  - *label*: string (optional)
+  - *site*: string, empty for local repositories or when using mirror+file:/ method (optional)
 
 #### Example
 
@@ -157,3 +176,14 @@ protocol version only (for example, 1.7 may only support 0.2).
 
 Additional fields may be added to objects without bumping the protocol
 version.
+
+# Changes:
+
+## Version 0.2
+
+The 0.2 protocol makes one incompatible change, and adds several new compatible changes, all of which are optional in 0.1,
+but mandatory in 0.2.
+
+* (incompatible change) The `mode` flag of arguments gained `upgrade`, `downgrade`, `reinstall` modes. All of these are `install`
+* (compatible change) The hooks `org.debian.apt.hooks.install.package-list` and `org.debian.apt.hooks.install.statistics` have been added
+* (compatible change) Version objects gained a new `origins` array
