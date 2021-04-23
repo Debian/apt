@@ -474,6 +474,7 @@ bool RunJsonHook(std::string const &option, std::string const &method, const cha
 
       if (strstr(line, "\"0.1\""))
       {
+	 _error->Warning("Hook %s uses deprecated 0.1 protocol", Opts->Value.c_str());
 	 hookVersion = 0x010;
       }
       else if (strstr(line, "\"0.2\""))
