@@ -1,3 +1,30 @@
+apt (2.3.2) experimental; urgency=medium
+
+  * Remove inversed comment for AllowUnsizedPackages
+  * Automatically retry failed downloads 3 times.
+    Enable the Acquire::Retries option by default, set to 3.
+    This will help with slightly unreliable networking; future
+    work is needed for adding backoff and SRV/IP rotation. (LP: #1876035)
+  * Require dpkg >= 1.20.8 and make more use of --auto-deconfigure now that
+    no longer needs forcing for essential/protected:
+    - Support deconfiguring Essential packages
+    - Do not pass --force-remove-protected with --auto-deconfigure
+  * JSON hook bug fixes:
+    - json: Escape strings using \u escape sequences, add test
+    - json: Actually pop states
+    - json: Encode NULL strings as null
+    - json: Flush standard file descriptors before calling hooks
+    - test/json: Make the test hook more reliable
+  * JSON hooks 0.2:
+    - json: Add origins fields to version
+    - upgrade: Add JSON hook support (AptCli::Hooks::Upgrade)
+    - json: Add `package-list` and `statistics` install hooks
+    - json: Hook protocol 0.2 (added upgrade,downgrade,reinstall modes)
+    - 2.3-only: Warn that the 0.1 protocol is deprecated
+  * Avoid infinite loop on EOF on media change prompt
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 23 Apr 2021 18:23:15 +0200
+
 apt (2.3.1) experimental; urgency=medium
 
   [ David Kalnischkies ]
