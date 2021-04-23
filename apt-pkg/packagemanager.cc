@@ -672,7 +672,10 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg, DepIterator const * const D
 	 }
    }
 
-   if (IsEssential == true)
+   // dpkg will auto-deconfigure it, no need for the big remove hammer
+   if (Dep != NULL && (*Dep)->Type == pkgCache::Dep::DpkgBreaks)
+      return true;
+   else if (IsEssential == true)
    {
       // FIXME: Unify messaging with Protected below.
       if (_config->FindB("APT::Force-LoopBreak",false) == false)
@@ -682,9 +685,6 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg, DepIterator const * const D
 				"but if you really want to do it, activate the "
 				"APT::Force-LoopBreak option."),Pkg.FullName().c_str());
    }
-   // dpkg will auto-deconfigure it, no need for the big remove hammer
-   else if (Dep != NULL && (*Dep)->Type == pkgCache::Dep::DpkgBreaks)
-      return true;
    else if (IsProtected == true)
    {
       // FIXME: Message should talk about Protected, not Essential, and unified.

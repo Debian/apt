@@ -69,47 +69,54 @@ E: Internal Error, Could not early remove ${prefix}sysvinit:$(dpkg --print-archi
 	testdpkginstalled "${prefix}sysvinit" "${prefix}systemd-sysv"
 }
 
-testforcebreak 'conflict'
-testforcebreak 'break'
-
 testnoforcebreak() {
+	package="sid-$1"
+	prefix="$2"
 	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
 	rm -f rootdir/var/lib/apt/extended_states
 	testequalor2 "Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
-  protected-sysvinit
+  ${prefix}sysvinit
 The following NEW packages will be installed:
-  protected-systemd-sysv
+  ${prefix}systemd-sysv
 The following packages will be upgraded:
-  protected-sysvinit
+  ${prefix}sysvinit
 1 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
-Inst protected-systemd-sysv (2~$1 sid-$1 [$(getarchitecture 'native')]) [protected-systemd-sysv:$(getarchitecture 'native') on protected-sysvinit:$(getarchitecture 'native')] []
-Conf protected-systemd-sysv:$(getarchitecture 'native') broken
- Breaks:protected-sysvinit:$(getarchitecture 'native')
+Inst ${prefix}systemd-sysv (2~$1 sid-$1 [$(getarchitecture 'native')]) [${prefix}systemd-sysv:$(getarchitecture 'native') on ${prefix}sysvinit:$(getarchitecture 'native')] []
+Conf ${prefix}systemd-sysv:$(getarchitecture 'native') broken
+ Breaks:${prefix}sysvinit:$(getarchitecture 'native')
  []
-Inst protected-sysvinit [1] (2 sid [$(getarchitecture 'native')])
-Conf protected-sysvinit (2 sid [$(getarchitecture 'native')])
-E: Conf Broken protected-systemd-sysv:$(getarchitecture 'native')" "Reading package lists...
+Inst ${prefix}sysvinit [1] (2 sid [$(getarchitecture 'native')])
+Conf ${prefix}sysvinit (2 sid [$(getarchitecture 'native')])
+E: Conf Broken ${prefix}systemd-sysv:$(getarchitecture 'native')" "Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
-  protected-sysvinit
+  ${prefix}sysvinit
 The following NEW packages will be installed:
-  protected-systemd-sysv
+  ${prefix}systemd-sysv
 The following packages will be upgraded:
-  protected-sysvinit
+  ${prefix}sysvinit
 1 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
-Remv protected-sysvinit [1]
-Inst protected-systemd-sysv (2~conflict sid-conflict [$(getarchitecture 'native')])
-Conf protected-systemd-sysv (2~conflict sid-conflict [$(getarchitecture 'native')])
-Inst protected-sysvinit [1] (2 sid [$(getarchitecture 'native')])
-Conf protected-sysvinit (2 sid [$(getarchitecture 'native')])" aptget install protected-systemd-sysv -t "sid-$1" -s
+Remv ${prefix}sysvinit [1]
+Inst ${prefix}systemd-sysv (2~conflict sid-conflict [$(getarchitecture 'native')])
+Conf ${prefix}systemd-sysv (2~conflict sid-conflict [$(getarchitecture 'native')])
+Inst ${prefix}sysvinit [1] (2 sid [$(getarchitecture 'native')])
+Conf ${prefix}sysvinit (2 sid [$(getarchitecture 'native')])" aptget install ${prefix}systemd-sysv -t "sid-$1" -s
 
     # we check with 'real' packages here as the simulation reports a 'Conf broken'
 	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
-	testsuccess aptget install protected-systemd-sysv -y -t "sid-$1"
-	testdpkginstalled 'protected-sysvinit' 'protected-systemd-sysv'
+	testsuccess aptget install ${prefix}systemd-sysv -y -t "$package" -o Debug::pkgDpkgPm=1
+	cp rootdir/tmp/testsuccess.output apt.output
+	testsuccess grep -- "--unpack --auto-deconfigure" apt.output
+	testfailure grep -- "--remove" apt.output
+	testfailure grep -- "--force-remove" apt.output
+	testsuccess aptget install ${prefix}systemd-sysv -y -t "$package"
+	testdpkginstalled "${prefix}sysvinit" "${prefix}systemd-sysv"
 }
 
-testforcebreak 'conflict' 'protected-'
+testforcebreak 'conflict'
 testnoforcebreak 'break'
+
+testforcebreak 'conflict' 'protected-'
+testnoforcebreak 'break' 'protected-'
