@@ -15,8 +15,8 @@ JSON-RPC request or response, and each terminated by an empty line
 (`\n\n`). Therefore, JSON objects containing empty lines may not be
 used.
 
-For protocol version `0.1`, each JSON object must be encoded on a single
-line.
+Each JSON object must be encoded on a single line at the moment,
+but this may change in future versions.
 
 ## Lifecycle
 
