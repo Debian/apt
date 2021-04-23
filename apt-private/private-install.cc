@@ -100,7 +100,7 @@ static void RemoveDownloadNeedingItemsFromFetcher(pkgAcquire &Fetcher, bool &Tra
       I = Fetcher.ItemsBegin();
    }
 }
-bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
+bool InstallPackages(CacheFile &Cache, bool ShwKept, bool Ask, bool Safety, std::string const &Hook, CommandLine const &CmdL)
 {
    if (not RunScripts("APT::Install::Pre-Invoke"))
       return false;
@@ -168,7 +168,12 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    if (_config->FindB("APT::Get::Download-Only",false) == false)
         Essential = !ShowEssential(c1out,Cache);
 
+   if (not Hook.empty())
+      RunJsonHook(Hook, "org.debian.apt.hooks.install.package-list", CmdL.FileList, Cache);
+
    Stats(c1out,Cache);
+   if (not Hook.empty())
+      RunJsonHook(Hook, "org.debian.apt.hooks.install.statistics", CmdL.FileList, Cache);
 
    // Sanity check
    if (Cache->BrokenCount() != 0)
@@ -934,9 +939,9 @@ bool DoInstall(CommandLine &CmdL)
    // See if we need to prompt
    // FIXME: check if really the packages in the set are going to be installed
    if (Cache->InstCount() == verset[MOD_INSTALL].size() && Cache->DelCount() == 0)
-      result = InstallPackages(Cache, false, false);
+      result = InstallPackages(Cache, false, false, true, "AptCli::Hooks::Install", CmdL);
    else
-      result = InstallPackages(Cache, false);
+      result = InstallPackages(Cache, false, true, true, "AptCli::Hooks::Install", CmdL);
 
    if (result)
       result = RunJsonHook("AptCli::Hooks::Install", "org.debian.apt.hooks.install.post", CmdL.FileList, Cache);
