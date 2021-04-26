@@ -1,3 +1,15 @@
+apt (1.2.35~rc1) xenial; urgency=medium
+
+  * Backport JSON hooks, version 0.2, to xenial (LP: #1926150). The JSON code
+    files are identical to that of 2.3.2, only the integration and test cases
+    needed minor adjustment to behave correctly, especially:
+    - In private-install.cc, exit before showing the list of packages to
+      upgrade/install/etc, in case an error is already set. This moves the
+      behavior closer to bionic.
+  * Fix indendation of changelog message in 1.2.34 changelog.
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Mon, 26 Apr 2021 12:42:35 +0200
+
 apt (1.2.34) xenial-security; urgency=high
 
   * SECURITY UPDATE: Integer overflow in parsing (LP: #1899193)
@@ -8,7 +20,7 @@ apt (1.2.34) xenial-security; urgency=high
     - CVE-2020-27350
   * Additional hardening:
     - apt-pkg/contrib/tarfile.cc: Limit size of long names and links to 1 MiB
- * (upstream re-release of 1.2.34)
+  * (upstream re-release of 1.2.32ubuntu0.2)
 
  -- Julian Andres Klode <juliank@ubuntu.com>  Mon, 07 Dec 2020 12:24:07 +0100
 
@@ -22,7 +34,7 @@ apt (1.2.33) xenial-security; urgency=high
       member names in error path
     - CVE-2020-3810
   * Add .gitlab-ci.yml for CI testing on Salsa
-  * (upstream re-release of 1.2.34)
+  * (upstream re-release of 1.2.32ubuntu0.1)
 
  -- Julian Andres Klode <juliank@ubuntu.com>  Thu, 14 May 2020 11:36:41 +0200
 
