@@ -27,7 +27,7 @@ The general life of a hook is as following.
 
 It is unspecified whether a hook is sent one or more messages. For
 example, a hook may be started only once for the lifetime of the apt
-process and receive multiple notificatgions, but a hook may also be
+process and receive multiple notifications, but a hook may also be
 started multiple times. Hooks should thus be stateless.
 
 ## JSON messages
@@ -59,7 +59,7 @@ The following methods are supported:
 
 1. `org.debian.apt.hooks.install.pre-prompt` - Run before the y/n prompt
 1. `org.debian.apt.hooks.install.post` - Run after success
-1. `org.debian.apt.hooks.install.fail` - Run after failed instal
+1. `org.debian.apt.hooks.install.fail` - Run after failed install
 1. `org.debian.apt.hooks.search.pre` - Run before search
 1. `org.debian.apt.hooks.search.post` - Run after successful search
 1. `org.debian.apt.hooks.search.fail` - Run after search without results
@@ -105,7 +105,7 @@ install. Each package has the following attributes:
   - *id*: An unsigned integer
   - *version*: The version as a string
   - *architecture*: Architecture of the version
-  - *pin*: The pin priority
+  - *pin*: The pin priority (optional)
 
 #### Example
 
