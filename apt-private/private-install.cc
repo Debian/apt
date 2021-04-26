@@ -36,6 +36,7 @@
 #include <apt-private/private-cachefile.h>
 #include <apt-private/private-cacheset.h>
 #include <apt-private/private-download.h>
+#include <apt-private/private-json-hooks.h>
 #include <apt-private/private-output.h>
 
 #include <apti18n.h>
@@ -77,7 +78,7 @@ bool CheckNothingBroken(CacheFile &Cache)				/*{{{*/
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
    happen and then calls the download routines */
-bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
+bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety, std::string const &Hook, CommandLine const &CmdL)
 {
    if (not RunScripts("APT::Install::Pre-Invoke"))
       return false;
@@ -91,6 +92,10 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       }
    }
    
+   // If we already have errors, exit here.
+   if (_error->PendingError() == true)
+      return false;
+
    bool Hold = false;
    bool Downgrade = false;
    bool Essential = false;
@@ -111,7 +116,12 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    // All kinds of failures
    bool Fail = (Essential || Downgrade || Hold);
 
+   if (not Hook.empty())
+      RunJsonHook(Hook, "org.debian.apt.hooks.install.package-list", CmdL.FileList, Cache);
+
    Stats(c1out,Cache);
+   if (not Hook.empty())
+      RunJsonHook(Hook, "org.debian.apt.hooks.install.statistics", CmdL.FileList, Cache);
 
    // Sanity check
    if (Cache->BrokenCount() != 0)
@@ -570,10 +580,11 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache, int
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<const char*> &VolatileCmdL, CacheFile &Cache, int UpgradeMode)
 {
    std::map<unsigned short, APT::VersionSet> verset;
-   return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, UpgradeMode);
+   std::set<std::string> UnknownPackages;
+   return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, UpgradeMode, UnknownPackages);
 }
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<const char*> &VolatileCmdL, CacheFile &Cache,
-                                        std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode)
+                                        std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode, std::set<std::string> &UnknownPackages)
 {
    // Enter the special broken fixing mode if the user specified arguments
    bool BrokenFix = false;
@@ -621,6 +632,8 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<const cha
       // via cacheset to have our usual virtual handling
       APT::VersionContainerInterface::FromPackage(&(verset[MOD_INSTALL]), Cache, P, APT::CacheSetHelper::CANDIDATE, helper);
    }
+
+   UnknownPackages = helper.notFound;
 
    if (_error->PendingError() == true)
    {
@@ -727,8 +740,13 @@ bool DoInstall(CommandLine &CmdL)
       return false;
 
    std::map<unsigned short, APT::VersionSet> verset;
-   if(!DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, 0))
+   std::set<std::string> UnknownPackages;
+
+   if (!DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, 0, UnknownPackages))
+   {
+      RunJsonHook("AptCli::Hooks::Install", "org.debian.apt.hooks.install.fail", CmdL.FileList, Cache, UnknownPackages);
       return false;
+   }
 
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
@@ -829,12 +847,22 @@ bool DoInstall(CommandLine &CmdL)
 	    always_true, string_ident, verbose_show_candidate);
    }
 
+   RunJsonHook("AptCli::Hooks::Install", "org.debian.apt.hooks.install.pre-prompt", CmdL.FileList, Cache);
+
+   bool result;
    // See if we need to prompt
    // FIXME: check if really the packages in the set are going to be installed
    if (Cache->InstCount() == verset[MOD_INSTALL].size() && Cache->DelCount() == 0)
-      return InstallPackages(Cache,false,false);
+      result = InstallPackages(Cache, false, false, true, "AptCli::Hooks::Install", CmdL);
+   else
+      result = InstallPackages(Cache, false, true, true, "AptCli::Hooks::Install", CmdL);
 
-   return InstallPackages(Cache,false);
+   if (result)
+      result = RunJsonHook("AptCli::Hooks::Install", "org.debian.apt.hooks.install.post", CmdL.FileList, Cache);
+   else
+      /* not a result */ RunJsonHook("AptCli::Hooks::Install", "org.debian.apt.hooks.install.fail", CmdL.FileList, Cache);
+
+   return result;
 }
 									/*}}}*/
 

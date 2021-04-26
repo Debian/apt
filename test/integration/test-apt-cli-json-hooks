@@ -1,0 +1,348 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+getoriginfromsuite() { echo 'Oranges'; }
+getlabelfromsuite() { echo 'Lemons'; }
+getversionfromsuite() { echo 'Volkamer'; }
+
+setupenvironment
+configarchitecture "i386"
+
+DESCR='Some description that has a unusual word xxyyzz and aabbcc and a UPPERCASE'
+DESCR2='Some other description with the unusual aabbcc only'
+insertpackage 'unstable' 'foo' 'all' '1.0' '' '' "$DESCR
+ Long description of stuff and such, with lines
+ .
+ and paragraphs and everything."
+insertpackage 'testing' 'bar' 'i386' '2.0' '' '' "$DESCR2"
+insertpackage 'testing' 'upgrade' 'i386' '2.0'
+insertinstalledpackage 'upgrade' 'i386' '1.0'
+
+setupaptarchive
+
+APTARCHIVE="$(readlink -f ./aptarchive)"
+export TEST_HOOK_VERSION=0.2
+
+cat >> json-hook.sh << EOF
+#!/bin/bash
+trap '' SIGPIPE
+while true; do
+	read request <&\$APT_HOOK_SOCKET || exit 1
+
+	if echo "\$request" | grep -q ".hello"; then
+		echo "HOOK: HELLO"
+	fi
+
+	if echo "\$request" | grep -q ".bye"; then
+		echo "HOOK: BYE"
+		exit 0;
+	fi
+
+	echo HOOK: request \$request
+
+	read empty <&\$APT_HOOK_SOCKET || exit 1
+
+	echo HOOK: empty \$empty
+
+	if echo "\$request" | grep -q ".hello"; then
+		printf '{"jsonrpc": "2.0", "result": {"version": "'\$TEST_HOOK_VERSION'"}, "id": 0}\n\n' >&\$APT_HOOK_SOCKET 2>/dev/null || exit 1
+	fi
+
+
+done
+EOF
+
+chmod +x json-hook.sh
+
+HOOK="$(readlink -f ./json-hook.sh)"
+
+# Setup all hooks
+cat >> rootdir/etc/apt/apt.conf.d/99-json-hooks << EOF
+	AptCli::Hooks::Install:: "$HOOK";
+	AptCli::Hooks::Upgrade:: "$HOOK";
+	AptCli::Hooks::Search:: "$HOOK";
+EOF
+
+
+############################# Success search #######################
+testsuccessequal 'HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.search.pre","params":{"command":"search","search-terms":["foo"],"unknown-packages":[],"packages":[]}}
+HOOK: empty
+HOOK: BYE
+Sorting...
+Full Text Search...
+foo/unstable 1.0 all
+  Some description that has a unusual word xxyyzz and aabbcc and a UPPERCASE
+
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.search.post","params":{"command":"search","search-terms":["foo"],"unknown-packages":[],"packages":[]}}
+HOOK: empty
+HOOK: BYE' apt search foo
+
+############################# Failed search #######################
+testsuccessequal 'HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.search.pre","params":{"command":"search","search-terms":["foox"],"unknown-packages":[],"packages":[]}}
+HOOK: empty
+HOOK: BYE
+Sorting...
+Full Text Search...
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.search.fail","params":{"command":"search","search-terms":["foox"],"unknown-packages":[],"packages":[]}}
+HOOK: empty
+HOOK: BYE' apt search foox
+
+
+############################# Failed install #######################
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.fail","params":{"command":"install","search-terms":["foxxx"],"unknown-packages":["foxxx"],"packages":[]}}
+HOOK: empty
+HOOK: BYE
+E: Unable to locate package foxxx' apt install foxxx
+
+############################# Success install #######################
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.pre-prompt","params":{"command":"install","search-terms":["foo"],"unknown-packages":[],"packages":[{"id":2,"name":"foo","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":2,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":2,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]}}}]}}
+HOOK: empty
+HOOK: BYE
+The following NEW packages will be installed:
+  foo
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.package-list","params":{"command":"install","search-terms":["foo"],"unknown-packages":[],"packages":[{"id":2,"name":"foo","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":2,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":2,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]}}}]}}
+HOOK: empty
+HOOK: BYE
+0 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.statistics","params":{"command":"install","search-terms":["foo"],"unknown-packages":[],"packages":[{"id":2,"name":"foo","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":2,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":2,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]}}}]}}
+HOOK: empty
+HOOK: BYE
+Inst foo (1.0 Lemons:unstable [all])
+Conf foo (1.0 Lemons:unstable [all])
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.post","params":{"command":"install","search-terms":["foo"],"unknown-packages":[],"packages":[{"id":2,"name":"foo","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":2,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":2,"version":"1.0","architecture":"all","pin":500,"origins":[{"archive":"unstable","codename":"sid","origin":"Oranges","label":"Lemons","site":""}]}}}]}}
+HOOK: empty
+HOOK: BYE' apt install foo -s
+
+############################# Failed dist-upgrade #######################
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.fail","params":{"command":"dist-upgrade","search-terms":["foxxx"],"unknown-packages":["foxxx"],"packages":[]}}
+HOOK: empty
+HOOK: BYE
+E: Unable to locate package foxxx' apt dist-upgrade foxxx
+
+############################# Success install #######################
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.pre-prompt","params":{"command":"dist-upgrade","search-terms":[],"unknown-packages":[],"packages":[{"id":1,"name":"upgrade","architecture":"i386","mode":"upgrade","automatic":false,"versions":{"candidate":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"current":{"id":3,"version":"1.0","architecture":"i386","pin":100,"origins":[]}}}]}}
+HOOK: empty
+HOOK: BYE
+The following packages will be upgraded:
+  upgrade
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.package-list","params":{"command":"dist-upgrade","search-terms":[],"unknown-packages":[],"packages":[{"id":1,"name":"upgrade","architecture":"i386","mode":"upgrade","automatic":false,"versions":{"candidate":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"current":{"id":3,"version":"1.0","architecture":"i386","pin":100,"origins":[]}}}]}}
+HOOK: empty
+HOOK: BYE
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.statistics","params":{"command":"dist-upgrade","search-terms":[],"unknown-packages":[],"packages":[{"id":1,"name":"upgrade","architecture":"i386","mode":"upgrade","automatic":false,"versions":{"candidate":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"current":{"id":3,"version":"1.0","architecture":"i386","pin":100,"origins":[]}}}]}}
+HOOK: empty
+HOOK: BYE
+Inst upgrade [1.0] (2.0 Lemons:testing [i386])
+Conf upgrade (2.0 Lemons:testing [i386])
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.post","params":{"command":"dist-upgrade","search-terms":[],"unknown-packages":[],"packages":[{"id":1,"name":"upgrade","architecture":"i386","mode":"upgrade","automatic":false,"versions":{"candidate":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"current":{"id":3,"version":"1.0","architecture":"i386","pin":100,"origins":[]}}}]}}
+HOOK: empty
+HOOK: BYE' apt dist-upgrade -s
+
+
+################## version 0.1 #########################
+TEST_HOOK_VERSION=0.1
+
+testequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.pre-prompt","params":{"command":"dist-upgrade","search-terms":[],"unknown-packages":[],"packages":[{"id":1,"name":"upgrade","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"current":{"id":3,"version":"1.0","architecture":"i386","pin":100,"origins":[]}}}]}}
+HOOK: empty
+HOOK: BYE
+The following packages will be upgraded:
+  upgrade
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.package-list","params":{"command":"dist-upgrade","search-terms":[],"unknown-packages":[],"packages":[{"id":1,"name":"upgrade","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"current":{"id":3,"version":"1.0","architecture":"i386","pin":100,"origins":[]}}}]}}
+HOOK: empty
+HOOK: BYE
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.statistics","params":{"command":"dist-upgrade","search-terms":[],"unknown-packages":[],"packages":[{"id":1,"name":"upgrade","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"current":{"id":3,"version":"1.0","architecture":"i386","pin":100,"origins":[]}}}]}}
+HOOK: empty
+HOOK: BYE
+Inst upgrade [1.0] (2.0 Lemons:testing [i386])
+Conf upgrade (2.0 Lemons:testing [i386])
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.install.post","params":{"command":"dist-upgrade","search-terms":[],"unknown-packages":[],"packages":[{"id":1,"name":"upgrade","architecture":"i386","mode":"install","automatic":false,"versions":{"candidate":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"install":{"id":1,"version":"2.0","architecture":"i386","pin":500,"origins":[{"archive":"testing","codename":"testing","origin":"Oranges","label":"Lemons","site":""}]},"current":{"id":3,"version":"1.0","architecture":"i386","pin":100,"origins":[]}}}]}}
+HOOK: empty
+HOOK: BYE
+W: Hook '$HOOK' uses deprecated 0.1 protocol
+W: Hook '$HOOK' uses deprecated 0.1 protocol
+W: Hook '$HOOK' uses deprecated 0.1 protocol
+W: Hook '$HOOK' uses deprecated 0.1 protocol' apt dist-upgrade -s
+
+
+################## Wrong version #########################
+TEST_HOOK_VERSION=42
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+HOOK: HELLO
+HOOK: request {"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1","0.2"]}}
+HOOK: empty
+E: Unknown hook version in handshake from hook '$HOOK': {"jsonrpc": "2.0", "result": {"version": "42"}, "id": 0}
+
+E: Sub-process '$HOOK' returned an error code (1)
+E: Failure running hook '$HOOK'
+E: Unknown hook version in handshake from hook '$HOOK': {"jsonrpc": "2.0", "result": {"version": "42"}, "id": 0}
+
+E: Sub-process '$HOOK' returned an error code (1)
+E: Failure running hook '$HOOK'' apt dist-upgrade -s
+################## Error in hello response #########################
+
+cat > json-hook.sh << EOF
+#!/bin/bash
+exec 2>/dev/null
+trap '' SIGPIPE
+while true; do
+	read request <&\$APT_HOOK_SOCKET
+	read empty <&\$APT_HOOK_SOCKET
+
+	if echo "\$request" | grep -q ".hello"; then
+		printf '{"jsonrpc": "2.0", "error": {"version": "0.2"}, "id": 0}\n\n' >&\$APT_HOOK_SOCKET
+		break
+	fi
+done
+exit 0
+EOF
+
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+E: Hook '$HOOK' reported an error during hello: {"jsonrpc": "2.0", "error": {"version": "0.2"}, "id": 0}
+
+E: Hook '$HOOK' reported an error during hello: {"jsonrpc": "2.0", "error": {"version": "0.2"}, "id": 0}
+' apt install foo -s
+
+################## Missing separator line #########################
+cat > json-hook.sh << EOF
+#!/bin/bash
+exec 2>/dev/null
+trap '' SIGPIPE
+while true; do
+	read request <&\$APT_HOOK_SOCKET
+	read empty <&\$APT_HOOK_SOCKET
+
+	if echo "\$request" | grep -q ".hello"; then
+		printf '{"jsonrpc": "2.0", "result": {"version": "0.2"}, "id": 0}\n' >&\$APT_HOOK_SOCKET
+		break
+	fi
+done
+exit 0
+EOF
+
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+E: Could not read message separator line after handshake from '$HOOK': end of file
+E: Could not read message separator line after handshake from '$HOOK': end of file' apt install foo -s
+
+################## Wrong separator line #########################
+cat > json-hook.sh << EOF
+#!/bin/bash
+exec 2>/dev/null
+trap '' SIGPIPE
+while true; do
+	read request <&\$APT_HOOK_SOCKET
+	read empty <&\$APT_HOOK_SOCKET
+
+	if echo "\$request" | grep -q ".hello"; then
+		printf '{"jsonrpc": "2.0", "result": {"version": "0.2"}, "id": 0}\nXX' >&\$APT_HOOK_SOCKET
+		break
+	fi
+done
+exit 0
+EOF
+
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+E: Expected empty line after handshake from '$HOOK', received XX
+E: Expected empty line after handshake from '$HOOK', received XX' apt install foo -s
+
+##################### Removed hook || true ############################
+cat > rootdir/etc/apt/apt.conf.d/99-json-hooks << EOF
+	AptCli::Hooks::Install:: "true";
+	AptCli::Hooks::Search:: "true";
+EOF
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo
+0 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst foo (1.0 Lemons:unstable [all])
+Conf foo (1.0 Lemons:unstable [all])' apt install foo -s
+
+
+
