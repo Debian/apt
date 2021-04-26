@@ -92,6 +92,10 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       }
    }
    
+   // If we already have errors, exit here.
+   if (_error->PendingError() == true)
+      return false;
+
    bool Hold = false;
    bool Downgrade = false;
    bool Essential = false;
