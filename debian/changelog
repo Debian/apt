@@ -1,3 +1,24 @@
+apt (1.2.35) xenial; urgency=medium
+
+  * Backport JSON hooks, version 0.2, to xenial (LP: #1926150). The JSON code
+    files are identical to that of 2.3.2, only the integration and test cases
+    needed minor adjustment to behave correctly, especially:
+    - In private-install.cc, exit before showing the list of packages to
+      upgrade/install/etc, in case an error is already set. This moves the
+      behavior closer to bionic.
+  * Backport zstd support for Launchpad zstd enablement (LP: #1926437)
+  * Fix indendation of changelog message in 1.2.34 changelog.
+  * Bug fixes needed for JSON hooks:
+    - private-install: Handle existing errors before showing lists
+    - Avoid duplicated error in `apt search`
+  * Bug fixes affecting CI / autopkgtest only:
+    - prepare-release: Ignore alternative build dependencies
+    - tests: Do not expect requested-by if sudo was invoked by root
+    - tests: Export TZ=UTC to work around test failures on non-UTC hosts
+    - tests: avoid time-dependent rebuild of caches
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Wed, 28 Apr 2021 14:55:54 +0200
+
 apt (1.2.34) xenial-security; urgency=high
 
   * SECURITY UPDATE: Integer overflow in parsing (LP: #1899193)
