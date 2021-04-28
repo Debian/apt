@@ -34,7 +34,8 @@ static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
 {
 
    CacheFile CacheFile;
-   CacheFile.GetDepCache();
+   if (not CacheFile.BuildDepCache())
+      return false;
    pkgCache *Cache = CacheFile.GetPkgCache();
    pkgDepCache::Policy *Plcy = CacheFile.GetPolicy();
    if (unlikely(Cache == NULL || Plcy == NULL))
