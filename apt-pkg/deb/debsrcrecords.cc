@@ -123,6 +123,14 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
 
       while (1)
       {
+	 // Strip off leading spaces (is done by ParseDepends, too) and
+	 // superfluous commas (encountered in user-written dsc/control files)
+	 do {
+	    for (;Start != Stop && isspace_ascii(*Start) != 0; ++Start);
+	 } while (*Start == ',' && ++Start != Stop);
+	 if (Start == Stop)
+	    break;
+
 	 BuildDepRec rec;
 	 Start = debListParser::ParseDepends(Start, Stop,
 					     rec.Package, rec.Version, rec.Op, true, StripMultiArch, true);
@@ -135,19 +143,12 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
 	 // or something).
 	 if (rec.Package.empty())
 	 {
-	    // If we are in an OR group, we need to set the "Or" flag of the
-	    // previous entry to our value.
-	    if (BuildDeps.empty() == false && (BuildDeps[BuildDeps.size() - 1].Op & pkgCache::Dep::Or) == pkgCache::Dep::Or)
-	    {
-	       BuildDeps[BuildDeps.size() - 1].Op &= ~pkgCache::Dep::Or;
-	       BuildDeps[BuildDeps.size() - 1].Op |= (rec.Op & pkgCache::Dep::Or);
-	    }
+	    // If this was the last or-group member, close the or-group with the previous entry
+	    if (not BuildDeps.empty() && (BuildDeps.back().Op & pkgCache::Dep::Or) == pkgCache::Dep::Or && (rec.Op & pkgCache::Dep::Or) != pkgCache::Dep::Or)
+	       BuildDeps.back().Op &= ~pkgCache::Dep::Or;
 	 } else {
 	    BuildDeps.emplace_back(std::move(rec));
 	 }
-
-	 if (Start == Stop)
-	    break;
       }
    }
 
