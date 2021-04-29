@@ -1,6 +1,7 @@
 #ifndef APT_PRIVATE_OUTPUT_H
 #define APT_PRIVATE_OUTPUT_H
 
+#include <apt-pkg/cacheset.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
@@ -91,14 +92,14 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
 
 void ShowNew(std::ostream &out,CacheFile &Cache);
 void ShowDel(std::ostream &out,CacheFile &Cache);
-void ShowKept(std::ostream &out,CacheFile &Cache);
+void ShowKept(std::ostream &out,CacheFile &Cache, APT::PackageVector const &HeldBackPackages);
 void ShowUpgraded(std::ostream &out,CacheFile &Cache);
 bool ShowDowngraded(std::ostream &out,CacheFile &Cache);
 bool ShowHold(std::ostream &out,CacheFile &Cache);
 
 bool ShowEssential(std::ostream &out,CacheFile &Cache);
 
-void Stats(std::ostream &out, pkgDepCache &Dep);
+void Stats(std::ostream &out, pkgDepCache &Dep, APT::PackageVector const &HeldBackPackages);
 
 // prompting
 APT_PUBLIC bool YnPrompt(char const *const Question, bool Default = true);

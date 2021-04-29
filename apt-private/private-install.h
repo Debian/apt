@@ -1,6 +1,7 @@
 #ifndef APT_PRIVATE_INSTALL_H
 #define APT_PRIVATE_INSTALL_H
 
+#include <apt-pkg/depcache.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/configuration.h>
@@ -32,11 +33,14 @@ bool AddVolatileBinaryFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector
 bool AddVolatileSourceFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector<PseudoPkg> &VolatileCmdL);
 
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache,
-					std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode, std::set<std::string> &UnknownPackages);
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache, int UpgradeMode);
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache, int UpgradeMode);
+					std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode,
+					std::set<std::string> &UnknownPackages, APT::PackageVector &HeldBackPackages);
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache, int UpgradeMode,
+					APT::PackageVector &HeldBackPackages);
 
-APT_PUBLIC bool InstallPackages(CacheFile &Cache, bool ShwKept, bool Ask = true,
+APT_PUBLIC bool InstallPackages(CacheFile &Cache,
+				APT::PackageVector &HeldBackPackages,
+				bool ShwKept, bool Ask = true,
 				bool Safety = true,
 				std::string const &Hook = "",
 				CommandLine const &CmdL = {});

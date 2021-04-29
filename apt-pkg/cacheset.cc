@@ -295,7 +295,8 @@ bool CacheSetHelper::PackageFromPackageName(PackageContainerInterface * const pc
 	pci->insert(Pkg);
 	return true;
 }
-
+									/*}}}*/
+// PackageFromPattern - Return all packages matching a specific pattern	/*{{{*/
 bool CacheSetHelper::PackageFromPattern(PackageContainerInterface *const pci, pkgCacheFile &Cache, std::string const &pattern)
 {
    if (pattern.size() < 1 || (pattern[0] != '?' && pattern[0] != '~'))

@@ -491,17 +491,11 @@ void ShowDel(ostream &out,CacheFile &Cache)
 }
 									/*}}}*/
 // ShowKept - Show kept packages					/*{{{*/
-void ShowKept(ostream &out,CacheFile &Cache)
+void ShowKept(ostream &out,CacheFile &Cache, APT::PackageVector const &HeldBackPackages)
 {
    SortedPackageUniverse Universe(Cache);
-   ShowList(out,_("The following packages have been kept back:"), Universe,
-	 [&Cache](pkgCache::PkgIterator const &Pkg)
-	 {
-	    return Cache[Pkg].Upgrade() == false &&
-		   Cache[Pkg].Upgradable() == true &&
-		   Pkg->CurrentVer != 0 &&
-		   Cache[Pkg].Delete() == false;
-	 },
+   ShowList(out,_("The following packages have been kept back:"), HeldBackPackages,
+	 &AlwaysTrue,
 	 &PrettyFullName,
 	 CurrentToCandidateVersion(&Cache));
 }
@@ -623,7 +617,7 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
 // Stats - Show some statistics						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Stats(ostream &out,pkgDepCache &Dep)
+void Stats(ostream &out, pkgDepCache &Dep, APT::PackageVector const &HeldBackPackages)
 {
    unsigned long Upgrade = 0;
    unsigned long Downgrade = 0;
@@ -655,7 +649,7 @@ void Stats(ostream &out,pkgDepCache &Dep)
       ioprintf(out,_("%lu downgraded, "),Downgrade);
 
    ioprintf(out,_("%lu to remove and %lu not upgraded.\n"),
-	    Dep.DelCount(),Dep.KeepCount());
+	    Dep.DelCount(), HeldBackPackages.size());
    
    if (Dep.BadCount() != 0)
       ioprintf(out,_("%lu not fully installed or removed.\n"),
@@ -784,7 +778,15 @@ std::function<std::string(pkgCache::PkgIterator const &)> CandidateVersion(pkgCa
 }
 std::string CurrentToCandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg)
 {
-   return std::string((*Cache)[Pkg].CurVersion) + " => " + (*Cache)[Pkg].CandVersion;
+   std::string const CurVer = (*Cache)[Pkg].CurVersion;
+   std::string CandVer = (*Cache)[Pkg].CandVersion;
+   if (CurVer == CandVer)
+   {
+      auto const CandVerIter = Cache->GetPolicy()->GetCandidateVer(Pkg);
+      if (not CandVerIter.end())
+	 CandVer = CandVerIter.VerStr();
+   }
+   return  CurVer + " => " + CandVer;
 }
 std::function<std::string(pkgCache::PkgIterator const &)> CurrentToCandidateVersion(pkgCacheFile * const Cache)
 {
@@ -798,4 +800,3 @@ std::string EmptyString(pkgCache::PkgIterator const &)
 {
    return std::string();
 }
-
