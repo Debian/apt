@@ -25,7 +25,7 @@ The general life of a hook is as following.
 1. Hook is started
 2. Hello handshake is exchanged
 3. One or more calls or notifications are sent from apt to the hook
-4. Bye notification is send
+4. Bye notification is sent
 
 It is unspecified whether a hook is sent one or more messages. For
 example, a hook may be started only once for the lifetime of the apt
