@@ -69,6 +69,8 @@ class APT_PUBLIC pkgCacheFile
    void Close();
 
    bool AddIndexFile(pkgIndexFile * const File);
+   // Starts DepCache with a claim of one ActionGroup already active
+   void InhibitActionGroups(bool yes);
 
    inline pkgCache* GetPkgCache() { BuildCaches(NULL, false); return Cache; };
    inline pkgDepCache* GetDepCache() { BuildDepCache(); return DCache; };

@@ -12,6 +12,7 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
+#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
@@ -28,10 +29,13 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
+#include <sstream>
 #include <iterator>
 #include <list>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 #include <stdio.h>
@@ -84,30 +88,34 @@ ConfigValueInSubTree(const char* SubTree, const char *needle)
 pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :		/*{{{*/
   d(NULL), cache(cache), released(false)
 {
-  ++cache.group_level;
+  cache.IncreaseActionGroupLevel();
 }
 
 void pkgDepCache::ActionGroup::release()
 {
-  if(!released)
-    {
-      if(cache.group_level == 0)
-	std::cerr << "W: Unbalanced action groups, expect badness" << std::endl;
-      else
-	{
-	  --cache.group_level;
-
-	  if(cache.group_level == 0)
-	    cache.MarkAndSweep();
-	}
-
-      released = true;
-    }
+  if(released)
+     return;
+  released = true;
+  if (cache.DecreaseActionGroupLevel() == 0)
+     cache.MarkAndSweep();
 }
 
 pkgDepCache::ActionGroup::~ActionGroup()
 {
   release();
+}
+int pkgDepCache::IncreaseActionGroupLevel()
+{
+   return ++group_level;
+}
+int pkgDepCache::DecreaseActionGroupLevel()
+{
+   if(group_level == 0)
+   {
+      std::cerr << "W: Unbalanced action groups, expect badness\n";
+      return -1;
+   }
+   return --group_level;
 }
 									/*}}}*/
 // DepCache::pkgDepCache - Constructors					/*{{{*/
@@ -117,6 +125,8 @@ pkgDepCache::ActionGroup::~ActionGroup()
 struct pkgDepCache::Private
 {
    std::unique_ptr<InRootSetFunc> inRootSetFunc;
+   std::vector<bool> fullyExplored;
+   std::unique_ptr<APT::CacheFilter::Matcher> IsAVersionedKernelPackage, IsProtectedKernelPackage;
 };
 pkgDepCache::pkgDepCache(pkgCache *const pCache, Policy *const Plcy) : group_level(0), Cache(pCache), PkgState(0), DepState(0),
 								       iUsrSize(0), iDownloadSize(0), iInstCount(0), iDelCount(0), iKeepCount(0),
@@ -2230,6 +2240,7 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
       PkgState[i].Marked  = false;
       PkgState[i].Garbage = false;
    }
+   d->fullyExplored = std::vector<bool>(PackagesCount, false);
    if (debug_autoremove)
       for(PkgIterator p = PkgBegin(); !p.end(); ++p)
 	 if(PkgState[p->ID].Flags & Flag::Auto)
@@ -2268,7 +2279,7 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 	 MarkPackage(P, P.CurrentVer(),
 	       follow_recommends, follow_suggests, reason);
    }
-
+   d->fullyExplored.clear();
    return true;
 }
 									/*}}}*/
@@ -2279,26 +2290,32 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 			      bool const &follow_suggests,
 			      const char *reason)
 {
-   {
-      pkgDepCache::StateCache &state = PkgState[Pkg->ID];
-      // if we are marked already we are done
-      if(state.Marked || unlikely(Ver.end()))
-	 return;
-      state.Marked=true;
-   }
-
-   if (IsPkgInBoringState(Pkg, PkgState))
+   if (Ver.end() || (d->fullyExplored[Pkg->ID] && PkgState[Pkg->ID].Marked))
       return;
 
+   if (IsPkgInBoringState(Pkg, PkgState))
+   {
+      d->fullyExplored[Pkg->ID] = true;
+      return;
+   }
+
+   PkgState[Pkg->ID].Marked = true;
    bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove", false);
    if(debug_autoremove)
       std::clog << "Marking: " << Pkg.FullName() << " " << Ver.VerStr()
 		<< " (" << reason << ")" << std::endl;
 
-   for (auto D = Ver.DependsList(); D.end() == false; ++D)
+   auto const sort_by_source_version = [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) {
+      auto const verret = A.Cache()->VS->CmpVersion(A.SourceVerStr(), B.SourceVerStr());
+      if (verret != 0)
+	 return verret > 0;
+      return A->ID < B->ID;
+   };
+
+   for (auto D = Ver.DependsList(); not D.end(); ++D)
    {
       auto const T = D.TargetPkg();
-      if (PkgState[T->ID].Marked)
+      if (T.end() || d->fullyExplored[T->ID])
 	 continue;
 
       if (D->Type != Dep::Depends &&
@@ -2307,65 +2324,88 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 	    (follow_suggests == false || D->Type != Dep::Suggests))
 	 continue;
 
-      // handle the virtual part first
-      APT::VersionVector providers;
-      for(auto Prv = T.ProvidesList(); Prv.end() == false; ++Prv)
+      bool unsatisfied_choice = false;
+      std::unordered_map<std::string, APT::VersionVector> providers_by_source;
+      // collect real part
+      if (not IsPkgInBoringState(T, PkgState))
       {
-	 auto PP = Prv.OwnerPkg();
+	 auto const TV = (PkgState[T->ID].Install()) ? PkgState[T->ID].InstVerIter(*this) : T.CurrentVer();
+	 if (likely(not TV.end()))
+	 {
+	    if (not D.IsSatisfied(TV))
+	       unsatisfied_choice = true;
+	    else
+	       providers_by_source[TV.SourcePkgName()].push_back(TV);
+	 }
+      }
+      if (providers_by_source.empty() && not unsatisfied_choice)
+	 PkgState[T->ID].Marked = true;
+      // collect virtual part
+      for (auto Prv = T.ProvidesList(); not Prv.end(); ++Prv)
+      {
+	 auto const PP = Prv.OwnerPkg();
 	 if (IsPkgInBoringState(PP, PkgState))
 	    continue;
 
 	 // we want to ignore provides from uninteresting versions
 	 auto const PV = (PkgState[PP->ID].Install()) ?
 	    PkgState[PP->ID].InstVerIter(*this) : PP.CurrentVer();
-	 if (unlikely(PV.end()) || PV != Prv.OwnerVer() || D.IsSatisfied(Prv) == false)
+	 if (unlikely(PV.end()) || PV != Prv.OwnerVer())
 	    continue;
 
-	 providers.emplace_back(PV);
+	 if (not D.IsSatisfied(Prv))
+	    unsatisfied_choice = true;
+	 else
+	    providers_by_source[PV.SourcePkgName()].push_back(PV);
       }
-      if (providers.empty() == false)
+      // only latest binary package of a source package is marked instead of all
+      for (auto &providers : providers_by_source)
       {
-	 // sort providers by source version so that only the latest versioned
-	 // binary package of a source package is marked instead of all
-	 std::sort(providers.begin(), providers.end(),
-	    [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) {
-	       auto const nameret = strcmp(A.SourcePkgName(), B.SourcePkgName());
-	       if (nameret != 0)
-	          return nameret < 0;
-	       auto const verret = A.Cache()->VS->CmpVersion(A.SourceVerStr(), B.SourceVerStr());
-	       if (verret != 0)
-	          return verret > 0;
-	       return strcmp(A.ParentPkg().Name(), B.ParentPkg().Name()) < 0;
-	 });
-	 auto const prvsize = providers.size();
-	 providers.erase(std::unique(providers.begin(), providers.end(),
-	    [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) {
-	       return strcmp(A.SourcePkgName(), B.SourcePkgName()) == 0 &&
-	          strcmp(A.SourceVerStr(), B.SourceVerStr()) != 0;
-	    }), providers.end());
-	 for (auto && PV: providers)
+	 std::sort(providers.second.begin(), providers.second.end(), sort_by_source_version);
+	 auto const highestSrcVer = (*providers.second.begin()).SourceVerStr();
+	 auto notThisVer = std::find_if_not(providers.second.begin(), providers.second.end(), [&](auto const &V) { return strcmp(highestSrcVer, V.SourceVerStr()) == 0; });
+	 if (notThisVer != providers.second.end())
+	    providers.second.erase(notThisVer, providers.second.end());
+	 // if the provider is a versioned kernel package mark them only for protected kernels
+	 if (providers.second.size() == 1)
+	    continue;
+	 if (not d->IsAVersionedKernelPackage)
+	    d->IsAVersionedKernelPackage = [&]() -> std::unique_ptr<APT::CacheFilter::Matcher> {
+	       auto const patterns = _config->FindVector("APT::VersionedKernelPackages");
+	       if (patterns.empty())
+		  return std::make_unique<APT::CacheFilter::FalseMatcher>();
+	       std::ostringstream regex;
+	       regex << '^';
+	       std::copy(patterns.begin(), patterns.end() - 1, std::ostream_iterator<std::string>(regex, "-.*$|^"));
+	       regex << patterns.back() << "-.*$";
+	       return std::make_unique<APT::CacheFilter::PackageNameMatchesRegEx>(regex.str());
+	    }();
+	 if (not std::all_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*d->IsAVersionedKernelPackage)(Prv.ParentPkg()); }))
+	    continue;
+	 // … if there is at least one for protected kernels installed
+	 if (not d->IsProtectedKernelPackage)
+	    d->IsProtectedKernelPackage = APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(Cache);
+	 if (not std::any_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*d->IsProtectedKernelPackage)(Prv.ParentPkg()); }))
+	    continue;
+	 providers.second.erase(std::remove_if(providers.second.begin(), providers.second.end(),
+					       [&](auto const &Prv) { return not((*d->IsProtectedKernelPackage)(Prv.ParentPkg())); }),
+				providers.second.end());
+      }
+
+      if (not unsatisfied_choice)
+	 d->fullyExplored[T->ID] = true;
+      for (auto const &providers : providers_by_source)
+      {
+	 for (auto const &PV : providers.second)
 	 {
 	    auto const PP = PV.ParentPkg();
 	    if (debug_autoremove)
 	       std::clog << "Following dep: " << APT::PrettyDep(this, D)
-		  << ", provided by " << PP.FullName() << " " << PV.VerStr()
-		  << " (" << providers.size() << "/" << prvsize << ")"<< std::endl;
-	    MarkPackage(PP, PV, follow_recommends, follow_suggests, "Provider");
+			 << ", provided by " << PP.FullName() << " " << PV.VerStr()
+			 << " (" << providers_by_source.size() << "/" << providers.second.size() << ")\n";
+	    MarkPackage(PP, PV, follow_recommends, follow_suggests, "Dependency");
 	 }
       }
-
-      // now deal with the real part of the package
-      if (IsPkgInBoringState(T, PkgState))
-	 continue;
-
-      auto const TV = (PkgState[T->ID].Install()) ?
-	 PkgState[T->ID].InstVerIter(*this) : T.CurrentVer();
-      if (unlikely(TV.end()) || D.IsSatisfied(TV) == false)
-	 continue;
-
-      if (debug_autoremove)
-	 std::clog << "Following dep: " << APT::PrettyDep(this, D) << std::endl;
-      MarkPackage(T, TV, follow_recommends, follow_suggests, "Dependency");
    }
 }
 									/*}}}*/

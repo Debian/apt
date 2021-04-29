@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'needs' 'all' '1'
+insertinstalledpackage 'needs-provider1' 'all' '1' 'Provides: needs (= 1)'
+insertinstalledpackage 'needs-provider2' 'all' '1' 'Provides: needs (= 2)'
+insertinstalledpackage 'needs-provider3' 'all' '1' 'Provides: needs (= 3)'
+insertinstalledpackage 'needs-provider4' 'all' '1' 'Provides: needs (= 4)'
+
+insertinstalledpackage 'foo' 'all' '1' 'Depends: needs (= 1), needs (= 2), needs (= 3)'
+
+testsuccess aptmark auto 'needs*'
+testsuccessequal 'needs
+needs-provider1
+needs-provider2
+needs-provider3
+needs-provider4' aptmark showauto
+
+testsuccess aptget check -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  needs-provider4
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv needs-provider4 [1]' aptget autoremove -s

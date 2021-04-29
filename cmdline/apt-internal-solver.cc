@@ -146,6 +146,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 	EDSP::WriteProgress(5, "Read scenario…", output);
 
 	pkgCacheFile CacheFile;
+	CacheFile.InhibitActionGroups(true);
 	if (CacheFile.Open(NULL, false) == false)
 		DIE("Failed to open CacheFile!");
 
@@ -202,6 +203,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	EDSP::WriteProgress(95, "Write solution…", output);
 
+	CacheFile->MarkAndSweep();
 	if (WriteSolution(CacheFile, output) == false)
 		DIE("Failed to output the solution!");
 

@@ -80,6 +80,16 @@ bool CheckNothingBroken(CacheFile &Cache)				/*{{{*/
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
    happen and then calls the download routines */
+class SimulateWithActionGroupInhibited : public pkgSimulate
+{
+public:
+      SimulateWithActionGroupInhibited(CacheFile &Cache) : pkgSimulate(Cache) { Sim.IncreaseActionGroupLevel(); }
+      SimulateWithActionGroupInhibited(SimulateWithActionGroupInhibited const &Cache) = delete;
+      SimulateWithActionGroupInhibited(SimulateWithActionGroupInhibited &&Cache) = delete;
+      SimulateWithActionGroupInhibited& operator=(SimulateWithActionGroupInhibited const &Cache) = delete;
+      SimulateWithActionGroupInhibited& operator=(SimulateWithActionGroupInhibited &&Cache) = delete;
+      ~SimulateWithActionGroupInhibited() = default;
+};
 static void RemoveDownloadNeedingItemsFromFetcher(pkgAcquire &Fetcher, bool &Transient)
 {
    for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I < Fetcher.ItemsEnd();)
@@ -208,7 +218,7 @@ bool InstallPackages(CacheFile &Cache, bool ShwKept, bool Ask, bool Safety, std:
    // Run the simulator ..
    if (_config->FindB("APT::Get::Simulate") == true)
    {
-      pkgSimulate PM(Cache);
+      SimulateWithActionGroupInhibited PM(Cache);
 
       APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
       pkgPackageManager::OrderResult Res = PM.DoInstall(progress);
@@ -420,7 +430,6 @@ bool DoAutomaticRemove(CacheFile &Cache)
       kernelAutoremovalMatcher = APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(Cache, true);
    }
 
-   pkgDepCache::ActionGroup group(*Cache);
    if(Debug)
       std::cout << "DoAutomaticRemove()" << std::endl;
 
@@ -431,6 +440,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		 "AutoRemover") << std::endl;
       return false;
    }
+   Cache->MarkAndSweep();
 
    bool purgePkgs = _config->FindB("APT::Get::Purge", false);
    bool smallList = (hideAutoRemove == false &&
@@ -529,8 +539,6 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 }
       } while (Changed == true);
    }
-   // trigger marking now so that the package list below is correct
-   group.release();
 
    // Now see if we had destroyed anything (if we had done anything)
    if (Cache->BrokenCount() != 0)
@@ -550,6 +558,8 @@ bool DoAutomaticRemove(CacheFile &Cache)
    {
       if (smallList == false)
       {
+	 // trigger marking now so that the package list is correct
+	 Cache->MarkAndSweep();
 	 SortedPackageUniverse Universe(Cache);
 	 ShowList(c1out, P_("The following package was automatically installed and is no longer required:",
 	          "The following packages were automatically installed and are no longer required:",
@@ -664,9 +674,7 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
   TryToInstall InstallAction(Cache, Fix.get(), BrokenFix);
   TryToRemove RemoveAction(Cache, Fix.get());
 
-   // new scope for the ActionGroup
    {
-      pkgDepCache::ActionGroup group(Cache);
       unsigned short const order[] = { MOD_REMOVE, MOD_INSTALL, 0 };
 
       for (unsigned short i = 0; order[i] != 0; ++i)
@@ -828,6 +836,7 @@ struct PkgIsExtraInstalled {
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
+   Cache.InhibitActionGroups(true);
    auto VolatileCmdL = GetPseudoPackages(Cache.GetSourceList(), CmdL, AddVolatileBinaryFile, "");
 
    // then open the cache

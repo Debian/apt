@@ -42,6 +42,7 @@
 struct pkgCacheFile::Private
 {
    bool WithLock = false;
+   bool InhibitActionGroups = false;
 };
 
 // CacheFile::CacheFile - Constructor					/*{{{*/
@@ -199,6 +200,8 @@ bool pkgCacheFile::BuildDepCache(OpProgress *Progress)
    DCache.reset(new pkgDepCache(Cache,Policy));
    if (_error->PendingError() == true)
       return false;
+   if (d->InhibitActionGroups)
+      DCache->IncreaseActionGroupLevel();
    if (DCache->Init(Progress) == false)
       return false;
 
@@ -376,3 +379,7 @@ void pkgCacheFile::Close()
    SrcList = NULL;
 }
 									/*}}}*/
+void pkgCacheFile::InhibitActionGroups(bool const yes)
+{
+   d->InhibitActionGroups = yes;
+}
