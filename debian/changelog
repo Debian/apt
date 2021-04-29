@@ -1,3 +1,21 @@
+apt (2.3.3) experimental; urgency=medium
+
+  [ David Kalnischkies ]
+  * Allow superfluous commas in build-dependency lines
+  * Mark only provides from protected versioned kernel packages
+  * Count uninstallable packages in "not upgraded" (Closes: #981535)
+  * Reexplore providers of marked packages if some didn't satisfy before
+  * Call MarkAndSweep only manually in apt-get for autoremove
+  * Store versioned kernel package detectors in d-pointer
+
+  [ Brian Murray ]
+  * Fix a typo in json-hooks-protocol.md
+
+  [ Julian Andres Klode ]
+  * Temporarily Revert "2.3-only: Warn that the 0.1 protocol is deprecated"
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 29 Apr 2021 10:43:19 +0200
+
 apt (2.3.2) experimental; urgency=medium
 
   * Remove inversed comment for AllowUnsizedPackages
