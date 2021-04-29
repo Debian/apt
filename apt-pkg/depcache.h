@@ -298,7 +298,10 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
    int group_level;
 
    friend class ActionGroup;
-     
+   public:
+   int IncreaseActionGroupLevel();
+   int DecreaseActionGroupLevel();
+
    protected:
 
    // State information
