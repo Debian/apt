@@ -123,6 +123,7 @@ GEMessage(Debug, DEBUG)
 // GlobalError::Insert - Add a errotype message to the list		/*{{{*/
 bool GlobalError::Insert(MsgType const &type, const char *Description,...)
 {
+	std::cout << "bruh." << std::endl;
 	va_list args;
 	size_t msgSize = 400;
 	bool retry;
@@ -137,6 +138,7 @@ bool GlobalError::Insert(MsgType const &type, const char *Description,...)
 // GlobalError::Insert - Insert a new item at the end			/*{{{*/
 bool GlobalError::Insert(MsgType type, const char* Description,
 			 va_list &args, size_t &msgSize) {
+	std::cout << "bruh." << std::endl;
 	char* S = (char*) malloc(msgSize);
 	int const n = vsnprintf(S, msgSize, Description, args);
 	if (n > -1 && ((unsigned int) n) < msgSize);
