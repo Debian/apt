@@ -21,13 +21,12 @@ APTARCHIVE="$(readlink -f ./aptarchive)"
 
 cat >> json-hook.sh << EOF
 #!/bin/bash
+trap '' SIGPIPE
 while true; do
-	read request <&\$APT_HOOK_SOCKET
-	read empty <&\$APT_HOOK_SOCKET
+	read request <&\$APT_HOOK_SOCKET || exit 1
 
 	if echo "\$request" | grep -q ".hello"; then
 		echo "HOOK: HELLO"
-		printf '{"jsonrpc": "2.0", "result": {"version": "0.1"}, "id": 0}\n\n' >&\$APT_HOOK_SOCKET
 	fi
 
 	if echo "\$request" | grep -q ".bye"; then
@@ -36,7 +35,16 @@ while true; do
 	fi
 
 	echo HOOK: request \$request
+
+	read empty <&\$APT_HOOK_SOCKET || exit 1
+
 	echo HOOK: empty \$empty
+
+	if echo "\$request" | grep -q ".hello"; then
+		printf '{"jsonrpc": "2.0", "result": {"version": "0.1"}, "id": 0}\n\n' >&\$APT_HOOK_SOCKET 2>/dev/null || exit 1
+	fi
+
+
 done
 EOF
 

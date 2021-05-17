@@ -1045,7 +1045,7 @@ ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
    err = tlsFd->DoTLSHandshake();
 
    if (err < 0)
-      return ResultState::FATAL_ERROR;
+      return ResultState::TRANSIENT_ERROR;
 
    return ResultState::SUCCESSFUL;
 }

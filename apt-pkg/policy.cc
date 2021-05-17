@@ -310,7 +310,7 @@ static inline bool ExcludePhased(std::string machineID, pkgCache::VerIterator co
 }
 APT_PURE signed short pkgPolicy::GetPriority(pkgCache::VerIterator const &Ver, bool ConsiderFiles)
 {
-   if (Ver.ParentPkg()->CurrentVer && Ver.PhasedUpdatePercentage() != 100)
+   if (Ver.PhasedUpdatePercentage() != 100)
    {
       if (ExcludePhased(d->machineID, Ver))
 	 return 1;
