@@ -322,8 +322,10 @@ bool AcqTextStatus::MediaChange(std::string Media, std::string Drive)
    while (C != '\n' && C != '\r')
    {
       int len = read(STDIN_FILENO,&C,1);
-      if(C == 'c' || len <= 0)
+      if(C == 'c' || len <= 0) {
 	 bStatus = false;
+	 break;
+      }
    }
 
    if(bStatus)

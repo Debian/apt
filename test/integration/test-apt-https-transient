@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture "i386"
+
+# Disable sandbox to avoid W: down below
+echo 'APT::Sandbox::User "root";' > rootdir/etc/apt/apt.conf.d/no-acquire-sandbox
+
+echo 'alright' > aptarchive/working
+changetohttpswebserver
+
+msgtest 'download of a file works via' 'http'
+testsuccess --nomsg downloadfile "http://localhost:${APTHTTPPORT}/working" httpsfile
+testfileequal httpsfile 'alright'
+rm -f httpfile httpsfile
+
+msgtest 'download of a file works via' 'https'
+testsuccess --nomsg downloadfile "https://localhost:${APTHTTPSPORT}/working" httpfile
+testfileequal httpfile 'alright'
+rm -f httpfile httpsfile
+
+# Speak wrong protocols (https on http port and vice versa). We check that they can be retried.
+
+msgtest 'protocol negotiation error is transient for' 'https'
+testfailureequal "Ign:1 https://localhost:${APTHTTPPORT}/working
+  Could not wait for server fd - select (11: Resource temporarily unavailable)
+Err:1 https://localhost:${APTHTTPPORT}/working
+  Could not wait for server fd - select (11: Resource temporarily unavailable)
+E: Failed to fetch https://localhost:${APTHTTPPORT}/working  Could not wait for server fd - select (11: Resource temporarily unavailable)
+E: Download Failed" apthelper download-file "https://localhost:${APTHTTPPORT}/working" httpfile -oAcquire::https::Timeout=1 -oAcquire::Retries=1
+
+# Speak wrong protocols (https on http port and vice versa)
+msgtest 'protocol negotiation error is transient for' 'http'
+testfailureequal "Ign:1 http://localhost:${APTHTTPSPORT}/working
+  Connection failed
+Err:1 http://localhost:${APTHTTPSPORT}/working
+  Connection failed
+E: Failed to fetch http://localhost:${APTHTTPSPORT}/working  Connection failed
+E: Download Failed" apthelper download-file "http://localhost:${APTHTTPSPORT}/working" httpfile -oAcquire::https::Timeout=1 -oAcquire::Retries=1
