@@ -1,3 +1,24 @@
+apt (2.2.4) unstable; urgency=medium
+
+  * Various bugfixes to the JSON hooks:
+    - encoder fixes:
+      + json: Escape strings using \u escape sequences, add test
+      + json: Actually pop states
+      + json: Encode NULL strings as null
+    - json: Flush standard file descriptors before calling hooks
+      (this avoids output from hooks in middle of apt output)
+    - Non-installed JSON changes:
+      + test/json: Make the test hook more reliable
+      + Fix a typo in json-hooks-protocol.md (thanks to Brian Murray)
+  * Avoid infinite loop on EOF on media change prompt (LP: #1928687)
+  * Turn TLS handshake issues into transient errors (LP: #1928100),
+    this makes behavior consistent with TCP and enables Acquire::Retries
+  * policy: Apply phasing to uninstalled packages too (LP: #1925745),
+    this prevents inconsistencies when installing new binaries that depend
+    on the same version of an already installed binary.
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 17 May 2021 16:20:59 +0200
+
 apt (2.2.3) unstable; urgency=medium
 
   * tests: Check for and discard expected warning from MaybeAddAuth. For some
