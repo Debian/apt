@@ -211,6 +211,7 @@ bool DoDownload(CommandLine &CmdL)
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << std::endl;
       return true;
    }
+   auto const storecopy = storefile;
 
    if (_error->PendingError() == true || CheckAuth(Fetcher, false) == false)
       return false;
@@ -220,19 +221,22 @@ bool DoDownload(CommandLine &CmdL)
       return false;
 
    // copy files in local sources to the current directory
+   i = 0;
    for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
    {
-      std::string const filename = cwd + flNotDir((*I)->DestFile);
+      if (dynamic_cast<pkgAcqArchive*>(*I) == nullptr)
+	 continue;
+
       if ((*I)->Local == true &&
-          filename != (*I)->DestFile &&
-          (*I)->Status == pkgAcquire::Item::StatDone &&
-	  dynamic_cast<pkgAcqArchive*>(*I) != nullptr)
+	  (*I)->Status == pkgAcquire::Item::StatDone &&
+	  (*I)->DestFile != storecopy[i])
       {
 	 std::ifstream src((*I)->DestFile.c_str(), std::ios::binary);
-	 std::ofstream dst(filename.c_str(), std::ios::binary);
+	 std::ofstream dst(storecopy[i].c_str(), std::ios::binary);
 	 dst << src.rdbuf();
-	 chmod(filename.c_str(), 0644);
+	 chmod(storecopy[i].c_str(), 0644);
       }
+      ++i;
    }
    return Failed == false;
 }
