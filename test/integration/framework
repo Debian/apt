@@ -1776,6 +1776,9 @@ msgfailoutput() {
 			shift
 		done
 		echo '#### cmp output ####'
+	elif [ "$1" = 'rm' ]; then
+		echo "#### Directory listing of: $(pwd) ####"
+		ls -l
 	fi
 	catfile "$OUTPUT"
 	msgfail "$MSG"
