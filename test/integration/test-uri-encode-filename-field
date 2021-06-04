@@ -1,0 +1,42 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'foo' 'all' '0+0~0'
+setupaptarchive --no-update
+
+runtest() {
+	rm -rf rootdir/var/lib/apt/lists
+	testsuccess apt update
+
+	cd downloaded
+	testsuccess apt download foo
+	testsuccess rm 'foo_0+0~0_all.deb'
+	testsuccess apt install foo
+
+	mv '../aptarchive/pool/foo_0+0~0_all.deb' '../aptarchive/pool/foo_0%3a0+0~0_all.deb'
+	testsuccess apt purge foo -y
+	testfailure apt download foo
+	testfailure apt install foo
+
+	sed -i -e 's#_0+0~0_#_0%3a0+0~0_#' ../rootdir/var/lib/apt/lists/*Packages
+	testsuccess apt download foo
+	# FIXME: we shouldn't take filename from file:/ in 'apt download'
+	if [ "$1" = 'file' ]; then
+		testsuccess rm 'foo_0%3a0+0~0_all.deb'
+	else
+		testsuccess rm 'foo_0+0~0_all.deb'
+	fi
+	testsuccess apt install foo
+
+	cd "$TMPWORKINGDIRECTORY" >/dev/null
+	mv 'aptarchive/pool/foo_0%3a0+0~0_all.deb' 'aptarchive/pool/foo_0+0~0_all.deb'
+}
+
+runtest 'file'
+changetowebserver
+runtest 'http'
