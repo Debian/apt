@@ -23,6 +23,7 @@
 
 #include <algorithm>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <ctype.h>
 #include <stdlib.h>
@@ -170,6 +171,7 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 
    std::vector<std::string> const compExts = APT::Configuration::getCompressorExtensions();
 
+   auto const &posix = std::locale::classic();
    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
    {
       // derive field from checksum type
@@ -182,27 +184,23 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
       string const Files = Sect.FindS(checksumField.c_str());
       if (Files.empty() == true)
 	 continue;
+      std::istringstream ss(Files);
+      ss.imbue(posix);
 
-      // Iterate over the entire list grabbing each triplet
-      const char *C = Files.c_str();
-      while (*C != 0)
+      while (ss.good())
       {
-	 string hash, size, path;
-
-	 // Parse each of the elements
-	 if (ParseQuoteWord(C, hash) == false ||
-	       ParseQuoteWord(C, size) == false ||
-	       ParseQuoteWord(C, path) == false)
-	    return _error->Error("Error parsing file record in %s of source package %s", checksumField.c_str(), Package().c_str());
-
+	 std::string hash, path;
+	 unsigned long long size;
 	 if (iIndex == nullptr && checksumField == "Files")
 	 {
-	    // the Files field has a different format than the rest in deb-changes files
 	    std::string ignore;
-	    if (ParseQuoteWord(C, ignore) == false ||
-		  ParseQuoteWord(C, path) == false)
-	       return _error->Error("Error parsing file record in %s of source package %s", checksumField.c_str(), Package().c_str());
+	    ss >> hash >> size >> ignore >> ignore >> path;
 	 }
+	 else
+	    ss >> hash >> size >> path;
+
+	 if (ss.fail() || hash.empty() || path.empty())
+	    return _error->Error("Error parsing file record in %s of source package %s", checksumField.c_str(), Package().c_str());
 
 	 HashString const hashString(*type, hash);
 	 if (Base.empty() == false)
@@ -226,7 +224,7 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 	 // we haven't seen this file yet
 	 pkgSrcRecords::File F;
 	 F.Path = path;
-	 F.FileSize = strtoull(size.c_str(), NULL, 10);
+	 F.FileSize = size;
 	 F.Hashes.push_back(hashString);
 	 F.Hashes.FileSize(F.FileSize);
 
