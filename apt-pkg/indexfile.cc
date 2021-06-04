@@ -9,6 +9,7 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/acquire.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/deblistparser.h>
@@ -174,7 +175,7 @@ pkgDebianIndexTargetFile::pkgDebianIndexTargetFile(IndexTarget const &Target, bo
 									/*}}}*/
 std::string pkgDebianIndexTargetFile::ArchiveURI(std::string const &File) const/*{{{*/
 {
-   return Target.Option(IndexTarget::REPO_URI) + File;
+   return Target.Option(IndexTarget::REPO_URI) + pkgAcquire::URIEncode(File);
 }
 									/*}}}*/
 std::string pkgDebianIndexTargetFile::Describe(bool const Short) const	/*{{{*/
@@ -281,7 +282,7 @@ std::string pkgDebianIndexRealFile::Describe(bool const /*Short*/) const/*{{{*/
 									/*}}}*/
 std::string pkgDebianIndexRealFile::ArchiveURI(std::string const &/*File*/) const/*{{{*/
 {
-   return "file:" + File;
+   return "file:" + pkgAcquire::URIEncode(File);
 }
 									/*}}}*/
 std::string pkgDebianIndexRealFile::IndexFileName() const			/*{{{*/
