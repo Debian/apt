@@ -3853,16 +3853,16 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *const Owner, string const &URI, HashStringLis
 		       const string &DestDir, const string &DestFilename,
 		       bool const IsIndexFile) : Item(Owner), d(NULL), IsIndexFile(IsIndexFile), ExpectedHashes(Hashes)
 {
-   if(!DestFilename.empty())
-      DestFile = DestFilename;
-   else if(!DestDir.empty())
-      DestFile = DestDir + "/" + flNotDir(URI);
-   else
-      DestFile = flNotDir(URI);
-
    ::URI url{URI};
    if (url.Path.find(' ') != std::string::npos || url.Path.find('%') == std::string::npos)
       url.Path = pkgAcquire::URIEncode(url.Path);
+
+   if(!DestFilename.empty())
+      DestFile = DestFilename;
+   else if(!DestDir.empty())
+      DestFile = DestDir + "/" + DeQuoteString(flNotDir(url.Path));
+   else
+      DestFile = DeQuoteString(flNotDir(url.Path));
 
    // Create the item
    Desc.URI = std::string(url);

@@ -1,0 +1,47 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'foo' 'all' '0+0~0'
+setupaptarchive --no-update
+
+runtest() {
+	rm -rf rootdir/var/lib/apt/lists
+	testsuccess apt update
+
+	cd downloaded
+	testsuccess apt download foo
+	testsuccess rm 'foo_0+0~0_all.deb'
+	testsuccess apt install foo
+	testsuccess apt source foo
+	testsuccess rm 'foo_0+0~0.dsc' 'foo_0+0~0.tar.xz'
+	testsuccess rm -r 'foo-0+0~0'
+
+	mv '../aptarchive/pool/foo_0+0~0_all.deb' '../aptarchive/pool/foo_0%3a0+0~0_all.deb'
+	mv '../aptarchive/pool/foo_0+0~0.dsc' '../aptarchive/pool/foo_0%3a0+0~0.dsc'
+	testsuccess apt purge foo -y
+	testfailure apt download foo
+	testfailure apt install foo
+	testfailure apt source foo --dsc-only
+
+	sed -i -e 's#_0+0~0_#_0%3a0+0~0_#' ../rootdir/var/lib/apt/lists/*Packages
+	sed -i -e 's#_0+0~0.d#_0%3a0+0~0.d#' ../rootdir/var/lib/apt/lists/*Sources
+	testsuccess apt download foo
+	testsuccess rm 'foo_0+0~0_all.deb'
+	testsuccess apt install foo
+	testsuccess apt source foo
+	testsuccess rm 'foo_0%3a0+0~0.dsc' 'foo_0+0~0.tar.xz'
+	testsuccess rm -r 'foo-0+0~0'
+
+	cd "$TMPWORKINGDIRECTORY" >/dev/null
+	mv 'aptarchive/pool/foo_0%3a0+0~0_all.deb' 'aptarchive/pool/foo_0+0~0_all.deb'
+	mv 'aptarchive/pool/foo_0%3a0+0~0.dsc' 'aptarchive/pool/foo_0+0~0.dsc'
+}
+
+runtest 'file'
+changetowebserver
+runtest 'http'
