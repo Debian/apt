@@ -56,6 +56,23 @@ static std::string transformFingergrpintsWithFilenames(std::string const &finger
 									/*}}}*/
 static std::string NormalizeSignedBy(std::string SignedBy, bool const SupportFilenames) /*{{{*/
 {
+   // This is an embedded public pgp key, normalize spaces inside it and empty "." lines
+   if (SignedBy.find("-----BEGIN PGP PUBLIC KEY BLOCK-----") != std::string::npos) {
+      std::istringstream is(SignedBy);
+      std::ostringstream os;
+      std::string line;
+
+      while (std::getline(is, line)) {
+	 line = APT::String::Strip(line);
+	 // The special encoding for empty lines in deb822
+	 if (line == ".")
+	    line="";
+	 os << line << std::endl;
+      }
+      std::clog << "OUTPUT " << os.str() << std::endl;
+      return os.str();
+   }
+
    // we could go all fancy and allow short/long/string matches as gpgv/apt-key does,
    // but fingerprints are harder to fake than the others and this option is set once,
    // not interactively all the time so easy to type is not really a concern.
