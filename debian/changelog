@@ -1,5 +1,6 @@
 apt (2.2.4) unstable; urgency=medium
 
+  [ Julian Andres Klode ]
   * Various bugfixes to the JSON hooks:
     - encoder fixes:
       + json: Escape strings using \u escape sequences, add test
@@ -17,7 +18,12 @@ apt (2.2.4) unstable; urgency=medium
     this prevents inconsistencies when installing new binaries that depend
     on the same version of an already installed binary.
 
- -- Julian Andres Klode <jak@debian.org>  Mon, 17 May 2021 16:20:59 +0200
+  [ David Kalnischkies ]
+  * URI encode Filename field of Packages files (again). This fixes a
+    regression introduced in 2.1.15 that causes download failures of
+    packages with an epoch included in their filename.
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 10 Jun 2021 10:53:34 +0200
 
 apt (2.2.3) unstable; urgency=medium
 
