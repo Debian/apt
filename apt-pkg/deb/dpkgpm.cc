@@ -248,19 +248,7 @@ bool pkgDPkgPM::Install(PkgIterator Pkg,string File)
    if (File.empty() == true || Pkg.end() == true)
       return _error->Error("Internal Error, No file name for %s",Pkg.FullName().c_str());
 
-   // If the filename string begins with DPkg::Chroot-Directory, return the
-   // substr that is within the chroot so dpkg can access it.
-   string const chrootdir = _config->FindDir("DPkg::Chroot-Directory","/");
-   if (chrootdir != "/" && File.find(chrootdir) == 0)
-   {
-      size_t len = chrootdir.length();
-      if (chrootdir.at(len - 1) == '/')
-        len--;
-      List.push_back(Item(Item::Install,Pkg,File.substr(len)));
-   }
-   else
-      List.push_back(Item(Item::Install,Pkg,File));
-
+   List.emplace_back(Item::Install, Pkg, debSystem::StripDpkgChrootDirectory(File));
    return true;
 }
 									/*}}}*/
@@ -1855,6 +1843,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       }
 
       std::unique_ptr<char, decltype(&cleanUpTmpDir)> tmpdir_for_dpkg_recursive{nullptr, &cleanUpTmpDir};
+      std::string const dpkg_chroot_dir = _config->FindDir("DPkg::Chroot-Directory", "/");
 
       // Write in the file or package names
       if (I->Op == Item::Install)
@@ -1862,11 +1851,14 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 auto const installsToDo = J - I;
 	 if (dpkg_recursive_install == true && dpkg_recursive_install_min < installsToDo)
 	 {
-	    std::string tmpdir;
-	    strprintf(tmpdir, "%s/apt-dpkg-install-XXXXXX", GetTempDir().c_str());
-	    tmpdir_for_dpkg_recursive.reset(strndup(tmpdir.data(), tmpdir.length()));
-	    if (mkdtemp(tmpdir_for_dpkg_recursive.get()) == nullptr)
-	       return _error->Errno("DPkg::Go", "mkdtemp of %s failed in preparation of calling dpkg unpack", tmpdir_for_dpkg_recursive.get());
+	    {
+	       std::string basetmpdir = (dpkg_chroot_dir == "/") ? GetTempDir() : flCombine(dpkg_chroot_dir, "tmp");
+	       std::string tmpdir;
+	       strprintf(tmpdir, "%s/apt-dpkg-install-XXXXXX", basetmpdir.c_str());
+	       tmpdir_for_dpkg_recursive.reset(strndup(tmpdir.data(), tmpdir.length()));
+	       if (mkdtemp(tmpdir_for_dpkg_recursive.get()) == nullptr)
+		  return _error->Errno("DPkg::Go", "mkdtemp of %s failed in preparation of calling dpkg unpack", tmpdir_for_dpkg_recursive.get());
+	    }
 
 	    char p = 1;
 	    for (auto c = installsToDo - 1; (c = c/10) != 0; ++p);
@@ -1886,7 +1878,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 		  return _error->Errno("DPkg::Go", "Symlinking %s to %s failed!", I->File.c_str(), linkpath.c_str());
 	    }
 	    Args.push_back("--recursive");
-	    Args.push_back(tmpdir_for_dpkg_recursive.get());
+	    Args.push_back(debSystem::StripDpkgChrootDirectory(tmpdir_for_dpkg_recursive.get()));
 	 }
 	 else
 	 {

@@ -228,6 +228,14 @@ echo 'dpkg::install::recursive "true";
 dpkg::install::recursive::force "true";
 dpkg::install::recursive::minimum "0";' > rootdir/etc/apt/apt.conf.d/lowerminimum.conf
 mv ./incoming/pkg-as-it-should-be_0_all.deb ./incoming/pkg-as-it-should-be_0%3a0+0_all.ddeb
+testsuccess aptget install -y ./incoming/pkg-as-it-should-be_0%3a0+0_all.ddeb --reinstall -o Debug::pkgDpkgPm=1
+cp rootdir/tmp/testsuccess.output apt.output
+testsuccess grep "^${TMPWORKINGDIRECTORY}/.*/dpkg.* --recursive .*/apt-dpkg-install-" apt.output
+testsuccess aptget install -y ./incoming/pkg-as-it-should-be_0%3a0+0_all.ddeb --reinstall -o Debug::pkgDpkgPm=1 -o DPkg::Chroot-Directory="${TMPWORKINGDIRECTORY}/rootdir/"
+cp rootdir/tmp/testsuccess.output apt.output
+testsuccess grep 'dpkg.* --recursive .*/apt-dpkg-install-' apt.output
+testfailure grep "^${TMPWORKINGDIRECTORY}/.*/dpkg.* --recursive .*/apt-dpkg-install-" apt.output
+testfailure grep "dpkg.* --recursive ${TMPWORKINGDIRECTORY}" apt.output
 testsuccess aptget install -y ./incoming/pkg-as-it-should-be_0%3a0+0_all.ddeb --reinstall
 testfailure grep 'is already the newest version' rootdir/tmp/testsuccess.output
 testsuccess apt purge -y pkg-as-it-should-be
