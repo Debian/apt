@@ -404,8 +404,13 @@ uint32_t debListParser::VersionHash()
             half-configured, triggers-awaited, triggers-pending, installed
  */
 bool debListParser::ParseStatus(pkgCache::PkgIterator &,
-				pkgCache::VerIterator &)
+				pkgCache::VerIterator &Ver)
 {
+   // the status file has no info about the download size and
+   // usually this is fine as we will have picked that info up already –
+   // except if we have volatile sources which are parsed after the status file.
+   if (Ver->Size == 0)
+      Ver->Size = Section.FindULL(pkgTagSection::Key::Size);
    return true;
 }
 bool debStatusListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
