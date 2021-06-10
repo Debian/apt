@@ -40,4 +40,4 @@ Get:2 http://localhost:${APTHTTPPORT} stable/main all b all 1.0 [$size_b B]
 Get:3 http://localhost:${APTHTTPPORT} stable/main all c all 1.0 [$size_c B]" apt download a b c -o Acquire::AllowUnsizedPackages=true
 
 rm *.deb
-testfailureequal "E: Repository is broken: b:i386 (= 1.0) has no Size information" apt download a b c
+testfailureequal "E: Repository is broken: http://localhost:${APTHTTPPORT} stable/main all b all 1.0 has no Size information" apt download a b c
