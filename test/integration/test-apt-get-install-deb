@@ -7,9 +7,6 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'amd64' 'i386'
 
-# XXX: Remove temporary hack
-rm rootdir/etc/apt/apt.conf.d/temporary-allow-unsized-packages
-
 # regression test for #754904
 cat > foo.rpm <<EOF
 I'm not a deb, I'm a teapot.
