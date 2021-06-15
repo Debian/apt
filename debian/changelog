@@ -1,3 +1,29 @@
+apt (2.0.6) focal; urgency=medium
+
+  * RunScripts: Do not reset SIGQUIT and SIGINT to SIG_DFL (LP: #1898026)
+  * test suite fix: Check for and discard expected warning from MaybeAddAuth
+  * Fix downloads of unsized files that are largest in pipeline (LP: #1921626),
+    and warn about packages without size (option Acquire::AllowUnsizedPackages)
+  * JSON hooks 0.2 and assorted JSON bugfixes (LP: #1926150)
+    - encoder fixes:
+      + json: Escape strings using \u escape sequences, add test
+      + json: Actually pop states
+      + json: Encode NULL strings as null
+    - json: Flush standard file descriptors before calling hooks
+      (this avoids output from hooks in middle of apt output)
+    - non-code changes:
+      + test/json: Make the test hook more reliable
+      + Fix a typo in json-hooks-protocol.md (thanks to Brian Murray)
+    - semantic changes (new fields, hooks, and protocol 0.2):
+      + json: Add origins fields to version
+      + upgrade: Add JSON hook support (AptCli::Hooks::Upgrade)
+      + json: Add `package-list` and `statistics` install hooks
+      + json: Hook protocol 0.2 (added upgrade,downgrade,reinstall modes)
+    + Fix a typo in json-hooks-protocol.md (thanks to Brian Murray)
+  * Avoid infinite loop on EOF on media change prompt (LP: #1928687)
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Tue, 15 Jun 2021 13:05:46 +0200
+
 apt (2.0.5) focal; urgency=medium
 
   [ Julian Andres Klode ]
