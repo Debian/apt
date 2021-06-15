@@ -7,7 +7,9 @@
  */
 
 #include <apt-pkg/debsystem.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/strutl.h>
 #include <apt-private/private-json-hooks.h>
 #include <apt-private/private-output.h>
 
@@ -83,7 +85,7 @@ class APT_HIDDEN JsonWriter
    }
 
    public:
-   JsonWriter(std::ostream &os) : os(os) { old_locale = os.imbue(std::locale::classic()); }
+   explicit JsonWriter(std::ostream &os) : os(os), old_locale{os.imbue(std::locale::classic())} {}
    ~JsonWriter() { os.imbue(old_locale); }
    JsonWriter &beginArray()
    {
@@ -429,7 +431,7 @@ bool RunJsonHook(std::string const &option, std::string const &method, const cha
 	 SetCloseExec(STDIN_FILENO, false);
 	 SetCloseExec(STDERR_FILENO, false);
 
-	 string hookfd;
+	 std::string hookfd;
 	 strprintf(hookfd, "%d", InfoFD);
 	 setenv("APT_HOOK_SOCKET", hookfd.c_str(), 1);
 
