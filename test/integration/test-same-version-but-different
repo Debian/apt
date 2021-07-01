@@ -1,0 +1,98 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'all-same' 'all' '1'
+insertpackage 'testing' 'all-same' 'all' '1'
+
+insertpackage 'unstable' 'diff-depends' 'all' '1' 'Depends: all-same (= 1)'
+insertpackage 'testing' 'diff-depends' 'all' '1' 'Depends: all-same (= 2)'
+
+insertpackage 'unstable' 'diff-arch' 'all' '1'
+insertpackage 'testing' 'diff-arch' 'amd64' '1'
+
+insertpackage 'unstable' 'diff-ma-1' 'all' '1' 'Multi-Arch: foreign'
+insertpackage 'testing' 'diff-ma-1' 'all' '1'
+
+insertpackage 'unstable' 'diff-ma-2' 'all' '1' 'Multi-Arch: foreign'
+insertpackage 'testing' 'diff-ma-2' 'all' '1' 'Multi-Arch: no'
+
+insertpackage 'unstable' 'diff-ma-3' 'amd64' '1' 'Multi-Arch: foreign'
+insertpackage 'testing' 'diff-ma-3' 'amd64' '1' 'Multi-Arch: same'
+
+insertpackage 'unstable' 'diff-size' 'all' '1' 'Size: 21'
+insertpackage 'testing' 'diff-size' 'all' '1' 'Size: 42'
+
+insertpackage 'unstable' 'diff-instsize' 'all' '1' 'Installed-Size: 21'
+insertpackage 'testing' 'diff-instsize' 'all' '1' 'Installed-Size: 42'
+
+setupaptarchive
+
+APTARCHIVE="$(readlink -f ./aptarchive)"
+testsuccessequal "all-same:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${APTARCHIVE} testing/main all Packages
+        500 file:${APTARCHIVE} unstable/main all Packages" apt policy all-same
+testsuccessequal "diff-depends:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${APTARCHIVE} testing/main all Packages
+     1 500
+        500 file:${APTARCHIVE} unstable/main all Packages" apt policy diff-depends
+testsuccessequal "diff-arch:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${APTARCHIVE} testing/main amd64 Packages
+     1 500
+        500 file:${APTARCHIVE} unstable/main all Packages" apt policy diff-arch
+testsuccessequal "diff-ma-1:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${APTARCHIVE} testing/main all Packages
+     1 500
+        500 file:${APTARCHIVE} unstable/main all Packages" apt policy diff-ma-1
+testsuccessequal "diff-ma-2:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${APTARCHIVE} testing/main all Packages
+     1 500
+        500 file:${APTARCHIVE} unstable/main all Packages" apt policy diff-ma-2
+testsuccessequal "diff-ma-3:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${APTARCHIVE} testing/main amd64 Packages
+     1 500
+        500 file:${APTARCHIVE} unstable/main amd64 Packages" apt policy diff-ma-3
+testsuccessequal "diff-size:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${APTARCHIVE} testing/main all Packages
+     1 500
+        500 file:${APTARCHIVE} unstable/main all Packages" apt policy diff-size
+testsuccessequal "diff-instsize:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${APTARCHIVE} testing/main all Packages
+     1 500
+        500 file:${APTARCHIVE} unstable/main all Packages" apt policy diff-instsize
