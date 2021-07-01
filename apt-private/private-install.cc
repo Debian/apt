@@ -860,6 +860,8 @@ bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
    Cache.InhibitActionGroups(true);
+   if (Cache.BuildSourceList() == false)
+      return false;
    auto VolatileCmdL = GetPseudoPackages(Cache.GetSourceList(), CmdL, AddVolatileBinaryFile, "");
 
    // then open the cache

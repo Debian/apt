@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'foo' 'amd64' '1'
+
+echo foo > rootdir/etc/apt/sources.list.d/test.list
+
+testfailureequal "E: Malformed line 1 in source list ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/sources.list.d/test.list (type)
+E: The list of sources could not be read." apt install ./incoming/foo_1_amd64.deb -s
