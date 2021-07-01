@@ -154,7 +154,10 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
    {
       auto ContentLength = strtoull(Val.c_str(), NULL, 10);
       if (ContentLength == 0)
+      {
+	 haveContent = HaveContent::FALSE;
 	 return true;
+      }
       if (Encoding == Closes)
 	 Encoding = Stream;
       haveContent = HaveContent::TRUE;
@@ -180,7 +183,8 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 
    if (stringcasecmp(Tag,"Content-Type:") == 0)
    {
-      haveContent = HaveContent::TRUE;
+      if (haveContent == HaveContent::UNKNOWN)
+	 haveContent = HaveContent::TRUE;
       return true;
    }
 
@@ -190,7 +194,8 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
    // for such responses.
    if ((Result == 416 || Result == 206) && stringcasecmp(Tag,"Content-Range:") == 0)
    {
-      haveContent = HaveContent::TRUE;
+      if (haveContent == HaveContent::UNKNOWN)
+	 haveContent = HaveContent::TRUE;
 
       // §14.16 says 'byte-range-resp-spec' should be a '*' in case of 416
       if (Result == 416 && sscanf(Val.c_str(), "bytes */%llu",&TotalFileSize) == 1)
@@ -207,7 +212,8 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 
    if (stringcasecmp(Tag,"Transfer-Encoding:") == 0)
    {
-      haveContent = HaveContent::TRUE;
+      if (haveContent == HaveContent::UNKNOWN)
+	 haveContent = HaveContent::TRUE;
       if (stringcasecmp(Val,"chunked") == 0)
 	 Encoding = Chunked;
       return true;
