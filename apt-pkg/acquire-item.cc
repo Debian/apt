@@ -3471,9 +3471,8 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
    }
    if (FileSize == 0 && not _config->FindB("Acquire::AllowUnsizedPackages", false))
    {
-      _error->Error("Repository is broken: %s (= %s) has no Size information",
-		    Version.ParentPkg().FullName(false).c_str(),
-		    Version.VerStr());
+      _error->Error("Repository is broken: %s has no Size information",
+		    Desc.Description.c_str());
       return;
    }
 

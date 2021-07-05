@@ -15,13 +15,8 @@ buildsimplenativepackage 'a' 'all' '1.0' 'stable'
 buildsimplenativepackage 'b' 'all' '1.0' 'stable' '' '' '' '' "$PWD/tree"
 buildsimplenativepackage 'c' 'all' '1.0' 'stable'
 
-setupaptarchive
+setupaptarchive --no-update
 changetowebserver
-
-# Disable sandbox
-echo 'APT::Sandbox::User "root";' > rootdir/etc/apt/apt.conf.d/no-acquire-sandbox
-# XXX: Remove temporary hack
-rm rootdir/etc/apt/apt.conf.d/temporary-allow-unsized-packages
 
 testsuccess apt update
 
@@ -35,9 +30,11 @@ size_a=$(wc -c aptarchive/pool/a_1.0_all.deb | awk '{print $1}')
 size_b=$(wc -c aptarchive/pool/b_1.0_all.deb | awk '{print $1}')
 size_c=$(wc -c aptarchive/pool/c_1.0_all.deb | awk '{print $1}')
 
+cd downloaded
 testsuccessequal "Get:1 http://localhost:${APTHTTPPORT} stable/main all a all 1.0 [$size_a B]
 Get:2 http://localhost:${APTHTTPPORT} stable/main all b all 1.0 [$size_b B]
 Get:3 http://localhost:${APTHTTPPORT} stable/main all c all 1.0 [$size_c B]" apt download a b c -o Acquire::AllowUnsizedPackages=true
-
 rm *.deb
-testfailureequal "E: Repository is broken: b:i386 (= 1.0) has no Size information" apt download a b c
+
+testfailureequal "E: Repository is broken: http://localhost:${APTHTTPPORT} stable/main all b all 1.0 has no Size information" apt download a b c
+cd ..
