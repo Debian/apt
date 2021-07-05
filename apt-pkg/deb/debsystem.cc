@@ -358,19 +358,22 @@ bool debSystem::FindIndex(pkgCache::PkgFileIterator File,
    return false;
 }
 									/*}}}*/
-
+std::string debSystem::StripDpkgChrootDirectory(std::string const &File)/*{{{*/
+{
+   // If the filename string begins with DPkg::Chroot-Directory, return the
+   // substr that is within the chroot so dpkg can access it.
+   std::string const chrootdir = _config->FindDir("DPkg::Chroot-Directory","/");
+   size_t len = chrootdir.length();
+   if (chrootdir == "/" || File.compare(0, len, chrootdir) != 0)
+      return File;
+   if (chrootdir.at(len - 1) == '/')
+      --len;
+   return File.substr(len);
+}
+									/*}}}*/
 std::string debSystem::GetDpkgExecutable()				/*{{{*/
 {
-   string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
-   string const dpkgChrootDir = _config->FindDir("DPkg::Chroot-Directory", "/");
-   size_t dpkgChrootLen = dpkgChrootDir.length();
-   if (dpkgChrootDir != "/" && Tmp.find(dpkgChrootDir) == 0)
-   {
-      if (dpkgChrootDir[dpkgChrootLen - 1] == '/')
-         --dpkgChrootLen;
-      Tmp = Tmp.substr(dpkgChrootLen);
-   }
-   return Tmp;
+   return StripDpkgChrootDirectory(_config->Find("Dir::Bin::dpkg","dpkg"));
 }
 									/*}}}*/
 std::vector<std::string> debSystem::GetDpkgBaseCommand()		/*{{{*/
