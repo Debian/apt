@@ -1902,7 +1902,7 @@ string pkgAcqMetaClearSig::Custom600Headers() const
    Header += "\nFail-Ignore: true";
    std::string const key = TransactionManager->MetaIndexParser->GetSignedBy();
    if (key.empty() == false)
-      Header += "\nSigned-By: " + key;
+      Header += "\nSigned-By: " + QuoteString(key, "");
 
    return Header;
 }
@@ -2158,7 +2158,7 @@ std::string pkgAcqMetaSig::Custom600Headers() const
    std::string Header = pkgAcqTransactionItem::Custom600Headers();
    std::string const key = TransactionManager->MetaIndexParser->GetSignedBy();
    if (key.empty() == false)
-      Header += "\nSigned-By: " + key;
+      Header += "\nSigned-By: " + QuoteString(key, "");
    return Header;
 }
 									/*}}}*/
