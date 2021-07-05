@@ -43,6 +43,7 @@ class debSystem : public pkgSystem
    APT_HIDDEN static std::string GetDpkgExecutable();
    APT_HIDDEN static std::vector<std::string> GetDpkgBaseCommand();
    APT_HIDDEN static void DpkgChrootDirectory();
+   APT_HIDDEN static std::string StripDpkgChrootDirectory(std::string const &File);
    APT_HIDDEN static pid_t ExecDpkg(std::vector<std::string> const &sArgs, int * const inputFd, int * const outputFd, bool const DiscardOutput);
    bool MultiArchSupported() const override;
    static bool AssertFeature(std::string const &Feature);
