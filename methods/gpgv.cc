@@ -473,7 +473,30 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
          }
          if (!Signers.NoPubKey.empty())
          {
+            if (keyFpts || keyFiles) {
+               string keys;
+               first = true;
+               for (auto const &I : keyFpts) {
+                  if (first) {
+                     first = false;
+                  } else {
+                     keys.append(", ");
+                  }
+                  keys.append(I);
+               }
+               for (auto const &I : keyFiles) {
+                  if (first) {
+                     first = false;
+                  } else {
+                     keys.append(_(", "));
+                  }
+                  keys.append(I);
+               }
+             errmsg += _("The following signatures couldn't be verified because the public key is not in the configured set (");
+             errmsg.append(keys).append(_("):\n"));
+            } else {
              errmsg += _("The following signatures couldn't be verified because the public key is not available:\n");
+            }
             for (auto const &I : Signers.NoPubKey)
                errmsg.append(I).append("\n");
          }
