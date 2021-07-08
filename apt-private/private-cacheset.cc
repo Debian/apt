@@ -1,5 +1,6 @@
 #include <config.h>
 
+#include <apt-pkg/cacheset.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cachefilter.h>
@@ -102,8 +103,21 @@ pkgCache::VerIterator CacheSetHelperVirtuals::canNotGetVersion(
       pkgCacheFile &Cache,
       pkgCache::PkgIterator const &Pkg)
 {
-   if (select == NEWEST || select == CANDIDATE || select == ALL)
-      virtualPkgs.insert(Pkg);
+   switch (select)
+   {
+      case VERSIONNUMBER:
+      case RELEASE:
+      case INSTALLED:
+      case CANDIDATE:
+      case NEWEST:
+      case ALL:
+	 virtualPkgs.insert(Pkg);
+	 break;
+      case CANDANDINST:
+      case CANDINST:
+      case INSTCAND:
+	 break;
+   }
    return CacheSetHelper::canNotGetVersion(select, Cache, Pkg);
 }
 void CacheSetHelperVirtuals::canNotFindVersion(
@@ -230,10 +244,11 @@ void CacheSetHelperAPTGet::showVersionSelection(pkgCache::PkgIterator const &Pkg
 {
    switch (select)
    {
-   case RELEASE:
    case VERSIONNUMBER:
       if (pattern == Ver.VerStr())
 	 return;
+      /* fall through */
+   case RELEASE:
       selectedByRelease.push_back(make_pair(Ver, pattern));
       break;
    default:
@@ -258,7 +273,9 @@ bool CacheSetHelperAPTGet::showVirtualPackageErrors(pkgCacheFile &Cache)
 
 	    if (Cache[OPkg].CandidateVerIter(Cache) == I.OwnerVer())
 	    {
-	       c1out << "  " << OPkg.FullName(true) << " " << I.OwnerVer().VerStr();
+	       c1out << "  " << OPkg.FullName(true) << ' ' << I.OwnerVer().VerStr();
+	       if (I->ProvideVersion != 0)
+		  c1out << " (= " << I.ProvideVersion() << ")";
 	       if (Cache[OPkg].Install() == true && Cache[OPkg].NewInstall() == false)
 		  c1out << _(" [Installed]");
 	       c1out << std::endl;
@@ -268,8 +285,12 @@ bool CacheSetHelperAPTGet::showVirtualPackageErrors(pkgCacheFile &Cache)
 	 // if we found no candidate which provide this package, show non-candidates
 	 if (provider == 0)
 	    for (I = Pkg.ProvidesList(); I.end() == false; ++I)
-	       c1out << "  " << I.OwnerPkg().FullName(true) << " " << I.OwnerVer().VerStr()
-		  << _(" [Not candidate version]") << std::endl;
+	    {
+	       c1out << "  " << I.OwnerPkg().FullName(true) << " " << I.OwnerVer().VerStr();
+	       if (I->ProvideVersion != 0)
+		  c1out << " (= " << I.ProvideVersion() << ")";
+	       c1out << _(" [Not candidate version]") << std::endl;
+	    }
 	 else
 	    out << _("You should explicitly select one to install.") << std::endl;
       } else {
@@ -305,6 +326,10 @@ pkgCache::VerIterator CacheSetHelperAPTGet::canNotGetVersion(enum VerSelector co
       return canNotFindNewestVer(Cache, Pkg);
    case CANDIDATE:
       return canNotFindCandidateVer(Cache, Pkg);
+   case VERSIONNUMBER:
+      return canNotFindVersionNumber(Cache, Pkg, getLastVersionMatcher());
+   case RELEASE:
+      return canNotFindVersionRelease(Cache, Pkg, getLastVersionMatcher());
    default:
       return APT::CacheSetHelper::canNotGetVersion(select, Cache, Pkg);
    }
@@ -324,6 +349,34 @@ void CacheSetHelperAPTGet::canNotFindVersion(enum VerSelector const select, APT:
    }
 }
 
+pkgCache::VerIterator CacheSetHelperAPTGet::canNotFindVersionNumber(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg, std::string const &verstr)
+{
+   APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, CacheSetHelper::VERSIONNUMBER);
+   if (not verset.empty())
+      return *(verset.begin());
+   else if (ShowError)
+   {
+      auto const V = canNotGetVerFromVersionNumber(Cache, Pkg, verstr);
+      if (not V.end())
+	 return V;
+      virtualPkgs.insert(Pkg);
+   }
+   return pkgCache::VerIterator(Cache, 0);
+}
+pkgCache::VerIterator CacheSetHelperAPTGet::canNotFindVersionRelease(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg, std::string const &verstr)
+{
+   APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, CacheSetHelper::RELEASE);
+   if (not verset.empty())
+      return *(verset.begin());
+   else if (ShowError)
+   {
+      auto const V = canNotGetVerFromRelease(Cache, Pkg, verstr);
+      if (not V.end())
+	 return V;
+      virtualPkgs.insert(Pkg);
+   }
+   return pkgCache::VerIterator(Cache, 0);
+}
 pkgCache::VerIterator CacheSetHelperAPTGet::canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg)
 {
    APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, CacheSetHelper::CANDIDATE);
@@ -368,49 +421,72 @@ pkgCache::VerIterator CacheSetHelperAPTGet::canNotFindNewestVer(pkgCacheFile &Ca
 APT::VersionSet CacheSetHelperAPTGet::tryVirtualPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg,
       CacheSetHelper::VerSelector const select)
 {
-   /* This is a pure virtual package and there is a single available
-      candidate providing it. */
-   if (unlikely(Cache[Pkg].CandidateVer != 0) || Pkg->ProvidesList == 0)
-      return APT::VersionSet();
+   /* If this is a virtual package see if we have a single matching provider
+      (ignoring multiple matches from the same package due to e.g. M-A) */
+   if (Pkg->ProvidesList == 0)
+      return APT::VersionSet{};
 
-   pkgCache::PkgIterator Prov;
-   bool found_one = false;
-   for (pkgCache::PrvIterator P = Pkg.ProvidesList(); P; ++P) {
-      pkgCache::VerIterator const PVer = P.OwnerVer();
-      pkgCache::PkgIterator const PPkg = PVer.ParentPkg();
-
-      /* Ignore versions that are not a candidate. */
-      if (Cache[PPkg].CandidateVer != PVer)
-	 continue;
-
-      if (found_one == false) {
-	 Prov = PPkg;
-	 found_one = true;
-      } else if (PPkg != Prov) {
-	 // same group, so it's a foreign package
-	 if (PPkg->Group == Prov->Group) {
-	    // do we already have the requested arch?
-	    if (strcmp(Pkg.Arch(), Prov.Arch()) == 0 ||
-		  strcmp(Prov.Arch(), "all") == 0 ||
-		  unlikely(strcmp(PPkg.Arch(), Prov.Arch()) == 0)) // packages have only on candidate, but just to be sure
-	       continue;
-	    // see which architecture we prefer more and switch to it
-	    std::vector<std::string> archs = APT::Configuration::getArchitectures();
-	    if (std::find(archs.begin(), archs.end(), PPkg.Arch()) < std::find(archs.begin(), archs.end(), Prov.Arch()))
-	       Prov = PPkg;
-	    continue;
-	 }
-	 found_one = false; // we found at least two
-	 break;
+   auto const oldShowError = showErrors(false);
+   APT::VersionVector verset;
+   auto const lastmatcher = getLastVersionMatcher();
+   for (auto P = Pkg.ProvidesList(); not P.end(); ++P)
+   {
+      auto V = P.OwnerVer();
+      switch (select)
+      {
+	 case RELEASE:
+	    for (auto File = V.FileList(); not File.end(); ++File)
+	       if (lastmatcher == File.File().Archive() || lastmatcher == File.File().Codename())
+	       {
+		  verset.push_back(V);
+		  break;
+	       }
+	    break;
+	 case VERSIONNUMBER:
+	    if (P->ProvideVersion != 0 && lastmatcher == P.ProvideVersion())
+	       verset.push_back(V);
+	    break;
+	 default:
+	    if (Cache[V.ParentPkg()].CandidateVerIter(Cache) == V)
+	       verset.push_back(V);
+	    break;
       }
    }
+   // do not change the candidate if we have more than one option for this package
+   if (select == VERSIONNUMBER || select == RELEASE)
+      for (auto const &V : verset)
+	 if (std::count_if(verset.begin(), verset.end(), [Pkg = V.ParentPkg()](auto const &v) { return v.ParentPkg() == Pkg; }) == 1)
+	    Cache->SetCandidateVersion(V);
+   showErrors(oldShowError);
 
-   if (found_one == true) {
-      ioprintf(out, _("Note, selecting '%s' instead of '%s'\n"),
-	    Prov.FullName(true).c_str(), Pkg.FullName(true).c_str());
-      return APT::VersionSet::FromPackage(Cache, Prov, select, *this);
+   pkgCache::VerIterator Choosen;
+   for (auto const &Ver : verset)
+   {
+      if (Choosen.end())
+	 Choosen = Ver;
+      else
+      {
+	 auto const ChoosenPkg = Choosen.ParentPkg();
+	 auto const AltPkg = Ver.ParentPkg();
+	 // seeing two different packages makes it not simple anymore
+	 if (ChoosenPkg->Group != AltPkg->Group)
+	    return APT::VersionSet{};
+	 // do we already have the requested arch?
+	 if (strcmp(Pkg.Arch(), ChoosenPkg.Arch()) == 0 ||
+	     strcmp(ChoosenPkg.Arch(), "all") == 0)
+	    continue;
+	 // see which architecture we prefer more and switch to it
+	 std::vector<std::string> archs = APT::Configuration::getArchitectures();
+	 if (std::find(archs.begin(), archs.end(), AltPkg.Arch()) < std::find(archs.begin(), archs.end(), ChoosenPkg.Arch()))
+	    Choosen = Ver;
+      }
    }
-   return APT::VersionSet();
+   if (Choosen.end())
+      return APT::VersionSet{};
+
+   ioprintf(out, _("Note, selecting '%s' instead of '%s'\n"),
+	 Choosen.ParentPkg().FullName(true).c_str(), Pkg.FullName(true).c_str());
+   return { Choosen };
 }
 pkgCache::PkgIterator CacheSetHelperAPTGet::canNotFindPkgName(pkgCacheFile &Cache, std::string const &str)
 {

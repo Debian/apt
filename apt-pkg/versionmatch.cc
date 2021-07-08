@@ -159,15 +159,16 @@ bool pkgVersionMatch::MatchVer(const char *A,string B,bool Prefix)
 /* */
 pkgCache::VerIterator pkgVersionMatch::Find(pkgCache::PkgIterator Pkg)
 {
-   pkgCache::VerIterator Ver = Pkg.VersionList();
-   for (; Ver.end() == false; ++Ver)
-   {
+   for (auto Ver = Pkg.VersionList(); not Ver.end(); ++Ver)
       if (VersionMatches(Ver))
 	 return Ver;
-   }
-
-   // This will be Ended by now.
-   return Ver;
+   // check if the package provides itself in a matching version
+   for (auto Prov = Pkg.ProvidesList(); not Prov.end(); ++Prov)
+      if (Prov->ProvideVersion != 0 && Prov.OwnerPkg() == Prov.ParentPkg())
+	 if (MatchVer(Prov.ProvideVersion(), VerStr, VerPrefixMatch) ||
+	     ExpressionMatches(VerStr, Prov.ProvideVersion()))
+	    return Prov.OwnerVer();
+   return pkgCache::VerIterator{};
 }
 									/*}}}*/
 

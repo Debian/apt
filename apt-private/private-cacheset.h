@@ -118,6 +118,8 @@ public:
 	void canNotFindVersion(enum VerSelector const select, APT::VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
 	pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
 	pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
+	pkgCache::VerIterator canNotFindVersionNumber(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg, std::string const &verstr);
+	pkgCache::VerIterator canNotFindVersionRelease(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg, std::string const &verstr);
 	virtual pkgCache::PkgIterator canNotFindPkgName(pkgCacheFile &Cache, std::string const &str) APT_OVERRIDE;
 
 	APT::VersionSet tryVirtualPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg,
