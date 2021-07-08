@@ -6,6 +6,7 @@ add_library(connectlib OBJECT connect.cc rfc2553emu.cc)
 
 add_executable(file file.cc)
 add_executable(copy copy.cc)
+add_executable(delay delay.cc)
 add_executable(store store.cc)
 add_executable(gpgv gpgv.cc)
 add_executable(cdrom cdrom.cc)
