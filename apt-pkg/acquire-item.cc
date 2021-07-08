@@ -290,6 +290,7 @@ public:
    std::vector<std::string> BadAlternativeSites;
    std::vector<std::string> PastRedirections;
    std::unordered_map<std::string, std::string> CustomFields;
+   time_t FetchAfter = 0;
 
    Private()
    {
@@ -1118,6 +1119,15 @@ std::string pkgAcquire::Item::HashSum() const				/*{{{*/
    HashStringList const hashes = GetExpectedHashes();
    HashString const * const hs = hashes.find(NULL);
    return hs != NULL ? hs->toStr() : "";
+}
+									/*}}}*/
+void pkgAcquire::Item::FetchAfter(time_t FetchAfter) /*{{{*/
+{
+   d->FetchAfter = FetchAfter;
+}
+time_t pkgAcquire::Item::FetchAfter()
+{
+   return d->FetchAfter;
 }
 									/*}}}*/
 bool pkgAcquire::Item::IsRedirectionLoop(std::string const &NewURI)	/*{{{*/
