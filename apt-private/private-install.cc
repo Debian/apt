@@ -26,8 +26,10 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-cachefile.h>
@@ -298,6 +300,26 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	       std::to_string(I->Owner->FileSize) << ' ' << I->Owner->HashSum() << std::endl;
       return true;
    }
+
+#ifdef CHECK_MERGED_USR
+   std::string root = _config->FindDir("Dir");
+   if (root == "/")
+   {
+      for (auto const dir : std::vector<const char *>{"bin", "sbin", "lib", "lib32", "lib64", "libx32"})
+      {
+	 std::string path = flCombine(root, dir);
+	 struct stat st;
+	 if (lstat(path.c_str(), &st))
+	    continue;
+
+	 if (!S_ISLNK(st.st_mode))
+	 {
+	    _error->Warning(_("%s is not a symbolic link. Install usrmerge to convert to a supported configuration."), path.c_str());
+	    break;
+	 }
+      }
+   }
+#endif
 
    if (Essential == true && Safety == true && _config->FindB("APT::Get::allow-remove-essential", false) == false)
    {
