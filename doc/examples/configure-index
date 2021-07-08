@@ -230,7 +230,9 @@ APT
 Acquire
 {
   Queue-Mode "<STRING>";       // host or access
-  Retries "<INT>";
+  Retries "<INT>" {
+      Delay "<BOOL>";   // whether to backoff between retries using the delay: method
+  };
   Source-Symlinks "<BOOL>";
   ForceHash "<STRING>"; // hashmethod used for expected hash: sha256, sha1 or md5sum
   Send-URI-Encoded "<BOOL>"; // false does the old encode/decode dance even if we could avoid it

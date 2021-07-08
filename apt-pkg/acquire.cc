@@ -24,14 +24,15 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <memory>
 #include <numeric>
 #include <sstream>
 #include <string>
+#include <tuple>
 #include <vector>
-#include <cmath>
 
 #include <dirent.h>
 #include <errno.h>
@@ -962,6 +963,7 @@ bool pkgAcquire::Queue::Enqueue(ItemDesc &Item)
    };
    QItem **OptimalI = &Items;
    QItem **I = &Items;
+   auto insertLocation = std::make_tuple(Item.Owner->FetchAfter(), -Item.Owner->Priority());
    // move to the end of the queue and check for duplicates here
    for (; *I != 0; ) {
       if (Item.URI == (*I)->URI && MetaKeysMatch(Item, *I))
@@ -974,10 +976,12 @@ bool pkgAcquire::Queue::Enqueue(ItemDesc &Item)
       }
       // Determine the optimal position to insert: before anything with a
       // higher priority.
-      int priority = (*I)->GetPriority();
+      auto queueLocation = std::make_tuple((*I)->GetFetchAfter(),
+					   -(*I)->GetPriority());
 
       I = &(*I)->Next;
-      if (priority >= Item.Owner->Priority()) {
+      if (queueLocation <= insertLocation)
+      {
 	 OptimalI = I;
       }
    }
@@ -1153,6 +1157,7 @@ bool pkgAcquire::Queue::Cycle()
    // Look for a queable item
    QItem *I = Items;
    int ActivePriority = 0;
+   time_t currentTime = time(nullptr);
    while (PipeDepth < static_cast<decltype(PipeDepth)>(MaxPipeDepth))
    {
       for (; I != 0; I = I->Next) {
@@ -1170,6 +1175,11 @@ bool pkgAcquire::Queue::Cycle()
       // the queue is idle
       if (I->GetPriority() < ActivePriority)
 	 return true;
+
+      // Item is not ready yet, delay
+      if (I->GetFetchAfter() > currentTime)
+	 return true;
+
       I->Worker = Workers;
       for (auto const &O: I->Owners)
 	 O->Status = pkgAcquire::Item::StatFetching;
@@ -1235,6 +1245,15 @@ APT_PURE int pkgAcquire::Queue::QItem::GetPriority() const		/*{{{*/
       Priority = std::max(Priority, O->Priority());
 
    return Priority;
+}
+									/*}}}*/
+APT_PURE time_t pkgAcquire::Queue::QItem::GetFetchAfter() const /*{{{*/
+{
+   time_t FetchAfter = 0;
+   for (auto const &O : Owners)
+      FetchAfter = std::max(FetchAfter, O->FetchAfter());
+
+   return FetchAfter;
 }
 									/*}}}*/
 void pkgAcquire::Queue::QItem::SyncDestinationFiles() const		/*{{{*/

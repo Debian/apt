@@ -458,6 +458,8 @@ class APT_PUBLIC pkgAcquire::Queue
       std::string Custom600Headers() const;
       /** @return the maximum priority of this item */
       int APT_HIDDEN GetPriority() const;
+      /** @return the maximum time to fetch this item at */
+      time_t APT_HIDDEN GetFetchAfter() const;
    };
 
    /** \brief The name of this queue. */
