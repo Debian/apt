@@ -168,7 +168,13 @@ bool pkgAcquire::GetLock(std::string const &Lock)
       close(LockFD);
    LockFD = ::GetLock(flCombine(Lock, "lock"));
    if (LockFD == -1)
-      return _error->Error(_("Unable to lock directory %s"), Lock.c_str());
+   {
+      _error->Error(_("Unable to lock directory %s"), Lock.c_str());
+      if (getuid() != 0)
+	 _error->Notice(_("You are not root; depending on your configuration, "
+			  "that might explain why locking fails"));
+      return false;
+   }
 
    return true;
 }

@@ -20,7 +20,9 @@ using namespace std;
 // ListUpdate - construct Fetcher and update the cache files		/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a simple wrapper to update the cache. it will fetch stuff
- * from the network (or any other sources defined in sources.list)
+ * from the network (or any other sources defined in sources.list).
+ * The return value is false if we fail to get the lock, and true
+ * otherwise.
  */
 bool ListUpdate(pkgAcquireStatus &Stat, 
 		pkgSourceList &List, 
@@ -32,9 +34,10 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 
    // Populate it with the source selection
    if (List.GetIndexes(&Fetcher) == false)
-	 return false;
+      return true;
 
-   return AcquireUpdate(Fetcher, PulseInterval, true);
+   AcquireUpdate(Fetcher, PulseInterval, true);
+   return true;
 }
 									/*}}}*/
 // AcquireUpdate - take Fetcher and update the cache files		/*{{{*/

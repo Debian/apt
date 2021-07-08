@@ -70,7 +70,8 @@ bool DoUpdate(CommandLine &CmdL)
    if (_config->FindB("APT::Get::Download",true) == true)
    {
       AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
-      ListUpdate(Stat, *List);
+      if (ListUpdate(Stat, *List) == false)
+	 return false;
    }
 
    if (_config->FindB("pkgCacheFile::Generate", true) == false)
