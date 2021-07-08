@@ -640,6 +640,12 @@ void pkgAcquire::Worker::HandleFailure(std::vector<pkgAcquire::Item *> const &It
 	 --Owner->Retries;
 	 Owner->FailMessage(Message);
 	 auto SavedDesc = Owner->GetItemDesc();
+	 if (_config->FindB("Acquire::Retries::Delay", true))
+	 {
+	    auto Iter = _config->FindI("Acquire::Retries", 3) - Owner->Retries - 1;
+	    SavedDesc.URI = "delay://" + std::to_string(1 << Iter) + "/" + pkgAcquire::URIEncode(SavedDesc.URI);
+	 }
+
 	 if (Log != nullptr)
 	    Log->Fail(SavedDesc);
 	 if (isDoomedItem(Owner) == false)
