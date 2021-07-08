@@ -2390,6 +2390,32 @@ public:
    virtual ~DirectFileFdPrivate() { InternalClose(""); }
 };
 									/*}}}*/
+static bool StatFileFd(char const * const msg, int const iFd, std::string const &FileName, struct stat &Buf, FileFdPrivate * const d) /*{{{*/
+{
+   bool ispipe = (d != NULL && d->get_is_pipe() == true);
+   if (ispipe == false)
+   {
+      if (fstat(iFd,&Buf) != 0)
+	 // higher-level code will generate more meaningful messages,
+	 // even translated this would be meaningless for users
+	 return _error->Errno("fstat", "Unable to determine %s for fd %i", msg, iFd);
+      if (FileName.empty() == false)
+	 ispipe = S_ISFIFO(Buf.st_mode);
+   }
+
+   // for compressor pipes st_size is undefined and at 'best' zero
+   if (ispipe == true)
+   {
+      // we set it here, too, as we get the info here for free
+      // in theory the Open-methods should take care of it already
+      if (d != NULL)
+	 d->set_is_pipe(true);
+      if (stat(FileName.c_str(), &Buf) != 0)
+	 return _error->Errno("fstat", "Unable to determine %s for file %s", msg, FileName.c_str());
+   }
+   return true;
+}
+									/*}}}*/
 // FileFd Constructors							/*{{{*/
 FileFd::FileFd(std::string FileName,unsigned int const Mode,unsigned long AccessMode) : iFd(-1), Flags(0), d(NULL)
 {
@@ -2634,8 +2660,25 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 
    if (d == nullptr)
    {
-      if (false)
-	 /* dummy so that the rest can be 'else if's */;
+      // if check due to ReadWrite == WriteOnly|ReadOnly
+      if ((Mode & WriteOnly) != WriteOnly && not FileName.empty())
+      {
+	 /* empty files aren't handled gracefully by every compressor
+	    so we force them to be handled always directly */
+	 struct stat Buf;
+	 if (StatFileFd("file emptiness", iFd, FileName, Buf, nullptr))
+	 {
+	    if (not S_ISFIFO(Buf.st_mode) && Buf.st_size == 0)
+	    {
+	       d = new DirectFileFdPrivate(this);
+	       // even if its empty, we want to pretend that it is compressed
+	       if (compressor.Name != ".")
+		  Flags |= FileFd::Compressed;
+	    }
+	 }
+      }
+      if (d != nullptr)
+	 ;
 #define APT_COMPRESS_INIT(NAME, CONSTRUCTOR) \
       else if (compressor.Name == NAME) \
 	 d = new CONSTRUCTOR(this)
@@ -2911,32 +2954,6 @@ unsigned long long FileFd::Tell()
       FileFdErrno("lseek","Failed to determine the current file position");
    d->set_seekpos(Res);
    return Res;
-}
-									/*}}}*/
-static bool StatFileFd(char const * const msg, int const iFd, std::string const &FileName, struct stat &Buf, FileFdPrivate * const d) /*{{{*/
-{
-   bool ispipe = (d != NULL && d->get_is_pipe() == true);
-   if (ispipe == false)
-   {
-      if (fstat(iFd,&Buf) != 0)
-	 // higher-level code will generate more meaningful messages,
-	 // even translated this would be meaningless for users
-	 return _error->Errno("fstat", "Unable to determine %s for fd %i", msg, iFd);
-      if (FileName.empty() == false)
-	 ispipe = S_ISFIFO(Buf.st_mode);
-   }
-
-   // for compressor pipes st_size is undefined and at 'best' zero
-   if (ispipe == true)
-   {
-      // we set it here, too, as we get the info here for free
-      // in theory the Open-methods should take care of it already
-      if (d != NULL)
-	 d->set_is_pipe(true);
-      if (stat(FileName.c_str(), &Buf) != 0)
-	 return _error->Errno("fstat", "Unable to determine %s for file %s", msg, FileName.c_str());
-   }
-   return true;
 }
 									/*}}}*/
 // FileFd::FileSize - Return the size of the file			/*{{{*/

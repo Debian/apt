@@ -707,6 +707,51 @@ bool pkgAcqIndexDiffs::AcquireByHash() const
 }
 									/*}}}*/
 
+class APT_HIDDEN EmptyFileItem : public pkgAcqTransactionItem		/*{{{*/
+{
+   public:
+   EmptyFileItem(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager, IndexTarget const &Target) :
+      pkgAcqTransactionItem(Owner, TransactionManager, Target)
+   {
+      Status = StatDone;
+      DestFile = GetFinalFileNameFromURI(Target.URI);
+   }
+   bool TransactionState(TransactionStates const state) APT_OVERRIDE
+   {
+      if (state != TransactionCommit)
+	 return true;
+      auto const Debug = _config->FindB("Debug::Acquire::Transaction", false);
+
+      // ensure that even without lists-cleanup all compressions are nuked
+      if (FileExists(DestFile))
+      {
+	 if(Debug)
+	    std::clog << "rm " << DestFile << " # " << DescURI() << std::endl;
+	 if (RemoveFile("TransactionStates-Cleanup", DestFile) == false)
+	    return false;
+      }
+      for (auto const &ext: APT::Configuration::getCompressorExtensions())
+      {
+	 auto const Final = DestFile + ext;
+	 if (FileExists(Final))
+	 {
+	    if(Debug == true)
+	       std::clog << "rm " << Final << " # " << DescURI() << std::endl;
+	    if (RemoveFile("TransactionStates-Cleanup", Final) == false)
+	       return false;
+	 }
+      }
+      auto const Final = GetKeepCompressedFileName(DestFile, Target);
+      if (_config->FindB("Debug::Acquire::Transaction", false) == true)
+	 std::clog << "touch " << Final << " # " << DescURI() << std::endl;
+      // touch an empty file named with preferred compression to avoid stat-searching
+      FileFd fd{Final, FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive, FileFd::None};
+      fchmod(fd.Fd(), 0644);
+      fd.Close();
+      return true;
+   }
+};
+									/*}}}*/
 class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
 /* The sole purpose of this class is having an item which does nothing to
    reach its done state to prevent cleanup deleting the mentioned file.
@@ -1641,13 +1686,6 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 			Target.MetaKey.c_str(), TransactionManager->Target.Description.c_str());
 		  continue;
 	       }
-	       // empty files are skipped as acquiring the very small compressed files is a waste of time
-	       else if (hashes.FileSize() == 0)
-	       {
-		  new CleanupItem(Owner, TransactionManager, Target);
-		  targetsSeen.emplace(Target.Option(IndexTarget::CREATED_BY));
-		  continue;
-	       }
 	    }
 	 }
 
@@ -1699,6 +1737,18 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	       new NoActionItem(Owner, Target, idxfilename);
 	    targetsSeen.emplace(Target.Option(IndexTarget::CREATED_BY));
 	    continue;
+	 }
+
+	 if (verify)
+	 {
+	    auto const hashes = GetExpectedHashesFor(Target.MetaKey);
+	    if (not hashes.empty() && hashes.FileSize() == 0)
+	    {
+	       // empty files are skipped as acquiring the very small compressed files is a waste of time
+	       new EmptyFileItem(Owner, TransactionManager, Target);
+	       targetsSeen.emplace(Target.Option(IndexTarget::CREATED_BY));
+	       continue;
+	    }
 	 }
 
 	 // check if we have patches available

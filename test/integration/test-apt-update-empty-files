@@ -13,20 +13,26 @@ insertpackage 'unstable' 'apt' 'amd64' '1'
 
 setupaptarchive --no-update
 
+emptyindexupdate() {
+	testsuccess apt update -o Debug::pkgAcquire::Worker=1 -o APT::Get::List-Cleanup=0 -o Debug::Acquire::Transaction=1 "$@"
+	cp rootdir/tmp/testsuccess.output apt.output
+	testfailure grep '%0a\(Alt\)\?Filename:%20/.*/Sources\(\.gz\)\?%0a' apt.output
+	testfailure grep 'http:600.*Sources' apt.output
+	testsuccess grep 'touch .*Sources\(\.lz4\)\? #' apt.output
+	testnotempty find rootdir/var/lib/apt/lists -name '*_Sources*'
+	find rootdir/var/lib/apt/lists -name '*_Sources*' | while read SOURCES; do
+		testfilestats "$SOURCES" '%s' '=' '0'
+	done
+}
+
 msgmsg 'Test with file'
 rm -rf rootdir/var/lib/apt/lists
-testsuccess apt update -o Debug::pkgAcquire::Worker=1
-cp rootdir/tmp/testsuccess.output apt.output
-testfailure grep '%0a\(Alt\)\?Filename:%20/.*/Sources\(\.gz\)\?%0a' apt.output
-testempty find rootdir/var/lib/apt/lists -name '*_Sources'
+emptyindexupdate
 
 msgmsg 'Test with http'
 changetowebserver
 rm -rf rootdir/var/lib/apt/lists
-testsuccess apt update -o Debug::pkgAcquire::Worker=1
-cp rootdir/tmp/testsuccess.output apt.output
-testfailure grep 'http:600.*Sources' apt.output
-testempty find rootdir/var/lib/apt/lists -name '*_Sources'
+emptyindexupdate
 
 msgmsg 'Test lists-cleanup on newly empty'
 rm -rf rootdir/var/lib/apt/lists
@@ -41,7 +47,28 @@ echo -n > aptarchive/dists/unstable/main/source/Sources
 compressfile aptarchive/dists/unstable/main/source/Sources
 generatereleasefiles 'now + 1hour'
 signreleasefiles
-testsuccess apt update -o Debug::pkgAcquire::Worker=1 -o APT::Get::List-Cleanup=0 -o Debug::Acquire::Transaction=1
+cp -a rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists.bak
+emptyindexupdate -o Acquire::IndexTargets::deb-src::Sources::KeepCompressed=0
+rm -rf rootdir/var/lib/apt/lists
+cp -a rootdir/var/lib/apt/lists.bak rootdir/var/lib/apt/lists
+emptyindexupdate -o Acquire::IndexTargets::deb-src::Sources::KeepCompressed=1
+
+echo -n > aptarchive/dists/unstable/main/binary-amd64/Packages
+compressfile aptarchive/dists/unstable/main/binary-amd64/Packages
+generatereleasefiles 'now + 2hour'
+signreleasefiles
+rm -rf rootdir/var/lib/apt/lists
+cp -a rootdir/var/lib/apt/lists.bak rootdir/var/lib/apt/lists
+testsuccess apt update -o Debug::pkgAcquire::Worker=1 -o APT::Get::List-Cleanup=0 -o Debug::Acquire::Transaction=1 -o Acquire::IndexTargets::deb::Packages::KeepCompressed=1
 cp rootdir/tmp/testsuccess.output apt.output
-testfailure grep 'http:600.*Sources' apt.output
-testempty find rootdir/var/lib/apt/lists -name '*_Sources'
+testfailure grep '%0a\(Alt\)\?Filename:%20/.*/Packages\(\.gz\)\?%0a' apt.output
+testfailure grep 'http:600.*Packages' apt.output
+testsuccess grep 'touch .*Packages\(\.lz4\)\? #' apt.output
+testnotempty find rootdir/var/lib/apt/lists -name '*_Packages*'
+find rootdir/var/lib/apt/lists -name '*_Packages*' | while read PACKAGES; do
+	testfilestats "$PACKAGES" '%s' '=' '0'
+done
+
+testsuccess apt policy
+cp rootdir/tmp/testsuccess.output policy.output
+testsuccess grep '^ 500 http:.* unstable/main amd64 Packages$' policy.output

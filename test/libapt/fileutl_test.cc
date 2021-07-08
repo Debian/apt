@@ -223,6 +223,37 @@ TEST(FileUtlTest, FileFD)
    EXPECT_EQ(0, chdir(startdir.c_str()));
    removeDirectory(tempdir);
 }
+TEST(FileUtlTest, ReadEmptyFile)
+{
+   for (auto &&ext : APT::Configuration::getCompressorExtensions())
+   {
+      std::string const fname = "apt-filefd-test.txt" + ext;
+      SCOPED_TRACE(fname);
+      if (FileExists(fname))
+      {
+	 EXPECT_EQ(0, unlink(fname.c_str()));
+      }
+      FileFd f{fname, FileFd::WriteOnly | FileFd::Create | FileFd::Empty, FileFd::None};
+      EXPECT_TRUE(f.IsOpen());
+      EXPECT_FALSE(_error->PendingError());
+      EXPECT_EQ(0, fchmod(f.Fd(), 0444));
+      EXPECT_FALSE(f.Failed());
+      EXPECT_TRUE(f.Close());
+      EXPECT_TRUE(FileExists(fname));
+
+      f.Open(fname, FileFd::ReadOnly, FileFd::Extension);
+      EXPECT_TRUE(f.IsOpen());
+      EXPECT_FALSE(_error->PendingError());
+      EXPECT_FALSE(f.Eof());
+      std::string emptyline;
+      EXPECT_FALSE(f.ReadLine(emptyline));
+      EXPECT_TRUE(emptyline.empty());
+      EXPECT_TRUE(f.Eof());
+      EXPECT_TRUE(f.Close());
+
+      EXPECT_EQ(0, unlink(fname.c_str()));
+   }
+}
 TEST(FileUtlTest, Glob)
 {
    std::vector<std::string> files;
