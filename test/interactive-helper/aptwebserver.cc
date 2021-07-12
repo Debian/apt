@@ -22,6 +22,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <array>
 #include <fstream>
 #include <iostream>
 #include <list>
