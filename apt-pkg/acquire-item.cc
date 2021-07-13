@@ -3205,8 +3205,8 @@ bool pkgAcqIndex::CommonFailed(std::string const &TargetURI,
    {
       if (CompressionExtensions.empty() == false)
       {
-	 Init(TargetURI, Desc.Description, Desc.ShortDesc);
 	 Status = StatIdle;
+	 Init(TargetURI, Desc.Description, Desc.ShortDesc);
 	 return true;
       }
    }
