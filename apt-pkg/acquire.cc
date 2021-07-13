@@ -34,6 +34,7 @@
 #include <tuple>
 #include <vector>
 
+#include <assert.h>
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -714,7 +715,38 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
       FD_ZERO(&RFds);
       FD_ZERO(&WFds);
       SetFds(Highest,&RFds,&WFds);
-      
+
+      // Shorten the select() cycle in case we have items about to become ready
+      time_t now = time(nullptr);
+      time_t fetchAfter = 0;
+      for (Queue *I = Queues; I != nullptr; I = I->Next)
+      {
+	 if (I->Items == nullptr)
+	    continue;
+
+	 auto f = I->Items->GetFetchAfter();
+
+	 if (f == 0 || I->Items->Owner->Status != pkgAcquire::Item::StatIdle)
+	    continue;
+
+	 if (f <= now)
+	 {
+	    I->Cycle();	      // Queue got stuck, unstuck it.
+	    fetchAfter = now; // need to time out in select() below
+	    assert(I->Items->Owner->Status != pkgAcquire::Item::StatIdle);
+	 }
+	 else if (f < fetchAfter || fetchAfter == 0)
+	 {
+	    fetchAfter = f;
+	 }
+      }
+
+      if (fetchAfter && (fetchAfter - now) < (tv.tv_sec + tv.tv_usec / 1e6))
+      {
+	 tv.tv_sec = fetchAfter - now;
+	 tv.tv_usec = 0;
+      }
+
       int Res;
       do
       {
@@ -734,7 +766,9 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
       // Timeout, notify the log class
       if (Res == 0 || (Log != 0 && Log->Update == true))
       {
+	 tv.tv_sec = 0;
 	 tv.tv_usec = PulseIntervall;
+
 	 for (Worker *I = Workers; I != 0; I = I->NextAcquire)
 	    I->Pulse();
 	 if (Log != 0 && Log->Pulse(this) == false)
