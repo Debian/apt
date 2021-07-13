@@ -713,7 +713,11 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
       FD_ZERO(&RFds);
       FD_ZERO(&WFds);
       SetFds(Highest,&RFds,&WFds);
-      
+
+      // Check if there's anything to enqueue that we haven't yet
+      // before running messages.
+      Bump();
+
       int Res;
       do
       {
