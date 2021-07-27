@@ -69,6 +69,7 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/weakptr.h>
 
+#include <chrono>
 #include <string>
 #include <vector>
 
@@ -92,6 +93,10 @@ class metaIndex;
 class APT_PUBLIC pkgAcquire
 {   
    private:
+   /** \brief The monotonic clock used by the Acquire system */
+   using clock = std::chrono::steady_clock;
+   /** \brief Time point on our monotonic clock */
+   using time_point = std::chrono::time_point<clock>;
    /** \brief FD of the Lock file we acquire in Setup (if any) */
    int LockFD;
    /** \brief dpointer placeholder (for later in case we need it) */
@@ -459,7 +464,7 @@ class APT_PUBLIC pkgAcquire::Queue
       /** @return the maximum priority of this item */
       int APT_HIDDEN GetPriority() const;
       /** @return the maximum time to fetch this item at */
-      time_t APT_HIDDEN GetFetchAfter() const;
+      time_point APT_HIDDEN GetFetchAfter() const;
    };
 
    /** \brief The name of this queue. */

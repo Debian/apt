@@ -632,7 +632,7 @@ void pkgAcquire::Worker::HandleFailure(std::vector<pkgAcquire::Item *> const &It
 				       pkgAcquire::MethodConfig *const Config, pkgAcquireStatus *const Log,
 				       std::string const &Message, bool const errTransient, bool const errAuthErr)
 {
-   time_t currentTime = time(nullptr);
+   auto currentTime = clock::now();
    for (auto const Owner : ItmOwners)
    {
       std::string NewURI;
@@ -644,7 +644,8 @@ void pkgAcquire::Worker::HandleFailure(std::vector<pkgAcquire::Item *> const &It
 	 if (_config->FindB("Acquire::Retries::Delay", true))
 	 {
 	    auto Iter = _config->FindI("Acquire::Retries", 3) - Owner->Retries - 1;
-	    Owner->FetchAfter(currentTime + (1 << Iter));
+	    auto Dur = std::chrono::seconds(1 << Iter);
+	    Owner->FetchAfter(currentTime + Dur);
 	 }
 	 else
 	 {

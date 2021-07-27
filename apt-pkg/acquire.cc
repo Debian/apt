@@ -53,6 +53,14 @@
 
 using namespace std;
 
+// helper to convert time_point to a timeval
+static struct timeval SteadyDurationToTimeVal(std::chrono::steady_clock::duration Time)
+{
+   auto const Time_sec = std::chrono::duration_cast<std::chrono::seconds>(Time);
+   auto const Time_usec = std::chrono::duration_cast<std::chrono::microseconds>(Time - Time_sec);
+   return {Time_sec.count(), Time_usec.count()};
+}
+
 std::string pkgAcquire::URIEncode(std::string const &part)		/*{{{*/
 {
    // The "+" is encoded as a workaround for an S3 bug (LP#1003633 and LP#1086997)
@@ -717,8 +725,8 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
       SetFds(Highest,&RFds,&WFds);
 
       // Shorten the select() cycle in case we have items about to become ready
-      time_t now = time(nullptr);
-      time_t fetchAfter = 0;
+      auto now = clock::now();
+      auto fetchAfter = time_point{};
       for (Queue *I = Queues; I != nullptr; I = I->Next)
       {
 	 if (I->Items == nullptr)
@@ -726,7 +734,7 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 
 	 auto f = I->Items->GetFetchAfter();
 
-	 if (f == 0 || I->Items->Owner->Status != pkgAcquire::Item::StatIdle)
+	 if (f == time_point() || I->Items->Owner->Status != pkgAcquire::Item::StatIdle)
 	    continue;
 
 	 if (f <= now)
@@ -735,16 +743,15 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 	    fetchAfter = now; // need to time out in select() below
 	    assert(I->Items->Owner->Status != pkgAcquire::Item::StatIdle);
 	 }
-	 else if (f < fetchAfter || fetchAfter == 0)
+	 else if (f < fetchAfter || fetchAfter == time_point{})
 	 {
 	    fetchAfter = f;
 	 }
       }
 
-      if (fetchAfter && (fetchAfter - now) < (tv.tv_sec + tv.tv_usec / 1e6))
+      if (fetchAfter != time_point{} && (fetchAfter - now) < std::chrono::seconds(tv.tv_sec) + std::chrono::microseconds(tv.tv_usec))
       {
-	 tv.tv_sec = fetchAfter - now;
-	 tv.tv_usec = 0;
+	 tv = SteadyDurationToTimeVal(fetchAfter - now);
       }
 
       int Res;
@@ -1191,7 +1198,7 @@ bool pkgAcquire::Queue::Cycle()
    // Look for a queable item
    QItem *I = Items;
    int ActivePriority = 0;
-   time_t currentTime = time(nullptr);
+   auto currentTime = clock::now();
    while (PipeDepth < static_cast<decltype(PipeDepth)>(MaxPipeDepth))
    {
       for (; I != 0; I = I->Next) {
@@ -1281,9 +1288,9 @@ APT_PURE int pkgAcquire::Queue::QItem::GetPriority() const		/*{{{*/
    return Priority;
 }
 									/*}}}*/
-APT_PURE time_t pkgAcquire::Queue::QItem::GetFetchAfter() const /*{{{*/
+APT_PURE pkgAcquire::time_point pkgAcquire::Queue::QItem::GetFetchAfter() const /*{{{*/
 {
-   time_t FetchAfter = 0;
+   time_point FetchAfter{};
    for (auto const &O : Owners)
       FetchAfter = std::max(FetchAfter, O->FetchAfter());
 
@@ -1347,10 +1354,7 @@ pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Percent(-1), Update(true), MoreP
    as well as the current CPS estimate. */
 static struct timeval GetTimevalFromSteadyClock()
 {
-   auto const Time = std::chrono::steady_clock::now().time_since_epoch();
-   auto const Time_sec = std::chrono::duration_cast<std::chrono::seconds>(Time);
-   auto const Time_usec = std::chrono::duration_cast<std::chrono::microseconds>(Time - Time_sec);
-   return { Time_sec.count(), Time_usec.count() };
+   return SteadyDurationToTimeVal(std::chrono::steady_clock::now().time_since_epoch());
 }
 bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 {

@@ -290,7 +290,7 @@ public:
    std::vector<std::string> BadAlternativeSites;
    std::vector<std::string> PastRedirections;
    std::unordered_map<std::string, std::string> CustomFields;
-   time_t FetchAfter = 0;
+   time_point FetchAfter = {};
 
    Private()
    {
@@ -1121,11 +1121,11 @@ std::string pkgAcquire::Item::HashSum() const				/*{{{*/
    return hs != NULL ? hs->toStr() : "";
 }
 									/*}}}*/
-void pkgAcquire::Item::FetchAfter(time_t FetchAfter) /*{{{*/
+void pkgAcquire::Item::FetchAfter(time_point FetchAfter) /*{{{*/
 {
    d->FetchAfter = FetchAfter;
 }
-time_t pkgAcquire::Item::FetchAfter()
+pkgAcquire::time_point pkgAcquire::Item::FetchAfter()
 {
    return d->FetchAfter;
 }

@@ -301,8 +301,9 @@ class APT_PUBLIC pkgAcquire::Item : public WeakPointable				/*{{{*/
    /** \brief The priority of the item, used for queuing */
    int APT_HIDDEN Priority();
 
-   void APT_HIDDEN FetchAfter(time_t FetchAfter);
-   time_t APT_HIDDEN FetchAfter();
+   /** \brief internal clock definitions to avoid typing all that all over the place */
+   void APT_HIDDEN FetchAfter(time_point FetchAfter);
+   time_point APT_HIDDEN FetchAfter();
 
    protected:
    /** \brief The acquire object with which this item is associated. */
