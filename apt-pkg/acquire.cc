@@ -696,7 +696,7 @@ static void CheckDropPrivsMustBeDisabled(pkgAcquire const &Fetcher)
    if (setgroups(old_gidlist_nr, old_gidlist.get()))
       _error->FatalE("setgroups", "setgroups %u failed", 0);
 }
-pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
+pkgAcquire::RunResult pkgAcquire::Run(int PulseInterval)
 {
    _error->PushToStack();
    CheckDropPrivsMustBeDisabled(*this);
@@ -712,9 +712,7 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
    bool WasCancelled = false;
 
    // Run till all things have been acquired
-   struct timeval tv;
-   tv.tv_sec = 0;
-   tv.tv_usec = PulseIntervall; 
+   struct timeval tv = SteadyDurationToTimeVal(std::chrono::microseconds(PulseInterval));
    while (ToFetch > 0)
    {
       fd_set RFds;
@@ -773,8 +771,7 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
       // Timeout, notify the log class
       if (Res == 0 || (Log != 0 && Log->Update == true))
       {
-	 tv.tv_sec = 0;
-	 tv.tv_usec = PulseIntervall;
+	 tv = SteadyDurationToTimeVal(std::chrono::microseconds(PulseInterval));
 
 	 for (Worker *I = Workers; I != 0; I = I->NextAcquire)
 	    I->Pulse();
