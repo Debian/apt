@@ -644,7 +644,10 @@ void pkgAcquire::Worker::HandleFailure(std::vector<pkgAcquire::Item *> const &It
 	 if (_config->FindB("Acquire::Retries::Delay", true))
 	 {
 	    auto Iter = _config->FindI("Acquire::Retries", 3) - Owner->Retries - 1;
-	    auto Dur = std::chrono::seconds(1 << Iter);
+	    auto const MaxDur = _config->FindI("Acquire::Retries::Delay::Maximum", 30);
+	    auto Dur =  std::chrono::seconds(std::min(1 << Iter, MaxDur));
+	    if (_config->FindB("Debug::Acquire::Retries"))
+	       std::clog << "Delaying " << SavedDesc.Description << " by " << Dur.count() << " seconds" << std::endl;
 	    Owner->FetchAfter(currentTime + Dur);
 	 }
 	 else

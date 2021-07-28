@@ -21,7 +21,18 @@ rm -f testpkg_1_all.deb
 msgmsg 'Fail after too many retries'
 webserverconfig 'aptwebserver::failrequest' '429'
 webserverconfig 'aptwebserver::failrequest::pool/testpkg_1_all.deb' '99'
-testfailure apt download testpkg -o acquire::retries=3
+testfailureequal "Delaying http://localhost:${APTHTTPPORT} stable/main all testpkg all 1 by 1 seconds
+Ign:1 http://localhost:${APTHTTPPORT} stable/main all testpkg all 1
+  429  Unknown HTTP code
+Delaying http://localhost:${APTHTTPPORT} stable/main all testpkg all 1 by 2 seconds
+Ign:1 http://localhost:${APTHTTPPORT} stable/main all testpkg all 1
+  429  Unknown HTTP code
+Delaying http://localhost:${APTHTTPPORT} stable/main all testpkg all 1 by 4 seconds
+Ign:1 http://localhost:${APTHTTPPORT} stable/main all testpkg all 1
+  429  Unknown HTTP code
+Err:1 http://localhost:${APTHTTPPORT} stable/main all testpkg all 1
+  429  Unknown HTTP code
+E: Failed to fetch http://localhost:${APTHTTPPORT}/pool/testpkg_1_all.deb  429  Unknown HTTP code" apt download testpkg -o acquire::retries=3 -o debug::acquire::retries=true -q
 testfailure test -f testpkg_1_all.deb
 
 msgmsg 'Success in the third try'
