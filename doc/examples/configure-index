@@ -230,7 +230,11 @@ APT
 Acquire
 {
   Queue-Mode "<STRING>";       // host or access
-  Retries "<INT>";
+  Retries "<INT>" {
+      Delay "<BOOL>" {   // whether to backoff between retries using the delay: method
+        Maximum "<INT>"; // maximum number of seconds to delay an item per retry
+      };
+  };
   Source-Symlinks "<BOOL>";
   ForceHash "<STRING>"; // hashmethod used for expected hash: sha256, sha1 or md5sum
   Send-URI-Encoded "<BOOL>"; // false does the old encode/decode dance even if we could avoid it
@@ -555,6 +559,7 @@ Debug
   Acquire::cdrom "<BOOL>";   // Show cdrom debug output
   Acquire::Transaction "<BOOL>";
   Acquire::Progress "<BOOL>";
+  Acquire::Retries "<BOOL>";    // Debugging for retries, especially delays
   aptcdrom "<BOOL>";        // Show found package files
   IdentCdrom "<BOOL>";
   acquire::netrc "<BOOL>";  // netrc parser
