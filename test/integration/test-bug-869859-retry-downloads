@@ -4,6 +4,22 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
+testsecondsgreaterequal() {
+    seconds="$1"
+    shift
+    before=$(date +%s)
+    "$@"
+    after=$(date +%s)
+    msggroup 'testsecondsgreaterequal'
+    msgtest "Checking that previous test took more than $secondss"
+    if [ $((after - before)) -lt $seconds ]; then
+        msgfail "Took $((after - before)) second"
+    else
+        msgpass
+    fi
+    msggroup
+}
+
 setupenvironment
 configarchitecture 'amd64'
 
@@ -21,7 +37,7 @@ rm -f testpkg_1_all.deb
 msgmsg 'Fail after too many retries'
 webserverconfig 'aptwebserver::failrequest' '429'
 webserverconfig 'aptwebserver::failrequest::pool/testpkg_1_all.deb' '99'
-testfailureequal "Delaying http://localhost:${APTHTTPPORT} stable/main all testpkg all 1 by 1 seconds
+testsecondsgreaterequal 5 testfailureequal "Delaying http://localhost:${APTHTTPPORT} stable/main all testpkg all 1 by 1 seconds
 Ign:1 http://localhost:${APTHTTPPORT} stable/main all testpkg all 1
   429  Unknown HTTP code
 Delaying http://localhost:${APTHTTPPORT} stable/main all testpkg all 1 by 2 seconds
