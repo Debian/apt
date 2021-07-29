@@ -1,3 +1,25 @@
+apt (2.3.7) experimental; urgency=medium
+
+  [ David Kalnischkies ]
+  * Use full item description in broken repo error
+  * Store size from volatile sources for already installed versions
+  * Restore dpkg::chroot-directory functionality
+
+  [ Dillon Brock ]
+  * apt.conf(5): indicate # is also used for comments (LP: #1309658)
+
+  [ Julian Andres Klode ]
+  * Check sources.list could be parsed before adding volatile files
+    (Closes: #990518)
+  * pkgAcqIndex::CommonFailed: Set StatIdle before calling Init()
+  * Implement exponential backoff between retries
+    - acquire: Automatically reduce select() timeout as needed
+    - Properly convert PulseInterval to timeval
+    - Add support for a maximum delay and testing of delay
+    - tests (retry-downloads): Avoid delay in second test
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 29 Jul 2021 16:59:39 +0200
+
 apt (2.3.6) experimental; urgency=medium
 
   [ David Kalnischkies ]
