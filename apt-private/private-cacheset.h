@@ -34,7 +34,7 @@ public:
 struct VersionSortDescriptionLocality					/*{{{*/
 {
    bool operator () (const VerIteratorWithCaching &v_lhs,
-	 const VerIteratorWithCaching &v_rhs)
+	 const VerIteratorWithCaching &v_rhs) const
    {
       pkgCache::DescFile const *A = v_lhs.CachedDescFile();
       pkgCache::DescFile const *B = v_rhs.CachedDescFile();
