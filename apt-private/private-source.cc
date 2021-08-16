@@ -568,7 +568,7 @@ bool DoSource(CommandLine &CmdL)
 /* This function will look at the build depends list of the given source 
    package and install the necessary packages to make it true, or fail. */
 static std::vector<pkgSrcRecords::Parser::BuildDepRec> GetBuildDeps(pkgSrcRecords::Parser * const Last,
-      char const * const Src, bool const StripMultiArch, std::string const &hostArch)
+      char const * const Src, std::string const &hostArch)
 {
    std::vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
    // FIXME: Can't specify architecture to use for [wildcard] matching, so switch default arch temporary
@@ -576,7 +576,7 @@ static std::vector<pkgSrcRecords::Parser::BuildDepRec> GetBuildDeps(pkgSrcRecord
    {
       std::string nativeArch = _config->Find("APT::Architecture");
       _config->Set("APT::Architecture", hostArch);
-      bool Success = Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch);
+      bool Success = Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), false);
       _config->Set("APT::Architecture", nativeArch);
       if (Success == false)
       {
@@ -584,7 +584,7 @@ static std::vector<pkgSrcRecords::Parser::BuildDepRec> GetBuildDeps(pkgSrcRecord
 	 return {};
       }
    }
-   else if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
+   else if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), false) == false)
    {
       _error->Error(_("Unable to get build-dependency information for %s"), Src);
       return {};
@@ -637,17 +637,13 @@ static void WriteBuildDependencyPackage(std::ostringstream &buildDepsPkgFile,
 }
 bool DoBuildDep(CommandLine &CmdL)
 {
-   bool StripMultiArch;
    std::string hostArch = _config->Find("APT::Get::Host-Architecture");
    if (hostArch.empty() == false)
    {
       std::vector<std::string> archs = APT::Configuration::getArchitectures();
       if (std::find(archs.begin(), archs.end(), hostArch) == archs.end())
 	 return _error->Error(_("No architecture information available for %s. See apt.conf(5) APT::Architectures for setup"), hostArch.c_str());
-      StripMultiArch = false;
    }
-   else
-      StripMultiArch = true;
    auto const nativeArch = _config->Find("APT::Architecture");
    std::string const pseudoArch = hostArch.empty() ? nativeArch : hostArch;
 
@@ -777,7 +773,7 @@ bool DoBuildDep(CommandLine &CmdL)
 
 	 auto pseudo = std::string("builddeps:") + pkg.name;
 	 WriteBuildDependencyPackage(buildDepsPkgFile, pseudo, pseudoArch,
-				     GetBuildDeps(Last.get(), pkg.name.c_str(), StripMultiArch, hostArch));
+				     GetBuildDeps(Last.get(), pkg.name.c_str(), hostArch));
 	 pkg.name = std::move(pseudo);
 	 pseudoPkgs.push_back(std::move(pkg));
       }
@@ -802,7 +798,7 @@ bool DoBuildDep(CommandLine &CmdL)
 
 	 std::string const pseudo = std::string("builddeps:") + Src;
 	 WriteBuildDependencyPackage(buildDepsPkgFile, pseudo, pseudoArch,
-	       GetBuildDeps(Last, Src.c_str(), StripMultiArch, hostArch));
+	       GetBuildDeps(Last, Src.c_str(), hostArch));
 	 std::string reltag = *I;
 	 size_t found = reltag.find_last_of("/");
 	 if (found == std::string::npos)
