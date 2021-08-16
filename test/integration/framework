@@ -293,7 +293,6 @@ escape_shell() {
 }
 
 find_project_binary_dir() {
-	local TESTDIRECTORY="$(readlink -f "$(dirname $0)")"
 	if [ -z "$PROJECT_BINARY_DIR" ]; then
 		PROJECT_BINARY_DIR=
 		for dir in ${TESTDIRECTORY}/../../ ${TESTDIRECTORY}/../../*; do
@@ -311,6 +310,16 @@ find_project_binary_dir() {
 	fi
 }
 setupenvironment() {
+	# cleanup the environment a bit
+	export LC_ALL=C
+	unset LANGUAGE COLUMNS NLSPATH
+	unset APT_CONFIG DPKG_ADMINDIR DPKG_COLORS
+	unset DEB_CHECK_COMMAND DEB_SIGN_KEYID DEB_BUILD_OPTIONS DEB_BUILD_PROFILES
+	unset DH_VERBOSE DH_QUIET DH_COMPAT DH_NO_ACT DH_OPTIONS DH_EXTRA_ADDONS
+	unset GREP_OPTIONS POSIXLY_CORRECT
+	unset http_proxy HTTP_PROXY https_proxy HTTPS_PROXY no_proxy
+	export GCOV_ERROR_FILE=/dev/null
+
 	# Next check needs a gnu stat, let's figure that out early.
 	stat=stat
 	if command -v gnustat >/dev/null 2>&1; then
@@ -341,18 +350,40 @@ setupenvironment() {
 	done
 	export PATH="${TMPWORKINGDIRECTORY}/bin/:$PATH"
 
+	if [ -z "$TESTDIRECTORY" ]; then
+		TESTDIRECTORY="$(readlink -f "$(dirname $0)")"
+	fi
+	cd "$TMPWORKINGDIRECTORY"
 
-	mkdir -m 700 "${TMPWORKINGDIRECTORY}/downloaded"
+	mkdir -m 700 'downloaded'
 	if [ "$(id -u)" = '0' ]; then
 		# relax permissions so that running as root with user switching works
 		umask 022
 		chmod 711 "$TMPWORKINGDIRECTORY"
 		chown _apt:$(id -gn) "${TMPWORKINGDIRECTORY}/downloaded"
 	fi
+	mkdir -p 'rootdir/usr/bin' 'rootdir/var/cache' 'rootdir/var/lib' 'rootdir/var/log' 'rootdir/var/crash' 'rootdir/tmp'
 
-	TESTDIRECTORY="$(readlink -f "$(dirname $0)")"
 	# Find the newest build directory (sets PROJECT_BINARY_DIR)
 	find_project_binary_dir
+
+	_setupprojectenvironment
+
+	# create some files in /tmp and look at user/group to get what this means
+	TEST_DEFAULT_USER="$(id -un)"
+	touch "${TMPWORKINGDIRECTORY}/test-file"
+	TEST_DEFAULT_GROUP=$(stat --format '%G'  "${TMPWORKINGDIRECTORY}/test-file")
+
+	# prefer our apt binaries over the system apt binaries
+	export PATH="${BUILDDIRECTORY}:${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
+
+	if [ -r "${TESTDIRECTORY}/extra-environment" ]; then
+		. "${TESTDIRECTORY}/extra-environment"
+	fi
+
+	msgdone "info"
+}
+_setupprojectenvironment() {
         # allow overriding the default BUILDDIR location
 	SOURCEDIRECTORY="${APT_INTEGRATION_TESTS_SOURCE_DIR:-"${TESTDIRECTORY}/../../"}"
 	BUILDDIRECTORY="${APT_INTEGRATION_TESTS_BUILD_DIR:-"${PROJECT_BINARY_DIR}/cmdline"}"
@@ -365,14 +396,11 @@ setupenvironment() {
 	APTDUMPSOLVER="${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${BUILDDIRECTORY}/solvers/dump"}"
 	APTINTERNALPLANNER="${APT_INTEGRATION_TESTS_INTERNAL_PLANNER:-"${BUILDDIRECTORY}/planners/apt"}"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
-        # -----
 
-	cd "$TMPWORKINGDIRECTORY"
 	echo "#x-apt-configure-index \"${SOURCEDIRECTORY}/doc/examples/configure-index\";" > aptconfig.conf
-	mkdir rootdir aptarchive keys
+	mkdir aptarchive keys
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
-	mkdir -p usr/bin var/cache var/lib var/log var/crash tmp
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	mkdir -p usr/lib/apt/solvers usr/lib/apt/planners
 	touch var/lib/dpkg/available var/lib/dpkg/lock
@@ -493,28 +521,9 @@ EOF
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 	confighashes 'SHA256' # these are tests, not security best-practices
 
-	# create some files in /tmp and look at user/group to get what this means
-	TEST_DEFAULT_USER="$(id -un)"
-	touch "${TMPWORKINGDIRECTORY}/test-file"
-	TEST_DEFAULT_GROUP=$(stat --format '%G'  "${TMPWORKINGDIRECTORY}/test-file")
-
-	# cleanup the environment a bit
-	# prefer our apt binaries over the system apt binaries
-	export PATH="${BUILDDIRECTORY}:${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
-	export LC_ALL=C
-	unset LANGUAGE COLUMNS NLSPATH
-	unset APT_CONFIG DPKG_ADMINDIR DPKG_COLORS
-	unset DEB_CHECK_COMMAND DEB_SIGN_KEYID DEB_BUILD_OPTIONS DEB_BUILD_PROFILES
-	unset DH_VERBOSE DH_QUIET DH_COMPAT DH_NO_ACT DH_OPTIONS DH_EXTRA_ADDONS
-	unset GREP_OPTIONS POSIXLY_CORRECT
-	unset http_proxy HTTP_PROXY https_proxy HTTPS_PROXY no_proxy
-
 	# Make dpkg inherit testing path
 	echo 'DPkg::Path "";' >> aptconfig.conf
 	echo 'Dir::Bin::ischroot "/bin/false";' >> aptconfig.conf
-
-	# Make gcov shut up
-	export GCOV_ERROR_FILE=/dev/null
 
 	# If gpgv supports --weak-digest, pass it to make sure we can disable SHA1
 	if aptkey verify --weak-digest SHA1 --help 2>/dev/null >/dev/null; then
@@ -523,12 +532,6 @@ EOF
 
 	# most tests just need one signed Release file, not both
 	export APT_DONT_SIGN='Release.gpg'
-
-	if [ -r "${TESTDIRECTORY}/extra-environment" ]; then
-		. "${TESTDIRECTORY}/extra-environment"
-	fi
-
-	msgdone "info"
 }
 
 getarchitecture() {
