@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'librust-nom-4-dev' 'all' '4.2.3-3' 'Provides: librust-nom-dev (= 4.2.3-3)'
+insertinstalledpackage 'librust-nom-dev' 'all' '5.0.1-4' 'Depends: librust-nom+default-dev (= 5.0.1-4)'
+insertinstalledpackage 'librust-nom+default-dev ' 'all' '5.0.1-4' 'Depends: librust-nom-dev (= 5.0.1-4)'
+insertinstalledpackage 'librust-nom-4+std-dev' 'all' '4.2.3-3' 'Provides: librust-nom+default-dev (= 4.2.3-3)'
+
+insertinstalledpackage 'foo' 'all' '1' 'Depends: librust-nom-4-dev, librust-nom-dev, librust-nom-4+std-dev'
+
+for AUTO in '' 'librust-nom-4-dev' 'librust*' 'foo' '.*'; do
+	msgmsg 'Running test with these packages marked auto:' "$AUTO"
+	testsuccess aptmark manual '.*'
+	if [ -n "$AUTO" ]; then
+		testsuccess aptmark auto "$AUTO"
+	fi
+
+	testsuccess aptget check
+	testsuccess aptget autoremove -s
+
+	testsuccess aptget upgrade
+	testsuccess aptget full-upgrade
+
+	testsuccess apt show foo
+done

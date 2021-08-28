@@ -2240,7 +2240,7 @@ static bool MarkPackage(pkgCache::PkgIterator const &Pkg,
 			std::unique_ptr<APT::CacheFilter::Matcher> &IsAVersionedKernelPackage,
 			std::unique_ptr<APT::CacheFilter::Matcher> &IsProtectedKernelPackage)
 {
-   if (Ver.end() || (fullyExplored[Pkg->ID] && PkgState[Pkg->ID].Marked))
+   if (Ver.end() || PkgState[Pkg->ID].Marked)
       return true;
 
    if (IsPkgInBoringState(Pkg, PkgState))
