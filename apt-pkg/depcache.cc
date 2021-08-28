@@ -2226,12 +2226,13 @@ static bool IsPkgInBoringState(pkgCache::PkgIterator const &Pkg, pkgDepCache::St
 }
 									/*}}}*/
 // MarkPackage - mark a single package in Mark-and-Sweep		/*{{{*/
-static void MarkPackage(pkgCache::PkgIterator const &Pkg,
+static bool MarkPackage(pkgCache::PkgIterator const &Pkg,
 			pkgCache::VerIterator const &Ver,
 			bool const follow_recommends,
 			bool const follow_suggests,
 			bool const debug_autoremove,
 			std::string_view const reason,
+			size_t const Depth,
 			pkgCache &Cache,
 			pkgDepCache &DepCache,
 			pkgDepCache::StateCache *const PkgState,
@@ -2240,13 +2241,17 @@ static void MarkPackage(pkgCache::PkgIterator const &Pkg,
 			std::unique_ptr<APT::CacheFilter::Matcher> &IsProtectedKernelPackage)
 {
    if (Ver.end() || (fullyExplored[Pkg->ID] && PkgState[Pkg->ID].Marked))
-      return;
+      return true;
 
    if (IsPkgInBoringState(Pkg, PkgState))
    {
       fullyExplored[Pkg->ID] = true;
-      return;
+      return true;
    }
+
+   // we are not trying to hard…
+   if (unlikely(Depth > 100))
+      return false;
 
    PkgState[Pkg->ID].Marked = true;
    if(debug_autoremove)
@@ -2348,12 +2353,14 @@ static void MarkPackage(pkgCache::PkgIterator const &Pkg,
 	       std::clog << "Following dep: " << APT::PrettyDep(&DepCache, D)
 			 << ", provided by " << PP.FullName() << " " << PV.VerStr()
 			 << " (" << providers_by_source.size() << "/" << providers.second.size() << ")\n";
-	    MarkPackage(PP, PV, follow_recommends, follow_suggests, debug_autoremove,
-			"Dependency", Cache, DepCache, PkgState, fullyExplored,
-			IsAVersionedKernelPackage, IsProtectedKernelPackage);
+	    if (not MarkPackage(PP, PV, follow_recommends, follow_suggests, debug_autoremove,
+				"Dependency", Depth + 1, Cache, DepCache, PkgState, fullyExplored,
+				IsAVersionedKernelPackage, IsProtectedKernelPackage))
+	       return false;
 	 }
       }
    }
+   return true;
 }
 									/*}}}*/
 // pkgDepCache::MarkRequired - the main mark algorithm			/*{{{*/
@@ -2403,9 +2410,9 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 	 continue;
 
       pkgCache::VerIterator const PV = (PkgState[P->ID].Install()) ? PkgState[P->ID].InstVerIter(*this) : P.CurrentVer();
-      MarkPackage(P, PV, follow_recommends, follow_suggests, debug_autoremove,
-		  reason, *Cache, *this, PkgState, fullyExplored,
-		  d->IsAVersionedKernelPackage, d->IsProtectedKernelPackage);
+      if (not MarkPackage(P, PV, follow_recommends, follow_suggests, debug_autoremove,
+			  reason, 0, *Cache, *this, PkgState, fullyExplored,
+			  d->IsAVersionedKernelPackage, d->IsProtectedKernelPackage))
 	 return false;
    }
    return true;
