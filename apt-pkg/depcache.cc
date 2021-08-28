@@ -125,7 +125,6 @@ int pkgDepCache::DecreaseActionGroupLevel()
 struct pkgDepCache::Private
 {
    std::unique_ptr<InRootSetFunc> inRootSetFunc;
-   std::vector<bool> fullyExplored;
    std::unique_ptr<APT::CacheFilter::Matcher> IsAVersionedKernelPackage, IsProtectedKernelPackage;
 };
 pkgDepCache::pkgDepCache(pkgCache *const pCache, Policy *const Plcy) : group_level(0), Cache(pCache), PkgState(0), DepState(0),
@@ -2201,18 +2200,17 @@ pkgDepCache::InRootSetFunc *pkgDepCache::GetCachedRootSetFunc()
    return d->inRootSetFunc.get();
 }
 									/*}}}*/
-bool pkgDepCache::MarkFollowsRecommends()
+bool pkgDepCache::MarkFollowsRecommends()				/*{{{*/
 {
   return _config->FindB("APT::AutoRemove::RecommendsImportant", true);
 }
-
-bool pkgDepCache::MarkFollowsSuggests()
+									/*}}}*/
+bool pkgDepCache::MarkFollowsSuggests()					/*{{{*/
 {
   return _config->FindB("APT::AutoRemove::SuggestsImportant", true);
 }
-
-// pkgDepCache::MarkRequired - the main mark algorithm			/*{{{*/
-static bool IsPkgInBoringState(pkgCache::PkgIterator const &Pkg, pkgDepCache::StateCache const * const PkgState)
+									/*}}}*/
+static bool IsPkgInBoringState(pkgCache::PkgIterator const &Pkg, pkgDepCache::StateCache const * const PkgState)/*{{{*/
 {
    if (Pkg->CurrentVer == 0)
    {
@@ -2226,81 +2224,31 @@ static bool IsPkgInBoringState(pkgCache::PkgIterator const &Pkg, pkgDepCache::St
    }
    return false;
 }
-bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
-{
-   if (_config->Find("APT::Solver", "internal") != "internal")
-      return true;
-
-   bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
-
-   // init the states
-   auto const PackagesCount = Head().PackageCount;
-   for(auto i = decltype(PackagesCount){0}; i < PackagesCount; ++i)
-   {
-      PkgState[i].Marked  = false;
-      PkgState[i].Garbage = false;
-   }
-   d->fullyExplored = std::vector<bool>(PackagesCount, false);
-   if (debug_autoremove)
-      for(PkgIterator p = PkgBegin(); !p.end(); ++p)
-	 if(PkgState[p->ID].Flags & Flag::Auto)
-	    std::clog << "AutoDep: " << p.FullName() << std::endl;
-
-   bool const follow_recommends = MarkFollowsRecommends();
-   bool const follow_suggests   = MarkFollowsSuggests();
-
-   // do the mark part, this is the core bit of the algorithm
-   for (PkgIterator P = PkgBegin(); !P.end(); ++P)
-   {
-      if (PkgState[P->ID].Marked || IsPkgInBoringState(P, PkgState))
-	 continue;
-
-      const char *reason = nullptr;
-
-      if ((PkgState[P->ID].Flags & Flag::Auto) == 0)
-	 reason = "Manual-Installed";
-      else if (P->Flags & Flag::Essential)
-	 reason = "Essential";
-      else if (P->Flags & Flag::Important)
-	 reason = "Important";
-      else if (P->CurrentVer != 0 && P.CurrentVer()->Priority == pkgCache::State::Required)
-	 reason = "Required";
-      else if (userFunc.InRootSet(P))
-	 reason = "Blacklisted [APT::NeverAutoRemove]";
-      else if (not IsModeChangeOk(*this, ModeGarbage, P, 0, false, DebugMarker))
-	 reason = "Hold";
-      else
-	 continue;
-
-      if (PkgState[P->ID].Install())
-	 MarkPackage(P, PkgState[P->ID].InstVerIter(*this),
-	       follow_recommends, follow_suggests, reason);
-      else
-	 MarkPackage(P, P.CurrentVer(),
-	       follow_recommends, follow_suggests, reason);
-   }
-   d->fullyExplored.clear();
-   return true;
-}
 									/*}}}*/
 // MarkPackage - mark a single package in Mark-and-Sweep		/*{{{*/
-void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
-			      const pkgCache::VerIterator &Ver,
-			      bool const &follow_recommends,
-			      bool const &follow_suggests,
-			      const char *reason)
+static void MarkPackage(pkgCache::PkgIterator const &Pkg,
+			pkgCache::VerIterator const &Ver,
+			bool const follow_recommends,
+			bool const follow_suggests,
+			bool const debug_autoremove,
+			std::string_view const reason,
+			pkgCache &Cache,
+			pkgDepCache &DepCache,
+			pkgDepCache::StateCache *const PkgState,
+			std::vector<bool> &fullyExplored,
+			std::unique_ptr<APT::CacheFilter::Matcher> &IsAVersionedKernelPackage,
+			std::unique_ptr<APT::CacheFilter::Matcher> &IsProtectedKernelPackage)
 {
-   if (Ver.end() || (d->fullyExplored[Pkg->ID] && PkgState[Pkg->ID].Marked))
+   if (Ver.end() || (fullyExplored[Pkg->ID] && PkgState[Pkg->ID].Marked))
       return;
 
    if (IsPkgInBoringState(Pkg, PkgState))
    {
-      d->fullyExplored[Pkg->ID] = true;
+      fullyExplored[Pkg->ID] = true;
       return;
    }
 
    PkgState[Pkg->ID].Marked = true;
-   bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove", false);
    if(debug_autoremove)
       std::clog << "Marking: " << Pkg.FullName() << " " << Ver.VerStr()
 		<< " (" << reason << ")" << std::endl;
@@ -2315,13 +2263,13 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
    for (auto D = Ver.DependsList(); not D.end(); ++D)
    {
       auto const T = D.TargetPkg();
-      if (T.end() || d->fullyExplored[T->ID])
+      if (T.end() || fullyExplored[T->ID])
 	 continue;
 
-      if (D->Type != Dep::Depends &&
-	    D->Type != Dep::PreDepends &&
-	    (follow_recommends == false || D->Type != Dep::Recommends) &&
-	    (follow_suggests == false || D->Type != Dep::Suggests))
+      if (D->Type != pkgCache::Dep::Depends &&
+	    D->Type != pkgCache::Dep::PreDepends &&
+	    (not follow_recommends || D->Type != pkgCache::Dep::Recommends) &&
+	    (not follow_suggests || D->Type != pkgCache::Dep::Suggests))
 	 continue;
 
       bool unsatisfied_choice = false;
@@ -2329,7 +2277,7 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
       // collect real part
       if (not IsPkgInBoringState(T, PkgState))
       {
-	 auto const TV = (PkgState[T->ID].Install()) ? PkgState[T->ID].InstVerIter(*this) : T.CurrentVer();
+	 auto const TV = (PkgState[T->ID].Install()) ? PkgState[T->ID].InstVerIter(DepCache) : T.CurrentVer();
 	 if (likely(not TV.end()))
 	 {
 	    if (not D.IsSatisfied(TV))
@@ -2349,7 +2297,7 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 
 	 // we want to ignore provides from uninteresting versions
 	 auto const PV = (PkgState[PP->ID].Install()) ?
-	    PkgState[PP->ID].InstVerIter(*this) : PP.CurrentVer();
+	    PkgState[PP->ID].InstVerIter(DepCache) : PP.CurrentVer();
 	 if (unlikely(PV.end()) || PV != Prv.OwnerVer())
 	    continue;
 
@@ -2366,8 +2314,8 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 	 // if the provider is a versioned kernel package mark them only for protected kernels
 	 if (providers.second.size() == 1)
 	    continue;
-	 if (not d->IsAVersionedKernelPackage)
-	    d->IsAVersionedKernelPackage = [&]() -> std::unique_ptr<APT::CacheFilter::Matcher> {
+	 if (not IsAVersionedKernelPackage)
+	    IsAVersionedKernelPackage = [&]() -> std::unique_ptr<APT::CacheFilter::Matcher> {
 	       auto const patterns = _config->FindVector("APT::VersionedKernelPackages");
 	       if (patterns.empty())
 		  return std::make_unique<APT::CacheFilter::FalseMatcher>();
@@ -2377,33 +2325,90 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
 	       regex << patterns.back() << "-.*$";
 	       return std::make_unique<APT::CacheFilter::PackageNameMatchesRegEx>(regex.str());
 	    }();
-	 if (not std::all_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*d->IsAVersionedKernelPackage)(Prv.ParentPkg()); }))
+	 if (not std::all_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*IsAVersionedKernelPackage)(Prv.ParentPkg()); }))
 	    continue;
 	 // … if there is at least one for protected kernels installed
-	 if (not d->IsProtectedKernelPackage)
-	    d->IsProtectedKernelPackage = APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(Cache);
-	 if (not std::any_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*d->IsProtectedKernelPackage)(Prv.ParentPkg()); }))
+	 if (not IsProtectedKernelPackage)
+	    IsProtectedKernelPackage = APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(&Cache);
+	 if (not std::any_of(providers.second.begin(), providers.second.end(), [&](auto const &Prv) { return (*IsProtectedKernelPackage)(Prv.ParentPkg()); }))
 	    continue;
 	 providers.second.erase(std::remove_if(providers.second.begin(), providers.second.end(),
-					       [&](auto const &Prv) { return not((*d->IsProtectedKernelPackage)(Prv.ParentPkg())); }),
+					       [&](auto const &Prv) { return not((*IsProtectedKernelPackage)(Prv.ParentPkg())); }),
 				providers.second.end());
       }
 
       if (not unsatisfied_choice)
-	 d->fullyExplored[T->ID] = true;
+	 fullyExplored[T->ID] = true;
       for (auto const &providers : providers_by_source)
       {
 	 for (auto const &PV : providers.second)
 	 {
 	    auto const PP = PV.ParentPkg();
 	    if (debug_autoremove)
-	       std::clog << "Following dep: " << APT::PrettyDep(this, D)
+	       std::clog << "Following dep: " << APT::PrettyDep(&DepCache, D)
 			 << ", provided by " << PP.FullName() << " " << PV.VerStr()
 			 << " (" << providers_by_source.size() << "/" << providers.second.size() << ")\n";
-	    MarkPackage(PP, PV, follow_recommends, follow_suggests, "Dependency");
+	    MarkPackage(PP, PV, follow_recommends, follow_suggests, debug_autoremove,
+			"Dependency", Cache, DepCache, PkgState, fullyExplored,
+			IsAVersionedKernelPackage, IsProtectedKernelPackage);
 	 }
       }
    }
+}
+									/*}}}*/
+// pkgDepCache::MarkRequired - the main mark algorithm			/*{{{*/
+bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
+{
+   if (_config->Find("APT::Solver", "internal") != "internal")
+      return true;
+
+   // init the states
+   auto const PackagesCount = Head().PackageCount;
+   for(auto i = decltype(PackagesCount){0}; i < PackagesCount; ++i)
+   {
+      PkgState[i].Marked  = false;
+      PkgState[i].Garbage = false;
+   }
+   std::vector<bool> fullyExplored(PackagesCount, false);
+
+   bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove", false);
+   if (debug_autoremove)
+      for(PkgIterator p = PkgBegin(); !p.end(); ++p)
+	 if(PkgState[p->ID].Flags & Flag::Auto)
+	    std::clog << "AutoDep: " << p.FullName() << std::endl;
+
+   bool const follow_recommends = MarkFollowsRecommends();
+   bool const follow_suggests   = MarkFollowsSuggests();
+
+   // do the mark part, this is the core bit of the algorithm
+   for (PkgIterator P = PkgBegin(); !P.end(); ++P)
+   {
+      if (PkgState[P->ID].Marked || IsPkgInBoringState(P, PkgState))
+	 continue;
+
+      std::string_view reason;
+      if ((PkgState[P->ID].Flags & Flag::Auto) == 0)
+	 reason = "Manual-Installed";
+      else if (P->Flags & Flag::Essential)
+	 reason = "Essential";
+      else if (P->Flags & Flag::Important)
+	 reason = "Important";
+      else if (P->CurrentVer != 0 && P.CurrentVer()->Priority == pkgCache::State::Required)
+	 reason = "Required";
+      else if (userFunc.InRootSet(P))
+	 reason = "Blacklisted [APT::NeverAutoRemove]";
+      else if (not IsModeChangeOk(*this, ModeGarbage, P, 0, false, DebugMarker))
+	 reason = "Hold";
+      else
+	 continue;
+
+      pkgCache::VerIterator const PV = (PkgState[P->ID].Install()) ? PkgState[P->ID].InstVerIter(*this) : P.CurrentVer();
+      MarkPackage(P, PV, follow_recommends, follow_suggests, debug_autoremove,
+		  reason, *Cache, *this, PkgState, fullyExplored,
+		  d->IsAVersionedKernelPackage, d->IsProtectedKernelPackage);
+	 return false;
+   }
+   return true;
 }
 									/*}}}*/
 bool pkgDepCache::Sweep()						/*{{{*/

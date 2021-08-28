@@ -71,31 +71,6 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
    };
 
    private:
-   /** \brief Mark a single package and all its unmarked important
-    *  dependencies during mark-and-sweep.
-    *
-    *  Recursively invokes itself to mark all dependencies of the
-    *  package.
-    *
-    *  \param pkg The package to mark.
-    *
-    *  \param ver The version of the package that is to be marked.
-    *
-    *  \param follow_recommends If \b true, recommendations of the
-    *  package will be recursively marked.
-    *
-    *  \param follow_suggests If \b true, suggestions of the package
-    *  will be recursively marked.
-    *
-    *  \param reason The reason why the package is being marked.
-    *  (Used in logging when Debug::pkgAutoRemove is set.)
-    */
-   APT_HIDDEN void MarkPackage(const pkgCache::PkgIterator &pkg,
-		    const pkgCache::VerIterator &ver,
-		    bool const &follow_recommends,
-		    bool const &follow_suggests,
-		    const char *reason);
-
    /** \brief Update the Marked field of all packages.
     *
     *  Each package's StateCache::Marked field will be set to \b true
