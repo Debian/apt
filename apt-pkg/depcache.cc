@@ -2308,7 +2308,7 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
    auto const sort_by_source_version = [](pkgCache::VerIterator const &A, pkgCache::VerIterator const &B) {
       auto const verret = A.Cache()->VS->CmpVersion(A.SourceVerStr(), B.SourceVerStr());
       if (verret != 0)
-	 return verret > 0;
+	 return verret < 0;
       return A->ID < B->ID;
    };
 
@@ -2361,11 +2361,8 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &Pkg,
       // only latest binary package of a source package is marked instead of all
       for (auto &providers : providers_by_source)
       {
-	 std::sort(providers.second.begin(), providers.second.end(), sort_by_source_version);
-	 auto const highestSrcVer = (*providers.second.begin()).SourceVerStr();
-	 auto notThisVer = std::find_if_not(providers.second.begin(), providers.second.end(), [&](auto const &V) { return strcmp(highestSrcVer, V.SourceVerStr()) == 0; });
-	 if (notThisVer != providers.second.end())
-	    providers.second.erase(notThisVer, providers.second.end());
+	 auto const highestSrcVer = (*std::max_element(providers.second.begin(), providers.second.end(), sort_by_source_version)).SourceVerStr();
+	 providers.second.erase(std::remove_if(providers.second.begin(), providers.second.end(), [&](auto const &V) { return strcmp(highestSrcVer, V.SourceVerStr()) != 0; }), providers.second.end());
 	 // if the provider is a versioned kernel package mark them only for protected kernels
 	 if (providers.second.size() == 1)
 	    continue;
