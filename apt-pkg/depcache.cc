@@ -894,8 +894,8 @@ static char const* PrintMode(char const mode)
 static bool IsModeChangeOk(pkgDepCache &Cache, pkgDepCache::ModeList const mode, pkgCache::PkgIterator const &Pkg,
 			   unsigned long const Depth, bool const FromUser, bool const DebugMarker)
 {
-   // we are not trying to hard…
-   if (unlikely(Depth > 100))
+   // we are not trying too hard…
+   if (unlikely(Depth > 3000))
       return false;
 
    // general sanity
@@ -2249,8 +2249,8 @@ static bool MarkPackage(pkgCache::PkgIterator const &Pkg,
       return true;
    }
 
-   // we are not trying to hard…
-   if (unlikely(Depth > 100))
+   // we are not trying too hard…
+   if (unlikely(Depth > 3000))
       return false;
 
    PkgState[Pkg->ID].Marked = true;
