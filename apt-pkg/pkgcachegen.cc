@@ -626,16 +626,16 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
 	 pkgCache::PkgIterator const M = Grp.FindPreferredPkg(false); // native or any foreign pkg will do
 	 if (M.end() == false) {
 	    pkgCache::PrvIterator Prv;
+	    pkgCache::VerIterator Ver;
 	    Dynamic<pkgCache::PrvIterator> DynPrv(Prv);
+	    Dynamic<pkgCache::VerIterator> DynVer(Ver);
 	    for (Prv = M.ProvidesList(); Prv.end() == false; ++Prv)
 	    {
 	       if ((Prv->Flags & pkgCache::Flag::ArchSpecific) != 0)
 		  continue;
-	       pkgCache::VerIterator Ver = Prv.OwnerVer();
-	       Dynamic<pkgCache::VerIterator> DynVer(Ver);
-	       if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed ||
-	           ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign &&
-			(Prv->Flags & pkgCache::Flag::MultiArchImplicit) == 0))
+	       Ver = Prv.OwnerVer();
+	       if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign &&
+		   (Prv->Flags & pkgCache::Flag::MultiArchImplicit) == 0)
 	       {
 		  if (APT::Configuration::checkArchitecture(Ver.ParentPkg().Arch()) == false)
 		     continue;
