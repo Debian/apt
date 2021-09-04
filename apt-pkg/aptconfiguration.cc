@@ -315,13 +315,11 @@ bool Configuration::checkLanguage(std::string Lang, bool const All) {
 									/*}}}*/
 // getArchitectures - Return Vector of preferred Architectures		/*{{{*/
 std::vector<std::string> const Configuration::getArchitectures(bool const &Cached) {
-	using std::string;
-
-	std::vector<string> static archs;
+	std::vector<std::string> static archs;
 	if (likely(Cached == true) && archs.empty() == false)
 		return archs;
 
-	string const arch = _config->Find("APT::Architecture");
+	std::string const arch = _config->Find("APT::Architecture");
 	archs = _config->FindVector("APT::Architectures");
 
 	if (archs.empty() == true && _system != nullptr)
@@ -331,15 +329,13 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 	    std::find(archs.begin(), archs.end(), arch) == archs.end())
 		archs.insert(archs.begin(), arch);
 
-	// erase duplicates and empty strings
-	for (std::vector<string>::reverse_iterator a = archs.rbegin();
-	     a != archs.rend(); ++a) {
-		if (a->empty() == true || std::find(a + 1, archs.rend(), *a) != archs.rend())
-			archs.erase(a.base()-1);
-		if (a == archs.rend())
-			break;
-	}
-
+	// erase duplicates, empty strings and very foreign architectures
+	auto newend = std::remove_if(archs.begin(), archs.end(), [](auto const &a) { return a.empty(); });
+	for (auto a = archs.begin(); a != newend; ++a)
+		newend = std::remove(std::next(a), newend, *a);
+	for (auto const &f : _config->FindVector("APT::BarbarianArchitectures"))
+		newend = std::remove(archs.begin(), newend, f);
+	archs.erase(newend, archs.end());
 	return archs;
 }
 									/*}}}*/

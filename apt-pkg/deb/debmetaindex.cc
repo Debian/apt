@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include <map>
+#include <optional>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -966,13 +967,13 @@ pkgCache::RlsFileIterator debReleaseIndex::FindInCache(pkgCache &Cache, bool con
 
 class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 {
-   static std::vector<std::string> getDefaultSetOf(std::string const &Name,
-	 std::map<std::string, std::string> const &Options, std::vector<std::string> const &defaultValues)
+   static std::optional<std::vector<std::string>> getDefaultSetOf(std::string const &Name,
+	 std::map<std::string, std::string> const &Options)
    {
       auto const val = Options.find(Name);
       if (val != Options.end())
 	 return VectorizeString(val->second, ',');
-      return defaultValues;
+      return {};
    }
    static std::vector<std::string> applyPlusMinusOptions(std::string const &Name,
 	 std::map<std::string, std::string> const &Options, std::vector<std::string> &&Values)
@@ -997,12 +998,21 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
    static std::vector<std::string> parsePlusMinusOptions(std::string const &Name,
 	 std::map<std::string, std::string> const &Options, std::vector<std::string> const &defaultValues)
    {
-      return applyPlusMinusOptions(Name, Options, getDefaultSetOf(Name, Options, defaultValues));
+      return applyPlusMinusOptions(Name, Options, getDefaultSetOf(Name, Options).value_or(defaultValues));
    }
    static std::vector<std::string> parsePlusMinusArchOptions(std::string const &Name,
 	 std::map<std::string, std::string> const &Options)
    {
-      auto Values = getDefaultSetOf(Name, Options, APT::Configuration::getArchitectures());
+      std::vector<std::string> Values;
+     if (auto opt = getDefaultSetOf(Name, Options); opt.has_value())
+        Values = opt.value();
+     else
+     {
+	Values = APT::Configuration::getArchitectures();
+	auto veryforeign = _config->FindVector("APT::BarbarianArchitectures");
+	Values.reserve(Values.size() + veryforeign.size());
+	std::move(veryforeign.begin(), veryforeign.end(), std::back_inserter(Values));
+     }
       // all is a very special architecture users shouldn't be concerned with explicitly
       // but if the user does, do not override the choice
       auto const val = Options.find(Name + "-");

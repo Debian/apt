@@ -208,7 +208,10 @@ static bool WriteScenarioLimitedDependency(FileFd &output,
 									/*}}}*/
 static bool checkKnownArchitecture(std::string const &arch)		/*{{{*/
 {
-   return APT::Configuration::checkArchitecture(arch);
+   if (APT::Configuration::checkArchitecture(arch))
+      return true;
+   static auto const veryforeign = _config->FindVector("APT::BarbarianArchitectures");
+   return std::find(veryforeign.begin(), veryforeign.end(), arch) != veryforeign.end();
 }
 									/*}}}*/
 static bool WriteGenericRequestHeaders(FileFd &output, APT::StringView const head)/*{{{*/
@@ -216,6 +219,8 @@ static bool WriteGenericRequestHeaders(FileFd &output, APT::StringView const hea
    bool Okay = WriteOkay(output, head, "Architecture: ", _config->Find("APT::Architecture"), "\n",
 	 "Architectures:");
    for (auto const &a : APT::Configuration::getArchitectures())
+       WriteOkay(Okay, output, " ", a);
+   for (auto const &a : _config->FindVector("APT::BarbarianArchitectures"))
        WriteOkay(Okay, output, " ", a);
    return WriteOkay(Okay, output, "\n");
 }

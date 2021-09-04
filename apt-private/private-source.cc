@@ -638,11 +638,14 @@ static void WriteBuildDependencyPackage(std::ostringstream &buildDepsPkgFile,
 bool DoBuildDep(CommandLine &CmdL)
 {
    std::string hostArch = _config->Find("APT::Get::Host-Architecture");
-   if (hostArch.empty() == false)
+   if (not hostArch.empty())
    {
-      std::vector<std::string> archs = APT::Configuration::getArchitectures();
-      if (std::find(archs.begin(), archs.end(), hostArch) == archs.end())
-	 return _error->Error(_("No architecture information available for %s. See apt.conf(5) APT::Architectures for setup"), hostArch.c_str());
+      if (not APT::Configuration::checkArchitecture(hostArch))
+      {
+	 auto const veryforeign = _config->FindVector("APT::BarbarianArchitectures");
+	 if (std::find(veryforeign.begin(), veryforeign.end(), hostArch) == veryforeign.end())
+	    _error->Warning(_("No architecture information available for %s. See apt.conf(5) APT::Architectures for setup"), hostArch.c_str());
+      }
    }
    auto const nativeArch = _config->Find("APT::Architecture");
    std::string const pseudoArch = hostArch.empty() ? nativeArch : hostArch;

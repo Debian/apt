@@ -1,0 +1,140 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64' 'i386' 'armel' 'mipsel'
+
+insertinstalledpackage 'build-essential' 'all' '1'
+insertpackage 'unstable' 'samey' 'amd64,i386,armel,mipsel' '1' 'Multi-Arch: same'
+insertinstalledpackage 'samey' 'unknown' '1' 'Multi-Arch: same'
+
+insertsource 'unstable' 'cool-foo' 'any' '1' 'Build-Depends: foo, samey'
+insertsource 'unstable' 'bad-amd64-foo' 'any' '1' 'Build-Depends: foo, samey
+Build-Conflicts: foo:amd64'
+insertsource 'unstable' 'bad-armel-foo' 'any' '1' 'Build-Depends: foo, samey
+Build-Conflicts: foo:armel'
+insertsource 'unstable' 'bad-amd64-armel-foo' 'any' '1' 'Build-Depends: foo, samey
+Build-Conflicts: foo:amd64, foo:armel'
+insertsource 'unstable' 'bad-amd64-i386-foo' 'any' '1' 'Build-Depends: foo, samey
+Build-Conflicts: foo:amd64, foo:i386'
+insertsource 'unstable' 'bad-amd64-i386-armel-foo' 'any' '1' 'Build-Depends: foo, samey
+Build-Conflicts: foo:amd64, foo:i386, foo:armel'
+insertpackage 'unstable' 'foo' 'amd64,i386,armel,mipsel' '1' 'Multi-Arch: foreign'
+
+setupaptarchive
+
+installsfoosamey() {
+	local FOO="foo:$1"
+	local SAMEY="samey:$2"
+	if [ "$1" = 'amd64' ]; then FOO='foo'; fi
+	if [ "$2" = 'amd64' ]; then SAMEY='samey'; fi
+	echo "Reading package lists...
+Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  $FOO $SAMEY
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst $FOO (1 unstable [$1])
+Inst $SAMEY (1 unstable [$2])
+Conf $FOO (1 unstable [$1])
+Conf $SAMEY (1 unstable [$2])"
+}
+
+testdpkginstalled 'samey:unknown'
+
+testsuccessequal "$(installsfoosamey 'amd64' 'amd64')" apt build-dep cool-foo -s
+testsuccessequal "$(installsfoosamey 'amd64' 'amd64')" apt build-dep cool-foo -s -a amd64
+testsuccessequal "$(installsfoosamey 'amd64' 'i386')" apt build-dep cool-foo -s -a i386
+testsuccessequal "$(installsfoosamey 'amd64' 'armel')" apt build-dep cool-foo -s -a armel
+
+testsuccessequal "$(installsfoosamey 'i386' 'amd64')" apt build-dep bad-amd64-foo -s
+testsuccessequal "$(installsfoosamey 'i386' 'amd64')" apt build-dep bad-amd64-foo -s -a amd64
+testsuccessequal "$(installsfoosamey 'i386' 'i386')" apt build-dep bad-amd64-foo -s -a i386
+testsuccessequal "$(installsfoosamey 'i386' 'armel')" apt build-dep bad-amd64-foo -s -a armel
+
+testsuccessequal "$(installsfoosamey 'amd64' 'amd64')" apt build-dep bad-armel-foo -s
+testsuccessequal "$(installsfoosamey 'amd64' 'amd64')" apt build-dep bad-armel-foo -s -a amd64
+testsuccessequal "$(installsfoosamey 'amd64' 'i386')" apt build-dep bad-armel-foo -s -a i386
+testsuccessequal "$(installsfoosamey 'amd64' 'armel')" apt build-dep bad-armel-foo -s -a armel
+
+testsuccessequal "$(installsfoosamey 'i386' 'amd64')" apt build-dep bad-amd64-armel-foo -s
+testsuccessequal "$(installsfoosamey 'i386' 'amd64')" apt build-dep bad-amd64-armel-foo -s -a amd64
+testsuccessequal "$(installsfoosamey 'i386' 'i386')" apt build-dep bad-amd64-armel-foo -s -a i386
+testsuccessequal "$(installsfoosamey 'i386' 'armel')" apt build-dep bad-amd64-armel-foo -s -a armel
+
+testsuccessequal "$(installsfoosamey 'armel' 'amd64')" apt build-dep bad-amd64-i386-foo -s
+testsuccessequal "$(installsfoosamey 'armel' 'amd64')" apt build-dep bad-amd64-i386-foo -s -a amd64
+testsuccessequal "$(installsfoosamey 'armel' 'i386')" apt build-dep bad-amd64-i386-foo -s -a i386
+testsuccessequal "$(installsfoosamey 'armel' 'armel')" apt build-dep bad-amd64-i386-foo -s -a armel
+
+testsuccessequal "$(installsfoosamey 'mipsel' 'amd64')" apt build-dep bad-amd64-i386-armel-foo -s
+testsuccessequal "$(installsfoosamey 'mipsel' 'amd64')" apt build-dep bad-amd64-i386-armel-foo -s -a amd64
+testsuccessequal "$(installsfoosamey 'mipsel' 'i386')" apt build-dep bad-amd64-i386-armel-foo -s -a i386
+testsuccessequal "$(installsfoosamey 'mipsel' 'armel')" apt build-dep bad-amd64-i386-armel-foo -s -a armel
+
+
+msgmsg 'BarbarianArchitectures' 'config'
+echo 'APT::BarbarianArchitectures { "mipsel"; "armel"; };' > rootdir/etc/apt/apt.conf.d/99barbarianarchs
+testsuccess aptcache gencaches
+
+testsuccessequal "$(installsfoosamey 'amd64' 'i386')" apt build-dep cool-foo -s -a i386
+testsuccessequal "$(installsfoosamey 'i386' 'i386')" apt build-dep bad-amd64-foo -s -a i386
+testsuccessequal "$(installsfoosamey 'amd64' 'i386')" apt build-dep bad-armel-foo -s -a i386
+testsuccessequal "$(installsfoosamey 'i386' 'i386')" apt build-dep bad-amd64-armel-foo -s -a i386
+testfailureequal 'Reading package lists...
+Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ builddeps:bad-amd64-i386-foo:i386 : Depends: foo:i386
+E: Unable to correct problems, you have held broken packages.' apt build-dep bad-amd64-i386-foo -s -a i386
+testfailureequal 'Reading package lists...
+Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ builddeps:bad-amd64-i386-armel-foo:i386 : Depends: foo:i386
+E: Unable to correct problems, you have held broken packages.' apt build-dep bad-amd64-i386-armel-foo -s -a i386
+
+testsuccessequal "$(installsfoosamey 'amd64' 'armel')" apt build-dep cool-foo -s -a armel
+testsuccessequal "$(installsfoosamey 'i386' 'armel')" apt build-dep bad-amd64-foo -s -a armel
+testsuccessequal "$(installsfoosamey 'amd64' 'armel')" apt build-dep bad-armel-foo -s -a armel
+testsuccessequal "$(installsfoosamey 'i386' 'armel')" apt build-dep bad-amd64-armel-foo -s -a armel
+testsuccessequal "$(installsfoosamey 'armel' 'armel')" apt build-dep bad-amd64-i386-foo -s -a armel
+FAILURE='Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ builddeps:bad-amd64-i386-armel-foo:armel : Depends: foo:armel
+E: Unable to correct problems, you have held broken packages.'
+testfailureequal "Reading package lists...
+$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel
+
+msgmsg 'BarbarianArchitectures' 'cmdline options'
+rm rootdir/etc/apt/apt.conf.d/99barbarianarchs
+testsuccess aptcache gencaches
+
+testsuccessequal "$(installsfoosamey 'mipsel' 'armel')" apt build-dep bad-amd64-i386-armel-foo -s -a armel
+testsuccess aptcache gencaches -o APT::BarbarianArchitectures::=armel
+testsuccessequal "$(installsfoosamey 'mipsel' 'armel')" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures::=armel
+testfailureequal "$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures::=mipsel
+testfailureequal "$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures::=mipsel -o APT::BarbarianArchitectures::=armel
+testfailureequal "Reading package lists...
+$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures=mipsel,armel
