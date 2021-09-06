@@ -47,6 +47,7 @@ using namespace std;
 static bool DoAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
+   CacheFile.InhibitActionGroups(true);
    pkgDepCache * const DepCache = CacheFile.GetDepCache();
    if (unlikely(DepCache == nullptr))
       return false;
@@ -105,6 +106,7 @@ static bool DoAuto(CommandLine &CmdL)
 static bool DoMarkAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
+   CacheFile.InhibitActionGroups(true);
    pkgDepCache * const DepCache = CacheFile.GetDepCache();
    if (unlikely(DepCache == nullptr))
       return false;
@@ -262,6 +264,7 @@ static bool DoMinimize(CommandLine &CmdL)
 static bool ShowAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
+   CacheFile.InhibitActionGroups(true);
    pkgDepCache * const DepCache = CacheFile.GetDepCache();
    if (unlikely(DepCache == nullptr))
       return false;
@@ -301,6 +304,7 @@ static bool ShowAuto(CommandLine &CmdL)
 static bool DoSelection(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
+   CacheFile.InhibitActionGroups(true);
    pkgCache * const Cache = CacheFile.GetPkgCache();
    if (unlikely(Cache == nullptr))
       return false;

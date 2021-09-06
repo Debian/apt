@@ -307,6 +307,13 @@ find_project_binary_dir() {
 		export PROJECT_BINARY_DIR
 	fi
 }
+_removetmpworkingdirectory() {
+	cd /
+	if [ -n "$TMPWORKINGDIRECTORY" -a -d "$TMPWORKINGDIRECTORY" ]; then
+		rm -rf "$TMPWORKINGDIRECTORY"
+	fi
+	TMPWORKINGDIRECTORY=''
+}
 setupenvironment() {
 	# Next check needs a gnu stat, let's figure that out early.
 	stat=stat
@@ -317,8 +324,10 @@ setupenvironment() {
 	if [ -n "$TMPDIR" ] && [ "$(id -u)" = '0' ] && [ "$($stat --format '%a' "$TMPDIR")" != '1777' ]; then
 		unset TMPDIR
 	fi
-	TMPWORKINGDIRECTORY="$(mktemp -d)"
-	addtrap "cd /; rm -rf '$(escape_shell "$TMPWORKINGDIRECTORY")';"
+	if [ -z "$TMPWORKINGDIRECTORY" ]; then
+		addtrap '_removetmpworkingdirectory;'
+		TMPWORKINGDIRECTORY="$(mktemp -d)"
+	fi
 	if [ -n "$TMPDIR_ADD" ]; then
 		TMPWORKINGDIRECTORY="${TMPWORKINGDIRECTORY}/${TMPDIR_ADD}"
 		mkdir -p "$TMPWORKINGDIRECTORY"
@@ -361,6 +370,7 @@ setupenvironment() {
         APTINTERNALSOLVER="${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${BUILDDIRECTORY}/solvers/apt"}"
 	APTDUMPSOLVER="${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${BUILDDIRECTORY}/solvers/dump"}"
 	APTINTERNALPLANNER="${APT_INTEGRATION_TESTS_INTERNAL_PLANNER:-"${BUILDDIRECTORY}/planners/apt"}"
+	ARTIFACTSDIR="${APT_INTEGRATION_TESTS_ARTIFACTS_DIR:-"${BUILDDIRECTORY}/artifacts"}"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
         # -----
 
@@ -1778,6 +1788,52 @@ msgfailoutput() {
 		ls -l
 	fi
 	catfile "$OUTPUT"
+	if [ "$CMD" != 'echo' ] && tail -n 1 "$OUTPUT" | grep -q '(core dumped)$'; then
+		local COREDUMP="${TMPWORKINGDIRECTORY}/rootdir/tmp/core.dump"
+		local COREEXE=''
+		for CORENAME in 'core' 'core.pid'; do
+			if [ -s "$CORENAME" ]; then
+				cp -a ${CORENAME} "$COREDUMP"
+			elif [ -s "${TMPWORKINGDIRECTORY}/${CORENAME}" ]; then
+				cp -a "${TMPWORKINGDIRECTORY}/${CORENAME}" "$COREDUMP"
+			else
+				continue
+			fi
+			break
+		done
+		if [ -s "$COREDUMP" ]; then
+			true # found already as a file
+		elif dpkg-checkbuilddeps -d 'systemd-coredump' /dev/null >/dev/null 2>&1; then
+			COREEXE="$(coredumpctl -1 --no-legend list | sed -e 's#^.* \([^ ]\+\)$#\1#')"
+			coredumpctl -1 dump "$COREEXE" -o "$COREDUMP" 2>/dev/null >&2 || true
+		else
+			echo '### core dump not found ###'
+			cat /proc/sys/kernel/core_pattern
+		fi
+		if [ -s "$COREDUMP" ]; then
+			if [ -z "$COREEXE" ]; then
+				case "$CMD" in
+				apt) COREEXE="${BUILDDIRECTORY}/${CMD}";;
+				aptftparchive) COREEXE="${APTFTPARCHIVEBINDIR}/apt-ftparchive";;
+				apthelper) COREEXE="${APTHELPERBINDIR}/apt-helper";;
+				aptwebserver) COREEXE="${APTTESTHELPERSBINDIR}/aptwebserver";;
+				apt*) COREEXE="${BUILDDIRECTORY}/apt-${CMD##*apt}";;
+				*) COREEXE="${BUILDDIRECTORY}/${CMD}";;
+				esac
+			fi
+
+			if [ -d "${ARTIFACTSDIR}" ]; then
+				local ARTIFACT_COREDUMP="$(mktemp --suffix=.coredump -p "${ARTIFACTSDIR}" "${COREEXE##*/}-XXXXXX")"
+				cp -a "$COREDUMP" "$ARTIFACT_COREDUMP"
+				echo "#### coredump in $ARTIFACT_COREDUMP for $COREEXE ####"
+			fi
+			if [ -n "$COREEXE" -a -s "$COREEXE" ] && dpkg-checkbuilddeps -d 'gdb' /dev/null >/dev/null 2>&1; then
+				echo "#### gdb backtrace ####"
+				command gdb --batch -n -ex 'set pagination off' --ex 'thread apply all bt full' "$COREEXE" "$COREDUMP" || true
+			fi
+		fi
+		rm -f "$COREDUMP"
+	fi
 	msgfail "$MSG"
 }
 
@@ -1799,6 +1855,9 @@ testsuccesswithglobalerror() {
 			elif grep -E "^[${ERRORS}]: " "$OUTPUT" > "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" 2>&1; then
 				if [ "$IGNORE_PTY_NOT_MOUNTED" = '1' ]; then
 					if echo 'E: Can not write log (Is /dev/pts mounted?) - posix_openpt (2: No such file or directory)' \
+						| cmp - "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" >/dev/null 2>&1; then
+						msgpass
+					elif echo 'E: Can not write log (Is /dev/pts mounted?) - posix_openpt (13: Permission denied)' \
 						| cmp - "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" >/dev/null 2>&1; then
 						msgpass
 					else

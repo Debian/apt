@@ -11,7 +11,8 @@ target_link_libraries(aptdropprivs apt-pkg)
 add_executable(test_fileutl test_fileutl.cc)
 target_link_libraries(test_fileutl apt-pkg)
 add_executable(createdeb-cve-2020-27350 createdeb-cve-2020-27350.cc)
-
+add_executable(longest-dependency-chain longest-dependency-chain.cc)
+target_link_libraries(longest-dependency-chain apt-pkg apt-private)
 
 add_library(noprofile SHARED libnoprofile.c)
 target_link_libraries(noprofile ${CMAKE_DL_LIBS})

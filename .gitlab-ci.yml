@@ -17,7 +17,7 @@ test as root:
     - chmod -R o+rwX $PWD
     - ./prepare-release travis-ci
     - sudo -u travis mkdir -p build .ccache
-    - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=Release  -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
+    - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo  -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
     - sudo -u travis --preserve-env=CCACHE_DIR,CCACHE_BASEDIR ninja -C build
     - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
     - unbuffer ./test/integration/run-tests -q -j 4
@@ -34,7 +34,7 @@ test as user:
     - chmod -R o+rwX $PWD
     - ./prepare-release travis-ci
     - sudo -u travis mkdir -p build .ccache
-    - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
+    - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
     - sudo -u travis --preserve-env=CCACHE_DIR,CCACHE_BASEDIR ninja -C build
     - sudo -u travis CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
     - sudo -u travis unbuffer ./test/integration/run-tests -q -j 4

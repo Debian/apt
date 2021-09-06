@@ -300,6 +300,7 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgRecords &Recs, /*{{{*/
 bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
+   CacheFile.InhibitActionGroups(true);
    auto VolatileCmdL = GetAllPackagesAsPseudo(CacheFile.GetSourceList(), CmdL, AddVolatileBinaryFile, "");
 
    if (unlikely(CacheFile.GetPkgCache() == nullptr))
