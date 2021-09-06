@@ -34,7 +34,6 @@
 #include <tuple>
 #include <vector>
 
-#include <assert.h>
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -737,9 +736,13 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseInterval)
 
 	 if (f <= now)
 	 {
-	    I->Cycle();	      // Queue got stuck, unstuck it.
+	    if (not I->Cycle()) // Queue got stuck, unstuck it.
+	       goto stop;
 	    fetchAfter = now; // need to time out in select() below
-	    assert(I->Items->Owner->Status != pkgAcquire::Item::StatIdle);
+	    if (I->Items->Owner->Status == pkgAcquire::Item::StatIdle)
+	    {
+	       _error->Warning("Tried to start delayed item %s, but failed", I->Items->Description.c_str());
+	    }
 	 }
 	 else if (f < fetchAfter || fetchAfter == time_point{})
 	 {
@@ -781,8 +784,8 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseInterval)
 	    break;
 	 }
       }      
-   }   
-
+   }
+stop:
    if (Log != 0)
       Log->Stop();
    
