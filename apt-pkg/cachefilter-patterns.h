@@ -417,6 +417,22 @@ struct APT_HIDDEN VersionIsVersion : public VersionAnyMatcher
       return matcher(Ver.VerStr());
    }
 };
+
+struct APT_HIDDEN VersionIsPriority : public VersionAnyMatcher
+{
+   std::string name;
+   explicit VersionIsPriority(std::string name) : name(name) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      std::string Mapping[] = {"", "required","important","standard",
+                            "optional","extra"};
+      if (Ver->Priority > 0 && Ver->Priority < APT_ARRAY_SIZE(Mapping)) {
+         return name == Mapping[Ver->Priority];
+      }
+      return false;
+   }
+};
+
 } // namespace Patterns
 } // namespace Internal
 } // namespace APT
