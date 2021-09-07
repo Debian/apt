@@ -1,3 +1,20 @@
+apt (2.3.9) unstable; urgency=medium
+
+  [ Frans Spiesschaert ]
+  * Dutch manpages translation update (Closes: #992352)
+
+  [ David Kalnischkies ]
+  * Fix infinite recursions in MarkPackage and improve recursions in general
+    - Inhibit autoremove calculation in apt-mark and apt show
+    - Don't venture too deeply in AutoRemovers MarkPackage
+    - Stop autoremover from endlessly exploring cyclic providers (Closes: #992993)
+    - Increase recursion limits from 100 to 3000
+
+  [ Julian Andres Klode ]
+  * Improve error handling of cycling delayed queues
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 07 Sep 2021 17:25:44 +0200
+
 apt (2.3.8) unstable; urgency=medium
 
   * Upload to unstable
