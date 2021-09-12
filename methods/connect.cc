@@ -894,7 +894,8 @@ struct TlsFd : public MethodFd
 };
 
 ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
-		      unsigned long Timeout, aptMethod *Owner)
+		      unsigned long const Timeout, aptMethod * const Owner,
+		      aptConfigWrapperForMethods const * const OwnerConf)
 {
    if (_config->FindB("Acquire::AllowTLS", true) == false)
    {
@@ -940,7 +941,7 @@ ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
    }
 
    // Credential setup
-   std::string fileinfo = Owner->ConfigFind("CaInfo", "");
+   std::string fileinfo = OwnerConf->ConfigFind("CaInfo", "");
    if (fileinfo.empty())
    {
       // No CaInfo specified, use system trust store.
@@ -965,20 +966,20 @@ ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
       }
    }
 
-   if (!Owner->ConfigFind("IssuerCert", "").empty())
+   if (not OwnerConf->ConfigFind("IssuerCert", "").empty())
    {
       _error->Error("The option '%s' is not supported anymore", "IssuerCert");
       return ResultState::FATAL_ERROR;
    }
-   if (!Owner->ConfigFind("SslForceVersion", "").empty())
+   if (not OwnerConf->ConfigFind("SslForceVersion", "").empty())
    {
       _error->Error("The option '%s' is not supported anymore", "SslForceVersion");
       return ResultState::FATAL_ERROR;
    }
 
    // For client authentication, certificate file ...
-   std::string const cert = Owner->ConfigFind("SslCert", "");
-   std::string const key = Owner->ConfigFind("SslKey", "");
+   std::string const cert = OwnerConf->ConfigFind("SslCert", "");
+   std::string const key = OwnerConf->ConfigFind("SslKey", "");
    if (cert.empty() == false)
    {
       if ((err = gnutls_certificate_set_x509_key_file(
@@ -993,7 +994,7 @@ ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
    }
 
    // CRL file
-   std::string const crlfile = Owner->ConfigFind("CrlFile", "");
+   std::string const crlfile = OwnerConf->ConfigFind("CrlFile", "");
    if (crlfile.empty() == false)
    {
       if ((err = gnutls_certificate_set_x509_crl_file(tlsFd->credentials,
@@ -1017,9 +1018,9 @@ ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
       return ResultState::FATAL_ERROR;
    }
 
-   if (Owner->ConfigFindB("Verify-Peer", true))
+   if (OwnerConf->ConfigFindB("Verify-Peer", true))
    {
-      gnutls_session_set_verify_cert(tlsFd->session, Owner->ConfigFindB("Verify-Host", true) ? tlsFd->hostname.c_str() : nullptr, 0);
+      gnutls_session_set_verify_cert(tlsFd->session, OwnerConf->ConfigFindB("Verify-Host", true) ? tlsFd->hostname.c_str() : nullptr, 0);
    }
 
    // set SNI only if the hostname is really a name and not an address
