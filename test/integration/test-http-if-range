@@ -75,3 +75,8 @@ testrun 'buggy server' '200' '206' '206' '416'
 echo 'Acquire::http::localhost::AllowRanges "false";' > rootdir/etc/apt/apt.conf.d/noallowranges
 testrun 'range disabled by conf' '200' '200' '200' '200'
 rm rootdir/etc/apt/apt.conf.d/noallowranges
+# detect varnish < 6.4 automatically
+webserverconfig 'aptwebserver::response-header::Via' '1.1 varnish (Varnish/6.1)'
+testrun 'bad varnish' '200' '200' '200' '200'
+webserverconfig 'aptwebserver::response-header::Via' '1.1 varnish (Varnish/6.4)'
+testrun 'good varnish' '200' '206' '206' '416'
