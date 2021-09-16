@@ -31,7 +31,11 @@ validpartialfile() {
 	head -n 5 "$TESTFILE" > "$DOWNFILE"
 	touch -d "$(stat --format '%y' "${TESTFILE}")" "$DOWNFILE"
 }
-badpartialfile() {
+badolderpartialfile() {
+	head -n 5 "$TESTFILE" > "$DOWNFILE"
+	touch -d "$(stat --format '%y' "${TESTFILE}") - 1sec" "$DOWNFILE"
+}
+badnewerpartialfile() {
 	head -n 5 "$TESTFILE" > "$DOWNFILE"
 	touch -d 'now + 1hour' "$DOWNFILE"
 }
@@ -52,8 +56,13 @@ testrun() {
 	testwebserverlaststatuscode "$3" "$DOWNLOADLOG"
 	testsuccess cmp "$TESTFILE" "$DOWNFILE"
 
-	badpartialfile
-	testdownloadfile "bad partial file $1"
+	badolderpartialfile
+	testdownloadfile "bad old partial file $1"
+	testwebserverlaststatuscode "$4" "$DOWNLOADLOG"
+	testsuccess cmp "$TESTFILE" "$DOWNFILE"
+
+	badnewerpartialfile
+	testdownloadfile "bad new partial file $1"
 	testwebserverlaststatuscode "$4" "$DOWNLOADLOG"
 	testsuccess cmp "$TESTFILE" "$DOWNFILE"
 
