@@ -1,0 +1,243 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+buildsimplenativepackage 'foreign-foo' 'amd64,i386' '1' 'stable' 'Multi-Arch: foreign
+Provides: foreign-bar'
+buildsimplenativepackage 'allowed-foo' 'amd64,i386' '1' 'stable' 'Multi-Arch: allowed
+Provides: allowed-bar'
+buildsimplenativepackage 'needs-foreign-foo' 'amd64,i386' '1' 'stable' 'Depends: foreign-foo'
+buildsimplenativepackage 'needs-foreign-bar' 'amd64,i386' '1' 'stable' 'Depends: foreign-bar'
+buildsimplenativepackage 'needs-allowed-foo' 'amd64,i386' '1' 'stable' 'Depends: allowed-foo'
+buildsimplenativepackage 'needs-allowed-bar' 'amd64,i386' '1' 'stable' 'Depends: allowed-bar'
+buildsimplenativepackage 'needs-allowed-foo-any' 'amd64,i386' '1' 'stable' 'Depends: allowed-foo:any'
+buildsimplenativepackage 'needs-allowed-bar-any' 'amd64,i386' '1' 'stable' 'Depends: allowed-bar:any'
+
+setupaptarchive
+
+simulateinstall() {
+	testsuccessequal "Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  $1-foo
+The following NEW packages will be installed:
+  $1-foo needs-$1-$2
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst $1-foo (1 stable [amd64])
+Inst needs-$1-$2 (1 stable [amd64])
+Conf $1-foo (1 stable [amd64])
+Conf needs-$1-$2 (1 stable [amd64])" apt install needs-$1-$2 -s
+}
+simulateinstall 'foreign' 'foo'
+simulateinstall 'foreign' 'bar'
+simulateinstall 'allowed' 'foo'
+simulateinstall 'allowed' 'bar'
+simulateinstall 'allowed' 'foo-any'
+simulateinstall 'allowed' 'bar-any'
+
+# install a barbaric architecture which wont do
+insertinstalledpackage 'foreign-foo' 'armel' '1' 'Multi-Arch: foreign
+Provides: foreign-bar'
+insertinstalledpackage 'allowed-foo' 'armel' '1' 'Multi-Arch: allowed
+Provides: allowed-bar'
+testdpkginstalled foreign-foo:armel allowed-foo:armel
+
+runandsimulateaptinstall() {
+	local MSG="$1"
+	shift
+	testsuccessequal "$MSG" apt install -s "$@"
+	testsuccess apt install -y "$@"
+}
+
+runandsimulateaptinstall 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  allowed-foo foreign-foo
+The following packages will be REMOVED:
+  allowed-foo:armel foreign-foo:armel
+The following NEW packages will be installed:
+  allowed-foo foreign-foo needs-allowed-bar-any needs-allowed-foo-any
+  needs-foreign-bar needs-foreign-foo
+0 upgraded, 6 newly installed, 2 to remove and 0 not upgraded.
+Remv allowed-foo:armel [1]
+Remv foreign-foo:armel [1]
+Inst allowed-foo (1 stable [amd64])
+Inst foreign-foo (1 stable [amd64])
+Inst needs-allowed-bar-any (1 stable [amd64])
+Inst needs-allowed-foo-any (1 stable [amd64])
+Inst needs-foreign-bar (1 stable [amd64])
+Inst needs-foreign-foo (1 stable [amd64])
+Conf allowed-foo (1 stable [amd64])
+Conf foreign-foo (1 stable [amd64])
+Conf needs-allowed-bar-any (1 stable [amd64])
+Conf needs-allowed-foo-any (1 stable [amd64])
+Conf needs-foreign-bar (1 stable [amd64])
+Conf needs-foreign-foo (1 stable [amd64])' needs-foreign-foo needs-foreign-bar needs-allowed-foo-any needs-allowed-bar-any
+runandsimulateaptinstall 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  needs-allowed-bar needs-allowed-foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst needs-allowed-bar (1 stable [amd64])
+Inst needs-allowed-foo (1 stable [amd64])
+Conf needs-allowed-bar (1 stable [amd64])
+Conf needs-allowed-foo (1 stable [amd64])' needs-allowed-foo needs-allowed-bar
+testdpkginstalled foreign-foo:amd64 allowed-foo:amd64 needs-foreign-foo needs-foreign-bar needs-allowed-foo-any needs-allowed-bar-any
+testempty dpkg -C
+
+# check if dependencies between barbarians work
+testsuccess aptget check
+configarchitecture 'i386'
+testsuccess aptget check
+configarchitecture 'amd64' 'i386'
+
+testsuccess apt purge -y needs-foreign-foo needs-foreign-bar needs-allowed-foo-any needs-allowed-bar-any
+testdpkgnotinstalled foreign-foo:armel allowed-foo:armel needs-foreign-foo needs-foreign-bar needs-allowed-foo-any needs-allowed-bar-any
+testdpkginstalled foreign-foo:amd64 allowed-foo:amd64 needs-allowed-foo needs-allowed-bar
+
+runandsimulateaptinstall 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  allowed-foo:i386 foreign-foo:i386
+The following packages will be REMOVED:
+  allowed-foo foreign-foo needs-allowed-bar needs-allowed-foo
+The following NEW packages will be installed:
+  allowed-foo:i386 foreign-foo:i386 needs-allowed-bar-any
+  needs-allowed-foo-any needs-foreign-bar needs-foreign-foo
+0 upgraded, 6 newly installed, 4 to remove and 0 not upgraded.
+Remv needs-allowed-foo [1]
+Remv needs-allowed-bar [1]
+Remv allowed-foo [1]
+Remv foreign-foo [1]
+Inst allowed-foo:i386 (1 stable [i386])
+Inst foreign-foo:i386 (1 stable [i386])
+Inst needs-allowed-bar-any (1 stable [amd64])
+Inst needs-allowed-foo-any (1 stable [amd64])
+Inst needs-foreign-bar (1 stable [amd64])
+Inst needs-foreign-foo (1 stable [amd64])
+Conf allowed-foo:i386 (1 stable [i386])
+Conf foreign-foo:i386 (1 stable [i386])
+Conf needs-allowed-bar-any (1 stable [amd64])
+Conf needs-allowed-foo-any (1 stable [amd64])
+Conf needs-foreign-bar (1 stable [amd64])
+Conf needs-foreign-foo (1 stable [amd64])' needs-foreign-foo needs-foreign-bar needs-allowed-foo-any needs-allowed-bar-any foreign-foo:amd64- allowed-foo:amd64-
+
+runandsimulateaptinstall 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  needs-allowed-bar-any needs-allowed-foo-any needs-foreign-bar
+  needs-foreign-foo
+The following NEW packages will be installed:
+  needs-allowed-bar-any:i386 needs-allowed-foo-any:i386 needs-foreign-bar:i386
+  needs-foreign-foo:i386
+0 upgraded, 4 newly installed, 4 to remove and 0 not upgraded.
+Remv needs-allowed-bar-any [1]
+Remv needs-allowed-foo-any [1]
+Remv needs-foreign-bar [1]
+Remv needs-foreign-foo [1]
+Inst needs-allowed-bar-any:i386 (1 stable [i386])
+Inst needs-allowed-foo-any:i386 (1 stable [i386])
+Inst needs-foreign-bar:i386 (1 stable [i386])
+Inst needs-foreign-foo:i386 (1 stable [i386])
+Conf needs-allowed-bar-any:i386 (1 stable [i386])
+Conf needs-allowed-foo-any:i386 (1 stable [i386])
+Conf needs-foreign-bar:i386 (1 stable [i386])
+Conf needs-foreign-foo:i386 (1 stable [i386])' needs-foreign-foo:i386 needs-foreign-bar:i386 needs-allowed-foo-any:i386 needs-allowed-bar-any:i386
+
+runandsimulateaptinstall 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  allowed-foo:i386 foreign-foo:i386
+The following NEW packages will be installed:
+  allowed-foo foreign-foo
+0 upgraded, 2 newly installed, 2 to remove and 0 not upgraded.
+Remv allowed-foo:i386 [1] [needs-allowed-bar-any:i386 needs-allowed-foo-any:i386 ]
+Inst allowed-foo (1 stable [amd64])
+Remv foreign-foo:i386 [1] [needs-foreign-bar:i386 needs-foreign-foo:i386 ]
+Inst foreign-foo (1 stable [amd64])
+Conf allowed-foo (1 stable [amd64])
+Conf foreign-foo (1 stable [amd64])' foreign-foo:amd64 allowed-foo:amd64
+testdpkginstalled foreign-foo:amd64 needs-foreign-foo:i386 needs-foreign-bar:i386
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  allowed-foo:i386
+The following packages will be REMOVED:
+  allowed-foo
+The following NEW packages will be installed:
+  allowed-foo:i386 needs-allowed-bar:i386 needs-allowed-foo:i386
+0 upgraded, 3 newly installed, 1 to remove and 0 not upgraded.
+Remv allowed-foo [1] [needs-allowed-bar-any:i386 needs-allowed-foo-any:i386 ]
+Inst allowed-foo:i386 (1 stable [i386])
+Inst needs-allowed-bar:i386 (1 stable [i386])
+Inst needs-allowed-foo:i386 (1 stable [i386])
+Conf allowed-foo:i386 (1 stable [i386])
+Conf needs-allowed-bar:i386 (1 stable [i386])
+Conf needs-allowed-foo:i386 (1 stable [i386])' apt install needs-allowed-foo:i386 needs-allowed-bar:i386 -s
+
+testsuccess aptget check
+# make amd64 packages barbaric: the needs are i386 native, the providers amd64 barbaric!
+configarchitecture 'i386'
+testfailureequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+You might want to run 'apt --fix-broken install' to correct these.
+The following packages have unmet dependencies:
+ needs-allowed-bar-any : Depends: allowed-bar:any
+ needs-allowed-foo-any : Depends: allowed-foo:any
+ needs-foreign-bar : Depends: foreign-bar
+ needs-foreign-foo : Depends: foreign-foo but it is not installed
+E: Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution)." aptget check
+
+# make i386 packages barbaric, so the providers are now native
+configarchitecture 'amd64'
+testsuccess aptget check
+
+testsuccess apt install -y needs-allowed-foo needs-allowed-bar
+testsuccess dpkg --remove --force-depends foreign-foo:amd64 allowed-foo:amd64
+testdpkginstalled needs-foreign-foo:i386 needs-foreign-bar:i386 needs-allowed-foo needs-allowed-bar needs-allowed-foo-any:i386 needs-allowed-bar-any:i386
+testfailure aptget check
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+Correcting dependencies... Done
+The following additional packages will be installed:
+  allowed-foo foreign-foo
+The following NEW packages will be installed:
+  allowed-foo foreign-foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst allowed-foo (1 stable [amd64]) [needs-foreign-bar:i386 needs-foreign-foo:i386 ]
+Inst foreign-foo (1 stable [amd64])
+Conf allowed-foo (1 stable [amd64])
+Conf foreign-foo (1 stable [amd64])' apt install --fix-broken -s
+# note that dpkg would not accept this as its a barbaric arch,
+# but it is the easiest to try if the dependencies as such work in apt
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+Correcting dependencies... Done
+Note, selecting 'foreign-foo:i386' instead of './incoming/foreign-foo_1_i386.deb'
+Note, selecting 'allowed-foo:i386' instead of './incoming/allowed-foo_1_i386.deb'
+The following packages will be REMOVED:
+  needs-allowed-bar needs-allowed-foo
+The following NEW packages will be installed:
+  allowed-foo:i386 foreign-foo:i386
+0 upgraded, 2 newly installed, 2 to remove and 0 not upgraded.
+Remv needs-allowed-bar [1] [needs-foreign-bar:i386 needs-foreign-foo:i386 needs-allowed-bar-any:i386 needs-allowed-foo-any:i386 needs-allowed-foo:amd64 ]
+Remv needs-allowed-foo [1] [needs-foreign-bar:i386 needs-foreign-foo:i386 needs-allowed-bar-any:i386 needs-allowed-foo-any:i386 ]
+Inst allowed-foo:i386 (1 local-deb [i386]) [needs-foreign-bar:i386 needs-foreign-foo:i386 ]
+Inst foreign-foo:i386 (1 local-deb [i386])
+Conf allowed-foo:i386 (1 local-deb [i386])
+Conf foreign-foo:i386 (1 local-deb [i386])" apt install --fix-broken -s ./incoming/foreign-foo_1_i386.deb ./incoming/allowed-foo_1_i386.deb

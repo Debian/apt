@@ -96,6 +96,7 @@ Conf fine-installed:i386 (3 experimental [i386])
 Conf out-of-sync-gone-foreign (2 unstable [amd64])
 Conf out-of-sync-gone-native:i386 (2 unstable [i386])' aptget dist-upgrade -s #-o Debug::pkgDepCache::Marker=1
 
+testempty dpkg -C
 rm rootdir/var/lib/dpkg/status
 insertinstalledpackage 'libsame2' 'i386' '1' 'Multi-Arch: same'
 insertinstalledpackage 'libsame3' 'i386' '1' 'Multi-Arch: same'
@@ -128,3 +129,5 @@ Inst depender3 (3 unstable [all])
 Conf libsame3:i386 (3 unstable [i386])
 Conf libsame3 (3 unstable [amd64])
 Conf depender3 (3 unstable [all])' aptget install depender3 -s
+
+testempty dpkg -C

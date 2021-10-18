@@ -823,6 +823,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
       return true;
 
    string const pkgArch = Ver.Arch();
+   bool const barbarianArch = not APT::Configuration::checkArchitecture(pkgArch);
 
    while (1)
    {
@@ -843,7 +844,14 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
       }
       else if (Package.substr(found) == ":any")
       {
-	 if (NewDepends(Ver,Package,"any",Version,Op,Type) == false)
+	 if (barbarianArch)
+	 {
+	    if (not NewDepends(Ver, Package, "any", Version, Op | pkgCache::Dep::Or, Type))
+	       return false;
+	    if (not NewDepends(Ver, Package.substr(0, found), pkgArch, Version, Op, Type))
+	       return false;
+	 }
+	 else if (not NewDepends(Ver, Package, "any", Version, Op, Type))
 	    return false;
       }
       else
@@ -888,6 +896,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
    }
 
    string const Arch = Ver.Arch();
+   bool const barbarianArch = not APT::Configuration::checkArchitecture(Arch);
    const char *Start;
    const char *Stop;
    if (Section.Find(pkgTagSection::Key::Provides,Start,Stop) == true)
@@ -914,7 +923,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	    if (NewProvides(Ver, Package, "any", Version, pkgCache::Flag::ArchSpecific) == false)
 	       return false;
 	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
-	    if (APT::Configuration::checkArchitecture(Arch))
+	    if (not barbarianArch)
 	    {
 	       if (NewProvidesAllArch(Ver, Package, Version, 0) == false)
 		  return false;
@@ -922,7 +931,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	    else if (NewProvides(Ver, Package, Arch, Version, 0) == false)
 	       return false;
 	 } else {
-	    if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
+	    if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed && not barbarianArch)
 	    {
 	       if (NewProvides(Ver, Package.to_string().append(":any"), "any", Version, pkgCache::Flag::MultiArchImplicit) == false)
 		  return false;
@@ -945,7 +954,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
       } while (Start != Stop);
    }
 
-   if (APT::Configuration::checkArchitecture(Arch))
+   if (not barbarianArch)
    {
       if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
       {

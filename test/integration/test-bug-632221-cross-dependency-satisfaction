@@ -232,14 +232,15 @@ configarchitecture 'amd64' 'armel'
 insertinstalledpackage 'cool' 'amd64' '0.5'
 insertinstalledpackage 'foreigner' 'armel' '0.5'
 
-testsuccessequal 'Reading package lists...
+APT_ON_AMD64='Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   amdboot doxygen libc6 libc6-dev libfwibble-dev libfwibble1 linux-stuff
 The following packages will be upgraded:
-  foreigner:armel
-1 upgraded, 7 newly installed, 0 to remove and 1 not upgraded.
+  cool foreigner:armel
+2 upgraded, 7 newly installed, 0 to remove and 0 not upgraded.
 Inst amdboot (1.0 unstable [amd64])
+Inst cool [0.5] (1.0 unstable [amd64])
 Inst doxygen (1.0 unstable [amd64])
 Inst foreigner:armel [0.5] (1.0 unstable [armel])
 Inst libc6 (1.0 unstable [amd64])
@@ -248,13 +249,17 @@ Inst libfwibble1 (1.0 unstable [amd64])
 Inst libfwibble-dev (1.0 unstable [amd64])
 Inst linux-stuff (1.0 unstable [amd64])
 Conf amdboot (1.0 unstable [amd64])
+Conf cool (1.0 unstable [amd64])
 Conf doxygen (1.0 unstable [amd64])
 Conf foreigner:armel (1.0 unstable [armel])
 Conf libc6 (1.0 unstable [amd64])
 Conf libc6-dev (1.0 unstable [amd64])
 Conf libfwibble1 (1.0 unstable [amd64])
 Conf libfwibble-dev (1.0 unstable [amd64])
-Conf linux-stuff (1.0 unstable [amd64])' aptget build-dep apt -s
+Conf linux-stuff (1.0 unstable [amd64])'
+testsuccessequal "$APT_ON_AMD64" aptget build-dep apt -s
+testsuccessequal "Reading package lists...
+$APT_ON_AMD64" aptget build-dep apt -s -a amd64
 
 testsuccessequal 'Reading package lists...
 Reading package lists...
@@ -288,19 +293,16 @@ Conf libfwibble-dev:armel (1.0 unstable [armel])' aptget build-dep apt -s -a arm
 
 configarchitecture 'armel' 'amd64'
 
-# cool 0.5 is not M-A: allowed, so amd64 is not acceptable
-testsuccessequal 'Reading package lists...
+APT_ON_ARMEL='Reading package lists...
 Building dependency tree...
-The following packages will be REMOVED:
-  cool:amd64
 The following NEW packages will be installed:
-  amdboot:amd64 arm-stuff cool doxygen libc6 libc6-dev libfwibble-dev
-  libfwibble1
-0 upgraded, 8 newly installed, 1 to remove and 1 not upgraded.
-Remv cool:amd64 [0.5]
+  amdboot:amd64 arm-stuff doxygen libc6 libc6-dev libfwibble-dev libfwibble1
+The following packages will be upgraded:
+  cool:amd64
+1 upgraded, 7 newly installed, 0 to remove and 1 not upgraded.
 Inst amdboot:amd64 (1.0 unstable [amd64])
 Inst arm-stuff (1.0 unstable [armel])
-Inst cool (1.0 unstable [armel])
+Inst cool:amd64 [0.5] (1.0 unstable [amd64])
 Inst doxygen (1.0 unstable [armel])
 Inst libc6 (1.0 unstable [armel])
 Inst libc6-dev (1.0 unstable [armel])
@@ -308,12 +310,15 @@ Inst libfwibble1 (1.0 unstable [armel])
 Inst libfwibble-dev (1.0 unstable [armel])
 Conf amdboot:amd64 (1.0 unstable [amd64])
 Conf arm-stuff (1.0 unstable [armel])
-Conf cool (1.0 unstable [armel])
+Conf cool:amd64 (1.0 unstable [amd64])
 Conf doxygen (1.0 unstable [armel])
 Conf libc6 (1.0 unstable [armel])
 Conf libc6-dev (1.0 unstable [armel])
 Conf libfwibble1 (1.0 unstable [armel])
-Conf libfwibble-dev (1.0 unstable [armel])' aptget build-dep apt -s
+Conf libfwibble-dev (1.0 unstable [armel])'
+testsuccessequal "$APT_ON_ARMEL" aptget build-dep apt -s
+testsuccessequal "Reading package lists...
+$APT_ON_ARMEL" aptget build-dep apt -s -a armel
 
 testsuccessequal 'Reading package lists...
 Reading package lists...

@@ -19,8 +19,8 @@ insertpackage 'unstable' 'coolfoo' 'amd64' '1' 'Multi-Arch:allowed
 Provides: coolbar'
 insertpackage 'unstable' 'coolfoover' 'amd64' '1' 'Multi-Arch:allowed
 Provides: coolbar (= 2)'
-insertpackage 'unstable' 'needscoolfoo' 'amd64' '1' 'Depends: coolfoo, coolbar'
-insertpackage 'unstable' 'needscoolfooany' 'amd64' '1' 'Depends: coolfoo:any, coolbar:any'
+insertpackage 'unstable' 'needscoolfoo' 'amd64,i386' '1' 'Depends: coolfoo, coolbar'
+insertpackage 'unstable' 'needscoolfooany' 'amd64,i386' '1' 'Depends: coolfoo:any, coolbar:any'
 insertpackage 'unstable' 'needscoolfoover0' 'amd64' '1' 'Depends: coolfoo:any (>= 1), coolbar:any'
 insertpackage 'unstable' 'needscoolfoover1' 'amd64' '1' 'Depends: coolfoo:any (>= 1), coolbar:any (>= 1)'
 insertpackage 'unstable' 'needscoolfoover2' 'amd64' '1' 'Depends: coolfoo:any (>= 2), coolbar:any (>= 1)'
@@ -166,6 +166,28 @@ Inst hatesfoonative (1 unstable [amd64])
 Conf foo:i386 (1 unstable [i386])
 Conf hatesfoonative (1 unstable [amd64])' aptget install foo:i386 hatesfoonative -s
 
+testfailureequal "$BADPREFIX
+The following packages have unmet dependencies:
+ needscoolfoo:i386 : Depends: coolfoo:i386 but it is not installable
+                     Depends: coolbar:i386 but it is not installable
+E: Unable to correct problems, you have held broken packages." aptget install needscoolfoo:i386 -s
+solveneedscoolfooanyin() {
+	local NEEDSCOOL='needscoolfooany'
+	if [ "$1" != 'amd64' ]; then NEEDSCOOL="${NEEDSCOOL}:$1"; fi
+	testsuccessequal "Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  coolfoo
+The following NEW packages will be installed:
+  coolfoo $NEEDSCOOL
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst coolfoo (1 unstable [amd64])
+Inst $NEEDSCOOL (1 unstable [$1])
+Conf coolfoo (1 unstable [amd64])
+Conf $NEEDSCOOL (1 unstable [$1])" aptget install $NEEDSCOOL -s
+}
+solveneedscoolfooanyin 'i386'
+
 solveableinsinglearch3() {
 	testsuccessequal "Reading package lists...
 Building dependency tree...
@@ -191,17 +213,7 @@ Inst needscoolfoo (1 unstable [amd64])
 Conf coolfoo (1 unstable [amd64])
 Conf coolfoover (1 unstable [amd64])
 Conf needscoolfoo (1 unstable [amd64])" aptget install needscoolfoo coolfoover -s
-	testsuccessequal "Reading package lists...
-Building dependency tree...
-The following additional packages will be installed:
-  coolfoo
-The following NEW packages will be installed:
-  coolfoo needscoolfooany
-0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Inst coolfoo (1 unstable [amd64])
-Inst needscoolfooany (1 unstable [amd64])
-Conf coolfoo (1 unstable [amd64])
-Conf needscoolfooany (1 unstable [amd64])" aptget install needscoolfooany -s
+	solveneedscoolfooanyin 'amd64'
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
@@ -252,12 +264,15 @@ testfailureequal "$NEEDSFOO2NATIVE" aptget install needsfoover2 -s
 solveableinsinglearch2
 solveableinsinglearch3
 
+testempty dpkg -C
 msgmsg 'multi-arch with barbarian archs'
 configarchitecture 'amd64' 'i386'
 insertinstalledpackage 'foo' 'armel' '1' 'Multi-Arch: allowed'
 insertinstalledpackage 'coolfoo' 'armel' '1' 'Multi-Arch:allowed
 Provides: coolbar'
-insertinstalledpackage 'bar-needer' 'armel' '1.0' 'Depends: coolbar:any'
+insertinstalledpackage 'bar-needer' 'armel' '1.0' 'Depends: coolbar'
+insertinstalledpackage 'bar-any-needer' 'armel' '1.0' 'Depends: coolbar:any'
+insertinstalledpackage 'bar-armel-needer' 'armel' '1.0' 'Depends: coolbar:armel'
 
 testsuccess aptget check
 testsuccessequal 'Reading package lists...
@@ -293,11 +308,13 @@ Building dependency tree...
 The following additional packages will be installed:
   coolfoo
 The following packages will be REMOVED:
-  coolfoo:armel
+  bar-armel-needer:armel bar-needer:armel coolfoo:armel
 The following NEW packages will be installed:
   coolfoo needscoolfoover0
-0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
-Remv coolfoo:armel [1] [bar-needer:armel ]
+0 upgraded, 2 newly installed, 3 to remove and 0 not upgraded.
+Remv bar-armel-needer:armel [1.0]
+Remv bar-needer:armel [1.0]
+Remv coolfoo:armel [1] [bar-any-needer:armel ]
 Inst coolfoo (1 unstable [amd64])
 Inst needscoolfoover0 (1 unstable [amd64])
 Conf coolfoo (1 unstable [amd64])

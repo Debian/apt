@@ -8,6 +8,7 @@
 #include <config.h>
 
 #include <apt-pkg/algorithms.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/edsp.h>
@@ -205,6 +206,25 @@ static bool WriteScenarioLimitedDependency(FileFd &output,
    return WriteOkay(Okay, output, "\n");
 }
 									/*}}}*/
+static bool checkKnownArchitecture(std::string const &arch)		/*{{{*/
+{
+   if (APT::Configuration::checkArchitecture(arch))
+      return true;
+   static auto const veryforeign = _config->FindVector("APT::BarbarianArchitectures");
+   return std::find(veryforeign.begin(), veryforeign.end(), arch) != veryforeign.end();
+}
+									/*}}}*/
+static bool WriteGenericRequestHeaders(FileFd &output, APT::StringView const head)/*{{{*/
+{
+   bool Okay = WriteOkay(output, head, "Architecture: ", _config->Find("APT::Architecture"), "\n",
+	 "Architectures:");
+   for (auto const &a : APT::Configuration::getArchitectures())
+       WriteOkay(Okay, output, " ", a);
+   for (auto const &a : _config->FindVector("APT::BarbarianArchitectures"))
+       WriteOkay(Okay, output, " ", a);
+   return WriteOkay(Okay, output, "\n");
+}
+									/*}}}*/
 static bool SkipUnavailableVersions(pkgDepCache &Cache, pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const &Ver)/*{{{*/
 {
    /* versions which aren't current and aren't available in
@@ -266,11 +286,9 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress *Progres
       Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
    decltype(Cache.Head().VersionCount) p = 0;
    bool Okay = output.Failed() == false;
-   std::vector<std::string> archs = APT::Configuration::getArchitectures();
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false && likely(Okay); ++Pkg)
    {
-      std::string const arch = Pkg.Arch();
-      if (Pkg->CurrentVer == 0 && std::find(archs.begin(), archs.end(), arch) == archs.end())
+      if (Pkg->CurrentVer == 0 && not checkKnownArchitecture(Pkg.Arch()))
 	 continue;
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false && likely(Okay); ++Ver, ++p)
       {
@@ -341,15 +359,8 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output,
 	 continue;
       req->append(" ").append(Pkg.FullName());
    }
-   bool Okay = WriteOkay(output, "Request: EDSP 0.5\n");
 
-   std::vector<string> archs = APT::Configuration::getArchitectures();
-   WriteOkay(Okay, output, "Architecture: ", _config->Find("APT::Architecture").c_str(), "\n",
-	 "Architectures:");
-   for (std::vector<string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
-       WriteOkay(Okay, output, " ", *a);
-   WriteOkay(Okay, output, "\n");
-
+   bool Okay = WriteGenericRequestHeaders(output, "Request: EDSP 0.5\n");
    if (del.empty() == false)
       WriteOkay(Okay, output, "Remove:", del, "\n");
    if (inst.empty() == false)
@@ -863,15 +874,8 @@ bool EIPP::WriteRequest(pkgDepCache &Cache, FileFd &output,		/*{{{*/
 	 continue;
       req->append(" ").append(Pkg.FullName());
    }
-   bool Okay = WriteOkay(output, "Request: EIPP 0.1\n");
 
-   std::vector<string> archs = APT::Configuration::getArchitectures();
-   WriteOkay(Okay, output, "Architecture: ", _config->Find("APT::Architecture").c_str(), "\n",
-	 "Architectures:");
-   for (std::vector<string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
-       WriteOkay(Okay, output, " ", *a);
-   WriteOkay(Okay, output, "\n");
-
+   bool Okay = WriteGenericRequestHeaders(output, "Request: EIPP 0.1\n");
    if (del.empty() == false)
       WriteOkay(Okay, output, "Remove:", del, "\n");
    if (inst.empty() == false)
@@ -934,7 +938,6 @@ bool EIPP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress * const 
       Progress->SubProgress(Cache.Head().PackageCount, _("Send scenario to planner"));
    decltype(Cache.Head().PackageCount) p = 0;
    bool Okay = output.Failed() == false;
-   std::vector<std::string> archs = APT::Configuration::getArchitectures();
    std::vector<bool> pkgset(Cache.Head().PackageCount, false);
    auto const MarkVersion = [&](pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const &Ver) {
       pkgset[Pkg->ID] = true;
