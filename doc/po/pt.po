@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.1.16\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2021-07-29 17:00+0200\n"
+"POT-Creation-Date: 2021-10-18 16:36+0200\n"
 "PO-Revision-Date: 2021-01-10 19:51+0000\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <>\n"
@@ -8218,8 +8218,48 @@ msgstr ""
 "verificações de autenticação passem com sucesso. O valor predefinido não "
 "pode ser regulado explicitamente."
 
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para><literallayout>
+#: sources.list.5.xml
+#, no-wrap
+msgid ""
+"Types: deb\n"
+"URIs: https://deb.debian.org\n"
+"Suites: stable\n"
+"Components: main contrib non-free\n"
+"Signed-By:\n"
+" -----BEGIN PGP PUBLIC KEY BLOCK-----\n"
+" .\n"
+" mDMEYCQjIxYJKwYBBAHaRw8BAQdAD/P5Nvvnvk66SxBBHDbhRml9ORg1WV5CvzKY\n"
+" CuMfoIS0BmFiY2RlZoiQBBMWCgA4FiEErCIG1VhKWMWo2yfAREZd5NfO31cFAmAk\n"
+" IyMCGyMFCwkIBwMFFQoJCAsFFgIDAQACHgECF4AACgkQREZd5NfO31fbOwD6ArzS\n"
+" dM0Dkd5h2Ujy1b6KcAaVW9FOa5UNfJ9FFBtjLQEBAJ7UyWD3dZzhvlaAwunsk7DG\n"
+" 3bHcln8DMpIJVXht78sL\n"
+" =IE0r\n"
+" -----END PGP PUBLIC KEY BLOCK-----"
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
+#, fuzzy
+#| msgid ""
+#| "<option>Signed-By</option> (<option>signed-by</option>)  is an option to "
+#| "require a repository to pass &apt-secure; verification with a certain set "
+#| "of keys rather than all trusted keys apt has configured.  It is specified "
+#| "as a list of absolute paths to keyring files (have to be accessible and "
+#| "readable for the <literal>_apt</literal> system user, so ensure everyone "
+#| "has read-permissions on the file) and fingerprints of keys to select from "
+#| "these keyrings. If no keyring files are specified the default is the "
+#| "<filename>trusted.gpg</filename> keyring and all keyrings in the "
+#| "<filename>trusted.gpg.d/</filename> directory (see <command>apt-key "
+#| "fingerprint</command>). If no fingerprint is specified all keys in the "
+#| "keyrings are selected. A fingerprint will accept also all signatures by a "
+#| "subkey of this key, if this isn't desired an exclamation mark (<literal>!"
+#| "</literal>) can be appended to the fingerprint to disable this "
+#| "behaviour.  The option defaults to the value of the option with the same "
+#| "name if set in the previously acquired <filename>Release</filename> file "
+#| "of this repository (only fingerprints can be specified there through).  "
+#| "Otherwise all keys in the trusted keyrings are considered valid signers "
+#| "for this repository."
 msgid ""
 "<option>Signed-By</option> (<option>signed-by</option>)  is an option to "
 "require a repository to pass &apt-secure; verification with a certain set of "
@@ -8237,7 +8277,10 @@ msgid ""
 "option defaults to the value of the option with the same name if set in the "
 "previously acquired <filename>Release</filename> file of this repository "
 "(only fingerprints can be specified there through).  Otherwise all keys in "
-"the trusted keyrings are considered valid signers for this repository."
+"the trusted keyrings are considered valid signers for this repository.  The "
+"option may also be set directly to an embedded GPG public key block. Special "
+"care is needed to encode the empty line with leading spaces and \".\": "
+"<placeholder type=\"literallayout\" id=\"0\"/>"
 msgstr ""
 "<option>Signed-By</option> (<option>signed-by</option>)  é uma opção para "
 "requerer a um repositório para passar a verificação &apt-secure; com um "
@@ -11645,6 +11688,31 @@ msgstr "<code>~VREGEX</code>"
 msgid ""
 "Selects versions where the version string matches the specified regular "
 "expression."
+msgstr ""
+"Seleciona versões onde a string de versão coincide com a expressão regular "
+"fornecida."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>?not(PATTERN)</code>"
+msgid "<code>?priority(NAME)</code>"
+msgstr "<code>?not(PATTERN)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>~E</code>"
+msgid "<code>~pNAME</code>"
+msgstr "<code>~E</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid ""
+#| "Selects versions where the version string matches the specified regular "
+#| "expression."
+msgid "Selects versions where the Priority string equals the given name."
 msgstr ""
 "Seleciona versões onde a string de versão coincide com a expressão regular "
 "fornecida."

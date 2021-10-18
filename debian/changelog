@@ -1,3 +1,27 @@
+apt (2.3.10) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * basehttp: Turn HaveContent into a TriState
+  * Set haveContent to FALSE on `Content-Length: 0` (Closes: #990281)
+  * Add support for embedding PGP keys into Signed-By in deb822 sources
+
+  [ David Kalnischkies ]
+  * All pkgCaches are MultiArch caches
+  * Do not strip M-A for native build-dep resolution
+  * Do not make provides of M-A:allowed implicit M-A:foreign
+  * Barbarian M-A:allowed don't satisfy :any deps of other archs
+  * Streamline access to barbarian architecture functionality
+  * Read and work with canonical file-URIs from sources.lists
+  * Use https config on https proxies for http servers (Closes: #990555)
+  * Add AllowRange option to disable HTTP Range usage
+  * Disable HTTP Range usage if varnish < 6.4 is involved
+  * Use exact If-Range match in our test webserver
+
+  [ Johannes Schauer Marin Rodrigues ]
+  * add pattern to select packages by priority (closes: #989558)
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 18 Oct 2021 16:35:21 +0200
+
 apt (2.3.9) unstable; urgency=medium
 
   [ Frans Spiesschaert ]

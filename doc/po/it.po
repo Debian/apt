@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2021-07-29 17:00+0200\n"
+"POT-Creation-Date: 2021-10-18 16:36+0200\n"
 "PO-Revision-Date: 2017-03-27 19:05+0200\n"
 "Last-Translator: Beatrice Torracca <beatricet@libero.it>\n"
 "Language-Team: Italian <debian-l10n-italian@lists.debian.org>\n"
@@ -8269,6 +8269,26 @@ msgstr ""
 "superati con successo. Il valore predefinito non può essere impostato "
 "esplicitamente."
 
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para><literallayout>
+#: sources.list.5.xml
+#, no-wrap
+msgid ""
+"Types: deb\n"
+"URIs: https://deb.debian.org\n"
+"Suites: stable\n"
+"Components: main contrib non-free\n"
+"Signed-By:\n"
+" -----BEGIN PGP PUBLIC KEY BLOCK-----\n"
+" .\n"
+" mDMEYCQjIxYJKwYBBAHaRw8BAQdAD/P5Nvvnvk66SxBBHDbhRml9ORg1WV5CvzKY\n"
+" CuMfoIS0BmFiY2RlZoiQBBMWCgA4FiEErCIG1VhKWMWo2yfAREZd5NfO31cFAmAk\n"
+" IyMCGyMFCwkIBwMFFQoJCAsFFgIDAQACHgECF4AACgkQREZd5NfO31fbOwD6ArzS\n"
+" dM0Dkd5h2Ujy1b6KcAaVW9FOa5UNfJ9FFBtjLQEBAJ7UyWD3dZzhvlaAwunsk7DG\n"
+" 3bHcln8DMpIJVXht78sL\n"
+" =IE0r\n"
+" -----END PGP PUBLIC KEY BLOCK-----"
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
 #, fuzzy
@@ -8302,7 +8322,10 @@ msgid ""
 "option defaults to the value of the option with the same name if set in the "
 "previously acquired <filename>Release</filename> file of this repository "
 "(only fingerprints can be specified there through).  Otherwise all keys in "
-"the trusted keyrings are considered valid signers for this repository."
+"the trusted keyrings are considered valid signers for this repository.  The "
+"option may also be set directly to an embedded GPG public key block. Special "
+"care is needed to encode the empty line with leading spaces and \".\": "
+"<placeholder type=\"literallayout\" id=\"0\"/>"
 msgstr ""
 "<option>Signed-By</option> (<option>signed-by</option>) è un percorso "
 "assoluto ad un file di portachiavi (deve essere accessibile e leggibile "
@@ -11465,6 +11488,25 @@ msgstr "<option>--installed</option>"
 msgid ""
 "Selects versions where the version string matches the specified regular "
 "expression."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>?priority(NAME)</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<option>--installed</option>"
+msgid "<code>~pNAME</code>"
+msgstr "<option>--installed</option>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid "Selects versions where the Priority string equals the given name."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
