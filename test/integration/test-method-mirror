@@ -148,7 +148,16 @@ Ign:2 http://localhost:${APTHTTPPORT}/failure2 stable InRelease
 Ign:3 http://localhost:${APTHTTPPORT}/failure unstable InRelease
   404  Not Found" head -n 5 aptupdate.output
 
-changetohttpswebserver
+msgmsg 'do not hang on' 'file:///'
+sed -i -e 's#file:/tmp#file:///tmp#' rootdir/etc/apt/sources.list.d/apt-test-unstable-deb*
+testrun '*_localhost_*' '*_aptarchive_mirror.txt_*'
+testsuccessequal "Get:1 file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
+Ign:2 http://localhost:${APTHTTPPORT}/failure2 stable InRelease
+  404  Not Found
+Ign:3 http://localhost:${APTHTTPPORT}/failure unstable InRelease
+  404  Not Found" head -n 5 aptupdate.output
+
+changetohttpswebserver --no-rewrite
 rm -f rootdir/etc/apt/sources.list.d/*-stable-*
 msgmsg 'fallback mirrors are used if needed' 'random'
 echo "http://localhost:${APTHTTPPORT}/failure2	priority:1
@@ -241,7 +250,7 @@ Reading package lists...
 Building dependency tree...
 Reading state information...
 All packages are up to date." apt update
-sed -i -e "s#+file:${APTARCHIVE}#+http://localhost:${APTHTTPPORT}#" rootdir/etc/apt/sources.list.d/*
+sed -i -e "s#+file:\(//\|\)${APTARCHIVE}#+http://localhost:${APTHTTPPORT}#" rootdir/etc/apt/sources.list.d/*
 testsuccess apt update
 testrundownload 'foo=2'
 

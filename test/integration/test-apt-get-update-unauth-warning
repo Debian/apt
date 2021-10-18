@@ -47,7 +47,7 @@ partial' ls rootdir/var/lib/apt/lists
 filesize() {
 	local CREATEDBY="$1"
 	shift
-	stat -c%s "$(aptget indextargets --no-release-info --format '$(URI)' "Created-By: $CREATEDBY" "$@" | cut -d'/' -f 3- ).gz"
+	stat -c%s "/$(aptget indextargets --no-release-info --format '$(URI)' "Created-By: $CREATEDBY" "$@" | cut -d'/' -f 2- ).gz"
 }
 # allow override
 #aptget update --allow-insecure-repositories -o Debug::pkgAcquire::worker=1

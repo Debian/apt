@@ -1,0 +1,37 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'unrelated' 'all' '1' 'unstable'
+
+setupaptarchive --no-update
+changetowebserver --request-absolute='uri'
+changetohttpswebserver --no-rewrite
+
+msgtest 'Check that non-absolute paths are' 'not accepted'
+testfailure --nomsg aptget update --allow-insecure-repositories
+
+echo "Acquire::http::Proxy \"https://localhost:${APTHTTPSPORT}\";" > rootdir/etc/apt/apt.conf.d/99proxy
+
+msgtest 'Check that requests to https proxies' 'work from http'
+testsuccess --nomsg aptget update
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  unrelated
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst unrelated (1 unstable [all])
+Conf unrelated (1 unstable [all])' apt install unrelated -s
+
+testsuccess apt download unrelated --print-uris
+testfailure grep 'https:' rootdir/tmp/testsuccess.output
+
+cd downloaded
+testsuccess apt download unrelated
+testsuccess test -s 'unrelated_1_all.deb'
+cd ..

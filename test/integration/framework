@@ -1190,7 +1190,7 @@ setupdistsaptarchive() {
 		SECTIONS=$(find "./aptarchive/dists/${DISTS}/" -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 5 | tr '\n' ' ')
 		msgninfo "\tadd deb and deb-src sources.list lines for ${CCMD}${DISTS} ${SECTIONS}${CINFO}… "
 		echo "deb file://$APTARCHIVE $DISTS $SECTIONS" > "rootdir/etc/apt/sources.list.d/apt-test-${DISTS}-deb.list"
-		echo "deb-src file://$APTARCHIVE $DISTS $SECTIONS" > "rootdir/etc/apt/sources.list.d/apt-test-${DISTS}-deb-src.list"
+		echo "deb-src file:$APTARCHIVE $DISTS $SECTIONS" > "rootdir/etc/apt/sources.list.d/apt-test-${DISTS}-deb-src.list"
 		msgdone "info"
 	done
 }
@@ -1207,7 +1207,7 @@ setupflataptarchive() {
 	fi
 	if [ -f "${APTARCHIVE}/Sources" ]; then
 		msgninfo "\tadd deb-src sources.list line… "
-		echo "deb-src file://$APTARCHIVEURI /" > 'rootdir/etc/apt/sources.list.d/apt-test-archive-deb-src.list'
+		echo "deb-src file:$APTARCHIVEURI /" > 'rootdir/etc/apt/sources.list.d/apt-test-archive-deb-src.list'
 		msgdone 'info'
 	else
 		rm -f 'rootdir/etc/apt/sources.list.d/apt-test-archive-deb-src.list'
@@ -1369,10 +1369,13 @@ webserverconfig() {
 }
 
 rewritesourceslist() {
-	local APTARCHIVE="file://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive" | sed 's# #%20#g')"
-	local APTARCHIVE2="copy://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive" | sed 's# #%20#g')"
+	local APTARCHIVE="$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive" | sed 's# #%20#g')"
 	for LIST in $(find "${TMPWORKINGDIRECTORY}/rootdir/etc/apt/sources.list.d/" -name 'apt-test-*.list'); do
-		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#$APTARCHIVE2#${1}#" \
+		sed -i $LIST \
+			-e "s#file://$APTARCHIVE#${1}#" \
+			-e "s#file:$APTARCHIVE#${1}#" \
+			-e "s#copy://$APTARCHIVE#${1}#" \
+			-e "s#copy:$APTARCHIVE#${1}#" \
 			-e "s#http://[^@]*@\?localhost:${APTHTTPPORT}/\?#${1}#" \
 			-e "s#https://[^@]*@\?localhost:${APTHTTPSPORT}/\?#${1}#"
 	done
@@ -1393,10 +1396,9 @@ waitforpidfile() {
 }
 
 changetowebserver() {
-	local REWRITE='no'
-	if [ "$1" != '--no-rewrite' ]; then
-		REWRITE='yes'
-	else
+	local REWRITE='yes'
+	if [ "$1" = '--no-rewrite' ]; then
+		REWRITE='no'
 		shift
 	fi
 	if test -x "${APTTESTHELPERSBINDIR}/aptwebserver"; then
@@ -1421,12 +1423,17 @@ changetowebserver() {
 	else
 		msgdie 'You have to build apt from source to have test/interactive-helper/aptwebserver available for tests requiring a webserver'
 	fi
-	if [ "$REWRTE" != 'yes' ]; then
+	if [ "$REWRITE" != 'no' ]; then
 		rewritesourceslist "http://localhost:${APTHTTPPORT}/"
 	fi
 }
 
 changetohttpswebserver() {
+	local REWRITE='yes'
+	if [ "$1" = '--no-rewrite' ]; then
+		REWRITE='no'
+		shift
+	fi
 	local stunnel4
 	if command -v stunnel4 >/dev/null 2>&1; then
 		stunnel4=stunnel4
@@ -1455,7 +1462,9 @@ connect = $APTHTTPPORT
 	addtrap 'prefix' "kill ${PID};"
 	APTHTTPSPORT="$(lsof -i -n | awk "/^$stunnel4 / && \$2 == \"${PID}\" {print \$9; exit; }" | cut -d':' -f 2)"
 	webserverconfig 'aptwebserver::port::https' "$APTHTTPSPORT" "https://localhost:${APTHTTPSPORT}"
-	rewritesourceslist "https://localhost:${APTHTTPSPORT}/"
+	if [ "$REWRITE" != 'no' ]; then
+		rewritesourceslist "https://localhost:${APTHTTPSPORT}/"
+	fi
 }
 
 changetocdrom() {

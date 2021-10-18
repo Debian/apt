@@ -85,12 +85,12 @@ bool pkgSourceList::Type::FixupURI(string &URI) const
    if (URI.find(':') == string::npos)
       return false;
 
-   URI = SubstVar(URI,"$(ARCH)",_config->Find("APT::Architecture"));
-   
+   URI = ::URI{SubstVar(URI, "$(ARCH)", _config->Find("APT::Architecture"))};
+
    // Make sure that the URI is / postfixed
-   if (URI[URI.size() - 1] != '/')
-      URI += '/';
-   
+   if (URI.back() != '/')
+      URI.push_back('/');
+
    return true;
 }
 									/*}}}*/

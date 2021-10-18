@@ -43,7 +43,71 @@ static bool hasDoubleColon(std::string const &n)
    return n.find("::") != std::string::npos;
 }
 
-class aptMethod : public pkgAcqMethod
+class aptConfigWrapperForMethods
+{
+protected:
+   std::vector<std::string> methodNames;
+public:
+   void setPostfixForMethodNames(char const * const postfix) APT_NONNULL(2)
+   {
+      methodNames.erase(std::remove_if(methodNames.begin(), methodNames.end(), hasDoubleColon), methodNames.end());
+      decltype(methodNames) toAdd;
+      for (auto && name: methodNames)
+	 toAdd.emplace_back(name + "::" + postfix);
+      std::move(toAdd.begin(), toAdd.end(), std::back_inserter(methodNames));
+   }
+
+   bool DebugEnabled() const
+   {
+      if (methodNames.empty())
+	 return false;
+      auto const sni = std::find_if_not(methodNames.crbegin(), methodNames.crend(), hasDoubleColon);
+      if (unlikely(sni == methodNames.crend()))
+	 return false;
+      auto const ln = methodNames[methodNames.size() - 1];
+      // worst case: all three are the same
+      std::string confln, confsn, confpn;
+      strprintf(confln, "Debug::Acquire::%s", ln.c_str());
+      strprintf(confsn, "Debug::Acquire::%s", sni->c_str());
+      auto const pni = sni->substr(0, sni->find('+'));
+      strprintf(confpn, "Debug::Acquire::%s", pni.c_str());
+      return _config->FindB(confln,_config->FindB(confsn, _config->FindB(confpn, false)));
+   }
+   std::string ConfigFind(char const * const postfix, std::string const &defValue) const APT_NONNULL(2)
+   {
+      for (auto name = methodNames.rbegin(); name != methodNames.rend(); ++name)
+      {
+	 std::string conf;
+	 strprintf(conf, "Acquire::%s::%s", name->c_str(), postfix);
+	 auto value = _config->Find(conf);
+	 if (not value.empty())
+	    return value;
+      }
+      return defValue;
+   }
+   std::string ConfigFind(std::string const &postfix, std::string const &defValue) const
+   {
+      return ConfigFind(postfix.c_str(), defValue);
+   }
+   bool ConfigFindB(char const * const postfix, bool const defValue) const APT_NONNULL(2)
+   {
+      return StringToBool(ConfigFind(postfix, defValue ? "yes" : "no"), defValue);
+   }
+   int ConfigFindI(char const * const postfix, int const defValue) const APT_NONNULL(2)
+   {
+      char *End;
+      std::string const value = ConfigFind(postfix, "");
+      auto const Res = strtol(value.c_str(), &End, 0);
+      if (value.c_str() == End)
+	 return defValue;
+      return Res;
+   }
+
+   explicit aptConfigWrapperForMethods(std::string const &name) : methodNames{{name}} {}
+   explicit aptConfigWrapperForMethods(std::vector<std::string> &&names) : methodNames{std::move(names)} {}
+};
+
+class aptMethod : public pkgAcqMethod, public aptConfigWrapperForMethods
 {
 protected:
    std::string const Binary;
@@ -397,61 +461,6 @@ protected:
       SendMessage("104 Warning", std::move(fields));
    }
 
-   std::vector<std::string> methodNames;
-   void setPostfixForMethodNames(char const * const postfix) APT_NONNULL(2)
-   {
-      methodNames.erase(std::remove_if(methodNames.begin(), methodNames.end(), hasDoubleColon), methodNames.end());
-      decltype(methodNames) toAdd;
-      for (auto && name: methodNames)
-	 toAdd.emplace_back(name + "::" + postfix);
-      std::move(toAdd.begin(), toAdd.end(), std::back_inserter(methodNames));
-   }
-   bool DebugEnabled() const
-   {
-      if (methodNames.empty())
-	 return false;
-      auto const sni = std::find_if_not(methodNames.crbegin(), methodNames.crend(), hasDoubleColon);
-      if (unlikely(sni == methodNames.crend()))
-	 return false;
-      auto const ln = methodNames[methodNames.size() - 1];
-      // worst case: all three are the same
-      std::string confln, confsn, confpn;
-      strprintf(confln, "Debug::Acquire::%s", ln.c_str());
-      strprintf(confsn, "Debug::Acquire::%s", sni->c_str());
-      auto const pni = sni->substr(0, sni->find('+'));
-      strprintf(confpn, "Debug::Acquire::%s", pni.c_str());
-      return _config->FindB(confln,_config->FindB(confsn, _config->FindB(confpn, false)));
-   }
-   std::string ConfigFind(char const * const postfix, std::string const &defValue) const APT_NONNULL(2)
-   {
-      for (auto name = methodNames.rbegin(); name != methodNames.rend(); ++name)
-      {
-	 std::string conf;
-	 strprintf(conf, "Acquire::%s::%s", name->c_str(), postfix);
-	 auto const value = _config->Find(conf);
-	 if (value.empty() == false)
-	    return value;
-      }
-      return defValue;
-   }
-   std::string ConfigFind(std::string const &postfix, std::string const &defValue) const
-   {
-      return ConfigFind(postfix.c_str(), defValue);
-   }
-   bool ConfigFindB(char const * const postfix, bool const defValue) const APT_NONNULL(2)
-   {
-      return StringToBool(ConfigFind(postfix, defValue ? "yes" : "no"), defValue);
-   }
-   int ConfigFindI(char const * const postfix, int const defValue) const APT_NONNULL(2)
-   {
-      char *End;
-      std::string const value = ConfigFind(postfix, "");
-      auto const Res = strtol(value.c_str(), &End, 0);
-      if (value.c_str() == End)
-	 return defValue;
-      return Res;
-   }
-
    bool TransferModificationTimes(char const * const From, char const * const To, time_t &LastModified) APT_NONNULL(2, 3)
    {
       if (strcmp(To, "/dev/null") == 0)
@@ -498,7 +507,7 @@ protected:
    }
 
    aptMethod(std::string &&Binary, char const *const Ver, unsigned long const Flags) APT_NONNULL(3)
-       : pkgAcqMethod(Ver, Flags), Binary(Binary), SeccompFlags(0), methodNames({Binary})
+       : pkgAcqMethod(Ver, Flags), aptConfigWrapperForMethods(Binary), Binary(std::move(Binary)), SeccompFlags(0)
    {
       try {
 	 std::locale::global(std::locale(""));

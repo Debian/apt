@@ -518,7 +518,9 @@ ResultState HttpServerState::Open()
 	 return result;
       if (Host == Proxy.Host && Proxy.Access == "https")
       {
-	 result = UnwrapTLS(Proxy.Host, ServerFd, TimeOut, Owner);
+	 aptConfigWrapperForMethods ProxyConf{std::vector<std::string>{"http", "https"}};
+	 ProxyConf.setPostfixForMethodNames(Proxy.Host.c_str());
+	 result = UnwrapTLS(Proxy.Host, ServerFd, TimeOut, Owner, &ProxyConf);
 	 if (result != ResultState::SUCCESSFUL)
 	    return result;
       }
@@ -531,7 +533,7 @@ ResultState HttpServerState::Open()
    }
 
    if (tls)
-      return UnwrapTLS(ServerName.Host, ServerFd, TimeOut, Owner);
+      return UnwrapTLS(ServerName.Host, ServerFd, TimeOut, Owner, Owner);
 
    return ResultState::SUCCESSFUL;
 }
