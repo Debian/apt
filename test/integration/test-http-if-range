@@ -1,0 +1,91 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+changetowebserver
+
+TESTFILE='aptarchive/testfile'
+HTTPFILE="http://localhost:${APTHTTPPORT}/testfile"
+DOWNFILE='./downloaded/testfile'
+DOWNLOADLOG='rootdir/tmp/testdownloadfile.log'
+
+testdownloadfile() {
+	rm -f "$DOWNLOADLOG"
+	msgtest "Testing download of file with" "$1"
+	if ! downloadfile "$HTTPFILE" "$DOWNFILE" > "$DOWNLOADLOG"; then
+		cat >&2 "$DOWNLOADLOG"
+		msgfail
+	else
+		msgpass
+	fi
+}
+
+nopartialfile() {
+	rm -f "$DOWNFILE"
+}
+validpartialfile() {
+	head -n 5 "$TESTFILE" > "$DOWNFILE"
+	touch -d "$(stat --format '%y' "${TESTFILE}")" "$DOWNFILE"
+}
+badolderpartialfile() {
+	head -n 5 "$TESTFILE" > "$DOWNFILE"
+	touch -d "$(stat --format '%y' "${TESTFILE}") - 1sec" "$DOWNFILE"
+}
+badnewerpartialfile() {
+	head -n 5 "$TESTFILE" > "$DOWNFILE"
+	touch -d 'now + 1hour' "$DOWNFILE"
+}
+fullfile() {
+	cp -a "$TESTFILE" "$DOWNFILE"
+}
+
+cp -a "${TESTDIR}/framework" "$TESTFILE"
+
+testrun() {
+	nopartialfile
+	testdownloadfile "no file $1"
+	testwebserverlaststatuscode "$2" "$DOWNLOADLOG"
+	testsuccess cmp "$TESTFILE" "$DOWNFILE"
+
+	validpartialfile
+	testdownloadfile "good partial file $1"
+	testwebserverlaststatuscode "$3" "$DOWNLOADLOG"
+	testsuccess cmp "$TESTFILE" "$DOWNFILE"
+
+	badolderpartialfile
+	testdownloadfile "bad old partial file $1"
+	testwebserverlaststatuscode "$4" "$DOWNLOADLOG"
+	testsuccess cmp "$TESTFILE" "$DOWNFILE"
+
+	badnewerpartialfile
+	testdownloadfile "bad new partial file $1"
+	testwebserverlaststatuscode "$4" "$DOWNLOADLOG"
+	testsuccess cmp "$TESTFILE" "$DOWNFILE"
+
+	fullfile
+	testdownloadfile "complete file $1"
+	testwebserverlaststatuscode "$5" "$DOWNLOADLOG"
+	testsuccess cmp "$TESTFILE" "$DOWNFILE"
+}
+
+testrun 'defaults' '200' '206' '200' '416'
+
+webserverconfig 'aptwebserver::support::range' 'false'
+testrun 'no ranges' '200' '200' '200' '200'
+webserverconfig 'aptwebserver::support::range' 'true'
+
+webserverconfig 'aptwebserver::support::if-range' 'false'
+# the second 206 is bad, but we are unable to detect this
+testrun 'buggy server' '200' '206' '206' '416'
+echo 'Acquire::http::localhost::AllowRanges "false";' > rootdir/etc/apt/apt.conf.d/noallowranges
+testrun 'range disabled by conf' '200' '200' '200' '200'
+rm rootdir/etc/apt/apt.conf.d/noallowranges
+# detect varnish < 6.4 automatically
+webserverconfig 'aptwebserver::response-header::Via' '1.1 varnish (Varnish/6.1)'
+testrun 'bad varnish' '200' '200' '200' '200'
+webserverconfig 'aptwebserver::response-header::Via' '1.1 varnish (Varnish/6.4)'
+testrun 'good varnish' '200' '206' '206' '416'

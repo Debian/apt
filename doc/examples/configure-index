@@ -282,7 +282,8 @@ Acquire
     Timeout "30";
     ConnectionAttemptDelayMsec "250";
     Pipeline-Depth "5";
-    AllowRedirect  "true";
+    AllowRanges "<BOOL>";
+    AllowRedirect "<BOOL>";
 
     // Cache Control. Note these do not work with Squid 2.0.2
     No-Cache "false";
@@ -305,11 +306,11 @@ Acquire
 	SslCert "/etc/apt/some.pem";
 	CaPath  "/etc/ssl/certs";
 	Verify-Host "true";
-	AllowRedirect  "true";
+	AllowRanges "<BOOL>";
+	AllowRedirect "<BOOL>";
 
 	Timeout "30";
 	ConnectionAttemptDelayMsec "250";
-	AllowRedirect  "true";
 
 	// Cache Control. Note these do not work with Squid 2.0.2
 	No-Cache "false";

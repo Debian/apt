@@ -11,6 +11,7 @@
 #include <config.h>
 
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/debversion.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
@@ -19,6 +20,7 @@
 #include <limits>
 #include <map>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <ctype.h>
 #include <signal.h>
@@ -246,11 +248,29 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
       return true;
    }
 
-   if (stringcasecmp(Tag, "Accept-Ranges:") == 0)
+   if (Server->RangesAllowed && stringcasecmp(Tag, "Accept-Ranges:") == 0)
    {
       std::string ranges = ',' + Val + ',';
       ranges.erase(std::remove(ranges.begin(), ranges.end(), ' '), ranges.end());
       if (ranges.find(",bytes,") == std::string::npos)
+	 Server->RangesAllowed = false;
+      return true;
+   }
+
+   if (Server->RangesAllowed && stringcasecmp(Tag, "Via:") == 0)
+   {
+      auto const parts = VectorizeString(Val, ' ');
+      std::string_view const varnish{"(Varnish/"};
+      if (parts.size() != 3 || parts[1] != "varnish" || parts[2].empty() ||
+	    not APT::String::Startswith(parts[2], std::string{varnish}) ||
+	    parts[2].back() != ')')
+	 return true;
+      auto const version = parts[2].substr(varnish.length(), parts[2].length() - (varnish.length() + 1));
+      if (version.empty())
+	 return true;
+      std::string_view const varnishsupport{"6.4~"};
+      if (debVersioningSystem::CmpFragment(version.data(), version.data() + version.length(),
+					   varnishsupport.begin(), varnishsupport.end()) < 0)
 	 Server->RangesAllowed = false;
       return true;
    }
@@ -276,7 +296,6 @@ void ServerState::Reset()						/*{{{*/
    Persistent = false;
    Pipeline = false;
    PipelineAllowed = true;
-   RangesAllowed = true;
    PipelineAnswersReceived = 0;
 }
 									/*}}}*/
@@ -410,6 +429,13 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 	 _error->Error("Redirection from %s to '%s' is forbidden", Uri.Access.c_str(), NextURI.c_str());
       }
       /* else pass through for error message */
+   }
+   // the server is not supporting ranges as much as we would like. Retry without ranges
+   else if (not Server->RangesAllowed && (Req.Result == 416 || Req.Result == 206))
+   {
+      RemoveFile("server", Queue->DestFile);
+      NextURI = Queue->Uri;
+      return TRY_AGAIN_OR_REDIRECT;
    }
    // retry after an invalid range response without partial data
    else if (Req.Result == 416)
@@ -607,6 +633,7 @@ int BaseHttpMethod::Loop()
 	 setPostfixForMethodNames(::URI(Queue->Uri).Host.c_str());
 	 AllowRedirect = ConfigFindB("AllowRedirect", true);
 	 PipelineDepth = ConfigFindI("Pipeline-Depth", 10);
+	 Server->RangesAllowed = ConfigFindB("AllowRanges", true);
 	 Debug = DebugEnabled();
       }
 
