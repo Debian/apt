@@ -54,10 +54,12 @@ static std::string transformFingergrpintsWithFilenames(std::string const &finger
    return transformFingergrpints(finger);
 }
 									/*}}}*/
-static std::string NormalizeSignedBy(std::string SignedBy, bool const SupportFilenames) /*{{{*/
+// Introducer is set if additional keys may be introduced, for example	/*{{{*/
+// by setting it to a filename or a complete key
+static std::string NormalizeSignedBy(std::string SignedBy, bool const Introducer)
 {
    // This is an embedded public pgp key, normalize spaces inside it and empty "." lines
-   if (SignedBy.find("-----BEGIN PGP PUBLIC KEY BLOCK-----") != std::string::npos) {
+   if (Introducer && SignedBy.find("-----BEGIN PGP PUBLIC KEY BLOCK-----") != std::string::npos) {
       std::istringstream is(SignedBy);
       std::ostringstream os;
       std::string line;
@@ -84,7 +86,7 @@ static std::string NormalizeSignedBy(std::string SignedBy, bool const SupportFil
    fingers.erase(std::remove_if(fingers.begin(), fingers.end(), isAnEmptyString), fingers.end());
    if (unlikely(fingers.empty()))
       return "";
-   if (SupportFilenames)
+   if (Introducer)
       std::transform(fingers.begin(), fingers.end(), fingers.begin(), transformFingergrpintsWithFilenames);
    else
       std::transform(fingers.begin(), fingers.end(), fingers.begin(), transformFingergrpints);
