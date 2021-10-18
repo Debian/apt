@@ -27,6 +27,12 @@ class Hashes;
 class BaseHttpMethod;
 struct ServerState;
 
+enum class HaveContent
+{
+   UNKNOWN,
+   FALSE,
+   TRUE,
+};
 struct RequestState
 {
    unsigned int Major = 0;
@@ -46,7 +52,8 @@ struct RequestState
    unsigned long long MaximumSize = 0;
 
    time_t Date;
-   bool HaveContent = false;
+   HaveContent haveContent = HaveContent::UNKNOWN;
+
    enum {Chunked,Stream,Closes} Encoding = Closes;
    enum {Header, Data} State = Header;
    std::string Location;

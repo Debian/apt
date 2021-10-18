@@ -76,7 +76,7 @@ ServerState::RunHeadersResult ServerState::RunHeaders(RequestState &Req,
 	 continue;
       
       // Tidy up the connection persistence state.
-      if (Req.Encoding == RequestState::Closes && Req.HaveContent == true)
+      if (Req.Encoding == RequestState::Closes && Req.haveContent == HaveContent::TRUE)
 	 Persistent = false;
       
       return RUN_HEADERS_OK;
@@ -156,10 +156,13 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
    {
       auto ContentLength = strtoull(Val.c_str(), NULL, 10);
       if (ContentLength == 0)
+      {
+	 haveContent = HaveContent::FALSE;
 	 return true;
+      }
       if (Encoding == Closes)
 	 Encoding = Stream;
-      HaveContent = true;
+      haveContent = HaveContent::TRUE;
 
       unsigned long long * DownloadSizePtr = &DownloadSize;
       if (Result == 416 || (Result >= 300 && Result < 400))
@@ -169,7 +172,7 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
       if (*DownloadSizePtr >= std::numeric_limits<unsigned long long>::max())
 	 return _error->Errno("HeaderLine", _("The HTTP server sent an invalid Content-Length header"));
       else if (*DownloadSizePtr == 0)
-	 HaveContent = false;
+	 haveContent = HaveContent::FALSE;
 
       // On partial content (206) the Content-Length less than the real
       // size, so do not set it here but leave that to the Content-Range
@@ -182,7 +185,8 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 
    if (stringcasecmp(Tag,"Content-Type:") == 0)
    {
-      HaveContent = true;
+      if (haveContent == HaveContent::UNKNOWN)
+	 haveContent = HaveContent::TRUE;
       return true;
    }
 
@@ -192,7 +196,8 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
    // for such responses.
    if ((Result == 416 || Result == 206) && stringcasecmp(Tag,"Content-Range:") == 0)
    {
-      HaveContent = true;
+      if (haveContent == HaveContent::UNKNOWN)
+	 haveContent = HaveContent::TRUE;
 
       // §14.16 says 'byte-range-resp-spec' should be a '*' in case of 416
       if (Result == 416 && sscanf(Val.c_str(), "bytes */%llu",&TotalFileSize) == 1)
@@ -209,7 +214,8 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
 
    if (stringcasecmp(Tag,"Transfer-Encoding:") == 0)
    {
-      HaveContent = true;
+      if (haveContent == HaveContent::UNKNOWN)
+	 haveContent = HaveContent::TRUE;
       if (stringcasecmp(Val,"chunked") == 0)
 	 Encoding = Chunked;
       return true;
@@ -356,7 +362,7 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 	 {
 	    SetFailReason("RedirectionLoop");
 	    _error->Error("Redirection loop encountered");
-	    if (Req.HaveContent == true)
+	    if (Req.haveContent == HaveContent::TRUE)
 	       return ERROR_WITH_CONTENT_PAGE;
 	    return ERROR_UNRECOVERABLE;
 	 }
@@ -373,7 +379,7 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 	 if (tmpURI.Access.find('+') != std::string::npos)
 	 {
 	    _error->Error("Server tried to trick us into using a specific implementation: %s", tmpURI.Access.c_str());
-	    if (Req.HaveContent == true)
+	    if (Req.haveContent == HaveContent::TRUE)
 	       return ERROR_WITH_CONTENT_PAGE;
 	    return ERROR_UNRECOVERABLE;
 	 }
@@ -399,7 +405,7 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 	 {
 	    SetFailReason("RedirectionLoop");
 	    _error->Error("Redirection loop encountered");
-	    if (Req.HaveContent == true)
+	    if (Req.haveContent == HaveContent::TRUE)
 	       return ERROR_WITH_CONTENT_PAGE;
 	    return ERROR_UNRECOVERABLE;
 	 }
@@ -459,11 +465,11 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 	 if (partialHit == true)
 	 {
 	    // the file is completely downloaded, but was not moved
-	    if (Req.HaveContent == true)
+	    if (Req.haveContent == HaveContent::TRUE)
 	    {
 	       // nuke the sent error page
 	       Server->RunDataToDevNull(Req);
-	       Req.HaveContent = false;
+	       Req.haveContent = HaveContent::FALSE;
 	    }
 	    Req.StartPos = Req.TotalFileSize;
 	    Req.Result = 200;
@@ -487,7 +493,7 @@ BaseHttpMethod::DealWithHeaders(FetchResult &Res, RequestState &Req)
 	 SetFailReason(err);
 	 _error->Error("%u %s", Req.Result, Req.Code);
       }
-      if (Req.HaveContent == true)
+      if (Req.haveContent == HaveContent::TRUE)
 	 return ERROR_WITH_CONTENT_PAGE;
       return ERROR_UNRECOVERABLE;
    }
@@ -726,7 +732,7 @@ int BaseHttpMethod::Loop()
 	    // so instead we use the size of the biggest item in the queue
 	    Req.MaximumSize = FindMaximumObjectSizeInQueue();
 
-	    if (Req.HaveContent)
+	    if (Req.haveContent == HaveContent::TRUE)
 	    {
 	       /* If the server provides Content-Length we can figure out with it if
 		  this satisfies any request we have made so far (in the pipeline).
@@ -888,7 +894,7 @@ int BaseHttpMethod::Loop()
 	 case TRY_AGAIN_OR_REDIRECT:
 	 {
 	    // Clear rest of response if there is content
-	    if (Req.HaveContent)
+	    if (Req.haveContent == HaveContent::TRUE)
 	       Server->RunDataToDevNull(Req);
 	    Redirect(NextURI);
 	    break;
