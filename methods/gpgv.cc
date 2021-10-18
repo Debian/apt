@@ -416,6 +416,14 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       return _("Unknown error executing apt-key");
 }
 
+static std::string GenerateKeyFile(std::string const key)
+{
+   FileFd fd;
+   GetTempFile("apt-key.XXXXXX.asc", false, &fd);
+   fd.Write(key.data(), key.size());
+   return fd.Name();
+}
+
 bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 {
    URI const Get(Itm->Uri);
@@ -423,11 +431,27 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    SignersStorage Signers;
 
    std::vector<std::string> keyFpts, keyFiles;
-   for (auto &&key : VectorizeString(LookupTag(Message, "Signed-By"), ','))
-      if (key.empty() == false && key[0] == '/')
-	 keyFiles.emplace_back(std::move(key));
-      else
-	 keyFpts.emplace_back(std::move(key));
+   struct TemporaryFile
+   {
+      std::string name = "";
+      ~TemporaryFile() { if (0) RemoveFile("~TemporaryFile", name); }
+   } tmpKey;
+
+   std::string SignedBy = DeQuoteString(LookupTag(Message, "Signed-By"));
+
+   if (SignedBy.find("-----BEGIN PGP PUBLIC KEY BLOCK-----") != std::string::npos)
+   {
+      tmpKey.name = GenerateKeyFile(SignedBy);
+      keyFiles.emplace_back(tmpKey.name);
+   }
+   else
+   {
+      for (auto &&key : VectorizeString(SignedBy, ','))
+	 if (key.empty() == false && key[0] == '/')
+	    keyFiles.emplace_back(std::move(key));
+	 else
+	    keyFpts.emplace_back(std::move(key));
+   }
 
    // Run apt-key on file, extract contents and get the key ID of the signer
    string const msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), keyFpts, keyFiles, Signers);
