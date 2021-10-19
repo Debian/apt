@@ -268,7 +268,7 @@ class APT_PUBLIC pkgCache								/*{{{*/
    inline RlsFileIterator RlsFileBegin();
    inline RlsFileIterator RlsFileEnd();
 
-   APT_DEPRECATED_MSG("Always true") inline bool MultiArchCache() const { return MultiArchEnabled; }
+   inline bool MultiArchCache() const { return MultiArchEnabled; }
    inline char const * NativeArch();
 
    // Make me a function
