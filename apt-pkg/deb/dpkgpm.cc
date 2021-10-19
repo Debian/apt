@@ -1874,8 +1874,18 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 		  strprintf(linkpath, "%s/%.*lu-%s", tmpdir_for_dpkg_recursive.get(), p, n, file.c_str());
 	       else
 		  strprintf(linkpath, "%s/%s", tmpdir_for_dpkg_recursive.get(), file.c_str());
-	       if (symlink(I->File.c_str(), linkpath.c_str()) != 0)
-		  return _error->Errno("DPkg::Go", "Symlinking %s to %s failed!", I->File.c_str(), linkpath.c_str());
+	       std::string linktarget = I->File;
+	       if (dpkg_chroot_dir != "/") {
+		  char * fakechroot = getenv("FAKECHROOT");
+		  if (fakechroot != nullptr && strcmp(fakechroot, "true") == 0) {
+		     // if apt is run with DPkg::Chroot-Directory under
+		     // fakechroot, absolulte symbolic links must be prefixed
+		     // with the chroot path to be valid inside fakechroot
+		     strprintf(linktarget, "%s/%s", dpkg_chroot_dir.c_str(), I->File.c_str());
+		  }
+	       }
+	       if (symlink(linktarget.c_str(), linkpath.c_str()) != 0)
+		  return _error->Errno("DPkg::Go", "Symlinking %s to %s failed!", linktarget.c_str(), linkpath.c_str());
 	    }
 	    Args.push_back("--recursive");
 	    Args.push_back(debSystem::StripDpkgChrootDirectory(tmpdir_for_dpkg_recursive.get()));
