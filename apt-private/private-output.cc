@@ -86,7 +86,7 @@ bool InitOutput(std::basic_streambuf<char> * const out)			/*{{{*/
       SigWinch(0);
    }
 
-   if(!isatty(1))
+   if(!isatty(1) || getenv("NO_COLOR") != nullptr)
    {
       _config->Set("APT::Color", "false");
       _config->Set("APT::Color::Highlight", "");

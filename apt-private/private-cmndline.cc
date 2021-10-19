@@ -474,7 +474,8 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
    std::string const binary = flNotDir(Binary);
    if (binary == "apt" || binary == "apt-config")
    {
-      _config->CndSet("Binary::apt::APT::Color", true);
+      if (getenv("NO_COLOR") == nullptr)
+         _config->CndSet("Binary::apt::APT::Color", true);
       _config->CndSet("Binary::apt::APT::Cache::Show::Version", 2);
       _config->CndSet("Binary::apt::APT::Cache::AllVersions", false);
       _config->CndSet("Binary::apt::APT::Cache::ShowVirtuals", true);
