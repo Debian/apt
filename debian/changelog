@@ -1,3 +1,20 @@
+apt (2.3.11) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * Allow version selection to match versioned self-provides
+  * Allow =version and /release selector on virtual packages
+
+  [ Johannes Schauer Marin Rodrigues ]
+  * apt-pkg/deb/dpkgpm.cc: make DPkg::Chroot-Directory work under fakechroot
+
+  [ Julian Andres Klode ]
+  * Respect NO_COLOR environment variable
+  * Invalidate cached architecture list when building cache.
+    Fixes a regression in python-apt where switching the architectures
+    in the config between cache invocations regressed.
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 21 Oct 2021 12:20:24 +0200
+
 apt (2.3.10) unstable; urgency=medium
 
   [ Julian Andres Klode ]
