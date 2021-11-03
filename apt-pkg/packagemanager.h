@@ -2,7 +2,7 @@
 // Description								/*{{{*/
 /* ######################################################################
 
-   Package Manager - Abstacts the package manager
+   Package Manager - Abstracts the package manager
 
    Three steps are 
      - Aquiration of archives (stores the list of final file names)

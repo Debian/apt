@@ -12,7 +12,7 @@
 
    This is a modified version of Manoj's Routine B. It consists of four
    independent ordering algorithms that can be applied at for different
-   points in the ordering. By applying progressivly fewer ordering
+   points in the ordering. By applying progressively fewer ordering
    operations it is possible to give each consideration it's own
    priority and create an order that satisfies the lowest applicable
    consideration.
@@ -563,7 +563,7 @@ bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
 // ---------------------------------------------------------------------
 /* This is the core ordering routine. It calls the set dependency
    consideration functions which then potentially call this again. Finite
-   depth is achieved through the colouring mechinism. */
+   depth is achieved through the colouring mechanism. */
 bool pkgOrderList::VisitNode(PkgIterator Pkg, char const* from)
 {
    // Looping or irrelevant.

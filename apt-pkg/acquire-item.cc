@@ -999,7 +999,7 @@ void pkgAcquire::Item::FailMessage(string const &Message)
 // Acquire::Item::Start - Item has begun to download			/*{{{*/
 // ---------------------------------------------------------------------
 /* Stash status and the file size. Note that setting Complete means
-   sub-phases of the acquire process such as decompresion are operating */
+   sub-phases of the acquire process such as decompression are operating */
 void pkgAcquire::Item::Start(string const &/*Message*/, unsigned long long const Size)
 {
    Status = StatFetching;
@@ -3267,7 +3267,7 @@ void pkgAcqIndex::StageDownloadDone(string const &Message)
    std::string Filename = LookupTag(Message,"Filename");
 
    // we need to verify the file against the current Release file again
-   // on if-modfied-since hit to avoid a stale attack against us
+   // on if-modified-since hit to avoid a stale attack against us
    if (StringToBool(LookupTag(Message, "IMS-Hit"), false))
    {
       Filename = GetExistingFilename(GetFinalFileNameFromURI(Target.URI));

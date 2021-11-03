@@ -92,7 +92,7 @@ class MirrorMethod : public aptMethod /*{{{*/
    virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
 
    void RedirectItem(MirrorListInfo const &info, FetchItem *const Itm, std::string const &Message);
-   bool MirrorListFileRecieved(MirrorListInfo &info, FetchItem *const Itm);
+   bool MirrorListFileReceived(MirrorListInfo &info, FetchItem *const Itm);
    std::string GetMirrorFileURI(std::string const &Message, FetchItem *const Itm);
    void DealWithPendingItems(std::vector<std::string> const &baseuris, MirrorListInfo const &info, FetchItem *const Itm, std::function<void()> handler);
 
@@ -192,7 +192,7 @@ void MirrorMethod::DealWithPendingItems(std::vector<std::string> const &baseuris
    delete Itm;
 }
 									/*}}}*/
-bool MirrorMethod::MirrorListFileRecieved(MirrorListInfo &info, FetchItem *const Itm) /*{{{*/
+bool MirrorMethod::MirrorListFileReceived(MirrorListInfo &info, FetchItem *const Itm) /*{{{*/
 {
    std::vector<std::string> baseuris;
    for (auto const &i : mirrorfilestate)
@@ -345,7 +345,7 @@ bool MirrorMethod::URIAcquire(std::string const &Message, FetchItem *Itm) /*{{{*
 {
    auto mirrorinfo = mirrorfilestate.find(Itm->Uri);
    if (mirrorinfo != mirrorfilestate.end())
-      return MirrorListFileRecieved(mirrorinfo->second, Itm);
+      return MirrorListFileReceived(mirrorinfo->second, Itm);
 
    std::string const mirrorfileuri = GetMirrorFileURI(Message, Itm);
    if (mirrorfileuri.empty())

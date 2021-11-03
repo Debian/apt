@@ -1278,7 +1278,7 @@ bool pkgDepCache::MarkInstall_DiscardInstall(pkgCache::PkgIterator const &Pkg) /
 									/*}}}*/
 static bool MarkInstall_CollectDependencies(pkgDepCache const &Cache, pkgCache::VerIterator const &PV, std::vector<pkgCache::DepIterator> &toInstall, std::vector<pkgCache::DepIterator> &toRemove) /*{{{*/
 {
-   auto const propagateProctected = Cache[PV.ParentPkg()].Protect();
+   auto const propagateProtected = Cache[PV.ParentPkg()].Protect();
    for (auto Dep = PV.DependsList(); not Dep.end();)
    {
       auto const Start = Dep;
@@ -1290,7 +1290,7 @@ static bool MarkInstall_CollectDependencies(pkgDepCache const &Cache, pkgCache::
 	 if ((Cache[Dep] & pkgDepCache::DepInstall) == pkgDepCache::DepInstall)
 	    foundSolution = true;
       }
-      if (foundSolution && not propagateProctected)
+      if (foundSolution && not propagateProtected)
 	 continue;
 
       /* Check if this dep should be consider for install.
@@ -1352,10 +1352,10 @@ static APT::VersionVector getAllPossibleSolutions(pkgDepCache &Cache, pkgCache::
    return toUpgrade;
 }
 									/*}}}*/
-static bool MarkInstall_MarkDeleteForNotUpgradeable(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long const Depth, pkgCache::PkgIterator const &Pkg, bool const propagateProctected, APT::PackageVector &delayedRemove)/*{{{*/
+static bool MarkInstall_MarkDeleteForNotUpgradeable(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long const Depth, pkgCache::PkgIterator const &Pkg, bool const propagateProtected, APT::PackageVector &delayedRemove)/*{{{*/
 {
    auto &State = Cache[Pkg];
-   if (not propagateProctected)
+   if (not propagateProtected)
    {
       if (State.Delete())
 	 return true;
@@ -1380,7 +1380,7 @@ static bool MarkInstall_MarkDeleteForNotUpgradeable(pkgDepCache &Cache, bool con
    return true;
 }
 									/*}}}*/
-static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade, APT::PackageVector &delayedRemove, bool const propagateProctected, bool const FromUser) /*{{{*/
+static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long Depth, std::vector<pkgCache::DepIterator> &toRemove, APT::PackageVector &toUpgrade, APT::PackageVector &delayedRemove, bool const propagateProtected, bool const FromUser) /*{{{*/
 {
    /* Negative dependencies have no or-group
       If the candidate is effected try to keep current and discard candidate
@@ -1400,10 +1400,10 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
 	    if (State.Install() && not Cache.MarkKeep(Pkg, false, false, Depth))
 	    {
 	       failedToRemoveSomething = true;
-	       if (not propagateProctected && not FromUser)
+	       if (not propagateProtected && not FromUser)
 		  break;
 	    }
-	    else if (propagateProctected)
+	    else if (propagateProtected)
 	    {
 	       MarkInstall_DiscardCandidate(Cache, Pkg);
 	       if (Pkg->CurrentVer == 0)
@@ -1412,14 +1412,14 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
 	    else
 	       badCandidate.push_back(Pkg);
 	 }
-	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProctected, delayedRemove))
+	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProtected, delayedRemove))
 	 {
 	    failedToRemoveSomething = true;
-	    if (not propagateProctected && not FromUser)
+	    if (not propagateProtected && not FromUser)
 	       break;
 	 }
       }
-      if (failedToRemoveSomething && not propagateProctected && not FromUser)
+      if (failedToRemoveSomething && not propagateProtected && not FromUser)
 	 break;
       for (auto const &Ver : getAllPossibleSolutions(Cache, D, D, APT::CacheSetHelper::INSTALLED, true))
       {
@@ -1430,21 +1430,21 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
 	    toUpgrade.push_back(Pkg);
 	 else if (State.CandidateVer == Pkg.CurrentVer())
 	    ; // already done in the first loop above
-	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProctected, delayedRemove))
+	 else if (not MarkInstall_MarkDeleteForNotUpgradeable(Cache, DebugAutoInstall, PV, Depth, Pkg, propagateProtected, delayedRemove))
 	 {
 	    failedToRemoveSomething = true;
-	    if (not propagateProctected && not FromUser)
+	    if (not propagateProtected && not FromUser)
 	       break;
 	 }
       }
-      if (failedToRemoveSomething && not propagateProctected && not FromUser)
+      if (failedToRemoveSomething && not propagateProtected && not FromUser)
 	 break;
    }
    toRemove.clear();
    return not failedToRemoveSomething;
 }
 									/*}}}*/
-static bool MarkInstall_UpgradeOrRemoveConflicts(pkgDepCache &Cache, bool const DebugAutoInstall, unsigned long Depth, bool const ForceImportantDeps, APT::PackageVector &toUpgrade, bool const propagateProctected, bool const FromUser) /*{{{*/
+static bool MarkInstall_UpgradeOrRemoveConflicts(pkgDepCache &Cache, bool const DebugAutoInstall, unsigned long Depth, bool const ForceImportantDeps, APT::PackageVector &toUpgrade, bool const propagateProtected, bool const FromUser) /*{{{*/
 {
    bool failedToRemoveSomething = false;
    for (auto const &InstPkg : toUpgrade)
@@ -1455,17 +1455,17 @@ static bool MarkInstall_UpgradeOrRemoveConflicts(pkgDepCache &Cache, bool const 
 	 if (not Cache.MarkDelete(InstPkg, false, Depth + 1, false))
 	 {
 	    failedToRemoveSomething = true;
-	    if (not propagateProctected && not FromUser)
+	    if (not propagateProtected && not FromUser)
 	       break;
 	 }
-	 else if (propagateProctected)
+	 else if (propagateProtected)
 	    Cache.MarkProtected(InstPkg);
       }
    toUpgrade.clear();
    return not failedToRemoveSomething;
 }
 									/*}}}*/
-static bool MarkInstall_InstallDependencies(pkgDepCache &Cache, bool const DebugAutoInstall, bool const DebugMarker, pkgCache::PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, std::vector<pkgCache::DepIterator> &toInstall, APT::PackageVector *const toMoveAuto, bool const propagateProctected, bool const FromUser) /*{{{*/
+static bool MarkInstall_InstallDependencies(pkgDepCache &Cache, bool const DebugAutoInstall, bool const DebugMarker, pkgCache::PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, std::vector<pkgCache::DepIterator> &toInstall, APT::PackageVector *const toMoveAuto, bool const propagateProtected, bool const FromUser) /*{{{*/
 {
    auto const IsSatisfiedByInstalled = [&](auto &D) { return (Cache[pkgCache::DepIterator{Cache, &D}] & pkgDepCache::DepInstall) == pkgDepCache::DepInstall; };
    bool failedToInstallSomething = false;
@@ -1475,7 +1475,7 @@ static bool MarkInstall_InstallDependencies(pkgDepCache &Cache, bool const Debug
       pkgCache::DepIterator Start, End;
       Dep.GlobOr(Start, End);
       bool foundSolution = std::any_of(Start, Dep, IsSatisfiedByInstalled);
-      if (foundSolution && not propagateProctected)
+      if (foundSolution && not propagateProtected)
 	 continue;
       bool const IsCriticalDep = Start.IsCritical();
       if (foundSolution)
@@ -1555,7 +1555,7 @@ static bool MarkInstall_InstallDependencies(pkgDepCache &Cache, bool const Debug
 	 if (DebugAutoInstall)
 	    std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.FullName()
 		      << " as " << End.DepType() << " of " << Pkg.FullName() << '\n';
-	 if (propagateProctected && IsCriticalDep && possibleSolutions.size() == 1)
+	 if (propagateProtected && IsCriticalDep && possibleSolutions.size() == 1)
 	 {
 	    if (not Cache.MarkInstall(InstPkg, false, Depth + 1, false, ForceImportantDeps))
 	       continue;
@@ -1575,7 +1575,7 @@ static bool MarkInstall_InstallDependencies(pkgDepCache &Cache, bool const Debug
       if (not foundSolution && IsCriticalDep)
       {
 	 failedToInstallSomething = true;
-	 if (not propagateProctected && not FromUser)
+	 if (not propagateProtected && not FromUser)
 	    break;
       }
    }
@@ -1668,9 +1668,9 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
 	    P.iFlags &= (~Protected);
       }
       operator bool() noexcept { return already; }
-   } propagateProctected{PkgState[Pkg->ID]};
+   } propagateProtected{PkgState[Pkg->ID]};
 
-   if (not MarkInstall_UpgradeOrRemoveConflicts(*this, DebugAutoInstall, Depth, ForceImportantDeps, toUpgrade, propagateProctected, FromUser))
+   if (not MarkInstall_UpgradeOrRemoveConflicts(*this, DebugAutoInstall, Depth, ForceImportantDeps, toUpgrade, propagateProtected, FromUser))
    {
       if (failEarly)
       {
@@ -1698,7 +1698,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
 
    APT::PackageVector toMoveAuto;
    if (not MarkInstall_InstallDependencies(*this, DebugAutoInstall, DebugMarker, Pkg, Depth, ForceImportantDeps, toInstall,
-					   MoveAutoBitToDependencies ? &toMoveAuto : nullptr, propagateProctected, FromUser))
+					   MoveAutoBitToDependencies ? &toMoveAuto : nullptr, propagateProtected, FromUser))
    {
       if (failEarly)
       {
@@ -1811,7 +1811,7 @@ bool pkgDepCache::IsInstallOkDependenciesSatisfiableByCandidates(PkgIterator con
       DepIterator Start = Dep;
       bool foundSolution = false;
       unsigned Ors = 0;
-      // Is it possible to statisfy this dependency?
+      // Is it possible to satisfy this dependency?
       for (bool LastOR = true; not Dep.end() && LastOR; ++Dep, ++Ors)
       {
 	 LastOR = (Dep->CompareOp & Dep::Or) == Dep::Or;

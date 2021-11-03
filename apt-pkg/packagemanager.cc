@@ -2,7 +2,7 @@
 // Description								/*{{{*/
 /* ######################################################################
 
-   Package Manager - Abstacts the package manager
+   Package Manager - Abstracts the package manager
 
    More work is needed in the area of transitioning provides, ie exim
    replacing smail. This can cause interesting side effects.
