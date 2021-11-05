@@ -71,7 +71,6 @@ static std::string NormalizeSignedBy(std::string SignedBy, bool const Introducer
 	    line="";
 	 os << line << std::endl;
       }
-      std::clog << "OUTPUT " << os.str() << std::endl;
       return os.str();
    }
 
