@@ -243,6 +243,7 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
    unsigned long Offset = 0;
    std::string Version;
    pkgSourceList const * const SrcList = Cache.GetSourceList();
+   pkgVersionMatch RelTagMatch{RelTag, pkgVersionMatch::Release};
 
    /* Iterate over all of the hits, which includes the resulting
       binary packages in the search */
@@ -258,12 +259,8 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
 		     if (RelTag.empty() == false && UserRequestedVerTag.empty() == true)
 		     {
 			pkgCache::RlsFileIterator const Rls = GetReleaseFileForSourceRecord(Cache, SrcList, Parse);
-			if (Rls.end() == false)
-			{
-			   if ((Rls->Archive != 0 && RelTag != Rls.Archive()) &&
-				 (Rls->Codename != 0 && RelTag != Rls.Codename()))
-			      continue;
-			}
+			if (not Rls.end() && not RelTagMatch.FileMatch(Rls))
+			   continue;
 		     }
 
 		     // Ignore all versions which doesn't fit

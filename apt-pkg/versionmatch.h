@@ -68,6 +68,7 @@ class APT_PUBLIC pkgVersionMatch
    static bool ExpressionMatches(const char *pattern, const char *string);
    static bool ExpressionMatches(const std::string& pattern, const char *string);
    bool FileMatch(pkgCache::PkgFileIterator File);
+   bool FileMatch(pkgCache::RlsFileIterator const &File);
    pkgCache::VerIterator Find(pkgCache::PkgIterator Pkg);
    bool VersionMatches(pkgCache::VerIterator Ver);
 

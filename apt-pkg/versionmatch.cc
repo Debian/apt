@@ -228,64 +228,80 @@ bool pkgVersionMatch::ExpressionMatches(const std::string& pattern, const char *
 									/*}}}*/
 // VersionMatch::FileMatch - Match against an index file		/*{{{*/
 // ---------------------------------------------------------------------
-/* This matcher checks against the release file and the origin location 
+/* This matcher checks against the release file and the origin location
    to see if the constraints are met. */
-bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
+bool pkgVersionMatch::FileMatch(pkgCache::RlsFileIterator const &File)
 {
    if (Type == Release)
    {
-      if (MatchAll == true)
+      if (MatchAll)
 	 return true;
 
-/*      cout << RelVerStr << ',' << RelOrigin << ',' << RelArchive << ',' << RelLabel << endl;
-      cout << File.Version() << ',' << File.Origin() << ',' << File.Archive() << ',' << File.Label() << endl;*/
-
-      if (RelVerStr.empty() == true && RelOrigin.empty() == true &&
-	  RelArchive.empty() == true && RelLabel.empty() == true &&
-	  RelRelease.empty() == true && RelCodename.empty() == true &&
-	  RelComponent.empty() == true && RelArchitecture.empty() == true)
+      if (RelVerStr.empty() && RelOrigin.empty() &&
+	  RelArchive.empty() && RelLabel.empty() &&
+	  RelRelease.empty() && RelCodename.empty() &&
+	  RelComponent.empty() && RelArchitecture.empty())
 	 return false;
 
-      if (RelVerStr.empty() == false)
-	 if (MatchVer(File.Version(),RelVerStr,RelVerPrefixMatch) == false &&
-	       ExpressionMatches(RelVerStr, File.Version()) == false)
-	    return false;
-      if (RelOrigin.empty() == false)
-	 if (!ExpressionMatches(RelOrigin,File.Origin()))
-	    return false;
-      if (RelArchive.empty() == false)
-	 if (!ExpressionMatches(RelArchive,File.Archive()))
-            return false;
-      if (RelCodename.empty() == false)
-	 if (!ExpressionMatches(RelCodename,File.Codename()))
-            return false;
-      if (RelRelease.empty() == false)
-	 if (!ExpressionMatches(RelRelease,File.Archive()) &&
-             !ExpressionMatches(RelRelease,File.Codename()))
-	       return false;
-      if (RelLabel.empty() == false)
-	 if (!ExpressionMatches(RelLabel,File.Label()))
-	    return false;
-      if (RelComponent.empty() == false)
-	 if (!ExpressionMatches(RelComponent,File.Component()))
-	    return false;
-      if (RelArchitecture.empty() == false)
-	 if (!ExpressionMatches(RelArchitecture,File.Architecture()))
-	    return false;
+      if (not RelVerStr.empty() && not MatchVer(File.Version(), RelVerStr, RelVerPrefixMatch) &&
+	  not ExpressionMatches(RelVerStr, File.Version()))
+	 return false;
+      if (not RelOrigin.empty() && not ExpressionMatches(RelOrigin, File.Origin()))
+	 return false;
+      if (not RelArchive.empty() && not ExpressionMatches(RelArchive, File.Archive()))
+	 return false;
+      if (not RelCodename.empty() && not ExpressionMatches(RelCodename, File.Codename()))
+	 return false;
+      if (not RelRelease.empty() && not ExpressionMatches(RelRelease, File.Archive()) &&
+	  not ExpressionMatches(RelRelease, File.Codename()))
+	 return false;
+      if (not RelLabel.empty() && not ExpressionMatches(RelLabel, File.Label()))
+	 return false;
       return true;
    }
 
    if (Type == Origin)
    {
-      if (OrSite.empty() == false) {
-	 if (File.Site() == NULL)
-	    return false;
-      }
-      else if (File->Release == 0)// only 'bad' files like dpkg.status file has no release file
+      if (not OrSite.empty() && File.Site() == nullptr)
 	 return false;
-      return (ExpressionMatches(OrSite, File.Site())); /* both strings match */
+      return ExpressionMatches(OrSite, File.Site()); /* both strings match */
    }
 
    return false;
+}
+bool pkgVersionMatch::FileMatch(pkgCache::PkgFileIterator File)
+{
+   if (auto const RlsFile = File.ReleaseFile(); not RlsFile.end())
+   {
+      if (not FileMatch(RlsFile))
+	 return false;
+   }
+   else if (Type == Release)
+   {
+      // only 'bad' files like dpkg.status file have no release file
+      // those reuse the Component of te PkgFile to store the Archive "now".
+      if (not RelArchive.empty() && not ExpressionMatches(RelArchive, File.Component()))
+	 return false;
+      if (not RelRelease.empty() && not ExpressionMatches(RelRelease, File.Component()))
+	 return false;
+      if (not RelOrigin.empty() || not RelLabel.empty() ||
+	  not RelVerStr.empty() || not RelCodename.empty())
+	 return false;
+   }
+   else
+      return false;
+
+   if (Type == Release)
+   {
+      if (MatchAll)
+	 return true;
+
+      if (not RelComponent.empty() && not ExpressionMatches(RelComponent, File.Component()))
+	 return false;
+      if (not RelArchitecture.empty() && not ExpressionMatches(RelArchitecture, File.Architecture()))
+	 return false;
+   }
+
+   return true;
 }
 									/*}}}*/
