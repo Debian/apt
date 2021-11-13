@@ -62,7 +62,7 @@ _apt()
     # Complete a -t<SPACE><TAB>
     case $prev in
         -t|--target-release)
-            COMPREPLY=( $( compgen -W "$(apt-cache policy | egrep -o 'a=[^,]*|n=[^,]*' | cut -f2- -d= | sort -u)" -- "$cur" ) )
+            COMPREPLY=( $( compgen -W "$(apt-cache policy | grep -Eo 'a=[^,]*|n=[^,]*' | cut -f2- -d= | sort -u)" -- "$cur" ) )
             return 0
             ;;
     esac
