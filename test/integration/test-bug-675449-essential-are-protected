@@ -100,4 +100,16 @@ This should NOT be done unless you know exactly what you are doing!
   foo libfoo (due to foo)
 0 upgraded, 0 newly installed, 2 to remove and 4 not upgraded.
 Purg foo [1]
-Purg libfoo [1]' aptget purge libfoo -s
+Purg libfoo [1]' aptget purge foo libfoo -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ foo : Depends: libfoo but it is not going to be installed
+E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.' aptget purge libfoo -s
