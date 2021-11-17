@@ -304,19 +304,7 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
       if (_config->FindB("APT::Get::Trivial-Only",false) == true)
 	 return _error->Error(_("Trivial Only specified but this is not a trivial operation."));
 
-      // TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
-      //             careful with hard to type or special characters (like non-breaking spaces)
-      const char *Prompt = _("Yes, do as I say!");
-      std::string question;
-      strprintf(question,
-	       _("You are about to do something potentially harmful.\n"
-		 "To continue type in the phrase '%s'\n"
-		 " ?] "),Prompt);
-      if (AnalPrompt(question, Prompt) == false)
-      {
-	 c2out << _("Abort.") << std::endl;
-	 exit(1);
-      }
+      return _error->Error(_("Removing essential system-critical packages is not permitted. This might break the system."));
    }
    else
    {

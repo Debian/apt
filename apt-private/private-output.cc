@@ -745,24 +745,6 @@ bool YnPrompt(char const * const Question, bool const Default)
    return YnPrompt(Question, Default, true, c1out, c2out);
 }
 									/*}}}*/
-// AnalPrompt - Annoying Yes No Prompt.					/*{{{*/
-// ---------------------------------------------------------------------
-/* Returns true on a Yes.*/
-bool AnalPrompt(std::string const &Question, const char *Text)
-{
-   if (_config->FindI("quiet",0) > 0)
-      _error->DumpErrors(c2out);
-   else
-      _error->DumpErrors(c2out, GlobalError::DEBUG);
-   c2out << Question << std::flush;
-
-   char Buf[1024];
-   std::cin.getline(Buf,sizeof(Buf));
-   if (strcmp(Buf,Text) == 0)
-      return true;
-   return false;
-}
-									/*}}}*/
 
 std::string PrettyFullName(pkgCache::PkgIterator const &Pkg)
 {
