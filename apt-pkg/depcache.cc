@@ -930,6 +930,24 @@ static bool IsModeChangeOk(pkgDepCache &Cache, pkgDepCache::ModeList const mode,
 		   << " of " << APT::PrettyPkg(&Cache, Pkg) << std::endl;
       return false;
    }
+   // Do not allow removals of essential packages not explicitly triggered by the user
+   else if (mode == pkgDepCache::ModeDelete && (Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential &&
+	    not _config->FindB("APT::Get::Allow-Solver-Remove-Essential", false))
+   {
+      if (unlikely(DebugMarker == true))
+	 std::clog << OutputInDepth(Depth) << "Essential prevents Mark" << PrintMode(mode)
+		   << " of " << APT::PrettyPkg(&Cache, Pkg) << std::endl;
+      return false;
+   }
+   // Do not allow removals of essential packages not explicitly triggered by the user
+   else if (mode == pkgDepCache::ModeDelete && (Pkg->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important &&
+	    not _config->FindB("APT::Get::Allow-Solver-Remove-Essential", false))
+   {
+      if (unlikely(DebugMarker == true))
+	 std::clog << OutputInDepth(Depth) << "Protected prevents Mark" << PrintMode(mode)
+		   << " of " << APT::PrettyPkg(&Cache, Pkg) << std::endl;
+      return false;
+   }
 
    return true;
 }

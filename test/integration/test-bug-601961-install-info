@@ -35,4 +35,16 @@ This should NOT be done unless you know exactly what you are doing!
   findutils essentialpkg (due to findutils)
 0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
 After this operation, 2007 kB disk space will be freed.
-E: Trivial Only specified but this is not a trivial operation.' aptget remove essentialpkg --trivial-only
+E: Trivial Only specified but this is not a trivial operation.' aptget remove essentialpkg findutils --trivial-only
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ findutils : Depends: essentialpkg but it is not going to be installed
+E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.' aptget remove essentialpkg --trivial-only
