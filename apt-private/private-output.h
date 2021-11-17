@@ -104,7 +104,6 @@ void Stats(std::ostream &out, pkgDepCache &Dep, APT::PackageVector const &HeldBa
 // prompting
 APT_PUBLIC bool YnPrompt(char const *const Question, bool Default = true);
 bool YnPrompt(char const * const Question, bool const Default, bool const ShowGlobalErrors, std::ostream &c1o, std::ostream &c2o);
-bool AnalPrompt(std::string const &Question, const char *Text);
 
 APT_PUBLIC std::string PrettyFullName(pkgCache::PkgIterator const &Pkg);
 std::string CandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg);
