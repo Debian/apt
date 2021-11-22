@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <arpa/nameser.h>
+#include <sys/types.h>
 
 #include <apt-pkg/macros.h>
 
