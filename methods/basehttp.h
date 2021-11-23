@@ -29,9 +29,9 @@ struct ServerState;
 
 enum class HaveContent
 {
-   UNKNOWN,
-   FALSE,
-   TRUE,
+   TRI_UNKNOWN,
+   TRI_FALSE,
+   TRI_TRUE,
 };
 struct RequestState
 {
@@ -52,7 +52,7 @@ struct RequestState
    unsigned long long MaximumSize = 0;
 
    time_t Date;
-   HaveContent haveContent = HaveContent::UNKNOWN;
+   HaveContent haveContent = HaveContent::TRI_UNKNOWN;
 
    enum {Chunked,Stream,Closes} Encoding = Closes;
    enum {Header, Data} State = Header;
