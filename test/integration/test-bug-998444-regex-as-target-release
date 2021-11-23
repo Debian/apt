@@ -1,0 +1,65 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+addpackage() {
+	insertpackage "$@"
+	insertsource "$@"
+}
+
+addpackage 'stable' 'foo' 'all' '1'
+addpackage 'stable-security' 'foo' 'all' '1.1~security.1'
+addpackage 'stable-updates' 'foo' 'all' '2~stable.1'
+addpackage 'unstable' 'foo' 'all' '2'
+addpackage 'experimental' 'foo' 'all' '3'
+addpackage 'external' 'foo' 'all' '4'
+
+cat > rootdir/etc/apt/preferences <<EOF
+Package: *
+Pin: release a=external
+Pin-Priority: -10
+EOF
+
+setupaptarchive
+
+APTARCHIVE="file:${TMPWORKINGDIRECTORY}/aptarchive"
+
+testfoo() {
+	testsuccessequal "foo:
+  Installed: (none)
+  Candidate: $1
+  Version table:
+     4 $2
+        $(printf '%3s' "$2") ${APTARCHIVE} external/main all Packages
+     3 $3
+        $(printf '%3s' "$3") ${APTARCHIVE} experimental/main all Packages
+     2 $4
+        $(printf '%3s' "$4") ${APTARCHIVE} unstable/main all Packages
+     2~stable.1 $5
+        $(printf '%3s' "$5") ${APTARCHIVE} stable-updates/main all Packages
+     1.1~security.1 $6
+        $(printf '%3s' "$6") ${APTARCHIVE} stable-security/main all Packages
+     1 $7
+        $(printf '%3s' "$7") ${APTARCHIVE} stable/main all Packages" apt policy foo -t "$8"
+	testsuccessequal "'${APTARCHIVE}/pool/main/foo/foo_$(apthelper quote-string "${1}" '+~ ')_all.deb' foo_${1}_all.deb 42 SHA256:0000000000000000000000000000000000000000000000000000000000000000" apt download foo --print-uris -t "$8"
+	testsuccess apt source -t "$8" --print-uris foo
+	tail -n 2 rootdir/tmp/testsuccess.output | cut -d' ' -f 2 > aptsource.output
+	testfileequal 'aptsource.output' "foo_${9:-$1}.dsc
+foo_${9:-$1}.tar.gz"
+}
+testfoo '2' '-10' '1' '500' '500' '500' '500' '' '4'
+testfoo '2' '-10' '1' '990' '500' '500' '500' 'unstable' '2'
+testfoo '1' '-10' '1' '500' '500' '500' '990' 'stable'
+testfoo '2~stable.1' '-10' '1' '500' '990' '500' '500' 'stable-updates'
+testfoo '1.1~security.1' '-10' '1' '500' '500' '990' '500' 'stable-security'
+testfoo '4' '990' '1' '500' '500' '500' '500' 'a=external'
+testfoo '2' '-10' '1' '990' '990' '990' '990' '/stable/'
+testfoo '2~stable.1' '-10' '1' '500' '990' '990' '990' '/^stable/'
+testfoo '1.1~security.1' '-10' '1' '500' '500' '990' '990' '/^stable(|-security)$/'
+testfoo '2~stable.1' '-10' '1' '500' '990' '990' '500' '/^stable(-security|-updates)$/'
+testfoo '2~stable.1' '-10' '1' '500' '990' '990' '990' '/^stable(|-security|-updates)$/'
+testfoo '4' '990' '990' '990' '990' '990' '990' '/./'
