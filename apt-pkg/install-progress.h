@@ -126,11 +126,14 @@ namespace Progress {
  private:
     APT_HIDDEN static void staticSIGWINCH(int);
     static std::vector<PackageManagerFancy*> instances;
+    static sighandler_t SIGWINCH_orig;
+    static volatile sig_atomic_t SIGWINCH_flag;
+    APT_HIDDEN void CheckSIGWINCH();
     APT_HIDDEN bool DrawStatusLine();
 
  protected:
     void SetupTerminalScrollArea(int nr_rows);
-    void HandleSIGWINCH(int);
+    void HandleSIGWINCH(int); // for abi compatibility, do not use
 
     typedef struct {
        int rows;
@@ -138,12 +141,13 @@ namespace Progress {
     } TermSize;
     TermSize GetTerminalSize();
 
-    sighandler_t old_SIGWINCH;
+    sighandler_t old_SIGWINCH; // for abi compatibility, do not use
     int child_pty;
 
  public:
     PackageManagerFancy();
     virtual ~PackageManagerFancy();
+    virtual void Pulse() APT_OVERRIDE;
     virtual void Start(int child_pty=-1) APT_OVERRIDE;
     virtual void Stop() APT_OVERRIDE;
     virtual bool StatusChanged(std::string PackageName,

@@ -222,22 +222,42 @@ PackageManagerFancy::PackageManagerFancy()
    : d(NULL), child_pty(-1)
 {
    // setup terminal size
-   old_SIGWINCH = signal(SIGWINCH, PackageManagerFancy::staticSIGWINCH);
+   if (instances.empty())
+      SIGWINCH_orig = signal(SIGWINCH, PackageManagerFancy::staticSIGWINCH);
    instances.push_back(this);
 }
 std::vector<PackageManagerFancy*> PackageManagerFancy::instances;
+sighandler_t PackageManagerFancy::SIGWINCH_orig;
+volatile sig_atomic_t PackageManagerFancy::SIGWINCH_flag = 0;
 
 PackageManagerFancy::~PackageManagerFancy()
 {
    instances.erase(find(instances.begin(), instances.end(), this));
-   signal(SIGWINCH, old_SIGWINCH);
+   if (instances.empty())
+      signal(SIGWINCH, SIGWINCH_orig);
 }
 
 void PackageManagerFancy::staticSIGWINCH(int signum)
 {
-   std::vector<PackageManagerFancy *>::const_iterator I;
-   for(I = instances.begin(); I != instances.end(); ++I)
-      (*I)->HandleSIGWINCH(signum);
+   SIGWINCH_flag = 1;
+}
+
+void PackageManagerFancy::CheckSIGWINCH()
+{
+   if (SIGWINCH_flag)
+   {
+      SIGWINCH_flag = 0;
+      int errsv = errno;
+      int const nr_terminal_rows = GetTerminalSize().rows;
+      SetupTerminalScrollArea(nr_terminal_rows);
+      DrawStatusLine();
+      errno = errsv;
+   }
+}
+
+void PackageManagerFancy::Pulse()
+{
+   CheckSIGWINCH();
 }
 
 PackageManagerFancy::TermSize
@@ -296,9 +316,7 @@ void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
 
 void PackageManagerFancy::HandleSIGWINCH(int)
 {
-   int const nr_terminal_rows = GetTerminalSize().rows;
-   SetupTerminalScrollArea(nr_terminal_rows);
-   DrawStatusLine();
+   // for abi compatibility, do not use
 }
 
 void PackageManagerFancy::Start(int a_child_pty)
