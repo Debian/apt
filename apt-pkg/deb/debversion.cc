@@ -40,7 +40,7 @@ static int order(char c)
 {
    if (isdigit(c))
       return 0;
-   else if (isalpha(c))
+   else if (isalpha_ascii(c))
       return c;
    else if (c == '~')
       return -1;
