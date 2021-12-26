@@ -430,6 +430,8 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<APT::CacheFilter::PackageArchitectureMatchesSpecification>(aWord(node->arguments[0]));
    if (node->matches("?archive", 1, 1))
       return std::make_unique<Patterns::VersionIsArchive>(aWord(node->arguments[0]));
+   if (node->matches("?codename", 1, 1))
+      return std::make_unique<Patterns::VersionIsCodename>(aWord(node->arguments[0]));
    if (node->matches("?all-versions", 1, 1))
       return std::make_unique<Patterns::VersionIsAllVersions>(aPattern(node->arguments[0]));
    if (node->matches("?any-version", 1, 1))

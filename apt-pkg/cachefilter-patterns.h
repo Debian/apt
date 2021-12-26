@@ -363,6 +363,21 @@ struct APT_HIDDEN VersionIsArchive : public VersionAnyMatcher
    }
 };
 
+struct APT_HIDDEN VersionIsCodename : public VersionAnyMatcher
+{
+   BaseRegexMatcher matcher;
+   VersionIsCodename(std::string const &pattern) : matcher(pattern) {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      for (auto VF = Ver.FileList(); not VF.end(); VF++)
+      {
+	 if (VF.File().Codename() && matcher(VF.File().Codename()))
+	    return true;
+      }
+      return false;
+   }
+};
+
 struct APT_HIDDEN VersionIsOrigin : public VersionAnyMatcher
 {
    BaseRegexMatcher matcher;
