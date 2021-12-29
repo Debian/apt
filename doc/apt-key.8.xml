@@ -196,6 +196,34 @@
    </variablelist>
  </refsect1>
 
+ <refsect1><title>Deprecation</title>
+
+	 <para>Except for using <command>apt-key del</command> in maintainer scripts, the use of <command>apt-key</command> is deprecated. This section shows how to replace existing use of <command>apt-key</command>.</para>
+
+<para>If your existing use of <command>apt-key add</command> looks like this:</para>
+<para><literal>wget -qO- https://myrepo.example/myrepo.asc | sudo apt-key add -</literal></para>
+<para>Then you can directly replace this with:</para>
+<para><literal>wget -qO- https://myrepo.example/myrepo.asc | sudo tee /etc/apt/trusted.gpg.d/myrepo.asc</literal></para>
+<para>Make sure to use the "<literal>asc</literal>" extension for ASCII armored
+keys and the "<literal>gpg</literal>" extension for the binary OpenPGP
+format (also known as "GPG key public ring"). The binary OpenPGP format works
+for all apt versions, while the ASCII armored format works for apt version >=
+1.4.</para>
+<para>Instead of placing keys into the <filename>/etc/apt/trusted.gpg.d</filename>
+directory, you can place them anywhere on your filesystem by using the
+<literal>Signed-By</literal> option in your <literal>sources.list</literal> and
+pointing to the filename of the key. See &sources-list; for details.
+Since APT 2.4, <filename>/etc/apt/keyrings</filename> is provided as the recommended
+location for keys not managed by packages.
+When using a deb822-style sources.list, and with apt version >= 2.4, the
+<literal>Signed-By</literal> option can also be used to include the full ASCII
+armored keyring directly in the <literal>sources.list</literal> without an
+additional file.
+</para>
+
+ </refsect1>
+
+
  <refsect1><title>Files</title>
    <variablelist>
 
