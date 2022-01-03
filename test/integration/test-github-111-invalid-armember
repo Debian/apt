@@ -9,13 +9,13 @@ setupaptarchive
 
 # this used to crash, but it should treat it as an invalid member header
 touch ' '
-ar -q test.deb ' '
+testsuccess ar -q test.deb ' '
 testsuccessequal "E: Invalid archive member header" ${APTTESTHELPERSBINDIR}/testdeb test.deb
 
 
 rm test.deb
 touch 'x'
-ar -q test.deb 'x'
+testsuccess ar -q test.deb 'x'
 testsuccessequal "E: This is not a valid DEB archive, missing 'debian-binary' member" ${APTTESTHELPERSBINDIR}/testdeb test.deb
 
 
@@ -30,5 +30,5 @@ gzip control.tar
 cp control.tar.gz data.tar.gz
 touch debian-binary
 rm test.deb
-ar -q test.deb debian-binary control.tar.gz data.tar.gz
+testsuccess ar -q test.deb debian-binary control.tar.gz data.tar.gz
 testsuccessequal "W: Unknown TAR header type 88" ${APTTESTHELPERSBINDIR}/testdeb test.deb
