@@ -18,9 +18,9 @@ testequalpolicy() {
 	local AP="$2"
 	shift 2
 	testsuccessequal "Package files:
- $(echo "$SP" | awk '{ printf("%3s\n",$0) }') ${STATUS}
+ $(printf '%3s' "$SP") ${STATUS}
      release a=now
- $(echo "$AP" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE}  Packages
+ $(printf '%3s' "$AP") file:${APTARCHIVE}  Packages
      release c=
 Pinned packages:" aptcache policy "$@"
 }
@@ -110,11 +110,11 @@ testequalpolicycoolstuff() {
 	local BPO2ARCHIVE=""
 	if [ ! "$7" = "2.0~bpo2" ]; then
 		BPO1PIN="$AB"
-		BPO1ARCHIVE="        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main all Packages"
+		BPO1ARCHIVE="        $(printf '%3s' "$AB") file:${APTARCHIVE} backports/main all Packages"
 	else
 		BPO2ARCHIVE="
      2.0~bpo2 $AB
-        $(echo "$AB" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} backports/main all Packages"
+        $(printf '%3s' "$AB") file:${APTARCHIVE} backports/main all Packages"
 		SB="$(echo "$SB" | tail -n 1)"
 		shift
 	fi
@@ -126,7 +126,7 @@ testequalpolicycoolstuff() {
  $IB 2.0~bpo1 $PB
 ${BPO1ARCHIVE}$SB
  $IS 1.0 $AS
-        $(echo "$AS" | awk '{ printf("%3s\n",$0) }') file:${APTARCHIVE} stable/main all Packages$SS" \
+        $(printf '%3s' "$AS") file:${APTARCHIVE} stable/main all Packages$SS" \
 		aptcache policy coolstuff -o Policy=${INSTALLED}-${CANDIDATE}-${AB}-${AS}-${PB} $*
 }
 
@@ -268,7 +268,7 @@ testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 990 100 "" "2.0~bpo2" -o Test
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 990 500 100 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t backports
 
 
-tmppath=$(readlink -f .)
+tmppath="$(readlink -f .)"
 
 # Check 16-bit integers
 echo "Package: coolstuff
