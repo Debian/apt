@@ -282,11 +282,24 @@ condition is checked.
 
 </refsect2>
 
-<refsect2><title>Regular expressions and &glob; syntax</title>
+<refsect2><title>Matching packages in the Package field</title>
+
+<para>The <literal>Package</literal> field specifies the package that a pinning
+priority is applied to. The field can either contain a binary package name, a
+source package name (prefixed with "src:"), a &glob; expression or a regular
+expression (surrounded by slashes). Multiple package names, &glob; expressions
+and regular expressions can be listed separated by whitespace in which case
+the record will match any of the matched packages.</para>
+
+<para>By default, only packages of the native architecture are matched. To
+match binary packages of any architecture, add the <literal>:any</literal>
+suffix to the package name. You can also limit matching to a specific
+architecture by appending the architecture name to the package name,
+separated by a colon character.</para>
+
 <para>
-APT also supports pinning by &glob; expressions, and regular
-expressions surrounded by slashes. For example, the following
-example assigns the priority 500 to all packages from
+For example, the following example uses a glob expression and a regular
+expression to assign the priority 500 to all packages from
 experimental where the name starts with gnome (as a &glob;-like
 expression) or contains the word kde (as a POSIX extended regular
 expression surrounded by slashes).
@@ -320,12 +333,8 @@ pins first, so later specific pins override it.
 The pattern "<literal>*</literal>" in a Package field is not considered
 a &glob; expression in itself.
 </para>
-</refsect2>
 
-<refsect2><title>Pinning by source package</title>
-<para>APT supports pinning by source packages. To pin by a source package,
-prepend "src:" to the package name.</para>
-<para>For example, to pin all binaries produced by the apt source package
+<para>To pin all binaries produced by the apt source package
 of this APT's version to 990, you can do:</para>
 
 <programlisting>
@@ -343,6 +352,12 @@ Package: src:*apt*:any
 Pin: version *
 Pin-Priority: 990
 </programlisting>
+
+<para>The <literal>:any</literal> suffix makes sure to select binary packages
+from any architecture. Without that suffix, apt implicitly assumes the
+<literal>:native</literal> suffix which would only select packages from
+the native architecture.</para>
+
 </refsect2>
 
 
