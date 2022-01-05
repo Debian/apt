@@ -314,11 +314,11 @@ is_supported_keyring() {
     local FILEEXT="${1##*.}"
     if [ "$FILEEXT" = 'gpg' ]; then
 	# 0x98, 0x99 and 0xC6 via octal as hex isn't supported by dashs printf
-	if printf '\231' | cmp --silent --bytes=1 - "$1"; then
+	if printf '\231' | cmp -s -n 1 - "$1"; then
 	    true
-	elif printf '\230' | cmp --silent --bytes=1 - "$1"; then
+	elif printf '\230' | cmp -s -n 1 - "$1"; then
 	    true
-	elif printf '\306' | cmp --silent --bytes=1 - "$1"; then
+	elif printf '\306' | cmp -s -n 1 - "$1"; then
 	    true
 	else
 	    apt_warn "The key(s) in the keyring $1 are ignored as the file has an unsupported filetype."
