@@ -144,6 +144,16 @@ Pin: release n=backports
 Pin-Priority: 600" > rootdir/etc/apt/preferences
 testequalpolicycoolstuff "" "2.0~bpo1" 600 500 600 "" -o Test=GlobalPin
 testequalpolicycoolstuff "" "1.0" 600 990 600 "" -o Test=GlobalPin -t stable
+echo "Package: cool*
+Pin: release n=backports
+Pin-Priority: 600" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "2.0~bpo1" 500 500 600 "" -o Test=GlobPin
+testequalpolicycoolstuff "" "1.0" 500 990 600 "" -o Test=GlobPin -t stable
+echo "Package: /cool.*/
+Pin: release n=backports
+Pin-Priority: 600" > rootdir/etc/apt/preferences
+testequalpolicycoolstuff "" "2.0~bpo1" 500 500 600 "" -o Test=RegexPin
+testequalpolicycoolstuff "" "1.0" 500 990 600 "" -o Test=RegexPin -t stable
 echo "Package: coolstuff
 Pin: release n=backports
 Pin-Priority: 200" > rootdir/etc/apt/preferences
@@ -238,6 +248,7 @@ testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 990 500 990 "" -o Test=ButAutomat
 
 rm incoming/backports.main.pkglist incoming/backports.main.srclist
 buildsimplenativepackage "coolstuff" "all" "2.0~bpo2" "backports"
+buildsimplenativepackage "hotstuff" "all" "1.0" "backports"
 setupaptarchive --no-update
 
 sed -i aptarchive/dists/backports/Release -e 1i"NotAutomatic: yes"
@@ -431,3 +442,48 @@ Pin-Priority: never
 testfailureequal "Reading package lists...
 E: ${tmppath}/rootdir/etc/apt/preferences: The special 'Pin-Priority: never' can only be used for 'Package: *' records" \
  aptget install -s coolstuff -o PinPriority=0
+
+# Test multiple packages
+echo "Package: coolstuff hotstuff
+Pin: release n=backports
+Pin-Priority: 600
+" > rootdir/etc/apt/preferences
+
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: 2.0~bpo2
+  Version table:
+     2.0~bpo2 600
+        100 file:${tmppath}/aptarchive backports/main all Packages
+ *** 2.0~bpo1 100
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 500
+        500 file:${tmppath}/aptarchive stable/main all Packages
+hotstuff:
+  Installed: (none)
+  Candidate: 1.0
+  Version table:
+     1.0 600
+        100 file:${tmppath}/aptarchive backports/main all Packages" aptcache policy coolstuff hotstuff
+
+echo "Package: c?ol*ff /hot[st]+uff/
+Pin: release n=backports
+Pin-Priority: 600
+" > rootdir/etc/apt/preferences
+
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: 2.0~bpo2
+  Version table:
+     2.0~bpo2 600
+        100 file:${tmppath}/aptarchive backports/main all Packages
+ *** 2.0~bpo1 100
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 500
+        500 file:${tmppath}/aptarchive stable/main all Packages
+hotstuff:
+  Installed: (none)
+  Candidate: 1.0
+  Version table:
+     1.0 600
+        100 file:${tmppath}/aptarchive backports/main all Packages" aptcache policy coolstuff hotstuff
