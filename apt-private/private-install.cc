@@ -692,7 +692,7 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
 
       if (Fix != NULL && _config->FindB("APT::Get::AutoSolving", true) == true)
       {
-	 InstallAction.propergateReleaseCandiateSwitching(helper.selectedByRelease, c0out);
+	 InstallAction.propagateReleaseCandidateSwitching(helper.selectedByRelease, c0out);
 	 InstallAction.doAutoInstall();
       }
 
@@ -1052,7 +1052,7 @@ void TryToInstall::operator() (pkgCache::VerIterator const &Ver) {
    }
 }
 									/*}}}*/
-bool TryToInstall::propergateReleaseCandiateSwitching(std::list<std::pair<pkgCache::VerIterator, std::string> > const &start, std::ostream &out)/*{{{*/
+bool TryToInstall::propagateReleaseCandidateSwitching(std::list<std::pair<pkgCache::VerIterator, std::string> > const &start, std::ostream &out)/*{{{*/
 {
    for (std::list<std::pair<pkgCache::VerIterator, std::string> >::const_iterator s = start.begin();
 	 s != start.end(); ++s)

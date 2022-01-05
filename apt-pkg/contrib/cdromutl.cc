@@ -71,7 +71,7 @@ bool IsMounted(string &Path)
 // UnmountCdrom - Unmount a cdrom					/*{{{*/
 // ---------------------------------------------------------------------
 /* Forking umount works much better than the umount syscall which can 
-   leave /etc/mtab inconsitant. We drop all messages this produces. */
+   leave /etc/mtab inconsistent. We drop all messages this produces. */
 bool UnmountCdrom(string Path)
 {
    // do not generate errors, even if the mountpoint does not exist

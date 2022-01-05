@@ -18,7 +18,7 @@
    of multiple items from multiple sources as well as dynamic balancing
    of load between the sources.
    
-   Schedualing of downloads is done on a first ask first get basis. This
+   Scheduling of downloads is done on a first ask first get basis. This
    preserves the order of the download as much as possible. And means the
    fastest source will tend to process the largest number of files.
    

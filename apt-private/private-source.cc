@@ -334,7 +334,7 @@ bool DoSource(CommandLine &CmdL)
    // Dsc only mode only fetches .dsc files
    bool const dscOnly = _config->FindB("APT::Get::Dsc-Only", false);
 
-   // Load the requestd sources into the fetcher
+   // Load the requested sources into the fetcher
    aptAcquireWithTextStatus Fetcher;
    std::vector<std::string> UntrustedList;
    for (const char **cmdl = CmdL.FileList + 1; *cmdl != 0; ++cmdl)
@@ -831,7 +831,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	    candSwitch.emplace_back(Pkg.VersionList(), pkg.release);
       }
       if (candSwitch.empty() == false)
-	 InstallAction.propergateReleaseCandiateSwitching(candSwitch, c0out);
+	 InstallAction.propagateReleaseCandidateSwitching(candSwitch, c0out);
       for (auto const &pkg: pseudoPkgs)
       {
 	 pkgCache::PkgIterator const Pkg = Cache->FindPkg(pkg.name, pkg.arch);

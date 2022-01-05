@@ -135,7 +135,7 @@ bool pkgPolicy::InitDefaults()
 									/*}}}*/
 // Policy::GetCandidateVer - Get the candidate install version		/*{{{*/
 // ---------------------------------------------------------------------
-/* Evaluate the package pins and the default list to deteremine what the
+/* Evaluate the package pins and the default list to determine what the
    best package is. */
 pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pkg)
 {
