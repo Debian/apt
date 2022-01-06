@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 2.3.13\n"
+"Project-Id-Version: apt-doc 2.3.14\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2021-11-24 16:24+0100\n"
+"POT-Creation-Date: 2022-01-06 20:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4744,17 +4744,37 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
-msgid "Regular expressions and &glob; syntax"
+msgid "Matching packages in the Package field"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
 msgid ""
-"APT also supports pinning by &glob; expressions, and regular expressions "
-"surrounded by slashes. For example, the following example assigns the "
-"priority 500 to all packages from experimental where the name starts with "
-"gnome (as a &glob;-like expression) or contains the word kde (as a POSIX "
-"extended regular expression surrounded by slashes)."
+"The <literal>Package</literal> field specifies the package that a pinning "
+"priority is applied to. The field can either contain a binary package name, "
+"a source package name (prefixed with \"src:\"), a &glob; expression or a "
+"regular expression (surrounded by slashes). Multiple package names, &glob; "
+"expressions and regular expressions can be listed separated by whitespace in "
+"which case the record will match any of the matched packages."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"By default, only packages of the native architecture are matched. To match "
+"binary packages of any architecture, add the <literal>:any</literal> suffix "
+"to the package name. You can also limit matching to a specific architecture "
+"by appending the architecture name to the package name, separated by a colon "
+"character."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"For example, the following example uses a glob expression and a regular "
+"expression to assign the priority 500 to all packages from experimental "
+"where the name starts with gnome (as a &glob;-like expression) or contains "
+"the word kde (as a POSIX extended regular expression surrounded by slashes)."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><programlisting>
@@ -4794,23 +4814,11 @@ msgid ""
 "Package field is not considered a &glob; expression in itself."
 msgstr ""
 
-#. type: Content of: <refentry><refsect1><refsect2><title>
-#: apt_preferences.5.xml
-msgid "Pinning by source package"
-msgstr ""
-
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
 msgid ""
-"APT supports pinning by source packages. To pin by a source package, prepend "
-"\"src:\" to the package name."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><refsect2><para>
-#: apt_preferences.5.xml
-msgid ""
-"For example, to pin all binaries produced by the apt source package of this "
-"APT's version to 990, you can do:"
+"To pin all binaries produced by the apt source package of this APT's version "
+"to 990, you can do:"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><programlisting>
@@ -4843,6 +4851,15 @@ msgid ""
 "Package: src:*apt*:any\n"
 "Pin: version *\n"
 "Pin-Priority: 990\n"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"The <literal>:any</literal> suffix makes sure to select binary packages from "
+"any architecture. Without that suffix, apt implicitly assumes the "
+"<literal>:native</literal> suffix which would only select packages from the "
+"native architecture."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
@@ -8264,6 +8281,19 @@ msgid ""
 "Selects versions that come from the archive that matches the specified "
 "regular expression. Archive, here, means the values after <code>a=</code> in "
 "<command>apt-cache policy</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+msgid "<code>?codename(REGEX)</code>"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects versions that come from the codename that matches the specified "
+"regular expression. Codename, here, means the values after <code>n=</code> "
+"in <command>apt-cache policy</command>."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 2.3.11\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2021-11-09 15:29+0100\n"
+"POT-Creation-Date: 2022-01-06 20:58+0100\n"
 "PO-Revision-Date: 2021-10-25 12:46+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -6945,17 +6945,44 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
-msgid "Regular expressions and &glob; syntax"
-msgstr "Reguliere expressies en &glob; syntaxis"
+msgid "Matching packages in the Package field"
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
 msgid ""
-"APT also supports pinning by &glob; expressions, and regular expressions "
-"surrounded by slashes. For example, the following example assigns the "
-"priority 500 to all packages from experimental where the name starts with "
-"gnome (as a &glob;-like expression) or contains the word kde (as a POSIX "
-"extended regular expression surrounded by slashes)."
+"The <literal>Package</literal> field specifies the package that a pinning "
+"priority is applied to. The field can either contain a binary package name, "
+"a source package name (prefixed with \"src:\"), a &glob; expression or a "
+"regular expression (surrounded by slashes). Multiple package names, &glob; "
+"expressions and regular expressions can be listed separated by whitespace in "
+"which case the record will match any of the matched packages."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"By default, only packages of the native architecture are matched. To match "
+"binary packages of any architecture, add the <literal>:any</literal> suffix "
+"to the package name. You can also limit matching to a specific architecture "
+"by appending the architecture name to the package name, separated by a colon "
+"character."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+#, fuzzy
+#| msgid ""
+#| "APT also supports pinning by &glob; expressions, and regular expressions "
+#| "surrounded by slashes. For example, the following example assigns the "
+#| "priority 500 to all packages from experimental where the name starts with "
+#| "gnome (as a &glob;-like expression) or contains the word kde (as a POSIX "
+#| "extended regular expression surrounded by slashes)."
+msgid ""
+"For example, the following example uses a glob expression and a regular "
+"expression to assign the priority 500 to all packages from experimental "
+"where the name starts with gnome (as a &glob;-like expression) or contains "
+"the word kde (as a POSIX extended regular expression surrounded by slashes)."
 msgstr ""
 "APT ondersteunt bij het pinnen ook het gebruik van &glob;-expressies, en "
 "reguliere expressies die door slashes ingesloten worden. Het volgende "
@@ -7017,25 +7044,15 @@ msgstr ""
 "\" in een Package-veld wordt op zichzelf niet als een &glob;-expressie "
 "beschouwd."
 
-#. type: Content of: <refentry><refsect1><refsect2><title>
-#: apt_preferences.5.xml
-msgid "Pinning by source package"
-msgstr "Vastzetten op bronpakket"
-
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
+#, fuzzy
+#| msgid ""
+#| "For example, to pin all binaries produced by the apt source package of "
+#| "this APT's version to 990, you can do:"
 msgid ""
-"APT supports pinning by source packages. To pin by a source package, prepend "
-"\"src:\" to the package name."
-msgstr ""
-"APT ondersteunt het vastzetten op bronpakket. Om op een bronpakket vast te "
-"zetten, laat u \"src:\" voorafgaan aan de pakketnaam."
-
-#. type: Content of: <refentry><refsect1><refsect2><para>
-#: apt_preferences.5.xml
-msgid ""
-"For example, to pin all binaries produced by the apt source package of this "
-"APT's version to 990, you can do:"
+"To pin all binaries produced by the apt source package of this APT's version "
+"to 990, you can do:"
 msgstr ""
 "Bijvoorbeeld, om alle binaire pakketten die met het apt-bronpakket van deze "
 "APT-versie geproduceerd worden, vast te zetten op 990, kunt u als volgt te "
@@ -7084,6 +7101,15 @@ msgstr ""
 "Package: src:*apt*:any\n"
 "Pin: version *\n"
 "Pin-Priority: 990\n"
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml
+msgid ""
+"The <literal>:any</literal> suffix makes sure to select binary packages from "
+"any architecture. Without that suffix, apt implicitly assumes the <literal>:"
+"native</literal> suffix which would only select packages from the native "
+"architecture."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
@@ -11904,6 +11930,29 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>?name(REGEX)</code>"
+msgid "<code>?codename(REGEX)</code>"
+msgstr "<code>?name(REGEX)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid ""
+#| "Selects versions that come from the origin that matches the specified "
+#| "regular expression. Origin, here, means the values after <code>o=</code> "
+#| "in <command>apt-cache policy</command>."
+msgid ""
+"Selects versions that come from the codename that matches the specified "
+"regular expression. Codename, here, means the values after <code>n=</code> "
+"in <command>apt-cache policy</command>."
+msgstr ""
+"Selecteert versies die afkomstig zijn van de origine die overeenkomt met de "
+"opgegeven reguliere expressie. Origine (origin) betekent hier de waarden na "
+"<code>o=</code> in <command>apt-cache policy</command>."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
 msgid "<code>?origin(REGEX)</code>"
 msgstr "<code>?origin(REGEX)</code>"
 
@@ -13941,3 +13990,16 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 msgid "Which will use the already fetched archives on the disc."
 msgstr ""
 "En dit zal gebruik maken van de reeds opgehaalde archieven op de schijf."
+
+#~ msgid "Regular expressions and &glob; syntax"
+#~ msgstr "Reguliere expressies en &glob; syntaxis"
+
+#~ msgid "Pinning by source package"
+#~ msgstr "Vastzetten op bronpakket"
+
+#~ msgid ""
+#~ "APT supports pinning by source packages. To pin by a source package, "
+#~ "prepend \"src:\" to the package name."
+#~ msgstr ""
+#~ "APT ondersteunt het vastzetten op bronpakket. Om op een bronpakket vast "
+#~ "te zetten, laat u \"src:\" voorafgaan aan de pakketnaam."
