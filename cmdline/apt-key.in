@@ -645,6 +645,9 @@ if [ -z "$TRUSTEDFILE" ]; then
    TRUSTEDFILE="/etc/apt/trusted.gpg"
    eval $(apt-config shell TRUSTEDFILE Apt::GPGV::TrustedKeyring)
    eval $(apt-config shell TRUSTEDFILE Dir::Etc::Trusted/f)
+   if [ "$APT_KEY_NO_LEGACY_KEYRING" ]; then
+        TRUSTEDFILE="/dev/null"
+   fi
 fi
 
 command="$1"
