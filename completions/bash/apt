@@ -53,7 +53,7 @@ _apt()
 
     local command i
     for (( i=0; i < ${#words[@]}-1; i++ )); do
-        if [[ ${COMMANDS[@]} =~ ${words[i]} ]]; then
+        if [[ " ${COMMANDS[*]} " == *" ${words[i]} "* ]]; then
             command=${words[i]}
             break
         fi
