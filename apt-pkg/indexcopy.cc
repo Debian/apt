@@ -414,7 +414,7 @@ bool IndexCopy::GrabFirst(string Path,string &To,unsigned int Depth)
 bool PackageCopy::GetFile(string &File,unsigned long long &Size)
 {
    File = Section->FindS("Filename");
-   Size = Section->FindI("Size");
+   Size = Section->FindULL("Size");
    if (File.empty() || Size == 0)
       return _error->Error("Cannot find filename or size tag");
    return true;
