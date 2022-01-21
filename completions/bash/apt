@@ -39,7 +39,7 @@ _apt()
         "list"
         "search"
         "show" "showsrc"
-        "install" "remove" "purge" "autoremove" "autopurge"
+        "install" "reinstall" "remove" "purge" "autoremove" "autopurge"
         "update"
         "upgrade" "full-upgrade" "dist-upgrade"
         "edit-sources"
@@ -70,7 +70,7 @@ _apt()
     # supported options per command
     if [[ "$cur" == -* ]]; then
         case ${command-} in
-            install|remove|purge|upgrade|dist-upgrade|full-upgrade|autoremove|autopurge)
+            install|reinstall|remove|purge|upgrade|dist-upgrade|full-upgrade|autoremove|autopurge)
                 COMPREPLY=( $( compgen -W '--show-progress
                   --fix-broken --purge --verbose-versions --auto-remove
                   -s --simulate --dry-run
@@ -188,7 +188,7 @@ _apt()
                     2> /dev/null ) )
                 return 0
                 ;;
-            install)
+            install|reinstall)
                 if [[ "$cur" == .* || "$cur" == /* || "$cur" == ~* ]]; then
                     _filedir "deb"
                 else
