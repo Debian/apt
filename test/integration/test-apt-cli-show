@@ -42,6 +42,20 @@ APT-Sources: file:$APTARCHIVE unstable/main all Packages
 Description: Some description
  That has multiple lines
 " apt show foo
+testsuccessequal "Package: foo
+Version: 1.0
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Filename: pool/main/foo/foo_1.0_all.deb
+SHA256: 0000000000000000000000000000000000000000000000000000000000000000
+Download-Size: 42 B
+APT-Manual-Installed: yes
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+" apt show foo --full
 testsuccessequal "Package: bar
 Version: 1
 Priority: optional

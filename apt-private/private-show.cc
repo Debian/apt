@@ -253,17 +253,19 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgRecords &Recs, /*{{{*/
       manual_installed = !(state.Flags & pkgCache::Flag::Auto) ? "yes" : "no";
    }
 
-   // FIXME: add verbose that does not do the removal of the tags?
    std::vector<pkgTagSection::Tag> RW;
    // delete, apt-cache show has this info and most users do not care
-   RW.push_back(pkgTagSection::Tag::Remove("MD5sum"));
-   RW.push_back(pkgTagSection::Tag::Remove("SHA1"));
-   RW.push_back(pkgTagSection::Tag::Remove("SHA256"));
-   RW.push_back(pkgTagSection::Tag::Remove("SHA512"));
-   RW.push_back(pkgTagSection::Tag::Remove("Filename"));
-   RW.push_back(pkgTagSection::Tag::Remove("Multi-Arch"));
+   if (not _config->FindB("APT::Cache::ShowFull", false))
+   {
+      RW.push_back(pkgTagSection::Tag::Remove("MD5sum"));
+      RW.push_back(pkgTagSection::Tag::Remove("SHA1"));
+      RW.push_back(pkgTagSection::Tag::Remove("SHA256"));
+      RW.push_back(pkgTagSection::Tag::Remove("SHA512"));
+      RW.push_back(pkgTagSection::Tag::Remove("Filename"));
+      RW.push_back(pkgTagSection::Tag::Remove("Multi-Arch"));
+      RW.push_back(pkgTagSection::Tag::Remove("Conffiles"));
+   }
    RW.push_back(pkgTagSection::Tag::Remove("Architecture"));
-   RW.push_back(pkgTagSection::Tag::Remove("Conffiles"));
    // we use the translated description
    RW.push_back(pkgTagSection::Tag::Remove("Description"));
    RW.push_back(pkgTagSection::Tag::Remove("Description-md5"));
