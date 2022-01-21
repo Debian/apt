@@ -70,7 +70,7 @@ _apt()
     # supported options per command
     if [[ "$cur" == -* ]]; then
         case ${command-} in
-            install|remove|purge|upgrade|dist-upgrade|full-upgrade|autoremove)
+            install|remove|purge|upgrade|dist-upgrade|full-upgrade|autoremove|autopurge)
                 COMPREPLY=( $( compgen -W '--show-progress
                   --fix-broken --purge --verbose-versions --auto-remove
                   -s --simulate --dry-run
@@ -172,7 +172,7 @@ _apt()
     # specific command arguments
     if [[ -v command ]]; then
         case $command in
-            remove|purge|autoremove)
+            remove|purge|autoremove|autopurge)
                 if [[ -f /etc/debian_version ]]; then
                     # Debian system
                     COMPREPLY=( $( \
