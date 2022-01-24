@@ -326,7 +326,7 @@ static bool DoSelection(CommandLine &CmdL)
 	    if (MarkHold == true)
 	    ioprintf(c1out, _("%s was already set on hold.\n"), V.ParentPkg().FullName(true).c_str());
 	    else
-	    ioprintf(c1out, _("%s was already not hold.\n"), V.ParentPkg().FullName(true).c_str());
+	    ioprintf(c1out, _("%s was already not on hold.\n"), V.ParentPkg().FullName(true).c_str());
 	    });
 
       if (doneBegin == pkgset.begin() && doneEnd == pkgset.end())
