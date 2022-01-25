@@ -191,7 +191,7 @@ _apt()
             install)
                 COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" \
                     2> /dev/null ) )
-                if [[ "$cur" == ./* || "$cur" == /* ]]; then
+                if [[ "$cur" == ./* || "$cur" == /* || "$cur" == ~* ]]; then
                     _filedir "deb"
                 fi
                 return 0
