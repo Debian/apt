@@ -189,7 +189,7 @@ _apt()
                 return 0
                 ;;
             install)
-                if [[ "$cur" == ./* || "$cur" == /* || "$cur" == ~* ]]; then
+                if [[ "$cur" == .* || "$cur" == /* || "$cur" == ~* ]]; then
                     _filedir "deb"
                 else
                     COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" \
