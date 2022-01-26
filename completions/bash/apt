@@ -197,9 +197,13 @@ _apt()
                 return 0
                 ;;
             source|build-dep|showsrc|policy)
-                COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" \
-                    2> /dev/null ) $( apt-cache dumpavail | \
-                    command grep "^Source: $cur" | sort -u | cut -f2 -d" " ) )
+                if [[ "$command" == build-dep && ( "$cur" == .* || "$cur" == /* || "$cur" == ~* ) ]]; then
+                    _filedir "dsc"
+                else
+                    COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" \
+                        2> /dev/null ) $( apt-cache dumpavail | \
+                        command grep "^Source: $cur" | sort -u | cut -f2 -d" " ) )
+                fi
                 return 0
                 ;;
             edit-sources)
