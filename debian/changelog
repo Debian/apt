@@ -1,3 +1,26 @@
+apt (2.3.15) unstable; urgency=medium
+
+  [ Arnaud Rebillout ]
+  * Fix incorrect type when parsing Size (int to unsigned long long)
+    (Closes: #1004064)
+
+  [ Julian Andres Klode ]
+  * Add a --full mode to apt show
+
+  [ Ville Skyttä ]
+  * Fix "was already not hold" message grammar
+
+  [ Jörn-Thorben Hinz ]
+  * Also bash-complete .deb filenames after `apt install` for paths starting with ~
+  * Bash-complete either package name or .deb filename for `apt install`
+  * Start bash-completing .deb file paths after the first . passed in an argument to `apt install`
+  * Provide bash-completion of .dsc filenames for `apt build-dep`
+    (Closes: #985899)
+  * Don’t fail bash-completion for `apt` when the nounset option is set
+  * bash-completion: Don’t misidentify short options as commands to `apt`
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 01 Feb 2022 18:04:58 +0100
+
 apt (2.3.14) unstable; urgency=medium
 
   [ Helge Kreutzmann ]
