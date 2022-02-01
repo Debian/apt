@@ -316,6 +316,83 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
    out << output;
 }
 									/*}}}*/
+// ShowWithColumns - Show a list in the style of ls			/*{{{*/
+// ---------------------------------------------------------------------
+/* This prints out a vector of strings with the given indent and in as
+   many columns as will fit the screen width.
+   
+   The output looks like:
+  abiword                debootstrap                  gir1.2-upowerglib-1.0
+  abiword-common         dh-make                      google-chrome-beta
+  abiword-plugin-grammar dmeventd                     gstreamer1.0-clutter-3.0
+  binfmt-support         dmsetup                      hostname
+  console-setup          evolution-data-server        iproute2
+  console-setup-linux    evolution-data-server-common
+  coreutils              ffmpeg
+ */
+struct columnInfo
+{
+   bool ValidLen;
+   size_t LineWidth;
+   vector<size_t> RemainingWidths;
+};
+void ShowWithColumns(ostream &out, vector<string> const &List, size_t Indent, size_t ScreenWidth)
+{
+   constexpr size_t MinColumnWidth = 2;
+   constexpr size_t ColumnSpace = 1;
+
+   size_t const ListSize = List.size();
+   size_t const MaxScreenCols = (ScreenWidth - Indent) /
+         MinColumnWidth;
+   size_t const MaxNumCols = min(MaxScreenCols, ListSize);
+
+   vector<columnInfo> ColumnInfo(MaxNumCols);
+   for (size_t I = 0; I < MaxNumCols; ++I) {
+      ColumnInfo[I].ValidLen = true;
+      ColumnInfo[I].LineWidth = (I + 1) * MinColumnWidth;
+      ColumnInfo[I].RemainingWidths.resize(I + 1, MinColumnWidth);
+   }
+
+   for (size_t I = 0; I < ListSize; ++I) {
+      for (size_t J = 0; J < MaxNumCols; ++J) {
+         auto& Col = ColumnInfo[J];
+         if (!Col.ValidLen)
+            continue;
+
+         size_t Idx = I / ((ListSize + J) / (J + 1));
+         size_t RealColLen = List[I].size() + (Idx == J ? 0 : ColumnSpace);
+         if (Col.RemainingWidths[Idx] < RealColLen) {
+            Col.LineWidth += RealColLen - Col.RemainingWidths[Idx];
+            Col.RemainingWidths[Idx] = RealColLen;
+            Col.ValidLen = Col.LineWidth < ScreenWidth;
+         }
+      }
+   }
+   size_t NumCols = MaxNumCols;
+   while (NumCols > 1 && !ColumnInfo[NumCols - 1].ValidLen)
+      --NumCols;
+
+   size_t NumRows = ListSize / NumCols + (ListSize % NumCols != 0);
+   auto const &LineFormat = ColumnInfo[NumCols - 1];
+   for (size_t Row = 0; Row < NumRows; ++Row) {
+      size_t Col = 0;
+      size_t I = Row;
+      out << string(Indent, ' ');
+      while (true) {
+         out << List[I];
+
+         size_t CurLen = List[I].size();
+         size_t MaxLen = LineFormat.RemainingWidths[Col++];
+         I += NumRows;
+         if (I >= ListSize)
+            break;
+
+         out << string(MaxLen - CurLen, ' ');
+      }
+      out << endl;
+   }
+}
+									/*}}}*/
 // ShowBroken - Debugging aide						/*{{{*/
 // ---------------------------------------------------------------------
 /* This prints out the names of all the packages that are broken along

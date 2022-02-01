@@ -184,7 +184,8 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "show-progress", "DpkgPM::Progress", 0);
       addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
       addArg(0, "purge", "APT::Get::Purge", 0);
-      addArg('V',"verbose-versions","APT::Get::Show-Versions",0);
+      addArg('V',"verbose-versions", "APT::Get::Show-Versions",0);
+      addArg(0, "list-columns", "APT::Get::List-Columns", 0);
       addArg(0, "autoremove", "APT::Get::AutomaticRemove", 0);
       addArg(0, "auto-remove", "APT::Get::AutomaticRemove", 0);
       addArg(0, "reinstall", "APT::Get::ReInstall", 0);

@@ -10,6 +10,7 @@
 #include <functional>
 #include <iostream>
 #include <string>
+#include <vector>
 
 // forward declaration
 class pkgCacheFile;
@@ -35,6 +36,8 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,
 APT_PUBLIC void ShowBroken(std::ostream &out, CacheFile &Cache, bool const Now);
 APT_PUBLIC void ShowBroken(std::ostream &out, pkgCacheFile &Cache, bool const Now);
 
+APT_PUBLIC void ShowWithColumns(std::ostream &out, const std::vector<std::string> &List, size_t Indent, size_t ScreenWidth);
+
 template<class Container, class PredicateC, class DisplayP, class DisplayV> bool ShowList(std::ostream &out, std::string const &Title,
       Container const &cont,
       PredicateC Predicate,
@@ -44,7 +47,9 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
    size_t const ScreenWidth = (::ScreenWidth > 3) ? ::ScreenWidth - 3 : 0;
    int ScreenUsed = 0;
    bool const ShowVersions = _config->FindB("APT::Get::Show-Versions", false);
+   bool const ListColumns = _config->FindB("APT::Get::List-Columns", true);
    bool printedTitle = false;
+   std::vector<std::string> PackageList;
 
    for (auto const &Pkg: cont)
    {
@@ -67,24 +72,32 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
       else
       {
 	 std::string const PkgName = PkgDisplay(Pkg);
-	 if (ScreenUsed == 0 || (ScreenUsed + PkgName.length()) >= ScreenWidth)
+	 if (ListColumns)
+	    PackageList.push_back(PkgName);
+	 else
 	 {
-	    out << std::endl << "  ";
-	    ScreenUsed = 0;
+	    if (ScreenUsed == 0 || (ScreenUsed + PkgName.length()) >= ScreenWidth)
+	    {
+	       out << std::endl
+		   << "  ";
+	       ScreenUsed = 0;
+	    }
+	    else if (ScreenUsed != 0)
+	    {
+	       out << " ";
+	       ++ScreenUsed;
+	    }
+	    out << PkgName;
+	    ScreenUsed += PkgName.length();
 	 }
-	 else if (ScreenUsed != 0)
-	 {
-	    out << " ";
-	    ++ScreenUsed;
-	 }
-	 out << PkgName;
-	 ScreenUsed += PkgName.length();
       }
    }
 
    if (printedTitle == true)
    {
       out << std::endl;
+      if (ListColumns)
+	 ShowWithColumns(out, PackageList, 2, ScreenWidth);
       return false;
    }
    return true;
