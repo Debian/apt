@@ -69,7 +69,7 @@ _apt()
 
     # supported options per command
     if [[ "$cur" == -* ]]; then
-        case $command in
+        case ${command-} in
             install|remove|purge|upgrade|dist-upgrade|full-upgrade|autoremove)
                 COMPREPLY=( $( compgen -W '--show-progress
                   --fix-broken --purge --verbose-versions --auto-remove
@@ -170,7 +170,7 @@ _apt()
     fi
 
     # specific command arguments
-    if [[ -n $command ]]; then
+    if [[ -v command ]]; then
         case $command in
             remove|purge|autoremove)
                 if [[ -f /etc/debian_version ]]; then
@@ -214,10 +214,8 @@ _apt()
                 return 0
                 ;;
         esac
-    fi
-
-    # no command yet, show what commands we have
-    if [ "$command" = "" ]; then
+    else
+        # no command yet, show what commands we have
         COMPREPLY=( $( compgen -W '${COMMANDS[@]}' -- "$cur" ) )
     fi
 
