@@ -52,7 +52,7 @@ _apt()
         "policy")
 
     local command i
-    for (( i=0; i < ${#words[@]}-1; i++ )); do
+    for (( i=1; i < ${#words[@]}; i++ )); do
         if [[ " ${COMMANDS[*]} " == *" ${words[i]} "* ]]; then
             command=${words[i]}
             break
