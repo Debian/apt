@@ -67,8 +67,9 @@ _apt()
             ;;
     esac
 
-    # supported options per command
-    if [[ "$cur" == -* ]]; then
+    # When the cursor (cword) is before the command word (i), only suggest
+    # options but not package or file names:
+    if [[ $cur == -* || ( -v command && $cword -le $i ) ]]; then
         case ${command-} in
             install|remove|purge|upgrade|dist-upgrade|full-upgrade|autoremove)
                 COMPREPLY=( $( compgen -W '--show-progress
@@ -167,6 +168,8 @@ _apt()
                 return 0
                 ;;
         esac
+
+        return
     fi
 
     # specific command arguments
