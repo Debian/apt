@@ -740,7 +740,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	       break;
 	 }
       }
-      std::string const pseudo = "command line argument";
+      std::string const pseudo = "satisfy:command-line";
       WriteBuildDependencyPackage(buildDepsPkgFile, pseudo, pseudoArch, BuildDeps);
       pseudoPkgs.emplace_back(pseudo, pseudoArch, "");
    }

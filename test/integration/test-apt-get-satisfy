@@ -13,9 +13,12 @@ insertinstalledpackage 'conflicts' 'i386' '1' 'Multi-Arch: same'
 insertinstalledpackage 'conflicts' 'amd64' '1' 'Multi-Arch: same'
 setupaptarchive
 
-
-testsuccessequal "Reading package lists...
-Building dependency tree...
+testrun() {
+	local TYPE="$1"
+	local HEADER="$2"
+	shift 2
+	msgmsg "$TYPE: Normal"
+	testsuccessequal "$HEADER
 The following packages will be REMOVED:
   conflicts
 The following NEW packages will be installed:
@@ -23,10 +26,9 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
 Remv conflicts [1]
 Inst depends (1 stable [i386])
-Conf depends (1 stable [i386])" aptget satisfy --simulate "depends (>= 1)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]"
+Conf depends (1 stable [i386])" aptget satisfy --simulate "depends (>= 1)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]" "$@"
 
-testsuccessequal "Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following packages will be REMOVED:
   conflicts:amd64
 The following NEW packages will be installed:
@@ -34,43 +36,76 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
 Remv conflicts:amd64 [1]
 Inst depends:amd64 (1 stable [amd64])
-Conf depends:amd64 (1 stable [amd64])" aptget satisfy --simulate "depends (>= 1)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]" --host-architecture amd64
+Conf depends:amd64 (1 stable [amd64])" aptget satisfy --simulate "depends (>= 1)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]" --host-architecture amd64 "$@"
 
-msgmsg "Build profile"
+	msgmsg "$TYPE: Build profile"
 
-testsuccessequal "Reading package lists...
-Building dependency tree...
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget satisfy --simulate "depends:amd64 <a>, depends:i386 <i>"
+	testsuccessequal "$HEADER
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget satisfy --simulate "depends:amd64 <a>, depends:i386 <i>" "$@"
 
-testsuccessequal "Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following NEW packages will be installed:
   depends:amd64
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst depends:amd64 (1 stable [amd64])
-Conf depends:amd64 (1 stable [amd64])" aptget satisfy --simulate "depends:amd64 <a>, depends:i386 <i>" -P a
+Conf depends:amd64 (1 stable [amd64])" aptget satisfy --simulate "depends:amd64 <a>, depends:i386 <i>" -P a "$@"
 
-testsuccessequal "Reading package lists...
-Building dependency tree...
+	testsuccessequal "$HEADER
 The following NEW packages will be installed:
   depends
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst depends (1 stable [i386])
-Conf depends (1 stable [i386])" aptget satisfy --simulate "depends:amd64 <a>, depends:i386 <i>" -P i
+Conf depends (1 stable [i386])" aptget satisfy --simulate "depends:amd64 <a>, depends:i386 <i>" -P i "$@"
 
+	msgmsg "$TYPE: Broken syntax"
+	testfailureequal "E: Problem parsing dependency: apt (>= 2" aptget satisfy 'foo' 'apt (>= 2' -s "$@"
+	testfailureequal "E: Problem parsing dependency: Conflicts: apt (>= 2" aptget satisfy 'foo' 'Conflicts: apt (>= 2' -s "$@"
 
-msgmsg "Broken syntax"
-testfailureequal "E: Problem parsing dependency: apt (>= 2" aptget satisfy 'foo' 'apt (>= 2' -s
-testfailureequal "E: Problem parsing dependency: Conflicts: apt (>= 2" aptget satisfy 'foo' 'Conflicts: apt (>= 2' -s
+	msgmsg "$TYPE: Legacy operators"
+	testfailureequal "E: Invalid operator '<' at offset 5, did you mean '<<' or '<='? - in: foo (< 1)" aptget satisfy 'foo (< 1)' -s "$@"
+	testfailureequal "E: Invalid operator '>' at offset 5, did you mean '>>' or '>='? - in: foo (> 1)" aptget satisfy 'foo (> 1)' -s "$@"
 
+	msgmsg "$TYPE: Unsupported dependency type"
+	testfailureequal "E: Problem parsing dependency: Recommends: foo" aptget satisfy 'Recommends: foo' -s "$@"
 
-msgmsg "Legacy operators"
-testfailureequal "E: Invalid operator '<' at offset 5, did you mean '<<' or '<='? - in: foo (< 1)" aptget satisfy 'foo (< 1)' -s
-testfailureequal "E: Invalid operator '>' at offset 5, did you mean '>>' or '>='? - in: foo (> 1)" aptget satisfy 'foo (> 1)' -s
+	msgmsg "$TYPE: Empty dependency"
+	testfailureequal "E: Problem parsing dependency: " aptget satisfy '' -s "$@"
+}
 
-msgmsg "Unsupported dependency type"
-testfailureequal "E: Problem parsing dependency: Recommends: foo" aptget satisfy 'Recommends: foo' -s
+testrun 'Internal' 'Reading package lists...
+Building dependency tree...'
 
+testrun 'External' 'Reading package lists...
+Building dependency tree...
+Execute external solver...' --solver apt
 
-msgmsg "Empty dependency"
-testfailureequal "E: Problem parsing dependency: " aptget satisfy '' -s
+testfailureequal "Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ satisfy:command-line : Depends: depends (>= 2) but it is not going to be installed
+E: Unable to correct problems, you have held broken packages." aptget satisfy --simulate "depends (>= 2)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]"
+
+testfailureequal "Reading package lists...
+Building dependency tree...
+Execute external solver...
+The solver encountered an error of type: ERR_UNSOLVABLE
+The following information might help you to understand what is wrong:
+The following packages have unmet dependencies:
+ satisfy:command-line : Depends: depends (>= 2) but it is not going to be installed
+
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ satisfy:command-line : Depends: depends (>= 2) but it is not going to be installed
+                        Conflicts: conflicts:i386 (>= 1)
+E: External solver failed with: The following packages have unmet dependencies:" aptget satisfy --simulate "depends (>= 2)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]" --solver apt
