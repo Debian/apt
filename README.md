@@ -39,7 +39,7 @@ APT is maintained in git, the official repository being located at
 [https://salsa.debian.org/apt-team/apt](https://salsa.debian.org/apt-team/apt),
 but also available at other locations like [GitHub](https://github.com/Debian/apt).
 
-The default branch is `master`, other branches targeted at different
+The default branch is `main`, other branches targeted at different
 derivatives and releases being used as needed. Various topic branches in
 different stages of completion might be branched of from those, which you
 are encouraged to do as well.
