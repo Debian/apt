@@ -120,6 +120,11 @@ class GPGVMethod : public aptMethod
 				vector<string> const &keyFpts,
 				vector<string> const &keyFiles,
 				SignersStorage &Signers);
+   string VerifyGetSignersWithLegacy(const char *file, const char *outfile,
+				     vector<string> const &keyFpts,
+				     vector<string> const &keyFiles,
+				     SignersStorage &Signers);
+
    protected:
    virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
    public:
@@ -183,6 +188,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    {
       std::ostringstream keys;
       implodeVector(keyFiles, keys, ",");
+      setenv("APT_KEY_NO_LEGACY_KEYRING", "1", true);
       ExecGPGV(outfile, file, 3, fd, keys.str());
    }
    close(fd[1]);
@@ -415,7 +421,43 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    else
       return _("Unknown error executing apt-key");
 }
+string GPGVMethod::VerifyGetSignersWithLegacy(const char *file, const char *outfile,
+					      vector<string> const &keyFpts,
+					      vector<string> const &keyFiles,
+					      SignersStorage &Signers)
+{
+   string const msg = VerifyGetSigners(file, outfile, keyFpts, keyFiles, Signers);
+   if (_error->PendingError())
+      return msg;
+   if (keyFiles.empty() && (Signers.Good.empty() || !Signers.Bad.empty() || !Signers.NoPubKey.empty()))
+   {
+      std::vector<std::string> legacyKeyFiles{_config->FindFile("Dir::Etc::trusted")};
+      if (legacyKeyFiles[0].empty())
+	 return msg;
+      if (DebugEnabled())
+	 std::clog << "Retrying against " << legacyKeyFiles[0] << "\n";
 
+      // Retry against trusted.gpg
+      SignersStorage legacySigners;
+
+      string const legacyMsg = VerifyGetSigners(file, outfile, keyFpts, legacyKeyFiles, legacySigners);
+      if (_error->PendingError())
+	 return legacyMsg;
+      // Hooray, we found the key now
+      if (not(legacySigners.Good.empty() || !legacySigners.Bad.empty() || !legacySigners.NoPubKey.empty()))
+      {
+	 std::string warning;
+	 strprintf(warning,
+		   _("Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION section in apt-key(8) for details."),
+		   legacyKeyFiles[0].c_str());
+	 Warning(std::move(warning));
+	 Signers = std::move(legacySigners);
+	 return legacyMsg;
+      }
+
+   }
+   return msg;
+}
 static std::string GenerateKeyFile(std::string const key)
 {
    FileFd fd;
@@ -454,7 +496,7 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    }
 
    // Run apt-key on file, extract contents and get the key ID of the signer
-   string const msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), keyFpts, keyFiles, Signers);
+   string const msg = VerifyGetSignersWithLegacy(Path.c_str(), Itm->DestFile.c_str(), keyFpts, keyFiles, Signers);
    if (_error->PendingError())
       return false;
 
