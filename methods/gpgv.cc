@@ -429,7 +429,14 @@ string GPGVMethod::VerifyGetSignersWithLegacy(const char *file, const char *outf
    string const msg = VerifyGetSigners(file, outfile, keyFpts, keyFiles, Signers);
    if (_error->PendingError())
       return msg;
-   if (keyFiles.empty() && (Signers.Good.empty() || !Signers.Bad.empty() || !Signers.NoPubKey.empty()))
+
+   // Bad signature always remains bad, no need to retry against trusted.gpg
+   if (!Signers.Bad.empty())
+      return msg;
+
+   // We do not have a key file pinned, did not find a good signature, but found
+   // missing keys - let's retry with trusted.gpg
+   if (keyFiles.empty() && Signers.Valid.empty() && !Signers.NoPubKey.empty())
    {
       std::vector<std::string> legacyKeyFiles{_config->FindFile("Dir::Etc::trusted")};
       if (legacyKeyFiles[0].empty())
@@ -437,14 +444,13 @@ string GPGVMethod::VerifyGetSignersWithLegacy(const char *file, const char *outf
       if (DebugEnabled())
 	 std::clog << "Retrying against " << legacyKeyFiles[0] << "\n";
 
-      // Retry against trusted.gpg
       SignersStorage legacySigners;
 
       string const legacyMsg = VerifyGetSigners(file, outfile, keyFpts, legacyKeyFiles, legacySigners);
       if (_error->PendingError())
 	 return legacyMsg;
-      // Hooray, we found the key now
-      if (not(legacySigners.Good.empty() || !legacySigners.Bad.empty() || !legacySigners.NoPubKey.empty()))
+      // Hooray, we found a key apparently, something verified as good or bad
+      if (!legacySigners.Valid.empty() || !legacySigners.Bad.empty())
       {
 	 std::string warning;
 	 strprintf(warning,

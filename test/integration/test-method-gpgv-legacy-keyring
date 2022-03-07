@@ -25,3 +25,11 @@ testwarningequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InReleas
 Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [1420 B]
 Reading package lists...
 W: file:${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details." aptget update -q
+
+# 2.4.0 regression: If the InRelease file was signed with two keys, fallback to trusted.gpg did not
+# work: It ran the fallback, but then ignored the result, as keys were still missing.
+signreleasefiles 'Joe Sixpack,Marvin Paranoid'
+testwarningequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [1867 B]
+Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [1867 B]
+Reading package lists...
+W: file:${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details." aptget update -q -omsg=with-two-signatures
