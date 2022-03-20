@@ -2056,7 +2056,7 @@ bool pkgDepCache::SetCandidateRelease(pkgCache::VerIterator TargetVer,
 	 if (itsFine == false)
 	 {
 	    // change the candidate
-	    Changed.push_back(make_pair(V, TargetVer));
+	    Changed.emplace_back(V, TargetVer);
 	    if (SetCandidateRelease(V, TargetRel, Changed) == false)
 	    {
 	       if (stillOr == false)
