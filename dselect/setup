@@ -20,14 +20,16 @@ use warnings;
 #printf STDERR "DEBUG: Arguments $ARGV[0];$ARGV[1];$ARGV[2];\n";
 
 
+use Term::ANSIColor;
+
 # Handle the arguments
 my $vardir=$ARGV[0];
 my $method=$ARGV[1];
 my $option=$ARGV[2];
 my $config_file = '/etc/apt/sources.list';
 
-my $boldon=`setterm -bold on`;
-my $boldoff=`setterm -bold off`;
+my $boldon = color('bold');
+my $boldoff = color('reset');
 
 my @known_types           = ('deb');
 my @known_access         = ('https', 'http', 'ftp', 'file');
