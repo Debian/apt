@@ -116,19 +116,19 @@ struct PackageMap
    bool SrcDone;
    time_t ContentsMTime;
    
-   struct ContentsCompare : public binary_function<PackageMap,PackageMap,bool>
+   struct ContentsCompare
    {
       inline bool operator() (const PackageMap &x,const PackageMap &y)
       {return x.ContentsMTime < y.ContentsMTime;};
    };
     
-   struct DBCompare : public binary_function<PackageMap,PackageMap,bool>
+   struct DBCompare
    {
       inline bool operator() (const PackageMap &x,const PackageMap &y)
       {return x.BinCacheDB < y.BinCacheDB;};
    };  
 
-   struct SrcDBCompare : public binary_function<PackageMap,PackageMap,bool>
+   struct SrcDBCompare
    {
       inline bool operator() (const PackageMap &x,const PackageMap &y)
       {return x.SrcCacheDB < y.SrcCacheDB;};
