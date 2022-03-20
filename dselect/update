@@ -28,10 +28,11 @@ STATUS=1
 if $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" update
 then
     echo $"Merging available information"
+    # XXX: Make sure we remove an old intermediate file that we used to feed
+    # to dpkg, until enough time has passed that we have some guarantee it
+    # is no longer left over in the cache directory (since apt 2.9.x).
     rm -f $CACHEDIR/available
-    $APTCACHE dumpavail > $CACHEDIR/available
-    $DPKG "$DPKG_OPTS" --update-avail $CACHEDIR/available
-    rm -f $CACHEDIR/available
+    $APTCACHE dumpavail | $DPKG "$DPKG_OPTS" --update-avail
 
     case "$CLEAN" in
 	Pre-Auto|PreAuto|pre-auto)
