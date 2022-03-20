@@ -126,7 +126,7 @@ update</literal>. For instance,
 </para>
 <screen>
 # apt-get update
-Get http://ftp.de.debian.org/debian-non-US/ stable/binary-i386/ Packages
+Get http://ftp.de.debian.org/debian/ stable/binary-i386/ Packages
 Get http://llug.sep.bnl.gov/debian/ testing/contrib Packages
 Reading Package Lists... Done
 Building Dependency Tree... Done
@@ -237,7 +237,7 @@ to get.
 <screen>
  Please give the distribution tag to get or a path to the
  package file ending in a /. The distribution
- tags are typically something like: stable unstable testing non-US
+ tags are typically something like: stable unstable testing
 
  Distribution [stable]:
 </screen>
@@ -245,10 +245,7 @@ to get.
 The distribution refers to the Debian version in the archive,
 <emphasis>stable</emphasis> refers to the latest released version
 and <emphasis>unstable</emphasis> refers to the developmental
-version. <emphasis>non-US</emphasis> is only available on some mirrors
-and refers to packages that contain encryption technology or other
-things that cannot be exported from the United States. Importing these
-packages into the US is legal however.
+version.
 </para>
 <screen>
  Please give the components to get
@@ -496,10 +493,10 @@ status messages.
 </para>
 <screen>
 # apt-get update
-Get:1 http://ftp.de.debian.org/debian-non-US/ stable/non-US/ Packages
+Get:1 http://ftp.de.debian.org/debian/ stable/main Packages
 Get:2 http://llug.sep.bnl.gov/debian/ testing/contrib Packages
 Hit http://llug.sep.bnl.gov/debian/ testing/main Packages
-Get:4 http://ftp.de.debian.org/debian-non-US/ unstable/binary-i386/ Packages
+Get:4 http://ftp.de.debian.org/debian/ unstable/binary-i386/ Packages
 Get:5 http://llug.sep.bnl.gov/debian/ testing/non-free Packages
 11% [5 testing/non-free `Waiting for file' 0/32.1k 0%] 2203b/s 1m52s
 </screen>
