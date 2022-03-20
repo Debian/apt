@@ -31,10 +31,10 @@ my $config_file = '/etc/apt/sources.list';
 my $boldon = color('bold');
 my $boldoff = color('reset');
 
-my @known_types           = ('deb');
-my @known_access         = ('https', 'http', 'ftp', 'file');
-my @typical_distributions = ('stable', 'unstable', 'testing');
-my @typical_components    = ('main', 'contrib', 'non-free', 'non-free-firmware');
+my @known_types           = qw(deb);
+my @known_access          = qw(https http ftp file);
+my @typical_distributions = qw(stable unstable testing);
+my @typical_components    = qw(main contrib non-free non-free-firmware);
 
 my %known_access           = map {($_,$_)} @known_access;
 my %typical_distributions  = map {($_,$_)} @typical_distributions;
