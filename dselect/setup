@@ -36,6 +36,12 @@ my @typical_components    = ('main', 'contrib', 'non-free', 'non-free-firmware')
 my %known_access           = map {($_,$_)} @known_access;
 my %typical_distributions  = map {($_,$_)} @typical_distributions;
 
+sub print_bold {
+    my $msg = shift;
+
+    print "$boldon$msg$boldoff";
+}
+
 # Read the config file, creating source records
 sub read_config {
   my %params = @_;
@@ -130,7 +136,7 @@ sub get_source {
   
   while (!$done) {
     print "\n";
-    print "$boldon URL [$urn]: $boldoff";
+    print_bold(" URL [$urn]: ");
     
     $answer=<STDIN>;
     chomp ($answer);
@@ -159,10 +165,10 @@ sub get_source {
   
   print " Please give the distribution tag to get or a path to the\n";
   print " package file ending in a /. The distribution\n";
-  print " tags are typically something like:$boldon ";
-  print join(' ', @typical_distributions), "$boldoff\n";
+  print " tags are typically something like: ";
+  print_bold(join(' ', @typical_distributions) . "\n");
   print "\n";
-  print "$boldon Distribution [$distribution]:$boldoff ";
+  print_bold(" Distribution [$distribution]: ");
   $answer=<STDIN>;
   chomp ($answer);
   $answer =~ s/\s*//og;
@@ -193,10 +199,10 @@ sub get_components {
   
   print "\n";
   print " Please give the components to get\n";
-  print " The components are typically something like:$boldon ";
-  print join(' ', @typical_components), "$boldoff\n";
+  print " The components are typically something like: ";
+  print_bold(join(' ', @typical_components) . "\n");
   print "\n";
-  print "$boldon Components [$default]:$boldoff ";
+  print_bold(" Components [$default]: ");
   $answer=<STDIN>;
   chomp ($answer);
   $answer =~ s/\s+/ /og;
@@ -219,12 +225,12 @@ sub get_sources {
     @Oldconfig = &read_config('Filename' => $config_file)
   }
 
-  print "\t$boldon Set up a list of distribution source locations $boldoff \n";
+  print_bold("\t Set up a list of distribution source locations\n");
   print "\n";
 
   print " Please give the base URL of the debian distribution.\n";
-  print " The access schemes I know about are:$boldon ";
-  print join (' ', @known_access), "$boldoff\n";
+  print " The access schemes I know about are: ";
+  print_bold(join (' ', @known_access) . "\n");
 #  print " The mirror scheme is special  that it does not specify the\n";
 #  print " location of a debian archive but specifies the location\n";
 #  print " of a list of mirrors to use to access the archive.\n";
@@ -247,7 +253,7 @@ sub get_sources {
       push (@Config, &get_source());
     }
     print "\n";
-    print "$boldon Would you like to add another source?[y/N]$boldoff ";
+    print_bold(" Would you like to add another source? [y/N] ");
     my $answer = <STDIN>;
     chomp ($answer);
     $answer =~ s/\s+/ /og;
@@ -266,11 +272,11 @@ sub main {
   if (-e $config_file) {
     my @Oldconfig = &read_config('Filename' => $config_file);
     
-    print "$boldon I see you already have a source list.$boldoff\n";
+    print_bold(" I see you already have a source list.\n");
     print "-" x 72, "\n";
     &print_config('Config' => \@Oldconfig);
     print "-" x 72, "\n";
-    print "$boldon Do you wish to overwrite it? [y/N]$boldoff ";
+    print_bold(" Do you wish to overwrite it? [y/N] ");
     my $answer = <STDIN>;
     chomp ($answer);
     $answer =~ s/\s+/ /og;
