@@ -21,6 +21,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <array>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
