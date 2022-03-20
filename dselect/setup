@@ -29,7 +29,7 @@ my $boldon=`setterm -bold on`;
 my $boldoff=`setterm -bold off`;
 
 my @known_types           = ('deb');
-my @known_access         = ('http', 'ftp', 'file');
+my @known_access         = ('https', 'http', 'ftp', 'file');
 my @typical_distributions = ('stable', 'unstable', 'testing');
 my @typical_components    = ('main', 'contrib', 'non-free', 'non-free-firmware');
 
@@ -118,7 +118,7 @@ sub get_source {
   }
 
   $type         = 'deb';
-  $urn          = "http://deb.debian.org/debian" unless $urn;
+  $urn          = "https://deb.debian.org/debian" unless $urn;
   $distribution = "stable" unless $distribution;
   $components   = "main contrib non-free non-free-firmware" unless $components;
 
@@ -232,6 +232,7 @@ sub get_sources {
   print " For example:\n";
   print "              file:/mnt/debian,\n";
   print "              ftp://ftp.example.org/debian,\n";
+  print "              https://deb.debian.org/debian,\n";
   print "              http://deb.debian.org/debian,\n";
 #  print " and the special mirror scheme,\n";
 #  print "              mirror:http://www.debian.org/archivemirrors \n";
