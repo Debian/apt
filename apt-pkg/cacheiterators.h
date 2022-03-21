@@ -44,8 +44,7 @@
 // abstract Iterator template						/*{{{*/
 /* This template provides the very basic iterator methods we
    need to have for doing some walk-over-the-cache magic */
-template<typename Str, typename Itr> class APT_PUBLIC pkgCache::Iterator :
-			public std::iterator<std::forward_iterator_tag, Str> {
+template<typename Str, typename Itr> class APT_PUBLIC pkgCache::Iterator {
 	/** \brief Returns the Pointer for this struct in the owner
 	 *  The implementation of this method should be pretty short
 	 *  as it will only return the Pointer into the mmap stored
@@ -61,6 +60,12 @@ template<typename Str, typename Itr> class APT_PUBLIC pkgCache::Iterator :
 	pkgCache *Owner;
 
 	public:
+	// iterator_traits
+	using iterator_category = std::forward_iterator_tag;
+	using value_type = Str;
+	using difference_type = std::ptrdiff_t;
+	using pointer = Str*;
+	using reference = Str&;
 	// Iteration
 	inline bool end() const {return Owner == 0 || S == OwnerPointer();}
 
