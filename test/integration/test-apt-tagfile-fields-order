@@ -5,13 +5,19 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
 
+DPKG_PERL_VERSION="$(perl -e 'use Dpkg; print "$Dpkg::PROGVERSION";')"
+DPKG_OUTPUT_SORT='sort -u'
+if dpkg --compare-versions "$DPKG_PERL_VERSION" '>=' '1.21.4~'; then
+	DPKG_OUTPUT_SORT='sort'
+fi
+
 dpkg_field_ordered_list() {
 	local FIELDS="$(perl -e "
 use Dpkg::Control;
 use Dpkg::Control::Fields;
 foreach \$f (field_ordered_list(${1})) {
 	print \"\$f\\n\";
-}" | sort -u)"
+}" | $DPKG_OUTPUT_SORT )"
 	if [ -z "$FIELDS" ]; then
 		msgfail 'Could not get fields via libdpkg-perl'
 	fi
@@ -31,7 +37,7 @@ comparelsts() {
 
 msgtest 'Check that apt knows all fields dpkg orders in' 'Packages'
 dpkg_field_ordered_list 'CTRL_INDEX_PKG' > dpkg.lst
-sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort -u > apt.lst
+sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort > apt.lst
 comparelsts
 
 msgtest 'Check that apt knows all fields dpkg orders in' 'status'
@@ -63,7 +69,7 @@ if [ "$USER" = 'david' ]; then
 		msgpass
 		msgtest 'Check that apt knows about all fields' 'dpkg parses'
 		sed -n 's#^.*FIELD("\(.*\)").*$#\1#p' "${DPKGSOURCE}" | sort -u > dpkg.lst
-		sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort -u > apt.lst
+		sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort > apt.lst
 		comparelsts
 	fi
 
