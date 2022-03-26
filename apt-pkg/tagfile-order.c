@@ -16,6 +16,7 @@ static const char *iTFRewritePackageOrder[] = {
    "Package_Revision", // Obsolete (warning in dpkg)
    "Kernel-Version",   // Used only by d-i
    "Built-Using",
+   "Static-Built-Using",
    "Built-For-Profiles",
    "Auto-Built-Package",
    "Multi-Arch",
