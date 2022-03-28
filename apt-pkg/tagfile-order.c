@@ -11,9 +11,9 @@ static const char *iTFRewritePackageOrder[] = {
    "Architecture",
    "Subarchitecture", // NO_KEY: Used only by d-i
    "Version",
-   "Revision",         // NO_KEY: Obsolete (warning in dpkg)
-   "Package-Revision", // NO_KEY: Obsolete (warning in dpkg)
-   "Package_Revision", // NO_KEY: Obsolete (warning in dpkg)
+// "Revision",         // Obsolete (warning in dpkg)
+// "Package-Revision", // Obsolete (warning in dpkg)
+// "Package_Revision", // Obsolete (warning in dpkg)
    "Kernel-Version",   // NO_KEY: Used only by d-i
    "Built-Using",
    "Static-Built-Using",
@@ -22,7 +22,7 @@ static const char *iTFRewritePackageOrder[] = {
    "Multi-Arch",
    "Status",
    "Priority",
-   "Class", // NO_KEY: dpkg nickname for Priority
+// "Class", // Obsolete alias for Priority, warning by dpkg
    "Build-Essential",
    "Protected",
    "Important", // old name of Protected
@@ -44,9 +44,9 @@ static const char *iTFRewritePackageOrder[] = {
    "Pre-Depends",
    "Depends",
    "Recommends",
-   "Recommended", // NO_KEY: dpkg nickname for Recommends
+// "Recommended", // Obsolete alias for Recommends, warning by dpkg
    "Suggests",
-   "Optional", // NO_KEY: dpkg nickname for Suggests
+// "Optional", // Obsolete alias for Suggests, warning by dpkg
    "Conflicts",
    "Breaks",
    "Replaces",
@@ -73,7 +73,7 @@ static const char *iTFRewriteSourceOrder[] = {
    "Architecture",
    "Version",
    "Priority",
-   "Class", // NO_KEY: dpkg nickname for Priority
+// "Class", // Obsolete alias for Priority, warning by dpkg
    "Section",
    "Origin",
    "Maintainer",

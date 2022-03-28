@@ -100,7 +100,7 @@ else
 	msgpass
 	msgtest 'Check that apt knows about all fields' 'dpkg parses'
 	sed -n 's#^.*FIELD("\(.*\)").*$#\1#p' "${DPKG_SOURCE_PARSE_C}" | sort -u > dpkg.lst
-	sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort > apt.lst
+	sed -n -e's#^ *// *"#   "#' -e 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort > apt.lst
 	comparelsts
 fi
 
