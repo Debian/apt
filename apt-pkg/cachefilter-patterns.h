@@ -11,6 +11,7 @@
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/header-is-private.h>
 #include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
 #include <iostream>
@@ -19,10 +20,6 @@
 #include <string>
 #include <vector>
 #include <assert.h>
-
-#ifndef APT_COMPILING_APT
-#error Internal header
-#endif
 
 namespace APT
 {

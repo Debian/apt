@@ -35,6 +35,37 @@ comparelsts() {
 	fi
 }
 
+grep -v '^#' "${SOURCEDIRECTORY}/apt-pkg/tagfile-keys.list" > tagfile-keys.list
+# Hardcoding this is a bit silly, but it might help preventing issues…
+msgtest 'File is append only: do not sort, remove or insert keys in' 'tagfile-keys.list'
+testequal --nomsg 'Version' sed '73q;d' tagfile-keys.list
+
+msgtest 'List has fewer entries than pkgTagSection buckets' 'tagfile-keys.list'
+ENTRIES_LIST="$(wc -l tagfile-keys.list | cut -d' ' -f 1)"
+ENTRIES_BUCKET="$(grep -m 1 'AlphaIndexes\[' "${SOURCEDIRECTORY}/apt-pkg/tagfile.h" | sed -e 's#.*\[\([0-9]\+\)\].*#\1#')"
+if test $ENTRIES_LIST -lt $ENTRIES_BUCKET; then
+	msgpass
+else
+	echo
+	echo "List has $ENTRIES_LIST entries, but pkgTagSection can only store $ENTRIES_BUCKET as AlphaIndexes"
+	msgfail
+fi
+
+msgtest 'Check for duplicates in' 'tagfile-keys.list'
+sort tagfile-keys.list > apt.lst
+testempty --nomsg uniq --repeated 'apt.lst'
+
+msgtest 'Check that apt knows all fields it orders' 'itself'
+grep -v "// NO_KEY: " "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -ne 's#^   "\(.*\)",.*$#\1#p' | sort -u > dpkg.lst
+comparelsts
+
+msgtest 'Check tagfile-keys.list does not contain' 'obsoleted and internal fields'
+grep "// NO_KEY: " "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -ne 's#^   "\(.*\)",.*$#\1#p' > obsolete.lst
+sed -n -e's#^ *// *"\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" >> obsolete.lst
+sort -u obsolete.lst > obsolete-sorted.lst
+sort obsolete-sorted.lst tagfile-keys.list > obsolete-keys.lst
+testempty --nomsg uniq --repeat 'obsolete-keys.lst'
+
 msgtest 'Check that apt knows all fields dpkg orders in' 'Packages'
 dpkg_field_ordered_list 'CTRL_INDEX_PKG' > dpkg.lst
 sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort > apt.lst
