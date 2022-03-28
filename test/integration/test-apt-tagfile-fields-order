@@ -38,7 +38,7 @@ comparelsts() {
 grep -v '^#' "${SOURCEDIRECTORY}/apt-pkg/tagfile-keys.list" > tagfile-keys.list
 # Hardcoding this is a bit silly, but it might help preventing issues…
 msgtest 'File is append only: do not sort, remove or insert keys in' 'tagfile-keys.list'
-testequal --nomsg 'Version' sed '73q;d' tagfile-keys.list
+testequal --nomsg 'Version' sed '72q;d' tagfile-keys.list
 
 msgtest 'List has fewer entries than pkgTagSection buckets' 'tagfile-keys.list'
 ENTRIES_LIST="$(wc -l tagfile-keys.list | cut -d' ' -f 1)"

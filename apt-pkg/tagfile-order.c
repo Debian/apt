@@ -46,7 +46,7 @@ static const char *iTFRewritePackageOrder[] = {
    "Recommends",
    "Recommended", // NO_KEY: dpkg nickname for Recommends
    "Suggests",
-   "Optional", // dpkg nickname for Suggests
+   "Optional", // NO_KEY: dpkg nickname for Suggests
    "Conflicts",
    "Breaks",
    "Replaces",

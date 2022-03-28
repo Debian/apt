@@ -486,7 +486,6 @@ bool PackagesWriter::DoPackage(string FileName)
    Changes.push_back(pkgTagSection::Tag::Rewrite("Filename", NewFileName));
    Changes.push_back(pkgTagSection::Tag::Rewrite("Priority", OverItem->Priority));
    Changes.push_back(pkgTagSection::Tag::Remove("Status"));
-   Changes.push_back(pkgTagSection::Tag::Remove("Optional"));
 
    string DescriptionMd5;
    if (LongDescription == false) {
@@ -513,19 +512,6 @@ bool PackagesWriter::DoPackage(string FileName)
 
    if (NewMaint.empty() == false)
       Changes.push_back(pkgTagSection::Tag::Rewrite("Maintainer", NewMaint));
-
-   /* Get rid of the Optional tag. This is an ugly, ugly, ugly hack that
-      dpkg-scanpackages does. Well sort of. dpkg-scanpackages just does renaming
-      but dpkg does this append bit. So we do the append bit, at least that way the
-      status file and package file will remain similar. There are other transforms
-      but optional is the only legacy one still in use for some lazy reason. */
-   string OptionalStr = Tags.FindS("Optional");
-   if (OptionalStr.empty() == false)
-   {
-      if (Tags.FindS("Suggests").empty() == false)
-	 OptionalStr = Tags.FindS("Suggests") + ", " + OptionalStr;
-      Changes.push_back(pkgTagSection::Tag::Rewrite("Suggests", OptionalStr));
-   }
 
    for (map<string,string>::const_iterator I = OverItem->FieldOverride.begin();
         I != OverItem->FieldOverride.end(); ++I)

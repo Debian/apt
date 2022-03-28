@@ -241,10 +241,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
       return false;
    if (ParseDepends(Ver,pkgTagSection::Key::Enhances,pkgCache::Dep::Enhances) == false)
       return false;
-   // Obsolete.
-   if (ParseDepends(Ver,pkgTagSection::Key::Optional,pkgCache::Dep::Suggests) == false)
-      return false;
-   
+
    if (ParseProvides(Ver) == false)
       return false;
    if (not APT::KernelAutoRemoveHelper::getUname(Ver.ParentPkg().Name()).empty())
