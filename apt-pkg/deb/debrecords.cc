@@ -129,7 +129,7 @@ string debRecordParserBase::LongDesc(std::string const &lang)
 	    l != lang.end(); ++l)
       {
 	 std::string const tagname = "Description-" + *l;
-	 orig = Section.FindS(tagname.c_str());
+	 orig = Section.FindS(tagname);
 	 if (orig.empty() == false)
 	    break;
 	 else if (*l == "en")

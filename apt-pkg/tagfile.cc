@@ -1051,8 +1051,8 @@ bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::v
    {
       if (R->Action == Tag::REMOVE)
 	 continue;
-      std::string const name = ((R->Action == Tag::RENAME) ? R->Data : R->Name);
-      if (Exists(name.c_str()))
+      auto const name = ((R->Action == Tag::RENAME) ? R->Data : R->Name);
+      if (Exists(name))
 	 continue;
       if (Order != NULL)
       {
