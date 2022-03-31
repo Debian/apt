@@ -61,9 +61,7 @@ APT::StringView edspLikeListParser::Description_md5()
 // ListParser::VersionHash - Compute a unique hash for this version	/*{{{*/
 uint32_t edspLikeListParser::VersionHash()
 {
-   if (Section.Exists("APT-Hash") == true)
-      return Section.FindI("APT-Hash");
-   else if (Section.Exists("APT-ID") == true)
+   if (Section.Exists("APT-ID") == true)
       return Section.FindI("APT-ID");
    return 0;
 }
