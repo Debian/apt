@@ -771,21 +771,21 @@ bool SourcesWriter::DoPackage(string FileName)
 	 {
 	    if (hs->HashType() == "MD5Sum" || hs->HashType() == "Checksum-FileSize")
 	       continue;
-	    char const * fieldname;
+	    pkgTagSection::Key fieldkey;
 	    std::string * out;
 	    if (hs->HashType() == "SHA1")
 	    {
-	       fieldname = "Checksums-Sha1";
+	       fieldkey = pkgTagSection::Key::Checksums_Sha1;
 	       out = &ChecksumsSha1;
 	    }
 	    else if (hs->HashType() == "SHA256")
 	    {
-	       fieldname = "Checksums-Sha256";
+	       fieldkey = pkgTagSection::Key::Checksums_Sha256;
 	       out = &ChecksumsSha256;
 	    }
 	    else if (hs->HashType() == "SHA512")
 	    {
-	       fieldname = "Checksums-Sha512";
+	       fieldkey = pkgTagSection::Key::Checksums_Sha512;
 	       out = &ChecksumsSha512;
 	    }
 	    else
@@ -793,7 +793,7 @@ bool SourcesWriter::DoPackage(string FileName)
 	       _error->Warning("Ignoring unknown Checksumtype %s in SourcesWriter::DoPackages", hs->HashType().c_str());
 	       continue;
 	    }
-	    if (Tags.Exists(fieldname) == true)
+	    if (Tags.Exists(fieldkey))
 	       continue;
 	    std::ostringstream streamout;
 	    streamout << "\n " << hs->HashValue() << " " << std::to_string(Db.GetFileSize()) << " " << ParseJnk;

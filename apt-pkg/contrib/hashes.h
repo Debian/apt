@@ -14,6 +14,11 @@
 
 #include <apt-pkg/macros.h>
 
+#ifdef APT_COMPILING_APT
+#include <apt-pkg/string_view.h>
+#include <apt-pkg/tagfile-keys.h>
+#endif
+
 #include <cstring>
 #include <string>
 #include <vector>
@@ -59,6 +64,15 @@ class APT_PUBLIC HashString
 
    // return the list of hashes we support
    static APT_PURE const char** SupportedHashes();
+#ifdef APT_COMPILING_APT
+   struct APT_HIDDEN HashSupportInfo {
+      APT::StringView name;
+      pkgTagSection::Key namekey;
+      APT::StringView chksumsname;
+      pkgTagSection::Key chksumskey;
+   };
+   APT_HIDDEN static std::vector<HashSupportInfo> SupportedHashesInfo();
+#endif
 };
 
 class APT_PUBLIC HashStringList

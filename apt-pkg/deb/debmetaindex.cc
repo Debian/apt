@@ -515,10 +515,9 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 
    bool FoundHashSum = false;
    bool FoundStrongHashSum = false;
-   auto const SupportedHashes = HashString::SupportedHashes();
-   for (int i=0; SupportedHashes[i] != NULL; i++)
+   for (auto const hashinfo : HashString::SupportedHashesInfo())
    {
-      if (!Section.Find(SupportedHashes[i], Start, End))
+      if (not Section.Find(hashinfo.namekey, Start, End))
 	 continue;
 
       std::string Name;
@@ -529,7 +528,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	 if (!parseSumData(Start, End, Name, Hash, Size))
 	    return false;
 
-	 HashString const hs(SupportedHashes[i], Hash);
+	 HashString const hs(hashinfo.name.to_string(), Hash);
          if (Entries.find(Name) == Entries.end())
          {
             metaIndex::checkSum *Sum = new metaIndex::checkSum;

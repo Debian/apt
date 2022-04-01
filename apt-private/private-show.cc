@@ -260,10 +260,8 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgRecords &Recs, /*{{{*/
    // delete, apt-cache show has this info and most users do not care
    if (not _config->FindB("APT::Cache::ShowFull", false))
    {
-      RW.push_back(pkgTagSection::Tag::Remove("MD5sum"));
-      RW.push_back(pkgTagSection::Tag::Remove("SHA1"));
-      RW.push_back(pkgTagSection::Tag::Remove("SHA256"));
-      RW.push_back(pkgTagSection::Tag::Remove("SHA512"));
+      for (char const * const * type = HashString::SupportedHashes(); *type != nullptr; ++type)
+	 RW.push_back(pkgTagSection::Tag::Remove(*type));
       RW.push_back(pkgTagSection::Tag::Remove("Filename"));
       RW.push_back(pkgTagSection::Tag::Remove("Multi-Arch"));
       RW.push_back(pkgTagSection::Tag::Remove("Conffiles"));

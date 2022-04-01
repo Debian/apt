@@ -17,6 +17,8 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile-keys.h>
+#include <apt-pkg/tagfile.h>
 
 #include <algorithm>
 #include <iostream>
@@ -45,6 +47,15 @@ const char * HashString::_SupportedHashes[] =
 {
    "SHA512", "SHA256", "SHA1", "MD5Sum", "Checksum-FileSize", NULL
 };
+std::vector<HashString::HashSupportInfo> HashString::SupportedHashesInfo()
+{
+   return {{
+      { "SHA512",  pkgTagSection::Key::SHA512,"Checksums-Sha512", pkgTagSection::Key::Checksums_Sha512},
+      { "SHA256", pkgTagSection::Key::SHA256, "Checksums-Sha256", pkgTagSection::Key::Checksums_Sha256},
+      { "SHA1", pkgTagSection::Key::SHA1, "Checksums-Sha1", pkgTagSection::Key::Checksums_Sha1 },
+      { "MD5Sum", pkgTagSection::Key::MD5sum, "Files", pkgTagSection::Key::Files },
+   }};
+}
 
 HashString::HashString()
 {

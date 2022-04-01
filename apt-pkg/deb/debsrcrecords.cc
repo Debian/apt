@@ -172,26 +172,19 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
    std::vector<std::string> const compExts = APT::Configuration::getCompressorExtensions();
 
    auto const &posix = std::locale::classic();
-   for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+   for (auto const hashinfo : HashString::SupportedHashesInfo())
    {
-      // derive field from checksum type
-      std::string checksumField("Checksums-");
-      if (strcmp(*type, "MD5Sum") == 0)
-	 checksumField = "Files"; // historic name for MD5 checksums
-      else
-	 checksumField.append(*type);
-
-      string const Files = Sect.FindS(checksumField.c_str());
+      auto const Files = Sect.Find(hashinfo.chksumskey);
       if (Files.empty() == true)
 	 continue;
-      std::istringstream ss(Files);
+      std::istringstream ss(Files.to_string());
       ss.imbue(posix);
 
       while (ss.good())
       {
 	 std::string hash, path;
 	 unsigned long long size;
-	 if (iIndex == nullptr && checksumField == "Files")
+	 if (iIndex == nullptr && hashinfo.chksumskey == pkgTagSection::Key::Files)
 	 {
 	    std::string ignore;
 	    ss >> hash >> size >> ignore >> ignore >> path;
@@ -200,9 +193,9 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 	    ss >> hash >> size >> path;
 
 	 if (ss.fail() || hash.empty() || path.empty())
-	    return _error->Error("Error parsing file record in %s of source package %s", checksumField.c_str(), Package().c_str());
+	    return _error->Error("Error parsing file record in %s of source package %s", hashinfo.chksumsname.to_string().c_str(), Package().c_str());
 
-	 HashString const hashString(*type, hash);
+	 HashString const hashString(hashinfo.name.to_string(), hash);
 	 if (Base.empty() == false)
 	    path = Base + path;
 
@@ -217,7 +210,7 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 	 {
 	    // an error here indicates that we have two different hashes for the same file
 	    if (file->Hashes.push_back(hashString) == false)
-	       return _error->Error("Error parsing checksum in %s of source package %s", checksumField.c_str(), Package().c_str());
+	       return _error->Error("Error parsing checksum in %s of source package %s", hashinfo.chksumsname.to_string().c_str(), Package().c_str());
 	    continue;
 	 }
 
