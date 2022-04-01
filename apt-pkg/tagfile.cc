@@ -626,6 +626,11 @@ bool pkgTagSection::Exists(StringView Tag) const
    unsigned int tmp;
    return Find(Tag, tmp);
 }
+bool pkgTagSection::Exists(Key key) const
+{
+   unsigned int tmp;
+   return Find(key, tmp);
+}
 									/*}}}*/
 // TagSection::Find - Locate a tag					/*{{{*/
 // ---------------------------------------------------------------------

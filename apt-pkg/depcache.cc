@@ -23,6 +23,7 @@
 #include <apt-pkg/prettyprinters.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/versionmatch.h>
@@ -310,8 +311,8 @@ bool pkgDepCache::readStateFile(OpProgress * const Prog)		/*{{{*/
       off_t amt = 0;
       bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
       while(tagfile.Step(section)) {
-	 string const pkgname = section.FindS("Package");
-	 string pkgarch = section.FindS("Architecture");
+	 auto const pkgname = section.Find(pkgTagSection::Key::Package);
+	 auto pkgarch = section.Find(pkgTagSection::Key::Architecture);
 	 if (pkgarch.empty() == true)
 	    pkgarch = "any";
 	 pkgCache::PkgIterator pkg = Cache->FindPkg(pkgname, pkgarch);
@@ -379,8 +380,8 @@ bool pkgDepCache::writeStateFile(OpProgress * const /*prog*/, bool const Install
    pkgTagSection section;
    std::set<string> pkgs_seen;
    while(tagfile.Step(section)) {
-	 string const pkgname = section.FindS("Package");
-	 string pkgarch = section.FindS("Architecture");
+	 auto const pkgname = section.Find(pkgTagSection::Key::Package);
+	 auto pkgarch = section.Find(pkgTagSection::Key::Architecture);
 	 if (pkgarch.empty() == true)
 	    pkgarch = "native";
 	 // Silently ignore unknown packages and packages with no actual

@@ -28,6 +28,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/version.h>
 
@@ -170,11 +171,11 @@ bool DebFile::ParseInfo()
 	if (Section.Scan(Control, ControlLen) == false)
 		return false;
 
-	Package = Section.FindS("Package");
+	Package = Section.Find(pkgTagSection::Key::Package).to_string();
 	Version = GetInstalledVer(Package);
 
 	const char *Start, *Stop;
-	if (Section.Find("Depends", Start, Stop) == true)
+	if (Section.Find(pkgTagSection::Key::Depends, Start, Stop))
 	{
 		while (1)
 		{
@@ -191,8 +192,8 @@ bool DebFile::ParseInfo()
 			if (Start == Stop) break;
 		}
 	}
-	
-	if (Section.Find("Pre-Depends", Start, Stop) == true)
+
+	if (Section.Find(pkgTagSection::Key::Pre_Depends, Start, Stop))
 	{
 		while (1)
 		{

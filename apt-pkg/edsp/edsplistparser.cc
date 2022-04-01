@@ -19,6 +19,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
 
 #include <array>
@@ -141,8 +142,8 @@ bool eippListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
       {"triggers-pending",pkgCache::State::TriggersPending},
       {"installed",pkgCache::State::Installed},
    }};
-   auto const status = Section.Find("Status");
-   if (status.empty() == false)
+   auto const status = Section.Find(pkgTagSection::Key::Status);
+   if (not status.empty())
    {
       for (auto && sv: statusvalues)
       {

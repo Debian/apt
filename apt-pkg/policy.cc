@@ -21,7 +21,9 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
+#include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/versionmatch.h>
@@ -425,12 +427,12 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
       if (Tags.Count() == 0)
          continue;
 
-      string Name = Tags.FindS("Package");
-      if (Name.empty() == true)
+      auto Name = Tags.Find(pkgTagSection::Key::Package);
+      if (Name.empty())
 	 return _error->Error(_("Invalid record in the preferences file %s, no Package header"), File.c_str());
       if (Name == "*")
-	 Name = string();
-      
+	 Name = APT::StringView{};
+
       const char *Start;
       const char *End;
       if (Tags.Find("Pin",Start,End) == false)
@@ -479,7 +481,7 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
          return _error->Error(_("No priority (or zero) specified for pin"));
       }
 
-      istringstream s(Name);
+      std::istringstream s(Name.to_string());
       string pkg;
       while(!s.eof())
       {
