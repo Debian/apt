@@ -29,15 +29,6 @@ testsuccess aptmark auto "$CURRENTKERNEL" "${CURRENTKERNEL}-dbg" "${CURRENTKERNE
 testsuccess aptmark hold "${CURRENTKERNEL}-rt"
 
 testprotected() {
-	rm -f rootdir/etc/apt/apt.conf.d/01autoremove-kernels protected.list
-
-	testsuccess runapt sh "${TESTDIR}/../../debian/apt.auto-removal.sh" "$@"
-	testfailure test -s rootdir/tmp/testsuccess.output
-
-	msgtest 'Check kernel autoremoval protection list' 'is created'
-	testsuccess --nomsg test -e rootdir/etc/apt/apt.conf.d/01autoremove-kernels
-	testfilestats 'rootdir/etc/apt/apt.conf.d/01autoremove-kernels' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:444"
-
     testsuccess --nomsg apt -o Debug::PkgAutoRemove=1 autoremove -s
     grep "Kernel protection regex" rootdir/tmp/testsuccess.output | cut -f2- -d: | tr '|' '\n' | sed 's/\s*//g' | sort -u > protected.list
 
@@ -134,8 +125,6 @@ msgmsg "install unknown kernel"
 testprotected 1.0.0-2-ungeneric
 msgtest 'Check kernel autoremoval protection list does not include' 'old kernel'
 testfailure --nomsg grep '^\^linux-.*-1\\\.0\\\.0-2-generic\$$' protected.list
-msgtest 'Check kernel autoremoval protection list does include' 'unknown installed kernel'
-testsuccess --nomsg grep '^\^linux-.*-1\\\.0\\\.0-2-ungeneric\$$' protected.list
 export COLUMNS=9
 testsuccessequal "Reading package lists...
 Building dependency tree...
@@ -152,17 +141,17 @@ unset COLUMNS
 
 msgmsg "install an old kernel"
 testprotected 1.0.0-2-generic
-msgtest 'Check kernel autoremoval protection list includes' 'installed kernel'
-testsuccess --nomsg grep '^\^linux-.*-1\\\.0\\\.0-2-generic\$$' protected.list
 export COLUMNS=9
 testsuccessequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 The following packages will be REMOVED:
   linux-headers-1000000-1-generic
+  linux-image-1.0.0-2-generic
   ${CURRENTKERNEL}-dbg
-0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
 Remv linux-headers-1000000-1-generic [100.0.0-1]
+Remv linux-image-1.0.0-2-generic [1.0.0-2]
 Remv ${CURRENTKERNEL}-dbg [5-1]" aptget autoremove -s
 unset COLUMNS
 
@@ -173,8 +162,9 @@ testsuccessequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 The following packages will be REMOVED:
-  linux-headers-1000000-1-generic ${CURRENTKERNEL}-dbg
-0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+  linux-headers-1000000-1-generic linux-image-1.0.0-2-generic ${CURRENTKERNEL}-dbg
+0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
 Remv linux-headers-1000000-1-generic [100.0.0-1]
+Remv linux-image-1.0.0-2-generic [1.0.0-2]
 Remv ${CURRENTKERNEL}-dbg [5-1]" aptget autoremove -s
 unset COLUMNS
