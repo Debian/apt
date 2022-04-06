@@ -7,4 +7,9 @@ if [ "$1" = 'configure' ]; then
 	    --no-create-home --quiet _apt || true
 fi
 
+if [ "$1" = "configure" ] && [ -n "$2" ] && dpkg --compare-versions -- "$2" le-nl "2.4.5~"; then
+    rm -f /etc/apt/apt.conf.d/01autoremove-kernels
+fi
+
+
 #DEBHELPER#
