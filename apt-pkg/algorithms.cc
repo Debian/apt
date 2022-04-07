@@ -1514,9 +1514,6 @@ std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
    // needs to be initialized to 0s, might not be set up.
    utsname uts{};
    std::string bootedVersion;
-   std::string lastInstalledVersion;
-
-   std::string lastInstalledUname = _config->Find("APT::LastInstalledKernel");
 
    // Get currently booted version, but only when not on reproducible build.
    if (getenv("SOURCE_DATE_EPOCH") == 0)
@@ -1548,8 +1545,6 @@ std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
 
       if (pkgUname == uts.release)
 	 bootedVersion = pkgVersion;
-      if (pkgUname == lastInstalledUname)
-	 lastInstalledVersion = pkgVersion;
    }
 
    if (version2unames.size() == 0)
@@ -1567,19 +1562,13 @@ std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
 	 std::clog << "Keeping booted kernel " << bootedVersion << std::endl;
       keep.insert(bootedVersion);
    }
-   if (not lastInstalledVersion.empty())
-   {
-      if (Debug)
-	 std::clog << "Keeping installed kernel " << lastInstalledVersion << std::endl;
-      keep.insert(lastInstalledVersion);
-   }
    if (latest != version2unames.rend())
    {
       if (Debug)
 	 std::clog << "Keeping latest kernel " << latest->first << std::endl;
       keep.insert(latest->first);
    }
-   if (keep.size() < 3 && previous != version2unames.rend())
+   if (keep.size() < 2 && previous != version2unames.rend())
    {
       if (Debug)
 	 std::clog << "Keeping previous kernel " << previous->first << std::endl;
@@ -1596,8 +1585,6 @@ std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
    for (auto &pattern : _config->FindVector("APT::VersionedKernelPackages"))
    {
       // Legacy compatibility: Always protected the booted uname and last installed uname
-      if (not lastInstalledUname.empty())
-	 ss << "|^" << pattern << "-" << escapeSpecial(lastInstalledUname) << "$";
       if (*uts.release)
 	 ss << "|^" << pattern << "-" << escapeSpecial(uts.release) << "$";
       for (auto const &kernel : version2unames)
