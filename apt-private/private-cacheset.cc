@@ -436,7 +436,8 @@ APT::VersionSet CacheSetHelperAPTGet::tryVirtualPackage(pkgCacheFile &Cache, pkg
       {
 	 case RELEASE:
 	    for (auto File = V.FileList(); not File.end(); ++File)
-	       if (lastmatcher == File.File().Archive() || lastmatcher == File.File().Codename())
+	       if ((File.File().Archive() != nullptr && lastmatcher == File.File().Archive()) ||
+		   (File.File().Codename() != nullptr && lastmatcher == File.File().Codename()))
 	       {
 		  verset.push_back(V);
 		  break;
