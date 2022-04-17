@@ -31,7 +31,7 @@ Build-Depends: cmake (>= 3.4),
                triehash,
                xsltproc,
                zlib1g-dev
-Build-Depends-Indep: doxygen, graphviz, w3m
+Build-Depends-Indep: doxygen <!nodoc>, graphviz <!nodoc>, w3m <!nodoc>
 Vcs-Git: https://salsa.debian.org/apt-team/apt.git
 Vcs-Browser: https://salsa.debian.org/apt-team/apt
 
@@ -101,6 +101,7 @@ Priority: optional
 Depends: ${misc:Depends}
 Section: doc
 Multi-Arch: foreign
+Build-Profiles: <!nodoc>
 Description: documentation for APT
  This package contains the user guide and offline guide for various
  APT tools which are provided in a html and a text-only version.
@@ -125,6 +126,7 @@ Priority: optional
 Depends: ${misc:Depends}
 Section: doc
 Multi-Arch: foreign
+Build-Profiles: <!nodoc>
 Description: documentation for APT development
  This package contains documentation for development of the APT
  Debian package manipulation program and its libraries.
