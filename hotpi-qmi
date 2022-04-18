@@ -1,0 +1,29 @@
+#!/bin/sh
+apt update && apt upgrade -y
+apt install bridge-utils dnsmasq hostapd libqmi-utils resolvconf samba udhcpc xrdp -y
+echo \#!/bin/sh\\nqmicli -d /dev/cdc-wdm0 --dms-set-operating-mode=online\\nqmicli -d /dev/cdc-wdm0 -E raw-ip\\nqmicli -d /dev/cdc-wdm0 -p --wds-start-network=ip-type=4 --client-no-release-cid\\nudhcpc -i wwan0 > /bin/qmistart
+chmod 755 /bin/qmistart
+echo Enter your Wi-Fi country code \(US or CA for United States or Canada\).
+read hotpicc
+echo Your Wi-Fi country code has been set to '"'$hotpicc'"'
+echo Create your Wi-Fi network name \(no special characters or spaces\).
+read hotpinn
+echo Your Wi-Fi network name has been set to '"'$hotpinn'"'
+echo Create your Wi-Fi network password \(no special characters or spaces\).
+read hotpinp
+echo Your Wi-Fi network password has been set to '"'$hotpinp'"'
+echo If you need to change these settings, you can do so by editing the '"hostapd.conf"' file using the '"sudo nano /etc/hostapd/hostapd.conf"' command in Terminal.\\nPress ENTER to continue...
+read hotpips
+echo interface=wlan0\\nbridge=br0\\ncountry_code=$hotpicc\\nieee80211ac=1\\nwmm_enabled=1\\nhw_mode=a\\nchannel=36\\nht_capab=[HT40+]\\nssid=$hotpinn\\nwpa_passphrase=$hotpinp\\nwpa=2\\nwpa_key_mgmt=WPA-PSK\\nrsn_pairwise=CCMP > /etc/hostapd/hostapd.conf
+echo allow-hotplug br0\\niface br0 inet static\\naddress 192.168.0.1\\nbridge_ports wlan0 eth0 >> /etc/network/interfaces
+echo interface=br0\\ndhcp-range=192.168.0.2,192.168.0.10,24h >> /etc/dnsmasq.conf
+sed -i s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/ /etc/sysctl.conf
+iptables -t nat -A POSTROUTING -o wwan0 -j MASQUERADE
+iptables-save > /etc/iptables
+echo [External Storage]\\npath = /media/pi\\npublic = yes\\nwriteable = yes >> /etc/samba/smb.conf
+mkdir /media/pi
+chmod -R 777 /media/pi
+sed -i s/^exit\ 0/qmistart\ \;\ iptables-restore\ \<\ \\/etc\\/iptables\\nexit\ 0/ /etc/rc.local
+systemctl unmask hostapd
+systemctl enable hostapd resolvconf
+reboot
