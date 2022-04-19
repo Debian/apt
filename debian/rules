@@ -17,12 +17,6 @@ else
 	configure_test_flags =
 endif
 
-ifeq ($(filter nodoc,$(DEB_BUILD_PROFILES)),)
-	profile_doc_flags=-DWITH_DOC=ON
-else
-	profile_doc_flags=-DWITH_DOC=OFF
-endif
-
 %:
 	dh $@ --buildsystem=cmake+ninja
 
@@ -50,7 +44,13 @@ override_dh_installsystemd:
 	dh_installsystemd -papt --no-restart-on-upgrade --no-restart-after-upgrade --no-start apt-daily.service apt-daily-upgrade.service
 	dh_installsystemd --remaining-packages
 
-override_dh_auto_configure-arch: configure_doc_flags=-DWITH_DOC=OFF
-override_dh_auto_configure-indep: configure_doc_flags=$(profile_doc_flags)
+ifeq ($(filter nodoc,$(DEB_BUILD_PROFILES)),)
+override_dh_auto_configure-arch: configure_doc_flags="-DWITH_DOC=OFF -DWITH_DOC_MANPAGES=ON"
+override_dh_auto_configure-indep: configure_doc_flags="-DWITH_DOC=ON"
+else
+override_dh_auto_configure-arch: configure_doc_flags="-DWITH_DOC=OFF"
+override_dh_auto_configure-indep: configure_doc_flags="-DWITH_DOC=OFF"
+endif
+
 override_dh_auto_configure-arch override_dh_auto_configure-indep:
 	dh_auto_configure -- -DCMAKE_BUILD_RPATH_USE_ORIGIN=ON $(configure_doc_flags) $(configure_test_flags)

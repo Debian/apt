@@ -1,4 +1,6 @@
+if (WITH_DOC OR WITH_DOC_MANPAGES OR WITH_DOC_GUIDES)
 include(Documentation)
+endif()
 
 set(LINGUAS
     de
@@ -21,7 +23,7 @@ set(ENTITIES
     ../vendor/${CURRENT_VENDOR}/apt-vendor.ent
 )
 
-if(WITH_DOC)
+if(WITH_DOC OR WITH_DOC_GUIDES)
 add_docbook(apt-doc HTML TEXT ALL
     DOCUMENTS
         guide.dbk
@@ -43,7 +45,9 @@ add_docbook(libapt-pkg-doc HTML TEXT ALL
     TRANSLATED_ENTITIES ${TRANSLATED_ENTITIES}
     DEPENDS ${ENTITIES}
 )
+endif()
 
+if(WITH_DOC OR WITH_DOC_DOXYGEN)
 find_package(Doxygen REQUIRED)
 
 file(GLOB_RECURSE apt_pkg "../apt-pkg/*.h" "../apt-pkg/*.cc")
@@ -65,9 +69,9 @@ install(DIRECTORY  ${PROJECT_BINARY_DIR}/doc/doxygen/html
         PATTERN "*.map" EXCLUDE
         PATTERN "*.md5" EXCLUDE
 )
-
 endif()
 
+if(WITH_DOC OR WITH_DOC_MANPAGES)
 add_docbook(apt-man MANPAGE ALL
     DOCUMENTS
         apt.8.xml
@@ -93,7 +97,12 @@ add_docbook(apt-man MANPAGE ALL
     TRANSLATED_ENTITIES ${TRANSLATED_ENTITIES}
     LINGUAS ${LINGUAS}
 )
+endif()
 
+if(WITH_DOC OR WITH_DOC_MANPAGES OR WITH_DOC_GUIDES)
 add_update_po4a(update-po4a po/${PROJECT_NAME}-doc.pot "po/header.pot.txt")
+endif()
 
+if(WITH_DOC OR WITH_DOC_EXAMPLES)
 add_subdirectory(examples)
+endif()
