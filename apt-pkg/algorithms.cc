@@ -1497,7 +1497,7 @@ std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
 	 abort();
    }
 
-   auto VirtualKernelPkg = cache->FindPkg("$kernel", "any");
+   auto VirtualKernelPkg = cache->FindPkg(APT::StringView("$kernel"), "any");
    if (VirtualKernelPkg.end())
       return "";
 
@@ -1589,9 +1589,9 @@ std::unique_ptr<APT::CacheFilter::Matcher> GetProtectedKernelsFilter(pkgCache *c
    auto regex = GetProtectedKernelsRegex(cache, returnRemove);
 
    if (regex.empty())
-      return std::make_unique<APT::CacheFilter::FalseMatcher>();
+      return std::unique_ptr<APT::CacheFilter::FalseMatcher>(new APT::CacheFilter::FalseMatcher());
 
-   return std::make_unique<APT::CacheFilter::PackageNameMatchesRegEx>(regex);
+   return std::unique_ptr<APT::CacheFilter::PackageNameMatchesRegEx>(new APT::CacheFilter::PackageNameMatchesRegEx(regex));
 }
 
 } // namespace KernelAutoRemoveHelper
