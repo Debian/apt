@@ -37,4 +37,5 @@ test as user:
     - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
     - sudo -u travis --preserve-env=CCACHE_DIR,CCACHE_BASEDIR ninja -C build
     - sudo -u travis CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
+    - chmod -R o-w $PWD
     - sudo -u travis unbuffer ./test/integration/run-tests -q -j 4
