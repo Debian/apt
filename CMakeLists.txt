@@ -240,8 +240,10 @@ configure_file(CMake/apti18n.h.in ${PROJECT_BINARY_DIR}/include/apti18n.h)
 
 # Add our subdirectories
 add_subdirectory(vendor)
+if (NOT USE_SYSTEM_APTPKG)
 add_subdirectory(apt-pkg)
 add_subdirectory(apt-private)
+endif()
 add_subdirectory(cmdline)
 add_subdirectory(completions)
 add_subdirectory(doc)

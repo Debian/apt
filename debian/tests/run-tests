@@ -15,7 +15,7 @@ else
 fi
 
 if [ ! -e "${BUILD_DIR}/CMakeCache.txt" ]; then
-   cmake -S "$SOURCE_DIR" -B "$BUILD_DIR"
+   cmake -S "$SOURCE_DIR" -B "$BUILD_DIR" -DUSE_SYSTEM_APTPKG=ON -DWITH_DOC=OFF -DUSE_NLS=OFF
 fi
 
 make -C "${BUILD_DIR}/test/interactive-helper"
@@ -24,14 +24,14 @@ make -C "${BUILD_DIR}/test/interactive-helper"
 # the host env does not pollute our environment
 env -i \
 APT_INTEGRATION_TESTS_SOURCE_DIR="${SOURCE_DIR}" \
-APT_INTEGRATION_TESTS_HELPERS_BIN_DIR="${BUILD_DIR}/test/interactive-helper" \
+APT_INTEGRATION_TESTS_BUILD_DIR="${BUILD_DIR}" \
 APT_INTEGRATION_TESTS_METHODS_DIR=/usr/lib/apt/methods \
 APT_INTEGRATION_TESTS_LIBEXEC_DIR=/usr/lib/apt/ \
 APT_INTEGRATION_TESTS_INTERNAL_SOLVER=/usr/lib/apt/solvers/apt \
 APT_INTEGRATION_TESTS_DUMP_SOLVER=/usr/lib/apt/solvers/dump \
 APT_INTEGRATION_TESTS_INTERNAL_PLANNER=/usr/lib/apt/planners/apt \
-APT_INTEGRATION_TESTS_BUILD_DIR=/usr/bin \
 APT_INTEGRATION_TESTS_FTPARCHIVE_BIN_DIR=/usr/bin \
+APT_INTEGRATION_TESTS_CMDLINE_BIN_DIR=/usr/bin \
 APT_INTEGRATION_TESTS_LIBRARY_PATH=/dev/null/does/not/exist \
 APT_INTEGRATION_TESTS_ARTIFACTS_DIR="${AUTOPKGTEST_ARTIFACTS}" \
 "${SOURCE_DIR}/test/integration/run-tests" -q
