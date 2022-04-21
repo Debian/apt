@@ -28,9 +28,10 @@ static const constexpr struct
    {"M"_sv, "?automatic"_sv, false},
    {"b"_sv, "?broken"_sv, false},
    {"c"_sv, "?config-files"_sv, false},
-   // FIXME: The words after ~D should be case-insensitive
+   // FIXME: The words after ~D and ~R should be case-insensitive
    {"DDepends:"_sv, "?depends"_sv, true},
-   {"DPre-Depends:"_sv, "?pre-depends"_sv, true},
+   {"DPreDepends:"_sv, "?predepends"_sv, true},
+   {"DPre-Depends:"_sv, "?predepends"_sv, true},
    {"DSuggests:"_sv, "?suggests"_sv, true},
    {"DRecommends:"_sv, "?recommends"_sv, true},
    {"DConflicts:"_sv, "?conflicts"_sv, true},
@@ -40,7 +41,8 @@ static const constexpr struct
    {"DEnhances:"_sv, "?enhances"_sv, true},
    {"D"_sv, "?depends"_sv, true},
    {"RDepends:"_sv, "?reverse-depends"_sv, true},
-   {"RPre-Depends:"_sv, "?reverse-pre-depends"_sv, true},
+   {"RPreDepends:"_sv, "?reverse-predepends"_sv, true},
+   {"RPre-Depends:"_sv, "?reverse-predepends"_sv, true},
    {"RSuggests:"_sv, "?reverse-suggests"_sv, true},
    {"RRecommends:"_sv, "?reverse-recommends"_sv, true},
    {"RConflicts:"_sv, "?reverse-conflicts"_sv, true},
@@ -444,7 +446,7 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<Patterns::PackageIsConfigFiles>();
    if (node->matches("?depends", 1, 1))
       return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]));
-   if (node->matches("?predepends", 1, 1))
+   if (node->matches("?predepends", 1, 1) || node->matches("?pre-depends", 1, 1))
       return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::PreDepends);
    if (node->matches("?suggests", 1, 1))
       return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Suggests);
@@ -462,7 +464,7 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<Patterns::VersionDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Enhances);
    if (node->matches("?reverse-depends", 1, 1))
       return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]));
-   if (node->matches("?reverse-predepends", 1, 1))
+   if (node->matches("?reverse-predepends", 1, 1) || node->matches("?reverse-pre-depends", 1, 1))
       return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]), pkgCache::Dep::PreDepends);
    if (node->matches("?reverse-suggests", 1, 1))
       return std::make_unique<Patterns::PackageReverseDepends>(aPattern(node->arguments[0]), pkgCache::Dep::Suggests);
