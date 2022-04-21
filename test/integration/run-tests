@@ -80,9 +80,9 @@ if [ -n "$TESTTORUN" ]; then
 		fi
 	} >"$OUTPUT" 2>&1
 	# without we end up getting stepped output 'randomly'
-	stty sane
+	stty sane || true
 	cat >&2 "$OUTPUT"
-	stty sane
+	stty sane || true
 	if [ "$FAIL" = 'yes' ]; then
 		exit 1
 	else
