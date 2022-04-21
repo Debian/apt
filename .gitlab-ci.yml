@@ -19,6 +19,8 @@ test as root:
     - sudo -u travis mkdir -p build .ccache
     - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo  -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
     - sudo -u travis --preserve-env=CCACHE_DIR,CCACHE_BASEDIR ninja -C build
+    - apt-get install --no-install-recommends -qq libxml2-utils
+    - ./prepare-release post-build --report-failure
     - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
     - unbuffer ./test/integration/run-tests -q -j 4
 
