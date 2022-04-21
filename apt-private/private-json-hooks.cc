@@ -22,6 +22,7 @@
 #include <signal.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 /**
  * @brief Simple JSON writer
