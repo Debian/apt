@@ -5,6 +5,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0+
  */
+#include <config.h>
 
 #include <apt-pkg/debsystem.h>
 #include <apt-pkg/fileutl.h>

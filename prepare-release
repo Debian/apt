@@ -142,6 +142,11 @@ elif [ "$1" = 'post-build' ]; then
 		FAILED=true
 	fi
 
+	if [ "$(find -name '*.cc' ! -name 'tagfile-keys.cc' -exec grep --files-without-match '^#include <config\.h>$' '{}' \+ | wc -l)" != '0' ]; then
+		echo >&2 'WARNING: C++ files not including our config.h can cause ODR violations!'
+		find -name '*.cc' ! -name 'tagfile-keys.cc' -exec grep --files-without-match '^#include <config\.h>$' '{}' \+ >&2
+		FAILED=true
+	fi
 	if $REPORT_FAILURE && $FAILED; then
 		exit 1
 	fi
