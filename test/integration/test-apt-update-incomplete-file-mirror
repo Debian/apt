@@ -29,3 +29,4 @@ find aptarchive/dists -name 'Packages' | while read FILE; do
 	echo 'hacked' > $FILE
 done
 testfailure apt update
+testsuccessequal '4' grep -c -- '- Filesize:' rootdir/tmp/testfailure.output

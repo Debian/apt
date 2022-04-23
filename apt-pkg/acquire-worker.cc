@@ -457,6 +457,18 @@ bool pkgAcquire::Worker::RunMessages()
 		     FileFd file(filename, FileFd::ReadOnly, FileFd::None);
 		     calc.AddFD(file);
 		     ReceivedHashes = calc.GetHashStringList();
+		     for (auto const &h : ReceivedHashes)
+		     {
+			std::string tagname;
+			if (AltFile)
+			   tagname = "Alt-";
+			tagname.append(h.HashType()).append("-Hash");
+			if (not LookupTag(Message, tagname.c_str()).empty())
+			   continue;
+			if (not APT::String::Endswith(Message, "\n"))
+			   Message.append("\n");
+			Message.append(tagname).append(": ").append(h.HashValue());
+		     }
 		  }
 	       }
 

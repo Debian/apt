@@ -976,13 +976,25 @@ void pkgAcquire::Item::FailMessage(string const &Message)
 	 if (failreason == HASHSUM_MISMATCH)
 	 {
 	    out << "Hashes of received file:" << std::endl;
+	    size_t hashes = 0;
 	    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
 	    {
 	       std::string const tagname = std::string(*type) + "-Hash";
 	       std::string const hashsum = LookupTag(Message, tagname.c_str());
-	       if (hashsum.empty() == false)
+	       if (not hashsum.empty())
+	       {
 		  formatHashsum(out, HashString(*type, hashsum));
+		  ++hashes;
+	       }
 	    }
+	    if (hashes == 0)
+	       for (char const *const *type = HashString::SupportedHashes(); *type != nullptr; ++type)
+	       {
+		  std::string const tagname = std::string("Alt-") + *type + "-Hash";
+		  std::string const hashsum = LookupTag(Message, tagname.c_str());
+		  if (not hashsum.empty())
+		     formatHashsum(out, HashString(*type, hashsum));
+	       }
 	 }
 	 auto const lastmod = LookupTag(Message, "Last-Modified", "");
 	 if (lastmod.empty() == false)
