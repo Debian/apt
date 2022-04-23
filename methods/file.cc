@@ -107,6 +107,8 @@ bool FileMethod::Fetch(FetchItem *Itm)
 	    AltRes.IMSHit = false;
 	    if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
 	       AltRes.IMSHit = true;
+	    if (Res.Filename.empty())
+	       CalculateHashes(Itm, AltRes);
 	    break;
 	 }
 	 // no break here as we could have situations similar to '.gz' vs '.tar.gz' here

@@ -28,5 +28,6 @@ rm -rf rootdir/var/lib/apt/lists
 find aptarchive/dists -name 'Packages' | while read FILE; do
 	echo 'hacked' > $FILE
 done
-testfailure apt update
+testfailure apt update -o Debug::pkgAcquire::Worker=1
 testsuccessequal '4' grep -c -- '- Filesize:' rootdir/tmp/testfailure.output
+testsuccessequal '2' grep -c '%0aAlt-Checksum-FileSize-Hash:%20' rootdir/tmp/testfailure.output
