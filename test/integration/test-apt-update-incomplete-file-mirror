@@ -1,0 +1,31 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture "amd64"
+configcompression 'gz'
+
+insertpackage 'unstable' 'foo' 'amd64' '1'
+
+setupaptarchive --no-update
+
+testfailure aptcache show foo
+
+# the Release file says gz available, but the mirror has only uncompressed files
+find aptarchive/dists -name '*.gz' -delete
+
+testsuccess apt update
+testsuccess aptcache show foo
+testfailure aptcache show bar
+
+testsuccess apt update
+
+rm -rf rootdir/var/lib/apt/lists
+
+find aptarchive/dists -name 'Packages' | while read FILE; do
+	echo 'hacked' > $FILE
+done
+testfailure apt update

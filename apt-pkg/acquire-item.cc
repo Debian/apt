@@ -1024,8 +1024,7 @@ void pkgAcquire::Item::Start(string const &/*Message*/, unsigned long long const
 bool pkgAcquire::Item::VerifyDone(std::string const &Message,
 	 pkgAcquire::MethodConfig const * const /*Cnf*/)
 {
-   std::string const FileName = LookupTag(Message,"Filename");
-   if (FileName.empty() == true)
+   if (LookupTag(Message,"Filename").empty() && LookupTag(Message, "Alt-Filename").empty())
    {
       Status = StatError;
       ErrorText = "Method gave a blank filename";

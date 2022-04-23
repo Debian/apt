@@ -20,6 +20,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/metaindex.h>
 #include <apt-pkg/proxy.h>
 #include <apt-pkg/strutl.h>
 
@@ -434,11 +435,18 @@ bool pkgAcquire::Worker::RunMessages()
 		  Log->Pulse((*O)->GetOwner());
 
 	    HashStringList ReceivedHashes;
+	    bool AltFile = false;
 	    {
-	       std::string const givenfilename = LookupTag(Message, "Filename");
-	       std::string const filename = givenfilename.empty() ? Itm->Owner->DestFile : givenfilename;
+	       std::string filename;
+	       if (filename = LookupTag(Message, "Filename"); filename.empty())
+	       {
+		  if (filename = LookupTag(Message, "Alt-Filename"); not filename.empty())
+		     AltFile = true;
+		  else
+		     filename = Itm->Owner->DestFile;
+	       }
 	       // see if we got hashes to verify
-	       ReceivedHashes = GetHashesFromMessage("", Message);
+	       ReceivedHashes = GetHashesFromMessage(AltFile ? "Alt-" : "", Message);
 	       // not all methods always sent Hashes our way
 	       if (ReceivedHashes.usable() == false)
 	       {
@@ -453,7 +461,7 @@ bool pkgAcquire::Worker::RunMessages()
 	       }
 
 	       // only local files can refer other filenames and counting them as fetched would be unfair
-	       if (Log != NULL && Itm->Owner->Complete == false && Itm->Owner->Local == false && givenfilename == filename)
+	       if (Log != nullptr && not Itm->Owner->Complete && not Itm->Owner->Local && not AltFile && Itm->Owner->DestFile == filename)
 		  Log->Fetched(ReceivedHashes.FileSize(),atoi(LookupTag(Message,"Resume-Point","0").c_str()));
 	    }
 
@@ -466,7 +474,19 @@ bool pkgAcquire::Worker::RunMessages()
 	    auto const forcedHash = _config->Find("Acquire::ForceHash");
 	    for (auto const Owner: ItmOwners)
 	    {
-	       HashStringList const ExpectedHashes = Owner->GetExpectedHashes();
+	       HashStringList const ExpectedHashes = [&]() {
+		  if (AltFile)
+		  {
+		     auto const * const transOwner = dynamic_cast<pkgAcqTransactionItem const * const>(Owner);
+		     if (transOwner != nullptr && transOwner->TransactionManager != nullptr && transOwner->TransactionManager->MetaIndexParser != nullptr)
+		     {
+			auto const * const hashes = transOwner->TransactionManager->MetaIndexParser->Lookup(transOwner->Target.MetaKey);
+			if (hashes != nullptr)
+			   return hashes->Hashes;
+		     }
+		  }
+		  return Owner->GetExpectedHashes();
+	       }();
 	       if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
 	       {
 		  std::clog << "201 URI Done: " << Owner->DescURI() << endl
