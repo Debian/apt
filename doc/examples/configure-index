@@ -846,12 +846,18 @@ acquire::gpgv::dl-limit "<INVALID>";
 acquire::store::dl-limit "<INVALID>";
 acquire::mirror::dl-limit "<INVALID>";
 methods::mirror::problemreporting "<STRING>";
-acquire::http::proxyautodetect "<STRING>";
-acquire::http::proxy-auto-detect "<STRING>";
-acquire::http::proxy::* "<STRING>";
-acquire::https::proxyautodetect "<STRING>";
-acquire::https::proxy-auto-detect "<STRING>";
-acquire::https::proxy::* "<STRING>";
+acquire::*::proxyautodetect "<STRING>";
+acquire::file::proxyautodetect "<INVALID>";
+acquire::copy::proxyautodetect "<INVALID>";
+acquire::store::proxyautodetect "<INVALID>";
+acquire::*::proxy-auto-detect "<STRING>";
+acquire::file::proxy-auto-detect "<INVALID>";
+acquire::copy::proxy-auto-detect "<INVALID>";
+acquire::store::proxy-auto-detect "<INVALID>";
+acquire::file::proxy::* "<INVALID>";
+acquire::copy::proxy::* "<INVALID>";
+acquire::store::proxy::* "<INVALID>";
+acquire::*::proxy::* "<STRING>";
 
 // Options used by apt-ftparchive
 dir::archivedir "<DIR>";

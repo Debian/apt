@@ -877,14 +877,12 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    }
    Message += "\nFilename: " + Item->Owner->DestFile;
 
-   // FIXME: We should not hard code proxy protocols here.
-   if (URL.Access == "http" || URL.Access == "https")
+   // AutoDetectProxy() checks this already by itself, but we don't want to access unknown configs
+   if (CanURIBeAccessedViaProxy(URL))
    {
       AutoDetectProxy(URL);
-      if (_config->Exists("Acquire::" + URL.Access + "::proxy::" + URL.Host))
-      {
-	 Message += "\nProxy: " + _config->Find("Acquire::" + URL.Access + "::proxy::" + URL.Host);
-      }
+      if (auto const proxy = _config->Find("Acquire::" + URL.Access + "::proxy::" + URL.Host); not proxy.empty())
+	 Message.append("\nProxy: ").append(proxy);
    }
 
    HashStringList const hsl = Item->GetExpectedHashes();
