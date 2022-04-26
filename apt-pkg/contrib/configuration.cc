@@ -55,12 +55,14 @@ Configuration *_config = new Configuration;
    but a Cnf-member – but that would need ABI breaks and stuff and for now
    that really is an apt-dev-only tool, so it isn't that bad that it is
    unusable and allaround a bit strange */
-enum class APT_HIDDEN ConfigType { UNDEFINED, INT, BOOL, STRING, STRING_OR_BOOL, STRING_OR_LIST, FILE, DIR, LIST, PROGRAM_PATH = FILE };
+enum class APT_HIDDEN ConfigType { INVALID, UNDEFINED, INT, BOOL, STRING, STRING_OR_BOOL, STRING_OR_LIST, FILE, DIR, LIST, PROGRAM_PATH = FILE };
 APT_HIDDEN std::unordered_map<std::string, ConfigType> apt_known_config {};
+APT_HIDDEN std::vector<std::pair<std::string, ConfigType>> apt_known_config_patterns {};
 static std::string getConfigTypeString(ConfigType const type)		/*{{{*/
 {
    switch (type)
    {
+      case ConfigType::INVALID: return "INVALID";
       case ConfigType::UNDEFINED: return "UNDEFINED";
       case ConfigType::INT: return "INT";
       case ConfigType::BOOL: return "BOOL";
@@ -94,6 +96,8 @@ static ConfigType getConfigType(std::string const &type)		/*{{{*/
       return ConfigType::STRING_OR_LIST;
    else if (type == "<PROGRAM_PATH>")
       return ConfigType::PROGRAM_PATH;
+   else if (type == "<INVALID>")
+      return ConfigType::INVALID;
    return ConfigType::UNDEFINED;
 }
 									/*}}}*/
@@ -101,59 +105,86 @@ static ConfigType getConfigType(std::string const &type)		/*{{{*/
 static void checkFindConfigOptionTypeInternal(std::string name, ConfigType const type)
 {
    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-   auto known = apt_known_config.find(name);
-   if (known == apt_known_config.cend())
+   bool found = false;
+   ConfigType expectedType = ConfigType::INVALID;
+   if (auto const known = apt_known_config.find(name); known != apt_known_config.cend())
    {
-      auto const rcolon = name.rfind(':');
-      if (rcolon != std::string::npos)
-      {
-	 known = apt_known_config.find(name.substr(0, rcolon) + ":*");
-	 if (known == apt_known_config.cend())
-	 {
-	    auto const parts = StringSplit(name, "::");
-	    size_t psize = parts.size();
-	    if (psize > 1)
-	    {
-	       for (size_t max = psize; max != 1; --max)
-	       {
-		  std::ostringstream os;
-		  std::copy(parts.begin(), parts.begin() + max, std::ostream_iterator<std::string>(os, "::"));
-		  os << "**";
-		  known = apt_known_config.find(os.str());
-		  if (known != apt_known_config.cend() && known->second == ConfigType::UNDEFINED)
-		     return;
-	       }
-	       for (size_t max = psize - 1; max != 1; --max)
-	       {
-		  std::ostringstream os;
-		  std::copy(parts.begin(), parts.begin() + max - 1, std::ostream_iterator<std::string>(os, "::"));
-		  os << "*::";
-		  std::copy(parts.begin() + max + 1, parts.end() - 1, std::ostream_iterator<std::string>(os, "::"));
-		  os << *(parts.end() - 1);
-		  known = apt_known_config.find(os.str());
-		  if (known != apt_known_config.cend())
-		     break;
-	       }
-	    }
-	 }
-      }
+      found = true;
+      expectedType = known->second;
    }
-   if (known == apt_known_config.cend())
+   else
+      for (auto const &known : apt_known_config_patterns)
+      {
+	 std::string_view n{name};
+	 std::string_view k{known.first};
+	 do
+	 {
+	    if (auto star = k.find('*'); star != std::string_view::npos)
+	    {
+	       if (auto nextstar = star + 1; k.length() > nextstar && k[nextstar] == '*')
+		  star -= 3;
+	       if (n.compare(0, star, k, 0, star) != 0)
+		  break;
+	       n.remove_prefix(star);
+	       k.remove_prefix(star + 1);
+	    }
+	    else if (k == n)
+	    {
+	       n = {};
+	       break;
+	    }
+	    else
+	       break;
+
+	    if (k.empty())
+	    {
+	       if (n.find("::") == std::string_view::npos)
+		  n = {};
+	       break;
+	    }
+	    if (k == "::**")
+	    {
+	       if (known.second == ConfigType::UNDEFINED)
+		  return;
+	       n = {};
+	       break;
+	    }
+	    if (k.compare(0, 2, "::") == 0)
+	    {
+	       auto const colons = n.find("::");
+	       if (colons == std::string_view::npos)
+		  break;
+	       n.remove_prefix(colons);
+	    }
+	    else
+	       break;
+	 } while (not n.empty());
+	 if (not n.empty())
+	    continue;
+	 found = true;
+	 expectedType = known.second;
+	 break;
+      }
+
+   if (not found)
       _error->Warning("Using unknown config option »%s« of type %s",
 	    name.c_str(), getConfigTypeString(type).c_str());
-   else if (known->second != type)
+   else if (expectedType != type)
    {
-      if (known->second == ConfigType::DIR && type == ConfigType::FILE)
+      if (expectedType == ConfigType::INVALID)
+	 _error->Warning("Using invalid config option »%s« as a type %s",
+	       name.c_str(), getConfigTypeString(type).c_str());
+      if (expectedType == ConfigType::DIR && type == ConfigType::FILE)
 	 ; // implementation detail
-      else if (type == ConfigType::STRING && (known->second == ConfigType::FILE || known->second == ConfigType::DIR))
+      else if (type == ConfigType::STRING && (expectedType == ConfigType::FILE || expectedType == ConfigType::DIR))
 	 ; // TODO: that might be an error or not, we will figure this out later
-      else if (known->second == ConfigType::STRING_OR_BOOL && (type == ConfigType::BOOL || type == ConfigType::STRING))
+      else if (expectedType == ConfigType::STRING_OR_BOOL && (type == ConfigType::BOOL || type == ConfigType::STRING))
 	 ;
-      else if (known->second == ConfigType::STRING_OR_LIST && (type == ConfigType::LIST || type == ConfigType::STRING))
+      else if (expectedType == ConfigType::STRING_OR_LIST && (type == ConfigType::LIST || type == ConfigType::STRING))
 	 ;
       else
 	 _error->Warning("Using config option »%s« of type %s as a type %s",
-	       name.c_str(), getConfigTypeString(known->second).c_str(), getConfigTypeString(type).c_str());
+	       name.c_str(), getConfigTypeString(expectedType).c_str(), getConfigTypeString(type).c_str());
    }
 }
 static void checkFindConfigOptionType(char const * const name, ConfigType const type)
@@ -166,6 +197,7 @@ static void checkFindConfigOptionType(char const * const name, ConfigType const 
 static bool LoadConfigurationIndex(std::string const &filename)		/*{{{*/
 {
    apt_known_config.clear();
+   apt_known_config_patterns.clear();
    if (filename.empty())
       return true;
    Configuration Idx;
@@ -181,7 +213,10 @@ static bool LoadConfigurationIndex(std::string const &filename)		/*{{{*/
       {
 	 std::string fulltag = Top->FullTag();
 	 std::transform(fulltag.begin(), fulltag.end(), fulltag.begin(), ::tolower);
-	 apt_known_config.emplace(std::move(fulltag), getConfigType(Top->Value));
+	 if (fulltag.find("::*") == std::string::npos)
+	    apt_known_config.emplace(std::move(fulltag), getConfigType(Top->Value));
+	 else
+	    apt_known_config_patterns.emplace_back(std::move(fulltag), getConfigType(Top->Value));
       }
 
       if (Top->Child != nullptr)

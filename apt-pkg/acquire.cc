@@ -524,7 +524,7 @@ pkgAcquire::MethodConfig *pkgAcquire::GetConfig(string Access)
    Configs = Conf;
 
    /* if a method uses DownloadLimit, we switch to SingleInstance mode */
-   if(_config->FindI("Acquire::"+Access+"::Dl-Limit",0) > 0)
+   if (not Conf->SingleInstance && _config->FindI("Acquire::" + Access + "::Dl-Limit", 0) > 0)
       Conf->SingleInstance = true;
     
    return Conf;

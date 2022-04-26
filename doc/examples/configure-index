@@ -184,18 +184,16 @@ APT
      Error-Mode "<STRING>";
   };
 
-  /* define a new supported compressor on the fly
-  Compressor::rev {
-     Name "rev";
-     Extension ".reversed";
-     Binary "rev";
-     CompressArg {};
-     UncompressArg {};
-     Cost "10";
-  };
-  */
   Compressor "<LIST>";
-  Compressor::** "<UNDEFINED>";
+  // define a new compressor on the fly, like the super-compressor: /usr/bin/rev
+  Compressor::* {
+     Name "<STRING>"; // rev
+     Extension "<STRING>"; // .reversed
+     Binary "<STRING>"; // rev
+     CompressArg "<LIST>"; // {}
+     UncompressArg "<LIST>"; // {}
+     Cost "<INT>"; // 10
+  };
 
   Authentication
   {
@@ -584,6 +582,9 @@ Debug
   Acquire::Ftp "<BOOL>";    // Show ftp command traffic
   Acquire::Http "<BOOL>";   // Show http command traffic
   Acquire::Https "<BOOL>";   // Show https debug
+  Acquire::tor "<BOOL>";
+  Acquire::tor+http "<BOOL>";
+  Acquire::tor+https "<BOOL>";
   Acquire::gpgv "<BOOL>";   // Show the gpgv traffic
   Acquire::cdrom "<BOOL>";   // Show cdrom debug output
   Acquire::Transaction "<BOOL>";
@@ -819,10 +820,31 @@ acquire::max-pipeline-depth "<INT>";
 acquire::progress::diffpercent "<BOOL>";
 acquire::gzipindexes "<BOOL>";
 acquire::indextargets::randomized "<BOOL>";
-acquire::indextargets::deb::** "<UNDEFINED>";
-acquire::indextargets::deb-src::** "<UNDEFINED>";
+acquire::indextargets::* "<LIST>" {
+	* {
+		MetaKey "<STRING>";
+		ShortDescription "<STRING>";
+		Description "<STRING>";
+		flatMetaKey "<STRING>";
+		flatDescription "<STRING>";
+		Identifier "<STRING>";
+		DefaultEnabled "<BOOL>";
+		Optional "<BOOL>";
+		KeepCompressed "<BOOL>";
+		PDiffs "<BOOL>";
+		By-Hash "<STRING>";
+		Fallback-Of "<STRING>";
+		CompressionTypes "<STRING>";
+		KeepCompressedAs "<STRING>";
+	};
+};
 acquire::progress::ignore::showerrortext "<BOOL>";
 acquire::*::dl-limit "<INT>"; // catches file: and co which do not have these
+acquire::file::dl-limit "<INVALID>";
+acquire::copy::dl-limit "<INVALID>";
+acquire::gpgv::dl-limit "<INVALID>";
+acquire::store::dl-limit "<INVALID>";
+acquire::mirror::dl-limit "<INVALID>";
 methods::mirror::problemreporting "<STRING>";
 acquire::http::proxyautodetect "<STRING>";
 acquire::http::proxy-auto-detect "<STRING>";
@@ -900,6 +922,7 @@ APT::Internal::OpProgress::EraseLines "<BOOL>";
 APT::Color "<BOOL>";
 APT::Color::Show::Field "<STRING>";
 APT::Color::Show::Package "<STRING>";
+APT::Color::* "<STRING>";
 
 update-manager::always-include-phased-updates "<BOOL>";
 update-manager::never-include-phased-updates "<BOOL>";
