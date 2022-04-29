@@ -32,7 +32,9 @@
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
+#include <array>
 #include <cerrno>
+#include <ctime>
 #include <chrono>
 #include <cstddef>
 #include <cstdio>
@@ -843,8 +845,17 @@ void pkgAcquire::Item::PushAlternativeURI(std::string &&NewURI, std::unordered_m
       d->AlternativeURIs.emplace_front(std::move(NewURI), std::move(fields));
 }
 									/*}}}*/
-void pkgAcquire::Item::RemoveAlternativeSite(std::string &&OldSite) /*{{{*/
+void pkgAcquire::Item::RemoveAlternativeSite(std::string const &AltUriStr)/*{{{*/
 {
+   ::URI AltUri{AltUriStr};
+   // the hostnames for these methods are empty for absolute paths which would result
+   // in the elimination of all sites accessed via those methods. On the upside, those
+   // methods are local and fast to reply with failure, so it doesn't hurt that much to
+   // keep them in the loop – so we just exit here rather than trying to guess the site.
+   std::array const badhosts{"file", "copy", "cdrom"};
+   if (std::find(badhosts.begin(), badhosts.end(), AltUri.Access) != badhosts.end())
+      return;
+   auto const OldSite = URI::SiteOnly(AltUriStr);
    d->AlternativeURIs.erase(std::remove_if(d->AlternativeURIs.begin(), d->AlternativeURIs.end(),
 					   [&](decltype(*d->AlternativeURIs.cbegin()) AltUri) {
 					      return URI::SiteOnly(AltUri.URI) == OldSite;

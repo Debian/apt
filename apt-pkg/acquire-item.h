@@ -240,7 +240,7 @@ class APT_PUBLIC pkgAcquire::Item : public WeakPointable				/*{{{*/
    APT_HIDDEN bool PopAlternativeURI(std::string &NewURI);
    APT_HIDDEN bool IsGoodAlternativeURI(std::string const &AltUri) const;
    APT_HIDDEN void PushAlternativeURI(std::string &&NewURI, std::unordered_map<std::string, std::string> &&fields, bool const at_the_back);
-   APT_HIDDEN void RemoveAlternativeSite(std::string &&OldSite);
+   APT_HIDDEN void RemoveAlternativeSite(std::string const &AltUri);
 
    /** \brief A "descriptive" URI-like string.
     *

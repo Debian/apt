@@ -720,7 +720,7 @@ void pkgAcquire::Worker::HandleFailure(std::vector<pkgAcquire::Item *> const &It
       else
       {
 	 if (errAuthErr)
-	    Owner->RemoveAlternativeSite(URI::SiteOnly(Owner->GetItemDesc().URI));
+	    Owner->RemoveAlternativeSite(Owner->GetItemDesc().URI);
 	 if (Owner->PopAlternativeURI(NewURI))
 	 {
 	    Owner->FailMessage(Message);
