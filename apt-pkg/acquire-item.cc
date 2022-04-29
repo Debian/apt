@@ -1424,7 +1424,7 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
    // verified yet)
 
    // Save the final base URI we got this Release file from
-   if (I->UsedMirror.empty() == false && _config->FindB("Acquire::SameMirrorForAllIndexes", true))
+   if (not I->Local && not I->UsedMirror.empty() && _config->FindB("Acquire::SameMirrorForAllIndexes", true))
    {
       auto InReleasePath = Target.Option(IndexTarget::INRELEASE_PATH);
       if (InReleasePath.empty())
