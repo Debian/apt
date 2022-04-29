@@ -1,3 +1,12 @@
+apt (1.6.15) bionic; urgency=medium
+
+  * Revert "Protect currently running kernel at run-time"
+  * Backport Determine autoremovable kernels at run-time (LP: #1615381) as of
+    2.4.5; including the change to only protect two kernels, not last installed
+    one (LP: #1968154)
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Fri, 29 Apr 2022 10:14:33 +0200
+
 apt (1.6.14) bionic; urgency=medium
 
   * RunScripts: Do not reset SIGQUIT and SIGINT to SIG_DFL (LP: #1898026)
