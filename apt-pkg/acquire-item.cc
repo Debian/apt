@@ -950,7 +950,7 @@ void pkgAcquire::Item::FailMessage(string const &Message)
       failreason = WEAK_HASHSUMS;
    else if (FailReason == "RedirectionLoop")
       failreason = REDIRECTION_LOOP;
-   else if (Status == StatAuthError)
+   else if (Status == StatAuthError || FailReason == "HashSumMismatch")
       failreason = HASHSUM_MISMATCH;
 
    if(ErrorText.empty())
@@ -975,7 +975,7 @@ void pkgAcquire::Item::FailMessage(string const &Message)
 	    break;
       }
 
-      if (Status == StatAuthError)
+      if (Status == StatAuthError || failreason == HASHSUM_MISMATCH)
       {
 	 auto const ExpectedHashes = GetExpectedHashes();
 	 if (ExpectedHashes.empty() == false)

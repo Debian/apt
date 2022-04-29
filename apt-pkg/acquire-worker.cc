@@ -486,9 +486,21 @@ bool pkgAcquire::Worker::RunMessages()
 	    bool const isIMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false) ||
 	       StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false);
 	    auto const forcedHash = _config->Find("Acquire::ForceHash");
+
+	    bool consideredOkay = true;
+	    HashStringList ExpectedHashes;
+	    bool const DebugAuth = _config->FindB("Debug::pkgAcquire::Auth", false);
+	    if (DebugAuth)
+	    {
+	       std::clog << "201 URI Done: " << URI << endl
+			 << "ReceivedHash:" << endl;
+	       for (auto const &hs : ReceivedHashes)
+		  std::clog << "\t- " << hs.toStr() << std::endl;
+	       std::clog << "ExpectedHash:" << endl;
+	    }
 	    for (auto const Owner: ItmOwners)
 	    {
-	       HashStringList const ExpectedHashes = [&]() {
+	       HashStringList const OwnerExpectedHashes = [&]() {
 		  if (AltFile)
 		  {
 		     auto const * const transOwner = dynamic_cast<pkgAcqTransactionItem const * const>(Owner);
@@ -501,46 +513,51 @@ bool pkgAcquire::Worker::RunMessages()
 		  }
 		  return Owner->GetExpectedHashes();
 	       }();
-	       if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
+	       for (auto const &h : OwnerExpectedHashes)
 	       {
-		  std::clog << "201 URI Done: " << Owner->DescURI() << endl
-		     << "ReceivedHash:" << endl;
-		  for (HashStringList::const_iterator hs = ReceivedHashes.begin(); hs != ReceivedHashes.end(); ++hs)
-		     std::clog <<  "\t- " << hs->toStr() << std::endl;
-		  std::clog << "ExpectedHash:" << endl;
-		  for (HashStringList::const_iterator hs = ExpectedHashes.begin(); hs != ExpectedHashes.end(); ++hs)
-		     std::clog <<  "\t- " << hs->toStr() << std::endl;
-		  std::clog << endl;
-	       }
-
-	       // decide if what we got is what we expected
-	       bool consideredOkay = false;
-	       if ((forcedHash.empty() && ExpectedHashes.empty() == false) ||
-		     (forcedHash.empty() == false && ExpectedHashes.usable()))
-	       {
-		  if (ReceivedHashes.empty())
+		  if (not ExpectedHashes.push_back(h))
 		  {
-		     /* IMS-Hits can't be checked here as we will have uncompressed file,
-			but the hashes for the compressed file. What we have was good through
-			so all we have to ensure later is that we are not stalled. */
-		     consideredOkay = isIMSHit;
-		  }
-		  else if (ReceivedHashes == ExpectedHashes)
-		     consideredOkay = true;
-		  else
 		     consideredOkay = false;
-
+		     std::clog << "\t- " << h.toStr() << " [conflict]" << std::endl;
+		  }
+		  else if (DebugAuth)
+		     std::clog << "\t- " << h.toStr() << std::endl;
 	       }
+	    }
+	    if (DebugAuth)
+	       std::clog << endl;
+
+	    // decide if what we got is what we expected
+	    if (not consideredOkay)
+	       ;
+	    else if ((forcedHash.empty() && not ExpectedHashes.empty()) ||
+		     (not forcedHash.empty() && ExpectedHashes.usable()))
+	    {
+	       if (ReceivedHashes.empty())
+	       {
+		  /* IMS-Hits can't be checked here as we will have uncompressed file,
+		     but the hashes for the compressed file. What we have was good through
+		     so all we have to ensure later is that we are not stalled. */
+		  consideredOkay = isIMSHit;
+	       }
+	       else if (ReceivedHashes == ExpectedHashes)
+		  consideredOkay = true;
 	       else
-		  consideredOkay = !Owner->HashesRequired();
+		  consideredOkay = false;
+	    }
+	    else
+	       consideredOkay = std::none_of(ItmOwners.begin(), ItmOwners.end(), [](auto const * const O) { return O->HashesRequired(); });
 
-	       if (consideredOkay == true)
-		  consideredOkay = Owner->VerifyDone(Message, Config);
-	       else // hashsum mismatch
-		  Owner->Status = pkgAcquire::Item::StatAuthError;
+	    bool otherReasons = false;
+	    if (consideredOkay && not std::all_of(ItmOwners.begin(), ItmOwners.end(), [&](auto * const O) { return O->VerifyDone(Message, Config); }))
+	    {
+	       consideredOkay = false;
+	       otherReasons = true;
+	    }
 
-
-	       if (consideredOkay == true)
+	    if (consideredOkay)
+	    {
+	       for (auto const Owner : ItmOwners)
 	       {
 		  if (isDoomedItem(Owner) == false)
 		     Owner->Done(Message, ReceivedHashes, Config);
@@ -552,22 +569,21 @@ bool pkgAcquire::Worker::RunMessages()
 			Log->Done(Owner->GetItemDesc());
 		  }
 	       }
+	    }
+	    else
+	    {
+	       if (otherReasons)
+		  HandleFailure(ItmOwners, Config, Log, Message, false, false);
 	       else
 	       {
-		  auto SavedDesc = Owner->GetItemDesc();
-		  if (isDoomedItem(Owner) == false)
+		  if (Message.find("\nFailReason:") == std::string::npos)
 		  {
-		     if (Message.find("\nFailReason:") == std::string::npos)
-		     {
-			if (ReceivedHashes != ExpectedHashes)
-			   Message.append("\nFailReason: HashSumMismatch");
-			else
-			   Message.append("\nFailReason: WeakHashSums");
-		     }
-		     Owner->Failed(Message,Config);
+		     if (ReceivedHashes != ExpectedHashes)
+			Message.append("\nFailReason: HashSumMismatch");
+		     else
+			Message.append("\nFailReason: WeakHashSums");
 		  }
-		  if (Log != nullptr)
-		     Log->Fail(SavedDesc);
+		  HandleFailure(ItmOwners, Config, Log, Message, false, true);
 	       }
 	    }
 	    ItemDone();
