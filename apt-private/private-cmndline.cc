@@ -39,7 +39,7 @@ static bool CmdMatches_fn(char const *const Cmd, char const *const Match, Tail..
 
 static bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
-   if (CmdMatches("depends", "rdepends", "xvcg", "dotty"))
+   if (CmdMatches("depends", "rdepends"))
    {
       addArg('i', "important", "APT::Cache::Important", 0);
       addArg(0, "installed", "APT::Cache::Installed", 0);
