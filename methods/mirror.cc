@@ -145,7 +145,7 @@ void MirrorMethod::RedirectItem(MirrorListInfo const &info, FetchItem *const Itm
    std::string const path = Itm->Uri.substr(info.baseuri.length());
    std::string altMirrors;
    std::unordered_map<std::string, std::string> fields;
-   fields.emplace("URI", Queue->Uri);
+   fields.emplace("URI", Itm->Uri);
    for (auto curMirror = possMirrors.cbegin(); curMirror != possMirrors.cend(); ++curMirror)
    {
       std::string mirror = curMirror->uri;
@@ -161,7 +161,19 @@ void MirrorMethod::RedirectItem(MirrorListInfo const &info, FetchItem *const Itm
    }
    fields.emplace("Alternate-URIs", altMirrors);
    SendMessage("103 Redirect", std::move(fields));
-   Dequeue();
+
+   // Remove Itm from the queue, then delete
+   if (Queue == Itm)
+      Queue = Itm->Next;
+   else
+   {
+      FetchItem *previous = Queue;
+      while (previous->Next != Itm)
+	 previous = previous->Next;
+
+      previous->Next = Itm->Next;
+   }
+   delete Itm;
 }
 									/*}}}*/
 void MirrorMethod::DealWithPendingItems(std::vector<std::string> const &baseuris, /*{{{*/
