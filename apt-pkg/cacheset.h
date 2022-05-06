@@ -203,12 +203,16 @@ private:
 };									/*}}}*/
 // Iterator templates for our Containers				/*{{{*/
 template<typename Interface, typename Master, typename iterator_type, typename container_iterator, typename container_value> class Container_iterator_base :
-   public std::iterator<typename std::iterator_traits<container_iterator>::iterator_category, container_value>,
    public Interface::template iterator_base<iterator_type>
 {
 protected:
 	container_iterator _iter;
 public:
+	using iterator_category = typename std::iterator_traits<container_iterator>::iterator_category;
+	using value_type = container_value;
+	using difference_type = std::ptrdiff_t;
+	using pointer = container_value*;
+	using reference = container_value&;
 	explicit Container_iterator_base(container_iterator const &i) : _iter(i) {}
 	inline container_value operator*(void) const { return static_cast<iterator_type const*>(this)->getType(); };
 	operator container_iterator(void) const { return _iter; }
