@@ -453,7 +453,7 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 			continue;
 		}
 
-		decltype(VersionCount) const id = section.FindULL(type.c_str(), VersionCount);
+		decltype(VersionCount) const id = section.FindULL(type, VersionCount);
 		if (id == VersionCount) {
 			_error->Warning("Unable to parse %s request with id value '%s'!", type.c_str(), section.FindS(type.c_str()).c_str());
 			continue;

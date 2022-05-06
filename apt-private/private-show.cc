@@ -17,6 +17,7 @@
 #include <apt-pkg/policy.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
 
 #include <apt-private/private-cacheset.h>
@@ -233,13 +234,15 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgRecords &Recs, /*{{{*/
 
    // make size nice
    std::string installed_size;
-   if (Tags.FindULL("Installed-Size") > 0)
-      strprintf(installed_size, "%sB", SizeToStr(Tags.FindULL("Installed-Size") * 1024).c_str());
+   auto const installed_size_field = Tags.FindULL(pkgTagSection::Key::Installed_Size);
+   if (installed_size_field > 0)
+      installed_size = SizeToStr(installed_size_field * 1024).append("B");
    else
       installed_size = _("unknown");
    std::string package_size;
-   if (Tags.FindULL("Size") > 0)
-      strprintf(package_size, "%sB", SizeToStr(Tags.FindULL("Size")).c_str());
+   auto const package_size_field = Tags.FindULL(pkgTagSection::Key::Size);
+   if (package_size_field > 0)
+      package_size = SizeToStr(package_size_field).append("B");
    else
       package_size = _("unknown");
 
@@ -257,10 +260,8 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgRecords &Recs, /*{{{*/
    // delete, apt-cache show has this info and most users do not care
    if (not _config->FindB("APT::Cache::ShowFull", false))
    {
-      RW.push_back(pkgTagSection::Tag::Remove("MD5sum"));
-      RW.push_back(pkgTagSection::Tag::Remove("SHA1"));
-      RW.push_back(pkgTagSection::Tag::Remove("SHA256"));
-      RW.push_back(pkgTagSection::Tag::Remove("SHA512"));
+      for (char const * const * type = HashString::SupportedHashes(); *type != nullptr; ++type)
+	 RW.push_back(pkgTagSection::Tag::Remove(*type));
       RW.push_back(pkgTagSection::Tag::Remove("Filename"));
       RW.push_back(pkgTagSection::Tag::Remove("Multi-Arch"));
       RW.push_back(pkgTagSection::Tag::Remove("Conffiles"));

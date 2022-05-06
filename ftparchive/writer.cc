@@ -21,6 +21,7 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
@@ -421,7 +422,7 @@ bool PackagesWriter::DoPackage(string FileName)
    
    // Lookup the override information
    pkgTagSection &Tags = Db.Control.Section;
-   string Package = Tags.FindS("Package");
+   auto const Package = Tags.Find(pkgTagSection::Key::Package).to_string();
    string Architecture;
    // if we generate a Packages file for a given arch, we use it to
    // look for overrides. if we run in "simple" mode without the 
@@ -430,9 +431,9 @@ bool PackagesWriter::DoPackage(string FileName)
    if(Arch != "")
       Architecture = Arch;
    else
-      Architecture = Tags.FindS("Architecture");
-   unique_ptr<Override::Item> OverItem(Over.GetItem(Package,Architecture));
-   
+      Architecture = Tags.Find(pkgTagSection::Key::Architecture).to_string();
+   unique_ptr<Override::Item> OverItem(Over.GetItem(Package, Architecture));
+
    if (Package.empty() == true)
       return _error->Error(_("Archive had no package field"));
 
@@ -444,10 +445,10 @@ bool PackagesWriter::DoPackage(string FileName)
 	 NewLine(1);
 	 ioprintf(c1out, _("  %s has no override entry\n"), Package.c_str());
       }
-      
+
       OverItem = unique_ptr<Override::Item>(new Override::Item);
-      OverItem->FieldOverride["Section"] = Tags.FindS("Section");
-      OverItem->Priority = Tags.FindS("Priority");
+      OverItem->FieldOverride["Section"] = Tags.Find(pkgTagSection::Key::Section).to_string();
+      OverItem->Priority = Tags.Find(pkgTagSection::Key::Priority).to_string();
    }
 
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
@@ -466,7 +467,7 @@ bool PackagesWriter::DoPackage(string FileName)
       in the package file - instead we want to ship a separated file */
    string desc;
    if (LongDescription == false) {
-      desc = Tags.FindS("Description").append("\n");
+      desc = Tags.Find(pkgTagSection::Key::Description).to_string().append("\n");
       OverItem->FieldOverride["Description"] = desc.substr(0, desc.find('\n')).c_str();
    }
 
@@ -486,7 +487,6 @@ bool PackagesWriter::DoPackage(string FileName)
    Changes.push_back(pkgTagSection::Tag::Rewrite("Filename", NewFileName));
    Changes.push_back(pkgTagSection::Tag::Rewrite("Priority", OverItem->Priority));
    Changes.push_back(pkgTagSection::Tag::Remove("Status"));
-   Changes.push_back(pkgTagSection::Tag::Remove("Optional"));
 
    string DescriptionMd5;
    if (LongDescription == false) {
@@ -500,32 +500,19 @@ bool PackagesWriter::DoPackage(string FileName)
 
    // Rewrite the maintainer field if necessary
    bool MaintFailed;
-   string NewMaint = OverItem->SwapMaint(Tags.FindS("Maintainer"),MaintFailed);
+   string NewMaint = OverItem->SwapMaint(Tags.Find(pkgTagSection::Key::Maintainer).to_string(), MaintFailed);
    if (MaintFailed == true)
    {
       if (NoOverride == false)
       {
 	 NewLine(1);
 	 ioprintf(c1out, _("  %s maintainer is %s not %s\n"),
-	       Package.c_str(), Tags.FindS("Maintainer").c_str(), OverItem->OldMaint.c_str());
+	       Package.c_str(), Tags.Find(pkgTagSection::Key::Maintainer).to_string().c_str(), OverItem->OldMaint.c_str());
       }
    }
 
    if (NewMaint.empty() == false)
       Changes.push_back(pkgTagSection::Tag::Rewrite("Maintainer", NewMaint));
-
-   /* Get rid of the Optional tag. This is an ugly, ugly, ugly hack that
-      dpkg-scanpackages does. Well sort of. dpkg-scanpackages just does renaming
-      but dpkg does this append bit. So we do the append bit, at least that way the
-      status file and package file will remain similar. There are other transforms
-      but optional is the only legacy one still in use for some lazy reason. */
-   string OptionalStr = Tags.FindS("Optional");
-   if (OptionalStr.empty() == false)
-   {
-      if (Tags.FindS("Suggests").empty() == false)
-	 OptionalStr = Tags.FindS("Suggests") + ", " + OptionalStr;
-      Changes.push_back(pkgTagSection::Tag::Rewrite("Suggests", OptionalStr));
-   }
 
    for (map<string,string>::const_iterator I = OverItem->FieldOverride.begin();
         I != OverItem->FieldOverride.end(); ++I)
@@ -628,14 +615,14 @@ SourcesWriter::SourcesWriter(FileFd * const GivenOutput, string const &DB, strin
 									/*}}}*/
 // SourcesWriter::DoPackage - Process a single package			/*{{{*/
 static std::string getDscHash(unsigned int const DoHashes,
-      Hashes::SupportedHashes const DoIt, pkgTagSection &Tags, char const * const FieldName,
+      Hashes::SupportedHashes const DoIt, pkgTagSection &Tags, pkgTagSection::Key const FieldKey,
       HashString const * const Hash, unsigned long long Size, std::string const &FileName)
 {
-   if ((DoHashes & DoIt) != DoIt || Tags.Exists(FieldName) == false || Hash == NULL)
+   if ((DoHashes & DoIt) != DoIt || not Tags.Exists(FieldKey) || Hash == nullptr)
       return "";
    std::ostringstream out;
    out << "\n " << Hash->HashValue() << " " << std::to_string(Size) << " " << FileName
-      << "\n " << Tags.FindS(FieldName);
+      << "\n " << Tags.Find(FieldKey).to_string();
    return out.str();
 }
 bool SourcesWriter::DoPackage(string FileName)
@@ -660,19 +647,20 @@ bool SourcesWriter::DoPackage(string FileName)
    if (Tags.Scan(Db.Dsc.Data.c_str(), Db.Dsc.Data.length()) == false)
       return _error->Error("Could not find a record in the DSC '%s'",FileName.c_str());
 
-   if (Tags.Exists("Source") == false)
+   if (not Tags.Exists(pkgTagSection::Key::Source))
       return _error->Error("Could not find a Source entry in the DSC '%s'",FileName.c_str());
    Tags.Trim();
 
    // Lookup the override information, finding first the best priority.
    string BestPrio;
-   string Bins = Tags.FindS("Binary");
+   auto const Bins = Tags.Find(pkgTagSection::Key::Binary);
    char Buffer[Bins.length() + 1];
    unique_ptr<Override::Item> OverItem(nullptr);
    if (Bins.empty() == false)
    {
-      strcpy(Buffer,Bins.c_str());
-      
+      strncpy(Buffer, Bins.data(), Bins.length());
+      Buffer[Bins.length()] = '\0';
+
       // Ignore too-long errors.
       char *BinList[400];
       TokSplitString(',',Buffer,BinList,sizeof(BinList)/sizeof(BinList[0]));
@@ -702,8 +690,8 @@ bool SourcesWriter::DoPackage(string FileName)
    {
       if (NoOverride == false)
       {
-	 NewLine(1);	 
-	 ioprintf(c1out, _("  %s has no override entry\n"), Tags.FindS("Source").c_str());
+	 NewLine(1);
+	 ioprintf(c1out, _("  %s has no override entry\n"), Tags.Find(pkgTagSection::Key::Source).to_string().c_str());
       }
       
       OverItem.reset(new Override::Item);
@@ -713,15 +701,16 @@ bool SourcesWriter::DoPackage(string FileName)
    if (stat(FileName.c_str(), &St) != 0)
       return _error->Errno("fstat","Failed to stat %s",FileName.c_str());
 
-   unique_ptr<Override::Item> SOverItem(SOver.GetItem(Tags.FindS("Source")));
+   auto const Package = Tags.Find(pkgTagSection::Key::Source).to_string();
+   unique_ptr<Override::Item> SOverItem(SOver.GetItem(Package));
    // const unique_ptr<Override::Item> autoSOverItem(SOverItem);
    if (SOverItem.get() == 0)
    {
-      ioprintf(c1out, _("  %s has no source override entry\n"), Tags.FindS("Source").c_str());
-      SOverItem = unique_ptr<Override::Item>(BOver.GetItem(Tags.FindS("Source")));
+      ioprintf(c1out, _("  %s has no source override entry\n"), Package.c_str());
+      SOverItem = unique_ptr<Override::Item>(BOver.GetItem(Package));
       if (SOverItem.get() == 0)
       {
-        ioprintf(c1out, _("  %s has no binary override entry either\n"), Tags.FindS("Source").c_str());
+        ioprintf(c1out, _("  %s has no binary override entry either\n"), Package.c_str());
 	 SOverItem = unique_ptr<Override::Item>(new Override::Item);
 	 *SOverItem = *OverItem;
       }
@@ -729,10 +718,10 @@ bool SourcesWriter::DoPackage(string FileName)
 
    // Add the dsc to the files hash list
    string const strippedName = flNotDir(FileName);
-   std::string const Files = getDscHash(DoHashes, Hashes::MD5SUM, Tags, "Files", Db.HashesList.find("MD5Sum"), St.st_size, strippedName);
-   std::string ChecksumsSha1 = getDscHash(DoHashes, Hashes::SHA1SUM, Tags, "Checksums-Sha1", Db.HashesList.find("SHA1"), St.st_size, strippedName);
-   std::string ChecksumsSha256 = getDscHash(DoHashes, Hashes::SHA256SUM, Tags, "Checksums-Sha256", Db.HashesList.find("SHA256"), St.st_size, strippedName);
-   std::string ChecksumsSha512 = getDscHash(DoHashes, Hashes::SHA512SUM, Tags, "Checksums-Sha512", Db.HashesList.find("SHA512"), St.st_size, strippedName);
+   std::string const Files = getDscHash(DoHashes, Hashes::MD5SUM, Tags, pkgTagSection::Key::Files, Db.HashesList.find("MD5Sum"), St.st_size, strippedName);
+   std::string ChecksumsSha1 = getDscHash(DoHashes, Hashes::SHA1SUM, Tags, pkgTagSection::Key::Checksums_Sha1, Db.HashesList.find("SHA1"), St.st_size, strippedName);
+   std::string ChecksumsSha256 = getDscHash(DoHashes, Hashes::SHA256SUM, Tags, pkgTagSection::Key::Checksums_Sha256, Db.HashesList.find("SHA256"), St.st_size, strippedName);
+   std::string ChecksumsSha512 = getDscHash(DoHashes, Hashes::SHA512SUM, Tags, pkgTagSection::Key::Checksums_Sha512, Db.HashesList.find("SHA512"), St.st_size, strippedName);
 
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
@@ -746,7 +735,6 @@ bool SourcesWriter::DoPackage(string FileName)
       NewFileName = flCombine(PathPrefix,NewFileName);
 
    string Directory = flNotFile(OriginalPath);
-   string Package = Tags.FindS("Source");
 
    // Perform operation over all of the files
    string ParseJnk;
@@ -764,9 +752,9 @@ bool SourcesWriter::DoPackage(string FileName)
       string OriginalPath = Directory + ParseJnk;
 
       // Add missing hashes to source files
-      if (((DoHashes & Hashes::SHA1SUM) == Hashes::SHA1SUM && !Tags.Exists("Checksums-Sha1")) ||
-          ((DoHashes & Hashes::SHA256SUM) == Hashes::SHA256SUM && !Tags.Exists("Checksums-Sha256")) ||
-          ((DoHashes & Hashes::SHA512SUM) == Hashes::SHA512SUM && !Tags.Exists("Checksums-Sha512")))
+      if (((DoHashes & Hashes::SHA1SUM) == Hashes::SHA1SUM && not Tags.Exists(pkgTagSection::Key::Checksums_Sha1)) ||
+          ((DoHashes & Hashes::SHA256SUM) == Hashes::SHA256SUM && not Tags.Exists(pkgTagSection::Key::Checksums_Sha256)) ||
+          ((DoHashes & Hashes::SHA512SUM) == Hashes::SHA512SUM && not Tags.Exists(pkgTagSection::Key::Checksums_Sha512)))
       {
          if (Db.GetFileInfo(OriginalPath,
                             false, /* DoControl */
@@ -783,21 +771,21 @@ bool SourcesWriter::DoPackage(string FileName)
 	 {
 	    if (hs->HashType() == "MD5Sum" || hs->HashType() == "Checksum-FileSize")
 	       continue;
-	    char const * fieldname;
+	    pkgTagSection::Key fieldkey;
 	    std::string * out;
 	    if (hs->HashType() == "SHA1")
 	    {
-	       fieldname = "Checksums-Sha1";
+	       fieldkey = pkgTagSection::Key::Checksums_Sha1;
 	       out = &ChecksumsSha1;
 	    }
 	    else if (hs->HashType() == "SHA256")
 	    {
-	       fieldname = "Checksums-Sha256";
+	       fieldkey = pkgTagSection::Key::Checksums_Sha256;
 	       out = &ChecksumsSha256;
 	    }
 	    else if (hs->HashType() == "SHA512")
 	    {
-	       fieldname = "Checksums-Sha512";
+	       fieldkey = pkgTagSection::Key::Checksums_Sha512;
 	       out = &ChecksumsSha512;
 	    }
 	    else
@@ -805,7 +793,7 @@ bool SourcesWriter::DoPackage(string FileName)
 	       _error->Warning("Ignoring unknown Checksumtype %s in SourcesWriter::DoPackages", hs->HashType().c_str());
 	       continue;
 	    }
-	    if (Tags.Exists(fieldname) == true)
+	    if (Tags.Exists(fieldkey))
 	       continue;
 	    std::ostringstream streamout;
 	    streamout << "\n " << hs->HashValue() << " " << std::to_string(Db.GetFileSize()) << " " << ParseJnk;
@@ -862,14 +850,14 @@ bool SourcesWriter::DoPackage(string FileName)
 
    // Rewrite the maintainer field if necessary
    bool MaintFailed;
-   string NewMaint = OverItem->SwapMaint(Tags.FindS("Maintainer"), MaintFailed);
+   string NewMaint = OverItem->SwapMaint(Tags.Find(pkgTagSection::Key::Maintainer).to_string(), MaintFailed);
    if (MaintFailed == true)
    {
       if (NoOverride == false)
       {
 	 NewLine(1);
 	 ioprintf(c1out, _("  %s maintainer is %s not %s\n"), Package.c_str(),
-	       Tags.FindS("Maintainer").c_str(), OverItem->OldMaint.c_str());
+	       Tags.Find(pkgTagSection::Key::Maintainer).to_string().c_str(), OverItem->OldMaint.c_str());
       }
    }
    if (NewMaint.empty() == false)
@@ -921,7 +909,7 @@ bool ContentsWriter::DoPackage(string FileName, string Package)
    // Parse the package name
    if (Package.empty() == true)
    {
-      Package = Db.Control.Section.FindS("Package");
+      Package = Db.Control.Section.Find(pkgTagSection::Key::Package).to_string();
    }
 
    Db.Contents.Add(Gen,Package);
@@ -951,17 +939,9 @@ bool ContentsWriter::ReadFromPkgs(string const &PkgFile,string const &PkgCompres
    pkgTagSection Section;
    while (Tags.Step(Section) == true)
    {
-      string File = flCombine(Prefix,Section.FindS("FileName"));
-      string Package = Section.FindS("Section");
-      if (Package.empty() == false && Package.end()[-1] != '/')
-      {
-	 Package += '/';
-	 Package += Section.FindS("Package");
-      }
-      else
-	 Package += Section.FindS("Package");
-	 
-      DoPackage(File,Package);
+      auto File = flCombine(Prefix, Section.Find(pkgTagSection::Key::Filename).to_string());
+      auto Package = flCombine(Section.Find(pkgTagSection::Key::Section).to_string(), Section.Find(pkgTagSection::Key::Package).to_string());
+      DoPackage(std::move(File), std::move(Package));
       if (_error->empty() == false)
       {
 	 _error->Error("Errors apply to file '%s'",File.c_str());

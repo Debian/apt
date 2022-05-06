@@ -9,12 +9,12 @@ static const char *iTFRewritePackageOrder[] = {
    "Package",
    "Package-Type",
    "Architecture",
-   "Subarchitecture", // Used only by d-i
+   "Subarchitecture", // NO_KEY: Used only by d-i
    "Version",
-   "Revision",	       // Obsolete (warning in dpkg)
-   "Package-Revision", // Obsolete (warning in dpkg)
-   "Package_Revision", // Obsolete (warning in dpkg)
-   "Kernel-Version",   // Used only by d-i
+// "Revision",         // Obsolete (warning in dpkg)
+// "Package-Revision", // Obsolete (warning in dpkg)
+// "Package_Revision", // Obsolete (warning in dpkg)
+   "Kernel-Version",   // NO_KEY: Used only by d-i
    "Built-Using",
    "Static-Built-Using",
    "Built-For-Profiles",
@@ -22,35 +22,37 @@ static const char *iTFRewritePackageOrder[] = {
    "Multi-Arch",
    "Status",
    "Priority",
-   "Class", // dpkg nickname for Priority
+// "Class", // Obsolete alias for Priority, warning by dpkg
    "Build-Essential",
    "Protected",
+   "Important", // old name of Protected
    "Essential",
-   "Installer-Menu-Item", // Used only by d-i
+   "Installer-Menu-Item", // NO_KEY: Used only by d-i
    "Section",
    "Source",
    "Origin",
+   "Phased-Update-Percentage",
    "Maintainer",
    "Original-Maintainer", // unknown in dpkg order
-   "Bugs",
+   "Bugs", // NO_KEY: very uncommon encounter
    "Config-Version", // Internal of dpkg
    "Conffiles",
-   "Triggers-Awaited",
-   "Triggers-Pending",
+   "Triggers-Awaited", // NO_KEY: Internal of dpkg
+   "Triggers-Pending", // NO_KEY: Internal of dpkg
    "Installed-Size",
    "Provides",
    "Pre-Depends",
    "Depends",
    "Recommends",
-   "Recommended", // dpkg nickname for Recommends
+// "Recommended", // Obsolete alias for Recommends, warning by dpkg
    "Suggests",
-   "Optional", // dpkg nickname for Suggests
+// "Optional", // Obsolete alias for Suggests, warning by dpkg
    "Conflicts",
    "Breaks",
    "Replaces",
    "Enhances",
    "Filename",
-   "MSDOS-Filename", // Obsolete (used by dselect)
+   "MSDOS-Filename", // NO_KEY: Obsolete (used by dselect)
    "Size",
    "MD5sum",
    "SHA1",
@@ -58,6 +60,7 @@ static const char *iTFRewritePackageOrder[] = {
    "SHA512",
    "Homepage",
    "Description",
+   "Description-md5",
    "Tag",
    "Task",
    0,
@@ -70,13 +73,13 @@ static const char *iTFRewriteSourceOrder[] = {
    "Architecture",
    "Version",
    "Priority",
-   "Class", // dpkg nickname for Priority
+// "Class", // Obsolete alias for Priority, warning by dpkg
    "Section",
    "Origin",
    "Maintainer",
    "Original-Maintainer", // unknown in dpkg order
    "Uploaders",
-   "Dm-Upload-Allowed", // Obsolete (ignored by dak)
+   "Dm-Upload-Allowed", // NO_KEY: Obsolete (ignored by dak)
    "Standards-Version",
    "Build-Depends",
    "Build-Depends-Arch",
@@ -89,7 +92,7 @@ static const char *iTFRewriteSourceOrder[] = {
    "Homepage",
    "Description",
    "Vcs-Browser",
-   "Vcs-Browse", // dak only (nickname?)
+   "Vcs-Browse", // NO_KEY: dak only (nickname?)
    "Vcs-Arch",
    "Vcs-Bzr",
    "Vcs-Cvs",

@@ -70,18 +70,21 @@ class APT_PUBLIC pkgTagSection
    std::string FindS(APT::StringView sv) const { return Find(sv).to_string(); }
    std::string FindRawS(APT::StringView sv) const { return FindRaw(sv).to_string(); };
 
+#ifdef APT_COMPILING_APT
    // Functions for lookup with a perfect hash function
    enum class Key;
-   APT_HIDDEN bool Find(Key key,const char *&Start, const char *&End) const;
-   APT_HIDDEN bool Find(Key key,unsigned int &Pos) const;
-   APT_HIDDEN signed int FindI(Key key,signed long Default = 0) const;
-   APT_HIDDEN bool FindB(Key key, bool Default = false) const;
-   APT_HIDDEN unsigned long long FindULL(Key key, unsigned long long const &Default = 0) const;
-   APT_HIDDEN bool FindFlag(Key key,uint8_t &Flags, uint8_t const Flag) const;
-   APT_HIDDEN bool FindFlag(Key key,unsigned long &Flags, unsigned long Flag) const;
-   APT_HIDDEN bool Exists(Key key) const;
-   APT_HIDDEN APT::StringView Find(Key key) const;
-   APT_HIDDEN APT::StringView FindRaw(Key key) const;
+   bool Find(Key key,const char *&Start, const char *&End) const;
+   bool Find(Key key,unsigned int &Pos) const;
+   signed int FindI(Key key,signed long Default = 0) const;
+   bool FindB(Key key, bool Default = false) const;
+   unsigned long long FindULL(Key key, unsigned long long const &Default = 0) const;
+   bool FindFlag(Key key,uint8_t &Flags, uint8_t const Flag) const;
+   bool FindFlag(Key key,unsigned long &Flags, unsigned long Flag) const;
+   bool Exists(Key key) const;
+   APT::StringView Find(Key key) const;
+   APT::StringView FindRaw(Key key) const;
+#endif
+
    bool Find(APT::StringView Tag,const char *&Start, const char *&End) const;
    bool Find(APT::StringView Tag,unsigned int &Pos) const;
    APT::StringView Find(APT::StringView Tag) const;

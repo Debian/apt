@@ -16,6 +16,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
@@ -57,13 +58,13 @@ debRecordParserBase::debRecordParserBase() : Parser(), d(NULL) {}
 // RecordParserBase::FileName - Return the archive filename on the site	/*{{{*/
 string debRecordParserBase::FileName()
 {
-   return Section.FindS("Filename");
+   return Section.Find(pkgTagSection::Key::Filename).to_string();
 }
 									/*}}}*/
 // RecordParserBase::Name - Return the package name			/*{{{*/
 string debRecordParserBase::Name()
 {
-   string Result = Section.FindS("Package");
+   auto Result = Section.Find(pkgTagSection::Key::Package).to_string();
 
    // Normalize mixed case package names to lower case, like dpkg does
    // See Bug#807012 for details
@@ -75,7 +76,7 @@ string debRecordParserBase::Name()
 // RecordParserBase::Homepage - Return the package homepage		/*{{{*/
 string debRecordParserBase::Homepage()
 {
-   return Section.FindS("Homepage");
+   return Section.Find(pkgTagSection::Key::Homepage).to_string();
 }
 									/*}}}*/
 // RecordParserBase::Hashes - return the available archive hashes	/*{{{*/
@@ -88,7 +89,7 @@ HashStringList debRecordParserBase::Hashes() const
       if (hash.empty() == false)
 	 hashes.push_back(HashString(*type, hash));
    }
-   auto const size = Section.FindULL("Size", 0);
+   auto const size = Section.FindULL(pkgTagSection::Key::Size, 0);
    if (size != 0)
       hashes.FileSize(size);
    return hashes;
@@ -97,7 +98,7 @@ HashStringList debRecordParserBase::Hashes() const
 // RecordParserBase::Maintainer - Return the maintainer email		/*{{{*/
 string debRecordParserBase::Maintainer()
 {
-   return Section.FindS("Maintainer");
+   return Section.Find(pkgTagSection::Key::Maintainer).to_string();
 }
 									/*}}}*/
 // RecordParserBase::RecordField - Return the value of an arbitrary field	/*{{*/
@@ -129,25 +130,25 @@ string debRecordParserBase::LongDesc(std::string const &lang)
 	    l != lang.end(); ++l)
       {
 	 std::string const tagname = "Description-" + *l;
-	 orig = Section.FindS(tagname.c_str());
+	 orig = Section.FindS(tagname);
 	 if (orig.empty() == false)
 	    break;
 	 else if (*l == "en")
 	 {
-	    orig = Section.FindS("Description");
+	    orig = Section.Find(pkgTagSection::Key::Description).to_string();
 	    if (orig.empty() == false)
 	       break;
 	 }
       }
       if (orig.empty() == true)
-	 orig = Section.FindS("Description");
+	 orig = Section.Find(pkgTagSection::Key::Description).to_string();
    }
    else
    {
       std::string const tagname = "Description-" + lang;
       orig = Section.FindS(tagname.c_str());
       if (orig.empty() == true && lang == "en")
-	 orig = Section.FindS("Description");
+	 orig = Section.Find(pkgTagSection::Key::Description).to_string();
    }
 
    char const * const codeset = nl_langinfo(CODESET);
@@ -165,17 +166,17 @@ static const char * const SourceVerSeparators = " ()";
 // RecordParserBase::SourcePkg - Return the source package name if any	/*{{{*/
 string debRecordParserBase::SourcePkg()
 {
-   string Res = Section.FindS("Source");
-   string::size_type Pos = Res.find_first_of(SourceVerSeparators);
-   if (Pos == string::npos)
-      return Res;
-   return string(Res,0,Pos);
+   auto Res = Section.Find(pkgTagSection::Key::Source).to_string();
+   auto const Pos = Res.find_first_of(SourceVerSeparators);
+   if (Pos != std::string::npos)
+      Res.erase(Pos);
+   return Res;
 }
 									/*}}}*/
 // RecordParserBase::SourceVer - Return the source version number if present	/*{{{*/
 string debRecordParserBase::SourceVer()
 {
-   string Pkg = Section.FindS("Source");
+   auto const Pkg = Section.Find(pkgTagSection::Key::Source).to_string();
    string::size_type Pos = Pkg.find_first_of(SourceVerSeparators);
    if (Pos == string::npos)
       return "";

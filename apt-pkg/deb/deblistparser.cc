@@ -126,7 +126,7 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
       {
 	 if (showErrors == true)
 	    _error->Warning("Architecture: all package '%s' can't be Multi-Arch: same",
-		  Section.FindS("Package").c_str());
+		  Package().c_str());
 	 MA = pkgCache::Version::No;
       }
       else
@@ -140,7 +140,7 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
    {
       if (showErrors == true)
 	 _error->Warning("Unknown Multi-Arch type '%s' for package '%s'",
-	       MultiArch.to_string().c_str(), Section.FindS("Package").c_str());
+	       MultiArch.to_string().c_str(), Package().c_str());
       MA = pkgCache::Version::No;
    }
 
@@ -241,10 +241,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
       return false;
    if (ParseDepends(Ver,pkgTagSection::Key::Enhances,pkgCache::Dep::Enhances) == false)
       return false;
-   // Obsolete.
-   if (ParseDepends(Ver,pkgTagSection::Key::Optional,pkgCache::Dep::Suggests) == false)
-      return false;
-   
+
    if (ParseProvides(Ver) == false)
       return false;
    if (not APT::KernelAutoRemoveHelper::getUname(Ver.ParentPkg().Name()).empty())
@@ -259,21 +256,20 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 // ListParser::AvailableDescriptionLanguages				/*{{{*/
 std::vector<std::string> debListParser::AvailableDescriptionLanguages()
 {
-   std::vector<std::string> const understood = APT::Configuration::getLanguages(true);
    std::vector<std::string> avail;
    static constexpr int prefixLen = 12;
    char buf[32] = "Description-";
-   if (Section.Exists("Description") == true)
-      avail.push_back("");
-   for (std::vector<std::string>::const_iterator lang = understood.begin(); lang != understood.end(); ++lang)
+   if (Section.Exists(pkgTagSection::Key::Description))
+      avail.emplace_back();
+   for (auto const &lang : APT::Configuration::getLanguages(true))
    {
-      if (unlikely(lang->size() > sizeof(buf) - prefixLen)) {
-	 _error->Warning("Ignoring translated description %s", lang->c_str());
+      if (unlikely(lang.size() > sizeof(buf) - prefixLen)) {
+	 _error->Warning("Ignoring translated description %s", lang.c_str());
 	 continue;
       }
-      memcpy(buf + prefixLen, lang->c_str(), lang->size());
-      if (Section.Exists(StringView(buf, prefixLen + lang->size())) == true)
-	 avail.push_back(*lang);
+      memcpy(buf + prefixLen, lang.c_str(), lang.size());
+      if (Section.Exists(StringView(buf, prefixLen + lang.size())) == true)
+	 avail.push_back(lang);
    }
    return avail;
 }

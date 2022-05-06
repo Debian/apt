@@ -22,6 +22,7 @@
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
 
 #include <iostream>
@@ -413,8 +414,8 @@ bool IndexCopy::GrabFirst(string Path,string &To,unsigned int Depth)
 /* */
 bool PackageCopy::GetFile(string &File,unsigned long long &Size)
 {
-   File = Section->FindS("Filename");
-   Size = Section->FindULL("Size");
+   File = Section->Find(pkgTagSection::Key::Filename).to_string();
+   Size = Section->FindULL(pkgTagSection::Key::Size);
    if (File.empty() || Size == 0)
       return _error->Error("Cannot find filename or size tag");
    return true;
@@ -436,29 +437,16 @@ bool PackageCopy::RewriteEntry(FileFd &Target,string const &File)
 /* */
 bool SourceCopy::GetFile(string &File,unsigned long long &Size)
 {
-   string Files;
-
-   for (char const *const *type = HashString::SupportedHashes(); *type != NULL; ++type)
+   std::string Files;
+   for (auto hashinfo : HashString::SupportedHashesInfo())
    {
-      // derive field from checksum type
-      std::string checksumField("Checksums-");
-      if (strcmp(*type, "MD5Sum") == 0)
-	 checksumField = "Files"; // historic name for MD5 checksums
-      else
-	 checksumField.append(*type);
-
-      Files = Section->FindS(checksumField.c_str());
-      if (Files.empty() == false)
+      Files = Section->Find(hashinfo.chksumskey).to_string();
+      if (not Files.empty())
 	 break;
    }
-   if (Files.empty() == true)
+   if (Files.empty())
       return false;
 
-   // Stash the / terminated directory prefix
-   string Base = Section->FindS("Directory");
-   if (Base.empty() == false && Base[Base.length()-1] != '/')
-      Base += '/';
-   
    // Read the first file triplet
    const char *C = Files.c_str();
    string sSize;
@@ -472,7 +460,8 @@ bool SourceCopy::GetFile(string &File,unsigned long long &Size)
    
    // Parse the size and append the directory
    Size = strtoull(sSize.c_str(), NULL, 10);
-   File = Base + File;
+   auto const Base = Section->Find(pkgTagSection::Key::Directory);
+   File = flCombine(Base.to_string(), File);
    return true;
 }
 									/*}}}*/

@@ -5,13 +5,19 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
 
+DPKG_PERL_VERSION="$(perl -e 'use Dpkg; print "$Dpkg::PROGVERSION";')"
+DPKG_OUTPUT_SORT='sort -u'
+if dpkg --compare-versions "$DPKG_PERL_VERSION" '>=' '1.21.4~'; then
+	DPKG_OUTPUT_SORT='sort'
+fi
+
 dpkg_field_ordered_list() {
 	local FIELDS="$(perl -e "
 use Dpkg::Control;
 use Dpkg::Control::Fields;
 foreach \$f (field_ordered_list(${1})) {
 	print \"\$f\\n\";
-}" | sort -u)"
+}" | $DPKG_OUTPUT_SORT )"
 	if [ -z "$FIELDS" ]; then
 		msgfail 'Could not get fields via libdpkg-perl'
 	fi
@@ -29,9 +35,40 @@ comparelsts() {
 	fi
 }
 
+grep -v '^#' "${SOURCEDIRECTORY}/apt-pkg/tagfile-keys.list" > tagfile-keys.list
+# Hardcoding this is a bit silly, but it might help preventing issues…
+msgtest 'File is append only: do not sort, remove or insert keys in' 'tagfile-keys.list'
+testequal --nomsg 'Version' sed '72q;d' tagfile-keys.list
+
+msgtest 'List has fewer entries than pkgTagSection buckets' 'tagfile-keys.list'
+ENTRIES_LIST="$(wc -l tagfile-keys.list | cut -d' ' -f 1)"
+ENTRIES_BUCKET="$(grep -m 1 'AlphaIndexes\[' "${SOURCEDIRECTORY}/apt-pkg/tagfile.h" | sed -e 's#.*\[\([0-9]\+\)\].*#\1#')"
+if test $ENTRIES_LIST -lt $ENTRIES_BUCKET; then
+	msgpass
+else
+	echo
+	echo "List has $ENTRIES_LIST entries, but pkgTagSection can only store $ENTRIES_BUCKET as AlphaIndexes"
+	msgfail
+fi
+
+msgtest 'Check for duplicates in' 'tagfile-keys.list'
+sort tagfile-keys.list > apt.lst
+testempty --nomsg uniq --repeated 'apt.lst'
+
+msgtest 'Check that apt knows all fields it orders' 'itself'
+grep -v "// NO_KEY: " "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -ne 's#^   "\(.*\)",.*$#\1#p' | sort -u > dpkg.lst
+comparelsts
+
+msgtest 'Check tagfile-keys.list does not contain' 'obsoleted and internal fields'
+grep "// NO_KEY: " "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -ne 's#^   "\(.*\)",.*$#\1#p' > obsolete.lst
+sed -n -e's#^ *// *"\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" >> obsolete.lst
+sort -u obsolete.lst > obsolete-sorted.lst
+sort obsolete-sorted.lst tagfile-keys.list > obsolete-keys.lst
+testempty --nomsg uniq --repeat 'obsolete-keys.lst'
+
 msgtest 'Check that apt knows all fields dpkg orders in' 'Packages'
 dpkg_field_ordered_list 'CTRL_INDEX_PKG' > dpkg.lst
-sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort -u > apt.lst
+sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort > apt.lst
 comparelsts
 
 msgtest 'Check that apt knows all fields dpkg orders in' 'status'
@@ -53,30 +90,31 @@ msgtest 'Check that apt knows all fields dpkg orders in' 'dsc'
 dpkg_field_ordered_list 'CTRL_PKG_SRC' > dpkg.lst
 comparelsts
 
-# HACK, but there is no good way to acquire sources in tests and/or to remember to run this regular manually
-if [ "$USER" = 'david' ]; then
-	msgtest 'Check if we have somewhere the sources of' 'dpkg'
-	DPKGSOURCE="$(locate dpkg/lib/dpkg/parse.c  | head -n 1 || true)"
-	if [ -z "$DPKGSOURCE" ]; then
-		msgskip 'Not found'
-	else
-		msgpass
-		msgtest 'Check that apt knows about all fields' 'dpkg parses'
-		sed -n 's#^.*FIELD("\(.*\)").*$#\1#p' "${DPKGSOURCE}" | sort -u > dpkg.lst
-		sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort -u > apt.lst
-		comparelsts
-	fi
+DPKG_SOURCE_PARSE_C="${DPKG_SOURCE_DIRECTORY}/lib/dpkg/parse.c"
+msgtest 'Compare our knowledge with the source code of' 'dpkg'
+if [ -z "$DPKG_SOURCE_DIRECTORY" ]; then
+	msgskip 'source not provided'
+elif [ ! -r "$DPKG_SOURCE_PARSE_C" ]; then
+	msgfail 'source not found'
+else
+	msgpass
+	msgtest 'Check that apt knows about all fields' 'dpkg parses'
+	sed -n 's#^.*FIELD("\(.*\)").*$#\1#p' "${DPKG_SOURCE_PARSE_C}" | sort -u > dpkg.lst
+	sed -n -e's#^ *// *"#   "#' -e 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sed -n '/^Package$/,/^Package$/ p' | head -n -1 | sort > apt.lst
+	comparelsts
+fi
 
-	msgtest 'Check if we have somewhere the sources of' 'dak'
-	DAKSOURCE="$(locate dak/setup/core-init.d/080_metadatakeys | head -n 1 || true)"
-	if [ -z "$DAKSOURCE" ]; then
-		msgskip 'Not found'
-	else
-		msgpass
-		msgtest 'Check that apt knows about all fields' 'dak knows'
-		# dak mixes both, so we can only check with the mixed one as well
-		sed -ne "s#^.* VALUES ('\(.*\)', \(.*\)).*\$#\1 \2#p" "${DAKSOURCE}" | cut -d ' ' -f 1 | sort -u > dpkg.lst
-		sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sort -u > apt.lst
-		comparelsts
-	fi
+DAK_SOURCE_METADATAKEYS="${DAK_SOURCE_DIRECTORY}/setup/core-init.d/080_metadatakeys"
+msgtest 'Compare our knowledge with the source code of' 'dak'
+if [ -z "$DAK_SOURCE_DIRECTORY" ]; then
+	msgskip 'source not provided'
+elif [ ! -r "$DAK_SOURCE_METADATAKEYS" ]; then
+	msgfail 'source not found'
+else
+	msgpass
+	msgtest 'Check that apt knows about all fields' 'dak knows'
+	# dak mixes both, so we can only check with the mixed one as well
+	sed -ne "s#^.* VALUES ('\(.*\)', \(.*\)).*\$#\1 \2#p" "${DAK_SOURCE_METADATAKEYS}" | cut -d ' ' -f 1 | sort -u > dpkg.lst
+	sed -ne 's#^   "\(.*\)",.*$#\1#p' "${SOURCEDIRECTORY}/apt-pkg/tagfile-order.c" | sort -u > apt.lst
+	comparelsts
 fi

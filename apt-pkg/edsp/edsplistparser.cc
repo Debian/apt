@@ -19,6 +19,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
 
 #include <array>
@@ -61,9 +62,7 @@ APT::StringView edspLikeListParser::Description_md5()
 // ListParser::VersionHash - Compute a unique hash for this version	/*{{{*/
 uint32_t edspLikeListParser::VersionHash()
 {
-   if (Section.Exists("APT-Hash") == true)
-      return Section.FindI("APT-Hash");
-   else if (Section.Exists("APT-ID") == true)
+   if (Section.Exists("APT-ID") == true)
       return Section.FindI("APT-ID");
    return 0;
 }
@@ -143,8 +142,8 @@ bool eippListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
       {"triggers-pending",pkgCache::State::TriggersPending},
       {"installed",pkgCache::State::Installed},
    }};
-   auto const status = Section.Find("Status");
-   if (status.empty() == false)
+   auto const status = Section.Find(pkgTagSection::Key::Status);
+   if (not status.empty())
    {
       for (auto && sv: statusvalues)
       {

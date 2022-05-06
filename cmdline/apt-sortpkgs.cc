@@ -20,6 +20,7 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
 
 #include <apt-private/private-cmndline.h>
@@ -85,9 +86,9 @@ static bool DoIt(string InFile)
       
       /* Fetch the name, auto-detecting if this is a source file or a 
          package file */
-      Tmp.Name = Section.FindS("Package");
-      Tmp.Ver = Section.FindS("Version");
-      Tmp.Arch = Section.FindS("Architecture");
+      Tmp.Name = Section.Find(pkgTagSection::Key::Package).to_string();
+      Tmp.Ver = Section.Find(pkgTagSection::Key::Version).to_string();
+      Tmp.Arch = Section.Find(pkgTagSection::Key::Architecture).to_string();
       
       if (Tmp.Name.empty() == true)
 	 return _error->Error(_("Unknown package record!"));

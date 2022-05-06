@@ -2371,13 +2371,13 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    {
       std::string tagname = *type;
       tagname.append("-Current");
-      std::string const tmp = Tags.FindS(tagname.c_str());
+      auto const tmp = Tags.Find(tagname);
       if (tmp.empty() == true)
 	 continue;
 
       string hash;
       unsigned long long size;
-      std::stringstream ss(tmp);
+      std::stringstream ss(tmp.to_string());
       ss.imbue(posix);
       ss >> hash >> size;
       if (unlikely(hash.empty() == true))
@@ -2441,13 +2441,13 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
       std::string tagname = *type;
       tagname.append("-History");
-      std::string const tmp = Tags.FindS(tagname.c_str());
+      auto const tmp = Tags.Find(tagname);
       if (tmp.empty() == true)
 	 continue;
 
       string hash, filename;
       unsigned long long size;
-      std::stringstream ss(tmp);
+      std::stringstream ss(tmp.to_string());
       ss.imbue(posix);
 
       while (ss >> hash >> size >> filename)
@@ -2498,13 +2498,13 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
       std::string tagname = *type;
       tagname.append("-Patches");
-      std::string const tmp = Tags.FindS(tagname.c_str());
+      auto const tmp = Tags.Find(tagname);
       if (tmp.empty() == true)
 	 continue;
 
       string hash, filename;
       unsigned long long size;
-      std::stringstream ss(tmp);
+      std::stringstream ss(tmp.to_string());
       ss.imbue(posix);
 
       while (ss >> hash >> size >> filename)
@@ -2536,13 +2536,13 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    {
       std::string tagname = *type;
       tagname.append("-Download");
-      std::string const tmp = Tags.FindS(tagname.c_str());
+      auto const tmp = Tags.Find(tagname);
       if (tmp.empty() == true)
 	 continue;
 
       string hash, filename;
       unsigned long long size;
-      std::stringstream ss(tmp);
+      std::stringstream ss(tmp.to_string());
       ss.imbue(posix);
 
       // FIXME: all of pdiff supports only .gz compressed patches
@@ -2613,7 +2613,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
    if (pdiff_merge == true)
    {
       // reprepro and dak add this flag if they merge patches on the server
-      std::string const precedence = Tags.FindS("X-Patch-Precedence");
+      auto const precedence = Tags.Find("X-Patch-Precedence");
       pdiff_merge = (precedence != "merged");
    }
 
