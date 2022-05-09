@@ -473,15 +473,16 @@ bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
       // now add the actual by-hash uris
       auto const Expected = GetExpectedHashes();
       auto const TargetHash = Expected.find(nullptr);
-      auto const PushByHashURI = [&](std::string U) {
+      auto const PushByHashURI = [&](std::string const &U) {
 	 if (unlikely(TargetHash == nullptr))
 	    return false;
-	 auto const trailing_slash = U.find_last_of("/");
+	 ::URI uri{U};
+	 auto const trailing_slash = uri.Path.find_last_of("/");
 	 if (unlikely(trailing_slash == std::string::npos))
 	    return false;
-	 auto byhashSuffix = "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
-	 U.replace(trailing_slash, U.length() - trailing_slash, std::move(byhashSuffix));
-	 PushAlternativeURI(std::move(U), {}, false);
+	 auto altPath = uri.Path.substr(0, trailing_slash) + "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
+	 std::swap(uri.Path, altPath);
+	 PushAlternativeURI(uri, {{"Alternate-Paths", "../../" + flNotDir(altPath)}}, false);
 	 return true;
       };
       PushByHashURI(Item.URI);

@@ -255,7 +255,6 @@ echo "file:/nonexistent/apt/archive	priority:1
 http://localhost:${APTHTTPPORT}/redirectme
 " > aptarchive/mirror.txt
 testsuccessequal "Get:1 foo+file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
-Get:2 foo+file:/nonexistent/apt/archive unstable InRelease
 Ign:2 foo+file:/nonexistent/apt/archive unstable InRelease
   File not found - /nonexistent/apt/archive/dists/unstable/InRelease (2: No such file or directory)
 Hit:2 foo+http://localhost:${APTHTTPPORT}/redirectme unstable InRelease

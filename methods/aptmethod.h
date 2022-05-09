@@ -514,6 +514,17 @@ protected:
       return part;
    }
 
+   static std::string CombineWithAlternatePath(std::string Path, std::string Change)
+   {
+      while (APT::String::Startswith(Change, "../"))
+      {
+	 Path.erase(Path.find_last_not_of('/'));
+	 Path = flNotFile(Path);
+	 Change.erase(0, 3);
+      }
+      return flCombine(Path, Change);
+   }
+
    aptMethod(std::string &&Binary, char const *const Ver, unsigned long const Flags) APT_NONNULL(3)
        : pkgAcqMethod(Ver, Flags), aptConfigWrapperForMethods(Binary), Binary(std::move(Binary)), SeccompFlags(0)
    {

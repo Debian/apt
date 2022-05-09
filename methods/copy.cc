@@ -26,7 +26,7 @@
 
 class CopyMethod : public aptMethod
 {
-   virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
+   bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
 
    public:
    CopyMethod() : aptMethod("copy", "1.0", SingleInstance | SendConfig | SendURIEncoded)
@@ -36,55 +36,71 @@ class CopyMethod : public aptMethod
 };
 
 // CopyMethod::Fetch - Fetch a file					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool CopyMethod::Fetch(FetchItem *Itm)
+bool CopyMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 {
-   // this ensures that relative paths work in copy
-   std::string const File = DecodeSendURI(Itm->Uri.substr(Itm->Uri.find(':')+1));
-
-   // Stat the file and send a start message
-   struct stat Buf;
-   if (stat(File.c_str(),&Buf) != 0)
-      return _error->Errno("stat",_("Failed to stat"));
+   struct FileCopyType {
+      std::string name;
+      struct stat stat{};
+      explicit FileCopyType(std::string &&file) : name{std::move(file)} {}
+   };
+   std::vector<FileCopyType> files;
+   // this ensures that relative paths work
+   files.emplace_back(DecodeSendURI(Itm->Uri.substr(Itm->Uri.find(':')+1)));
+   for (auto const &AltPath : VectorizeString(LookupTag(Message, "Alternate-Paths"), '\n'))
+      files.emplace_back(CombineWithAlternatePath(flNotFile(files[0].name), DecodeSendURI(AltPath)));
+   files.erase(std::remove_if(files.begin(), files.end(), [](auto &file)
+			      { return stat(file.name.c_str(), &file.stat) != 0; }),
+	       files.end());
+   if (files.empty())
+      return _error->Errno("copy-stat", _("Failed to stat"));
 
    // Forumulate a result and send a start message
    FetchResult Res;
-   Res.Size = Buf.st_size;
    Res.Filename = Itm->DestFile;
-   Res.LastModified = Buf.st_mtime;
    Res.IMSHit = false;
-   URIStart(Res);
 
-   // just calc the hashes if the source and destination are identical
-   if (File == Itm->DestFile || Itm->DestFile == "/dev/null")
+   for (auto const &File : files)
    {
+      Res.Size = File.stat.st_size;
+      Res.LastModified = File.stat.st_mtime;
+
+      // just calc the hashes if the source and destination are identical
+      if (Itm->DestFile == "/dev/null" || File.name == Itm->DestFile)
+      {
+	 URIStart(Res);
+	 CalculateHashes(Itm, Res);
+	 URIDone(Res);
+	 return true;
+      }
+
+      FileFd From(File.name, FileFd::ReadOnly);
+      FileFd To(Itm->DestFile, FileFd::WriteAtomic);
+      To.EraseOnFailure();
+      if (not From.IsOpen() || not To.IsOpen())
+	 continue;
+
+      // Copy the file
+      URIStart(Res);
+      if (not CopyFile(From, To))
+      {
+	 To.OpFail();
+	 continue;
+      }
+      From.Close();
+      To.Close();
+
       CalculateHashes(Itm, Res);
+      if (not Itm->ExpectedHashes.empty() && Itm->ExpectedHashes != Res.Hashes)
+	 continue;
+
+      if (not TransferModificationTimes(File.name.c_str(), Res.Filename.c_str(), Res.LastModified))
+	 continue;
+
       URIDone(Res);
       return true;
    }
 
-   // See if the file exists
-   FileFd From(File,FileFd::ReadOnly);
-   FileFd To(Itm->DestFile,FileFd::WriteAtomic);
-   To.EraseOnFailure();
-
-   // Copy the file
-   if (CopyFile(From,To) == false)
-   {
-      To.OpFail();
-      return false;
-   }
-
-   From.Close();
-   To.Close();
-
-   if (TransferModificationTimes(File.c_str(), Res.Filename.c_str(), Res.LastModified) == false)
-      return false;
-
-   CalculateHashes(Itm, Res);
-   URIDone(Res);
-   return true;
+   return false;
 }
 									/*}}}*/
 

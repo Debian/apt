@@ -29,7 +29,7 @@
 
 class FileMethod : public aptMethod
 {
-   virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
+   bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
 
    public:
    FileMethod() : aptMethod("file", "1.0", SingleInstance | SendConfig | LocalOnly | SendURIEncoded)
@@ -41,88 +41,101 @@ class FileMethod : public aptMethod
 // FileMethod::Fetch - Fetch a file					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FileMethod::Fetch(FetchItem *Itm)
+bool FileMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 {
    URI Get(Itm->Uri);
-   std::string const File = DecodeSendURI(Get.Path);
-   FetchResult Res;
    if (Get.Host.empty() == false)
       return _error->Error(_("Invalid URI, local URIS must not start with //"));
 
-   struct stat Buf;
+   std::vector<std::string> Files;
+   Files.emplace_back(DecodeSendURI(Get.Path));
+   for (auto const &AltPath : VectorizeString(LookupTag(Message, "Alternate-Paths"), '\n'))
+      Files.emplace_back(CombineWithAlternatePath(flNotFile(Files[0]), DecodeSendURI(AltPath)));
+
+   FetchResult Res;
    // deal with destination files which might linger around
-   if (lstat(Itm->DestFile.c_str(), &Buf) == 0)
+   struct stat Buf;
+   if (lstat(Itm->DestFile.c_str(), &Buf) == 0 && S_ISLNK(Buf.st_mode) && Buf.st_size > 0)
    {
-      if ((Buf.st_mode & S_IFREG) != 0)
+      char name[Buf.st_size + 1];
+      if (ssize_t const sp = readlink(Itm->DestFile.c_str(), name, Buf.st_size); sp == -1)
       {
-	 if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
-	 {
-	    if (Itm->ExpectedHashes.VerifyFile(File))
-	    {
-	       Res.Filename = Itm->DestFile;
-	       Res.IMSHit = true;
-	    }
-	 }
+	 Itm->LastModified = 0;
+	 RemoveFile("file", Itm->DestFile);
       }
    }
-   if (Res.IMSHit != true)
-      RemoveFile("file", Itm->DestFile);
 
    int olderrno = 0;
    // See if the file exists
-   if (stat(File.c_str(),&Buf) == 0)
+   for (auto const &File : Files)
    {
-      Res.Size = Buf.st_size;
-      Res.Filename = File;
-      Res.LastModified = Buf.st_mtime;
-      Res.IMSHit = false;
-      if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
+      if (stat(File.c_str(), &Buf) == 0)
       {
-	 unsigned long long const filesize = Itm->ExpectedHashes.FileSize();
-	 if (filesize != 0 && filesize == Res.Size)
-	    Res.IMSHit = true;
+	 Res.Size = Buf.st_size;
+	 Res.Filename = File;
+	 Res.LastModified = Buf.st_mtime;
+	 Res.IMSHit = false;
+	 if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
+	 {
+	    auto const filesize = Itm->ExpectedHashes.FileSize();
+	    if (filesize != 0 && filesize == Res.Size)
+	       Res.IMSHit = true;
+	 }
+	 break;
       }
-
-      CalculateHashes(Itm, Res);
+      if (olderrno == 0)
+	 olderrno = errno;
    }
-   else
-      olderrno = errno;
-   if (Res.IMSHit == false)
-      URIStart(Res);
+
+   if (not Res.IMSHit)
+   {
+      RemoveFile("file", Itm->DestFile);
+      if (not Res.Filename.empty())
+      {
+	 URIStart(Res);
+	 CalculateHashes(Itm, Res);
+      }
+   }
 
    // See if the uncompressed file exists and reuse it
    FetchResult AltRes;
-   AltRes.Filename.clear();
-   std::vector<std::string> extensions = APT::Configuration::getCompressorExtensions();
-   for (std::vector<std::string>::const_iterator ext = extensions.begin(); ext != extensions.end(); ++ext)
+   for (auto const &File : Files)
    {
-      if (APT::String::Endswith(File, *ext) == true)
+      for (const auto &ext : APT::Configuration::getCompressorExtensions())
       {
-	 std::string const unfile = File.substr(0, File.length() - ext->length());
-	 if (stat(unfile.c_str(),&Buf) == 0)
+	 if (APT::String::Endswith(File, ext))
 	 {
-	    AltRes.Size = Buf.st_size;
-	    AltRes.Filename = unfile;
-	    AltRes.LastModified = Buf.st_mtime;
-	    AltRes.IMSHit = false;
-	    if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
-	       AltRes.IMSHit = true;
-	    if (Res.Filename.empty())
-	       CalculateHashes(Itm, AltRes);
-	    break;
+	    std::string const unfile = File.substr(0, File.length() - ext.length());
+	    if (stat(unfile.c_str(), &Buf) == 0)
+	    {
+	       AltRes.Size = Buf.st_size;
+	       AltRes.Filename = unfile;
+	       AltRes.LastModified = Buf.st_mtime;
+	       AltRes.IMSHit = false;
+	       if (Itm->LastModified == Buf.st_mtime && Itm->LastModified != 0)
+		  AltRes.IMSHit = true;
+	       if (Res.Filename.empty())
+	       {
+		  URIStart(Res);
+		  CalculateHashes(Itm, AltRes);
+	       }
+	       break;
+	    }
+	    // no break here as we could have situations similar to '.gz' vs '.tar.gz' here
 	 }
-	 // no break here as we could have situations similar to '.gz' vs '.tar.gz' here
       }
+      if (not AltRes.Filename.empty())
+	 break;
    }
 
-   if (AltRes.Filename.empty() == false)
+   if (not AltRes.Filename.empty())
       URIDone(Res,&AltRes);
-   else if (Res.Filename.empty() == false)
+   else if (not Res.Filename.empty())
       URIDone(Res);
    else
    {
       errno = olderrno;
-      return _error->Errno(File.c_str(), _("File not found"));
+      return _error->Errno(Files[0].c_str(), _("File not found"));
    }
 
    return true;

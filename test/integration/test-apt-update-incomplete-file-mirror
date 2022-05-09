@@ -37,6 +37,7 @@ testfailure apt update -o Debug::pkgAcquire::Worker=1
 testsuccessequal '4' grep -c -- '- Filesize:' rootdir/tmp/testfailure.output
 testsuccessequal '2' grep -c '%0aAlt-Checksum-FileSize-Hash:%20' rootdir/tmp/testfailure.output
 
+echo 'Acquire::By-Hash "force";' > rootdir/etc/apt/apt.conf.d/99force-by-hash.conf
 
 msgmsg 'Fallback over hashsum errors'
 rm -f rootdir/etc/apt/sources.list rootdir/etc/apt/sources.list.d/*
@@ -47,6 +48,8 @@ copy:${TMPWORKINGDIRECTORY}/aptarchive	priority:1
 file:${TMPWORKINGDIRECTORY}/aptarchive2	priority:2
 EOF
 testsuccess apt update
+cp -a rootdir/tmp/testsuccess.output aptupdate.log
+testsuccessequal '2' grep -c -- '^Ign:' aptupdate.log
 
 rm -rf rootdir/var/lib/apt/lists
 cat > mirror.list <<EOF
@@ -61,3 +64,5 @@ file:${TMPWORKINGDIRECTORY}/aptarchive	priority:1
 file:${TMPWORKINGDIRECTORY}/aptarchive2	priority:2
 EOF
 testsuccess apt update
+cp -a rootdir/tmp/testsuccess.output aptupdate.log
+testsuccessequal '1' grep -c -- '^Ign:' aptupdate.log

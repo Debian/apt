@@ -28,9 +28,7 @@ testwarning aptget update --allow-insecure-repositories
 rm -rf rootdir/var/lib/apt/lists
 find "$APTARCHIVE/dists/unstable" -name '*Release*' -delete
 # update without authenticated files leads to warning
-testfailureequal "Get:1 file:$APTARCHIVE unstable InRelease
-Ign:1 file:$APTARCHIVE unstable InRelease
-Get:2 file:$APTARCHIVE unstable Release
+testfailureequal "Ign:1 file:$APTARCHIVE unstable InRelease
 Err:2 file:$APTARCHIVE unstable Release
   File not found - ${APTARCHIVE}/dists/unstable/Release (2: No such file or directory)
 Reading package lists...
@@ -45,9 +43,7 @@ lock
 partial' ls rootdir/var/lib/apt/lists
 
 # allow override
-testwarningequal "Get:1 file:$APTARCHIVE unstable InRelease
-Ign:1 file:$APTARCHIVE unstable InRelease
-Get:2 file:$APTARCHIVE unstable Release
+testwarningequal "Ign:1 file:$APTARCHIVE unstable InRelease
 Ign:2 file:$APTARCHIVE unstable Release
 Get:3 file:$APTARCHIVE unstable/main Sources
 Get:4 file:$APTARCHIVE unstable/main i386 Packages

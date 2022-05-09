@@ -13,6 +13,7 @@ insertpackage 'unstable' 'foo' 'all' '1.0'
 insertpackage 'unstable' 'bar' 'i386' '1.0'
 
 setupaptarchive --no-update
+changetowebserver
 
 # make Packages *only* accessible by-hash for this test
 makebyhashonly() {
@@ -100,8 +101,7 @@ msgmsg 'Test InRelease by-hash with' 'no fallback'
 rm -rf aptarchive/dists
 cp -a aptarchive/dists.bak aptarchive/dists
 
-testfailureequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease
-Err:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease
-  File not found - ${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/by-hash/SHA256/${inrelease_hash} (2: No such file or directory)
+testfailureequal "Err:1 http://localhost:${APTHTTPPORT} unstable InRelease
+  404  Not Found
 Reading package lists...
-E: Failed to fetch file:${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/InRelease  File not found - ${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/by-hash/SHA256/${inrelease_hash} (2: No such file or directory)" aptget update
+E: Failed to fetch http://localhost:${APTHTTPPORT}/dists/unstable/InRelease  404  Not Found" aptget update
