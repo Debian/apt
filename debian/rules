@@ -45,14 +45,14 @@ override_dh_installsystemd:
 	dh_installsystemd --remaining-packages
 
 ifneq ($(filter pkg.apt.nodoxygen,$(DEB_BUILD_PROFILES)),)
-override_dh_auto_configure-arch: configure_doc_flags=-DWITH_DOC=OFF -DWITH_DOC_MANPAGES=ON
+override_dh_auto_configure-arch: configure_doc_flags=-DWITH_DOC=OFF -DWITH_DOC_MANPAGES=ON -DWITH_DOC_EXAMPLES=ON
 override_dh_auto_configure-indep: configure_doc_flags=-DWITH_DOC=OFF -DWITH_DOC_GUIDES=ON -DWITH_DOC_EXAMPLES=ON
 else
 ifneq ($(filter nodoc,$(DEB_BUILD_PROFILES)),)
 override_dh_auto_configure-arch: configure_doc_flags=-DWITH_DOC=OFF
 override_dh_auto_configure-indep: configure_doc_flags=-DWITH_DOC=OFF
 else
-override_dh_auto_configure-arch: configure_doc_flags=-DWITH_DOC=OFF -DWITH_DOC_MANPAGES=ON
+override_dh_auto_configure-arch: configure_doc_flags=-DWITH_DOC=OFF -DWITH_DOC_MANPAGES=ON -DWITH_DOC_EXAMPLES=ON
 override_dh_auto_configure-indep: configure_doc_flags=-DWITH_DOC=ON
 endif
 endif
