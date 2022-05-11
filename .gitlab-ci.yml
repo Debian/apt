@@ -3,22 +3,29 @@ variables:
   DEBIAN_FRONTEND: noninteractive
   CCACHE_DIR: $CI_PROJECT_DIR/.ccache
   CCACHE_BASEDIR: $CI_PROJECT_DIR
+  APT_CMAKE_BUILD_OPTIONS: ''
+  DEB_BUILD_PROFILES: ''
 cache:
   paths:
     - .ccache
-
-test as root:
-  stage: test
-  script:
+before_script:
     - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
     - rm -f /etc/dpkg/dpkg.cfg.d/excludes
     - apt-get update
-    - apt-get install -qq build-essential expect sudo ccache
+    - apt-get install --no-install-recommends -qq build-essential expect sudo ccache moreutils
+    - chmod 755 /root
     - chmod -R o+rwX $PWD
     - ./prepare-release travis-ci
     - sudo -u travis mkdir -p build .ccache
-    - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo  -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
+    - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache ${APT_CMAKE_BUILD_OPTIONS} -G Ninja ..
     - sudo -u travis --preserve-env=CCACHE_DIR,CCACHE_BASEDIR ninja -C build
+
+test as root:
+  stage: test
+  variables:
+    APT_CMAKE_BUILD_OPTIONS: '-DWITH_DOC=OFF -DUSE_NLS=OFF'
+    DEB_BUILD_PROFILES: 'nodoc'
+  script:
     - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
     - unbuffer ./test/integration/run-tests -q -j 4
 
@@ -26,15 +33,8 @@ test as user:
   image: i386/debian:unstable
   stage: test
   script:
-    - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
-    - rm -f /etc/dpkg/dpkg.cfg.d/excludes
-    - apt-get update
-    - apt-get install -qq build-essential expect sudo ccache
-    - chmod 755 /root
-    - chmod -R o+rwX $PWD
-    - ./prepare-release travis-ci
-    - sudo -u travis mkdir -p build .ccache
-    - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -G Ninja ..
-    - sudo -u travis --preserve-env=CCACHE_DIR,CCACHE_BASEDIR ninja -C build
+    - apt-get install --no-install-recommends -qq libxml2-utils
+    - ./prepare-release post-build --report-failure
     - sudo -u travis CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
+    - chmod -R o-w $PWD
     - sudo -u travis unbuffer ./test/integration/run-tests -q -j 4

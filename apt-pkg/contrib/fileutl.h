@@ -28,9 +28,6 @@
 #include <vector>
 #include <time.h>
 
-#include <zlib.h>
-
-
 /* Define this for python-apt */
 #define APT_HAS_GZIP 1
 

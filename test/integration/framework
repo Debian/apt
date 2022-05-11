@@ -175,7 +175,7 @@ runapt() {
 	shift
 	case "$CMD" in
 	sh|aptitude|*/*|command) ;;
-	*) CMD="${BUILDDIRECTORY}/$CMD";;
+	*) CMD="${APTCMDLINEBINDIR}/$CMD";;
 	esac
 	if [ "$CMD" = 'aptitude' ]; then
 		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH="${LIBRARYPATH}:${LD_LIBRARY_PATH}" command "$CMD" "$@"
@@ -228,7 +228,7 @@ gdb() {
 	esac
 	shift
 	if [ "${CMD##*/}" = "$CMD" ]; then
-		CMD="${BUILDDIRECTORY}/${CMD}"
+		CMD="${APTCMDLINEBINDIR}/${CMD}"
 	fi
 	runapt command gdb --quiet -ex "directory '$SOURCEDIRECTORY'" -ex run "$CMD" --args "$CMD" "$@"
 }
@@ -248,7 +248,7 @@ valgrind() {
 	esac
 	shift
 	if [ "${CMD##*/}" = "$CMD" ]; then
-		CMD="${BUILDDIRECTORY}/${CMD}"
+		CMD="${APTCMDLINEBINDIR}/${CMD}"
 	fi
 	runapt command valgrind "$CMD" "$@"
 }
@@ -373,18 +373,12 @@ setupenvironment() {
 	fi
 	mkdir -p 'rootdir/usr/bin' 'rootdir/var/cache' 'rootdir/var/lib' 'rootdir/var/log' 'rootdir/var/crash' 'rootdir/tmp'
 
-	# Find the newest build directory (sets PROJECT_BINARY_DIR)
-	find_project_binary_dir
-
 	_setupprojectenvironment
 
 	# create some files in /tmp and look at user/group to get what this means
 	TEST_DEFAULT_USER="$(id -un)"
 	touch "${TMPWORKINGDIRECTORY}/test-file"
 	TEST_DEFAULT_GROUP=$(stat --format '%G'  "${TMPWORKINGDIRECTORY}/test-file")
-
-	# prefer our apt binaries over the system apt binaries
-	export PATH="${BUILDDIRECTORY}:${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 
 	if [ -r "${TESTDIRECTORY}/extra-environment" ]; then
 		. "${TESTDIRECTORY}/extra-environment"
@@ -393,19 +387,20 @@ setupenvironment() {
 	msgdone "info"
 }
 _setupprojectenvironment() {
-        # allow overriding the default BUILDDIR location
+	# allow overriding the default BUILDDIR locations
 	SOURCEDIRECTORY="${APT_INTEGRATION_TESTS_SOURCE_DIR:-"${TESTDIRECTORY}/../../"}"
-	BUILDDIRECTORY="${APT_INTEGRATION_TESTS_BUILD_DIR:-"${PROJECT_BINARY_DIR}/cmdline"}"
-	LIBRARYPATH="${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}/../apt-pkg"}"
-        METHODSDIR="${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/../methods"}"
-        APTHELPERBINDIR="${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}"
-        APTTESTHELPERSBINDIR="${APT_INTEGRATION_TESTS_HELPERS_BIN_DIR:-"${BUILDDIRECTORY}/../test/interactive-helper"}"
-        APTFTPARCHIVEBINDIR="${APT_INTEGRATION_TESTS_FTPARCHIVE_BIN_DIR:-"${BUILDDIRECTORY}/../ftparchive"}"
-        APTINTERNALSOLVER="${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${BUILDDIRECTORY}/solvers/apt"}"
-	APTDUMPSOLVER="${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${BUILDDIRECTORY}/solvers/dump"}"
-	APTINTERNALPLANNER="${APT_INTEGRATION_TESTS_INTERNAL_PLANNER:-"${BUILDDIRECTORY}/planners/apt"}"
+	BUILDDIRECTORY="${APT_INTEGRATION_TESTS_BUILD_DIR:-"$(find_project_binary_dir; printf '%s' "$PROJECT_BINARY_DIR")"}"
+	LIBRARYPATH="${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}/apt-pkg"}"
+	METHODSDIR="${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}"
+	APTHELPERBINDIR="${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}/cmdline"}"
+	APTTESTHELPERSBINDIR="${APT_INTEGRATION_TESTS_HELPERS_BIN_DIR:-"${BUILDDIRECTORY}/test/interactive-helper"}"
+	APTFTPARCHIVEBINDIR="${APT_INTEGRATION_TESTS_FTPARCHIVE_BIN_DIR:-"${BUILDDIRECTORY}/ftparchive"}"
+	APTCMDLINEBINDIR="${APT_INTEGRATION_TESTS_CMDLINE_BIN_DIR:-"${BUILDDIRECTORY}/cmdline"}"
+	APTINTERNALSOLVER="${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${APTCMDLINEBINDIR}/solvers/apt"}"
+	APTDUMPSOLVER="${APT_INTEGRATION_TESTS_DUMP_SOLVER:-"${APTCMDLINEBINDIR}/solvers/dump"}"
+	APTINTERNALPLANNER="${APT_INTEGRATION_TESTS_INTERNAL_PLANNER:-"${APTCMDLINEBINDIR}/planners/apt"}"
 	ARTIFACTSDIR="${APT_INTEGRATION_TESTS_ARTIFACTS_DIR:-"${BUILDDIRECTORY}/artifacts"}"
-	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
+	test -x "${APTCMDLINEBINDIR}/apt-get" || msgdie 'You need to build tree first'
 
 	echo "#x-apt-configure-index \"${SOURCEDIRECTORY}/doc/examples/configure-index\";" > aptconfig.conf
 	mkdir aptarchive keys
@@ -422,8 +417,7 @@ _setupprojectenvironment() {
 	ln -s "${APTINTERNALPLANNER}" usr/lib/apt/planners/apt
 	echo "Dir::Bin::Solvers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/solvers\";" >> ../aptconfig.conf
 	echo "Dir::Bin::Planners \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/planners\";" >> ../aptconfig.conf
-        # use the autoremove from the BUILDDIRECTORY if its there, otherwise
-        # system
+        # use the autoremove from the BUILDDIRECTORY if its there, otherwise system
         if [ -z "${APT_INTEGRATION_TESTS_SOURCE_DIR}" ]; then
 	    ln -s "${SOURCEDIRECTORY}/debian/apt.conf.autoremove" etc/apt/apt.conf.d/01autoremove
         else
@@ -452,11 +446,11 @@ _setupprojectenvironment() {
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Dir::Bin::Methods \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods\";" >> aptconfig.conf
 	# either store apt-key were we can access it, even if we run it as a different user
-	#cp "${BUILDDIRECTORY}/apt-key" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/"
+	#cp "${APTCMDLINEBINDIR}/apt-key" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/"
 	#chmod o+rx "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/apt-key"
 	#echo "Dir::Bin::apt-key \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/apt-key\";" >> aptconfig.conf
 	# destroys coverage reporting though, so we disable changing user for the calling gpgv
-	echo "Dir::Bin::apt-key \"${BUILDDIRECTORY}/apt-key\";" >> aptconfig.conf
+	echo "Dir::Bin::apt-key \"${APTCMDLINEBINDIR}/apt-key\";" >> aptconfig.conf
 	if [ "$(id -u)" = '0' ]; then
 		echo 'Binary::gpgv::APT::Sandbox::User "root";' >> aptconfig.conf
 		# same for the solver executables
@@ -542,6 +536,9 @@ EOF
 
 	# most tests just need one signed Release file, not both
 	export APT_DONT_SIGN='Release.gpg'
+
+	# prefer our apt binaries over the system apt binaries
+	export PATH="${APTCMDLINEBINDIR}:${PATH}:/usr/sbin:/sbin"
 }
 
 getarchitecture() {
@@ -1831,12 +1828,12 @@ msgfailoutput() {
 		if [ -s "$COREDUMP" ]; then
 			if [ -z "$COREEXE" ]; then
 				case "$CMD" in
-				apt) COREEXE="${BUILDDIRECTORY}/${CMD}";;
+				apt) COREEXE="${APTCMDLINEBINDIR}/${CMD}";;
 				aptftparchive) COREEXE="${APTFTPARCHIVEBINDIR}/apt-ftparchive";;
 				apthelper) COREEXE="${APTHELPERBINDIR}/apt-helper";;
 				aptwebserver) COREEXE="${APTTESTHELPERSBINDIR}/aptwebserver";;
-				apt*) COREEXE="${BUILDDIRECTORY}/apt-${CMD##*apt}";;
-				*) COREEXE="${BUILDDIRECTORY}/${CMD}";;
+				apt*) COREEXE="${APTCMDLINEBINDIR}/apt-${CMD##*apt}";;
+				*) COREEXE="${APTCMDLINEBINDIR}/${CMD}";;
 				esac
 			fi
 

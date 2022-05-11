@@ -1,10 +1,11 @@
-Tests: run-tests, pkg-config-test
+Tests: pkg-config-test
+Restrictions: superficial
+Depends: libapt-pkg-dev, pkg-config
+
+Tests: run-tests
 Restrictions: allow-stderr
 Depends: @, @builddeps@, dpkg (>= 1.20.8), fakeroot, wget, stunnel4, lsof, db-util,
-         gnupg (>= 2) | gnupg2,
-         gnupg1 | gnupg (<< 2),
-         gpgv (>= 2) | gpgv2,
-         gpgv1 | gpgv (<< 2),
+         gnupg (>= 2) | gnupg2, gnupg1 | gnupg (<< 2),
+         gpgv (>= 2) | gpgv2, gpgv1 | gpgv (<< 2),
          libfile-fcntllock-perl, python3-apt, aptitude,
-         pkg-config,
          valgrind, gdb-minimal | gdb

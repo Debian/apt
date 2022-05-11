@@ -7,10 +7,10 @@ if [ -n "${GBP_BUILD_DIR}" ]; then
    cd "$GBP_BUILD_DIR"
 fi
 
-VERSION=$(dpkg-parsechangelog | sed -n -e '/^Version:/s/^Version: //p')
-DISTRIBUTION=$(dpkg-parsechangelog | sed -n -e '/^Distribution:/s/^Distribution: //p')
+VERSION=$(dpkg-parsechangelog -S 'Version')
+DISTRIBUTION=$(dpkg-parsechangelog -S 'Distribution')
 
-LIBAPTPKGVERSION="$(awk -v ORS='.' '/^\#define APT_PKG_M/ {print $3}' apt-pkg/contrib/macros.h | sed 's/\.$//')"
+LIBAPTPKGVERSION="$(awk -v ORS='.' '/^#define APT_PKG_M/ {print $3}' apt-pkg/contrib/macros.h | sed 's/\.$//')"
 
 librarysymbolsfromfile() {
 	local MISSING="$(grep '^+#MISSING' "$1")"
@@ -23,29 +23,6 @@ librarysymbolsfromfile() {
 	grep '^+ ' "$1" | grep -v '^+ (c++' | cut -d' ' -f 2 | cut -d'@' -f 1 | c++filt | while read line; do
 		echo " (c++)\"${line}@${SYMVER}\" $VERSION"
 	done | sort -u
-}
-
-test_deb_control() {
-	echo "Package: apt-test-depends"
-	echo "Version: 1.0"
-	echo "Architecture: all"
-	printf "Depends:"
-	(
-	for i in Build-Depends Build-Depends-Indep Build-Depends-Arch; do
-		grep-dctrl -ns $i -S apt ./debian/control && echo ,
-	done
-		grep-dctrl -ns Depends -F Tests run-tests ./debian/tests/control
-	) | tr '\n' ' '\
-	  | sed -r -e 's#<[^,<>()@]*>##g' \
-	           -e 's#@[^,<>()@]*@##g' \
-	           -e 's#\[linux-any\]*##g' \
-	           -e 's#\[[^][]*\]*##g' \
-	           -e 's#dpkg-dev \([^)]*\)#dpkg-dev#g' \
-	           -e 's#debhelper \([^)]*\)#debhelper#g' \
-	           -e 's#g\+\+ \([^)]*\)#g++#g' \
-	           -e 's#@##g' \
-	           -e 's#,(\s+,)+#, #g' \
-	           -e 's#\s+# #g'
 }
 
 if [ "$1" = 'pre-export' ]; then
@@ -104,7 +81,7 @@ elif [ "$1" = 'pre-build' ]; then
 			echo "You probably want to run »./prepare-release pre-export« to fix this."
 			exit 1
 		fi
-		NEWSDISTRIBUTION=$(dpkg-parsechangelog -l debian/NEWS | sed -n -e '/^Distribution:/s/^Distribution: //p')
+		NEWSDISTRIBUTION=$(dpkg-parsechangelog -l debian/NEWS -S 'Distribution')
 		if [ "$NEWSDISTRIBUTION" = 'UNRELEASED' ]; then
 			 echo "changelog (${VERSION}) has a distribution (${DISTRIBUTION}) set, while the NEWS file hasn't!"
 			echo "You probably want to edit »debian/NEWS« to fix this."
@@ -112,7 +89,12 @@ elif [ "$1" = 'pre-build' ]; then
 		fi
 	fi
 elif [ "$1" = 'post-build' ]; then
-	if [ "$DISTRIBUTION" != "UNRELEASED" ]; then
+	FAILED=false
+	REPORT_FAILURE=false
+
+	if [ "$2" = '--report-failure' ]; then
+		REPORT_FAILURE=true
+	elif [ "$DISTRIBUTION" != "UNRELEASED" ]; then
 		echo >&2 "REMEMBER: Tag this release with »git tag -s ${VERSION}« if you are satisfied"
 	else
 		echo >&2 'REMEMBER: Change to a valid distribution before release'
@@ -126,6 +108,7 @@ elif [ "$1" = 'post-build' ]; then
 		if ! sed -n '1,/^$/p' "$FILE" | cmp "$HEADERBLUEPRINT" - >/dev/null 2>&1; then
 			echo >&2 "WARNING: Manpage $FILE has not the usual header! (see diff below)"
 			sed -n '1,/^$/p' "$FILE" | diff -u "$HEADERBLUEPRINT" - || true
+			FAILED=true
 		fi
 	done
 	sed -n '1,/^$/p' doc/guide.dbk > "$HEADERBLUEPRINT"
@@ -133,30 +116,40 @@ elif [ "$1" = 'post-build' ]; then
 		if ! sed -n '1,/^$/p' "$FILE" | cmp "$HEADERBLUEPRINT" - >/dev/null 2>&1; then
 			echo >&2 "WARNING: Documentation $FILE has not the usual header (see diff below)!"
 			sed -n '1,/^$/p' "$FILE" | diff -u "$HEADERBLUEPRINT" - || true
+			FAILED=true
 		fi
 	done
 	rm "$HEADERBLUEPRINT"
 
 	# check the manpages with each vendor for vendor-specific errors…
 	find vendor -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 2 | while read DISTRO; do
-		ln -sf ../vendor/${DISTRO}/apt-vendor.ent doc
-		if ! xmllint --nonet --valid --noout $(find doc/ -maxdepth 1 -name '*.xml'); then
+		if ! xmllint --path vendor/${DISTRO} --nonet --valid --noout $(find doc/ -maxdepth 1 -name '*.xml'); then
 			echo >&2 "WARNING: original docbook manpages have errors with vendor ${DISTRO}!"
+			FAILED=true
 		fi
 	done
 	# lets assume we will always have a german manpage translation
 	if [ -e */doc/de/ -o -e doc/de ]; then
 		# … but check the translations only with one vendor for translation-specific errors
-		if ! xmllint  --path /vendor/$(./vendor/getinfo current)/ \
+		if ! xmllint  --path vendor/$(./vendor/getinfo current)/ \
 					  --path doc/ \
 					--nonet --valid --noout $(find doc/ */doc/ -mindepth 2 -maxdepth 2 -name '*.xml'); then
 			echo >&2 "WARNING: translated docbook manpages have errors!"
+			FAILED=true
 		fi
 	else
 		echo >&2 "ERROR: translated manpages need to be build before they can be checked!"
+		FAILED=true
 	fi
-	rm -f doc/apt-vendor.ent
 
+	if [ "$(find -name '*.cc' ! -name 'tagfile-keys.cc' -exec grep --files-without-match '^#include <config\.h>$' '{}' \+ | wc -l)" != '0' ]; then
+		echo >&2 'WARNING: C++ files not including our config.h can cause ODR violations!'
+		find -name '*.cc' ! -name 'tagfile-keys.cc' -exec grep --files-without-match '^#include <config\.h>$' '{}' \+ >&2
+		FAILED=true
+	fi
+	if $REPORT_FAILURE && $FAILED; then
+		exit 1
+	fi
 elif [ "$1" = 'library' ]; then
 	librarysymbols() {
 		local libname=$(echo "${1}" | cut -c 4-)
@@ -185,11 +178,11 @@ elif [ "$1" = 'buildlog' ]; then
 		shift
 	done
 elif [ "$1" = 'travis-ci' ]; then
-	apt-get install -qy --no-install-recommends dctrl-tools equivs gdebi-core moreutils
-
-	test_deb_control > test-control
-	equivs-build test-control
-	gdebi -n apt-test-depends_1.0_all.deb
+	apt-get build-dep -qy .
+	apt-get install -qy --no-install-recommends dctrl-tools
+	for t in $(grep '^Tests: ' debian/tests/control | cut -d':' -f 2- | tr ',' '\n'); do
+		apt-get satisfy -qy --no-install-recommends "base-files,$(grep-dctrl -ns Depends -F Tests $t ./debian/tests/control | sed -e 's#@[^,<>()@]*@\s*,\s*##g' -e 's#@\s*,\s*##g')"
+	done
 elif [ "$1" = 'coverage' ]; then
 	DIR="${2:-./coverage}"
 	git clean -dfX # remove ignored build artifacts for a clean start
@@ -387,7 +380,7 @@ Both will format the diff properly.
 \t$0 coverage [output-dir]
 
 »travis-ci« is a shortcut to install all build- as well as test-dependencies
-used by .travis.yml.
+used in .gitlab-ci.yml and other CI infrastructure.
 »coverage« does a clean build with the right flags for coverage reporting,
 runs all tests and generates a html report in the end.
 

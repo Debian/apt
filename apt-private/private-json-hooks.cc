@@ -5,6 +5,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0+
  */
+#include <config.h>
 
 #include <apt-pkg/debsystem.h>
 #include <apt-pkg/fileutl.h>
@@ -22,6 +23,7 @@
 #include <signal.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 /**
  * @brief Simple JSON writer

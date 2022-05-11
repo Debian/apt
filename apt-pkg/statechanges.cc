@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/debsystem.h>

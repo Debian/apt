@@ -4,12 +4,15 @@ set(languages_excluded
     he  ## disabled by translator request #313283
 )
 
+if (TARGET apt-pkg)
 apt_add_translation_domain(
     DOMAIN libapt-pkg${APT_PKG_MAJOR}
     TARGETS apt-pkg
     EXCLUDE_LANGUAGES ${languages_excluded}
 )
+endif()
 
+if (TARGET apt-private)
 apt_add_translation_domain(
     DOMAIN apt
     TARGETS apt apt-cache apt-get apt-config apt-cdrom apt-helper apt-mark
@@ -19,6 +22,7 @@ apt_add_translation_domain(
     SCRIPTS ../dselect/install ../dselect/update
     EXCLUDE_LANGUAGES ${languages_excluded}
 )
+endif()
 
 apt_add_translation_domain(
     DOMAIN apt-utils

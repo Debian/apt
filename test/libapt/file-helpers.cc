@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 
 #include <string>

@@ -10,6 +10,7 @@ else()
 endif()
 
 # Handle sources.list example
+if (WITH_DOC OR WITH_DOC_EXAMPLES)
 add_vendor_file(OUTPUT sources.list
                 INPUT "${CURRENT_VENDOR}/sources.list.in"
                 MODE 644
@@ -21,6 +22,7 @@ add_vendor_file(OUTPUT sources.list
                           current-codename)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/sources.list
         DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
+endif()
 
 # Handle apt.conf snippets
 file(GLOB conffiles ${CURRENT_VENDOR}/apt.conf-*)

@@ -1,4 +1,6 @@
 // Include Files                                                       /*{{{*/
+#include <config.h>
+
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/pkgcachegen.h>
