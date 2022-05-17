@@ -1,3 +1,49 @@
+apt (2.5.0) unstable; urgency=medium
+
+  [ Helmut Grohne ]
+  * Avoid use of deprecated std::iterator (twice) (Closes: #1008036)
+
+  [ David Kalnischkies ]
+  * Document tagfile-keys.h as internal to apt
+  * Drop support for long obsoleted Suggests alias: Optional
+  * Do not order long obsoleted fields anymore
+  * Stop parsing undocumented unknown EDSP field APT-Hash
+  * Avoid .c_str() on strings feed into pkgTagSection::FindS
+  * Use pkgTagSection::Key in more places in src:apt
+  * Parse Checksum fields via pkgTagSection::Key, too
+  * Avoid building all docs in nodoc build profile
+  * Add pkg.apt.nodoxygen build profile
+  * Use build-dep & satisfy for our CI dependency resolution
+  * Mark pkg-config-test autopkgtest as superficial
+  * Avoid building inside the source dir in autopkgtest
+  * Link interactive helpers against system libapt for autopkgtest
+  * Remove unused public zlib include from libapt fileutl.h
+  * Run ./prepare-release post-build checks in Gitlab CI
+  * Do not build documentation twice in CI
+  * Ignore stty failures in testcases
+  * Include our config.h in all C++ files to avoid ODR violations
+  * Ship our README.md in apt package
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #1010029)
+  * Dutch manpages translation update (Closes: #1010030)
+
+  [ Troy Varney ]
+  * Fix mirror method dequeuing incorrect items
+
+  [ Julian Andres Klode ]
+  * Do not accept arguments for apt-cache dotty, xvcg.
+    These commands do not actually interpret the same
+    arguments as depends, or any own ones for that matter.
+  * tests: Add g++ dependency to pkg-config test
+
+  [ Vagrant Cascadian ]
+  * Pass -DCMAKE_BUILD_RPATH_USE_ORIGIN=ON via dh_auto_configure override
+    (Closes: #1009796)
+  * Add support for "nodoc" build profile (Closes: #1009797)
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 17 May 2022 18:50:45 +0200
+
 apt (2.4.5) unstable; urgency=medium
 
   * Only protect two kernels, not last installed one (LP: #1968154)
