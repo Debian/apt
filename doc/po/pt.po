@@ -2,13 +2,13 @@
 # Copyright (C) 2009 Free Software Foundation, Inc.
 # This file is distributed under the same license as the apt package.
 #
-# Américo Monteiro <a_monteiro@gmx.com>, 2014 to 2021.
+# Américo Monteiro <a_monteiro@gmx.com>, 2014 to 2022.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.3.12\n"
+"Project-Id-Version: apt 2.4.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2022-02-22 20:01+0100\n"
-"PO-Revision-Date: 2021-11-22 22:20+0000\n"
+"POT-Creation-Date: 2022-05-20 10:28+0200\n"
+"PO-Revision-Date: 2022-05-19 23:40+0100\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <>\n"
 "Language: pt\n"
@@ -414,14 +414,7 @@ msgstr ""
 
 #. type: Plain text
 #: apt.ent
-#, fuzzy, no-wrap
-#| msgid ""
-#| "     <varlistentry><term><filename>/etc/apt/trusted.gpg.d/</filename></term>\n"
-#| "     <listitem><para>File fragments for the trusted keys, additional keyrings can\n"
-#| "     be stored here (by other packages or the administrator).\n"
-#| "     Configuration Item <literal>Dir::Etc::TrustedParts</literal>.</para></listitem>\n"
-#| "     </varlistentry>\n"
-#| "\">\n"
+#, no-wrap
 msgid ""
 "     <varlistentry><term><filename>/etc/apt/trusted.gpg.d/</filename></term>\n"
 "     <listitem><para>File fragments for the trusted keys, additional keyrings can\n"
@@ -438,6 +431,10 @@ msgstr ""
 "     <listitem><para>Fragmentos de ficheiro para as chaves de confiança, chaveiros adicionais podem\n"
 "     ser armazenados aqui (por outros pacotes ou pelo administrador).\n"
 "     Item de Configuração <literal>Dir::Etc::TrustedParts</literal>.</para></listitem>\n"
+"     </varlistentry>\n"
+"     <varlistentry><term><filename>/etc/apt/keyrings/</filename></term>\n"
+"     <listitem><para>Local para armazenar chaveiros adicionais para serem usados com <literal>Signed-By</literal>.\n"
+"     </para></listitem>\n"
 "     </varlistentry>\n"
 "\">\n"
 
@@ -3119,10 +3116,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
-#, fuzzy
-#| msgid "Operation"
 msgid "Deprecation"
-msgstr "Operação"
+msgstr "Descontinuação"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -3131,11 +3126,15 @@ msgid ""
 "use of <command>apt-key</command> is deprecated. This section shows how to "
 "replace existing use of <command>apt-key</command>."
 msgstr ""
+"Excepto para usar <command>apt-key del</command> em scripts de maintainer, o "
+"uso de <command>apt-key</command> está descontinuado. Esta secção mostra "
+"como substituir o uso existente de <command>apt-key</command>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
 msgid "If your existing use of <command>apt-key add</command> looks like this:"
 msgstr ""
+"Se o seu uso existente de <command>apt-key add</command> se parecer com isto:"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -3143,6 +3142,8 @@ msgid ""
 "<literal>wget -qO- https://myrepo.example/myrepo.asc | sudo apt-key add -</"
 "literal>"
 msgstr ""
+"<literal>wget -qO- https://myrepo.example/myrepo.asc | sudo apt-key add -</"
+"literal>"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -3150,6 +3151,8 @@ msgid ""
 "Then you can directly replace this with (though note the recommendation "
 "below):"
 msgstr ""
+"Então você pode substituir directamente isto por (contudo note a "
+"recomendação em baixo):"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -3157,6 +3160,8 @@ msgid ""
 "<literal>wget -qO- https://myrepo.example/myrepo.asc | sudo tee /etc/apt/"
 "trusted.gpg.d/myrepo.asc</literal>"
 msgstr ""
+"<literal>wget -qO- https://myrepo.example/myrepo.asc | sudo tee /etc/apt/"
+"trusted.gpg.d/myrepo.asc</literal>"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -3167,6 +3172,11 @@ msgid ""
 "works for all apt versions, while the ASCII armored format works for apt "
 "version >= 1.4."
 msgstr ""
+"Certifique-se de usar a extensão \"<literal>asc</literal>\" para as chaves "
+"blindadas ASCII e a extensão \"<literal>gpg</literal>\" para o formato "
+"binário OpenPGP (também conhecido como \"GPG key public ring\"). O formato "
+"binário OpenPGP funciona para todas as versões do apt, enquanto o formato "
+"blindado ASCII funciona para apt versão >= 1.4."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -3182,6 +3192,16 @@ msgid ""
 "include the full ASCII armored keyring directly in the <literal>sources."
 "list</literal> without an additional file."
 msgstr ""
+"<emphasis>Recomendação:</emphasis> Em vez de colocar chaves no directório "
+"<filename>/etc/apt/trusted.gpg.d</filename>, você pode coloca-las em "
+"qualquer local no seu sistema de ficheiros ao usar a opção <literal>Signed-"
+"By</literal> no seu <literal>sources.list</literal> e apontando para o nome "
+"de ficheiro da chave. Veja &sources-list; para detalhes. Desde o APT 2.4, é "
+"fornecido <filename>/etc/apt/keyrings</filename> como a localização "
+"recomendada para chaves não geridas por pacotes. Quando se usa sources.list "
+"ao estilo deb822, e com a versão de apt >= 2.4, a opção <literal>Signed-By</"
+"literal> pode também ser usada para incluir a chave blindada ASCII completa "
+"directamente no <literal>sources.list</literal> sem um ficheiro adicional."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
@@ -5985,7 +6005,7 @@ msgid ""
 "Output information about the process of accessing collections of packages "
 "stored on CD-ROMs."
 msgstr ""
-"Escreve informação acerca do processo de aceder a colecções de pacotes "
+"Escreve informação acerca do processo de aceder a coleções de pacotes "
 "armazenados em CD-ROMs."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -6088,7 +6108,7 @@ msgstr ""
 "Gera mensagens de depuração descrevendo quais pacotes estão a ser instalados "
 "automaticamente para resolver dependências. Isto corresponde ao passo de "
 "instalação-automática inicial executado em, ex, <literal>apt-get install</"
-"literal>, e não ao resolvedor de dependências total do <literal>apt</"
+"literal>, e não ao solucionador de dependências total do <literal>apt</"
 "literal>; veja <literal>Debug::pkgProblemResolver</literal> para isso."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -6169,8 +6189,8 @@ msgid ""
 "Trace the execution of the dependency resolver (this applies only to what "
 "happens when a complex dependency problem is encountered)."
 msgstr ""
-"Rastreia a execução do resolvedor de dependências (isto só se aplica ao que "
-"acontece quando é encontrado um problema de dependências complexo)."
+"Rastreia a execução do solucionador de dependências (isto só se aplica ao "
+"que acontece quando é encontrado um problema de dependências complexo)."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -6828,7 +6848,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
 msgid "Matching packages in the Package field"
-msgstr ""
+msgstr "Corresponder pacotes no campo Package"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
@@ -6840,6 +6860,13 @@ msgid ""
 "expressions and regular expressions can be listed separated by whitespace in "
 "which case the record will match any of the matched packages."
 msgstr ""
+"O campo <literal>Package</literal> especifica o pacote ao qual uma "
+"prioridade de fixação é aplicada. O campo pode ou conter um nome de pacote "
+"binário, um nome de pacote fonte (prefixado com \"src:\"), uma expressão "
+"&glob; ou uma expressão regular (dentro de barras). Podem ser listados "
+"vários nomes de pacotes, expressões &glob; e expressões regulares separados "
+"por espaços o que neste caso o registo irá corresponder a qualquer um dos "
+"pacotes correspondentes."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
@@ -6850,27 +6877,24 @@ msgid ""
 "by appending the architecture name to the package name, separated by a colon "
 "character."
 msgstr ""
+"Por predefinição, apenas pacotes da arquitectura nativa são correspondidos. "
+"Para corresponder pacotes binários de qualquer arquitectura, adicione o "
+"sufixo <literal>:any</literal> ao nome do pacote. Você pode também limitar a "
+"correspondência a uma arquitectura específica ao acrescentar o nome da "
+"arquitectura ao nome do pacote, separado pelo caractere dos dois pontos."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
-#, fuzzy
-#| msgid ""
-#| "APT also supports pinning by &glob; expressions, and regular expressions "
-#| "surrounded by slashes. For example, the following example assigns the "
-#| "priority 500 to all packages from experimental where the name starts with "
-#| "gnome (as a &glob;-like expression) or contains the word kde (as a POSIX "
-#| "extended regular expression surrounded by slashes)."
 msgid ""
 "For example, the following example uses a glob expression and a regular "
 "expression to assign the priority 500 to all packages from experimental "
 "where the name starts with gnome (as a &glob;-like expression) or contains "
 "the word kde (as a POSIX extended regular expression surrounded by slashes)."
 msgstr ""
-"O APT também suporta \"pinning\" por expressões &glob;, e expressões "
-"regulares rodeadas por barras. Por exemplo, o seguinte designa a prioridade "
-"de 500 a todos os pacotes de experimental onde o nome começa com gnome (como "
-"uma expressão tipo &glob;) ou contém a palavra kde (como uma expressão "
-"regular extensa do POSIX rodeada de barras)."
+"Por exemplo, o seguinte exemplo usa uma expressão glob e uma expressão "
+"regular para designar a prioridade 500 a todos os pacotes de experimental "
+"onde o nome começa com gnome (como uma expressão tipo &glob;) ou contém a "
+"palavra kde (como uma expressão regular extensa do POSIX rodeada de barras)."
 
 #. type: Content of: <refentry><refsect1><refsect2><programlisting>
 #: apt_preferences.5.xml
@@ -6927,16 +6951,12 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml
-#, fuzzy
-#| msgid ""
-#| "For example, to pin all binaries produced by the apt source package of "
-#| "this APT's version to 990, you can do:"
 msgid ""
 "To pin all binaries produced by the apt source package of this APT's version "
 "to 990, you can do:"
 msgstr ""
-"Por exemplo, para fixar todos os binários produzidos pelo pacote fonte do "
-"apt desta versão do APT para 990, você pode fazer:"
+"Para fixar todos os binários produzidos pelo pacote fonte do apt desta "
+"versão do APT para 990, você pode fazer:"
 
 #. type: Content of: <refentry><refsect1><refsect2><programlisting>
 #: apt_preferences.5.xml
@@ -6988,6 +7008,10 @@ msgid ""
 "native</literal> suffix which would only select packages from the native "
 "architecture."
 msgstr ""
+"O sufixo <literal>:any</literal> certifica a selecção de pacotes binários de "
+"qualquer arquitectura. Sem este sufixo, o apt assume implicitamente o sufixo "
+"<literal>:native</literal> o qual irá apenas selecionar pacotes da "
+"arquitectura nativa."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
@@ -7911,7 +7935,7 @@ msgstr ""
 "entrada pode assim ser desactivada ao comentar cada linha que pertence à "
 "estrofe, mas é geralmente mais fácil adicionar o campo \"Enabled: no\" à "
 "estrofe para desactivar a entrada. Removendo o campo ou defini-lo para "
-"\"yes\" volta a activá-la. As opções têm a mesma sintaxe que todos os outros "
+"\"yes\" volta a activa-la. As opções têm a mesma sintaxe que todos os outros "
 "campos. Um nome de campo é separado por dois pontos (<literal>:</literal>) e "
 "opcionalmente por espaços dos seus valor(es).  Note especialmente que "
 "múltiplos valores são separados por espaços em branco (como espaços, tabs e "
@@ -8349,29 +8373,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "<option>Signed-By</option> (<option>signed-by</option>)  is an option to "
-#| "require a repository to pass &apt-secure; verification with a certain set "
-#| "of keys rather than all trusted keys apt has configured.  It is specified "
-#| "as a list of absolute paths to keyring files (have to be accessible and "
-#| "readable for the <literal>_apt</literal> system user, so ensure everyone "
-#| "has read-permissions on the file) and fingerprints of keys to select from "
-#| "these keyrings. If no keyring files are specified the default is the "
-#| "<filename>trusted.gpg</filename> keyring and all keyrings in the "
-#| "<filename>trusted.gpg.d/</filename> directory (see <command>apt-key "
-#| "fingerprint</command>). If no fingerprint is specified all keys in the "
-#| "keyrings are selected. A fingerprint will accept also all signatures by a "
-#| "subkey of this key, if this isn't desired an exclamation mark (<literal>!"
-#| "</literal>) can be appended to the fingerprint to disable this "
-#| "behaviour.  The option defaults to the value of the option with the same "
-#| "name if set in the previously acquired <filename>Release</filename> file "
-#| "of this repository (only fingerprints can be specified there through).  "
-#| "Otherwise all keys in the trusted keyrings are considered valid signers "
-#| "for this repository.  The option may also be set directly to an embedded "
-#| "GPG public key block. Special care is needed to encode the empty line "
-#| "with leading spaces and \".\": <placeholder type=\"literallayout\" "
-#| "id=\"0\"/>"
 msgid ""
 "<option>Signed-By</option> (<option>signed-by</option>)  is an option to "
 "require a repository to pass &apt-secure; verification with a certain set of "
@@ -8404,7 +8405,10 @@ msgstr ""
 "ficheiros de chaveiro (têm de estar acessíveis e legíveis para o utilizador "
 "do sistema <literal>_apt</literal>, portanto assegure que todos têm "
 "permissões de leitura ao ficheiro) e impressões digitais de chaves para "
-"selecionar a partir destes chaveiros. Se não forem especificados nenhuns "
+"selecionar a partir destes chaveiros. As localizações recomendadas para "
+"chaveiros são <filename>/usr/share/keyrings</filename> para chaveiros "
+"geridos por pacotes, e <filename>/etc/apt/keyrings</filename> para chaveiros "
+"geridos pelo operador do sistema. Se não forem especificados nenhuns "
 "ficheiros chaveiro, o predefinido é o chaveiro <filename>trusted.gpg</"
 "filename> e todos os chaveiros no directório <filename>trusted.gpg.d/</"
 "filename> (veja <command>apt-key fingerprint</command>). Se não for "
@@ -11724,26 +11728,19 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?name(REGEX)</code>"
 msgid "<code>?codename(REGEX)</code>"
-msgstr "<code>?name(REGEX)</code>"
+msgstr "<code>?codename(REGEX)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid ""
-#| "Selects versions that come from the origin that matches the specified "
-#| "regular expression. Origin, here, means the values after <code>o=</code> "
-#| "in <command>apt-cache policy</command>."
 msgid ""
 "Selects versions that come from the codename that matches the specified "
 "regular expression. Codename, here, means the values after <code>n=</code> "
 "in <command>apt-cache policy</command>."
 msgstr ""
-"Seleciona versões que vêm do arquivo que correspondem à expressão regular "
-"fornecida. Origin, aqui, significa os valores após <code>a=</code> em  "
-"<command>apt-cache policy</command>."
+"Seleciona versões que vêm do nome-de-código que correspondem à expressão "
+"regular fornecida. O nome-de-código aqui, significa os valores após "
+"<code>n=</code> em  <command>apt-cache policy</command>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
