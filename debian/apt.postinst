@@ -59,11 +59,6 @@ case "$1" in
             # ensure permissions are right
             chmod -f 0640 /var/log/apt/term.log* || true
         fi
-
-        # create kernel autoremoval blacklist on update
-        if dpkg --compare-versions "$2" lt 0.9.9.3; then
-            /etc/kernel/postinst.d/apt-auto-removal
-        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
