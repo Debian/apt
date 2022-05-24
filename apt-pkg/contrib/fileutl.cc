@@ -691,7 +691,7 @@ string flExtension(string File)
    if (Res == string::npos)
       return File;
    Res++;
-   return string(File,Res,Res - File.length());
+   return string(File,Res);
 }
 									/*}}}*/
 // flNoLink - If file is a symlink then deref it			/*{{{*/
