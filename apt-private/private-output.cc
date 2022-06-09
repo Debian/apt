@@ -86,9 +86,9 @@ bool InitOutput(std::basic_streambuf<char> * const out)			/*{{{*/
       SigWinch(0);
    }
 
-   if(!isatty(1) || getenv("NO_COLOR") != nullptr)
+   if (isatty(STDOUT_FILENO) == 0 || not _config->FindB("APT::Color", true) || getenv("NO_COLOR") != nullptr)
    {
-      _config->Set("APT::Color", "false");
+      _config->Set("APT::Color", false);
       _config->Set("APT::Color::Highlight", "");
       _config->Set("APT::Color::Neutral", "");
    } else {
