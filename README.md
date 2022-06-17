@@ -68,7 +68,7 @@ Adhering to it avoids unnecessary code-churn destroying history (aka: `git blame
 and you are therefore encouraged to write patches in this style.
 Your editor can surely help you with this, for vim the settings would be
 `setlocal shiftwidth=3 noexpandtab tabstop=8`
-(the later two are the default configuration and could therefore be omitted).
+(the latter two are the default configuration and could therefore be omitted).
 
 ### Translations
 
@@ -86,7 +86,7 @@ as well as the manual pages and other documentation shipped with APT.
 Software tools like APT, which are used by thousands of users every
 day, have a steady flow of incoming bug reports. Not all of them are really
 bugs in APT: It can be packaging bugs, like failing maintainer scripts, that a
-user reports against apt, because apt was the command they executed that lead
+user reports against apt, because apt was the command they executed that led
 to this failure; or various wishlist items for new features. Given enough time
 the occasional duplicate enters the system as well.
 Our bug tracker is therefore full with open bug reports which are waiting for you! ;)
@@ -110,9 +110,9 @@ There is an extensive integration test suite available which can be run via:
 
 	$ ./test/integration/run-tests
 
-Each test can also be run individually as well. The tests are very noisy by
+Each test can be run individually as well. The tests are very noisy by
 default, especially so while running all of them; it might be beneficial to
-enabling quiet (`-q`) or very quiet (`-qq`) mode. The tests can also be run in
+enable quiet (`-q`) or very quiet (`-qq`) mode. The tests can also be run in
 parallel via `-j X` where `X` is the number of jobs to run.
 
 While these tests are not executed at package build-time as they require
@@ -161,7 +161,7 @@ with a configuration file like:
 	APT:: Architectures { "arch1"; "arch2"; }
 
 If a certain mirror state is needed, see if you can reproduce it with [snapshot.debian.org](http://snapshot.debian.org/).
-Your sources.list file (`dir::etc::sourcelist`) has to be correctly mention the repository,
+Your sources.list file (`dir::etc::sourcelist`) has to correctly mention the repository,
 but if it does, you can use different downloaded archive state files via `dir::state::lists`.
 
 In case manually vs. automatically installed matters, you can ask the reporter for
@@ -185,7 +185,7 @@ talks to them via simple text protocol. Depending on which side you want to see,
 `Debug::pkgAcquire::Worker` or `Debug::Acquire::http` (or similar) will show the messages.
 
 The integration tests use a simple self-built web server (`webserver`) which also logs. If you find that
-the http(s) methods do not behave like they should be try to implement this behavior in
+the http(s) methods do not behave like they should then try to implement this behavior in
 webserver for simpler and more controlled testing.
 
 ### Installation order
