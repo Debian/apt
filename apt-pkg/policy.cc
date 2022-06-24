@@ -288,6 +288,10 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 // Returns true if this update is excluded by phasing.
 static inline bool ExcludePhased(std::string machineID, pkgCache::VerIterator const &Ver)
 {
+   // FIXME: We have migrated to a legacy implementation until LP: #1929082 is fixed
+   if (not _config->FindB("APT::Get::Phase-Policy", false))
+      return false;
+
    // The order and fallbacks for the always/never checks come from update-manager and exist
    // to preserve compatibility.
    if (_config->FindB("APT::Get::Always-Include-Phased-Updates",

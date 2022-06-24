@@ -6,6 +6,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 
 setupenvironment
 echo 'Debug::Phasing "1";' > rootdir/etc/apt/apt.conf.d/debug-phasing
+echo 'APT::Get::Phase-Policy "1";' > rootdir/etc/apt/apt.conf.d/debug-phasing
 configarchitecture 'i386' 'armel'
 
 
