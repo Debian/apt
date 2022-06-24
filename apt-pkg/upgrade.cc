@@ -2,18 +2,116 @@
 #include <config.h>
 
 #include <apt-pkg/algorithms.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/edsp.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/upgrade.h>
 
+#include <random>
 #include <string>
 
 #include <apti18n.h>
 									/*}}}*/
+
+struct PhasedUpgrader
+{
+   std::string machineID;
+   bool isChroot;
+
+   PhasedUpgrader()
+   {
+      machineID = APT::Configuration::getMachineID();
+   }
+
+   // See if this version is a security update. This also checks, for installed packages,
+   // if any of the previous versions is a security update
+   bool IsSecurityUpdate(pkgCache::VerIterator const &Ver)
+   {
+      auto Pkg = Ver.ParentPkg();
+      auto Installed = Pkg.CurrentVer();
+
+      auto OtherVer = Pkg.VersionList();
+
+      // Advance to first version < our version
+      while (OtherVer->ID != Ver->ID)
+	 ++OtherVer;
+      ++OtherVer;
+
+      // Iterate over all versions < our version
+      for (; !OtherVer.end() && (Installed.end() || OtherVer->ID != Installed->ID); OtherVer++)
+      {
+	 for (auto PF = OtherVer.FileList(); !PF.end(); PF++)
+	    if (PF.File() && PF.File().Archive() != nullptr && APT::String::Endswith(PF.File().Archive(), "-security"))
+	       return true;
+      }
+      return false;
+   }
+
+   // Check if this version is a phased update that should be ignored
+   bool IsIgnoredPhasedUpdate(pkgCache::VerIterator const &Ver)
+   {
+      if (_config->FindB("APT::Get::Phase-Policy", false))
+	 return false;
+
+      // The order and fallbacks for the always/never checks come from update-manager and exist
+      // to preserve compatibility.
+      if (_config->FindB("APT::Get::Always-Include-Phased-Updates",
+			 _config->FindB("Update-Manager::Always-Include-Phased-Updates", false)))
+	 return false;
+
+      if (_config->FindB("APT::Get::Never-Include-Phased-Updates",
+			 _config->FindB("Update-Manager::Never-Include-Phased-Updates", false)))
+	 return true;
+
+      if (machineID.empty()			    // no machine-id
+	  || getenv("SOURCE_DATE_EPOCH") != nullptr // reproducible build - always include
+	  || APT::Configuration::isChroot())
+	 return false;
+
+      std::string seedStr = std::string(Ver.SourcePkgName()) + "-" + Ver.SourceVerStr() + "-" + machineID;
+      std::seed_seq seed(seedStr.begin(), seedStr.end());
+      std::minstd_rand rand(seed);
+      std::uniform_int_distribution<unsigned int> dist(0, 100);
+
+      return dist(rand) > Ver.PhasedUpdatePercentage();
+   }
+
+   bool ShouldKeep(pkgDepCache &Cache, pkgCache::PkgIterator Pkg)
+   {
+      if (Pkg->CurrentVer == 0)
+	 return false;
+      if (Cache[Pkg].InstallVer == 0)
+	 return false;
+      if (Cache[Pkg].InstVerIter(Cache).PhasedUpdatePercentage() == 100)
+	 return false;
+      if (IsSecurityUpdate(Cache[Pkg].InstVerIter(Cache)))
+	 return false;
+      if (!IsIgnoredPhasedUpdate(Cache[Pkg].InstVerIter(Cache)))
+	 return false;
+
+      return true;
+   }
+
+   // Hold back upgrades to phased versions of already installed packages, unless
+   // they are security updates
+   void HoldBackIgnoredPhasedUpdates(pkgDepCache &Cache, pkgProblemResolver *Fix)
+   {
+      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+      {
+	 if (not ShouldKeep(Cache, I))
+	    continue;
+
+	 Cache.MarkKeep(I, false, false);
+	 if (Fix != nullptr)
+	    Fix->Protect(I);
+      }
+   }
+};
 
 // DistUpgrade - Distribution upgrade					/*{{{*/
 // ---------------------------------------------------------------------
@@ -115,6 +213,8 @@ static bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
       }
    }
 
+   PhasedUpgrader().HoldBackIgnoredPhasedUpdates(Cache, &Fix);
+
    bool const success = Fix.ResolveInternal(false);
    if (Progress != NULL)
       Progress->Done();
@@ -134,7 +234,7 @@ static bool pkgAllUpgradeNoNewPackages(pkgDepCache &Cache, OpProgress * const Pr
 
    pkgDepCache::ActionGroup group(Cache);
    pkgProblemResolver Fix(&Cache);
-
+   PhasedUpgrader phasedUpgrader;
    // Upgrade all installed packages
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
    {
@@ -144,13 +244,18 @@ static bool pkgAllUpgradeNoNewPackages(pkgDepCache &Cache, OpProgress * const Pr
       if (_config->FindB("APT::Ignore-Hold",false) == false)
 	 if (I->SelectedState == pkgCache::State::Hold)
 	    continue;
-      
+
+      if (phasedUpgrader.ShouldKeep(Cache, I))
+	 continue;
+
       if (I->CurrentVer != 0 && Cache[I].InstallVer != 0)
 	 Cache.MarkInstall(I, false, 0, false);
    }
 
    if (Progress != NULL)
       Progress->Progress(50);
+
+   phasedUpgrader.HoldBackIgnoredPhasedUpdates(Cache, &Fix);
 
    // resolve remaining issues via keep
    bool const success = Fix.ResolveByKeepInternal();
@@ -178,6 +283,7 @@ static bool pkgAllUpgradeWithNewPackages(pkgDepCache &Cache, OpProgress * const 
 
    pkgDepCache::ActionGroup group(Cache);
    pkgProblemResolver Fix(&Cache);
+   PhasedUpgrader phasedUpgrader;
 
    // provide the initial set of stuff we want to upgrade by marking
    // all upgradable packages for upgrade
@@ -188,6 +294,8 @@ static bool pkgAllUpgradeWithNewPackages(pkgDepCache &Cache, OpProgress * const 
          if (_config->FindB("APT::Ignore-Hold",false) == false)
             if (I->SelectedState == pkgCache::State::Hold)
                continue;
+	 if (phasedUpgrader.ShouldKeep(Cache, I))
+	    continue;
 
 	 Cache.MarkInstall(I, false, 0, false);
       }
@@ -211,6 +319,8 @@ static bool pkgAllUpgradeWithNewPackages(pkgDepCache &Cache, OpProgress * const 
 
    if (Progress != NULL)
       Progress->Progress(60);
+
+   phasedUpgrader.HoldBackIgnoredPhasedUpdates(Cache, &Fix);
 
    // resolve remaining issues via keep
    bool const success = Fix.ResolveByKeepInternal();
