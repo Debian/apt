@@ -6,6 +6,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 
 setupenvironment
 echo 'Debug::Phasing "1";' > rootdir/etc/apt/apt.conf.d/debug-phasing
+echo 'APT::Get::Phase-Policy "1";' > rootdir/etc/apt/apt.conf.d/debug-phasing
 configarchitecture 'i386' 'armel'
 
 
@@ -23,6 +24,16 @@ insertpackage 'unstable' 'phased3' 'all' '100' 'Phased-Update-Percentage: 100'
 insertpackage 'unstable' 'phased1' 'all' '50' 'Phased-Update-Percentage: 50'
 insertpackage 'unstable' 'phased2' 'all' '50' 'Phased-Update-Percentage: 50'
 insertpackage 'unstable' 'phased3' 'all' '50' 'Phased-Update-Percentage: 50'
+
+insertinstalledpackage 'phased-and-pinned' 'all' '1'
+insertpackage 'unstable' 'phased-and-pinned' 'all' '10' 'Phased-Update-Percentage: 0'
+insertpackage 'unstable' 'phased-and-pinned-new' 'all' '10' 'Phased-Update-Percentage: 0'
+
+cat > rootdir/etc/apt/preferences.d/phased-and-pinned << EOF
+Package: phased-and-pinned phased-and-pinned-new
+Pin: release *
+Pin-Priority: -12
+EOF
 
 setupaptarchive
 
@@ -61,6 +72,23 @@ phased3:
         500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
      10 1 (phased 10%)
         500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages" aptcache policy phased1 phased2 phased3
+
+testsuccessequal "phased-and-pinned:
+  Installed: 1
+  Candidate: (none)
+  Version table:
+     10 -12 (phased 0%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages
+ *** 1 -12
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy phased-and-pinned
+
+testsuccessequal "phased-and-pinned-new:
+  Installed: (none)
+  Candidate: (none)
+  Version table:
+     10 -12 (phased 0%)
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages" aptcache policy phased-and-pinned-new
+
 
 msgmsg "Test for always-include-phased-updates"
 for always in Update-Manager::Always-Include-Phased-Updates APT::Get::Always-Include-Phased-Updates; do

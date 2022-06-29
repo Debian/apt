@@ -1,0 +1,256 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+echo 'Debug::Phasing "1";' > rootdir/etc/apt/apt.conf.d/debug-phasing
+configarchitecture 'i386' 'armel'
+
+
+
+# Test case phased: The package is installed and has a phased update available
+insertinstalledpackage 'phased' 'all' '1'
+insertpackage 'unstable-updates' 'phased' 'all' '3' 'Phased-Update-Percentage: 0'
+
+# Test case phased-security: A phased package is in security and will be installed
+insertinstalledpackage 'phased-security' 'all' '1'
+insertpackage 'unstable-security' 'phased-security' 'all' '2'
+insertpackage 'unstable-updates' 'phased-security' 'all' '3' 'Phased-Update-Percentage: 0'
+
+# Test case phased-dep: A released update depends on the phased dependency phased-dep
+insertinstalledpackage 'phased-dep' 'all' '1'
+insertinstalledpackage 'depends-phased-dep' 'all' '1'
+insertpackage 'unstable-updates' 'phased-dep' 'all' '3' 'Phased-Update-Percentage: 0'
+insertpackage 'unstable-updates' 'depends-phased-dep' 'all' '3' 'Depends: phased-dep (= 3)'
+
+# Test case phased-new: A release update depends on a new package that's phasing
+insertinstalledpackage 'depends-phased-new' 'all' '1'
+insertpackage 'unstable-updates' 'phased-new' 'all' '3' 'Phased-Update-Percentage: 0'
+insertpackage 'unstable-updates' 'depends-phased-new' 'all' '3' 'Depends: phased-new (= 3)'
+
+setupaptarchive
+
+msgmsg "Testing with default (upgrade-based) implementation"
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  phased-new
+The following packages have been kept back:
+  depends-phased-dep phased phased-dep
+The following packages will be upgraded:
+  depends-phased-new phased-security
+2 upgraded, 1 newly installed, 0 to remove and 3 not upgraded.
+Inst phased-new (3 unstable-updates [all])
+Inst depends-phased-new [1] (3 unstable-updates [all])
+Inst phased-security [1] (3 unstable-updates [all])
+Conf phased-new (3 unstable-updates [all])
+Conf depends-phased-new (3 unstable-updates [all])
+Conf phased-security (3 unstable-updates [all])" aptget dist-upgrade -s -q
+
+for always in APT::Get::Always-Include-Phased-Updates Update-Manager::Always-Include-Phased-Updates; do
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  phased-new
+The following packages will be upgraded:
+  depends-phased-dep depends-phased-new phased phased-dep phased-security
+5 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst phased-dep [1] (3 unstable-updates [all])
+Inst depends-phased-dep [1] (3 unstable-updates [all])
+Inst phased-new (3 unstable-updates [all])
+Inst depends-phased-new [1] (3 unstable-updates [all])
+Inst phased [1] (3 unstable-updates [all])
+Inst phased-security [1] (3 unstable-updates [all])
+Conf phased-dep (3 unstable-updates [all])
+Conf depends-phased-dep (3 unstable-updates [all])
+Conf phased-new (3 unstable-updates [all])
+Conf depends-phased-new (3 unstable-updates [all])
+Conf phased (3 unstable-updates [all])
+Conf phased-security (3 unstable-updates [all])" aptget dist-upgrade -s -q -o $always=1
+done
+
+SOURCE_DATE_EPOCH=1 testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  phased-new
+The following packages will be upgraded:
+  depends-phased-dep depends-phased-new phased phased-dep phased-security
+5 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst phased-dep [1] (3 unstable-updates [all])
+Inst depends-phased-dep [1] (3 unstable-updates [all])
+Inst phased-new (3 unstable-updates [all])
+Inst depends-phased-new [1] (3 unstable-updates [all])
+Inst phased [1] (3 unstable-updates [all])
+Inst phased-security [1] (3 unstable-updates [all])
+Conf phased-dep (3 unstable-updates [all])
+Conf depends-phased-dep (3 unstable-updates [all])
+Conf phased-new (3 unstable-updates [all])
+Conf depends-phased-new (3 unstable-updates [all])
+Conf phased (3 unstable-updates [all])
+Conf phased-security (3 unstable-updates [all])" aptget dist-upgrade -s -q -o with-source-date-epoch=1
+
+for never in APT::Get::Never-Include-Phased-Updates Update-Manager::Never-Include-Phased-Updates; do
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  phased-new
+The following packages have been kept back:
+  depends-phased-dep phased phased-dep
+The following packages will be upgraded:
+  depends-phased-new phased-security
+2 upgraded, 1 newly installed, 0 to remove and 3 not upgraded.
+Inst phased-new (3 unstable-updates [all])
+Inst depends-phased-new [1] (3 unstable-updates [all])
+Inst phased-security [1] (3 unstable-updates [all])
+Conf phased-new (3 unstable-updates [all])
+Conf depends-phased-new (3 unstable-updates [all])
+Conf phased-security (3 unstable-updates [all])" aptget dist-upgrade -s -q -o $never=1
+done
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  phased-new
+The following packages have been kept back:
+  depends-phased-dep phased phased-dep
+The following packages will be upgraded:
+  depends-phased-new phased-security
+2 upgraded, 1 newly installed, 0 to remove and 3 not upgraded.
+Inst phased-new (3 unstable-updates [all])
+Inst depends-phased-new [1] (3 unstable-updates [all])
+Inst phased-security [1] (3 unstable-updates [all])
+Conf phased-new (3 unstable-updates [all])
+Conf depends-phased-new (3 unstable-updates [all])
+Conf phased-security (3 unstable-updates [all])" aptget upgrade -s -q --with-new-pkgs
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages have been kept back:
+  depends-phased-dep depends-phased-new phased phased-dep
+The following packages will be upgraded:
+  phased-security
+1 upgraded, 0 newly installed, 0 to remove and 4 not upgraded.
+Inst phased-security [1] (3 unstable-updates [all])
+Conf phased-security (3 unstable-updates [all])" aptget upgrade -s -q
+
+
+msgmsg "Testing with policy based implementation"
+echo 'APT::Get::Phase-Policy "1";' > rootdir/etc/apt/apt.conf.d/phase-by-policy
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  phased-new
+The following packages have been kept back:
+  depends-phased-dep
+The following packages will be upgraded:
+  depends-phased-new phased-security
+2 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst phased-new (3 unstable-updates [all])
+Inst depends-phased-new [1] (3 unstable-updates [all])
+Inst phased-security [1] (2 unstable-security [all])
+Conf phased-new (3 unstable-updates [all])
+Conf depends-phased-new (3 unstable-updates [all])
+Conf phased-security (2 unstable-security [all])" aptget dist-upgrade -s -q
+
+for always in APT::Get::Always-Include-Phased-Updates Update-Manager::Always-Include-Phased-Updates; do
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  phased-new
+The following packages will be upgraded:
+  depends-phased-dep depends-phased-new phased phased-dep phased-security
+5 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst phased-dep [1] (3 unstable-updates [all])
+Inst depends-phased-dep [1] (3 unstable-updates [all])
+Inst phased-new (3 unstable-updates [all])
+Inst depends-phased-new [1] (3 unstable-updates [all])
+Inst phased [1] (3 unstable-updates [all])
+Inst phased-security [1] (3 unstable-updates [all])
+Conf phased-dep (3 unstable-updates [all])
+Conf depends-phased-dep (3 unstable-updates [all])
+Conf phased-new (3 unstable-updates [all])
+Conf depends-phased-new (3 unstable-updates [all])
+Conf phased (3 unstable-updates [all])
+Conf phased-security (3 unstable-updates [all])" aptget dist-upgrade -s -q -o $always=1
+done
+
+# In the policy implementation, we can update security
+for never in APT::Get::Never-Include-Phased-Updates Update-Manager::Never-Include-Phased-Updates; do
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  phased-new
+The following packages have been kept back:
+  depends-phased-dep
+The following packages will be upgraded:
+  depends-phased-new phased-security
+2 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst phased-new (3 unstable-updates [all])
+Inst depends-phased-new [1] (3 unstable-updates [all])
+Inst phased-security [1] (2 unstable-security [all])
+Conf phased-new (3 unstable-updates [all])
+Conf depends-phased-new (3 unstable-updates [all])
+Conf phased-security (2 unstable-security [all])" aptget dist-upgrade -s -q -o $never=1
+done
+
+SOURCE_DATE_EPOCH=1 testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  phased-new
+The following packages will be upgraded:
+  depends-phased-dep depends-phased-new phased phased-dep phased-security
+5 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst phased-dep [1] (3 unstable-updates [all])
+Inst depends-phased-dep [1] (3 unstable-updates [all])
+Inst phased-new (3 unstable-updates [all])
+Inst depends-phased-new [1] (3 unstable-updates [all])
+Inst phased [1] (3 unstable-updates [all])
+Inst phased-security [1] (3 unstable-updates [all])
+Conf phased-dep (3 unstable-updates [all])
+Conf depends-phased-dep (3 unstable-updates [all])
+Conf phased-new (3 unstable-updates [all])
+Conf depends-phased-new (3 unstable-updates [all])
+Conf phased (3 unstable-updates [all])
+Conf phased-security (3 unstable-updates [all])" aptget dist-upgrade -s -q -o with-source-date-epoch=1
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  phased-new
+The following packages have been kept back:
+  depends-phased-dep
+The following packages will be upgraded:
+  depends-phased-new phased-security
+2 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst phased-new (3 unstable-updates [all])
+Inst depends-phased-new [1] (3 unstable-updates [all])
+Inst phased-security [1] (2 unstable-security [all])
+Conf phased-new (3 unstable-updates [all])
+Conf depends-phased-new (3 unstable-updates [all])
+Conf phased-security (2 unstable-security [all])" aptget upgrade -s -q --with-new-pkgs
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages have been kept back:
+  depends-phased-dep depends-phased-new
+The following packages will be upgraded:
+  phased-security
+1 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+Inst phased-security [1] (2 unstable-security [all])
+Conf phased-security (2 unstable-security [all])" aptget upgrade -s -q
