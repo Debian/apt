@@ -1496,6 +1496,7 @@ static bool MarkInstall_UpgradeOrRemoveConflicts(pkgDepCache &Cache, bool const 
 									/*}}}*/
 static bool MarkInstall_UpgradeOtherBinaries(pkgDepCache &Cache, bool const DebugAutoInstall, unsigned long Depth, bool const ForceImportantDeps, pkgCache::PkgIterator Pkg, pkgCache::VerIterator Ver) /*{{{*/
 {
+   APT::PackageSet toUpgrade;
    auto SrcGrp = Cache.FindGrp(Ver.SourcePkgName());
    for (auto OtherBinary = SrcGrp.VersionsInSource(); not OtherBinary.end(); OtherBinary = OtherBinary.NextInSource())
    {
@@ -1514,8 +1515,13 @@ static bool MarkInstall_UpgradeOtherBinaries(pkgDepCache &Cache, bool const Debu
 	 continue;
       if (DebugAutoInstall)
 	 std::clog << OutputInDepth(Depth) << "Upgrading " << APT::PrettyPkg(&Cache, OtherPkg) << " due to " << Pkg.FullName() << '\n';
-      Cache.MarkInstall(OtherPkg, true, Depth + 1, false, ForceImportantDeps);
+
+      toUpgrade.insert(OtherPkg);
    }
+   for (auto &OtherPkg : toUpgrade)
+      Cache.MarkInstall(OtherPkg, false, Depth + 1, false, ForceImportantDeps);
+   for (auto &OtherPkg : toUpgrade)
+      Cache.MarkInstall(OtherPkg, true, Depth + 1, false, ForceImportantDeps);
    return true;
 }
 									/*}}}*/
