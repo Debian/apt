@@ -1444,6 +1444,34 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
    return not failedToRemoveSomething;
 }
 									/*}}}*/
+static bool MarkInstall_CollectReverseDepends(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long Depth, APT::PackageVector &toUpgrade) /*{{{*/
+{
+   auto CurrentVer = PV.ParentPkg().CurrentVer();
+   if (CurrentVer.end())
+      return true;
+   for (pkgCache::DepIterator D = PV.ParentPkg().RevDependsList(); D.end() == false; ++D)
+   {
+      auto ParentPkg = D.ParentPkg();
+      // Skip non-installed versions and packages already marked for upgrade
+      if (ParentPkg.CurrentVer() != D.ParentVer() || Cache[ParentPkg].Install())
+	 continue;
+      // We only handle important positive dependencies, RemoveConflictsIfNotUpgradeable handles negative
+      if (not Cache.IsImportantDep(D) || D.IsNegative())
+	 continue;
+      // The dependency was previously not satisfied (e.g. part of an or group) or will be satisfied, so it's OK
+      if (not D.IsSatisfied(CurrentVer) || D.IsSatisfied(PV))
+	 continue;
+      if (std::find(toUpgrade.begin(), toUpgrade.end(), ParentPkg) != toUpgrade.end())
+	 continue;
+
+      if (DebugAutoInstall)
+	 std::clog << OutputInDepth(Depth) << " Upgrading: " << APT::PrettyPkg(&Cache, ParentPkg) << " due to " << APT::PrettyDep(&Cache, D) << "\n";
+
+      toUpgrade.push_back(ParentPkg);
+   }
+   return true;
+}
+									/*}}}*/
 static bool MarkInstall_UpgradeOrRemoveConflicts(pkgDepCache &Cache, bool const DebugAutoInstall, unsigned long Depth, bool const ForceImportantDeps, APT::PackageVector &toUpgrade, bool const propagateProtected, bool const FromUser) /*{{{*/
 {
    bool failedToRemoveSomething = false;
@@ -1635,6 +1663,12 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
 	 return false;
 
       if (not MarkInstall_RemoveConflictsIfNotUpgradeable(*this, DebugAutoInstall, PV, Depth, toRemove, toUpgrade, delayedRemove, P.Protect(), FromUser))
+      {
+	 if (failEarly)
+	    return false;
+	 hasFailed = true;
+      }
+      if (not MarkInstall_CollectReverseDepends(*this, DebugAutoInstall, PV, Depth, toUpgrade))
       {
 	 if (failEarly)
 	    return false;
