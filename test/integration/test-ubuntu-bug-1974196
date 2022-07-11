@@ -1,0 +1,101 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+
+insertinstalledpackage 'pkg0' 'all' '1'
+insertinstalledpackage 'pkg1' 'all' '1'
+insertinstalledpackage 'depends' 'all' '1' 'Depends: pkg0 (= 1), pkg1 (= 1)'
+insertpackage 'unstable' 'pkg0' 'all' '2'
+insertpackage 'unstable' 'pkg1' 'all' '2'
+insertpackage 'unstable' 'depends' 'all' '2' 'Depends: pkg0 (= 2), pkg1 (= 2)'
+
+configarchitecture 'arm64'
+setupaptarchive
+
+noprogress() {
+    "$@" | sed /^Progress/d
+}
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+   Upgrading: depends:arm64 < 1 | 2 @ii uH Ib > due to depends:arm64 Depends on pkg0:arm64 < 1 -> 2 @ii puU > (= 1)
+  MarkInstall pkg0:arm64 < 1 -> 2 @ii puU > FU=1
+    MarkInstall depends:arm64 < 1 -> 2 @ii uU Ib > FU=0
+    Installing pkg1:arm64 as Depends of depends:arm64
+      MarkInstall pkg1:arm64 < 1 -> 2 @ii uU > FU=0
+Starting pkgProblemResolver with broken count: 0
+Starting 2 pkgProblemResolver with broken count: 0
+Done
+The following additional packages will be installed:
+  depends pkg1
+The following packages will be upgraded:
+  depends pkg0 pkg1
+3 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst depends [1] (2 unstable [all]) []
+Inst pkg0 [1] (2 unstable [all]) []
+Inst pkg1 [1] (2 unstable [all])
+Conf depends (2 unstable [all])
+Conf pkg0 (2 unstable [all])
+Conf pkg1 (2 unstable [all])" aptget install pkg0 -o debug::pkgdepcache::marker=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::AutoInstall=1 -s
+
+testsuccessequal "Percentage: 0
+Message: Start up solver…
+
+Percentage: 1
+Message: Read request…
+
+Percentage: 5
+Message: Read scenario…
+
+Percentage: 50
+Message: Apply request on scenario…
+
+Percentage: 60
+Message: Call problemresolver on current scenario…
+
+Percentage: 95
+Message: Write solution…
+
+Install: 66284
+Package: udev:arm64
+Version: 249.11-0ubuntu3.4
+
+Install: 66185
+Package: systemd-timesyncd:arm64
+Version: 249.11-0ubuntu3.4
+
+Install: 65031
+Package: libpam-systemd:arm64
+Version: 249.11-0ubuntu3.4
+
+Install: 65263
+Package: libsystemd0:arm64
+Version: 249.11-0ubuntu3.4
+
+Install: 65023
+Package: libnss-systemd:arm64
+Version: 249.11-0ubuntu3.4
+
+Install: 65264
+Package: libudev-dev:arm64
+Version: 249.11-0ubuntu3.4
+
+Install: 66181
+Package: systemd:arm64
+Version: 249.11-0ubuntu3.4
+
+Install: 65265
+Package: libudev1:arm64
+Version: 249.11-0ubuntu3.4
+
+Install: 66184
+Package: systemd-sysv:arm64
+Version: 249.11-0ubuntu3.4
+
+Percentage: 100
+Message: Done
+" noprogress runapt "${APTHELPERBINDIR}/solvers/apt" < $TESTDIR/edsp-ubuntu-bug-1974196
