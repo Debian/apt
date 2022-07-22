@@ -70,9 +70,9 @@ class APT_PUBLIC pkgTagSection
    std::string FindS(APT::StringView sv) const { return Find(sv).to_string(); }
    std::string FindRawS(APT::StringView sv) const { return FindRaw(sv).to_string(); };
 
-#ifdef APT_COMPILING_APT
    // Functions for lookup with a perfect hash function
    enum class Key;
+#ifdef APT_COMPILING_APT
    bool Find(Key key,const char *&Start, const char *&End) const;
    bool Find(Key key,unsigned int &Pos) const;
    signed int FindI(Key key,signed long Default = 0) const;
