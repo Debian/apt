@@ -1494,6 +1494,41 @@ static bool MarkInstall_UpgradeOrRemoveConflicts(pkgDepCache &Cache, bool const 
    return not failedToRemoveSomething;
 }
 									/*}}}*/
+static bool MarkInstall_UpgradeOtherBinaries(pkgDepCache &Cache, bool const DebugAutoInstall, unsigned long Depth, bool const ForceImportantDeps, pkgCache::PkgIterator Pkg, pkgCache::VerIterator Ver) /*{{{*/
+{
+   APT::PackageSet toUpgrade;
+
+   if (not _config->FindB("APT::Get::Upgrade-By-Source-Package", true))
+      return true;
+
+   auto SrcGrp = Cache.FindGrp(Ver.SourcePkgName());
+   for (auto OtherBinary = SrcGrp.VersionsInSource(); not OtherBinary.end(); OtherBinary = OtherBinary.NextInSource())
+   {
+      auto OtherPkg = OtherBinary.ParentPkg();
+      auto OtherState = Cache[OtherPkg];
+      if (OtherPkg == Pkg)
+	 continue;
+      // Package is not installed or at right version, don't need to upgrade
+      if (OtherPkg->CurrentVer == 0 || OtherPkg.CurrentVer() == OtherBinary)
+	 continue;
+      // Package is to be installed at right version, don't need to upgrade
+      if (OtherState.Install() && OtherState.InstallVer == OtherBinary)
+	 continue;
+      // Package has a different source version than us, so it's not relevant
+      if (strcmp(OtherBinary.SourceVerStr(), Ver.SourceVerStr()) != 0 || OtherState.CandidateVer != OtherBinary)
+	 continue;
+      if (DebugAutoInstall)
+	 std::clog << OutputInDepth(Depth) << "Upgrading " << APT::PrettyPkg(&Cache, OtherPkg) << " due to " << Pkg.FullName() << '\n';
+
+      toUpgrade.insert(OtherPkg);
+   }
+   for (auto &OtherPkg : toUpgrade)
+      Cache.MarkInstall(OtherPkg, false, Depth + 1, false, ForceImportantDeps);
+   for (auto &OtherPkg : toUpgrade)
+      Cache.MarkInstall(OtherPkg, true, Depth + 1, false, ForceImportantDeps);
+   return true;
+}
+									/*}}}*/
 static bool MarkInstall_InstallDependencies(pkgDepCache &Cache, bool const DebugAutoInstall, bool const DebugMarker, pkgCache::PkgIterator const &Pkg, unsigned long Depth, bool const ForceImportantDeps, std::vector<pkgCache::DepIterator> &toInstall, APT::PackageVector *const toMoveAuto, bool const propagateProtected, bool const FromUser) /*{{{*/
 {
    auto const IsSatisfiedByInstalled = [&](auto &D) { return (Cache[pkgCache::DepIterator{Cache, &D}] & pkgDepCache::DepInstall) == pkgDepCache::DepInstall; };
@@ -1705,6 +1740,8 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
       operator bool() noexcept { return already; }
    } propagateProtected{PkgState[Pkg->ID]};
 
+   if (not MarkInstall_UpgradeOtherBinaries(*this, DebugAutoInstall, Depth, ForceImportantDeps, Pkg, P.CandidateVerIter(*this)))
+      return false;
    if (not MarkInstall_UpgradeOrRemoveConflicts(*this, DebugAutoInstall, Depth, ForceImportantDeps, toUpgrade, propagateProtected, FromUser))
    {
       if (failEarly)

@@ -1,0 +1,53 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+
+insertinstalledpackage 'pkg' 'all' '1' 'Source: pkg'
+insertinstalledpackage 'pkg-foo' 'all' '1' 'Source: pkg'
+insertinstalledpackage 'pkg-bar' 'all' '1' 'Source: pkg'
+insertpackage 'unstable' 'pkg' 'all' '2' 'Source: pkg'
+insertpackage 'unstable' 'pkg-foo' 'all' '2' 'Source: pkg'
+insertpackage 'unstable' 'pkg-bar' 'all' '2' 'Source: pkg'
+
+configarchitecture 'arm64'
+setupaptarchive
+
+noprogress() {
+    "$@" | sed /^Progress/d
+}
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+  MarkInstall pkg:arm64 < 1 -> 2 @ii puU > FU=1
+  Upgrading pkg-bar:arm64 < 1 | 2 @ii uH > due to pkg:arm64
+  Upgrading pkg-foo:arm64 < 1 | 2 @ii uH > due to pkg:arm64
+Starting pkgProblemResolver with broken count: 0
+Starting 2 pkgProblemResolver with broken count: 0
+Done
+The following additional packages will be installed:
+  pkg-bar pkg-foo
+The following packages will be upgraded:
+  pkg pkg-bar pkg-foo
+3 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst pkg [1] (2 unstable [all])
+Inst pkg-bar [1] (2 unstable [all])
+Inst pkg-foo [1] (2 unstable [all])
+Conf pkg (2 unstable [all])
+Conf pkg-bar (2 unstable [all])
+Conf pkg-foo (2 unstable [all])" aptget install pkg -o debug::pkgdepcache::marker=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::AutoInstall=1 -s
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+  MarkInstall pkg:arm64 < 1 -> 2 @ii puU > FU=1
+Starting pkgProblemResolver with broken count: 0
+Starting 2 pkgProblemResolver with broken count: 0
+Done
+The following packages will be upgraded:
+  pkg
+1 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+Inst pkg [1] (2 unstable [all])
+Conf pkg (2 unstable [all])" aptget install pkg -o debug::pkgdepcache::marker=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::AutoInstall=1 -o APT::Get::Upgrade-By-Source-Package=0 -s
