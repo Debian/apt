@@ -1497,6 +1497,10 @@ static bool MarkInstall_UpgradeOrRemoveConflicts(pkgDepCache &Cache, bool const 
 static bool MarkInstall_UpgradeOtherBinaries(pkgDepCache &Cache, bool const DebugAutoInstall, unsigned long Depth, bool const ForceImportantDeps, pkgCache::PkgIterator Pkg, pkgCache::VerIterator Ver) /*{{{*/
 {
    APT::PackageSet toUpgrade;
+
+   if (not _config->FindB("APT::Get::Upgrade-By-Source-Package", true))
+      return true;
+
    auto SrcGrp = Cache.FindGrp(Ver.SourcePkgName());
    for (auto OtherBinary = SrcGrp.VersionsInSource(); not OtherBinary.end(); OtherBinary = OtherBinary.NextInSource())
    {
