@@ -1098,8 +1098,6 @@ void TryToInstall::doAutoInstall() {					/*{{{*/
    for (APT::PackageSet::const_iterator P = doAutoInstallLater.begin();
 	 P != doAutoInstallLater.end(); ++P) {
       pkgDepCache::StateCache &State = (*Cache)[P];
-      if (State.InstBroken() == false && State.InstPolicyBroken() == false)
-	 continue;
       Cache->GetDepCache()->MarkInstall(P, true);
    }
    doAutoInstallLater.clear();
