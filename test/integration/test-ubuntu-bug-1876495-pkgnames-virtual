@@ -14,10 +14,8 @@ setupaptarchive
 changetowebserver
 
 testsuccess aptget update -o Debug::Acquire::gpg=1
-testsuccessequal "dpkg
-coolstuff" aptcache pkgnames
+testsuccessequal 'coolstuff' aptcache pkgnames
 
-testsuccessequal "dpkg
-source-package
+testsuccessequal 'source-package
 virtual-package
-coolstuff" aptcache pkgnames --all-names
+coolstuff' aptcache pkgnames --all-names

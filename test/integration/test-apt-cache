@@ -22,9 +22,9 @@ Replaces: foo:i386 (<< 1)' "$DESCR"
 
 setupaptarchive
 
-# dpkg is installed by our framework
-testdpkginstalled 'dpkg'
-testempty aptcache unmet dpkg
+insertinstalledpackage 'awesome' 'all' '1'
+testdpkginstalled 'awesome'
+testempty aptcache unmet awesome
 
 # FIXME: Find some usecase for unmet as it seems kinda useless/broken
 #testsuccess aptcache unmet
@@ -46,9 +46,9 @@ testsuccess aptcache dump
 cp rootdir/tmp/testsuccess.output dump.output
 testsuccess test -s dump.output
 
-testsuccessequal 'dpkg
-bar
+testsuccessequal 'bar
 foo
+awesome
 specific
 fancy' aptcache pkgnames
 testsuccessequal 'bar' aptcache pkgnames bar

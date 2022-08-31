@@ -25,11 +25,11 @@ setupaptarchive
 
 testsuccess aptcache show nosection
 testfailure grep 'Section' rootdir/tmp/testsuccess.output
-testequal 'dpkg' aptmark showmanual
+testempty aptmark showmanual
 
 testsuccess aptget install mydesktop -y -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
 
-testmarkedmanual 'dpkg' 'mydesktop'
+testmarkedmanual 'mydesktop'
 testmarkedauto 'mydesktop-core' 'foreignpkg:i386' 'texteditor' 'browser' 'nosection'
 
 # if the remove is from a user, don't do manual-bit passing
@@ -60,22 +60,22 @@ testsuccess aptget autoremove texteditor -y
 testdpkgnotinstalled mydesktop mydesktop-core texteditor
 testdpkginstalled browser
 
-testmarkedmanual 'browser' 'dpkg' 'foreignpkg:i386' 'nosection'
+testmarkedmanual 'browser' 'foreignpkg:i386' 'nosection'
 testmarkedauto
 
 # test that installed/upgraded auto-pkgs are not set to manual
 
 testsuccess aptget install browser=41 -y --allow-downgrades
 
-testmarkedmanual 'browser' 'dpkg' 'foreignpkg:i386' 'nosection'
+testmarkedmanual 'browser' 'foreignpkg:i386' 'nosection'
 testmarkedauto
 testsuccess aptmark auto browser
 testmarkedauto 'browser'
 testsuccess aptmark auto nosection
 testmarkedauto 'browser' 'nosection'
-testmarkedmanual 'dpkg' 'foreignpkg:i386'
+testmarkedmanual 'foreignpkg:i386'
 
 testsuccess aptget install mydesktop -y -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
 
-testmarkedmanual 'dpkg' 'foreignpkg:i386' 'mydesktop'
+testmarkedmanual 'foreignpkg:i386' 'mydesktop'
 testmarkedauto 'browser' 'mydesktop-core' 'texteditor' 'nosection'

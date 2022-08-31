@@ -473,10 +473,56 @@ if [ -r '${TMPWORKINGDIRECTORY}/noopchroot.so' ]; then
 		export LD_PRELOAD="noopchroot.so"
 	fi
 fi
+EXEC='exec'
 EOF
 	cp "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
+	local DPKG_VERSION="$(command dpkg-query --showformat '${VERSION}' --show dpkg)"
+	if command dpkg --compare-versions "${DPKG_VERSION}" '<<' '1.21.0'; then
+		cat >> "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF
+dpkg_assert_call() {
+	while [ -n "\$1" ]; do
+		if [ "\${1#*--assert-}" != "\$1" ]; then return 0; fi
+		if [ "\$1" = '--' ]; then break; fi
+		shift
+	done
+	return 1
+}
+if dpkg_assert_call "\$@" && ! command dpkg-checkbuilddeps --admindir='${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg' -d 'dpkg' /dev/null >/dev/null 2>&1; then
+	EXEC=''
+	ORIGINAL="${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status"
+	BACKUP="${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status.apt-backup"
+	restoredpkgstatus() {
+		if [ -n "\$BACKUP" ]; then
+			if [ -e "\$BACKUP" ]; then
+				mv -f "\$BACKUP" "\$ORIGINAL"
+			else
+				rm -f "\$ORIGINAL"
+			fi
+			BACKUP=''
+		fi
+	}
+	trap "restoredpkgstatus;" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+	if [ -e "\$ORIGINAL" ]; then
+		cp -a "\$ORIGINAL" "\$BACKUP"
+	fi
+	cat >> "${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" << EOS
+
+Package: dpkg
+Architecture: all
+Version: ${DPKG_VERSION}+fake
+Status: install ok installed
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 42
+Description: tells dpkg it supports what we need
+ Some versions of dpkg check its own version from the status file
+ to know if it supports multi-arch and stuff in --assert-*.
+
+EOS
+fi
+EOF
+	fi
 	cat >> "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" <<EOF
-exec fakeroot '${DPKG:-dpkg}' --root='${TMPWORKINGDIRECTORY}/rootdir' \\
+\$EXEC fakeroot '${DPKG:-dpkg}' --root='${TMPWORKINGDIRECTORY}/rootdir' \\
 	--admindir="${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg" \\
 	--log='${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log' \\
 	--force-not-root --force-bad-path "\$@"
@@ -491,9 +537,6 @@ EOF
 	echo "Dir::Bin::dpkg \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg\";" > rootdir/etc/apt/apt.conf.d/99dpkg
 
 	{
-		if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
-			echo "DPKG::options:: \"--force-architecture\";" # Added to test multiarch before dpkg is ready for it…
-		fi
 		echo 'quiet "0";'
 		echo 'quiet::NoUpdate "true";'
 		echo 'quiet::NoStatistic "true";'
@@ -588,12 +631,6 @@ configdpkg() {
 		fi
 	fi
 	rm -f rootdir/etc/apt/apt.conf.d/00foreigndpkg
-	# make sure dpkg can detect itself as capable of it
-	if [ "0" = "$(dpkg -l dpkg 2> /dev/null | grep '^i' | wc -l)" ]; then
-		# dpkg doesn't really check the version as long as it is fully installed,
-		# but just to be sure we choose one above the required version
-		insertinstalledpackage 'dpkg' "all" '1.16.2+fake'
-	fi
 	if dpkg --assert-multi-arch >/dev/null 2>&1 ; then
 		local ARCHS="$(getarchitectures)"
 		local DPKGARCH="$(dpkg --print-architecture)"
@@ -613,6 +650,9 @@ configdpkg() {
 				fi
 			fi
 		done
+	else
+		# test multiarch before dpkg is ready for it…
+		echo "DPKG::options:: \"--force-architecture\";" > rootdir/etc/apt/apt.conf.d/00foreigndpkg
 	fi
 }
 

@@ -15,14 +15,10 @@ insertinstalledpackage 'bar' 'amd64' '1'
 
 setupaptarchive
 
-# dpkg is "installed" by our test framework
-testdpkginstalled dpkg
-
 testnoautopkg() {
 	testempty aptmark showauto
 	testempty aptcache -q=1 showauto
 	testsuccessequal 'bar
-dpkg
 foo' aptmark showmanual
 	testsuccessequal 'bar
 foo' aptmark showmanual bar foo uninstalled
@@ -32,8 +28,7 @@ testfooisauto() {
 	testsuccessequal 'foo' aptcache -q=1 showauto
 	testsuccessequal 'foo' aptmark showauto foo
 	testsuccessequal 'foo' aptcache -q=1 showauto foo
-	testsuccessequal 'bar
-dpkg' aptmark showmanual
+	testsuccessequal 'bar' aptmark showmanual
 	testsuccessequal 'bar' aptmark showmanual bar
 }
 testmarkonpkgasauto() {
@@ -59,8 +54,6 @@ testmarkonpkgasauto 'aptget' 'markauto' 'unmarkauto'
 testnoholdpkg() {
 	testempty aptmark showhold
 	testempty aptmark showholds  # typical "typo"
-	testempty aptmark showhold dpkg
-	testempty aptmark showholds dpkg
 }
 testpkgonhold() {
 	testsuccessequal "$1" aptmark showhold
