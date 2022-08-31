@@ -1095,11 +1095,9 @@ bool TryToInstall::propagateReleaseCandidateSwitching(std::list<std::pair<pkgCac
 }
 									/*}}}*/
 void TryToInstall::doAutoInstall() {					/*{{{*/
-   for (APT::PackageSet::const_iterator P = doAutoInstallLater.begin();
-	 P != doAutoInstallLater.end(); ++P) {
-      pkgDepCache::StateCache &State = (*Cache)[P];
-      Cache->GetDepCache()->MarkInstall(P, true);
-   }
+   auto * const DCache = Cache->GetDepCache();
+   for (auto const &P: doAutoInstallLater)
+      DCache->MarkInstall(P, true);
    doAutoInstallLater.clear();
 }
 									/*}}}*/
