@@ -335,8 +335,20 @@ signed debSystem::Score(Configuration const &Cnf)
 /* */
 bool debSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)
 {
-   if (d->StatusFile == 0)
-      d->StatusFile = new debStatusIndex(_config->FindFile("Dir::State::status"));
+   if (d->StatusFile == nullptr)
+   {
+      auto dpkgstatus = _config->FindFile("Dir::State::status");
+      _error->PushToStack();
+      d->StatusFile = new debStatusIndex(std::move(dpkgstatus));
+      bool const errored = _error->PendingError();
+      _error->MergeWithStack();
+      if (errored)
+      {
+	 delete d->StatusFile;
+	 d->StatusFile = nullptr;
+	 return false;
+      }
+   }
    List.push_back(d->StatusFile);
    return true;
 }
