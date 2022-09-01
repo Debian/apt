@@ -43,7 +43,6 @@ Inst steam:i386 (2 unstable [i386])
 Conf libmesa:i386 (2 unstable [i386])
 Conf steam:i386 (2 unstable [i386])' aptget install steam -st unstable
 
-cp rootdir/var/lib/dpkg/status default-status.dpkg
 insertinstalledpackage 'libmesa' 'amd64' '1' 'Multi-Arch: same'
 testsuccessequal 'Reading package lists...
 Building dependency tree...
@@ -72,7 +71,7 @@ Conf libmesa (2 unstable [amd64])
 Conf libmesa:i386 (2 unstable [i386])
 Conf steam:i386 (2 unstable [i386])' aptget install steam -st unstable
 
-cp default-status.dpkg rootdir/var/lib/dpkg/status
+rm -f rootdir/var/lib/dpkg/status
 insertinstalledpackage 'libmesa-lts' 'amd64' '1' 'Provides: libmesa
 Conflicts: libmesa
 Multi-Arch: same'

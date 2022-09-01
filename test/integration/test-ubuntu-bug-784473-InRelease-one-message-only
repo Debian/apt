@@ -28,6 +28,10 @@ done
 testfailure aptget update
 testsuccess grep '^E:.*Clearsigned file .*NOSPLIT.*' rootdir/tmp/testfailure.output
 
+testsuccessequal "Package files:
+Pinned packages:" aptcache policy
+
+insertinstalledpackage 'foo' 'all' '1'
 
 ROOTDIR="$(readlink -f .)"
 testsuccessequal "Package files:

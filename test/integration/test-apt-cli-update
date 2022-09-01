@@ -8,7 +8,6 @@ setupenvironment
 configarchitecture "i386"
 
 insertpackage 'unstable' 'foo' 'all' '2.0'
-cp rootdir/var/lib/dpkg/status dpkg.status
 insertinstalledpackage 'foo' 'all' '1.0'
 
 setupaptarchive --no-update
@@ -18,6 +17,6 @@ testfailuremsg 'E: The update command takes no arguments' apt update arguments
 testempty apt update -qq -o pkgCacheFile::Generate=false
 testsuccessequal "1 package can be upgraded. Run 'apt list --upgradable' to see it." apt update -qq
 
-cp dpkg.status rootdir/var/lib/dpkg/status
+rm -f rootdir/var/lib/dpkg/status
 insertinstalledpackage 'foo' 'all' '2.0'
 testsuccessequal 'All packages are up to date.' apt update -qq

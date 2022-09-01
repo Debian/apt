@@ -70,17 +70,19 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : VerPins(nullptr),
    if (DefRel.empty() == false)
    {
       bool found = false;
-      // FIXME: make ExpressionMatches static to use it here easily
-      pkgVersionMatch vm("", pkgVersionMatch::None);
       for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
       {
-	 if (vm.ExpressionMatches(DefRel, F.Archive()) ||
-	     vm.ExpressionMatches(DefRel, F.Codename()) ||
-	     vm.ExpressionMatches(DefRel, F.Version()) ||
+	 if (pkgVersionMatch::ExpressionMatches(DefRel, F.Archive()) ||
+	     pkgVersionMatch::ExpressionMatches(DefRel, F.Codename()) ||
+	     pkgVersionMatch::ExpressionMatches(DefRel, F.Version()) ||
 	     (DefRel.length() > 2 && DefRel[1] == '='))
 	    found = true;
       }
-      if (found == false)
+      // "now" is our internal archive name for the status file,
+      // which we should accept even if we have no status file at the moment
+      if (not found && pkgVersionMatch::ExpressionMatches(DefRel, "now"))
+	 found = true;
+      if (not found)
 	 _error->Error(_("The value '%s' is invalid for APT::Default-Release as such a release is not available in the sources"), DefRel.c_str());
       else
 	 CreatePin(pkgVersionMatch::Release,"",DefRel,990);

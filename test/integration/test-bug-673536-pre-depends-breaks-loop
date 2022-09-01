@@ -18,11 +18,8 @@ setupaptarchive
 # we check with 'real' packages here as the simulation reports a 'Conf broken'
 # which is technical correct for the simulation, but testing errormsg is ugly
 
-cp -a rootdir/var/lib/dpkg/status dpkg.status.backup
-
 testloopbreak() {
-	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
-	rm -f rootdir/var/lib/apt/extended_states
+	rm -f rootdir/var/lib/dpkg/status rootdir/var/lib/apt/extended_states
 
 	testsuccess aptget install advanced=1 -y -t "$1"
 	testdpkginstalled advanced

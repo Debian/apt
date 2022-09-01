@@ -9,11 +9,8 @@ configarchitecture 'amd64' 'i386'
 insertpackage 'unstable' 'libqtcore4' 'i386,amd64' '2' 'Multi-Arch: same'
 setupaptarchive
 
-DPKGSTATUS='rootdir/var/lib/dpkg/status'
-cp $DPKGSTATUS dpkg.status
-
 cleanstatus() {
-	cp dpkg.status $DPKGSTATUS
+	rm -f rootdir/var/lib/dpkg/status
 	rm rootdir/var/cache/apt/*.bin
 }
 

@@ -626,8 +626,6 @@ configdpkg() {
 			if tail -1 rootdir/var/lib/dpkg/status | grep -q .; then
 				echo >> rootdir/var/lib/dpkg/status
 			fi
-		else
-			echo -n > rootdir/var/lib/dpkg/status
 		fi
 	fi
 	rm -f rootdir/etc/apt/apt.conf.d/00foreigndpkg
