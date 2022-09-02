@@ -27,7 +27,7 @@ static bool UpgradeHelper(CommandLine &CmdL, int UpgradeFlags)
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
 
-   std::map<unsigned short, APT::VersionSet> verset;
+   std::map<unsigned short, APT::VersionVector> verset;
    std::set<std::string> UnknownPackages;
    APT::PackageVector HeldBackPackages;
    if (not DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, UpgradeFlags, UnknownPackages, HeldBackPackages))

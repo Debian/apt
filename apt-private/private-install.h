@@ -33,7 +33,7 @@ bool AddVolatileBinaryFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector
 bool AddVolatileSourceFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector<PseudoPkg> &VolatileCmdL);
 
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache,
-					std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode,
+					std::map<unsigned short, APT::VersionVector> &verset, int UpgradeMode,
 					std::set<std::string> &UnknownPackages, APT::PackageVector &HeldBackPackages);
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache, int UpgradeMode,
 					APT::PackageVector &HeldBackPackages);
@@ -54,7 +54,7 @@ struct TryToInstall {
    pkgProblemResolver* Fix;
    bool FixBroken;
    unsigned long AutoMarkChanged;
-   APT::PackageSet doAutoInstallLater;
+   APT::PackageVector doAutoInstallLater;
 
    TryToInstall(pkgCacheFile &Cache, pkgProblemResolver *PM, bool const FixBroken) : Cache(&Cache), Fix(PM),
 			FixBroken(FixBroken), AutoMarkChanged(0) {};

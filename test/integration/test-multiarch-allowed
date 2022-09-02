@@ -62,10 +62,16 @@ Inst foo:i386 (1 unstable [i386])
 Inst needsfoo:i386 (1 unstable [i386])
 Conf foo:i386 (1 unstable [i386])
 Conf needsfoo:i386 (1 unstable [i386])' aptget install needsfoo:i386 -s
+# FIXME: same problem, but two different unmet dependency messages depending on install order
+testfailureequal "$BADPREFIX
+The following packages have unmet dependencies:
+ foo : Conflicts: foo:i386 but 1 is to be installed
+ foo:i386 : Conflicts: foo but 1 is to be installed
+E: Unable to correct problems, you have held broken packages." aptget install needsfoo:i386 foo:amd64 -s
 testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  needsfoo:i386 : Depends: foo:i386 but it is not installable
-E: Unable to correct problems, you have held broken packages." aptget install needsfoo:i386 foo:amd64 -s
+E: Unable to correct problems, you have held broken packages." aptget install foo:amd64 needsfoo:i386 -s
 testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  foo : Conflicts: foo:i386 but 1 is to be installed
