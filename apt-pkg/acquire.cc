@@ -53,11 +53,11 @@
 using namespace std;
 
 // helper to convert time_point to a timeval
-static struct timeval SteadyDurationToTimeVal(std::chrono::steady_clock::duration Time)
+constexpr struct timeval SteadyDurationToTimeVal(std::chrono::steady_clock::duration Time)
 {
    auto const Time_sec = std::chrono::duration_cast<std::chrono::seconds>(Time);
    auto const Time_usec = std::chrono::duration_cast<std::chrono::microseconds>(Time - Time_sec);
-   return {Time_sec.count(), Time_usec.count()};
+   return timeval{static_cast<time_t>(Time_sec.count()), static_cast<suseconds_t>(Time_usec.count())};
 }
 
 std::string pkgAcquire::URIEncode(std::string const &part)		/*{{{*/
