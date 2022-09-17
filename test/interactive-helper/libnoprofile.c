@@ -1,4 +1,5 @@
 #define _GNU_SOURCE
+#undef _FORTIFY_SOURCE
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
