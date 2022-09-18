@@ -1,7 +1,7 @@
 #! /bin/sh
 set -e
 
-if [ "$1" = 'configure' ]; then
+if [ "$1" = 'configure' ] && [ -z "$DPKG_ROOT" ] && ! getent passwd _apt >/dev/null; then
 	# add unprivileged user for the apt methods
 	adduser --force-badname --system --home /nonexistent  \
 	    --no-create-home --quiet _apt || true
