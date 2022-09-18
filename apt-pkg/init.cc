@@ -208,6 +208,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Acquire::Changelogs::URI::Origin::Debian", "https://metadata.ftp-master.debian.org/changelogs/@CHANGEPATH@_changelog");
    Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ubuntu", "https://changelogs.ubuntu.com/changelogs/pool/@CHANGEPATH@/changelog");
    Cnf.CndSet("Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu", true);
+   Cnf.CndSet("Acquire::Changelogs::AlwaysOnline::Origin::Debian", true);
 
 
    Cnf.CndSet("DPkg::Path", "/usr/sbin:/usr/bin:/sbin:/bin");
