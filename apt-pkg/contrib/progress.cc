@@ -122,7 +122,7 @@ bool OpProgress::CheckChange(float Interval)
    auto const Now = std::chrono::steady_clock::now().time_since_epoch();
    auto const Now_sec = std::chrono::duration_cast<std::chrono::seconds>(Now);
    auto const Now_usec = std::chrono::duration_cast<std::chrono::microseconds>(Now - Now_sec);
-   struct timeval NowTime = { Now_sec.count(), Now_usec.count() };
+   struct timeval NowTime = { static_cast<time_t>(Now_sec.count()), static_cast<suseconds_t>(Now_usec.count()) };
 
    std::chrono::duration<decltype(Interval)> Delta =
       std::chrono::seconds(NowTime.tv_sec - LastTime.tv_sec) +
