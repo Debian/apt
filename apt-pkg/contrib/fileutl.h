@@ -26,6 +26,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <sys/stat.h>
 #include <time.h>
 
 /* Define this for python-apt */
