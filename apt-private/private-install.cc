@@ -593,12 +593,12 @@ static const unsigned short MOD_INSTALL = 2;
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache, int UpgradeMode,
 					APT::PackageVector &HeldBackPackages)
 {
-   std::map<unsigned short, APT::VersionSet> verset;
+   std::map<unsigned short, APT::VersionVector> verset;
    std::set<std::string> UnknownPackages;
    return DoCacheManipulationFromCommandLine(CmdL, VolatileCmdL, Cache, verset, UpgradeMode, UnknownPackages, HeldBackPackages);
 }
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg> &VolatileCmdL, CacheFile &Cache,
-					std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode,
+					std::map<unsigned short, APT::VersionVector> &verset, int UpgradeMode,
 					std::set<std::string> &UnknownPackages, APT::PackageVector &HeldBackPackages)
 {
    // Enter the special broken fixing mode if the user specified arguments
@@ -639,8 +639,13 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
    mods.push_back(APT::VersionSet::Modifier(MOD_REMOVE, "-",
 		APT::VersionSet::Modifier::POSTFIX, APT::CacheSetHelper::NEWEST));
    CacheSetHelperAPTGet helper(c0out);
-   verset = APT::VersionSet::GroupedFromCommandLine(Cache,
+   verset = APT::VersionVector::GroupedFromCommandLine(Cache,
 		CmdL.FileList + 1, mods, fallback, helper);
+   for (auto &vs : verset)
+   {
+      std::set<map_id_t> seen;
+      vs.second.erase(std::remove_if(vs.second.begin(), vs.second.end(), [&](auto const &p) { return not seen.insert(p->ID).second; }), vs.second.end());
+   }
 
    for (auto const &I: VolatileCmdL)
    {
@@ -834,14 +839,14 @@ std::vector<PseudoPkg> GetPseudoPackages(pkgSourceList *const SL, CommandLine &C
 /* Install named packages */
 struct PkgIsExtraInstalled {
    pkgCacheFile * const Cache;
-   APT::VersionSet const * const verset;
-   PkgIsExtraInstalled(pkgCacheFile * const Cache, APT::VersionSet const * const Container) : Cache(Cache), verset(Container) {}
+   APT::VersionVector const * const verset;
+   PkgIsExtraInstalled(pkgCacheFile * const Cache, APT::VersionVector const * const Container) : Cache(Cache), verset(Container) {}
    bool operator() (pkgCache::PkgIterator const &Pkg)
    {
         if ((*Cache)[Pkg].Install() == false)
            return false;
         pkgCache::VerIterator const Cand = (*Cache)[Pkg].CandidateVerIter(*Cache);
-        return verset->find(Cand) == verset->end();
+	return std::find(verset->begin(), verset->end(), Cand) == verset->end();
    }
 };
 bool DoInstall(CommandLine &CmdL)
@@ -857,7 +862,7 @@ bool DoInstall(CommandLine &CmdL)
        Cache.CheckDeps(CmdL.FileSize() != 1) == false)
       return false;
 
-   std::map<unsigned short, APT::VersionSet> verset;
+   std::map<unsigned short, APT::VersionVector> verset;
    std::set<std::string> UnknownPackages;
    APT::PackageVector HeldBackPackages;
 
@@ -1095,11 +1100,9 @@ bool TryToInstall::propagateReleaseCandidateSwitching(std::list<std::pair<pkgCac
 }
 									/*}}}*/
 void TryToInstall::doAutoInstall() {					/*{{{*/
-   for (APT::PackageSet::const_iterator P = doAutoInstallLater.begin();
-	 P != doAutoInstallLater.end(); ++P) {
-      pkgDepCache::StateCache &State = (*Cache)[P];
-      Cache->GetDepCache()->MarkInstall(P, true);
-   }
+   auto * const DCache = Cache->GetDepCache();
+   for (auto const &P: doAutoInstallLater)
+      DCache->MarkInstall(P, true);
    doAutoInstallLater.clear();
 }
 									/*}}}*/

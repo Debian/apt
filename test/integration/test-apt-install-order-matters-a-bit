@@ -1,0 +1,75 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'a' 'all' '1' 'Depends: b | d'
+insertpackage 'unstable' 'b' 'all' '1'
+insertpackage 'unstable' 'c' 'all' '1' 'Depends: d | b'
+insertpackage 'unstable' 'd' 'all' '1'
+
+setupaptarchive
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  b
+The following NEW packages will be installed:
+  a b c
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Inst b (1 unstable [all])
+Inst a (1 unstable [all])
+Inst c (1 unstable [all])
+Conf b (1 unstable [all])
+Conf a (1 unstable [all])
+Conf c (1 unstable [all])' apt install a c -s
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  d
+The following NEW packages will be installed:
+  a c d
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Inst d (1 unstable [all])
+Inst a (1 unstable [all])
+Inst c (1 unstable [all])
+Conf d (1 unstable [all])
+Conf a (1 unstable [all])
+Conf c (1 unstable [all])' apt install c a -s
+
+TOPLEVELCHOICE='Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  a c d
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Inst d (1 unstable [all])
+Inst a (1 unstable [all])
+Inst c (1 unstable [all])
+Conf d (1 unstable [all])
+Conf a (1 unstable [all])
+Conf c (1 unstable [all])'
+testsuccessequal "$TOPLEVELCHOICE" apt install d a c -s
+testsuccessequal "$TOPLEVELCHOICE" apt install a c d -s
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+  MarkInstall a:amd64 < none -> 1 @un puN Ib > FU=1
+    MarkInstall b:amd64 < none -> 1 @un uN > FU=0
+  MarkInstall c:amd64 < none -> 1 @un puN > FU=1
+Starting pkgProblemResolver with broken count: 0
+Starting 2 pkgProblemResolver with broken count: 0
+Done
+The following additional packages will be installed:
+  b
+The following NEW packages will be installed:
+  a b c
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Inst b (1 unstable [all])
+Inst a (1 unstable [all])
+Inst c (1 unstable [all])
+Conf b (1 unstable [all])
+Conf a (1 unstable [all])
+Conf c (1 unstable [all])' apt install a a a c a a a -s -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
