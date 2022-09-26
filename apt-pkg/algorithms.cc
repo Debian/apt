@@ -1359,8 +1359,8 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 	       if (Cache[Pkg].InstallVer == 0 ||
 		   Pkg->CurrentVer == 0)
 		  continue;
-	       
-	       if (not Cache[I].Protect())
+
+	       if (not Cache[Pkg].Protect())
 	       {
 		  if (Debug == true)
 		     clog << "  Keeping Package " << Pkg.FullName(false) << " due to " << Start.DepType() << endl;
