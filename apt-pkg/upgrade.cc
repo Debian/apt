@@ -107,6 +107,7 @@ struct PhasedUpgrader
 	    continue;
 
 	 Cache.MarkKeep(I, false, false);
+	 Cache.MarkProtected(I);
 	 if (Fix != nullptr)
 	    Fix->Protect(I);
       }
@@ -132,6 +133,8 @@ static bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
       Progress->OverallProgress(0, 100, 1, _("Calculating upgrade"));
 
    pkgDepCache::ActionGroup group(Cache);
+
+   PhasedUpgrader().HoldBackIgnoredPhasedUpdates(Cache, nullptr);
 
    /* Upgrade all installed packages first without autoinst to help the resolver
       in versioned or-groups to upgrade the old solver instead of installing
