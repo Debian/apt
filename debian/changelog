@@ -1,3 +1,34 @@
+apt (2.5.3) unstable; urgency=medium
+
+  [ Povilas Kanapickas ]
+  * doc: Explain that apt-get download ensures package authenticity
+
+  [ David Kalnischkies ]
+  * Keep color disabled if APT::Color was set to false
+  * Don't reuse filename for in-tree builds of apt
+  * Respect users pkg order on `apt install` for resolving
+
+  [ Hideki Yamane ]
+  * Fix typo in Japanese program translation
+
+  [ lancethepants ]
+  * porting (musl):
+    - apt-pkg/contrib/fileutl.h  Explicitly include sys/stat.h
+
+  [ Khem Raj ]
+  * porting (clang15):
+    - typecast time_t and suseconds_t from std::chrono
+    - interactive-helper: Undefine _FORTIFY_SOURCE
+
+  [ Julian Andres Klode ]
+  * edsp: Add support for phased updates (test in LP#1990586)
+  * Check state of dependency, not depender in dependency keep back
+    (LP: #1990684)
+  * full-upgrade: Mark phased upgrades for keep before anything else
+    (LP: #1990586)
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 28 Sep 2022 17:16:41 +0200
+
 apt (2.5.2) unstable; urgency=medium
 
   [ Julian Andres Klode ]
