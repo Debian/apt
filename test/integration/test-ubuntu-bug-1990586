@@ -1,0 +1,42 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+
+configarchitecture 'amd64'
+
+noprogress() {
+    "$@" | sed /^Progress/d
+}
+
+# The important thing in this bug is that python3.10 and python3.10-defaults are phasing differently,
+# so both should be kept back rather than one causing tons of removals.
+# This should effectively be a no-op
+testsuccessequal "Percentage: 0
+Message: Start up solver…
+
+Percentage: 1
+Message: Read request…
+
+Percentage: 5
+Message: Read scenario…
+
+Percentage: 50
+Message: Apply request on scenario…
+
+Percentage: 60
+Message: Call problemresolver on current scenario…
+
+Percentage: 95
+Message: Write solution…
+
+Autoremove: 74428
+Package: systemd-hwe-hwdb:amd64
+Version: 249.11.1
+
+Percentage: 100
+Message: Done
+" noprogress runapt "${APTHELPERBINDIR}/solvers/apt" < $TESTDIR/edsp-ubuntu-bug-1990586

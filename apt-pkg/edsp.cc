@@ -83,6 +83,8 @@ static bool WriteScenarioVersion(FileFd &output, pkgCache::PkgIterator const &Pk
 	 "\nArchitecture: ", Ver.Arch(),
 	 "\nVersion: ", Ver.VerStr());
    WriteOkay(Okay, output, "\nAPT-ID: ", Ver->ID);
+   if (Ver.PhasedUpdatePercentage() != 100)
+      WriteOkay(Okay, output, "\nPhased-Update-Percentage: ", Ver.PhasedUpdatePercentage());
    if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
       WriteOkay(Okay, output, "\nEssential: yes");
    if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
@@ -361,6 +363,9 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output,
    }
 
    bool Okay = WriteGenericRequestHeaders(output, "Request: EDSP 0.5\n");
+   string machineID = APT::Configuration::getMachineID();
+   if (not machineID.empty())
+      WriteOkay(Okay, output, "Machine-ID: ", machineID, "\n");
    if (del.empty() == false)
       WriteOkay(Okay, output, "Remove:", del, "\n");
    if (inst.empty() == false)
@@ -589,6 +594,8 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
 	    _config->Set("APT::Architecture", line);
 	 else if (LineStartsWithAndStrip(line, "Architectures:"))
 	    _config->Set("APT::Architectures", SubstVar(line, " ", ","));
+	 else if (LineStartsWithAndStrip(line, "Machine-ID"))
+	    _config->Set("APT::Machine-ID", line);
 	 else if (LineStartsWithAndStrip(line, "Solver:"))
 	    ; // purely informational line
 	 else
