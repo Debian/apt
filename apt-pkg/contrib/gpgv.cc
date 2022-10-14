@@ -76,7 +76,7 @@ class LineBuffer							/*{{{*/
    {
       errno = 0;
       line_length = getline(&buffer, &buffer_size, stream);
-      if (errno != 0)
+      if (line_length < 0 && errno != 0)
 	 return _error->Errno("getline", "Could not read from %s", InFile.c_str());
       if (line_length == -1)
       {
