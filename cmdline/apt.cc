@@ -55,6 +55,7 @@ static bool ShowHelp(CommandLine &)					/*{{{*/
 									/*}}}*/
 static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
+   // advanced commands are left undocumented on purpose
    return {
       // query
       {"list", &DoList, _("list packages based on package names")},
