@@ -97,7 +97,7 @@ Conf out-of-sync-gone-foreign (2 unstable [amd64])
 Conf out-of-sync-gone-native:i386 (2 unstable [i386])' aptget dist-upgrade -s #-o Debug::pkgDepCache::Marker=1
 
 testempty dpkg -C
-rm rootdir/var/lib/dpkg/status
+rm -f rootdir/var/lib/dpkg/status
 insertinstalledpackage 'libsame2' 'i386' '1' 'Multi-Arch: same'
 insertinstalledpackage 'libsame3' 'i386' '1' 'Multi-Arch: same'
 

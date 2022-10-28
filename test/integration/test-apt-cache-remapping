@@ -8,6 +8,7 @@ setupenvironment
 configarchitecture 'amd64'
 
 buildsimplenativepackage 'foo' 'amd64' '1'
+insertinstalledpackage 'bar' 'all' '1'
 
 # the default is 1MB – too much for our simple tests
 echo 'APT::Cache-Grow "1000";' > rootdir/etc/apt/apt.conf.d/limit-cachegrow.conf

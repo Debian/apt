@@ -335,8 +335,27 @@ signed debSystem::Score(Configuration const &Cnf)
 /* */
 bool debSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)
 {
-   if (d->StatusFile == 0)
-      d->StatusFile = new debStatusIndex(_config->FindFile("Dir::State::status"));
+   if (d->StatusFile == nullptr)
+   {
+      auto dpkgstatus = _config->FindFile("Dir::State::status");
+      if (dpkgstatus.empty())
+	 return true;
+      // we ignore only if the file doesn't exist, not if it is inaccessible
+      // e.g. due to permissions on parent directories as FileExists would do
+      errno = 0;
+      if (access(dpkgstatus.c_str(), R_OK) != 0 && errno == ENOENT)
+	 return true;
+      _error->PushToStack();
+      d->StatusFile = new debStatusIndex(std::move(dpkgstatus));
+      bool const errored = _error->PendingError();
+      _error->MergeWithStack();
+      if (errored)
+      {
+	 delete d->StatusFile;
+	 d->StatusFile = nullptr;
+	 return false;
+      }
+   }
    List.push_back(d->StatusFile);
    return true;
 }

@@ -26,7 +26,6 @@ setupaptarchive
 testsuccessequal "Listing...
 bar/now 1.0 i386 [installed,local]
 baz/unstable 2.0 all [upgradable from: 0.1]
-dpkg/now 1.16.2+fake all [installed,local]
 foo/unstable 1.0 all
 foobar/unstable 2.0 i386 [upgradable from: 1.0]
 foreign/unstable 2.0 armel [upgradable from: 1.0]
@@ -48,7 +47,6 @@ foreign/unstable 2.0 armel [upgradable from: 1.0]" apt list --upgradable
 testsuccessequal "Listing...
 bar/now 1.0 i386 [installed,local]
 baz/now 0.1 all [installed,upgradable to: 2.0]
-dpkg/now 1.16.2+fake all [installed,local]
 foobar/now 1.0 i386 [installed,upgradable to: 2.0]
 foreign/now 1.0 armel [installed,upgradable to: 2.0]" apt list --installed
 

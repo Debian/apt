@@ -15,17 +15,17 @@ buildsimplenativepackage 'libdef' 'native' '1' 'unstable' '' '' 'libs'
 setupaptarchive
 
 testmarkedauto
-testmarkedmanual 'dpkg'
+testmarkedmanual
 
 testsuccess aptget install libabc/stable -y
 testdpkginstalled 'libabc'
 testdpkgnotinstalled 'libdef'
 
-testmarkedmanual 'dpkg' 'libabc'
+testmarkedmanual 'libabc'
 testmarkedauto
 
 testsuccess aptget dist-upgrade -y
 testdpkginstalled 'libabc' 'libdef'
 
 testmarkedauto 'libabc'
-testmarkedmanual 'dpkg' 'libdef'
+testmarkedmanual 'libdef'

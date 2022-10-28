@@ -50,7 +50,6 @@ is only available from another source
 E: Package 'abar:amd64' has no installation candidate
 E: Package 'zfoo:amd64' has no installation candidate" aptget install abar:amd64 zfoo:amd64 -s
 
-	cp -f rootdir/var/lib/dpkg/status status.backup
 	insertinstalledpackage 'abar' 'i386' '1'
 	insertinstalledpackage 'zfoo' 'i386' '1'
 
@@ -62,7 +61,7 @@ zfoo set to automatically installed.' aptmark auto abar zfoo
 	testequal 'abar
 zfoo' aptmark showauto abar zfoo
 
-	mv -f status.backup rootdir/var/lib/dpkg/status
+	rm -f rootdir/var/lib/dpkg/status
 }
 
 msgmsg 'Single-Arch testrun'

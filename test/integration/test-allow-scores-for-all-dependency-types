@@ -37,7 +37,6 @@ insertpackage 'jessie' 'login' 'amd64' '2' 'Pre-Depends: libaudit1 (>= 0)'
 insertpackage 'jessie' 'libaudit1' 'amd64' '2' 'Depends: libaudit-common (>= 0)'
 insertpackage 'jessie' 'libaudit-common' 'amd64' '2' 'Breaks: libaudit0, libaudit1 (<< 2)'
 
-cp rootdir/var/lib/dpkg/status rootdir/var/lib/dpkg/status-backup
 setupaptarchive
 
 insertinstalledpackage 'libdb-dev' 'amd64' '5.1.7' 'Depends: libdb5.1-dev'
@@ -73,7 +72,7 @@ Inst libdb5.3-dev (5.3.28-3 versioned [amd64])
 Conf libdb-dev (5.3.0 versioned [amd64])
 Conf libdb5.3-dev (5.3.28-3 versioned [amd64])' aptget dist-upgrade -st versioned
 
-cp -f rootdir/var/lib/dpkg/status-backup rootdir/var/lib/dpkg/status
+rm -f rootdir/var/lib/dpkg/status
 insertinstalledpackage 'foo' 'amd64' '1'
 insertinstalledpackage 'bar' 'amd64' '1'
 testsuccessequal 'Reading package lists...
@@ -131,7 +130,7 @@ Conf bar (2 versioned [amd64])
 Conf baz (2 versioned [amd64])' aptget install baz -st versioned
 
 # recreating the exact situation is hard, so we pull tricks to get the score
-cp -f rootdir/var/lib/dpkg/status-backup rootdir/var/lib/dpkg/status
+rm -f rootdir/var/lib/dpkg/status
 insertinstalledpackage 'gdm3' 'amd64' '1' 'Depends: libaudit0, libaudit0'
 insertinstalledpackage 'login' 'amd64' '1' 'Essential: yes'
 insertinstalledpackage 'libaudit0' 'amd64' '1'

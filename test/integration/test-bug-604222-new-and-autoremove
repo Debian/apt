@@ -19,7 +19,6 @@ insertpackage 'stable' 'libkipi-data' 'i386' '4:15.08.0-1' '' 'important'
 
 setupaptarchive
 
-cp -a rootdir/var/lib/dpkg/status rootdir/var/lib/dpkg/status.backup
 insertinstalledpackage 'libvtk5.4' 'i386' '5.4.2-7'
 testsuccess aptmark markauto 'libvtk5.4'
 testmarkedauto 'libvtk5.4'
@@ -80,8 +79,7 @@ Need to get 0 B/126 B of archives.
 After this operation, 129 kB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation." aptget install dummy-archive --trivial-only -o APT::Get::HideAutoRemove=small
 
-cp rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
-rm -f rootdir/var/lib/apt/extended_states
+rm -f rootdir/var/lib/dpkg/status rootdir/var/lib/apt/extended_states
 
 CONFLICTING='Reading package lists...
 Building dependency tree...

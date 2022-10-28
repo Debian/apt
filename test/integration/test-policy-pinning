@@ -7,6 +7,8 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture "i386"
 
+insertinstalledpackage 'foobar' 'all' '1'
+
 buildaptarchive
 setupflataptarchive
 

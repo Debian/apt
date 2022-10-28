@@ -70,22 +70,21 @@ testmyfailure() {
 	testmarkedauto 'dependee'
 }
 
-cp -a rootdir/var/lib/dpkg/status rootdir/var/lib/dpkg/status.backup
 testmyfailure aptget install failure-preinst -y
-cp -a rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
+rm -f rootdir/var/lib/dpkg/status
 testmyfailure aptget install failure-postinst -y
-cp -a rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
+rm -f rootdir/var/lib/dpkg/status
 testsuccess aptget install failure-prerm -y
 testdpkginstalled failure-prerm
 testmyfailure aptget purge failure-prerm -y
-cp -a rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
+rm -f rootdir/var/lib/dpkg/status
 testsuccess aptget install failure-postrm -y
 testdpkginstalled failure-postrm
 testmyfailure aptget purge failure-postrm -y
 
 # FIXME: test with output going to a PTY as it usually does
 if false; then
-	cp -a rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
+	rm -f rootdir/var/lib/dpkg/status
 	apt install dependee -y || true
 	apt install failure-postinst -y || true
 fi
