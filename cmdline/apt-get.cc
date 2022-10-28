@@ -403,6 +403,7 @@ static bool ShowHelp(CommandLine &)					/*{{{*/
 									/*}}}*/
 static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
+   // advanced commands are left undocumented on purpose
    return {
       {"update", &DoUpdate, _("Retrieve new lists of packages")},
       {"upgrade", &DoUpgrade, _("Perform an upgrade")},
