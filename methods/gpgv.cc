@@ -482,7 +482,7 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    struct TemporaryFile
    {
       std::string name = "";
-      ~TemporaryFile() { if (0) RemoveFile("~TemporaryFile", name); }
+      ~TemporaryFile() { RemoveFile("~TemporaryFile", name); }
    } tmpKey;
 
    std::string SignedBy = DeQuoteString(LookupTag(Message, "Signed-By"));

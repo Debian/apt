@@ -7,6 +7,9 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'amd64'
 
+export TMPDIR="${TMPWORKINGDIRECTORY}/tmp"
+mkdir "${TMPDIR}"
+
 msgtest 'Check that a repository with' 'signed-by and two components works'
 echo 'deb [signed-by=CDE5618B8805FD6E202CE9C2D73C39E56580B386] https://people.debian.org/~jak/debian/ stable main contrib # Äffchen' > rootdir/etc/apt/sources.list
 testsuccess --nomsg aptcache policy
@@ -66,3 +69,5 @@ testfailure apt update  -o Debug::Acquire::gpgv=1
 testsuccess grep "NO_PUBKEY 5A90D141DBAC8DAE" rootdir/tmp/testfailure.output
 sed -i s/^xSigned-By/Signed-By/ rootdir/etc/apt/sources.list.d/deb822.sources
 testsuccess apt update  -o Debug::Acquire::gpgv=1
+# make sure we did not leave leftover files (LP: #1995247)
+testsuccessequal "" ls "${TMPDIR}"
