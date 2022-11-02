@@ -270,20 +270,20 @@ function(add_docbook target)
         list(APPEND formats MANPAGE)
     endif()
 
-    foreach(document ${DOC_TRANSLATED_ENTITIES})
-        foreach(lang ${DOC_LINGUAS})
-            po4a_one(po4a_stamp po4a_out ${document} "${lang}" "")
-            list(APPEND DOC_DEPENDS ${po4a_stamp})
-        endforeach()
-    endforeach()
-
     foreach(document ${DOC_DOCUMENTS})
         foreach(lang ${DOC_LINGUAS})
+            set(DOC_TRANSLATED_DEPENDS ${DOC_DEPENDS})
+            foreach(entity ${DOC_TRANSLATED_ENTITIES})
+                po4a_one(po4a_stamp po4a_out ${entity} "${lang}" "")
+                list(APPEND DOC_TRANSLATED_DEPENDS ${po4a_stamp})
+            endforeach()
+
             po4a_one(po4a_stamp po4a_out ${document} "${lang}" "${DOC_DEPENDS}")
             xsltproc_one(STAMP_OUT xslt_stamp
                          STAMP ${po4a_stamp}
                          FULL_DOCUMENT ${po4a_out}
                          INSTALL ${DOC_INSTALL}
+                         DEPENDS "${DOC_TRANSLATED_DEPENDS}"
                          ${formats})
 
             list(APPEND stamps ${xslt_stamp})
@@ -292,6 +292,7 @@ function(add_docbook target)
                          STAMP ${document}
                          FULL_DOCUMENT ${document}
                          INSTALL ${DOC_INSTALL}
+                         DEPENDS "${DOC_DEPENDS}"
                          ${formats})
 
             list(APPEND stamps ${xslt_stamp})
