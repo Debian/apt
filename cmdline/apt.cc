@@ -66,7 +66,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"install", &DoInstall, _("install packages")},
       {"reinstall", &DoInstall, _("reinstall packages")},
       {"remove", &DoInstall, _("remove packages")},
-      {"autoremove", &DoInstall, _("Remove automatically all unused packages")},
+      {"autoremove", &DoInstall, _("remove automatically all unused packages")},
       {"auto-remove", &DoInstall, nullptr},
       {"autopurge",&DoInstall, nullptr},
       {"purge", &DoInstall, nullptr},
