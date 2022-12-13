@@ -3410,7 +3410,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
 	 for (auto const &hs : hsl)
 	    if (ExpectedHashes.push_back(hs) == false)
 	    {
-	       _error->Warning("Sources disagree on hashes for supposely identical version '%s' of '%s'.",
+	       _error->Warning("Sources disagree on hashes for supposedly identical version '%s' of '%s'.",
 			       Version.VerStr(), Version.ParentPkg().FullName(false).c_str());
 	       break;
 	    }
