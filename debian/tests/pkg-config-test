@@ -1,6 +1,28 @@
 #!/bin/sh
 set -e
 
+BUILDDIR="$(readlink -f "$(dirname "$0")")/../../build"
+if [ -z "$AUTOPKGTEST_TMP" ]; then
+   if [ -f "${BUILDDIR}/apt-pkg/apt-pkg.pc" ]; then
+      if [ -n "$PKG_CONFIG_PATH" ]; then
+	 PKG_CONFIG_PATH="${BUILDDIR}/apt-pkg:${PKG_CONFIG_PATH}"
+      else
+	 PKG_CONFIG_PATH="${BUILDDIR}/apt-pkg"
+      fi
+      export PKG_CONFIG_PATH
+      echo 'Using PKG_CONFIG_PATH:' "$PKG_CONFIG_PATH"
+   fi
+fi
+
+INCDIR="$(pkg-config --variable=includedir apt-pkg)"
+if [ -z "$AUTOPKGTEST_TMP" ]; then
+   if [ -d "${BUILDDIR}/include/apt-pkg" ]; then
+      INCDIR="${BUILDDIR}/include"
+      CPPFLAGS="${CPPFLAGS} -I${INCDIR}"
+   fi
+fi
+echo 'Using include dir:' "$INCDIR"
+
 if [ -z "$AUTOPKGTEST_TMP" ]; then
    WORKDIR=''
    cleanup() {
@@ -14,8 +36,11 @@ else
    cd "$AUTOPKGTEST_TMP"
 fi
 
-cat >pkgconfigtest.cc <<EOF
-#include <apt-pkg/init.h>
+find "${INCDIR}/apt-pkg" -name '*.h' -type f \
+   ! -name 'debsrcrecords.h' \
+   ! -name 'header-is-private.h' ! -name 'cachefilter-patterns.h' ! -name 'tagfile-keys.h' \
+   -printf '#include <apt-pkg/%f>\n' > pkgconfigtest.cc
+cat >>pkgconfigtest.cc <<EOF
 #include <cstdio>
 
 int main()
@@ -25,8 +50,35 @@ int main()
 }
 EOF
 
-g++ -Wall -Wextra -o pkgconfigtest pkgconfigtest.cc `pkg-config --cflags --libs apt-pkg`
-echo 'build: OK'
-test -x pkgconfigtest
-./pkgconfigtest
-echo 'run: OK'
+FAILURE_COUNT=0
+runwithstatus() {
+   echo -n "${1}: "
+   local OKAY="$2"
+   local FAIL="$3"
+   shift 3
+   if "$@"; then
+      if [ -n "$OKAY" ]; then echo "$OKAY"; fi
+   else
+      FAILURE_COUNT=$(($FAILURE_COUNT + 1))
+      if [ -n "$FAIL" ]; then echo "$FAIL"; fi
+   fi
+}
+
+runcompilerwithstandard() {
+   local COMPILER="$1"
+   shift
+   if ! command -v "$COMPILER" >/dev/null; then
+      echo "SKIP testing with compiler $COMPILER as it is not available!"
+      return
+   fi
+   for CPPSTD in "$@"; do
+      runwithstatus "build $COMPILER ${CPPSTD:-default}" 'OK' '' "$COMPILER" -Wall -Wextra ${CPPFLAGS} ${CPPSTD} -o pkgconfigtest pkgconfigtest.cc `pkg-config --cflags --libs apt-pkg`
+      if [ -x pkgconfigtest ]; then
+	 runwithstatus "run $COMPILER ${CPPSTD:-default}" '' 'FAILED' ./pkgconfigtest
+	 rm pkgconfigtest
+      fi
+   done
+}
+runcompilerwithstandard 'g++' '-std=c++23' '-std=c++20' '-std=c++17' ''
+
+exit $FAILURE_COUNT
