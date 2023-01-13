@@ -108,7 +108,7 @@
      <listitem><para>Selects packages that can be removed automatically.</para></listitem>
      </varlistentry>
      <varlistentry><term><code>?installed</code></term><term><code>~i</code></term>
-     <listitem><para>Selects packages that are currently installed.</para></listitem>
+     <listitem><para>Selects packages that are currently installed. Since version 2.5.4, narrowing this pattern (see narrowing patterns above) makes it only match installed versions (see version patterns below).</para></listitem>
      </varlistentry>
      <varlistentry><term><code>?name(REGEX)</code></term><term><code>~nREGEX</code></term>
      <listitem><para>Selects packages where the name matches the given regular expression.</para></listitem>
@@ -137,6 +137,9 @@
      </varlistentry>
      <varlistentry><term><code>?codename(REGEX)</code></term>
      <listitem><para>Selects versions that come from the codename that matches the specified regular expression. Codename, here, means the values after <code>n=</code> in <command>apt-cache policy</command>.</para></listitem>
+     </varlistentry>
+     <varlistentry><term><code>?installed</code></term><term><code>~i</code></term>
+         <listitem><para>Selects package versions that are currently installed. Versions prior to 2.5.4 only matched at the package level, hence <code>?any-version(?installed?version(2.0))</code>matched even if 2.0 was not installed, but another version was.</para></listitem>
      </varlistentry>
      <varlistentry><term><code>?origin(REGEX)</code></term><term><code>~OREGEX</code></term>
      <listitem><para>Selects versions that come from the origin that matches the specified regular expression. Origin, here, means the values after <code>o=</code> in <command>apt-cache policy</command>.</para></listitem>
