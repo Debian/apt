@@ -212,6 +212,11 @@ struct APT_HIDDEN PackageIsInstalled : public PackageMatcher
       assert(Cache != nullptr);
       return Pkg->CurrentVer != 0;
    }
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      assert(Cache != nullptr);
+      return Ver == Ver.ParentPkg().CurrentVer();
+   }
 };
 
 struct APT_HIDDEN PackageIsObsolete : public PackageMatcher
