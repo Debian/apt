@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.0.1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2022-10-31 12:11+0100\n"
+"POT-Creation-Date: 2023-01-17 16:33+0100\n"
 "PO-Revision-Date: 2020-04-04 08:45+0200\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -11761,8 +11761,11 @@ msgstr "<code>~i</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-patterns.7.xml
-msgid "Selects packages that are currently installed."
-msgstr "wählt Pakete aus, die derzeit installiert sind."
+msgid ""
+"Selects packages that are currently installed. Since version 2.5.4, "
+"narrowing this pattern (see narrowing patterns above) makes it only match "
+"installed versions (see version patterns below)."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
@@ -11886,6 +11889,15 @@ msgstr ""
 "wählt Versionen aus, deren Ursprung auf den regulären Ausdruck passt. "
 "Ursprung bedeutet hier, die Werte nach <code>o=</code> in <command>apt-cache "
 "policy</command>."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects package versions that are currently installed. Versions prior to "
+"2.5.4 only matched at the package level, hence <code>?any-version(?installed?"
+"version(2.0))</code>matched even if 2.0 was not installed, but another "
+"version was."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
@@ -12282,18 +12294,6 @@ msgstr ""
 "Priorität <code>required</code> hat, wenn Sie jedoch nicht das <code>~</"
 "code> eintippen, würde es erfordern, dass der Paketname <code>poptional</"
 "code> enthält."
-
-#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
-#: apt-patterns.7.xml
-msgid ""
-"Grouping patterns with <code>(...)</code> or writing <code>?or(A,B)</code> "
-"as <code>A|B</code> are not supported. We do not believe that the use of "
-"<code>|</code> is that common, and the grouping is not necessary without it."
-msgstr ""
-"Bündelnde Muster mit <code>(…)</code> oder der Schreibweise <code>A|B</code> "
-"für <code>?or(A,B)</code> werden nicht unterstützt. Wir gehen nicht davon "
-"aus, dass die Verwendung von <code>|</code> üblich ist und ohne diese ist "
-"eine Bündelung unnötig."
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
 #: apt-patterns.7.xml
@@ -13945,6 +13945,20 @@ msgid "Which will use the already fetched archives on the disc."
 msgstr ""
 "fortfahren, wodurch die bereits auf der Platte heruntergeladenen Archive "
 "benutzt werden."
+
+#~ msgid "Selects packages that are currently installed."
+#~ msgstr "wählt Pakete aus, die derzeit installiert sind."
+
+#~ msgid ""
+#~ "Grouping patterns with <code>(...)</code> or writing <code>?or(A,B)</"
+#~ "code> as <code>A|B</code> are not supported. We do not believe that the "
+#~ "use of <code>|</code> is that common, and the grouping is not necessary "
+#~ "without it."
+#~ msgstr ""
+#~ "Bündelnde Muster mit <code>(…)</code> oder der Schreibweise <code>A|B</"
+#~ "code> für <code>?or(A,B)</code> werden nicht unterstützt. Wir gehen nicht "
+#~ "davon aus, dass die Verwendung von <code>|</code> üblich ist und ohne "
+#~ "diese ist eine Bündelung unnötig."
 
 #~ msgid "Regular expressions and &glob; syntax"
 #~ msgstr "Reguläre Ausdrücke und &glob;-Syntax"

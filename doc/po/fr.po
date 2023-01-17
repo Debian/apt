@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.8.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2022-10-31 12:11+0100\n"
+"POT-Creation-Date: 2023-01-17 16:33+0100\n"
 "PO-Revision-Date: 2019-05-01 17:00+0100\n"
 "Last-Translator: Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -11672,7 +11672,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-patterns.7.xml
-msgid "Selects packages that are currently installed."
+msgid ""
+"Selects packages that are currently installed. Since version 2.5.4, "
+"narrowing this pattern (see narrowing patterns above) makes it only match "
+"installed versions (see version patterns below)."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
@@ -11779,6 +11782,15 @@ msgid ""
 "Selects versions that come from the codename that matches the specified "
 "regular expression. Codename, here, means the values after <code>n=</code> "
 "in <command>apt-cache policy</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-patterns.7.xml
+msgid ""
+"Selects package versions that are currently installed. Versions prior to "
+"2.5.4 only matched at the package level, hence <code>?any-version(?installed?"
+"version(2.0))</code>matched even if 2.0 was not installed, but another "
+"version was."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
@@ -12100,14 +12112,6 @@ msgid ""
 "~poptional)</code>: this requires the package to have <code>required</code> "
 "priority, but if you do not type the <code>~</code>, it would require the "
 "package name to contain <code>poptional</code>."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
-#: apt-patterns.7.xml
-msgid ""
-"Grouping patterns with <code>(...)</code> or writing <code>?or(A,B)</code> "
-"as <code>A|B</code> are not supported. We do not believe that the use of "
-"<code>|</code> is that common, and the grouping is not necessary without it."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
