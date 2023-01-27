@@ -222,6 +222,8 @@ int pkgCdrom::Score(string Path)
       Res += 20;
    if (Path.find("/non-free/") != string::npos)
       Res += 20;
+   if (Path.find("/non-free-firmware/") != string::npos)
+      Res += 20;
    if (Path.find("/non-US/") != string::npos)
       Res += 20;
    if (Path.find("/source/") != string::npos)
