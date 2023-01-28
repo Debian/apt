@@ -3710,17 +3710,62 @@ std::string pkgAcqChangelog::URI(pkgCache::VerIterator const &Ver)	/*{{{*/
       pkgCache::PkgIterator const Pkg = Ver.ParentPkg();
       if (Pkg->CurrentVer != 0 && Pkg.CurrentVer() == Ver)
       {
-	 std::string const root = _config->FindDir("Dir");
-	 std::string const basename = root + std::string("usr/share/doc/") + Pkg.Name() + "/changelog";
-	 std::string const debianname = basename + ".Debian";
-	 if (FileExists(debianname))
-	    return "copy://" + debianname;
-	 else if (FileExists(debianname + ".gz"))
-	    return "store://" + debianname + ".gz";
-	 else if (FileExists(basename))
-	    return "copy://" + basename;
-	 else if (FileExists(basename + ".gz"))
-	    return "store://" + basename + ".gz";
+	 auto const LocalFile = [](pkgCache::PkgIterator const &Pkg) -> std::string {
+	    std::string const root = _config->FindDir("Dir");
+	    std::string const basename = root + std::string("usr/share/doc/") + Pkg.Name() + "/changelog";
+	    std::string const debianname = basename + ".Debian";
+	    auto const exts = APT::Configuration::getCompressorExtensions(); // likely we encounter only .gz
+	    for (auto file : { debianname, basename })
+	    {
+	       if (FileExists(file))
+		  return "copy://" + file;
+	       for (auto const& ext : exts)
+	       {
+		  auto const compressedfile = file + ext;
+		  if (FileExists(compressedfile))
+		     return "store://" + compressedfile;
+	       }
+	    }
+	    return "";
+	 }(Pkg);
+	 if (not LocalFile.empty())
+	 {
+	    _error->PushToStack();
+	    FileFd trimmed;
+	    if (APT::String::Startswith(LocalFile, "copy://"))
+	       trimmed.Open(LocalFile.substr(7), FileFd::ReadOnly, FileFd::None);
+	    else
+	       trimmed.Open(LocalFile.substr(8), FileFd::ReadOnly, FileFd::Extension);
+
+	    bool trimmedFile = false;
+	    if (trimmed.IsOpen())
+	    {
+	       /* We want to look at the last line… in a (likely) compressed file,
+		  which means we more or less have to uncompress the entire file.
+		  So we skip ahead the filesize minus our choosen line size in
+		  the hope that changelogs don't grow by being compressed to
+		  avoid doing this costly dance on at least a bit of the file. */
+	       char buffer[150];
+	       if (auto const filesize = trimmed.FileSize(); filesize > sizeof(buffer))
+		  trimmed.Skip(filesize - sizeof(buffer));
+	       std::string_view giveaways[] = {
+		  "# To read the complete changelog use", // Debian
+		  "# For older changelog entries, run", // Ubuntu
+	       };
+	       while (trimmed.ReadLine(buffer, sizeof(buffer)) != nullptr)
+	       {
+		  std::string_view const line{buffer};
+		  if (std::any_of(std::begin(giveaways), std::end(giveaways), [=](auto const gw) { return line.compare(0, gw.size(), gw) == 0; }))
+		  {
+		     trimmedFile = true;
+		     break;
+		  }
+	       }
+	    }
+	    _error->RevertToStack();
+	    if (not trimmedFile)
+	       return LocalFile;
+	 }
       }
    }
 
