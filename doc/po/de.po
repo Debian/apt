@@ -8057,10 +8057,10 @@ msgid ""
 "<literal>stable</literal> or <literal>testing</literal> or a codename like "
 "<literal>&debian-stable-codename;</literal> or <literal>&debian-testing-"
 "codename;</literal> while component is one of <literal>main</literal>, "
-"<literal>contrib</literal> or <literal>non-free</literal>. The <literal>deb-"
-"src</literal> type references a Debian distribution's source code in the "
-"same form as the <literal>deb</literal> type.  A <literal>deb-src</literal> "
-"line is required to fetch source indexes."
+"<literal>contrib</literal>, <literal>non-free</literal> or <literal>non-free-"
+"firmware</literal>. The <literal>deb-src</literal> type references a Debian "
+"distribution's source code in the same form as the <literal>deb</literal> "
+"type.  A <literal>deb-src</literal> line is required to fetch source indexes."
 msgstr ""
 "Der <literal>deb</literal>-Typ beschreibt ein typisches zweistufiges Debian-"
 "Archiv, <filename>Distribution/Bestandteil</filename>. "
@@ -8068,11 +8068,11 @@ msgstr ""
 "<literal>stable</literal> oder <literal>testing</literal> oder ein Codename "
 "wie <literal>&debian-stable-codename;</literal> oder <literal>&debian-"
 "testing-codename;</literal> während Bestandteil entweder <literal>main</"
-"literal>, <literal>contrib</literal> oder <literal>non-free</literal> ist. "
-"Der <literal>deb-src</literal>-Typ beschreibt den Quellcode einer Debian-"
-"Distribution in der gleichen Form wie den <literal>deb</literal>-Typ. Eine "
-"<literal>deb-src</literal>-Zeile wird benötigt, um Quellindizes "
-"herunterzuladen."
+"literal>, <literal>contrib</literal>, <literal>non-free</literal> oder "
+"<literal>non-free-firmware</literal> ist. Der <literal>deb-src</literal>-Typ "
+"beschreibt den Quellcode einer Debian-Distribution in der gleichen Form wie "
+"den <literal>deb</literal>-Typ. Eine <literal>deb-src</literal>-Zeile wird "
+"benötigt, um Quellindizes herunterzuladen."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8429,7 +8429,7 @@ msgid ""
 "Types: deb\n"
 "URIs: https://deb.debian.org\n"
 "Suites: stable\n"
-"Components: main contrib non-free\n"
+"Components: main contrib non-free non-free-firmware\n"
 "Signed-By:\n"
 " -----BEGIN PGP PUBLIC KEY BLOCK-----\n"
 " .\n"
@@ -8846,16 +8846,17 @@ msgstr ""
 #: sources.list.5.xml
 msgid ""
 "Uses the archive stored locally (or NFS mounted) at /home/apt/debian for "
-"stable/main, stable/contrib, and stable/non-free."
+"stable/main, stable/contrib, stable/non-free and stable/non-free-firmware."
 msgstr ""
 "benutzt die lokal gespeicherten (oder per NFS eingehängten) Archive in /home/"
-"apt/debian für stable/main, stable/contrib und stable/non-free."
+"apt/debian für stable/main, stable/contrib, stable/non-free und stable/non-"
+"free-firmware."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
 #, no-wrap
-msgid "deb file:/home/apt/debian stable main contrib non-free"
-msgstr "deb file:/home/apt/debian stable main contrib non-free"
+msgid "deb file:/home/apt/debian stable main contrib non-free non-free-firmware"
+msgstr "deb file:/home/apt/debian stable main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
@@ -8864,12 +8865,12 @@ msgid ""
 "Types: deb\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: stable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 msgstr ""
 "Types: deb\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: stable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8880,8 +8881,8 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
 #, no-wrap
-msgid "deb file:/home/apt/debian unstable main contrib non-free"
-msgstr "deb file:/home/apt/debian unstable main contrib non-free"
+msgid "deb file:/home/apt/debian unstable main contrib non-free non-free-firmware"
+msgstr "deb file:/home/apt/debian unstable main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
@@ -8890,12 +8891,12 @@ msgid ""
 "Types: deb\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: unstable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 msgstr ""
 "Types: deb\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: unstable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8905,8 +8906,8 @@ msgstr "Quellenangabe für Obiges"
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
 #, no-wrap
-msgid "deb-src file:/home/apt/debian unstable main contrib non-free"
-msgstr "deb-src file:/home/apt/debian unstable main contrib non-free"
+msgid "deb-src file:/home/apt/debian unstable main contrib non-free non-free-firmware"
+msgstr "deb-src file:/home/apt/debian unstable main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
@@ -8915,12 +8916,12 @@ msgid ""
 "Types: deb-src\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: unstable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 msgstr ""
 "Types: deb-src\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: unstable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -9873,11 +9874,11 @@ msgstr ""
 msgid ""
 "This is a space separated list of sections which appear under the "
 "distribution; typically this is something like <literal>main contrib non-"
-"free</literal>"
+"free non-free-firmware</literal>"
 msgstr ""
 "Dies ist eine durch Leerzeichen getrennte Liste der Abschnitte, die unter "
 "der Distribution erscheint, typischerweise etwas wie <literal>main contrib "
-"non-free</literal>"
+"non-free non-free-firmware</literal>"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
@@ -11869,10 +11870,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?name(REGEX)</code>"
 msgid "<code>?codename(REGEX)</code>"
-msgstr "<code>?name(REGULÄRER_AUSDRUCK)</code>"
+msgstr "<code>?codename(REGULÄRER_AUSDRUCK)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-patterns.7.xml
@@ -12033,115 +12032,83 @@ msgstr "Diese Muster wählen bestimmte Versionen eines Pakets aus."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?depends(PATTERN)</code>"
-msgstr "<code>?not(MUSTER)</code>"
+msgstr "<code>?depends(MUSTER)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DPATTERN</code>"
-msgstr "<code>!MUSTER</code>"
+msgstr "<code>~DMUSTER</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?pre-depends(PATTERN)</code>"
-msgstr "<code>?not(MUSTER)</code>"
+msgstr "<code>?pre-depends(MUSTER)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DPre-Depends:PATTERN</code>"
-msgstr "<code>!MUSTER</code>"
+msgstr "<code>~DPre-Depends:MUSTER</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?suggests(PATTERN)</code>"
-msgstr "<code>?not(MUSTER)</code>"
+msgstr "<code>?suggests(MUSTER)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DSuggests:PATTERN</code>"
-msgstr "<code>!MUSTER</code>"
+msgstr "<code>~DSuggests:MUSTER</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?conflicts(PATTERN)</code>"
-msgstr "<code>?not(MUSTER)</code>"
+msgstr "<code>?conflicts(MUSTER)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>~DConflicts:PATTERN</code>"
-msgstr "<code>?not(MUSTER)</code>"
+msgstr "<code>~DConflicts:MUSTER</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>(PATTERN)</code>"
 msgid "<code>?replaces(PATTERN)</code>"
-msgstr "<code>(MUSTER)</code>"
+msgstr "<code>?replaces(MUSTER)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DReplaces:PATTERN</code>"
-msgstr "<code>!MUSTER</code>"
+msgstr "<code>~DReplaces:MUSTER</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?obsoletes(PATTERN)</code>"
-msgstr "<code>?not(MUSTER)</code>"
+msgstr "<code>?obsoletes(MUSTER)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>~DObsoletes:PATTERN</code>"
-msgstr "<code>?not(MUSTER)</code>"
+msgstr "<code>~DObsoletes:MUSTER</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>(PATTERN)</code>"
 msgid "<code>?breaks(PATTERN)</code>"
-msgstr "<code>(MUSTER)</code>"
+msgstr "<code>?breaks(MUSTER)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DBreaks:PATTERN</code>"
-msgstr "<code>!MUSTER</code>"
+msgstr "<code>~DBreaks:MUSTER</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?not(PATTERN)</code>"
 msgid "<code>?enhances(PATTERN)</code>"
-msgstr "<code>?not(MUSTER)</code>"
+msgstr "<code>?enhances(MUSTER)</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>!PATTERN</code>"
 msgid "<code>~DEnhances:PATTERN</code>"
-msgstr "<code>!MUSTER</code>"
+msgstr "<code>~DEnhances:MUSTER</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-patterns.7.xml
@@ -12817,14 +12784,14 @@ msgstr ""
 #, no-wrap
 msgid ""
 " Please give the components to get\n"
-" The components are typically something like: main contrib non-free\n"
+" The components are typically something like: main contrib non-free non-free-firmware\n"
 "\n"
-" Components [main contrib non-free]:\n"
+" Components [main contrib non-free non-free-firmware]:\n"
 msgstr ""
 " Bitte geben Sie die Bestandteile an, die Sie erhalten möchten\n"
-" Die Bestandteile sind normalerweise etwas wie: »main« »contrib« »non-free«\n"
+" Die Bestandteile sind normalerweise etwas wie: »main« »contrib« »non-free« »non-free-firmware«\n"
 "\n"
-" Bestandteile [main contrib non-free]:\n"
+" Bestandteile [main contrib non-free non-free-firmware]:\n"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk

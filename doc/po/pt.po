@@ -7996,10 +7996,10 @@ msgid ""
 "<literal>stable</literal> or <literal>testing</literal> or a codename like "
 "<literal>&debian-stable-codename;</literal> or <literal>&debian-testing-"
 "codename;</literal> while component is one of <literal>main</literal>, "
-"<literal>contrib</literal> or <literal>non-free</literal>. The <literal>deb-"
-"src</literal> type references a Debian distribution's source code in the "
-"same form as the <literal>deb</literal> type.  A <literal>deb-src</literal> "
-"line is required to fetch source indexes."
+"<literal>contrib</literal>, <literal>non-free</literal> or <literal>non-free-"
+"firmware</literal>. The <literal>deb-src</literal> type references a Debian "
+"distribution's source code in the same form as the <literal>deb</literal> "
+"type.  A <literal>deb-src</literal> line is required to fetch source indexes."
 msgstr ""
 "O tipo <literal>deb</literal> descreve um arquivo Debian típico de dois "
 "níveis, <filename>distribution/component</filename>. A "
@@ -8007,10 +8007,11 @@ msgstr ""
 "<literal>stable</literal> ou <literal>testing</literal> ou um nome de código "
 "como <literal>&debian-stable-codename;</literal> ou <literal>&debian-testing-"
 "codename;</literal> enquanto que componente é um de <literal>main</literal>, "
-"<literal>contrib</literal> ou <literal>non-free</literal>. O tipo "
-"<literal>deb-src</literal> faz referência a um código fonte de distribuição "
-"Debian no mesmo formato que o tipo <literal>deb</literal>. É necessária uma "
-"linha <literal>deb-src</literal> para obter índices das fontes."
+"<literal>contrib</literal>, <literal>non-free</literal> ou <literal>non-free-"
+"firmware</literal>. O tipo <literal>deb-src</literal> faz referência a um "
+"código fonte de distribuição Debian no mesmo formato que o tipo "
+"<literal>deb</literal>. É necessária uma linha <literal>deb-src</literal> "
+"para obter índices das fontes."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8356,7 +8357,7 @@ msgid ""
 "Types: deb\n"
 "URIs: https://deb.debian.org\n"
 "Suites: stable\n"
-"Components: main contrib non-free\n"
+"Components: main contrib non-free non-free-firmware\n"
 "Signed-By:\n"
 " -----BEGIN PGP PUBLIC KEY BLOCK-----\n"
 " .\n"
@@ -8371,7 +8372,7 @@ msgstr ""
 "Types: deb\n"
 "URIs: https://deb.debian.org\n"
 "Suites: stable\n"
-"Components: main contrib non-free\n"
+"Components: main contrib non-free non-free-firmware\n"
 "Signed-By:\n"
 " -----BEGIN PGP PUBLIC KEY BLOCK-----\n"
 " .\n"
@@ -8766,16 +8767,16 @@ msgstr ""
 #: sources.list.5.xml
 msgid ""
 "Uses the archive stored locally (or NFS mounted) at /home/apt/debian for "
-"stable/main, stable/contrib, and stable/non-free."
+"stable/main, stable/contrib, stable/non-free and stable/non-free-firmware."
 msgstr ""
 "Usa o arquivo armazenado localmente (ou montagem NFS) em /home/apt/debian "
-"para stable/main, stable/contrib, e stable/non-free."
+"para stable/main, stable/contrib, stable/non-free e stable/non-free-firmware."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
 #, no-wrap
-msgid "deb file:/home/apt/debian stable main contrib non-free"
-msgstr "deb file:/home/apt/debian stable main contrib non-free"
+msgid "deb file:/home/apt/debian stable main contrib non-free non-free-firmware"
+msgstr "deb file:/home/apt/debian stable main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
@@ -8784,12 +8785,12 @@ msgid ""
 "Types: deb\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: stable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 msgstr ""
 "Types: deb\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: stable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8800,8 +8801,8 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
 #, no-wrap
-msgid "deb file:/home/apt/debian unstable main contrib non-free"
-msgstr "deb file:/home/apt/debian unstable main contrib non-free"
+msgid "deb file:/home/apt/debian unstable main contrib non-free non-free-firmware"
+msgstr "deb file:/home/apt/debian unstable main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
@@ -8810,12 +8811,12 @@ msgid ""
 "Types: deb\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: unstable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 msgstr ""
 "Types: deb\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: unstable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8825,8 +8826,8 @@ msgstr "Especificação de fontes para o referido acima."
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
 #, no-wrap
-msgid "deb-src file:/home/apt/debian unstable main contrib non-free"
-msgstr "deb-src file:/home/apt/debian unstable main contrib non-free"
+msgid "deb-src file:/home/apt/debian unstable main contrib non-free non-free-firmware"
+msgstr "deb-src file:/home/apt/debian unstable main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
@@ -8835,12 +8836,12 @@ msgid ""
 "Types: deb-src\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: unstable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 msgstr ""
 "Types: deb-src\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: unstable\n"
-"Components: main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -9786,11 +9787,11 @@ msgstr ""
 msgid ""
 "This is a space separated list of sections which appear under the "
 "distribution; typically this is something like <literal>main contrib non-"
-"free</literal>"
+"free non-free-firmware</literal>"
 msgstr ""
 "Isto é uma lista de secções separada por espaços que aparece sob a "
-"distribuição, tipicamente isto é algo como <literal>main contrib non-free</"
-"literal>"
+"distribuição, tipicamente isto é algo como <literal>main contrib non-free "
+"non-free-firmware</literal>"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml
@@ -12627,14 +12628,14 @@ msgstr ""
 #, no-wrap
 msgid ""
 " Please give the components to get\n"
-" The components are typically something like: main contrib non-free\n"
+" The components are typically something like: main contrib non-free non-free-firmware\n"
 "\n"
-" Components [main contrib non-free]:\n"
+" Components [main contrib non-free non-free-firmware]:\n"
 msgstr ""
 " Por favor forneça os componentes a obter\n"
-" Tipicamente os componentes são algo como: main contrib non-free\n"
+" Tipicamente os componentes são algo como: main contrib non-free non-free-firmware\n"
 "\n"
-" Componentes [main contrib non-free]:\n"
+" Componentes [main contrib non-free non-free-firmware]:\n"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk
@@ -14313,25 +14314,6 @@ msgstr "O qual irá usar os arquivos já obtidos e que estão no disco."
 
 #~ msgid "Some examples:"
 #~ msgstr "Alguns exemplos:"
-
-#, fuzzy
-#~| msgid ""
-#~| "deb http://ftp.debian.org/debian &stable-codename; main contrib non-"
-#~| "free\n"
-#~| "deb http://security.debian.org/ &stable-codename;/updates main contrib "
-#~| "non-free\n"
-#~| "   "
-#~ msgid ""
-#~ "deb http://ftp.debian.org/debian &debian-stable-codename; main contrib "
-#~ "non-free\n"
-#~ "deb http://security.debian.org/ &debian-stable-codename;/updates main "
-#~ "contrib non-free\n"
-#~ "   "
-#~ msgstr ""
-#~ "deb http://ftp.debian.org/debian &stable-codename; main contrib non-free\n"
-#~ "deb http://security.debian.org/ &stable-codename;/updates main contrib "
-#~ "non-free\n"
-#~ "   "
 
 #~ msgid ""
 #~ "As a temporary exception &apt-get; (not &apt;!) raises warnings only if "

@@ -30,8 +30,8 @@ my $boldoff=`setterm -bold off`;
 
 my @known_types           = ('deb');
 my @known_access         = ('http', 'ftp', 'file');
-my @typical_distributions = ('stable', 'unstable', 'testing', 'non-US');
-my @typical_components    = ('main', 'contrib', 'non-free');
+my @typical_distributions = ('stable', 'unstable', 'testing');
+my @typical_components    = ('main', 'contrib', 'non-free', 'non-free-firmware');
 
 my %known_access           = map {($_,$_)} @known_access;
 my %typical_distributions  = map {($_,$_)} @typical_distributions;
@@ -118,9 +118,9 @@ sub get_source {
   }
 
   $type         = 'deb';
-  $urn          = "http://http.us.debian.org/debian" unless $urn;
+  $urn          = "http://deb.debian.org/debian" unless $urn;
   $distribution = "stable" unless $distribution;
-  $components   = "main contrib non-free" unless $components;
+  $components   = "main contrib non-free non-free-firmware" unless $components;
 
     
   $rec->{'Type'} = 'deb';
