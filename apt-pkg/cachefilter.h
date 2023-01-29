@@ -134,6 +134,7 @@ public:
 	 */
 	PackageArchitectureMatchesSpecification(std::string const &pattern, bool const isPattern = true);
 	bool operator() (char const * const &arch);
+	using PackageMatcher::operator();
 	bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
 	~PackageArchitectureMatchesSpecification() APT_OVERRIDE;
 };
@@ -142,6 +143,7 @@ class APT_PUBLIC PackageIsNewInstall : public PackageMatcher {			/*{{{*/
 	pkgCacheFile * const Cache;
 public:
 	explicit PackageIsNewInstall(pkgCacheFile * const Cache);
+	using PackageMatcher::operator();
 	bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
 	~PackageIsNewInstall() APT_OVERRIDE;
 };
