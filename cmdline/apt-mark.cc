@@ -140,24 +140,37 @@ static bool DoMarkAuto(CommandLine &CmdL)
 }
 									/*}}}*/
 // helper for Install-Recommends-Sections and Never-MarkAuto-Sections	/*{{{*/
-static bool
-ConfigValueInSubTree(const char *SubTree, const char *needle)
+// FIXME: Copied verbatim from apt-pkg/depcache.cc
+static bool ConfigValueInSubTree(const char* SubTree, std::string_view const needle)
 {
-   // copied from depcache.cc
-   Configuration::Item const *Opts;
-   Opts = _config->Tree(SubTree);
-   if (Opts != 0 && Opts->Child != 0)
+   if (needle.empty())
+      return false;
+   Configuration::Item const *Opts = _config->Tree(SubTree);
+   if (Opts != nullptr && Opts->Child != nullptr)
    {
       Opts = Opts->Child;
-      for (; Opts != 0; Opts = Opts->Next)
+      for (; Opts != nullptr; Opts = Opts->Next)
       {
-	 if (Opts->Value.empty() == true)
+	 if (Opts->Value.empty())
 	    continue;
-	 if (strcmp(needle, Opts->Value.c_str()) == 0)
+	 if (needle == Opts->Value)
 	    return true;
       }
    }
    return false;
+}
+static bool SectionInSubTree(char const * const SubTree, std::string_view Needle)
+{
+   if (ConfigValueInSubTree(SubTree, Needle))
+      return true;
+   auto const sub = Needle.find('/');
+   if (sub == std::string_view::npos)
+   {
+      std::string special{"<undefined>/"};
+      special.append(Needle);
+      return ConfigValueInSubTree(SubTree, special);
+   }
+   return ConfigValueInSubTree(SubTree, Needle.substr(sub + 1));
 }
 									/*}}}*/
 /* DoMinimize - minimize manually installed	{{{*/
@@ -179,7 +192,7 @@ static bool DoMinimize(CommandLine &CmdL)
       auto ver = pkg.CurrentVer();
       return ver.end() == false && ((*DepCache)[pkg].Flags & pkgCache::Flag::Auto) == 0 &&
 	     ver->Section != 0 &&
-	     ConfigValueInSubTree("APT::Never-MarkAuto-Sections", ver.Section());
+	     SectionInSubTree("APT::Never-MarkAuto-Sections", ver.Section());
    };
 
    APT::PackageSet roots;

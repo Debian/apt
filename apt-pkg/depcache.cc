@@ -67,23 +67,37 @@ class DefaultRootSetFunc2 : public pkgDepCache::DefaultRootSetFunc
 
 									/*}}}*/
 // helper for Install-Recommends-Sections and Never-MarkAuto-Sections	/*{{{*/
-static bool 
-ConfigValueInSubTree(const char* SubTree, const char *needle)
+// FIXME: Has verbatim copy in cmdline/apt-mark.cc
+static bool ConfigValueInSubTree(const char* SubTree, std::string_view const needle)
 {
-   Configuration::Item const *Opts;
-   Opts = _config->Tree(SubTree);
-   if (Opts != 0 && Opts->Child != 0)
+   if (needle.empty())
+      return false;
+   Configuration::Item const *Opts = _config->Tree(SubTree);
+   if (Opts != nullptr && Opts->Child != nullptr)
    {
       Opts = Opts->Child;
-      for (; Opts != 0; Opts = Opts->Next)
+      for (; Opts != nullptr; Opts = Opts->Next)
       {
-	 if (Opts->Value.empty() == true)
+	 if (Opts->Value.empty())
 	    continue;
-	 if (strcmp(needle, Opts->Value.c_str()) == 0)
+	 if (needle == Opts->Value)
 	    return true;
       }
    }
    return false;
+}
+static bool SectionInSubTree(char const * const SubTree, std::string_view Needle)
+{
+   if (ConfigValueInSubTree(SubTree, Needle))
+      return true;
+   auto const sub = Needle.find('/');
+   if (sub == std::string_view::npos)
+   {
+      std::string special{"<undefined>/"};
+      special.append(Needle);
+      return ConfigValueInSubTree(SubTree, special);
+   }
+   return ConfigValueInSubTree(SubTree, Needle.substr(sub + 1));
 }
 									/*}}}*/
 pkgDepCache::ActionGroup::ActionGroup(pkgDepCache &cache) :		/*{{{*/
@@ -1050,7 +1064,7 @@ bool pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
 	 // We do not check for or-groups here as we don't know which package takes care of
 	 // providing the feature the user likes e.g.:  browser1 | browser2 | browser3
 	 // Temporary removals are effected by this as well, which is bad, but unlikely in practice
-	 bool const PinNeverMarkAutoSection = (PV->Section != 0 && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", PV.Section()));
+	 bool const PinNeverMarkAutoSection = (PV->Section != 0 && SectionInSubTree("APT::Never-MarkAuto-Sections", PV.Section()));
 	 if (PinNeverMarkAutoSection)
 	 {
 	    for (DepIterator D = PV.DependsList(); D.end() != true; ++D)
@@ -1761,8 +1775,8 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
       VerIterator const CurVer = Pkg.CurrentVer();
       if (not CurVer.end() && CurVer->Section != 0 && strcmp(CurVer.Section(), PV.Section()) != 0)
       {
-	 bool const CurVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", CurVer.Section());
-	 bool const InstVerInMoveSection = ConfigValueInSubTree("APT::Move-Autobit-Sections", PV.Section());
+	 bool const CurVerInMoveSection = SectionInSubTree("APT::Move-Autobit-Sections", CurVer.Section());
+	 bool const InstVerInMoveSection = SectionInSubTree("APT::Move-Autobit-Sections", PV.Section());
 	 return (not CurVerInMoveSection && InstVerInMoveSection);
       }
       return false;
@@ -2254,7 +2268,7 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep) const
       // FIXME: this is a meant as a temporary solution until the
       //        recommends are cleaned up
       const char *sec = Dep.ParentVer().Section();
-      if (sec && ConfigValueInSubTree("APT::Install-Recommends-Sections", sec))
+      if (sec && SectionInSubTree("APT::Install-Recommends-Sections", sec))
 	 return true;
    }
    else if(Dep->Type == pkgCache::Dep::Suggests)

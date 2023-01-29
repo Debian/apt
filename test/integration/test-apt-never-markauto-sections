@@ -8,12 +8,13 @@ configarchitecture 'amd64' 'i386'
 
 aptconfig dump --no-empty --format '%v%n' APT::Never-MarkAuto-Sections > nevermarkauto.sections
 testsuccess grep '^metapackages$' nevermarkauto.sections
+testfailure grep '^universe/metapackages$' nevermarkauto.sections
 
 buildsimplenativepackage 'mydesktop' 'all' '1' 'unstable' 'Depends: mydesktop-core, foreignpkg
 Recommends: notavailable' '' 'metapackages'
 buildsimplenativepackage 'mydesktop-core' 'amd64' '1' 'unstable' 'Depends: bad-texteditor | texteditor, browser (>= 42), nosection, foreignpkg
 Recommends: notavailable
-Multi-Arch: foreign' '' 'metapackages'
+Multi-Arch: foreign' '' 'universe/metapackages'
 buildsimplenativepackage 'browser' 'amd64' '41' 'stable'
 buildsimplenativepackage 'browser' 'amd64' '42' 'unstable'
 buildsimplenativepackage 'texteditor' 'amd64' '1' 'stable'
