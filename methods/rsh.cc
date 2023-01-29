@@ -501,7 +501,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
       URIStart(Res);
 
       FailFile = Itm->DestFile;
-      FailFile.c_str();   // Make sure we don't do a malloc in the signal handler
+      (void)(FailFile.c_str()); // Make sure we don't do a malloc in the signal handler
       FailFd = Fd.Fd();
 
       bool Missing;
