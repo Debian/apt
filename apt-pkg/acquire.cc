@@ -1470,7 +1470,8 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       std::string msg;
       long i = CurrentItems < TotalItems ? CurrentItems + 1 : CurrentItems;
       // only show the ETA if it makes sense
-      if (ETA > 0 && ETA < std::chrono::seconds(std::chrono::hours(24 * 2)).count())
+      auto const twodays = std::chrono::seconds(std::chrono::hours(24 * 2)).count();
+      if (ETA > 0 && ETA < static_cast<decltype(ETA)>(twodays))
 	 strprintf(msg, _("Retrieving file %li of %li (%s remaining)"), i, TotalItems, TimeToStr(ETA).c_str());
       else
 	 strprintf(msg, _("Retrieving file %li of %li"), i, TotalItems);

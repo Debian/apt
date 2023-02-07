@@ -1008,7 +1008,7 @@ BaseHttpMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &R
       return ERROR_NOT_FROM_SERVER;
 
    FailFile = Queue->DestFile;
-   FailFile.c_str();   // Make sure we don't do a malloc in the signal handler
+   (void)(FailFile.c_str()); // Make sure we don't do a malloc in the signal handler
    FailFd = Req.File.Fd();
    FailTime = Req.Date;
 

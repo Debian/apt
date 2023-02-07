@@ -23,6 +23,7 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/mmap.h>
 
+#include <cstdint>
 #include <cstring>
 #include <string>
 #include <errno.h>

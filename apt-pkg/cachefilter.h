@@ -30,35 +30,35 @@ public:
 
 class APT_PUBLIC PackageMatcher : public Matcher {
 public:
-   virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE = 0;
-   virtual bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE { return (*this)(Ver.ParentPkg()); }
-   virtual bool operator() (pkgCache::GrpIterator const &/*Grp*/) APT_OVERRIDE { return false; }
-   virtual ~PackageMatcher();
+   bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE = 0;
+   bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE { return (*this)(Ver.ParentPkg()); }
+   bool operator() (pkgCache::GrpIterator const &/*Grp*/) APT_OVERRIDE { return false; }
+   ~PackageMatcher() APT_OVERRIDE;
 };
 
 // Generica like True, False, NOT, AND, OR				/*{{{*/
 class APT_PUBLIC TrueMatcher : public Matcher {
 public:
-   virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-   virtual bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
-   virtual bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
+   bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+   bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
+   bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
 };
 
 class APT_PUBLIC FalseMatcher : public Matcher {
 public:
-   virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-   virtual bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
-   virtual bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
+   bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+   bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
+   bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
 };
 
 class APT_PUBLIC NOTMatcher : public Matcher {
    Matcher * const matcher;
 public:
    explicit NOTMatcher(Matcher * const matcher);
-   virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-   virtual bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
-   virtual bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
-   virtual ~NOTMatcher();
+   bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+   bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
+   bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
+   ~NOTMatcher() APT_OVERRIDE;
 };
 
 class APT_PUBLIC ANDMatcher : public Matcher {
@@ -72,10 +72,10 @@ public:
    ANDMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3, Matcher * const matcher4);
    ANDMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3, Matcher * const matcher4, Matcher * const matcher5);
    ANDMatcher& AND(Matcher * const matcher);
-   virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-   virtual bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
-   virtual bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
-   virtual ~ANDMatcher();
+   bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+   bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
+   bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
+   ~ANDMatcher() APT_OVERRIDE;
 };
 class APT_PUBLIC ORMatcher : public Matcher {
    std::vector<Matcher *> matchers;
@@ -88,28 +88,28 @@ public:
    ORMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3, Matcher * const matcher4);
    ORMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3, Matcher * const matcher4, Matcher * const matcher5);
    ORMatcher& OR(Matcher * const matcher);
-   virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-   virtual bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
-   virtual bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
-   virtual ~ORMatcher();
+   bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+   bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
+   bool operator() (pkgCache::VerIterator const &Ver) APT_OVERRIDE;
+   ~ORMatcher() APT_OVERRIDE;
 };
 									/*}}}*/
 class APT_PUBLIC PackageNameMatchesRegEx : public PackageMatcher {			/*{{{*/
 	regex_t* pattern;
 public:
 	explicit PackageNameMatchesRegEx(std::string const &Pattern);
-	virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-	virtual bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
-	virtual ~PackageNameMatchesRegEx();
+	bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+	bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
+	~PackageNameMatchesRegEx() APT_OVERRIDE;
 };
 									/*}}}*/
 class APT_PUBLIC PackageNameMatchesFnmatch : public PackageMatcher {		/*{{{*/
 	const std::string Pattern;
 public:
 	explicit PackageNameMatchesFnmatch(std::string const &Pattern);
-	virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-	virtual bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
-	virtual ~PackageNameMatchesFnmatch() {};
+	bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+	bool operator() (pkgCache::GrpIterator const &Grp) APT_OVERRIDE;
+	~PackageNameMatchesFnmatch() APT_OVERRIDE = default;
 };
 									/*}}}*/
 class APT_PUBLIC PackageArchitectureMatchesSpecification : public PackageMatcher {	/*{{{*/
@@ -134,16 +134,18 @@ public:
 	 */
 	PackageArchitectureMatchesSpecification(std::string const &pattern, bool const isPattern = true);
 	bool operator() (char const * const &arch);
-	virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-	virtual ~PackageArchitectureMatchesSpecification();
+	using PackageMatcher::operator();
+	bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+	~PackageArchitectureMatchesSpecification() APT_OVERRIDE;
 };
 									/*}}}*/
 class APT_PUBLIC PackageIsNewInstall : public PackageMatcher {			/*{{{*/
 	pkgCacheFile * const Cache;
 public:
 	explicit PackageIsNewInstall(pkgCacheFile * const Cache);
-	virtual bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-	virtual ~PackageIsNewInstall();
+	using PackageMatcher::operator();
+	bool operator() (pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+	~PackageIsNewInstall() APT_OVERRIDE;
 };
 									/*}}}*/
 

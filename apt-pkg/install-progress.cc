@@ -237,7 +237,7 @@ PackageManagerFancy::~PackageManagerFancy()
       signal(SIGWINCH, SIGWINCH_orig);
 }
 
-void PackageManagerFancy::staticSIGWINCH(int signum)
+void PackageManagerFancy::staticSIGWINCH(int /*signum*/)
 {
    SIGWINCH_flag = 1;
 }
