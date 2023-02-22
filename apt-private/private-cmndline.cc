@@ -87,6 +87,7 @@ static bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char cons
    addArg('g', "generate", "APT::Cache::Generate", 0);
    addArg('t', "target-release", "APT::Default-Release", CommandLine::HasArg);
    addArg('t', "default-release", "APT::Default-Release", CommandLine::HasArg);
+   addArg('S', "snapshot", "APT::Snapshot", CommandLine::HasArg);
 
    addArg('p', "pkg-cache", "Dir::Cache::pkgcache", CommandLine::HasArg);
    addArg('s', "src-cache", "Dir::Cache::srcpkgcache", CommandLine::HasArg);
@@ -266,6 +267,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    addArg('m',"ignore-missing","APT::Get::Fix-Missing",0);
    addArg('t',"target-release","APT::Default-Release",CommandLine::HasArg);
    addArg('t',"default-release","APT::Default-Release",CommandLine::HasArg);
+   addArg('S', "snapshot", "APT::Snapshot", CommandLine::HasArg);
    addArg(0,"download","APT::Get::Download",0);
    addArg(0,"fix-missing","APT::Get::Fix-Missing",0);
    addArg(0,"ignore-hold","APT::Ignore-Hold",0);

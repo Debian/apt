@@ -121,6 +121,7 @@ std::string IndexTarget::Option(OptionKeys const EnumKey) const		/*{{{*/
       APT_CASE(ALLOW_WEAK);
       APT_CASE(ALLOW_DOWNGRADE_TO_INSECURE);
       APT_CASE(INRELEASE_PATH);
+      APT_CASE(SHADOWED);
 #undef APT_CASE
       case FILENAME:
       {
@@ -221,6 +222,8 @@ unsigned long pkgDebianIndexTargetFile::Size() const				/*{{{*/
 									/*}}}*/
 bool pkgDebianIndexTargetFile::Exists() const					/*{{{*/
 {
+   if (Target.OptionBool(IndexTarget::SHADOWED))
+      return false;
    return FileExists(IndexFileName());
 }
 									/*}}}*/

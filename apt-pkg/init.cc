@@ -209,6 +209,9 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ubuntu", "https://changelogs.ubuntu.com/changelogs/pool/@CHANGEPATH@/changelog");
    Cnf.CndSet("Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu", true);
 
+   Cnf.CndSet("Acquire::Snapshots::URI::Origin::Debian", "https://snapshot.debian.org/archive/debian/@SNAPSHOTID@/");
+   Cnf.CndSet("Acquire::Snapshots::URI::Override::Label::Debian-Security", "https://snapshot.debian.org/archive/debian-security/@SNAPSHOTID@/");
+   Cnf.CndSet("Acquire::Snapshots::URI::Origin::Ubuntu", "https://snapshot.ubuntu.com/ubuntu/@SNAPSHOTID@/");
 
    Cnf.CndSet("DPkg::Path", "/usr/sbin:/usr/bin:/sbin:/bin");
 

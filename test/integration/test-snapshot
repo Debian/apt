@@ -1,0 +1,191 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'awesome' 'native' '42' 'stable'
+buildsimplenativepackage 'foo' 'all' '1.0' 'stable'
+buildsimplenativepackage 'libbar' 'all' '1.0' 'stable'
+
+getlabelfromsuite() { echo 'Testcases'; }
+getoriginfromsuite() { echo 'Debian'; }
+
+setupaptarchive --no-update
+changetowebserver
+testsuccess aptget update
+
+testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
+
+testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris --snapshot OPTIONNOTSET
+
+# Enable the snapshot feature
+sed -i 's/http:/[snapshot=enable] http:/' rootdir/etc/apt/sources.list.d/*
+
+testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
+
+for option in -S --snapshot; do
+testsuccessequal "'https://snapshot.debian.org/archive/debian/BANANA/dists/stable/InRelease' snapshot.debian.org_archive_debian_BANANA_dists_stable_InRelease 0 
+'https://snapshot.debian.org/archive/debian/BANANA/dists/stable/main/source/Sources.xz' snapshot.debian.org_archive_debian_BANANA_dists_stable_main_source_Sources 0 
+'https://snapshot.debian.org/archive/debian/BANANA/dists/stable/main/binary-amd64/Packages.xz' snapshot.debian.org_archive_debian_BANANA_dists_stable_main_binary-amd64_Packages 0 
+'https://snapshot.debian.org/archive/debian/BANANA/dists/stable/main/binary-all/Packages.xz' snapshot.debian.org_archive_debian_BANANA_dists_stable_main_binary-all_Packages 0 
+'https://snapshot.debian.org/archive/debian/BANANA/dists/stable/main/i18n/Translation-en.xz' snapshot.debian.org_archive_debian_BANANA_dists_stable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris $option BANANA
+done
+
+
+# Let us update for realz
+mkdir aptarchive/snapshot/BANANA -p
+cp -a aptarchive/dists aptarchive/snapshot/BANANA
+
+testsuccessequal "Hit:1 http://localhost:${APTHTTPPORT} stable InRelease
+Get:2 http://localhost:${APTHTTPPORT}/snapshot/BANANA stable InRelease [$(stat -c %s aptarchive/dists/stable/InRelease) B]
+Get:3 http://localhost:${APTHTTPPORT}/snapshot/BANANA stable/main Sources [$(stat -c %s aptarchive/dists/stable/main/source/Sources.gz) B]
+Get:4 http://localhost:${APTHTTPPORT}/snapshot/BANANA stable/main amd64 Packages [$(stat -c %s aptarchive/dists/stable/main/binary-amd64/Packages.gz) B]
+Get:5 http://localhost:${APTHTTPPORT}/snapshot/BANANA stable/main all Packages [$(stat -c %s aptarchive/dists/stable/main/binary-all/Packages.gz) B]
+Get:6 http://localhost:${APTHTTPPORT}/snapshot/BANANA stable/main Translation-en [$(stat -c %s aptarchive/dists/stable/main/i18n/Translation-en.gz) B]
+Reading package lists..." \
+	aptget update  -o Acquire::Snapshots::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/snapshot/@SNAPSHOTID@/" -SBANANA
+
+msgmsg "Cache constructed without snapshot"
+testsuccessequal "Package files:
+ 500 http://localhost:${APTHTTPPORT} stable/main all Packages
+     release o=Debian,a=stable,n=stable,l=Testcases,c=main,b=all
+     origin localhost
+ 500 http://localhost:${APTHTTPPORT} stable/main amd64 Packages
+     release o=Debian,a=stable,n=stable,l=Testcases,c=main,b=amd64
+     origin localhost
+Pinned packages:" \
+	aptcache policy  -o Acquire::Snapshots::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/snapshot/@SNAPSHOTID@/" 
+
+testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/awesome_42_amd64.deb' awesome_42_amd64.deb $(stat -c %s aptarchive/pool/awesome_42_amd64.deb) " \
+	aptget install --print-uris -qq awesome
+
+msgmsg "Cache constructed with snapshot"
+testsuccessequal "Package files:
+ 500 http://localhost:${APTHTTPPORT}/snapshot/BANANA stable/main all Packages
+     release o=Debian,a=stable,n=stable,l=Testcases,c=main,b=all
+     origin localhost
+ 500 http://localhost:${APTHTTPPORT}/snapshot/BANANA stable/main amd64 Packages
+     release o=Debian,a=stable,n=stable,l=Testcases,c=main,b=amd64
+     origin localhost
+Pinned packages:" \
+	aptcache policy  -o Acquire::Snapshots::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/snapshot/@SNAPSHOTID@/" -SBANANA
+
+testsuccessequal "'http://localhost:${APTHTTPPORT}/snapshot/BANANA/pool/awesome_42_amd64.deb' awesome_42_amd64.deb $(stat -c %s aptarchive/pool/awesome_42_amd64.deb) " \
+	aptget install --print-uris -qq awesome  -o Acquire::Snapshots::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/snapshot/@SNAPSHOTID@/" -SBANANA
+
+
+releasechanger() {
+	# modifying the Release files in lists… bad stuff. Good that this is only a test…
+	sed -i "s#^${1}: .*#${1}: ${2}#" $(find rootdir/var/lib/apt/lists -name '*Release')
+	rm -f rootdir/var/cache/apt/*.bin
+}
+
+msgmsg "Origin: Ubuntu"
+releasechanger 'Origin' 'Ubuntu'
+testsuccessequal "'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/stable/InRelease' snapshot.ubuntu.com_ubuntu_BANANA_dists_stable_InRelease 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/stable/main/source/Sources.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_stable_main_source_Sources 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/stable/main/binary-amd64/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_stable_main_binary-amd64_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/stable/main/binary-all/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_stable_main_binary-all_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/stable/main/i18n/Translation-en.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_stable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris $option BANANA
+
+msgmsg "Label: Debian"
+releasechanger 'Label' 'Debian'
+testsuccessequal "'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/stable/InRelease' snapshot.ubuntu.com_ubuntu_BANANA_dists_stable_InRelease 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/stable/main/source/Sources.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_stable_main_source_Sources 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/stable/main/binary-amd64/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_stable_main_binary-amd64_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/stable/main/binary-all/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_stable_main_binary-all_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/stable/main/i18n/Translation-en.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_stable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris $option BANANA
+
+testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/InRelease' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris -o Acquire::Snapshots::URI::Label::Debian="http://localhost:${APTHTTPPORT}/snapshot/@SNAPSHOTID@/" -SBANANA
+
+msgmsg "Snapshots: set in the InRelease file"
+sed -i '/^Origin: / a\
+Snapshots: https://example.org/snapshots/@SNAPSHOTID@/' $(find rootdir/var/lib/apt/lists -name '*Release')
+rm -f rootdir/var/cache/apt/*.bin
+
+testsuccessequal "'https://example.org/snapshots/BANANA/dists/stable/InRelease' example.org_snapshots_BANANA_dists_stable_InRelease 0 
+'https://example.org/snapshots/BANANA/dists/stable/main/source/Sources.xz' example.org_snapshots_BANANA_dists_stable_main_source_Sources 0 
+'https://example.org/snapshots/BANANA/dists/stable/main/binary-amd64/Packages.xz' example.org_snapshots_BANANA_dists_stable_main_binary-amd64_Packages 0 
+'https://example.org/snapshots/BANANA/dists/stable/main/binary-all/Packages.xz' example.org_snapshots_BANANA_dists_stable_main_binary-all_Packages 0 
+'https://example.org/snapshots/BANANA/dists/stable/main/i18n/Translation-en.xz' example.org_snapshots_BANANA_dists_stable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris -SBANANA
+
+releasechanger 'Snapshots' 'no'
+testfailuremsg "E: Snapshots not supported for http://localhost:${APTHTTPPORT}/ stable
+E: Snapshots not supported for http://localhost:${APTHTTPPORT}/ stable
+E: The list of sources could not be read." aptget update --print-uris -S BANANA
+
+msgmsg "Snapshot URI configured in apt.conf"
+sed -i '/^Snapshots: / d' $(find rootdir/var/lib/apt/lists -name '*Release')
+releasechanger 'Label' 'Testcases'
+
+echo "Acquire::Snapshots::URI::Label::Testcases \"http://localhost:${APTHTTPPORT}/snapshot/@SNAPSHOTID@/\";" > rootdir/etc/apt/apt.conf.d/changelog.conf
+testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/InRelease' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris -SBANANA
+
+rm rootdir/etc/apt/apt.conf.d/changelog.conf
+
+exit 0
+msgmsg "Failure cases"
+
+# no @CHANGEPATH@ in the URI
+testequal 'E: Failed to fetch changelog:/foo.changelog  Changelog unavailable for foo=1.0' \
+	aptget update  -o Acquire::Snapshots::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/snapshot" -SBANANA
+
+testequal "E: Failed to fetch http://localhost:${APTHTTPPORT}/does/not/exist/main/f/foo/foo_1.0/change.txt  Changelog unavailable for foo=1.0 (404  Not Found)" \
+	aptget update -o Acquire::Snapshots::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/does/not/exist/@SNAPSHOTID@" -SBANANA
+
+
+
