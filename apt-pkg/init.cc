@@ -212,6 +212,10 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Acquire::Changelogs::URI::Origin::Ultimedia", "http://packages.ultimediaos.com/changelogs/pool/@CHANGEPATH@/changelog.txt");
    Cnf.CndSet("Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu", true);
 
+   Cnf.CndSet("Acquire::Snapshots::URI::Origin::Debian", "https://snapshot.debian.org/archive/debian/@SNAPSHOTID@/");
+   Cnf.CndSet("Acquire::Snapshots::URI::Override::Label::Debian-Security", "https://snapshot.debian.org/archive/debian-security/@SNAPSHOTID@/");
+   Cnf.CndSet("Acquire::Snapshots::URI::Origin::Ubuntu", "https://snapshot.ubuntu.com/ubuntu/@SNAPSHOTID@/");
+
    // Read an alternate config file
    _error->PushToStack();
    const char *Cfg = getenv("APT_CONFIG");

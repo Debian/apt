@@ -53,6 +53,9 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
    time_t DateMaxFuture;
    time_t NotBefore;
 
+   std::string Snapshot;
+   std::string SnapshotsServer;
+
    std::vector<std::string> Architectures;
    std::vector<std::string> NoSupportForAll;
    std::vector<std::string> SupportedComponents;
@@ -402,6 +405,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
    Suite = Section.FindS("Suite");
    Codename = Section.FindS("Codename");
    SetReleaseNotes(Section.FindS("Release-Notes"));
+   d->SnapshotsServer = Section.FindS("Snapshots");
    {
       std::string const archs = Section.FindS("Architectures");
       if (archs.empty() == false)
@@ -732,6 +736,18 @@ bool debReleaseIndex::SetDateMaxFuture(time_t const DateMaxFuture)
    else if (d->DateMaxFuture != DateMaxFuture)
       return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Date-Max-Future", URI.c_str(), Dist.c_str());
    return true;
+}
+bool debReleaseIndex::SetSnapshot(std::string const Snapshot)
+{
+   if (d->Snapshot.empty())
+      d->Snapshot = Snapshot;
+   else if (d->Snapshot != Snapshot)
+      return _error->Error(_("Conflicting values set for option %s regarding source %s %s"), "Snapshot", URI.c_str(), Dist.c_str());
+   return true;
+}
+std::string debReleaseIndex::GetSnapshotsServer() const
+{
+   return d->SnapshotsServer;
 }
 bool debReleaseIndex::SetSignedBy(std::string const &pSignedBy)
 {
@@ -1081,6 +1097,17 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	 return defVal;
       return StringToBool(opt->second, defVal);
    }
+   static std::string GetSnapshotOption(std::map<std::string, std::string> const &Options, char const * const name, const std::string defVal="")
+   {
+      std::map<std::string, std::string>::const_iterator const opt = Options.find(name);
+      if (opt == Options.end())
+	 return defVal;
+      int boolVal = StringToBool(opt->second, -1);
+      if (boolVal != -1)
+	 return boolVal ? _config->Find("APT::Snapshot") : "";
+      return opt->second;
+   }
+
 
    static std::vector<std::string> GetMapKeys(std::map<std::string, std::string> const &Options)
    {
@@ -1125,7 +1152,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
       return true;
    }
 
-   static debReleaseIndex * GetDebReleaseIndexBy(std::vector<metaIndex *> &List, std::string const &URI,
+   static debReleaseIndex * GetDebReleaseIndexBy(std::vector<metaIndex *> &List, std::string URI,
 			   std::string const &Dist, std::map<std::string, std::string> const &Options)
    {
       std::map<std::string, std::string> ReleaseOptions{{
@@ -1140,6 +1167,8 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	 ReleaseOptions.emplace("ALLOW_WEAK", "true");
       if (GetBoolOption(Options, "allow-downgrade-to-insecure", _config->FindB("Acquire::AllowDowngradeToInsecureRepositories")))
 	 ReleaseOptions.emplace("ALLOW_DOWNGRADE_TO_INSECURE", "true");
+      if (GetBoolOption(Options, "SHADOWED", false))
+	 ReleaseOptions.emplace("SHADOWED", "true");
 
       auto InReleasePath = Options.find("inrelease-path");
       if (InReleasePath != Options.end())
@@ -1179,10 +1208,78 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
    }
 
    protected:
+   // This is a duplicate of pkgAcqChangelog::URITemplate()  with some changes to work 
+   // on metaIndex instead of cache structures, and using Snapshots
+   std::string SnapshotServer(debReleaseIndex const *Rls) const
+   {
+      if (Rls->GetLabel().empty() && Rls->GetOrigin().empty())
+	 return "";
+      std::string const serverConfig = "Acquire::Snapshots::URI";
+      std::string server;
+#define APT_EMPTY_SERVER        \
+   if (server.empty() == false) \
+   {                            \
+      if (server != "no")       \
+	 return server;         \
+      return "";                \
+   }
+#define APT_CHECK_SERVER(X, Y)                                                                     \
+   if (not Rls->Get##X().empty())                                                                  \
+   {                                                                                               \
+      std::string const specialServerConfig = serverConfig + "::" + Y + #X + "::" + Rls->Get##X(); \
+      server = _config->Find(specialServerConfig);                                                 \
+      APT_EMPTY_SERVER                                                                             \
+   }
+      // this way e.g. Debian-Security can fallback to Debian
+      APT_CHECK_SERVER(Label, "Override::")
+      APT_CHECK_SERVER(Origin, "Override::")
 
-   bool CreateItemInternal(std::vector<metaIndex *> &List, std::string const &URI,
+      server = Rls->GetSnapshotsServer();
+      APT_EMPTY_SERVER
+
+      APT_CHECK_SERVER(Label, "")
+      APT_CHECK_SERVER(Origin, "")
+#undef APT_CHECK_SERVER
+#undef APT_EMPTY_SERVER
+      return "";
+   }
+   bool CreateItemInternal(std::vector<metaIndex *> &List, std::string URI,
 			   std::string const &Dist, std::string const &Section,
-			   bool const &IsSrc, std::map<std::string, std::string> const &Options) const
+			   bool const &IsSrc, std::map<std::string, std::string> Options) const
+   {
+      auto Snapshot = GetSnapshotOption(Options, "snapshot");
+      if (not Snapshot.empty()) {
+	 std::map<std::string, std::string> SnapshotOptions = Options;
+
+	 Options.emplace("SHADOWED", "true");
+
+	 auto const Deb = GetDebReleaseIndexBy(List, URI, Dist, Options);
+	 std::string filename;
+	 if (not ReleaseFileName(Deb, filename))
+	    return _error->Error("Cannot identify snapshot server for %s %s - run update without snapshot id first", URI.c_str(), Dist.c_str());
+	 auto OldDeb = dynamic_cast<debReleaseIndex *>(Deb->UnloadedClone());
+	 if (not OldDeb->Load(filename, nullptr))
+	    return _error->Error("Cannot identify snapshot server for %s %s - run update without snapshot id first", URI.c_str(), Dist.c_str());
+	 auto Server = SnapshotServer(OldDeb);
+	 delete OldDeb;
+
+	 if (Server.empty())
+	    return _error->Error("Snapshots not supported for %s %s", URI.c_str(), Dist.c_str());
+
+	 auto SnapshotURI = SubstVar(Server, "@SNAPSHOTID@", Snapshot);
+
+	 if (not CreateItemInternalOne(List, SnapshotURI, Dist, Section, IsSrc, SnapshotOptions))
+	    return false;
+      }
+      if (not CreateItemInternalOne(List, URI, Dist, Section, IsSrc, Options))
+	 return false;
+
+
+      return true;
+   }
+   bool CreateItemInternalOne(std::vector<metaIndex *> &List, std::string URI,
+			   std::string const &Dist, std::string const &Section,
+			   bool const &IsSrc, std::map<std::string, std::string> Options) const
    {
       auto const Deb = GetDebReleaseIndexBy(List, URI, Dist, Options);
       if (Deb == nullptr)
@@ -1221,7 +1318,8 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	  Deb->SetValidUntilMax(GetTimeOption(Options, "valid-until-max")) == false ||
 	  Deb->SetValidUntilMin(GetTimeOption(Options, "valid-until-min")) == false ||
 	  Deb->SetCheckDate(GetTriStateOption(Options, "check-date")) == false ||
-	  Deb->SetDateMaxFuture(GetTimeOption(Options, "date-max-future")) == false)
+	  Deb->SetDateMaxFuture(GetTimeOption(Options, "date-max-future")) == false ||
+	  Deb->SetSnapshot(GetSnapshotOption(Options, "snapshot")) == false)
 	 return false;
 
       std::map<std::string, std::string>::const_iterator const signedby = Options.find("signed-by");
