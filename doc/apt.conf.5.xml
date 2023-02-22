@@ -211,6 +211,10 @@ APT::Compressor::rev {
      version is available. Contains release name, codename or release version. Examples: 'stable', 'testing',
      'unstable', '&debian-stable-codename;', '&debian-testing-codename;', '4.0', '5.0*'. See also &apt-preferences;.</para></listitem>
      </varlistentry>
+     <varlistentry><term><option>Snapshot</option></term>
+         <listitem><para>Snapshot to use for all repositories configured with <literal>Snapshot: yes</literal>. See also &sources-list;, the <option>--snapshot</option> option that sets this value, and <option>Acquire::Snapshots::URI</option> below.</para></listitem>
+     </varlistentry>
+
 
      <varlistentry><term><option>Ignore-Hold</option></term>
      <listitem><para>Ignore held packages; this global option causes the problem resolver to
@@ -645,6 +649,26 @@ APT::Compressor::rev {
 
 	  The special value '<literal>no</literal>' is available for this option indicating that
 	  this source can't be used to acquire changelog files from. Another source will be tried
+	  if available in this case.
+	</para></listitem>
+</varlistentry>
+
+     <varlistentry><term><option>Snapshots::URI</option> scope</term>
+	<listitem><para>
+	  Like changelogs, snapshots can only be acquired if an URI is known from where to get them.
+	  Preferable the Release file indicates this in a 'Snapshots' field. If this isn't
+	  available the Label/Origin field of the Release file is used to check if a
+	  <literal>Acquire::Snapshots::URI::Label::<replaceable>LABEL</replaceable></literal> or
+	  <literal>Acquire::Snapshots::URI::Origin::<replaceable>ORIGIN</replaceable></literal> option
+	  exists and if so this value is taken. The value in the Release file can be overridden
+	  with <literal>Acquire::Snapshots::URI::Override::Label::<replaceable>LABEL</replaceable></literal>
+	  or <literal>Acquire::Snapshots::URI::Override::Origin::<replaceable>ORIGIN</replaceable></literal>.
+
+      The value should be a normal URI to a directory, except that the snapshot ID replaced with the
+      placeholder <literal>@SNAPSHOTID</literal>.
+
+	  The special value '<literal>no</literal>' is available for this option indicating that
+	  this source cannot be used to acquire snapshots from. Another source will be tried
 	  if available in this case.
 	</para></listitem>
     </varlistentry>

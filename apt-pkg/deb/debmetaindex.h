@@ -51,6 +51,8 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    bool SetValidUntilMax(time_t const Valid);
    bool SetCheckDate(TriState const CheckDate);
    bool SetDateMaxFuture(time_t const DateMaxFuture);
+   bool SetSnapshot(std::string Snapshot);
+   std::string GetSnapshotsServer() const; // As defined in the Release file
    bool SetSignedBy(std::string const &SignedBy);
    std::map<std::string, std::string> GetReleaseOptions();
 

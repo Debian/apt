@@ -120,6 +120,7 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,	/*{{{*/
    mapping.insert(std::make_pair("Valid-Until-Max", std::make_pair("valid-until-max", false)));
    mapping.insert(std::make_pair("Check-Date", std::make_pair("check-date", false)));
    mapping.insert(std::make_pair("Date-Max-Future", std::make_pair("date-max-future", false)));
+   mapping.insert(std::make_pair("Snapshot", std::make_pair("snapshot", false)));
    mapping.insert(std::make_pair("Signed-By", std::make_pair("signed-by", false)));
    mapping.insert(std::make_pair("PDiffs", std::make_pair("pdiffs", false)));
    mapping.insert(std::make_pair("By-Hash", std::make_pair("by-hash", false)));
