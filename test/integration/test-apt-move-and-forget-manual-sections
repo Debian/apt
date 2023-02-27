@@ -11,15 +11,18 @@ testsuccess grep '^oldlibs$' move-autobit.sections
 
 buildsimplenativepackage 'libabc' 'native' '1' 'stable' '' '' 'libs'
 buildsimplenativepackage 'libabc' 'native' '2' 'unstable' 'Depends: libdef' '' 'oldlibs'
+buildsimplenativepackage 'libzoo' 'native' '1' 'stable' '' '' 'libs'
+buildsimplenativepackage 'libzoo' 'native' '2' 'unstable' 'Depends: libdef' '' 'non-free/oldlibs'
 buildsimplenativepackage 'libdef' 'native' '1' 'unstable' '' '' 'libs'
 setupaptarchive
 
 testmarkedauto
 testmarkedmanual
 
+msgmsg 'Move bit on install of replacement'
 testsuccess aptget install libabc/stable -y
 testdpkginstalled 'libabc'
-testdpkgnotinstalled 'libdef'
+testdpkgnotinstalled 'libdef' 'libzoo'
 
 testmarkedmanual 'libabc'
 testmarkedauto
@@ -29,3 +32,43 @@ testdpkginstalled 'libabc' 'libdef'
 
 testmarkedauto 'libabc'
 testmarkedmanual 'libdef'
+
+testsuccess apt autopurge -y
+testdpkgnotinstalled 'libabc' 'libzoo'
+
+msgmsg 'Do not move bit if replacement is already installed'
+testsuccess aptget install libzoo/stable -y
+testdpkginstalled 'libzoo'
+
+testmarkedmanual 'libzoo' 'libdef'
+testmarkedauto
+
+testsuccess aptmark auto libdef
+testmarkedauto 'libdef'
+
+testsuccess aptget dist-upgrade -y
+testdpkginstalled 'libzoo' 'libdef'
+
+testmarkedmanual 'libzoo'
+testmarkedauto 'libdef'
+
+testsuccess apt autopurge -y libzoo-
+testdpkgnotinstalled 'libabc' 'libzoo' 'libdef'
+
+msgmsg 'Move bit on install of replacement (subsection)'
+testfailure grep '^non-free/oldlibs$' move-autobit.sections
+testsuccess aptget install libzoo/stable -y
+testdpkginstalled 'libzoo'
+testdpkgnotinstalled 'libdef' 'libabc'
+
+testmarkedmanual 'libzoo'
+testmarkedauto
+
+testsuccess aptget dist-upgrade -y
+testdpkginstalled 'libzoo' 'libdef'
+
+testmarkedauto 'libzoo'
+testmarkedmanual 'libdef'
+
+testsuccess apt autopurge -y
+testdpkgnotinstalled 'libabc' 'libzoo'

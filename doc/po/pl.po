@@ -7373,10 +7373,10 @@ msgid ""
 "<literal>stable</literal> or <literal>testing</literal> or a codename like "
 "<literal>&debian-stable-codename;</literal> or <literal>&debian-testing-"
 "codename;</literal> while component is one of <literal>main</literal>, "
-"<literal>contrib</literal> or <literal>non-free</literal>. The <literal>deb-"
-"src</literal> type references a Debian distribution's source code in the "
-"same form as the <literal>deb</literal> type.  A <literal>deb-src</literal> "
-"line is required to fetch source indexes."
+"<literal>contrib</literal>, <literal>non-free</literal> or <literal>non-free-"
+"firmware</literal>. The <literal>deb-src</literal> type references a Debian "
+"distribution's source code in the same form as the <literal>deb</literal> "
+"type.  A <literal>deb-src</literal> line is required to fetch source indexes."
 msgstr ""
 "Typ <literal>deb</literal> opisuje typowe dwupoziomowe archiwum Debiana: "
 "<filename>dystrybucja/komponent</filename>. Zazwyczaj <literal>dystrybucja</"
@@ -7714,7 +7714,7 @@ msgid ""
 "Types: deb\n"
 "URIs: https://deb.debian.org\n"
 "Suites: stable\n"
-"Components: main contrib non-free\n"
+"Components: main contrib non-free non-free-firmware\n"
 "Signed-By:\n"
 " -----BEGIN PGP PUBLIC KEY BLOCK-----\n"
 " .\n"
@@ -8027,34 +8027,33 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "Uses the archive stored locally (or NFS mounted) at /home/jason/debian "
-#| "for stable/main, stable/contrib, and stable/non-free."
 msgid ""
 "Uses the archive stored locally (or NFS mounted) at /home/apt/debian for "
-"stable/main, stable/contrib, and stable/non-free."
+"stable/main, stable/contrib, stable/non-free and stable/non-free-firmware."
 msgstr ""
 "Użycie archiwum lokalnego (lub montowanego przez NFS) w katalogu /home/jason/"
-"debian dla zasobów stable/main, stable/contrib i stable/non-free."
+"debian dla zasobów stable/main, stable/contrib, stable/non-free i stable/non-"
+"free-firmware."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb file:/home/jason/debian stable main contrib non-free"
-msgid "deb file:/home/apt/debian stable main contrib non-free"
-msgstr "deb file:/home/jason/debian stable main contrib non-free"
+#, no-wrap
+msgid "deb file:/home/apt/debian stable main contrib non-free non-free-firmware"
+msgstr "deb file:/home/apt/debian stable main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb file:/home/jason/debian stable main contrib non-free"
+#, no-wrap
 msgid ""
 "Types: deb\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: stable\n"
-"Components: main contrib non-free"
-msgstr "deb file:/home/jason/debian stable main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
+msgstr ""
+"Types: deb\n"
+"URIs: file:/home/apt/debian\n"
+"Suites: stable\n"
+"Components: main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8064,21 +8063,23 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb file:/home/jason/debian unstable main contrib non-free"
-msgid "deb file:/home/apt/debian unstable main contrib non-free"
-msgstr "deb file:/home/jason/debian unstable main contrib non-free"
+#, no-wrap
+msgid "deb file:/home/apt/debian unstable main contrib non-free non-free-firmware"
+msgstr "deb file:/home/apt/debian unstable main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb file:/home/jason/debian unstable main contrib non-free"
+#, no-wrap
 msgid ""
 "Types: deb\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: unstable\n"
-"Components: main contrib non-free"
-msgstr "deb file:/home/jason/debian unstable main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
+msgstr ""
+"Types: deb\n"
+"URIs: file:/home/apt/debian\n"
+"Suites: unstable\n"
+"Components: main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8089,21 +8090,23 @@ msgstr "Linie źródeł dla powyższego przykładu"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb-src file:/home/jason/debian unstable main contrib non-free"
-msgid "deb-src file:/home/apt/debian unstable main contrib non-free"
-msgstr "deb-src file:/home/jason/debian unstable main contrib non-free"
+#, no-wrap
+msgid "deb-src file:/home/apt/debian unstable main contrib non-free non-free-firmware"
+msgstr "deb-src file:/home/apt/debian unstable main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb-src file:/home/jason/debian unstable main contrib non-free"
+#, no-wrap
 msgid ""
 "Types: deb-src\n"
 "URIs: file:/home/apt/debian\n"
 "Suites: unstable\n"
-"Components: main contrib non-free"
-msgstr "deb-src file:/home/jason/debian unstable main contrib non-free"
+"Components: main contrib non-free non-free-firmware"
+msgstr ""
+"Types: deb-src\n"
+"URIs: file:/home/apt/debian\n"
+"Suites: unstable\n"
+"Components: main contrib non-free non-free-firmware"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8118,23 +8121,17 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid ""
-#| "deb http://ftp.debian.org/debian &debian-stable-codename; main\n"
-#| "deb [ arch=amd64,armel ] http://ftp.debian.org/debian &debian-stable-codename; main"
+#, no-wrap
 msgid ""
 "deb http://deb.debian.org/debian &debian-stable-codename; main\n"
 "deb [ arch=amd64,armel ] http://deb.debian.org/debian &debian-stable-codename; main"
 msgstr ""
-"deb http://ftp.debian.org/debian &debian-stable-codename; main\n"
-"deb [ arch=amd64,armel ] http://ftp.debian.org/debian &debian-stable-codename; main"
+"deb http://deb.debian.org/debian &debian-stable-codename; main\n"
+"deb [ arch=amd64,armel ] http://deb.debian.org/debian &debian-stable-codename; main"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid ""
-#| "deb http://ftp.debian.org/debian &debian-stable-codename; main\n"
-#| "deb [ arch=amd64,armel ] http://ftp.debian.org/debian &debian-stable-codename; main"
+#, no-wrap
 msgid ""
 "Types: deb\n"
 "URIs: http://deb.debian.org/debian\n"
@@ -8147,8 +8144,16 @@ msgid ""
 "Components: main\n"
 "Architectures: amd64 armel\n"
 msgstr ""
-"deb http://ftp.debian.org/debian &debian-stable-codename; main\n"
-"deb [ arch=amd64,armel ] http://ftp.debian.org/debian &debian-stable-codename; main"
+"Types: deb\n"
+"URIs: http://deb.debian.org/debian\n"
+"Suites: &debian-stable-codename;\n"
+"Components: main\n"
+"\n"
+"Types: deb\n"
+"URIs: http://deb.debian.org/debian\n"
+"Suites: &debian-stable-codename;\n"
+"Components: main\n"
+"Architectures: amd64 armel\n"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8167,14 +8172,17 @@ msgstr "deb http://archive.debian.org/debian-archive hamm main"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb http://archive.debian.org/debian-archive hamm main"
+#, no-wrap
 msgid ""
 "Types: deb\n"
 "URIs: http://archive.debian.org/debian-archive\n"
 "Suites: hamm\n"
 "Components: main"
-msgstr "deb http://archive.debian.org/debian-archive hamm main"
+msgstr ""
+"Types: deb\n"
+"URIs: http://archive.debian.org/debian-archive\n"
+"Suites: hamm\n"
+"Components: main"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8193,14 +8201,17 @@ msgstr "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
+#, no-wrap
 msgid ""
 "Types: deb\n"
 "URIs: ftp://ftp.debian.org/debian\n"
 "Suites: &debian-stable-codename;\n"
 "Components: contrib"
-msgstr "deb ftp://ftp.debian.org/debian &debian-stable-codename; contrib"
+msgstr ""
+"Types: deb\n"
+"URIs: ftp://ftp.debian.org/debian\n"
+"Suites: &debian-stable-codename;\n"
+"Components: contrib"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8223,14 +8234,17 @@ msgstr "deb ftp://ftp.debian.org/debian unstable contrib"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb ftp://ftp.debian.org/debian unstable contrib"
+#, no-wrap
 msgid ""
 "Types: deb\n"
 "URIs: ftp://ftp.debian.org/debian\n"
 "Suites: unstable\n"
 "Components: contrib"
-msgstr "deb ftp://ftp.debian.org/debian unstable contrib"
+msgstr ""
+"Types: deb\n"
+"URIs: ftp://ftp.debian.org/debian\n"
+"Suites: unstable\n"
+"Components: contrib"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: sources.list.5.xml
@@ -8240,13 +8254,15 @@ msgstr "deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid "deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/"
+#, no-wrap
 msgid ""
 "Types: deb\n"
 "URIs: http://ftp.tlh.debian.org/universe\n"
 "Suites: unstable/binary-$(ARCH)/"
-msgstr "deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/"
+msgstr ""
+"Types: deb\n"
+"URIs: http://ftp.tlh.debian.org/universe\n"
+"Suites: unstable/binary-$(ARCH)/"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -8307,10 +8323,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid "&apt-cache;, &apt-config;, &apt-preferences;."
 msgid "&apt-get;, &apt-conf;, &apt-acquire-additional-files;"
-msgstr "&apt-cache;, &apt-config;, &apt-preferences;."
+msgstr "&apt-get;, &apt-conf;, &apt-acquire-additional-files;."
 
 #. type: Content of: <refentry><refmeta><manvolnum>
 #: apt-extracttemplates.1.xml apt-sortpkgs.1.xml apt-ftparchive.1.xml
@@ -8882,7 +8896,7 @@ msgstr ""
 msgid ""
 "This is a space separated list of sections which appear under the "
 "distribution; typically this is something like <literal>main contrib non-"
-"free</literal>"
+"free non-free-firmware</literal>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
@@ -11299,14 +11313,14 @@ msgstr ""
 #, no-wrap
 msgid ""
 " Please give the components to get\n"
-" The components are typically something like: main contrib non-free\n"
+" The components are typically something like: main contrib non-free non-free-firmware\n"
 "\n"
-" Components [main contrib non-free]:\n"
+" Components [main contrib non-free non-free-firmware]:\n"
 msgstr ""
 " Proszę podać komponenty do pobrania\n"
-" Zazwyczaj komponentem jest coś w rodzaju: main contrib non-free\n"
+" Zazwyczaj komponentem jest coś w rodzaju: main contrib non-free non-free-firmware\n"
 "\n"
-" Komponenty [main contrib non-free]:\n"
+" Komponenty [main contrib non-free non-free-firmware]:\n"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk
@@ -12676,19 +12690,6 @@ msgstr "Które użyje pobranych uprzednio archiwów z dysku."
 
 #~ msgid "Some examples:"
 #~ msgstr "Kilka przykładów:"
-
-#~ msgid ""
-#~ "deb http://ftp.debian.org/debian &debian-stable-codename; main contrib "
-#~ "non-free\n"
-#~ "deb http://security.debian.org/ &debian-stable-codename;/updates main "
-#~ "contrib non-free\n"
-#~ "   "
-#~ msgstr ""
-#~ "deb http://ftp.debian.org/debian &debian-stable-codename; main contrib "
-#~ "non-free\n"
-#~ "deb http://security.debian.org/ &debian-stable-codename;/updates main "
-#~ "contrib non-free\n"
-#~ "   "
 
 #~ msgid "apt"
 #~ msgstr "apt"

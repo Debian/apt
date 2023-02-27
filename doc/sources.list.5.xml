@@ -129,8 +129,8 @@
    <literal>distribution</literal> is generally a suite name like
    <literal>stable</literal> or <literal>testing</literal> or a codename like
    <literal>&debian-stable-codename;</literal> or <literal>&debian-testing-codename;</literal>
-   while component is one of <literal>main</literal>, <literal>contrib</literal> or
-   <literal>non-free</literal>. The
+   while component is one of <literal>main</literal>, <literal>contrib</literal>,
+   <literal>non-free</literal> or <literal>non-free-firmware</literal>. The
    <literal>deb-src</literal> type references a Debian distribution's source
    code in the same form as the <literal>deb</literal> type.
    A <literal>deb-src</literal> line is required to fetch source indexes.</para>
@@ -321,7 +321,7 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
    <literallayout>Types: deb
 URIs: https://deb.debian.org
 Suites: stable
-Components: main contrib non-free
+Components: main contrib non-free non-free-firmware
 Signed-By:
  -----BEGIN PGP PUBLIC KEY BLOCK-----
  .
@@ -505,26 +505,26 @@ Signed-By:
 
  <refsect1><title>Examples</title>
    <para>Uses the archive stored locally (or NFS mounted) at /home/apt/debian
-   for stable/main, stable/contrib, and stable/non-free.</para>
-   <literallayout>deb file:/home/apt/debian stable main contrib non-free</literallayout>
+   for stable/main, stable/contrib, stable/non-free and stable/non-free-firmware.</para>
+   <literallayout>deb file:/home/apt/debian stable main contrib non-free non-free-firmware</literallayout>
    <literallayout>Types: deb
 URIs: file:/home/apt/debian
 Suites: stable
-Components: main contrib non-free</literallayout>
+Components: main contrib non-free non-free-firmware</literallayout>
 
    <para>As above, except this uses the unstable (development) distribution.</para>
-   <literallayout>deb file:/home/apt/debian unstable main contrib non-free</literallayout>
+   <literallayout>deb file:/home/apt/debian unstable main contrib non-free non-free-firmware</literallayout>
    <literallayout>Types: deb
 URIs: file:/home/apt/debian
 Suites: unstable
-Components: main contrib non-free</literallayout>
+Components: main contrib non-free non-free-firmware</literallayout>
 
    <para>Sources specification for the above.</para>
-   <literallayout>deb-src file:/home/apt/debian unstable main contrib non-free</literallayout>
+   <literallayout>deb-src file:/home/apt/debian unstable main contrib non-free non-free-firmware</literallayout>
    <literallayout>Types: deb-src
 URIs: file:/home/apt/debian
 Suites: unstable
-Components: main contrib non-free</literallayout>
+Components: main contrib non-free non-free-firmware</literallayout>
 
    <para>The first line gets package information for the architectures in <literal>APT::Architectures</literal>
    while the second always retrieves <literal>amd64</literal> and <literal>armel</literal>.</para>
