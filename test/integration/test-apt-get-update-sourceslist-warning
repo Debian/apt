@@ -21,11 +21,11 @@ Architectures: amd64
 Components: main contrib non-free non-free-firmware
 Description: Debian x.y Bookworm - Not Released
 EOF
-chmod 644 rootdir/var/lib/apt/lists/example.org_debian_dists_bookworm_Release
 touch rootdir/var/lib/apt/lists/example.org_debian_dists_bookworm_main_binary-amd64_Packages
 touch rootdir/var/lib/apt/lists/example.org_debian_dists_bookworm_contrib_binary-amd64_Packages
 touch rootdir/var/lib/apt/lists/example.org_debian_dists_bookworm_non-free_binary-amd64_Packages
 touch rootdir/var/lib/apt/lists/example.org_debian_dists_bookworm_non-free-firmware_binary-amd64_Packages
+find rootdir/var/lib/apt/lists/ -type f -exec chmod 644 {} \;
 
 NOTESURL='https://www.debian.org/releases/bookworm/amd64/release-notes/ch-information.html#non-free-split'
 BOILERPLATE='Reading package lists...
