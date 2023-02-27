@@ -90,10 +90,10 @@ static bool SectionInSubTree(char const * const SubTree, std::string_view Needle
 {
    if (ConfigValueInSubTree(SubTree, Needle))
       return true;
-   auto const sub = Needle.find('/');
+   auto const sub = Needle.rfind('/');
    if (sub == std::string_view::npos)
    {
-      std::string special{"<undefined>/"};
+      std::string special{"/"};
       special.append(Needle);
       return ConfigValueInSubTree(SubTree, special);
    }
