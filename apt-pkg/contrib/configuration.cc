@@ -1,4 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
+// SPDX-License-Identifier: GPL-2.0+
 // Description								/*{{{*/
 /* ######################################################################
 
@@ -8,9 +9,12 @@
    for a tree-oriented configuration environment. All runtime configuration
    is stored in here.
 
+   This file had this historic note, but now includes further changes
+   under the GPL-2.0+:
+
    This source is placed in the Public Domain, do with it what you will
    It was originally written by Jason Gunthorpe <jgg@debian.org>.
-   
+
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/

@@ -1,4 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
+// SPDX-License-Identifier: GPL-2.0+
 // Description								/*{{{*/
 /* ######################################################################
    
@@ -7,12 +8,19 @@
    CopyFile - Buffered copy of a single file
    GetLock - dpkg compatible lock file manipulation (fcntl)
    
+   This file had this historic note, but now includes further changes
+   under the GPL-2.0+:
+
    Most of this source is placed in the Public Domain, do with it what 
    you will
    It was originally written by Jason Gunthorpe <jgg@debian.org>.
    FileFd gzip support added by Martin Pitt <martin.pitt@canonical.com>
    
    The exception is RunScripts() it is under the GPLv2
+
+   We believe that this reference to GPLv2 was not meant to exclude later
+   versions as that would have changed the overall project license from GPL-2+
+   to GPL-2.
 
    ##################################################################### */
 									/*}}}*/

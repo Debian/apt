@@ -1,4 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
+// SPDX-License-Identifier: GPL-2.0+
 // Description								/*{{{*/
 /* ######################################################################
    
@@ -12,6 +13,9 @@
    The file class is a handy abstraction for various functions+classes
    that need to accept filenames.
    
+   This file had this historic note, but now includes further changes
+   under the GPL-2.0+:
+
    This source is placed in the Public Domain, do with it what you will
    It was originally written by Jason Gunthorpe.
    

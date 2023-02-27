@@ -1,4 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
+// SPDX-License-Identifier: GPL-2.0+
 // Description								/*{{{*/
 /* ######################################################################
 
@@ -8,6 +9,9 @@
    things to strings. They are useful in file parsers, URI handlers and
    especially in APT methods.   
    
+   This file had this historic note, but now includes further changes
+   under the GPL-2.0+:
+
    This source is placed in the Public Domain, do with it what you will
    It was originally written by Jason Gunthorpe <jgg@gpu.srv.ualberta.ca>
    
