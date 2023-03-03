@@ -127,6 +127,13 @@ testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/a/awesome/awesome_4
 testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/a/awesome/awesome_42/changelog' awesome.changelog" apt changelog awesome --print-uris -o Acquire::Changelogs::AlwaysOnline=false -o Acquire::Changelogs::AlwaysOnline::Origin::Ubuntu=true
 testsuccessequal "'copy://${TMPWORKINGDIRECTORY}/rootdir/usr/share/doc/awesome/changelog' awesome.changelog" apt changelog awesome --print-uris -o Acquire::Changelogs::AlwaysOnline=false -o Acquire::Changelogs::AlwaysOnline::Origin::Debian=true
 
+printf '\n# Older entries have been removed from this changelog.' >> rootdir/usr/share/doc/awesome/changelog
+testsuccessequal "'copy://${TMPWORKINGDIRECTORY}/rootdir/usr/share/doc/awesome/changelog' awesome.changelog" apt changelog awesome --print-uris -o Acquire::Changelogs::AlwaysOnline=false
+printf '\n# To read the complete changelog use `apt changelog awesome`.' >> rootdir/usr/share/doc/awesome/changelog
+testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/a/awesome/awesome_42/changelog' awesome.changelog" apt changelog awesome --print-uris -o Acquire::Changelogs::AlwaysOnline=false
+printf '\n# No guarantees the trigger is the last line' >> rootdir/usr/share/doc/awesome/changelog
+testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/main/a/awesome/awesome_42/changelog' awesome.changelog" apt changelog awesome --print-uris -o Acquire::Changelogs::AlwaysOnline=false
+
 testsuccess apt changelog awesome -d
 testfilestats 'awesome.changelog' '%U:%G:%a' '=' "${TEST_DEFAULT_USER}:${TEST_DEFAULT_GROUP}:644"
 head -n 3 awesome.changelog > awesome.change
