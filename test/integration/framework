@@ -1204,15 +1204,15 @@ generatereleasefiles() {
 		msgninfo "\tGenerate Release files for flat… "
 		aptftparchiverelease ./aptarchive > aptarchive/Release
 	fi
+	if [ -n "$VALIDUNTIL" ]; then
+		sed -i "/^Date: / a\
+Valid-Until: $(date -u -d "$VALIDUNTIL" -R)" $(find ./aptarchive -name 'Release')
+	fi
 	if [ -n "$DATE" -a "$DATE" != "now" ]; then
 		for release in $(find ./aptarchive -name 'Release'); do
 			sed -i "s/^Date: .*$/Date: $(date -u -d "$DATE" -R)/" "$release"
 			touch -d "$DATE" "$release"
 		done
-	fi
-	if [ -n "$VALIDUNTIL" ]; then
-		sed -i "/^Date: / a\
-Valid-Until: $(date -u -d "$VALIDUNTIL" -R)" $(find ./aptarchive -name 'Release')
 	fi
 	msgdone "info"
 }

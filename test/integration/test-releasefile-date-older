@@ -102,3 +102,31 @@ generatereleasefiles 'now' 'now + 2 days'
 sed -i '/^Date: / d' $(find ./aptarchive -name 'Release')
 signreleasefiles
 testwarning aptget update
+
+# the repo is now signed by unknown key, but marked as trusted
+rm -rf rootdir/etc/apt/trusted.gpg.d
+sed -i -e 's#\(deb\(-src\)\?\) #\1 [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
+
+msgmsg 'Forgot to disable in follow-up' 'Check-Date'
+rm -rf rootdir/var/lib/apt/lists
+generatereleasefiles 'now + 3 days' 'now + 7 days'
+signreleasefiles
+testfailure aptget update
+testwarning aptget update -o Acquire::Check-Date=no
+listcurrentlistsdirectory > listsdir.lst
+generatereleasefiles 'now + 5 days' 'now + 13 days'
+signreleasefiles
+testfailure aptget update
+testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
+testwarning aptget update -o Acquire::Check-Date=no
+testsuccess cmp "$(find aptarchive/ -name 'InRelease')" "$(find rootdir/var/lib/apt/ -name '*_Release')"
+
+msgmsg 'Force-Trusted InRelease file is silently ignored' 'new Date is before old Date'
+rm -rf rootdir/var/lib/apt/lists
+generatereleasefiles 'now' 'now + 7 days'
+signreleasefiles
+testwarning aptget update
+listcurrentlistsdirectory > listsdir.lst
+redatereleasefiles 'now - 2 days'
+testwarning aptget update
+testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"

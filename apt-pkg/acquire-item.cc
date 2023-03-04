@@ -2030,7 +2030,6 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 	 string const PartialRelease = GetPartialFileNameFromURI(DetachedDataTarget.URI);
 	 string const FinalInRelease = GetFinalFilename();
 	 Rename(DestFile, PartialRelease);
-	 TransactionManager->TransactionStageCopy(this, PartialRelease, FinalRelease);
 	 LoadLastMetaIndexParser(TransactionManager, FinalRelease, FinalInRelease);
 
 	 // we parse the indexes here because at this point the user wanted
@@ -2038,7 +2037,10 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 	 if (TransactionManager->MetaIndexParser->Load(PartialRelease, &ErrorText) == false || VerifyVendor(Message) == false)
 	    /* expired Release files are still a problem you need extra force for */;
 	 else
+	 {
+	    TransactionManager->TransactionStageCopy(this, PartialRelease, FinalRelease);
 	    TransactionManager->QueueIndexes(true);
+	 }
       }
    }
 }
@@ -2247,9 +2249,10 @@ void pkgAcqMetaSig::Failed(string const &Message,pkgAcquire::MethodConfig const 
       if (MetaIndex->VerifyVendor(Message) == false)
 	 /* expired Release files are still a problem you need extra force for */;
       else
+      {
+	 TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, FinalRelease);
 	 TransactionManager->QueueIndexes(GoodLoad);
-
-      TransactionManager->TransactionStageCopy(MetaIndex, MetaIndex->DestFile, FinalRelease);
+      }
    }
    else if (TransactionManager->IMSHit == false)
       Rename(MetaIndex->DestFile, MetaIndex->DestFile + ".FAILED");
