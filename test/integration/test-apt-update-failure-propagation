@@ -26,6 +26,9 @@ for FILE in rootdir/etc/apt/sources.list.d/*-sid-* ; do
 	sed -i -e 's#https:#http:#' -e "s#:${APTHTTPSPORT}/#:${APTHTTPPORT}/#" "$FILE"
 done
 
+# these tests are designed to fail, retries are just a waste of time here
+echo 'Acquire::Retries 0;' > rootdir/etc/apt/apt.conf.d/disable-retries.conf
+
 pretest() {
 	msgmsg "$@"
 	rm -rf rootdir/var/lib/apt/lists
