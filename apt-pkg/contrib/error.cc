@@ -1,4 +1,5 @@
 // -*- mode: cpp; mode: fold -*-
+// SPDX-License-Identifier: GPL-2.0+
 // Description								/*{{{*/
 /* ######################################################################
 
@@ -6,6 +7,9 @@
 
    We use a simple STL vector to store each error record. A PendingFlag
    is kept which indicates when the vector contains a Sever error.
+
+   This file had this historic note, but now includes further changes
+   under the GPL-2.0+:
 
    This source is placed in the Public Domain, do with it what you will
    It was originally written by Jason Gunthorpe.

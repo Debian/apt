@@ -1,8 +1,12 @@
 // -*- mode: cpp; mode: fold -*-
+// SPDX-License-Identifier: GPL-2.0+
 // Description								/*{{{*/
 /* ######################################################################
    
    Macros Header - Various useful macro definitions
+
+   This file had this historic note, but now includes further changes
+   under the GPL-2.0+:
 
    This source is placed in the Public Domain, do with it what you will
    It was originally written by Brian C. White.
