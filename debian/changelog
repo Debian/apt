@@ -1,3 +1,44 @@
+apt (2.6.0) unstable; urgency=medium
+
+  * The "unhappy bookworm" release. Too many changes needed to clarify
+    licensing.
+
+  [ Cyril Brulebois ]
+  * Teach apt-cdrom's scoring system about non-free-firmware (Closes: #1029751)
+
+  [ David Kalnischkies ]
+  * More support for non-free-firmware
+    - Have values in Section config trees refer to them in all components
+    - Add non-free-firmware component in documentation
+    - Suggest using non-free-firmware in update for Debian
+  * other bookworm regressions:
+    - Bump codenames in docs in preparation for Debian 12
+    - Detect trimmed changelogs and pick online instead (Closes: #1024457)
+  * Do not store trusted=yes Release file unconditionally
+
+  [ Miroslav Kure ]
+  * Czech program translation update (Closes: #1031008)
+
+  [ Bastian Germann ]
+  * machine-readable version of COPYING (Closes: #1019273), initial version
+
+  [ Julian Andres Klode ]
+  * Update lintian override info format in d/apt.lintian-overrides
+  * Further work on machine-readable COPYING file and the source code comments
+    to address licensing inadequacies:
+    - Address statements of public domain
+    - po/nb.po: Relicensing GPL-2.0 -> GPL-2.0+. Thanks Petter for chasing
+      down the copyright holders and getting agreement.
+    - COPYING: Group by license
+    - Address translation licensing concerns
+    - COPYING: Address RunScripts()
+    - We do not believe rsh was supposed to exclude GPL-3
+    This unfortunately creates a bit of churn, but updating the COPYING file
+    without addressing the actual licensing issues would not have solved the
+    bug.
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 06 Mar 2023 13:26:39 +0100
+
 apt (2.5.6) unstable; urgency=medium
 
   [ MichaIng ]

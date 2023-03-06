@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.5.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2023-01-17 16:33+0100\n"
+"POT-Creation-Date: 2023-03-06 12:29+0000\n"
 "PO-Revision-Date: 2023-02-10 12:58+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -204,7 +204,8 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Konfliktní distribuce: %s (očekáváno %s, obdrženo %s)"
 
-#: apt-pkg/acquire-item.cc
+#. Both messages are reused from the ReleaseInfoChange feature in acquire-item.cc
+#: apt-pkg/acquire-item.cc apt-private/private-update.cc
 #, c-format
 msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
 msgstr "Repositář „%s“ změnil svou hodnotu „%s“ z „%s“ na „%s“"
@@ -215,7 +216,7 @@ msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
 msgstr "Repositář „%s“ změnil svou výchozí prioritu pro %s z %hi na %hi."
 
 #. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
-#: apt-pkg/acquire-item.cc
+#: apt-pkg/acquire-item.cc apt-private/private-update.cc
 #, c-format
 msgid ""
 "More information about this can be found online in the Release notes at: %s"
@@ -263,7 +264,8 @@ msgid ""
 "to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
 msgstr ""
 "Metoda „%s“ není podporovaná a je ve výchozím nastavení zakázaná. Zvažte "
-"přechod na http(s). Pro znovupovolení nastavte Dir::Bin::Methods::%s na \"%s\"."
+"přechod na http(s). Pro znovupovolení nastavte Dir::Bin::Methods::%s na "
+"\"%s\"."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -898,8 +900,8 @@ msgid ""
 "%s: Credentials for %s match, but the protocol is not encrypted. Annotate "
 "with %s:// to use."
 msgstr ""
-"%s: Přihlašovací údaje pro %s odpovídají, ale protokol není šifrovaný. "
-"Pro použití předřaďte %s://."
+"%s: Přihlašovací údaje pro %s odpovídají, ale protokol není šifrovaný. Pro "
+"použití předřaďte %s://."
 
 #: apt-pkg/contrib/progress.cc
 #, c-format
@@ -1629,8 +1631,7 @@ msgstr ""
 msgid ""
 "Do you want to accept these changes and continue updating from this "
 "repository?"
-msgstr ""
-"Chcete přijmout tyto změny a pokračovat v používání tohoto repositáře?"
+msgstr "Chcete přijmout tyto změny a pokračovat v používání tohoto repositáře?"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -3500,7 +3501,8 @@ msgstr "Spojení selhalo"
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
-"Soubor má neočekávanou velikost (%llu != %llu). Neprobíhá synchronizace zrcadla?"
+"Soubor má neočekávanou velikost (%llu != %llu). Neprobíhá synchronizace "
+"zrcadla?"
 
 #: methods/basehttp.cc
 #, c-format
@@ -4497,4 +4499,3 @@ msgstr "Prázdné soubory nejsou platnými archivy"
 
 #~ msgid "Removed with config %s"
 #~ msgstr "Odstraněn %s včetně konfiguračního souboru"
-
