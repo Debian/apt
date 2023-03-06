@@ -5,7 +5,21 @@
    RSH method - Transfer files via rsh compatible program
 
    Written by Ben Collins <bcollins@debian.org>, Copyright (c) 2000
+
+   This file stated:
    Licensed under the GNU General Public License v2 [no exception clauses]
+
+   We believe that this was intended to be not a statement against future
+   versions of the GPL, but meant to exclude the Qt license exception in
+   place in APT until that time.
+
+   We received permission from Ben in 2021 to relicense under GPL-2+,
+   contributions from Adam Heath and Daniel Hartwig may still have to
+   be considered GPL-2 for the time being.
+
+   Other contributions are GPL-2+
+
+   See https://lists.debian.org/deity/2021/04/msg00013.html for details
 
    ##################################################################### */
 									/*}}}*/
