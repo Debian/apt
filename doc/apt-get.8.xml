@@ -657,6 +657,20 @@
      <listitem><para>Fail the update command if any error occured, even a transient one.</para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>-U</option></term><term><option>--update</option></term>
+         <listitem><para>Run the <option>update</option> command before the specified command. This is supported for commands
+         installing, removing, or upgrading packages such as
+         <option>install</option>, <option>remove</option>, <option>safe-upgrade</option>, <option>full-upgrade</option>.
+         This can be useful to ensure a command always installs the latest versions, or, in combination with the
+         <option>--snapshot</option> option to make sure the snapshot is present when install is being run.
+        </para>
+        <para>Caveat: Due to technical limitations, locks are acquired individually for each phase, hence an install
+        may fail to acquire locks after successfully executing the update. Until this is resolved, this is merely
+        syntactic sugar for <literal>apt update &amp;&amp; apt install</literal></para>
+         </listitem>
+     </varlistentry>
+
+
      &apt-commonoptions;
      
    </variablelist>

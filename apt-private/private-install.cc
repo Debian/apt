@@ -36,6 +36,7 @@
 #include <apt-private/private-install.h>
 #include <apt-private/private-json-hooks.h>
 #include <apt-private/private-output.h>
+#include <apt-private/private-update.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -852,6 +853,10 @@ struct PkgIsExtraInstalled {
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
+
+   if (_config->FindB("APT::Update") && not DoUpdate())
+      return false;
+
    Cache.InhibitActionGroups(true);
    if (Cache.BuildSourceList() == false)
       return false;

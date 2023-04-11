@@ -51,7 +51,11 @@ bool DoUpdate(CommandLine &CmdL)
 {
    if (CmdL.FileSize() != 1)
       return _error->Error(_("The update command takes no arguments"));
+   return DoUpdate();
+}
 
+bool DoUpdate()
+{
    CacheFile Cache;
 
    // Get the source list
