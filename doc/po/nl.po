@@ -1,13 +1,13 @@
 # Translation of apt-doc to Dutch
 # This file is distributed under the same license as the apt-doc package.
-# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2015-2022.
+# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2015-2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 2.5.4\n"
+"Project-Id-Version: apt-doc 2.6.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2023-05-02 14:45+0000\n"
-"PO-Revision-Date: 2022-11-28 22:15+0100\n"
+"PO-Revision-Date: 2023-03-18 22:12+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -2176,13 +2176,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Forbid the update command to acquire unverifiable data from configured "
-#| "sources. APT will fail at the update command for repositories without "
-#| "valid cryptographically signatures. See also &apt-secure; for details on "
-#| "the concept and the implications.  Configuration Item: <literal>Acquire::"
-#| "AllowInsecureRepositories</literal>."
 msgid ""
 "Allow the update command to acquire unverifiable data from configured "
 "sources. APT will otherwise fail at the update command for repositories "
@@ -2190,11 +2183,12 @@ msgid ""
 "details on the concept and the implications.  Configuration Item: "
 "<literal>Acquire::AllowInsecureRepositories</literal>."
 msgstr ""
-"Sta het commando update niet toe om niet-verifieerbare gegevens op te halen "
-"uit geconfigureerde pakketbronnen. Het commando update van APT zal mislukken "
-"bij pakketbronnen zonder geldige cryptografische ondertekening. Zie ook &apt-"
-"secure; voor meer informatie over het concept en de implicaties. "
-"Configuratie-item: <literal>Acquire::AllowInsecureRepositories</literal>."
+"Het commando update toestaan om niet-verifieerbare gegevens op te halen uit "
+"geconfigureerde pakketbronnen. Het commando update van APT zal anders "
+"mislukken bij pakketbronnen zonder geldige cryptografische ondertekening. "
+"Zie ook &apt-secure; voor meer informatie over het concept en de "
+"implicaties. Configuratie-item: <literal>Acquire::AllowInsecureRepositories</"
+"literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -11915,7 +11909,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><title>
 #: apt-patterns.7.xml
 msgid "Narrowing patterns"
-msgstr "Beperkende patronen"
+msgstr "Vernauwen van patronen"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
@@ -12106,6 +12100,10 @@ msgid ""
 "narrowing this pattern (see narrowing patterns above) makes it only match "
 "installed versions (see version patterns below)."
 msgstr ""
+"Selecteert pakketten die momenteel geïnstalleerd zijn. Sinds versie 2.5.4 "
+"zorgt het vernauwen van dit patroon (zie vernauwen van patronen hierboven) "
+"ervoor dat het alleen overeenkomsten oplevert met geïnstalleerde versies "
+"(zie versiepatronen hieronder)."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
@@ -12233,6 +12231,10 @@ msgid ""
 "version(2.0))</code>matched even if 2.0 was not installed, but another "
 "version was."
 msgstr ""
+"Selecteert pakketversies die momenteel zijn geïnstalleerd. Versies ouder dan "
+"2.5.4 gaven alleen een overeenkomst op het pakketniveau; dus <code>?any-"
+"version(?installed?version(2.0))</code> leverde een overeenkomst op, zelfs "
+"als 2.0 niet was geïnstalleerd, maar een andere versie wel."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
@@ -14261,17 +14263,3 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 msgid "Which will use the already fetched archives on the disc."
 msgstr ""
 "En dit zal gebruik maken van de reeds opgehaalde archieven op de schijf."
-
-#~ msgid "Selects packages that are currently installed."
-#~ msgstr "Selecteert pakketten die momenteel geïnstalleerd zijn."
-
-#~ msgid ""
-#~ "Grouping patterns with <code>(...)</code> or writing <code>?or(A,B)</"
-#~ "code> as <code>A|B</code> are not supported. We do not believe that the "
-#~ "use of <code>|</code> is that common, and the grouping is not necessary "
-#~ "without it."
-#~ msgstr ""
-#~ "Het groeperen van patronen met <code>(...)</code> of <code>?or(A,B)</"
-#~ "code> schrijven als <code>A|B</code> worden niet ondersteund. We zijn "
-#~ "niet van mening dat het gebruik van <code>|</code> erg verspreid is en "
-#~ "dat zonder dit de groepering niet noodzakelijk is."
