@@ -392,6 +392,23 @@ Signed-By:
 		or, if that fails, a <filename>Release</filename> file and its associated <filename>Release.gpg</filename> file. By setting this option,
 		the specified path will be tried instead of the InRelease file,
 		and the fallback to <filename>Release</filename> files will be disabled.
+    </para></listitem>
+
+    <listitem><para><option>Snapshot</option> (<option>snapshot</option>)
+        allows selecting an earlier version of the archive from the snapshot service. Supported
+    values are: </para>
+        <itemizedlist>
+        <listitem>
+            <para><literal>enable</literal> to allow selecting a snapshot with the <option>--snapshot</option> option, or</para>
+        </listitem>
+        <listitem>
+            <para>a snapshot ID to select a specific snapshot.</para>
+        </listitem>
+    </itemizedlist>
+        <para>
+            Snapshot IDs are usually timestamps in the form of <literal>YYYYMMDDTHHMMSSZ</literal>, such as
+            <literal>20220102T030405Z</literal> which is the January 2nd, 2022 at 03:04:05 UTC, servers may
+            however support additional types of IDs, and APT does not perform any checks so far.
 	  </para></listitem>
 
        </itemizedlist>

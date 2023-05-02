@@ -59,6 +59,9 @@ APT
   VersionedKernelPackages "<LIST>"; // regular expressions to be protected from autoremoval (kernel uname will be appended)
   Protect-Kernels "<BOOL>"; // whether to protect installed kernels against autoremoval (default: true)
 
+  // Currently active snapshot
+  Snapshot "<STRING>";
+
   // Options for apt-get
   Get
   {
@@ -170,7 +173,7 @@ APT
      DropTranslation "<BOOL>";
   };
 
-  Update
+  Update "<BOOL>"
   {
      Pre-Invoke {"touch /var/lib/apt/pre-update-stamp"; };
      Post-Invoke {"touch /var/lib/apt/post-update-stamp"; };
@@ -393,6 +396,14 @@ Acquire
   Changelogs::URI
   {
     // Origin::Debian "https://metadata.ftp-master.debian.org/changelogs/@CHANGEPATH@_changelog";
+    Origin::* "<STRING>";
+    Label::* "<STRING>";
+    Override::Origin::* "<STRING>";
+    Override::Label::* "<STRING>";
+  };
+  Snapshots::URI
+  {
+    // Origin::Debian "https://snapshot.debian.org/snapshot/@SNAPSHOTID@/";
     Origin::* "<STRING>";
     Label::* "<STRING>";
     Override::Origin::* "<STRING>";

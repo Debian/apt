@@ -11,6 +11,7 @@
 #include <apt-private/private-install.h>
 #include <apt-private/private-json-hooks.h>
 #include <apt-private/private-output.h>
+#include <apt-private/private-update.h>
 #include <apt-private/private-upgrade.h>
 
 #include <iostream>
@@ -21,6 +22,9 @@
 // this is actually performing the various upgrade operations 
 static bool UpgradeHelper(CommandLine &CmdL, int UpgradeFlags)
 {
+   if (_config->FindB("APT::Update") && not DoUpdate())
+      return false;
+
    CacheFile Cache;
    auto VolatileCmdL = GetPseudoPackages(Cache.GetSourceList(), CmdL, AddVolatileBinaryFile, "");
 

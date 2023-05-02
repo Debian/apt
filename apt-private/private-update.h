@@ -6,5 +6,6 @@
 class CommandLine;
 
 APT_PUBLIC bool DoUpdate(CommandLine &CmdL);
+APT_PUBLIC bool DoUpdate();
 
 #endif

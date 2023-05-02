@@ -1,0 +1,111 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'awesome' 'native' '42' 'stable'
+buildsimplenativepackage 'foo' 'all' '1.0' 'stable'
+buildsimplenativepackage 'libbar' 'all' '1.0' 'stable'
+
+setupaptarchive --no-update
+changetowebserver
+testfailureequal "Reading package lists...
+Building dependency tree...
+E: Unable to locate package awesome" aptget install awesome -s
+
+msgmsg "apt-get {install,remove} {-U, --update}"
+for command in install remove; do
+    for option in -U --update; do
+testsuccessequal "Get:1 http://localhost:${APTHTTPPORT} stable InRelease [$(stat -c %s aptarchive/dists/stable/InRelease) B]
+Get:2 http://localhost:${APTHTTPPORT} stable/main Sources [$(stat -c %s aptarchive/dists/stable/main/source/Sources.gz) B]
+Get:3 http://localhost:${APTHTTPPORT} stable/main amd64 Packages [$(stat -c %s aptarchive/dists/stable/main/binary-amd64/Packages.gz) B]
+Get:4 http://localhost:${APTHTTPPORT} stable/main all Packages [$(stat -c %s aptarchive/dists/stable/main/binary-all/Packages.gz) B]
+Get:5 http://localhost:${APTHTTPPORT} stable/main Translation-en [$(stat -c %s aptarchive/dists/stable/main/i18n/Translation-en.gz) B]
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  awesome
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst awesome (42 stable [amd64])
+Conf awesome (42 stable [amd64])" \
+	aptget $command $option awesome+ -s
+    find rootdir/var/lib/apt/lists/ -type f -delete
+    done
+done
+
+msgmsg "apt {install,remove} {-U, --update}"
+
+for command in install remove; do
+    for option in -U --update; do
+testsuccessequal "Get:1 http://localhost:${APTHTTPPORT} stable InRelease [$(stat -c %s aptarchive/dists/stable/InRelease) B]
+Get:2 http://localhost:${APTHTTPPORT} stable/main Sources [$(stat -c %s aptarchive/dists/stable/main/source/Sources.gz) B]
+Get:3 http://localhost:${APTHTTPPORT} stable/main amd64 Packages [$(stat -c %s aptarchive/dists/stable/main/binary-amd64/Packages.gz) B]
+Get:4 http://localhost:${APTHTTPPORT} stable/main all Packages [$(stat -c %s aptarchive/dists/stable/main/binary-all/Packages.gz) B]
+Get:5 http://localhost:${APTHTTPPORT} stable/main Translation-en [$(stat -c %s aptarchive/dists/stable/main/i18n/Translation-en.gz) B]
+Reading package lists...
+Building dependency tree...
+All packages are up to date.
+Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  awesome
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst awesome (42 stable [amd64])
+Conf awesome (42 stable [amd64])" \
+	apt $command $option awesome+ -s
+    find rootdir/var/lib/apt/lists/ -type f -delete
+    done
+done
+
+msgmsg "apt-get *upgrade {-U, --update}"
+
+for command in upgrade dist-upgrade full-upgrade; do
+    for option in -U --update; do
+testsuccessequal "Get:1 http://localhost:${APTHTTPPORT} stable InRelease [$(stat -c %s aptarchive/dists/stable/InRelease) B]
+Get:2 http://localhost:${APTHTTPPORT} stable/main Sources [$(stat -c %s aptarchive/dists/stable/main/source/Sources.gz) B]
+Get:3 http://localhost:${APTHTTPPORT} stable/main amd64 Packages [$(stat -c %s aptarchive/dists/stable/main/binary-amd64/Packages.gz) B]
+Get:4 http://localhost:${APTHTTPPORT} stable/main all Packages [$(stat -c %s aptarchive/dists/stable/main/binary-all/Packages.gz) B]
+Get:5 http://localhost:${APTHTTPPORT} stable/main Translation-en [$(stat -c %s aptarchive/dists/stable/main/i18n/Translation-en.gz) B]
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  awesome
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst awesome (42 stable [amd64])
+Conf awesome (42 stable [amd64])" \
+	aptget $command $option awesome -s
+    find rootdir/var/lib/apt/lists/ -type f -delete
+    done
+done
+
+msgmsg "apt *upgrade {-U, --update}"
+
+for command in upgrade dist-upgrade full-upgrade; do
+    for option in -U --update; do
+testsuccessequal "Get:1 http://localhost:${APTHTTPPORT} stable InRelease [$(stat -c %s aptarchive/dists/stable/InRelease) B]
+Get:2 http://localhost:${APTHTTPPORT} stable/main Sources [$(stat -c %s aptarchive/dists/stable/main/source/Sources.gz) B]
+Get:3 http://localhost:${APTHTTPPORT} stable/main amd64 Packages [$(stat -c %s aptarchive/dists/stable/main/binary-amd64/Packages.gz) B]
+Get:4 http://localhost:${APTHTTPPORT} stable/main all Packages [$(stat -c %s aptarchive/dists/stable/main/binary-all/Packages.gz) B]
+Get:5 http://localhost:${APTHTTPPORT} stable/main Translation-en [$(stat -c %s aptarchive/dists/stable/main/i18n/Translation-en.gz) B]
+Reading package lists...
+Building dependency tree...
+All packages are up to date.
+Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  awesome
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst awesome (42 stable [amd64])
+Conf awesome (42 stable [amd64])" \
+	apt $command $option awesome -s
+    find rootdir/var/lib/apt/lists/ -type f -delete
+    done
+done

@@ -88,6 +88,7 @@ static bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char cons
    addArg('g', "generate", "APT::Cache::Generate", 0);
    addArg('t', "target-release", "APT::Default-Release", CommandLine::HasArg);
    addArg('t', "default-release", "APT::Default-Release", CommandLine::HasArg);
+   addArg('S', "snapshot", "APT::Snapshot", CommandLine::HasArg);
 
    addArg('p', "pkg-cache", "Dir::Cache::pkgcache", CommandLine::HasArg);
    addArg('s', "src-cache", "Dir::Cache::srcpkgcache", CommandLine::HasArg);
@@ -189,13 +190,15 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "reinstall", "APT::Get::ReInstall", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
       addArg(0, "planner", "APT::Planner", CommandLine::HasArg);
+      addArg('U', "update", "APT::Update", 0);
       if (CmdMatches("upgrade"))
       {
          addArg(0, "new-pkgs", "APT::Get::Upgrade-Allow-New", 
                 CommandLine::Boolean);
       }
    }
-   else if (CmdMatches("update"))
+
+   else if (CmdMatches("update") || CmdMatches("install"))
    {
       addArg(0, "list-cleanup", "APT::Get::List-Cleanup", 0);
       addArg(0, "allow-insecure-repositories", "Acquire::AllowInsecureRepositories", 0);
@@ -267,6 +270,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    addArg('m',"ignore-missing","APT::Get::Fix-Missing",0);
    addArg('t',"target-release","APT::Default-Release",CommandLine::HasArg);
    addArg('t',"default-release","APT::Default-Release",CommandLine::HasArg);
+   addArg('S', "snapshot", "APT::Snapshot", CommandLine::HasArg);
    addArg(0,"download","APT::Get::Download",0);
    addArg(0,"fix-missing","APT::Get::Fix-Missing",0);
    addArg(0,"ignore-hold","APT::Ignore-Hold",0);
