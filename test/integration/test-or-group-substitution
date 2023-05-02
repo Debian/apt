@@ -1,0 +1,45 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+# One package (non-essential) depends on either of two other packages, which conflict with each other.
+
+insertinstalledpackage 'chrony' 'amd64' '1' 'Conflicts: openntpd'
+
+insertpackage 'sid' 'openntpd' 'amd64' '1' 'Conflicts: openntpd'
+
+insertinstalledpackage 'systemd' 'amd64' '1' 'Depends: chrony | openntpd'
+
+# An essential package depends on the non-essential package that has an or group dependency.
+
+insertinstalledpackage 'pop-desktop' 'amd64' '1' 'Depends: systemd
+Essential: yes'
+
+# An additional, non-essential package depends on the package that has an or group dependency.
+
+insertinstalledpackage 'unrelated-package' 'amd64' '1' 'Depends: systemd'
+
+setupaptarchive
+
+# The test removes the currently-installed part of the or group
+# (it should be replaced with the other one automatically.)
+#
+# The test should fail if the package "unrelated-package" is removed.
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  openntpd
+The following packages will be REMOVED:
+  chrony
+The following NEW packages will be installed:
+  openntpd
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv chrony [1] [systemd:amd64 ]
+Inst openntpd (1 sid [amd64])
+Conf openntpd (1 sid [amd64])' aptget -s remove chrony

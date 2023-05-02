@@ -1056,9 +1056,12 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 			      clog << "  Try Installing " << APT::PrettyPkg(&Cache, Start.TargetPkg()) << " before changing " << I.FullName(false) << std::endl;
 			   auto const OldBroken = Cache.BrokenCount();
 			   Cache.MarkInstall(Start.TargetPkg(), true, 1, false);
+			   OrOp = OrKeep;
 			   // FIXME: we should undo the complete MarkInstall process here
-			   if (Cache[Start.TargetPkg()].InstBroken() == true || Cache.BrokenCount() > OldBroken)
+			   if (Cache[Start.TargetPkg()].InstBroken() == true || Cache.BrokenCount() > OldBroken) {
 			      Cache.MarkDelete(Start.TargetPkg(), false, 1, false);
+			      OrOp = OrRemove;
+			   }
 			}
 		     }
 		  }
