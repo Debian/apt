@@ -138,6 +138,20 @@ testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' local
 'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_main_binary-all_Packages 0 
 'http://localhost:${APTHTTPPORT}/snapshot/BANANA/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_snapshot_BANANA_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris -o Acquire::Snapshots::URI::Label::Debian="http://localhost:${APTHTTPPORT}/snapshot/@SNAPSHOTID@/" -SBANANA
 
+msgmsg "Origin: Unknown"
+releasechanger 'Origin' 'Unknown'
+# XXX: @PATH@ is empty here so we have //, there isn't much we can do here, people don't have to use @PATH@ of course.
+testsuccessequal "'https://example.org/snapshots//BANANA/dists/stable/InRelease' example.org_snapshots__BANANA_dists_stable_InRelease 0 
+'https://example.org/snapshots//BANANA/dists/stable/main/source/Sources.xz' example.org_snapshots__BANANA_dists_stable_main_source_Sources 0 
+'https://example.org/snapshots//BANANA/dists/stable/main/binary-amd64/Packages.xz' example.org_snapshots__BANANA_dists_stable_main_binary-amd64_Packages 0 
+'https://example.org/snapshots//BANANA/dists/stable/main/binary-all/Packages.xz' example.org_snapshots__BANANA_dists_stable_main_binary-all_Packages 0 
+'https://example.org/snapshots//BANANA/dists/stable/main/i18n/Translation-en.xz' example.org_snapshots__BANANA_dists_stable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris $option BANANA -o Acquire::Snapshots::URI::Host::localhost="https://example.org/snapshots/@PATH@/@SNAPSHOTID@/"
+
 msgmsg "Snapshots: set in the InRelease file"
 sed -i '/^Origin: / a\
 Snapshots: https://example.org/snapshots/@SNAPSHOTID@/' $(find rootdir/var/lib/apt/lists -name '*Release')
@@ -177,6 +191,102 @@ testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' local
 
 rm rootdir/etc/apt/apt.conf.d/changelog.conf
 
+msgmsg "Testing host-based seed: Ubuntu"
+
+echo "deb [snapshot=BANANA] http://security.ubuntu.com/ubuntu/ mantic-security main" > rootdir/etc/apt/security.list
+testsuccessequal "'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic-security/InRelease' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic-security_InRelease 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic-security/main/binary-amd64/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic-security_main_binary-amd64_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic-security/main/binary-all/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic-security_main_binary-all_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic-security/main/i18n/Translation-en.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic-security_main_i18n_Translation-en 0 
+'http://security.ubuntu.com/ubuntu/dists/mantic-security/InRelease' security.ubuntu.com_ubuntu_dists_mantic-security_InRelease 0 
+'http://security.ubuntu.com/ubuntu/dists/mantic-security/main/binary-amd64/Packages.xz' security.ubuntu.com_ubuntu_dists_mantic-security_main_binary-amd64_Packages 0 
+'http://security.ubuntu.com/ubuntu/dists/mantic-security/main/binary-all/Packages.xz' security.ubuntu.com_ubuntu_dists_mantic-security_main_binary-all_Packages 0 
+'http://security.ubuntu.com/ubuntu/dists/mantic-security/main/i18n/Translation-en.xz' security.ubuntu.com_ubuntu_dists_mantic-security_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=security.list -o Dir::Etc::SourceParts=/dev/null
+echo "deb [snapshot=BANANA] http://archive.ubuntu.com/ubuntu/ mantic main" > rootdir/etc/apt/archive.list
+testsuccessequal "'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/InRelease' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_InRelease 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/binary-amd64/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_binary-amd64_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/binary-all/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_binary-all_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/i18n/Translation-en.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_i18n_Translation-en 0 
+'http://archive.ubuntu.com/ubuntu/dists/mantic/InRelease' archive.ubuntu.com_ubuntu_dists_mantic_InRelease 0 
+'http://archive.ubuntu.com/ubuntu/dists/mantic/main/binary-amd64/Packages.xz' archive.ubuntu.com_ubuntu_dists_mantic_main_binary-amd64_Packages 0 
+'http://archive.ubuntu.com/ubuntu/dists/mantic/main/binary-all/Packages.xz' archive.ubuntu.com_ubuntu_dists_mantic_main_binary-all_Packages 0 
+'http://archive.ubuntu.com/ubuntu/dists/mantic/main/i18n/Translation-en.xz' archive.ubuntu.com_ubuntu_dists_mantic_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=archive.list -o Dir::Etc::SourceParts=/dev/null
+echo "deb [snapshot=BANANA] http://cc.archive.ubuntu.com/ubuntu/ mantic main" > rootdir/etc/apt/cc.archive.list
+testsuccessequal "'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/InRelease' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_InRelease 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/binary-amd64/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_binary-amd64_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/binary-all/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_binary-all_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/i18n/Translation-en.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_i18n_Translation-en 0 
+'http://cc.archive.ubuntu.com/ubuntu/dists/mantic/InRelease' cc.archive.ubuntu.com_ubuntu_dists_mantic_InRelease 0 
+'http://cc.archive.ubuntu.com/ubuntu/dists/mantic/main/binary-amd64/Packages.xz' cc.archive.ubuntu.com_ubuntu_dists_mantic_main_binary-amd64_Packages 0 
+'http://cc.archive.ubuntu.com/ubuntu/dists/mantic/main/binary-all/Packages.xz' cc.archive.ubuntu.com_ubuntu_dists_mantic_main_binary-all_Packages 0 
+'http://cc.archive.ubuntu.com/ubuntu/dists/mantic/main/i18n/Translation-en.xz' cc.archive.ubuntu.com_ubuntu_dists_mantic_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=cc.archive.list -o Dir::Etc::SourceParts=/dev/null
+
+# with a custom override for .archive.ubuntu.com
+testsuccessequal "'https://cc.snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/InRelease' cc.snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_InRelease 0 
+'https://cc.snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/binary-amd64/Packages.xz' cc.snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_binary-amd64_Packages 0 
+'https://cc.snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/binary-all/Packages.xz' cc.snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_binary-all_Packages 0 
+'https://cc.snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/i18n/Translation-en.xz' cc.snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_i18n_Translation-en 0 
+'http://cc.archive.ubuntu.com/ubuntu/dists/mantic/InRelease' cc.archive.ubuntu.com_ubuntu_dists_mantic_InRelease 0 
+'http://cc.archive.ubuntu.com/ubuntu/dists/mantic/main/binary-amd64/Packages.xz' cc.archive.ubuntu.com_ubuntu_dists_mantic_main_binary-amd64_Packages 0 
+'http://cc.archive.ubuntu.com/ubuntu/dists/mantic/main/binary-all/Packages.xz' cc.archive.ubuntu.com_ubuntu_dists_mantic_main_binary-all_Packages 0 
+'http://cc.archive.ubuntu.com/ubuntu/dists/mantic/main/i18n/Translation-en.xz' cc.archive.ubuntu.com_ubuntu_dists_mantic_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=cc.archive.list -o Dir::Etc::SourceParts=/dev/null -o "Acquire::Snapshots::URI::Host::.archive.ubuntu.com"="https://cc.snapshot.ubuntu.com/@PATH@/@SNAPSHOTID@/"
+
+testsuccessequal "'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/InRelease' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_InRelease 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/binary-amd64/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_binary-amd64_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/binary-all/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_binary-all_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/main/i18n/Translation-en.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic_main_i18n_Translation-en 0 
+'http://archive.ubuntu.com/ubuntu/dists/mantic/InRelease' archive.ubuntu.com_ubuntu_dists_mantic_InRelease 0 
+'http://archive.ubuntu.com/ubuntu/dists/mantic/main/binary-amd64/Packages.xz' archive.ubuntu.com_ubuntu_dists_mantic_main_binary-amd64_Packages 0 
+'http://archive.ubuntu.com/ubuntu/dists/mantic/main/binary-all/Packages.xz' archive.ubuntu.com_ubuntu_dists_mantic_main_binary-all_Packages 0 
+'http://archive.ubuntu.com/ubuntu/dists/mantic/main/i18n/Translation-en.xz' archive.ubuntu.com_ubuntu_dists_mantic_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=archive.list -o Dir::Etc::SourceParts=/dev/null -o "Acquire::Snapshots::URI::Host::.archive.ubuntu.com"="https://cc.snapshot.ubuntu.com/@PATH@/@SNAPSHOTID@/"
+
+testfailure "E: Snapshots not supported for http://archive.ubuntu.com/ubuntu/ mantic
+E: The list of sources could not be read." aptget update --print-uris -o Dir::Etc::SourceList=archive.list -o Dir::Etc::SourceParts=/dev/null -o "Acquire::Snapshots::URI::Host::archive.ubuntu.com"="no"
+
+msgmsg "Testing host based-seeds: PPA"
+
+echo "deb [snapshot=BANANA] http://ppa.launchpad.net/owner/archive/distribution/ mantic main" > rootdir/etc/apt/ppa.list
+testsuccessequal "'https://snapshot.ppa.launchpadcontent.net/owner/archive/distribution/BANANA/dists/mantic/InRelease' snapshot.ppa.launchpadcontent.net_owner_archive_distribution_BANANA_dists_mantic_InRelease 0 
+'https://snapshot.ppa.launchpadcontent.net/owner/archive/distribution/BANANA/dists/mantic/main/binary-amd64/Packages.xz' snapshot.ppa.launchpadcontent.net_owner_archive_distribution_BANANA_dists_mantic_main_binary-amd64_Packages 0 
+'https://snapshot.ppa.launchpadcontent.net/owner/archive/distribution/BANANA/dists/mantic/main/binary-all/Packages.xz' snapshot.ppa.launchpadcontent.net_owner_archive_distribution_BANANA_dists_mantic_main_binary-all_Packages 0 
+'https://snapshot.ppa.launchpadcontent.net/owner/archive/distribution/BANANA/dists/mantic/main/i18n/Translation-en.xz' snapshot.ppa.launchpadcontent.net_owner_archive_distribution_BANANA_dists_mantic_main_i18n_Translation-en 0 
+'http://ppa.launchpad.net/owner/archive/distribution/dists/mantic/InRelease' ppa.launchpad.net_owner_archive_distribution_dists_mantic_InRelease 0 
+'http://ppa.launchpad.net/owner/archive/distribution/dists/mantic/main/binary-amd64/Packages.xz' ppa.launchpad.net_owner_archive_distribution_dists_mantic_main_binary-amd64_Packages 0 
+'http://ppa.launchpad.net/owner/archive/distribution/dists/mantic/main/binary-all/Packages.xz' ppa.launchpad.net_owner_archive_distribution_dists_mantic_main_binary-all_Packages 0 
+'http://ppa.launchpad.net/owner/archive/distribution/dists/mantic/main/i18n/Translation-en.xz' ppa.launchpad.net_owner_archive_distribution_dists_mantic_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=ppa.list -o Dir::Etc::SourceParts=/dev/null
+
+echo "deb [snapshot=BANANA] http://ppa.launchpadcontent.net/owner/archive/distribution/ mantic main" > rootdir/etc/apt/ppa.list
+testsuccessequal "'https://snapshot.ppa.launchpadcontent.net/owner/archive/distribution/BANANA/dists/mantic/InRelease' snapshot.ppa.launchpadcontent.net_owner_archive_distribution_BANANA_dists_mantic_InRelease 0 
+'https://snapshot.ppa.launchpadcontent.net/owner/archive/distribution/BANANA/dists/mantic/main/binary-amd64/Packages.xz' snapshot.ppa.launchpadcontent.net_owner_archive_distribution_BANANA_dists_mantic_main_binary-amd64_Packages 0 
+'https://snapshot.ppa.launchpadcontent.net/owner/archive/distribution/BANANA/dists/mantic/main/binary-all/Packages.xz' snapshot.ppa.launchpadcontent.net_owner_archive_distribution_BANANA_dists_mantic_main_binary-all_Packages 0 
+'https://snapshot.ppa.launchpadcontent.net/owner/archive/distribution/BANANA/dists/mantic/main/i18n/Translation-en.xz' snapshot.ppa.launchpadcontent.net_owner_archive_distribution_BANANA_dists_mantic_main_i18n_Translation-en 0 
+'http://ppa.launchpadcontent.net/owner/archive/distribution/dists/mantic/InRelease' ppa.launchpadcontent.net_owner_archive_distribution_dists_mantic_InRelease 0 
+'http://ppa.launchpadcontent.net/owner/archive/distribution/dists/mantic/main/binary-amd64/Packages.xz' ppa.launchpadcontent.net_owner_archive_distribution_dists_mantic_main_binary-amd64_Packages 0 
+'http://ppa.launchpadcontent.net/owner/archive/distribution/dists/mantic/main/binary-all/Packages.xz' ppa.launchpadcontent.net_owner_archive_distribution_dists_mantic_main_binary-all_Packages 0 
+'http://ppa.launchpadcontent.net/owner/archive/distribution/dists/mantic/main/i18n/Translation-en.xz' ppa.launchpadcontent.net_owner_archive_distribution_dists_mantic_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=ppa.list -o Dir::Etc::SourceParts=/dev/null
+
+msgmsg "Testing host based-seeds: Debian"
+
+echo "deb [snapshot=BANANA] http://deb.debian.org/debian/ unstable main" > rootdir/etc/apt/debian.list
+testsuccessequal "'https://snapshot.debian.org/archive/debian/BANANA/dists/unstable/InRelease' snapshot.debian.org_archive_debian_BANANA_dists_unstable_InRelease 0 
+'https://snapshot.debian.org/archive/debian/BANANA/dists/unstable/main/binary-amd64/Packages.xz' snapshot.debian.org_archive_debian_BANANA_dists_unstable_main_binary-amd64_Packages 0 
+'https://snapshot.debian.org/archive/debian/BANANA/dists/unstable/main/binary-all/Packages.xz' snapshot.debian.org_archive_debian_BANANA_dists_unstable_main_binary-all_Packages 0 
+'https://snapshot.debian.org/archive/debian/BANANA/dists/unstable/main/i18n/Translation-en.xz' snapshot.debian.org_archive_debian_BANANA_dists_unstable_main_i18n_Translation-en 0 
+'http://deb.debian.org/debian/dists/unstable/InRelease' deb.debian.org_debian_dists_unstable_InRelease 0 
+'http://deb.debian.org/debian/dists/unstable/main/binary-amd64/Packages.xz' deb.debian.org_debian_dists_unstable_main_binary-amd64_Packages 0 
+'http://deb.debian.org/debian/dists/unstable/main/binary-all/Packages.xz' deb.debian.org_debian_dists_unstable_main_binary-all_Packages 0 
+'http://deb.debian.org/debian/dists/unstable/main/i18n/Translation-en.xz' deb.debian.org_debian_dists_unstable_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=debian.list -o Dir::Etc::SourceParts=/dev/null
+
+echo "deb [snapshot=BANANA] http://deb.debian.org/debian-security/ stable-security main" > rootdir/etc/apt/debian-security.list
+testsuccessequal "'https://snapshot.debian.org/archive/debian-security/BANANA/dists/stable-security/InRelease' snapshot.debian.org_archive_debian-security_BANANA_dists_stable-security_InRelease 0 
+'https://snapshot.debian.org/archive/debian-security/BANANA/dists/stable-security/main/binary-amd64/Packages.xz' snapshot.debian.org_archive_debian-security_BANANA_dists_stable-security_main_binary-amd64_Packages 0 
+'https://snapshot.debian.org/archive/debian-security/BANANA/dists/stable-security/main/binary-all/Packages.xz' snapshot.debian.org_archive_debian-security_BANANA_dists_stable-security_main_binary-all_Packages 0 
+'https://snapshot.debian.org/archive/debian-security/BANANA/dists/stable-security/main/i18n/Translation-en.xz' snapshot.debian.org_archive_debian-security_BANANA_dists_stable-security_main_i18n_Translation-en 0 
+'http://deb.debian.org/debian-security/dists/stable-security/InRelease' deb.debian.org_debian-security_dists_stable-security_InRelease 0 
+'http://deb.debian.org/debian-security/dists/stable-security/main/binary-amd64/Packages.xz' deb.debian.org_debian-security_dists_stable-security_main_binary-amd64_Packages 0 
+'http://deb.debian.org/debian-security/dists/stable-security/main/binary-all/Packages.xz' deb.debian.org_debian-security_dists_stable-security_main_binary-all_Packages 0 
+'http://deb.debian.org/debian-security/dists/stable-security/main/i18n/Translation-en.xz' deb.debian.org_debian-security_dists_stable-security_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=debian-security.list -o Dir::Etc::SourceParts=/dev/null
+
 exit 0
 msgmsg "Failure cases"
 
@@ -186,6 +296,5 @@ testequal 'E: Failed to fetch changelog:/foo.changelog  Changelog unavailable fo
 
 testequal "E: Failed to fetch http://localhost:${APTHTTPPORT}/does/not/exist/main/f/foo/foo_1.0/change.txt  Changelog unavailable for foo=1.0 (404  Not Found)" \
 	aptget update -o Acquire::Snapshots::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/does/not/exist/@SNAPSHOTID@" -SBANANA
-
 
 
