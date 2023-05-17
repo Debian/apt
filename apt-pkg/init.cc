@@ -215,6 +215,13 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Acquire::Snapshots::URI::Origin::Debian", "https://snapshot.debian.org/archive/debian/@SNAPSHOTID@/");
    Cnf.CndSet("Acquire::Snapshots::URI::Override::Label::Debian-Security", "https://snapshot.debian.org/archive/debian-security/@SNAPSHOTID@/");
    Cnf.CndSet("Acquire::Snapshots::URI::Origin::Ubuntu", "https://snapshot.ubuntu.com/ubuntu/@SNAPSHOTID@/");
+   // Preseeds by host
+   Cnf.CndSet("Acquire::Snapshots::URI::Host::archive.ubuntu.com", "https://snapshot.ubuntu.com/@PATH@/@SNAPSHOTID@/");
+   Cnf.CndSet("Acquire::Snapshots::URI::Host::deb.debian.org", "https://snapshot.debian.org/archive/@PATH@/@SNAPSHOTID@/");
+   Cnf.CndSet("Acquire::Snapshots::URI::Host::.archive.ubuntu.com", "https://snapshot.ubuntu.com/@PATH@/@SNAPSHOTID@/");
+   Cnf.CndSet("Acquire::Snapshots::URI::Host::security.ubuntu.com", "https://snapshot.ubuntu.com/@PATH@/@SNAPSHOTID@/");
+   Cnf.CndSet("Acquire::Snapshots::URI::Host::ppa.launchpadcontent.net", "https://snapshot.ppa.launchpadcontent.net/@PATH@/@SNAPSHOTID@/");
+   Cnf.CndSet("Acquire::Snapshots::URI::Host::ppa.launchpad.net", "https://snapshot.ppa.launchpadcontent.net/@PATH@/@SNAPSHOTID@/");
 
    // Read an alternate config file
    _error->PushToStack();
