@@ -173,6 +173,10 @@ testfailuremsg "E: Snapshots not supported for http://localhost:${APTHTTPPORT}/ 
 E: Snapshots not supported for http://localhost:${APTHTTPPORT}/ stable
 E: The list of sources could not be read." aptget update --print-uris -S BANANA
 
+testfailuremsg "E: Snapshots not supported for http://localhost:${APTHTTPPORT}/ stable
+E: Snapshots not supported for http://localhost:${APTHTTPPORT}/ stable
+E: The list of sources could not be read." aptget update --print-uris -S BANANA -o Acquire::Snapshots::URI::Host::localhost="https://example.org/snapshots/@PATH@/@SNAPSHOTID@/"
+
 msgmsg "Snapshot URI configured in apt.conf"
 sed -i '/^Snapshots: / d' $(find rootdir/var/lib/apt/lists -name '*Release')
 releasechanger 'Label' 'Testcases'

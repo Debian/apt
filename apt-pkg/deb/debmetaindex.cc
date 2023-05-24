@@ -1261,9 +1261,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 #define APT_EMPTY_SERVER        \
    if (server.empty() == false) \
    {                            \
-      if (server != "no")       \
-	 return server;         \
-      return "";                \
+      return server;         \
    }
 #define APT_CHECK_SERVER(X, Y)                                                                     \
    if (not Rls->Get##X().empty())                                                                  \
@@ -1321,12 +1319,10 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    // Lookup a fallback based on the host. For a.b.c, this will try a.b.c, .b.c, and .c to allow generalization for cc.archive.ubuntu.com
 	    for (std::string Host = ArchiveURI.Host; not Host.empty() && Server.empty(); Host = Host.find(".", 1) != Host.npos ? Host.substr(Host.find(".", 1)) : "")
 	       Server = _config->Find("Acquire::Snapshots::URI::Host::" + Host);
-	    if (Server == "no")
-	       Server = "";
 	 }
-	 if (Server.empty())
+	 if (Server.empty() || Server == "no")
 	 {
-	    if (filename.empty())
+	    if (Server != "no" && filename.empty())
 	       return _error->Error("Cannot identify snapshot server for %s %s - run update without snapshot id first", URI.c_str(), Dist.c_str());
 	    return _error->Error("Snapshots not supported for %s %s", URI.c_str(), Dist.c_str());
 	 }
