@@ -1283,6 +1283,16 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 #undef APT_EMPTY_SERVER
       return "";
    }
+
+   /// \brief Given a hostname, strip one level down, e.g. a.b.c -> .b.c -> .c, this
+   ///        allows you to match a.b.c against itself, .b.c, and .c, but not b.c
+   static inline std::string NextLevelDomain(std::string Host)
+   {
+      auto nextDot = Host.find(".", 1);
+      if (nextDot == Host.npos)
+	 return "";
+      return Host.substr(nextDot);
+   }
    bool CreateItemInternal(std::vector<metaIndex *> &List, std::string URI,
 			   std::string const &Dist, std::string const &Section,
 			   bool const &IsSrc, std::map<std::string, std::string> Options) const
@@ -1313,12 +1323,17 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    Server = SnapshotServer(OldDeb);
 	    delete OldDeb;
 	 }
+	 // We did not find a server based on the release file.
+	 // Lookup a fallback based on the host. For a.b.c, this will
+	 // try a.b.c, .b.c, and .c to allow generalization for cc.archive.ubuntu.com
 	 if (Server.empty())
 	 {
-	    // We did not find a server based on the release file.
-	    // Lookup a fallback based on the host. For a.b.c, this will try a.b.c, .b.c, and .c to allow generalization for cc.archive.ubuntu.com
-	    for (std::string Host = ArchiveURI.Host; not Host.empty() && Server.empty(); Host = Host.find(".", 1) != Host.npos ? Host.substr(Host.find(".", 1)) : "")
+	    for (std::string Host = ArchiveURI.Host; not Host.empty(); Host = NextLevelDomain(Host))
+	    {
 	       Server = _config->Find("Acquire::Snapshots::URI::Host::" + Host);
+	       if (not Server.empty())
+		  break;
+	    }
 	 }
 	 if (Server.empty() || Server == "no")
 	 {
