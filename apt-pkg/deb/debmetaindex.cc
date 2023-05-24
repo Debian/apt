@@ -1261,9 +1261,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 #define APT_EMPTY_SERVER        \
    if (server.empty() == false) \
    {                            \
-      if (server != "no")       \
-	 return server;         \
-      return "";                \
+      return server;         \
    }
 #define APT_CHECK_SERVER(X, Y)                                                                     \
    if (not Rls->Get##X().empty())                                                                  \
@@ -1285,6 +1283,16 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 #undef APT_EMPTY_SERVER
       return "";
    }
+
+   /// \brief Given a hostname, strip one level down, e.g. a.b.c -> .b.c -> .c, this
+   ///        allows you to match a.b.c against itself, .b.c, and .c, but not b.c
+   static inline std::string NextLevelDomain(std::string Host)
+   {
+      auto nextDot = Host.find(".", 1);
+      if (nextDot == Host.npos)
+	 return "";
+      return Host.substr(nextDot);
+   }
    bool CreateItemInternal(std::vector<metaIndex *> &List, std::string URI,
 			   std::string const &Dist, std::string const &Section,
 			   bool const &IsSrc, std::map<std::string, std::string> Options) const
@@ -1295,20 +1303,45 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 
 	 Options.emplace("SHADOWED", "true");
 
+	 ::URI ArchiveURI(URI);
+	 // Trim trailing and leading / from the path because we don't want them when calculating snapshot url
+	 if (not ArchiveURI.Path.empty() && ArchiveURI.Path[ArchiveURI.Path.length() - 1] == '/')
+	    ArchiveURI.Path.erase(ArchiveURI.Path.length() - 1);
+	 if (not ArchiveURI.Path.empty() && ArchiveURI.Path[0] == '/')
+	    ArchiveURI.Path.erase(0, 1);
+	 std::string Server;
+
 	 auto const Deb = GetDebReleaseIndexBy(List, URI, Dist, Options);
 	 std::string filename;
-	 if (not ReleaseFileName(Deb, filename))
-	    return _error->Error("Cannot identify snapshot server for %s %s - run update without snapshot id first", URI.c_str(), Dist.c_str());
-	 auto OldDeb = dynamic_cast<debReleaseIndex *>(Deb->UnloadedClone());
-	 if (not OldDeb->Load(filename, nullptr))
-	    return _error->Error("Cannot identify snapshot server for %s %s - run update without snapshot id first", URI.c_str(), Dist.c_str());
-	 auto Server = SnapshotServer(OldDeb);
-	 delete OldDeb;
 
+	 // The Release file and config based on that should be the ultimate source of truth.
+	 if (ReleaseFileName(Deb, filename))
+	 {
+	    auto OldDeb = dynamic_cast<debReleaseIndex *>(Deb->UnloadedClone());
+	    if (not OldDeb->Load(filename, nullptr))
+	       return _error->Error("Cannot identify snapshot server for %s %s - run update without snapshot id first", URI.c_str(), Dist.c_str());
+	    Server = SnapshotServer(OldDeb);
+	    delete OldDeb;
+	 }
+	 // We did not find a server based on the release file.
+	 // Lookup a fallback based on the host. For a.b.c, this will
+	 // try a.b.c, .b.c, and .c to allow generalization for cc.archive.ubuntu.com
 	 if (Server.empty())
+	 {
+	    for (std::string Host = ArchiveURI.Host; not Host.empty(); Host = NextLevelDomain(Host))
+	    {
+	       Server = _config->Find("Acquire::Snapshots::URI::Host::" + Host);
+	       if (not Server.empty())
+		  break;
+	    }
+	 }
+	 if (Server.empty() || Server == "no")
+	 {
+	    if (Server != "no" && filename.empty())
+	       return _error->Error("Cannot identify snapshot server for %s %s - run update without snapshot id first", URI.c_str(), Dist.c_str());
 	    return _error->Error("Snapshots not supported for %s %s", URI.c_str(), Dist.c_str());
-
-	 auto SnapshotURI = SubstVar(Server, "@SNAPSHOTID@", Snapshot);
+	 }
+	 auto SnapshotURI = SubstVar(SubstVar(Server, "@SNAPSHOTID@", Snapshot), "@PATH@", ArchiveURI.Path);
 
 	 if (not CreateItemInternalOne(List, SnapshotURI, Dist, Section, IsSrc, SnapshotOptions))
 	    return false;
