@@ -1,3 +1,14 @@
+apt (2.6.1) unstable; urgency=medium
+
+  * Restore adduser dependency for bookworm.
+    This caused some regressions to late in the bookworm cycle. To keep
+    upgrade paths (which will have adduser installed) the same, we drop
+    the base-password alternative rather than requiring both dependencies,
+    as that could change resolving or ordering bugs. (Closes: #1035654)
+  * Point gitlab-ci and gbp to bookworm/2.6.y
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 25 May 2023 16:11:37 +0200
+
 apt (2.6.0) unstable; urgency=medium
 
   * The "unhappy bookworm" release. Too many changes needed to clarify
