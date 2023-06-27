@@ -143,6 +143,8 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,	/*{{{*/
       Options["sourceslist-entry"] = entry;
    }
 
+   Options["sourceslist-entry-is-deb822"] = "true";
+
    // now create one item per suite/section
    auto const list_uris = FindMultiValue(Tags, "URIs");
    auto const list_comp = FindMultiValue(Tags, "Components");
