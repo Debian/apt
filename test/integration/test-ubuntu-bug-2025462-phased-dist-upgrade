@@ -1,0 +1,50 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+echo 'Debug::Phasing "1";' > rootdir/etc/apt/apt.conf.d/debug-phasing
+configarchitecture 'i386'
+
+insertinstalledpackage 'gnome-shell' 'all' '1' 'Depends: mutter (>= 1), gnome-shell-common (= 1)'
+insertinstalledpackage 'gnome-shell-common' 'all' '1'
+insertinstalledpackage 'mutter' 'all' '1'
+
+insertpackage 'unstable-updates' 'gnome-shell-common' 'all' '2' 'Phased-Update-Percentage: 100'
+insertpackage 'unstable-updates' 'gnome-shell' 'all' '2' 'Phased-Update-Percentage: 100
+Depends: mutter (>= 2), gnome-shell-common (= 2)'
+insertpackage 'unstable-updates' 'mutter' 'all' '2' 'Phased-Update-Percentage: 0'
+
+setupaptarchive
+
+# This is the broken test case:
+#
+# The following packages will be REMOVED:
+#   gnome-shell
+# The following packages have been kept back:
+#   mutter
+# The following packages will be upgraded:
+#   gnome-shell-common
+# 1 upgraded, 0 newly installed, 1 to remove and 1 not upgraded.
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages have been kept back:
+  gnome-shell gnome-shell-common mutter
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded." aptget dist-upgrade -s -q
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be upgraded:
+  gnome-shell gnome-shell-common mutter
+3 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst mutter [1] (2 unstable-updates [all])
+Inst gnome-shell [1] (2 unstable-updates [all]) []
+Inst gnome-shell-common [1] (2 unstable-updates [all])
+Conf mutter (2 unstable-updates [all])
+Conf gnome-shell (2 unstable-updates [all])
+Conf gnome-shell-common (2 unstable-updates [all])" aptget dist-upgrade -s -q  -o APT::Get::Always-Include-Phased-Updates=1
