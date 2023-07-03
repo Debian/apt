@@ -102,10 +102,16 @@ class APT_PUBLIC pkgProblemResolver						/*{{{*/
    typedef pkgCache::PrvIterator PrvIterator;
    typedef pkgCache::Version Version;
    typedef pkgCache::Package Package;
-   
-   enum Flags {Protected = (1 << 0), PreInstalled = (1 << 1),
-               Upgradable = (1 << 2), ReInstateTried = (1 << 3),
-               ToRemove = (1 << 4)};
+
+   enum Flags
+   {
+      Protected = (1 << 0),
+      PreInstalled = (1 << 1),
+      Upgradable = (1 << 2),
+      ReInstateTried = (1 << 3),
+      ToRemove = (1 << 4),
+      BrokenPolicyAllowed = (1 << 5)
+   };
    int *Scores;
    unsigned char *Flags;
    bool Debug;
@@ -129,7 +135,10 @@ class APT_PUBLIC pkgProblemResolver						/*{{{*/
    
    inline void Protect(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] |= Protected; Cache.MarkProtected(Pkg);};
    inline void Remove(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] |= ToRemove;};
-   inline void Clear(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] &= ~(Protected | ToRemove);};
+   inline void Clear(pkgCache::PkgIterator Pkg) { Flags[Pkg->ID] &= ~(Protected | ToRemove | BrokenPolicyAllowed); };
+#ifdef APT_COMPILING_APT
+   inline void AllowBrokenPolicy(pkgCache::PkgIterator Pkg) { Flags[Pkg->ID] |= BrokenPolicyAllowed; };
+#endif
 
    // Try to intelligently resolve problems by installing and removing packages
    bool Resolve(bool BrokenFix = false, OpProgress * const Progress = NULL);

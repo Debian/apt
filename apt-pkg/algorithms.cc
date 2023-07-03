@@ -1231,7 +1231,8 @@ bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
    }
 
    // a newly broken policy (recommends/suggests) is a problem
-   if (Cache[I].NowPolicyBroken() == false &&
+   if ((Flags[I->ID] & BrokenPolicyAllowed) == 0 &&
+       Cache[I].NowPolicyBroken() == false &&
        Cache[I].InstPolicyBroken() == true)
    {
       if (Debug == true)
