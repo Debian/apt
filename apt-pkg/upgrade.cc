@@ -134,8 +134,6 @@ static bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
 
    pkgDepCache::ActionGroup group(Cache);
 
-   PhasedUpgrader().HoldBackIgnoredPhasedUpdates(Cache, nullptr);
-
    /* Upgrade all installed packages first without autoinst to help the resolver
       in versioned or-groups to upgrade the old solver instead of installing
       a new one (if the old solver is not the first one [anymore]) */
@@ -216,9 +214,23 @@ static bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
       }
    }
 
-   PhasedUpgrader().HoldBackIgnoredPhasedUpdates(Cache, &Fix);
+   bool success = Fix.ResolveInternal(false);
+   if (success)
+   {
+      // Revert phased updates using keeps. An issue with ResolveByKeep is
+      // that it also keeps back packages due to (new) broken Recommends,
+      // even if Upgrade already decided this is fine, so we will mark all
+      // packages that dist-upgrade decided may have a broken policy as allowed
+      // to do so such that we do not keep them back again.
+      pkgProblemResolver FixPhasing(&Cache);
 
-   bool const success = Fix.ResolveInternal(false);
+      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+	 if (Cache[I].InstPolicyBroken())
+	    FixPhasing.AllowBrokenPolicy(I);
+      PhasedUpgrader().HoldBackIgnoredPhasedUpdates(Cache, &FixPhasing);
+      success = FixPhasing.ResolveByKeepInternal();
+   }
+
    if (Progress != NULL)
       Progress->Done();
    return success;
