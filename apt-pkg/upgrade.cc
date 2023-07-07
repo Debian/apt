@@ -85,13 +85,13 @@ struct PhasedUpgrader
    {
       if (Pkg->CurrentVer == 0)
 	 return false;
-      if (Cache[Pkg].InstallVer == 0)
+      if (Cache[Pkg].CandidateVer == 0)
 	 return false;
-      if (Cache[Pkg].InstVerIter(Cache).PhasedUpdatePercentage() == 100)
+      if (Cache[Pkg].CandidateVerIter(Cache).PhasedUpdatePercentage() == 100)
 	 return false;
-      if (IsSecurityUpdate(Cache[Pkg].InstVerIter(Cache)))
+      if (IsSecurityUpdate(Cache[Pkg].CandidateVerIter(Cache)))
 	 return false;
-      if (!IsIgnoredPhasedUpdate(Cache[Pkg].InstVerIter(Cache)))
+      if (!IsIgnoredPhasedUpdate(Cache[Pkg].CandidateVerIter(Cache)))
 	 return false;
 
       return true;
@@ -133,13 +133,18 @@ static bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
       Progress->OverallProgress(0, 100, 1, _("Calculating upgrade"));
 
    pkgDepCache::ActionGroup group(Cache);
+   PhasedUpgrader phasedUpgrader;
 
    /* Upgrade all installed packages first without autoinst to help the resolver
       in versioned or-groups to upgrade the old solver instead of installing
       a new one (if the old solver is not the first one [anymore]) */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+   {
+      if (phasedUpgrader.ShouldKeep(Cache, I))
+	 continue;
       if (I->CurrentVer != 0)
 	 Cache.MarkInstall(I, false, 0, false);
+   }
 
    if (Progress != NULL)
       Progress->Progress(10);
@@ -147,8 +152,12 @@ static bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
    /* Auto upgrade all installed packages, this provides the basis 
       for the installation */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+   {
+      if (phasedUpgrader.ShouldKeep(Cache, I))
+	 continue;
       if (I->CurrentVer != 0)
 	 Cache.MarkInstall(I, true, 0, false);
+   }
 
    if (Progress != NULL)
       Progress->Progress(50);
@@ -176,13 +185,19 @@ static bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
 	 if (isEssential == false || instEssential == true)
 	    continue;
 	 pkgCache::PkgIterator P = G.FindPreferredPkg();
+	 if (phasedUpgrader.ShouldKeep(Cache, P))
+	    continue;
 	 Cache.MarkInstall(P, true, 0, false);
       }
    }
    else if (essential != "none")
       for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+      {
+	 if (phasedUpgrader.ShouldKeep(Cache, I))
+	    continue;
 	 if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
 	    Cache.MarkInstall(I, true, 0, false);
+      }
 
    if (Progress != NULL)
       Progress->Progress(55);
@@ -190,8 +205,12 @@ static bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress)
    /* We do it again over all previously installed packages to force 
       conflict resolution on them all. */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+   {
+      if (phasedUpgrader.ShouldKeep(Cache, I))
+	 continue;
       if (I->CurrentVer != 0)
 	 Cache.MarkInstall(I, false, 0, false);
+   }
 
    if (Progress != NULL)
       Progress->Progress(65);

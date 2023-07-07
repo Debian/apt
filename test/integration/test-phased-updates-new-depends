@@ -1,0 +1,96 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+echo 'Debug::Phasing "1";' > rootdir/etc/apt/apt.conf.d/debug-phasing
+configarchitecture 'i386'
+
+insertinstalledpackage 'has-new-depends' 'all' '1' ''
+insertinstalledpackage 'has-new-recommends' 'all' '1' ''
+insertinstalledpackage 'has-new-conflicts' 'all' '1' ''
+insertinstalledpackage 'new-conflicts' 'all' '1' ''
+
+insertpackage 'unstable-updates' 'new-depends' 'all' '2'
+insertpackage 'unstable-updates' 'new-recommends' 'all' '2'
+insertpackage 'unstable-updates' 'has-new-depends' 'all' '2' 'Phased-Update-Percentage: 0
+Depends: new-depends'
+insertpackage 'unstable-updates' 'has-new-recommends' 'all' '2' 'Phased-Update-Percentage: 0
+Recommends: new-recommends'
+insertpackage 'unstable-updates' 'has-new-conflicts' 'all' '2' 'Phased-Update-Percentage: 0
+Conflicts: new-conflicts'
+
+setupaptarchive
+
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages have been kept back:
+  has-new-conflicts has-new-depends has-new-recommends
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded." aptget upgrade -s -q -o APT::Get::Always-Include-Phased-Updates=1
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages have been kept back:
+  has-new-conflicts has-new-depends has-new-recommends
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded." aptget upgrade -s -q
+
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  new-depends new-recommends
+The following packages have been kept back:
+  has-new-conflicts
+The following packages will be upgraded:
+  has-new-depends has-new-recommends
+2 upgraded, 2 newly installed, 0 to remove and 1 not upgraded.
+Inst new-depends (2 unstable-updates [all])
+Inst has-new-depends [1] (2 unstable-updates [all])
+Inst has-new-recommends [1] (2 unstable-updates [all])
+Inst new-recommends (2 unstable-updates [all])
+Conf new-depends (2 unstable-updates [all])
+Conf has-new-depends (2 unstable-updates [all])
+Conf has-new-recommends (2 unstable-updates [all])
+Conf new-recommends (2 unstable-updates [all])" aptget upgrade -s -q --with-new-pkgs -o APT::Get::Always-Include-Phased-Updates=1
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages have been kept back:
+  has-new-conflicts has-new-depends has-new-recommends
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded." aptget upgrade -s -q --with-new-pkgs
+
+: testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be REMOVED:
+  new-conflicts
+The following NEW packages will be installed:
+  new-depends new-recommends
+The following packages will be upgraded:
+  has-new-conflicts has-new-depends has-new-recommends
+3 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv new-conflicts [1]
+Inst has-new-conflicts [1] (2 unstable-updates [all])
+Inst new-depends (2 unstable-updates [all])
+Inst has-new-depends [1] (2 unstable-updates [all])
+Inst has-new-recommends [1] (2 unstable-updates [all])
+Inst new-recommends (2 unstable-updates [all])
+Conf has-new-conflicts (2 unstable-updates [all])
+Conf new-depends (2 unstable-updates [all])
+Conf has-new-depends (2 unstable-updates [all])
+Conf has-new-recommends (2 unstable-updates [all])
+Conf new-recommends (2 unstable-updates [all])" aptget dist-upgrade -s -q -o APT::Get::Always-Include-Phased-Updates=1
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages have been kept back:
+  has-new-conflicts has-new-depends has-new-recommends
+0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded." aptget dist-upgrade -s -q
