@@ -30,7 +30,13 @@ public:
    enum APT_HIDDEN TriState {
       TRI_YES, TRI_DONTCARE, TRI_NO, TRI_UNSET
    };
-private:
+
+   enum class APT_HIDDEN Flag
+   {
+      DEB822 = 0x01,
+   };
+
+   private:
    metaIndexPrivate * const d;
 protected:
    std::vector <pkgIndexFile *> *Indexes;
@@ -74,6 +80,10 @@ public:
    time_t GetValidUntil() const;
    time_t GetDate() const;
    virtual time_t GetNotBefore() const = 0;
+#ifdef APT_COMPILING_APT
+   bool HasFlag(Flag flag) const;
+#endif
+   void SetFlag(Flag flag) APT_HIDDEN;
 
    std::string GetExpectedDist() const;
    bool CheckDist(std::string const &MaybeDist) const;

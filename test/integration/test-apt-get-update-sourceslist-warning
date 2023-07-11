@@ -38,6 +38,17 @@ testsuccessequal "$BOILERPLATE" apt update --no-download
 echo 'deb-src http://example.org/debian bookworm main non-free' > rootdir/etc/apt/sources.list.d/example.list
 testsuccessequal "$BOILERPLATE" apt update --no-download
 
+msgmsg 'Suggest Signed-By for deb822 sources.list(5) entries'
+rm rootdir/etc/apt/sources.list.d/example.list
+echo 'Types: deb
+URIs: http://example.org/debian
+Suites: bookworm
+Components: main
+' > rootdir/etc/apt/sources.list.d/example.sources
+testsuccessequal "$BOILERPLATE
+N: Missing Signed-By in the sources.list(5) entry for 'http://example.org/debian'" apt update --no-download
+rm rootdir/etc/apt/sources.list.d/example.sources
+
 msgmsg 'Is non-free-firmware missing?'
 echo 'deb http://example.org/debian bookworm main non-free' > rootdir/etc/apt/sources.list.d/example.list
 cat >> rootdir/var/lib/apt/lists/example.org_debian_dists_bookworm_non-free_binary-amd64_Packages <<EOF
@@ -72,3 +83,4 @@ insertinstalledpackage 'firmware-linux-nonfree' 'all' '1'
 testsuccessequal "$BOILERPLATE
 N: Repository 'Debian bookworm' changed its 'firmware component' value from 'non-free' to 'non-free-firmware'
 N: More information about this can be found online in the Release notes at: $NOTESURL" apt update --no-download
+

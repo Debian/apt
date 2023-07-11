@@ -11,8 +11,9 @@
 #include <vector>
 									/*}}}*/
 
-class metaIndexPrivate							/*{{{*/
+struct metaIndexPrivate							/*{{{*/
 {
+   int Flags;
 };
 									/*}}}*/
 
@@ -69,6 +70,8 @@ APT_PURE signed short metaIndex::GetDefaultPin() const { return DefaultPin; }
 APT_PURE bool metaIndex::GetSupportsAcquireByHash() const { return SupportsAcquireByHash; }
 APT_PURE time_t metaIndex::GetValidUntil() const { return ValidUntil; }
 APT_PURE time_t metaIndex::GetDate() const { return this->Date; }
+APT_PURE bool metaIndex::HasFlag(metaIndex::Flag Flag) const { return d->Flags & int(Flag); }
+void metaIndex::SetFlag(metaIndex::Flag Flag) { d->Flags |= int(Flag); }
 APT_PURE metaIndex::TriState metaIndex::GetLoadedSuccessfully() const { return LoadedSuccessfully; }
 APT_PURE std::string metaIndex::GetExpectedDist() const { return Dist; }
 									/*}}}*/

@@ -1397,6 +1397,9 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	  Deb->SetSnapshot(GetSnapshotOption(Options, "snapshot")) == false)
 	 return false;
 
+      if (GetBoolOption(Options, "sourceslist-entry-is-deb822", false))
+	 Deb->SetFlag(metaIndex::Flag::DEB822);
+
       std::map<std::string, std::string>::const_iterator const signedby = Options.find("signed-by");
       if (signedby == Options.end())
       {
