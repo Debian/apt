@@ -14,6 +14,9 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/tagfile.h>
+#ifdef APT_COMPILING_APT
+#include <apt-pkg/tagfile-keys.h>
+#endif
 
 #include <string>
 #include <vector>
@@ -90,6 +93,13 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 
    explicit debListParser(FileFd *File);
    virtual ~debListParser();
+
+#ifdef APT_COMPILING_APT
+   APT::StringView SHA256() const
+   {
+      return Section.Find(pkgTagSection::Key::SHA256);
+   }
+#endif
 };
 
 class APT_HIDDEN debDebFileParser : public debListParser

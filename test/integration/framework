@@ -987,9 +987,13 @@ insertpackage() {
 Priority: $PRIORITY
 Section: $SECTION
 Installed-Size: 42
-Size: 42
-SHA256: 0000000000000000000000000000000000000000000000000000000000000000
-Maintainer: Joe Sixpack <joe@example.org>"
+Size: 42"
+                    if echo "$DEPENDENCIES" | grep -q SHA256:; then
+                        :
+                    else
+                        echo "SHA256: 0000000000000000000000000000000000000000000000000000000000000000"
+                    fi
+                    echo "Maintainer: Joe Sixpack <joe@example.org>"
 					test "$arch" = 'none' || echo "Architecture: $arch"
 					echo "Version: $VERSION
 Filename: pool/${DISTSECTION}/${NAME}/${NAME}_${VERSION}_${arch}.deb"
