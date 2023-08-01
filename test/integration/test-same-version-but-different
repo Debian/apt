@@ -30,6 +30,9 @@ insertpackage 'testing' 'diff-size' 'all' '1' 'Size: 42'
 insertpackage 'unstable' 'diff-instsize' 'all' '1' 'Installed-Size: 21'
 insertpackage 'testing' 'diff-instsize' 'all' '1' 'Installed-Size: 42'
 
+insertpackage 'unstable' 'diff-sha256' 'all' '1' 'SHA256: 0000000000000000000000000000000000000000000000000000000000000000'
+insertpackage 'testing' 'diff-sha256' 'all' '1' 'SHA256: 0000000000000000000000000000000000000000000000000000000000000001'
+
 setupaptarchive
 
 APTARCHIVE="$(readlink -f ./aptarchive)"
@@ -96,3 +99,11 @@ testsuccessequal "diff-instsize:
         500 file:${APTARCHIVE} testing/main all Packages
      1 500
         500 file:${APTARCHIVE} unstable/main all Packages" apt policy diff-instsize
+testsuccessequal "diff-sha256:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${APTARCHIVE} testing/main all Packages
+     1 500
+        500 file:${APTARCHIVE} unstable/main all Packages" apt policy diff-sha256

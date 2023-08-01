@@ -76,6 +76,12 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    std::unordered_set<string_pointer, hash> strSections;
 #endif
 
+   struct VersionExtra
+   {
+      char SHA256[64];
+   };
+   std::vector<VersionExtra> VersionExtra{32 * 1024};
+
    friend class pkgCacheListParser;
    typedef pkgCacheListParser ListParser;
 
