@@ -12,6 +12,7 @@
 #include <config.h>
 
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/indexfile.h>
@@ -376,6 +377,12 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    void const * oldMap = Map.Data();
 
    auto Hash = List.VersionHash();
+   APT::StringView ListSHA256;
+
+   bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
+   auto DebList = dynamic_cast<debListParser *>(&List);
+   if (DebList != nullptr)
+      ListSHA256 = DebList->SHA256();
    if (Ver.end() == false)
    {
       /* We know the list is sorted so we use that fact in the search.
@@ -392,8 +399,18 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 	 // Versionstrings are equal - is hash also equal?
 	 if (Res == 0)
 	 {
-	    if (List.SameVersion(Hash, Ver) == true)
-	       break;
+	    if (List.SameVersion(Hash, Ver))
+	    {
+               // We do not have SHA256 for both, so we cannot compare them, trust the call from SameVersion()
+               if (ListSHA256.empty() || VersionExtra[Ver->ID].SHA256[0] == 0)
+                  break;
+               // We have SHA256 for both, so they must match.
+               if (ListSHA256 == APT::StringView(VersionExtra[Ver->ID].SHA256, 64))
+                  break;
+	       if (Debug)
+		  std::cerr << "Found differing SHA256 for " << Pkg.Name() << "=" << Version.to_string() << std::endl;
+	    }
+
 	    // sort (volatile) sources above not-sources like the status file
 	    if (CurrentFile == nullptr || (CurrentFile->Flags & pkgCache::Flag::NotSource) == 0)
 	    {
@@ -440,6 +457,8 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    if (oldMap != Map.Data())
 	 LastVer = static_cast<map_pointer<pkgCache::Version> *>(Map.Data()) + (LastVer - static_cast<map_pointer<pkgCache::Version> const *>(oldMap));
    *LastVer = verindex;
+   if (ListSHA256.size() == 64)
+	 memcpy(VersionExtra[Ver->ID].SHA256, ListSHA256.data(), 64);
 
    if (unlikely(List.NewVersion(Ver) == false))
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
@@ -868,6 +887,10 @@ map_pointer<pkgCache::Version> pkgCacheGenerator::NewVersion(pkgCache::VerIterat
    Ver->ParentPkg = ParentPkg;
    Ver->Hash = Hash;
    Ver->ID = Cache.HeaderP->VersionCount++;
+
+   // Allocate size for extra store
+   if (VersionExtra.size() <= Ver->ID)
+      VersionExtra.resize(Ver->ID + 1);
 
    // try to find the version string in the group for reuse
    pkgCache::PkgIterator Pkg = Ver.ParentPkg();
