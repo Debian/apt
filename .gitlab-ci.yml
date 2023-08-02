@@ -12,7 +12,7 @@ before_script:
     - rm -f /etc/dpkg/dpkg.cfg.d/excludes
     - apt-get update
     - apt-get install --no-install-recommends -qq build-essential expect sudo ccache moreutils adduser
-    - adduser --home /home/travis travis --quiet --disabled-login --gecos "" --uid 1000
+    - adduser --home /home/travis travis --quiet --disabled-login --gecos ""
     - chmod 755 /root
     - chmod -R o+rwX $PWD
     - ./prepare-release travis-ci
