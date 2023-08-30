@@ -103,7 +103,7 @@ bool StoreMethod::Fetch(FetchItem *Itm)					/*{{{*/
    Res.Size = 0;
    while (1)
    {
-      unsigned char Buffer[4*1024];
+      unsigned char Buffer[APT_BUFFER_SIZE];
       unsigned long long Count = 0;
 
       if (!From.Read(Buffer,sizeof(Buffer),&Count))
