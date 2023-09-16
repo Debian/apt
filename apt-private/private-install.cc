@@ -215,6 +215,26 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
    if (Cache->DelCount() != 0 && _config->FindB("APT::Get::Remove",true) == false)
       return _error->Error(_("Packages need to be removed but remove is disabled."));
 
+#ifdef REQUIRE_MERGED_USR
+   _error->PushToStack();
+   auto usrmergePkg = Cache->FindPkg("usrmerge");
+   if (not APT::Configuration::isChroot() && _config->FindDir("Dir") == std::string("/") &&
+       not usrmergePkg.end() && not usrmergePkg.VersionList().end() &&
+       not Cache[usrmergePkg].Install() && not APT::Configuration::checkUsrMerged())
+   {
+      _error->Error(_("Unmerged usr is no longer supported, install usrmerge to continue."));
+      for (auto VF = usrmergePkg.VersionList().FileList(); not VF.end(); ++VF)
+	 if (VF.File().Origin() == std::string("Debian"))
+	 {
+	    // TRANSLATORS: %s is a url to a page describing merged-usr (bookworm release notes)
+	    _error->Notice(_("See %s for more details."), "https://www.debian.org/releases/bookworm/amd64/release-notes/ch-information.en.html#a-merged-usr-is-now-required");
+	    break;
+	 }
+      return false;
+   }
+   _error->RevertToStack();
+#endif
+
    // Fail safe check
    bool const Fail = (Essential || Downgrade || Hold);
    if (_config->FindI("quiet",0) >= 2 ||

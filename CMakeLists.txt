@@ -10,6 +10,7 @@ include_directories(${PROJECT_BINARY_DIR}/include)
 
 enable_testing()
 
+option(REQUIRE_MERGED_USR "Require merged-usr." ON)
 option(WITH_DOC "Build all documentation." ON)
 include(CMakeDependentOption)
 cmake_dependent_option(WITH_DOC_MANPAGES "Force building manpages." OFF "NOT WITH_DOC" OFF)

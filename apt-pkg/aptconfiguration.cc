@@ -28,8 +28,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
-
 									/*}}}*/
 namespace APT {
 // setDefaultConfigurationForCompressors				/*{{{*/
@@ -536,6 +536,33 @@ bool Configuration::isChroot()
    } once;
 
    return once.res;
+}
+									/*}}}*/
+// isUsrMerged - whether usr is merged t			     	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool Configuration::checkUsrMerged()
+{
+   std::string rootDir = _config->FindDir("Dir");
+   for (auto dir : {"bin", "sbin", "lib"})
+   {
+      struct stat root;
+      struct stat usr;
+      std::string dirInRoot = rootDir + dir;
+      std::string dirInUsr = rootDir + "usr/" + dir;
+
+      // Missing directories are a boot strap scenario that needs to work
+      if (stat(dirInRoot.c_str(), &root))
+	 continue;
+      if (stat(dirInUsr.c_str(), &usr))
+	 continue;
+      if (root.st_dev != usr.st_dev)
+	 return _error->Error("%s is on different device than %s", dirInRoot.c_str(), dirInUsr.c_str());
+      if (root.st_ino != usr.st_ino)
+	 return _error->Error("%s resolved to a different inode than %s", dirInRoot.c_str(), dirInUsr.c_str());
+   }
+
+   return true;
 }
 									/*}}}*/
 }
