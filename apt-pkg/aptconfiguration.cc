@@ -556,8 +556,6 @@ bool Configuration::checkUsrMerged()
 	 continue;
       if (stat(dirInUsr.c_str(), &usr))
 	 continue;
-      if (root.st_dev != usr.st_dev)
-	 return _error->Error("%s is on different device than %s", dirInRoot.c_str(), dirInUsr.c_str());
       if (root.st_ino != usr.st_ino)
 	 return _error->Error("%s resolved to a different inode than %s", dirInRoot.c_str(), dirInUsr.c_str());
    }
