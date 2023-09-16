@@ -1,3 +1,25 @@
+apt (2.7.4) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * CI: Do not require UID 1000 for our test user.
+  * methods: store: Use APT_BUFFER_SIZE (64k) instead of 4k buffers
+  * Only accept installs of usrmerge on unmerged-usr systems.
+    As of bookworm, merged-usr is mandatory, and people got caught
+    in the crosshairs of the dpkg fsys-unmessusr debacle and inadvertently
+    reverted back to an unmerged configuration and continue to remain
+    on an unsupported system unknowingly.
+  * Drop alternatives to the gpgv dependency (Closes: #1051642)
+  * Remove unnecessary explicit st_dev check for merged-usr
+
+  [ Frans Spiesschaert ]
+  * Dutch translation update (Closes: #1051720)
+  * Dutch documentation translation update (Closes: #1051723)
+
+  [ Helge Kreutzmann ]
+  * updated German translation (Closes: #1049427)
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 16 Sep 2023 13:01:48 +0200
+
 apt (2.7.3) unstable; urgency=medium
 
   [ Tianon Gravi ]
