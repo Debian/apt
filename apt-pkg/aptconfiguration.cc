@@ -557,7 +557,7 @@ bool Configuration::checkUsrMerged()
       if (stat(dirInUsr.c_str(), &usr))
 	 continue;
       if (root.st_ino != usr.st_ino)
-	 return _error->Error("%s resolved to a different inode than %s", dirInRoot.c_str(), dirInUsr.c_str());
+	 return _error->Warning("%s resolved to a different inode than %s", dirInRoot.c_str(), dirInUsr.c_str()), false;
    }
 
    return true;
