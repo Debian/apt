@@ -282,25 +282,7 @@ std::vector<std::string> debListParser::AvailableDescriptionLanguages()
  */
 APT::StringView debListParser::Description_md5()
 {
-   StringView const value = Section.Find(pkgTagSection::Key::Description_md5);
-   if (unlikely(value.empty() == true))
-   {
-      StringView const desc = Section.Find(pkgTagSection::Key::Description);
-      if (desc == "\n")
-	 return StringView();
-
-      Hashes md5(Hashes::MD5SUM);
-      md5.Add(desc.data(), desc.size());
-      md5.Add("\n");
-      MD5Buffer = md5.GetHashString(Hashes::MD5SUM).HashValue();
-      return StringView(MD5Buffer);
-   }
-   else if (likely(value.size() == 32))
-   {
-      return value;
-   }
-   _error->Error("Malformed Description-md5 line; doesn't have the required length (32 != %d) '%.*s'", (int)value.size(), (int)value.length(), value.data());
-   return StringView();
+   return Section.Find(pkgTagSection::Key::Description_md5);
 }
                                                                         /*}}}*/
 // ListParser::UsePackage - Update a package structure			/*{{{*/
