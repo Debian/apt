@@ -330,9 +330,6 @@ public:
 	    exit(2);
 	 }
 
-	 // It is OK for apt to use MD5.
-	 gcry_control(GCRYCTL_NO_FIPS_MODE, 0);
-
 	 gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);
       }
    }
