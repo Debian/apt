@@ -68,6 +68,8 @@ Reading package lists..." \
 
 msgmsg "Cache constructed without snapshot"
 testsuccessequal "Package files:
+ 100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+     release a=now
  500 http://localhost:${APTHTTPPORT} stable/main all Packages
      release o=Debian,a=stable,n=stable,l=Testcases,c=main,b=all
      origin localhost
@@ -82,6 +84,8 @@ testsuccessequal "'http://localhost:${APTHTTPPORT}/pool/awesome_42_amd64.deb' aw
 
 msgmsg "Cache constructed with snapshot"
 testsuccessequal "Package files:
+ 100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+     release a=now
  500 http://localhost:${APTHTTPPORT}/snapshot/BANANA stable/main all Packages
      release o=Debian,a=stable,n=stable,l=Testcases,c=main,b=all
      origin localhost
