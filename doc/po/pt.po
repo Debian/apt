@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.3.12\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2022-02-22 20:01+0100\n"
+"POT-Creation-Date: 2023-10-06 09:06+0000\n"
 "PO-Revision-Date: 2021-11-22 22:20+0000\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <>\n"
@@ -1956,6 +1956,16 @@ msgstr ""
 "para assegurar que os ficheiros obsoletos são apagados. A única razão para "
 "desligar isto é no caso de você alterar frequentemente a sua lista de "
 "fontes. Item de Configuração: <literal>APT::Get::List-Cleanup</literal>."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"This option controls the snapshot chosen for archives with "
+"<literal>Snapshot: enable</literal> in the source entry. For example, "
+"<option>-S 20220102T030405Z</option> selects a snapshot from January 2nd, "
+"2022 at 03:04:05 UTC.  Configuration Item: <literal>APT::Snapshot</literal>; "
+"see also the &sources-list; manual page."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -4525,6 +4535,14 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
 msgid ""
+"Snapshot to use for all repositories configured with <literal>Snapshot: yes</"
+"literal>. See also &sources-list;, the <option>--snapshot</option> option "
+"that sets this value, and <option>Acquire::Snapshots::URI</option> below."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
 "Ignore held packages; this global option causes the problem resolver to "
 "ignore held packages in its decision making."
 msgstr ""
@@ -5378,6 +5396,76 @@ msgid ""
 "literal>' is available for this option indicating that this source can't be "
 "used to acquire changelog files from. Another source will be tried if "
 "available in this case."
+msgstr ""
+"Adquirir changelogs só pode ser feito se for conhecido um URL de onde os "
+"obter. De preferência o ficheiro Release indica isto num campo 'Changelogs'. "
+"Se isto não estiver disponível, é usado o campo Label/Origin do ficheiro "
+"Release para verificar se uma opção <literal>Acquire::Changelogs::URI::"
+"Label::<replaceable>LABEL</replaceable></literal> ou <literal>Acquire::"
+"Changelogs::URI::Origin::<replaceable>ORIGIN</replaceable></literal> existem "
+"e se sim é utilizado este valor. Este valor no ficheiro Release pode ser "
+"sobreposto com <literal>Acquire::Changelogs::URI::Override::Label::"
+"<replaceable>LABEL</replaceable></literal> ou <literal>Acquire::Changelogs::"
+"URI::Override::Origin::<replaceable>ORIGIN</replaceable></literal>. O valor "
+"deve ser um URI normal para um ficheiro de texto, excepto se os dados desse "
+"pacote específico for substituído pelo marcador de posição "
+"<literal>@CHANGEPATH@</literal>. O valor para isto é: 1. se o pacote "
+"pertence a um componente (ex. <literal>main</literal>) esta é a primeira "
+"parte, caso contrário é omitida. 2. a primeira letra do nome do pacote "
+"fonte, excepto se o nome do pacote fonte começar com '<literal>lib</"
+"literal>' e neste caso será as primeiras quatro letras. 3. O nome completo "
+"do pacote fonte. 4. O nome completo outra vez e 5. a versão da fonte. A "
+"primeira (se presente), segunda, terceira e quarta partes são separadas por "
+"uma barra ('<literal>/</literal>') e entre a quarta e quinta partes fica um "
+"underscore ('<literal>_</literal>'). O valor especial '<literal>no</"
+"literal>' está disponível para esta opção e indica que esta fonte não pode "
+"ser usada para adquirir ficheiros changelog a partir dela. Neste caso será "
+"tentada outra fonte se estiver disponível."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "Acquiring changelogs can only be done if an URI is known from where to "
+#| "get them.  Preferable the Release file indicates this in a 'Changelogs' "
+#| "field. If this isn't available the Label/Origin field of the Release file "
+#| "is used to check if a <literal>Acquire::Changelogs::URI::Label::"
+#| "<replaceable>LABEL</replaceable></literal> or <literal>Acquire::"
+#| "Changelogs::URI::Origin::<replaceable>ORIGIN</replaceable></literal> "
+#| "option exists and if so this value is taken. The value in the Release "
+#| "file can be overridden with <literal>Acquire::Changelogs::URI::Override::"
+#| "Label::<replaceable>LABEL</replaceable></literal> or <literal>Acquire::"
+#| "Changelogs::URI::Override::Origin::<replaceable>ORIGIN</replaceable></"
+#| "literal>.  The value should be a normal URI to a text file, except that "
+#| "package specific data is replaced with the placeholder "
+#| "<literal>@CHANGEPATH@</literal>. The value for it is: 1. if the package "
+#| "is from a component (e.g. <literal>main</literal>)  this is the first "
+#| "part otherwise it is omitted, 2. the first letter of source package name, "
+#| "except if the source package name starts with '<literal>lib</literal>' in "
+#| "which case it will be the first four letters. 3. The complete source "
+#| "package name. 4. the complete name again and 5. the source version.  The "
+#| "first (if present), second, third and fourth part are separated by a "
+#| "slash ('<literal>/</literal>')  and between the fourth and fifth part is "
+#| "an underscore ('<literal>_</literal>').  The special value '<literal>no</"
+#| "literal>' is available for this option indicating that this source can't "
+#| "be used to acquire changelog files from. Another source will be tried if "
+#| "available in this case."
+msgid ""
+"Like changelogs, snapshots can only be acquired if an URI is known from "
+"where to get them.  Preferable the Release file indicates this in a "
+"'Snapshots' field. If this isn't available the Label/Origin field of the "
+"Release file is used to check if a <literal>Acquire::Snapshots::URI::Label::"
+"<replaceable>LABEL</replaceable></literal> or <literal>Acquire::Snapshots::"
+"URI::Origin::<replaceable>ORIGIN</replaceable></literal> option exists and "
+"if so this value is taken. The value in the Release file can be overridden "
+"with <literal>Acquire::Snapshots::URI::Override::Label::<replaceable>LABEL</"
+"replaceable></literal> or <literal>Acquire::Snapshots::URI::Override::"
+"Origin::<replaceable>ORIGIN</replaceable></literal>.  The value should be a "
+"normal URI to a directory, except that the snapshot ID replaced with the "
+"placeholder <literal>@SNAPSHOTID</literal>.  The special value '<literal>no</"
+"literal>' is available for this option indicating that this source cannot be "
+"used to acquire snapshots from. Another source will be tried if available in "
+"this case."
 msgstr ""
 "Adquirir changelogs só pode ser feito se for conhecido um URL de onde os "
 "obter. De preferência o ficheiro Release indica isto num campo 'Changelogs'. "
@@ -8530,6 +8618,35 @@ msgstr ""
 "associado <filename>Release.gpg</filename>. Ao definir esta opção, será "
 "tentado o caminho especificado em vez do ficheiro InRelease, e o recurso a "
 "ficheiros <filename>Release</filename> será desactivado."
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: sources.list.5.xml
+msgid ""
+"<option>Snapshot</option> (<option>snapshot</option>)  allows selecting an "
+"earlier version of the archive from the snapshot service. Supported values "
+"are:"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><itemizedlist><listitem><para>
+#: sources.list.5.xml
+msgid ""
+"<literal>enable</literal> to allow selecting a snapshot with the <option>--"
+"snapshot</option> option, or"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><itemizedlist><listitem><para>
+#: sources.list.5.xml
+msgid "a snapshot ID to select a specific snapshot."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: sources.list.5.xml
+msgid ""
+"Snapshot IDs are usually timestamps in the form of "
+"<literal>YYYYMMDDTHHMMSSZ</literal>, such as <literal>20220102T030405Z</"
+"literal> which is the January 2nd, 2022 at 03:04:05 UTC, servers may however "
+"support additional types of IDs, and APT does not perform any checks so far."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
