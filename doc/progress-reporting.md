@@ -63,7 +63,7 @@ Example:
 
 dlstatus
 --------
-	dlstatus:AlreadDownloaded:TotalPercentage:action-description
+	dlstatus:AlreadyDownloaded:TotalPercentage:action-description
 
 * AlreadyDownloaded = the number of already downloaded packages
 * TotalPercentage = the total progress between [0..100]
