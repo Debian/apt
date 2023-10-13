@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+rm -f rootdir/etc/apt/sources.list
+rm -f rootdir/etc/apt/sources.list.d/*
+
+insertinstalledpackage 'foo' 'all' '1'
+
+testfailureequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'foo' for regex '^foo$'
+Package foo is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+E: Version '2' for 'foo' was not found" apt install '^foo$'=2
