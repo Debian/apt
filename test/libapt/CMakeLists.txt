@@ -1,6 +1,6 @@
 if (WITH_TESTS)
    set(PROJECT_TEST_LIBRARIES apt-private)
-   find_path(GTEST_ROOT src/gtest.cc
+   find_path(GTEST_SRCPATH src/gtest.cc
       /usr/src/googletest/googletest
       /usr/src/googletest
       /usr/src/gtest
@@ -8,10 +8,10 @@ if (WITH_TESTS)
    find_package(GTest)
    set(GTEST_DEPENDENCIES)
 
-   if(NOT GTEST_FOUND AND EXISTS ${GTEST_ROOT})
+   if(NOT GTEST_FOUND AND EXISTS ${GTEST_SRCPATH})
       include(ExternalProject)
       ExternalProject_Add(gtest PREFIX ./gtest
-                                SOURCE_DIR ${GTEST_ROOT}
+                                SOURCE_DIR ${GTEST_SRCPATH}
                                 INSTALL_COMMAND true)
 
       link_directories(${CMAKE_CURRENT_BINARY_DIR}/gtest/src/gtest-build)
@@ -20,9 +20,9 @@ if (WITH_TESTS)
       set(GTEST_LIBRARIES "-lgtest")
       set(GTEST_DEPENDENCIES "gtest")
       set(GTEST_FOUND TRUE)
-      find_path(GTEST_INCLUDE_DIRS NAMES gtest/gtest.h PATHS ${GTEST_ROOT}/include)
+      find_path(GTEST_INCLUDE_DIRS NAMES gtest/gtest.h PATHS ${GTEST_SRCPATH}/include)
 
-      message(STATUS "Found GTest at ${GTEST_ROOT}, headers at ${GTEST_INCLUDE_DIRS}")
+      message(STATUS "Found GTest at ${GTEST_SRCPATH}, headers at ${GTEST_INCLUDE_DIRS}")
    endif()
 
    if (NOT GTEST_FOUND)
