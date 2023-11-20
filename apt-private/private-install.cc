@@ -633,6 +633,9 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
       fallback = MOD_REMOVE;
    }
 
+   // We need to MarkAndSweep before parsing commandline so that ?garbage pattern works correctly.
+   Cache->MarkAndSweep();
+
    std::list<APT::VersionSet::Modifier> mods;
    mods.push_back(APT::VersionSet::Modifier(MOD_INSTALL, "+",
 		APT::VersionSet::Modifier::POSTFIX, APT::CacheSetHelper::CANDIDATE));
