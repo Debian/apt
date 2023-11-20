@@ -278,7 +278,7 @@ class APT_PUBLIC pkgAcquire
     *  methods on #Log to report on the progress of the download.
     *
     *  \param PulseInterval The method pkgAcquireStatus::Pulse will be
-    *  invoked on #Log at intervals of PulseInterval milliseconds.
+    *  invoked on #Log at intervals of PulseInterval microseconds.
     *
     *  \return the result of the download.
     */
