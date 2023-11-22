@@ -22,9 +22,9 @@ noprogress() {
 
 testsuccessequal "Reading package lists...
 Building dependency tree...
-  MarkInstall pkg:arm64 < 1 -> 2 @ii puU > FU=1
-  Upgrading pkg-bar:arm64 < 1 | 2 @ii uH > due to pkg:arm64
-  Upgrading pkg-foo:arm64 < 1 | 2 @ii uH > due to pkg:arm64
+  MarkInstall pkg:arm64 < 1 -> 2 @ii pumU > FU=1
+  Upgrading pkg-bar:arm64 < 1 | 2 @ii umH > due to pkg:arm64
+  Upgrading pkg-foo:arm64 < 1 | 2 @ii umH > due to pkg:arm64
 Starting pkgProblemResolver with broken count: 0
 Starting 2 pkgProblemResolver with broken count: 0
 Done
@@ -42,7 +42,7 @@ Conf pkg-foo (2 unstable [all])" aptget install pkg -o debug::pkgdepcache::marke
 
 testsuccessequal "Reading package lists...
 Building dependency tree...
-  MarkInstall pkg:arm64 < 1 -> 2 @ii puU > FU=1
+  MarkInstall pkg:arm64 < 1 -> 2 @ii pumU > FU=1
 Starting pkgProblemResolver with broken count: 0
 Starting 2 pkgProblemResolver with broken count: 0
 Done
