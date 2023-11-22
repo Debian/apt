@@ -1,3 +1,32 @@
+apt (2.7.7) unstable; urgency=medium
+
+  [ sid ]
+  * Fix incorrect time unit comment for PulseInterval
+
+  [ Patrice Duroux ]
+  * Update fr.po (add a missing dot)
+
+  [ Julian Andres Klode ]
+  * Stop calculating Description-md5 if missing
+  * Revert "Do not fail on systems running in FIPSmode."
+  * s/AlreadDownloaded/AlreadyDownloaded/ in doc/progress-reporting.md.
+    Thanks to jwilk for suggestion
+  * Bump Priority to required to match Debian archive.
+    This unbreaks mmdebstrap scenarios if you mirror Debian or use
+    a distro where apt did not get overridden to required.
+    Reported-By: josch on IRC, following discovery by helmut
+  * Restore ?garbage by calling MarkAndSweep before parsing (LP: #1995790)
+  * Fix the test suite by adding new "m" flags to debug output
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #1055178)
+
+  [ David Kalnischkies ]
+  * Raise cmake_minimum_required to 3.13 to avoid warnings
+  * Use different variable name in GTest source path detection
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 22 Nov 2023 16:43:47 +0100
+
 apt (2.7.6) unstable; urgency=medium
 
   [ Américo Monteiro ]
