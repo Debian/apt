@@ -446,7 +446,8 @@ dearmor_keyring() {
     # The awk script is more complex through to skip surrounding garbage and
     # to support multiple keys in one file (old gpgs generate version headers
     # which get printed with the original and hence result in garbage input for base64
-    awk '/^-----BEGIN/{ x = 1; }
+    awk '{ gsub(/\r/,"") }
+/^-----BEGIN/{ x = 1; }
 /^$/{ if (x == 1) { x = 2; }; }
 /^[^=-]/{ if (x == 2) { print $0; }; }
 /^-----END/{ x = 0; }' | base64 -d
