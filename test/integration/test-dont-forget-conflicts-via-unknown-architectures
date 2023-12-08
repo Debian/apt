@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'arm64'
+configdpkgnoopchroot
+
+buildsimplenativepackage 'pkga' 'arm64' '1' 'stable'
+buildsimplenativepackage 'pkgb' 'arm64' '1' 'stable'
+
+cd aptarchive
+aptftparchive packages ../incoming > Packages
+cd ..
+generatereleasefiles
+signreleasefiles
+setupflataptarchive
+testsuccess apt update
+
+testsuccess apt install pkga pkgb -y
+testdpkginstalled 'pkga' 'pkgb'
+
+rm -rf aptarchive incoming
+
+buildsimplenativepackage 'pkga' 'arm64,amd64' '2' 'unstable' 'Provides: pkgb
+Breaks: pkgb (<< 1+)
+Replaces: pkgb (<< 1+)'
+
+mkdir aptarchive
+cd aptarchive
+aptftparchive packages ../incoming > Packages
+cd ..
+generatereleasefiles
+signreleasefiles
+setupflataptarchive
+testsuccess apt update
+
+#apt upgrade pkga -o Debug::pkgDpkgPm=1 -y -o Dpkg::use-pty=0
+rm -f rootdir/var/cache/apt/*.bin
+testsuccess apt upgrade pkga -y
+testdpkginstalled 'pkga'
+testdpkgnotinstalled 'pkgb'

@@ -393,11 +393,17 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg(bool const &Prefer
 	pkgCache::PkgIterator Pkg = FindPkg(StringView("native", 6));
 	if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
 		return Pkg;
-
-	std::vector<std::string> const archs = APT::Configuration::getArchitectures();
-	for (std::vector<std::string>::const_iterator a = archs.begin();
-	     a != archs.end(); ++a) {
-		Pkg = FindPkg(*a);
+	// native and foreign
+	for (auto const &a : APT::Configuration::getArchitectures())
+	{
+		Pkg = FindPkg(a);
+		if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
+			return Pkg;
+	}
+	// very foreign/barbarian
+	for (auto const &a : _config->FindVector("APT::BarbarianArchitectures"))
+	{
+		Pkg = FindPkg(a);
 		if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
 			return Pkg;
 	}
@@ -405,6 +411,10 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg(bool const &Prefer
 	Pkg = FindPkg(StringView("none", 4));
 	if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
 		return Pkg;
+	// the "rest" we somehow know about (+ those we tried already again as skipping is hard)
+	for (Pkg = PackageList(); not Pkg.end(); Pkg = NextPkg(Pkg))
+		if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
+			return Pkg;
 
 	if (PreferNonVirtual == true)
 		return FindPreferredPkg(false);
