@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+setupaptarchive --no-update
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+All packages are up to date." apt update -q
+
+
+msgtest "Check notices about .list and .sources directories in sources.list.d"
+mkdir rootdir/etc/apt/sources.list.d/a-dir-that-will-be-ignored
+mkdir rootdir/etc/apt/sources.list.d/a-dir-that-will-be-ignored.conf
+mkdir rootdir/etc/apt/sources.list.d/a-dir-that-will-not-be-ignored.list
+mkdir rootdir/etc/apt/sources.list.d/a-dir-that-will-not-be-ignored.sources
+testsuccessequal "Reading package lists...
+Building dependency tree...
+All packages are up to date.
+N: Ignoring 'a-dir-that-will-not-be-ignored.list' in directory '${TMPWORKINGDIRECTORY}/rootdir/etc/apt/sources.list.d/' as it is not a regular file
+N: Ignoring 'a-dir-that-will-not-be-ignored.sources' in directory '${TMPWORKINGDIRECTORY}/rootdir/etc/apt/sources.list.d/' as it is not a regular file" apt update
+rmdir rootdir/etc/apt/sources.list.d/a-dir-*
+
+msgtest "Check for notices about .conf directories in apt.conf.d"
+mkdir -p rootdir/etc/apt/apt.conf.d/a-dir-that-will-be-ignored
+mkdir -p rootdir/etc/apt/apt.conf.d/a-dir-that-will-be-ignored.list
+mkdir -p rootdir/etc/apt/apt.conf.d/a-dir-that-will-not-be-ignored.conf
+testsuccessequal "N: Ignoring 'a-dir-that-will-not-be-ignored.conf' in directory '${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/' as it is not a regular file" aptconfig shell 
+rmdir rootdir/etc/apt/apt.conf.d/a-dir-*
+
+msgtest "Check for directory notices in preferences.d"
+mkdir -p rootdir/etc/apt/preferences.d/a-dir-that-will-be-ignored
+mkdir -p rootdir/etc/apt/preferences.d/a-dir-that-will-be-ignored.conf
+mkdir -p rootdir/etc/apt/preferences.d/a-dir-that-will-not-be-ignored.pref
+testsuccessequal "Package files:
+Pinned packages:
+N: Ignoring 'a-dir-that-will-not-be-ignored.pref' in directory '${TMPWORKINGDIRECTORY}/rootdir/etc/apt/preferences.d/' as it is not a regular file" apt policy
+rmdir rootdir/etc/apt/preferences.d/a-dir-*

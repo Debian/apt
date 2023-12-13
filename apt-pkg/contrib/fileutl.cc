@@ -486,12 +486,14 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
       {
 	 if (RealFileExists(File) == false)
 	 {
+	    string d_ext = flExtension(Ent->d_name);
 	    // do not show ignoration warnings for directories
-	    if (
+	    if ((
 #ifdef _DIRENT_HAVE_D_TYPE
-		Ent->d_type == DT_DIR ||
+		   Ent->d_type == DT_DIR ||
 #endif
-		DirectoryExists(File) == true)
+		   DirectoryExists(File) == true) &&
+		(d_ext.empty() || std::find(Ext.begin(), Ext.end(), d_ext) == Ext.end()))
 	       continue;
 	    if (SilentIgnore.Match(Ent->d_name) == false)
 	       _error->Notice(_("Ignoring '%s' in directory '%s' as it is not a regular file"), Ent->d_name, Dir.c_str());
