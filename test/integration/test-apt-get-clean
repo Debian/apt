@@ -24,6 +24,9 @@ testsuccess aptget clean -s
 # generate some dirt and clean it up
 generatedirt() {
 	touch rootdir/var/lib/apt/lists/partial/http.debian.net_debian_dists_sid_main_i18n_Translation-en
+	touch rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_sid_InRelease
+	touch rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_sid_main_binary-amd64_Packages
+	touch rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_sid_main_binary-amd64_Packages.diff_Index
 	mkdir -p rootdir/var/cache/apt/archives/lost+found
 	touch rootdir/var/cache/apt/archives/foo_1_all.deb
 	touch rootdir/var/cache/apt/archives/foo_1%3a1_all.deb
@@ -52,6 +55,12 @@ testfailure test -e rootdir/var/cache/apt/archives/foo_2%3a1_all.deb
 testfailure test -e rootdir/var/cache/apt/archives/foo_2_all.deb
 testfailure test -e rootdir/var/cache/apt/archives/foo_3_all.deb
 testfailure test -e rootdir/var/cache/apt/archives/foo_4_all.deb
+
+generatedirt
+testsuccess aptget distclean
+testsuccess test -e rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_sid_InRelease
+testfailure test -e rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_sid_main_binary-amd64_Packages
+testfailure test -e rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_sid_main_binary-amd64_Packages.diff_Index
 
 if [ "$(id -u)" != '0' ]; then
 	msgmsg 'No clean if lock can not be acquired'
