@@ -858,7 +858,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 
    int CurLine = 0;
    bool InComment = false;
-   while (F.Eof() == false)
+   while (F.Eof() == false && F.Failed() == false)
    {
       // The raw input line.
       std::string Input;
