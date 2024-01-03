@@ -424,6 +424,8 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"clean", &DoClean, _("Erase downloaded archive files")},
       {"autoclean", &DoAutoClean, _("Erase old downloaded archive files")},
       {"auto-clean", &DoAutoClean, nullptr},
+      {"distclean", &DoDistClean, nullptr},
+      {"dist-clean", &DoDistClean, nullptr},
       {"check", &DoCheck, _("Verify that there are no broken dependencies")},
       {"source", &DoSource, _("Download source archives")},
       {"download", &DoDownload, _("Download the binary package into the current directory")},

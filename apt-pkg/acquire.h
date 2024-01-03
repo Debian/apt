@@ -70,7 +70,6 @@
 #include <apt-pkg/weakptr.h>
 
 #include <chrono>
-#include <functional>
 #include <string>
 #include <vector>
 
@@ -338,7 +337,7 @@ class APT_PUBLIC pkgAcquire
     *
     *  \return \b true if the directory exists and is readable.
     */
-   bool CleanLists(std::string Dir);
+   bool CleanLists(std::string const &Dir);
 
    /** \return the total size in bytes of all the items included in
     *  this download.
@@ -381,20 +380,6 @@ class APT_PUBLIC pkgAcquire
 
    private:
    APT_HIDDEN void Initialize();
-
-   /** Delete each entry in the given directory whose name does \em not match
-    *  a criterion.
-    *
-    *  \param Dir The directory to be cleaned.
-    *
-    *  \param KeepP A predicate telling to keep the named file; if it is
-    *  non-empty and returns true, the file is kept.
-    *
-    *  \param Caller Log name of the caller.
-    *
-    *  \return \b true if the directory exists and is readable.
-    */
-   APT_HIDDEN static bool CleanDir(std::string Dir, std::function<bool(char const*)> const &KeepP, char const * const Caller);
 };
 
 /** \brief Represents a single download source from which an item
