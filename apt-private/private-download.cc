@@ -316,7 +316,7 @@ static bool CleanDownloadDirectories(bool const ListsToo)
       std::cout << "Del " << archivedir << "* " << archivedir << "partial/*" << std::endl
 		<< "Del " << listsdir << "partial/*" << std::endl;
       if (ListsToo)
-	 std::cout << "Del " << listsdir << "*_{Packages,Sources,Translation-*}{,.diff_Index}" << std::endl;
+	 std::cout << "Del " << listsdir << "*_{Packages,Sources,Translation-*}" << std::endl;
       std::cout << "Del " << pkgcache << " " << srcpkgcache << std::endl;
       return true;
    }

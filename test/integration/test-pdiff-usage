@@ -38,14 +38,7 @@ wasmergeused() {
 	#apt update "$@" 2>&1 | tee rootdir/tmp/testsuccess.output
 
 	msgtest 'No intermediate patch files' 'still exist'
-	local EDS="$(find rootdir/var/lib/apt/lists -name '*.ed' -o -name '*.ed.*')"
-	if [ -z "$EDS" ]; then
-		msgpass
-	else
-		echo
-		echo "$EDS"
-		msgfail
-	fi
+	testempty --nomsg find rootdir/var/lib/apt/lists -name '*.ed' -o -name '*.ed.*' -o -name '*.diff_Index' -o -name '*.diff_Index.xz'
 
 	if echo "$*" | grep -q -- '-o test::cannot-use-pdiff=1'; then
 		msgtest 'Check if pdiff was' 'not used'
@@ -389,21 +382,25 @@ testcase() {
 	testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=0 "$@"
 }
 generatepartialleftovers() {
+	local PREFIX="$1"
+	shift
 	for f in "$@"; do
-		cat "${PKGFILE}" "${PKGFILE}" > "rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_${f}"
-		printf '\n\nInvalid\nStanza: yes\n\n' >> "rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_${f}"
+		cat "${PKGFILE}" "${PKGFILE}" > "rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_${PREFIX}${f}"
+		printf '\n\nInvalid\nStanza: yes\n\n' >> "rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_${PREFIX}${f}"
 	done
+	printf '\n\nInvalid\nStanza: yes\n\n' >> "rootdir/var/lib/apt/lists-bak/localhost:${APTHTTPPORT}_${PREFIX}Packages.diff_Index"
+	printf '\n\nInvalid\nStanza: yes\n\n' >> "rootdir/var/lib/apt/lists-bak/localhost:${APTHTTPPORT}_${PREFIX}Packages.diff_Index.xz"
 }
 
-partialleftovers() { generatepartialleftovers 'Packages' 'Packages-patched'; }
+partialleftovers() { generatepartialleftovers '' 'Packages' 'Packages-patched'; }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; testsuccess test -e "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_Packages"; }
 testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=false
-partialleftovers() { generatepartialleftovers "Packages.${LOWCOSTEXT}" "Packages-patched.${LOWCOSTEXT}"; }
+partialleftovers() { generatepartialleftovers '' "Packages.${LOWCOSTEXT}" "Packages-patched.${LOWCOSTEXT}"; }
 aptautotest_apt_update() { aptautotest_aptget_update "$@"; testsuccess test -e "rootdir/var/lib/apt/lists/localhost:${APTHTTPPORT}_Packages.$LOWCOSTEXT"; }
 testcase -o Acquire::IndexTargets::deb::Packages::KeepCompressed=true
 
 
-partialleftovers() { generatepartialleftovers "redirectme_Packages.${LOWCOSTEXT}" "redirectme_Packages-patched.${LOWCOSTEXT}"; }
+partialleftovers() { generatepartialleftovers 'redirectme_' "Packages.${LOWCOSTEXT}" "Packages-patched.${LOWCOSTEXT}"; }
 # redirect the InRelease file only – the other files are auto-redirected by apt
 webserverconfig 'aptwebserver::redirect::replace::/redirectme/I' "http://0.0.0.0:${APTHTTPPORT}/I"
 rewritesourceslist "http://localhost:${APTHTTPPORT}/redirectme"
