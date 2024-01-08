@@ -826,11 +826,11 @@ pkgAcquire::Worker *pkgAcquire::WorkerStep(Worker *I)
    return I->NextAcquire;
 }
 									/*}}}*/
-// Acquire::CleanDir - Cleans a directory					/*{{{*/
+// CleanDir - Cleans a directory					/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a bit simplistic, it looks at every file in the dir and sees
    if it matches the predicate or not. */
-bool pkgAcquire::CleanDir(string Dir, std::function<bool(char const*)> const &Keep, char const * const Caller)
+static bool CleanDir(std::string const &Dir, std::function<bool(std::string_view)> const &Keep, char const * const Caller)
 {
    // non-existing directories are by definition clean…
    if (DirectoryExists(Dir) == false)
@@ -855,7 +855,7 @@ bool pkgAcquire::CleanDir(string Dir, std::function<bool(char const*)> const &Ke
 	  strcmp(E->d_name, "lost+found") == 0 ||
 	  strcmp(E->d_name, ".") == 0 ||
 	  strcmp(E->d_name, "..") == 0 ||
-	  Keep(E->d_name) == true)
+	  Keep(E->d_name))
 	 continue;
       RemoveFileAt(Caller, dirfd, E->d_name);
    }
@@ -867,12 +867,12 @@ bool pkgAcquire::CleanDir(string Dir, std::function<bool(char const*)> const &Ke
 // ---------------------------------------------------------------------
 /* This is a bit simplistic, it looks at every file in the dir and sees
    if it is part of the download set. */
-bool pkgAcquire::Clean(string Dir)
+bool pkgAcquire::Clean(std::string Dir)
 {
    return CleanDir(
       Dir,
       // Look in the get list and if found then keep
-      [this](char const *FName) {
+      [this](std::string_view const FName) {
          return std::any_of(Items.cbegin(), Items.cend(),
             [FName](pkgAcquire::Item const * const I) {
                return flNotDir(I->DestFile) == FName;
@@ -882,21 +882,19 @@ bool pkgAcquire::Clean(string Dir)
    );
 }
                            /*}}}*/
-// Acquire::CleanLists - Cleans a directory of list files             /*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool pkgAcquire::CleanLists(string Dir)
+// Acquire::CleanLists - Cleans a directory of list files		/*{{{*/
+bool pkgAcquire::CleanLists(std::string const &Dir)
 {
+   std::regex const KeepPattern(".*_(Release|Release\\.gpg|InRelease)");
    return CleanDir(
       Dir,
-      [](char const *FName) noexcept {
-         static const std::regex KeepPattern(".*_(Release|Release.gpg|InRelease)");
-         return std::regex_match(FName, KeepPattern);
+      [&KeepPattern](std::string_view const FName) noexcept {
+         return std::regex_match(FName.begin(), FName.end(), KeepPattern);
       },
       "pkgAcquire::CleanLists"
    );
 }
-                           /*}}}*/
+									/*}}}*/
 // Acquire::TotalNeeded - Number of bytes to fetch			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the total number of bytes needed */

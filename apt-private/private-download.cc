@@ -303,20 +303,8 @@ bool DoChangelog(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-
-// DoClean - Remove download archives            /*{{{*/
-bool DoClean(CommandLine &)
-{
-   return DoDistClean(false);
-}
-                           /*}}}*/
-// DoDistClean - Remove download archives and lists            /*{{{*/
-bool DoDistClean(CommandLine &)
-{
-   return DoDistClean(true);
-}
-// DoDistClean - the worker
-bool DoDistClean(bool ListsToo)
+// DoClean & DoDistClean - Remove download archives and/or lists	/*{{{*/
+static bool CleanDownloadDirectories(bool const ListsToo)
 {
    std::string const archivedir = _config->FindDir("Dir::Cache::archives");
    std::string const listsdir = _config->FindDir("Dir::state::lists");
@@ -325,22 +313,24 @@ bool DoDistClean(bool ListsToo)
    {
       std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
       std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
-      std::cout << "Del " << archivedir << "* " << archivedir << "partial/*"<< std::endl
-      << "Del " << listsdir << "partial/*" << (ListsToo ? " *_{Packages,Sources}{,.diff_Index}" : "") << std::endl
-      << "Del " << pkgcache << " " << srcpkgcache << std::endl;
+      std::cout << "Del " << archivedir << "* " << archivedir << "partial/*" << std::endl
+		<< "Del " << listsdir << "partial/*" << std::endl;
+      if (ListsToo)
+	 std::cout << "Del " << listsdir << "*_{Packages,Sources,Translation-*}" << std::endl;
+      std::cout << "Del " << pkgcache << " " << srcpkgcache << std::endl;
       return true;
    }
 
    pkgAcquire Fetcher;
-   if (archivedir.empty() == false && FileExists(archivedir) == true &&
-    Fetcher.GetLock(archivedir) == true)
+   if (not archivedir.empty() && FileExists(archivedir) &&
+       Fetcher.GetLock(archivedir))
    {
       Fetcher.Clean(archivedir);
       Fetcher.Clean(archivedir + "partial/");
    }
 
-   if (listsdir.empty() == false && FileExists(listsdir) == true &&
-    Fetcher.GetLock(listsdir) == true)
+   if (not listsdir.empty() && FileExists(listsdir) &&
+       Fetcher.GetLock(listsdir))
    {
       Fetcher.Clean(listsdir + "partial/");
       if (ListsToo)
@@ -350,6 +340,14 @@ bool DoDistClean(bool ListsToo)
    pkgCacheFile::RemoveCaches();
 
    return true;
+}
+bool DoClean(CommandLine &)
+{
+   return CleanDownloadDirectories(false);
+}
+bool DoDistClean(CommandLine &)
+{
+   return CleanDownloadDirectories(true);
 }
 									/*}}}*/
 // DoAutoClean - Smartly remove downloaded archives			/*{{{*/

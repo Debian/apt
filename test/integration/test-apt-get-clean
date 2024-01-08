@@ -13,13 +13,27 @@ insertpackage 'experimental' 'foo' 'all' '1:1'
 insertinstalledpackage 'foo' 'all' '3'
 
 setupaptarchive --no-update
+mkdir -p rootdir/var/lib/apt/lists/partial
+testsuccess test -d rootdir/var/lib/apt/lists/partial
 
-mkdir -p rootdir/var/lib/apt/lists/lost+found
+# nothing to do always works (part 1)
+for cmd in aptget apt; do
+	for sub in distclean dist-clean; do
+		testsuccess $cmd $sub
+		testsuccess $cmd $sub -s
+	done
+done
+testsuccess test -d rootdir/var/lib/apt/lists/partial
+
 testsuccess apt update
 
-# nothing to do always works
-testsuccess aptget clean
-testsuccess aptget clean -s
+# nothing to do always works (part 2)
+for cmd in aptget apt; do
+	for sub in clean autoclean auto-clean; do
+		testsuccess $cmd $sub
+		testsuccess $cmd $sub -s
+	done
+done
 
 # generate some dirt and clean it up
 generatedirt() {
@@ -63,6 +77,23 @@ if [ "$(id -u)" != '0' ]; then
 	chmod 644 rootdir/var/cache/apt/archives/lock
 fi
 
+msgmsg 'distclean'
+listcurrentlistsdirectory > aptdistclean.before
+testsuccessequal '3' grep -c -e 'Release$' aptdistclean.before
+testsuccess grep -e 'Packages$' -e 'Sources$' -e 'Translation-*$' aptdistclean.before
+testsuccess apt distclean
+listcurrentlistsdirectory > aptdistclean.after
+testfailure cmp aptdistclean.before aptdistclean.after
+testsuccessequal '3' grep -c -e 'Release$' aptdistclean.after
+testfailureequal '0' grep -c -e 'Packages$' -e 'Sources$' -e 'Translation-*$' aptdistclean.after
+for dirt in Packages.gz Sources.xz Release2gpg Release_Packages; do
+	touch "rootdir/var/lib/apt/lists/_foo_bar_$dirt"
+done
+listcurrentlistsdirectory > aptdistclean.before
+testsuccess apt distclean
+listcurrentlistsdirectory > aptdistclean.cleaned
+testsuccess cmp aptdistclean.after aptdistclean.cleaned
+
 directorygone() {
 	rm -rf "$1"
 	testsuccess apt autoclean
@@ -86,3 +117,4 @@ directorygone 'rootdir/var/lib/apt/lists'
 msgmsg 'apt directory missing'
 directorygone 'rootdir/var/cache/apt'
 directorygone 'rootdir/var/lib/apt'
+
