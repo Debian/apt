@@ -1,3 +1,25 @@
+apt (2.7.8) unstable; urgency=medium
+
+  [ Gábor Németh ]
+  * Add 'dist-clean' command to remove packages and list files (Closes:
+    #959093); this is experimental and does not yet have docs or tests.
+
+  [ David Kalnischkies ]
+  * Have Grp.FindPreferredPkg return very foreign pkgs as last resort
+  * Improve and test distclean implementation
+  * Do not store .diff_Index files in update
+
+  [ Tianyu Chen ]
+  * apt-pkg/cacheset.cc: set ShowErrors to true when no version matched
+    (Closes: #1053887)
+
+  [ Julian Andres Klode ]
+  * Do not silently ignore directories for reserved file names
+  * test: Disable valgrind on armhf, incompatible with stack clash protector
+    (Closes: #1059352)
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 08 Jan 2024 10:32:31 +0100
+
 apt (2.7.7) unstable; urgency=medium
 
   [ sid ]
