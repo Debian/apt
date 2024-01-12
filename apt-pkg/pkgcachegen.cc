@@ -89,7 +89,7 @@ bool pkgCacheGenerator::Start()
       Map.UsePools(*Cache.HeaderP->Pools,sizeof(Cache.HeaderP->Pools)/sizeof(Cache.HeaderP->Pools[0]));
 
       // Starting header
-      *Cache.HeaderP = pkgCache::Header();
+      new (Cache.HeaderP) pkgCache::Header();
 
       // make room for the hashtables for packages and groups
       if (Map.RawAllocate(2 * (Cache.HeaderP->GetHashTableSize() * sizeof(map_pointer<void>))) == 0)
