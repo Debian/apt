@@ -40,6 +40,8 @@ using std::vector;
 #define GNUPGEXPSIG "[GNUPG:] EXPSIG"
 #define GNUPGREVKEYSIG "[GNUPG:] REVKEYSIG"
 #define GNUPGNODATA "[GNUPG:] NODATA"
+#define GNUPGWARNING "[GNUPG:] WARNING"
+#define GNUPGERROR "[GNUPG:] ERROR"
 #define APTKEYWARNING "[APTKEY:] WARNING"
 #define APTKEYERROR "[APTKEY:] ERROR"
 
@@ -269,6 +271,13 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	 if (tokens.size() > 9 && sig != tokens[9])
 	    SubKeyMapping[tokens[9]].emplace_back(sig);
       }
+      else if (strncmp(buffer, GNUPGWARNING, sizeof(GNUPGWARNING)-1) == 0) {
+	 std::string warning;
+	 strprintf(warning, "GPG: %s", buffer + sizeof(GNUPGWARNING));
+	 Warning(std::move(warning));
+      }
+      else if (strncmp(buffer, GNUPGERROR, sizeof(GNUPGERROR)-1) == 0)
+	 _error->Error("GPG: %s", buffer + sizeof(GNUPGERROR));
       else if (strncmp(buffer, APTKEYWARNING, sizeof(APTKEYWARNING)-1) == 0)
          Warning(buffer + sizeof(APTKEYWARNING));
       else if (strncmp(buffer, APTKEYERROR, sizeof(APTKEYERROR)-1) == 0)
