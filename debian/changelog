@@ -1,3 +1,16 @@
+apt (2.7.10) unstable; urgency=medium
+
+  * pkgcachegen: Use placement new to construct header to make
+    valgrind happy when we hash/write out padding bytes
+  * Add Conflicts: apt-verify.
+    The APT team is very concerned about the encroachement of its
+    namespace and the impact on security of its file verification
+    process. We have expressed those concerns in the ITP bug, but
+    the package was nonetheless uploaded and accepted, so we have
+    to take this extraordinary step to protect our users.
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 19 Jan 2024 09:31:13 +0100
+
 apt (2.7.9) unstable; urgency=medium
 
   [ David Kalnischkies ]
