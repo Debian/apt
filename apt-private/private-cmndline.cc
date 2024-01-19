@@ -214,6 +214,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    }
    else if (CmdMatches("source"))
    {
+      addArg('a', "host-architecture", "APT::Get::Host-Architecture", CommandLine::HasArg);
       addArg('b', "compile", "APT::Get::Compile", 0);
       addArg('b', "build", "APT::Get::Compile", 0);
       addArg('P', "build-profiles", "APT::Build-Profiles", CommandLine::HasArg);
