@@ -64,6 +64,7 @@ GEMessage(FatalE, FATAL)
 GEMessage(Errno, ERROR)
 GEMessage(WarningE, WARNING)
 GEMessage(NoticeE, NOTICE)
+GEMessage(AuditE, AUDIT)
 GEMessage(DebugE, DEBUG)
 #undef GEMessage
 									/*}}}*/
@@ -121,6 +122,7 @@ GEMessage(Fatal, FATAL)
 GEMessage(Error, ERROR)
 GEMessage(Warning, WARNING)
 GEMessage(Notice, NOTICE)
+GEMessage(Audit, AUDIT)
 GEMessage(Debug, DEBUG)
 #undef GEMessage
 									/*}}}*/
@@ -270,6 +272,7 @@ APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
 	 out << COLOR_WARN;
 	 break;
       case GlobalError::NOTICE:
+      case GlobalError::AUDIT:
 	 out << COLOR_NOTICE;
 	 break;
       default:
@@ -289,6 +292,9 @@ APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
    case GlobalError::NOTICE:
       out << 'N';
       break;
+   case GlobalError::AUDIT:
+      out << 'A';
+      break;
    case GlobalError::DEBUG:
       out << 'D';
       break;
@@ -303,6 +309,7 @@ APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
       case GlobalError::ERROR:
       case GlobalError::WARNING:
       case GlobalError::NOTICE:
+      case GlobalError::AUDIT:
 	 out << COLOR_RESET;
 	 break;
       default:

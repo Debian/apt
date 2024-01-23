@@ -66,6 +66,8 @@ public:									/*{{{*/
 		WARNING = 20,
 		/** \brief deprecation warnings, old fallback behavior, … */
 		NOTICE = 10,
+		/** \brief future deprecation warnings, divergence from best practices */
+		AUDIT = 5,
 		/** \brief for developers only in areas it is hard to print something directly */
 		DEBUG = 0
 	};
@@ -108,6 +110,15 @@ public:									/*{{{*/
 	 *  \return \b false
 	 */
 	bool NoticeE(const char *Function,const char *Description,...) APT_PRINTF(3) APT_COLD;
+
+	/** \brief add an audit message with errno to the list
+	 *
+	 *  \param Function name of the function generating the error
+	 *  \param Description format string for the error message
+	 *
+	 *  \return \b false
+	 */
+	bool AuditE(const char *Function,const char *Description,...) APT_PRINTF(3) APT_COLD;
 
 	/** \brief add a debug message with errno to the list
 	 *
@@ -192,6 +203,18 @@ public:									/*{{{*/
 	 *  \return \b false
 	 */
 	bool Notice(const char *Description,...) APT_PRINTF(2) APT_COLD;
+
+	/** \brief add an audit message to the list
+	 *
+	 *  An audit message highlights divergences from best practices and
+	 *  future deprecations. It my for example include additional messages
+	 *  targeted at repository owners.
+	 *
+	 *  \param Description Format string for the message
+	 *
+	 *  \return \b false
+	 */
+	bool Audit(const char *Description,...) APT_PRINTF(2) APT_COLD;
 
 	/** \brief add a debug message to the list
 	 *
