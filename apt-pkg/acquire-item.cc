@@ -2013,6 +2013,8 @@ void pkgAcqMetaClearSig::Failed(string const &Message,pkgAcquire::MethodConfig c
 	    return;
       }
 
+      _error->Audit(_("Repositories should provide a clear-signed InRelease file, but none found at %s."), Target.URI.c_str());
+
       // Queue the 'old' InRelease file for removal if we try Release.gpg
       // as otherwise the file will stay around and gives a false-auth
       // impression (CVE-2012-0214)
