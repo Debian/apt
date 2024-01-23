@@ -435,7 +435,7 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 				if (Progress != nullptr)
 					Progress->Done();
 				Progress = nullptr;
-				_error->DumpErrors(std::cerr, GlobalError::DEBUG, false);
+				_error->DumpErrors(std::cerr, GlobalError::NOTICE, false);
 			}
 			std::string msg = SubstVar(SubstVar(section.FindS("Message"), "\n .\n", "\n\n"), "\n ", "\n");
 			if (msg.empty() == true) {
@@ -1044,7 +1044,7 @@ bool EIPP::ReadResponse(int const input, pkgPackageManager * const PM, OpProgres
 	    if (Progress != nullptr)
 	       Progress->Done();
 	    Progress = nullptr;
-	    _error->DumpErrors(std::cerr, GlobalError::DEBUG, false);
+	    _error->DumpErrors(std::cerr, GlobalError::NOTICE, false);
 	 }
 	 std::string msg = SubstVar(SubstVar(section.FindS("Message"), "\n .\n", "\n\n"), "\n ", "\n");
 	 if (msg.empty() == true) {

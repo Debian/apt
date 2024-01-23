@@ -604,7 +604,7 @@ unsigned short DispatchCommandLine(CommandLine &CmdL, std::vector<CommandLine::D
    if (_config->FindI("quiet",0) > 0)
       _error->DumpErrors();
    else
-      _error->DumpErrors(GlobalError::DEBUG);
+      _error->DumpErrors(GlobalError::NOTICE);
    if (returned == false)
       return 100;
    return Errors == true ? 100 : 0;

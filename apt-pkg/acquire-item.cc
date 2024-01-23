@@ -3985,7 +3985,7 @@ void pkgAcqFile::Done(string const &Message,HashStringList const &CalcHashes,
 	 _error->PushToStack();
 	 _error->Errno("pkgAcqFile::Done", "Symlinking file %s failed", DestFile.c_str());
 	 std::stringstream msg;
-	 _error->DumpErrors(msg, GlobalError::DEBUG, false);
+	 _error->DumpErrors(msg, GlobalError::NOTICE, false);
 	 _error->RevertToStack();
 	 ErrorText = msg.str();
 	 Status = StatError;
