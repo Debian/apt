@@ -7,4 +7,6 @@ if [ -z "$CLANG_FORMAT" ]; then
 fi
 git "$(basename "$CLANG_FORMAT" | cut -d'-' -f 2-)" --diff "$@" | \
    sed "s#+/\*\}\}\}\*/#+									/*}}}*/#" | \
+   grep -v '^clang-format did not modify any files$' | \
+   grep -v '^no modified files to format$' | \
    patch -p1
