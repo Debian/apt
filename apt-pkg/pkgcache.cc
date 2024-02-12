@@ -1017,5 +1017,30 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
 }
 
 									/*}}}*/
+// VerIterator::IsSecurity - check if it is a security update /*{{{*/
 
+// See if this version is a security update. This also checks, for installed packages,
+// if any of the previous versions is a security update
+bool pkgCache::VerIterator::IsSecurityUpdate() const
+{
+   auto Pkg = ParentPkg();
+   auto Installed = Pkg.CurrentVer();
+
+   auto OtherVer = Pkg.VersionList();
+
+   // Advance to first version < our version
+   while (OtherVer->ID != S->ID)
+      ++OtherVer;
+
+   // Iterate over all versions < our version
+   for (; !OtherVer.end() && (Installed.end() || OtherVer->ID != Installed->ID); OtherVer++)
+   {
+      for (auto PF = OtherVer.FileList(); !PF.end(); PF++)
+	 if (PF.File() && PF.File().Archive() != nullptr && APT::String::Endswith(PF.File().Archive(), "-security"))
+	    return true;
+   }
+   return false;
+}
+
+									/*}}}*/
 pkgCache::~pkgCache() {}

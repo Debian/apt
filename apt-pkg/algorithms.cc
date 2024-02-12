@@ -1246,6 +1246,26 @@ bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
    return false;
 }
 									/*}}}*/
+// ProblemResolver::KeepPhasedUpdates - Keep back phased updates	/*{{{*/
+// ---------------------------------------------------------------------
+// Hold back upgrades to phased versions of already installed packages, unless
+// they are security updates
+bool pkgProblemResolver::KeepPhasedUpdates()
+{
+   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+   {
+      if (not Cache.PhasingApplied(I))
+	 continue;
+
+      Cache.MarkKeep(I, false, false);
+      Cache.MarkProtected(I);
+      Protect(I);
+   }
+
+   return true;
+}
+
+									/*}}}*/
 // ProblemResolver::ResolveByKeep - Resolve problems using keep		/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the work horse of the soft upgrade routine. It is very gentle

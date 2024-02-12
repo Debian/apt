@@ -381,6 +381,12 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
    bool MarkAndSweep(InRootSetFunc &rootFunc);
    bool MarkAndSweep();
 
+   /** Check if the phased update is ready.
+    *
+    * \return \b false if this is a phased update that is not yet ready for us
+    */
+   bool PhasingApplied(PkgIterator Pkg) const;
+
    /** \name State Manipulators
     */
    // @{
