@@ -1,3 +1,19 @@
+apt (2.7.11) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * Remove erroneous -a flag from apt-get synopsis in manpage
+  * Support -a for setting host architecture in apt-get source -b
+
+  [ Julian Andres Klode ]
+  * For phasing, check if current version is a security update, not just previous ones
+    (LP: #2051181)
+  * Add public phased update API
+  * Add a new ?phasing pattern
+  * Add the ?security pattern
+  * Show a separate list of upgrades deferred due to phasing (LP: #1988819)
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 13 Feb 2024 16:31:00 +0100
+
 apt (2.7.10) unstable; urgency=medium
 
   * pkgcachegen: Use placement new to construct header to make
