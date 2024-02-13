@@ -40,7 +40,6 @@ struct PhasedUpgrader
       // Advance to first version < our version
       while (OtherVer->ID != Ver->ID)
 	 ++OtherVer;
-      ++OtherVer;
 
       // Iterate over all versions < our version
       for (; !OtherVer.end() && (Installed.end() || OtherVer->ID != Installed->ID); OtherVer++)
