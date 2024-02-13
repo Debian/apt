@@ -415,6 +415,15 @@ struct APT_HIDDEN VersionIsSection : public VersionAnyMatcher
    }
 };
 
+struct APT_HIDDEN VersionIsSecurity : public VersionAnyMatcher
+{
+   VersionIsSecurity() {}
+   bool operator()(pkgCache::VerIterator const &Ver) override
+   {
+      return Ver.IsSecurityUpdate();
+   }
+};
+
 struct APT_HIDDEN VersionIsSourcePackage : public VersionAnyMatcher
 {
    BaseRegexMatcher matcher;

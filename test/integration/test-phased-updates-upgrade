@@ -72,6 +72,10 @@ phased-dep/unstable-updates 3 all [upgradable from: 1]
 phased-depends-ready-dep/unstable-updates 3 all [upgradable from: 1]
 phased/unstable-updates 3 all [upgradable from: 1]" apt list '?phasing'
 
+testsuccessequal "Listing...
+phased-security-same/unstable-security,unstable-updates 3 all [upgradable from: 1]
+phased-security/unstable-updates 3 all [upgradable from: 1]" apt list '?security'
+
 for always in APT::Get::Always-Include-Phased-Updates Update-Manager::Always-Include-Phased-Updates; do
 testsuccessequal "Reading package lists...
 Building dependency tree...
