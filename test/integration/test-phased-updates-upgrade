@@ -67,6 +67,11 @@ Conf depends-phased-new (3 unstable-updates [all])
 Conf phased-security (3 unstable-updates [all])
 Conf phased-security-same (3 unstable-security, unstable-updates [all])" aptget dist-upgrade -s -q
 
+testsuccessequal "Listing...
+phased-dep/unstable-updates 3 all [upgradable from: 1]
+phased-depends-ready-dep/unstable-updates 3 all [upgradable from: 1]
+phased/unstable-updates 3 all [upgradable from: 1]" apt list '?phasing'
+
 for always in APT::Get::Always-Include-Phased-Updates Update-Manager::Always-Include-Phased-Updates; do
 testsuccessequal "Reading package lists...
 Building dependency tree...

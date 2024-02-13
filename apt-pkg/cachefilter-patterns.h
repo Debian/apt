@@ -243,6 +243,16 @@ struct APT_HIDDEN PackageIsObsolete : public PackageMatcher
    }
 };
 
+struct APT_HIDDEN PackageIsPhasing : public PackageMatcher
+{
+   pkgCacheFile *Cache;
+   explicit PackageIsPhasing(pkgCacheFile *Cache) : Cache(Cache) {}
+   bool operator()(pkgCache::PkgIterator const &pkg) override
+   {
+      return (*Cache)->PhasingApplied(pkg);
+   }
+};
+
 struct APT_HIDDEN PackageIsUpgradable : public PackageMatcher
 {
    pkgCacheFile *Cache;
