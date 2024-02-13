@@ -53,8 +53,10 @@ Building dependency tree...
 Calculating upgrade...
 The following NEW packages will be installed:
   phased-new
+The following upgrades have been deferred due to phasing:
+  phased phased-dep phased-depends-ready-dep
 The following packages have been kept back:
-  depends-phased-dep phased phased-dep phased-depends-ready-dep ready-dep
+  depends-phased-dep ready-dep
 The following packages will be upgraded:
   depends-phased-new phased-security phased-security-same
 3 upgraded, 1 newly installed, 0 to remove and 5 not upgraded.
@@ -66,6 +68,32 @@ Conf phased-new (3 unstable-updates [all])
 Conf depends-phased-new (3 unstable-updates [all])
 Conf phased-security (3 unstable-updates [all])
 Conf phased-security-same (3 unstable-security, unstable-updates [all])" aptget dist-upgrade -s -q
+
+testequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  phased-new
+The following upgrades have been deferred due to phasing:
+  phased phased-dep phased-depends-ready-dep
+The following packages have been kept back:
+  depends-phased-dep ready-dep
+The following packages will be upgraded:
+  depends-phased-new phased-security phased-security-same
+3 upgraded, 1 newly installed, 0 to remove and 5 not upgraded.
+Need to get 0 B/168 B of archives.
+After this operation, 43.0 kB of additional disk space will be used.
+N: Some packages may have been kept back due to phasing.
+Do you want to continue? [Y/n] Abort." apt dist-upgrade < /dev/null
+
+testsuccessequal "Listing...
+phased-dep/unstable-updates 3 all [upgradable from: 1]
+phased-depends-ready-dep/unstable-updates 3 all [upgradable from: 1]
+phased/unstable-updates 3 all [upgradable from: 1]" apt list '?phasing'
+
+testsuccessequal "Listing...
+phased-security-same/unstable-security,unstable-updates 3 all [upgradable from: 1]
+phased-security/unstable-updates 3 all [upgradable from: 1]" apt list '?security'
 
 for always in APT::Get::Always-Include-Phased-Updates Update-Manager::Always-Include-Phased-Updates; do
 testsuccessequal "Reading package lists...
@@ -131,8 +159,10 @@ Building dependency tree...
 Calculating upgrade...
 The following NEW packages will be installed:
   phased-new
+The following upgrades have been deferred due to phasing:
+  phased phased-dep phased-depends-ready-dep
 The following packages have been kept back:
-  depends-phased-dep phased phased-dep phased-depends-ready-dep ready-dep
+  depends-phased-dep ready-dep
 The following packages will be upgraded:
   depends-phased-new phased-security phased-security-same
 3 upgraded, 1 newly installed, 0 to remove and 5 not upgraded.
@@ -151,8 +181,10 @@ Building dependency tree...
 Calculating upgrade...
 The following NEW packages will be installed:
   phased-new
+The following upgrades have been deferred due to phasing:
+  phased phased-dep phased-depends-ready-dep
 The following packages have been kept back:
-  depends-phased-dep phased phased-dep phased-depends-ready-dep ready-dep
+  depends-phased-dep ready-dep
 The following packages will be upgraded:
   depends-phased-new phased-security phased-security-same
 3 upgraded, 1 newly installed, 0 to remove and 5 not upgraded.
@@ -168,9 +200,10 @@ Conf phased-security-same (3 unstable-security, unstable-updates [all])" aptget 
 testsuccessequal "Reading package lists...
 Building dependency tree...
 Calculating upgrade...
+The following upgrades have been deferred due to phasing:
+  phased phased-dep phased-depends-ready-dep
 The following packages have been kept back:
-  depends-phased-dep depends-phased-new phased phased-dep
-  phased-depends-ready-dep ready-dep
+  depends-phased-dep depends-phased-new ready-dep
 The following packages will be upgraded:
   phased-security phased-security-same
 2 upgraded, 0 newly installed, 0 to remove and 6 not upgraded.
@@ -185,8 +218,10 @@ Building dependency tree...
 Calculating upgrade...
 The following NEW packages will be installed:
   phased-new
+The following upgrades have been deferred due to phasing:
+  phased phased-depends-ready-dep
 The following packages have been kept back:
-  phased phased-depends-ready-dep ready-dep
+  ready-dep
 The following packages will be upgraded:
   depends-phased-dep depends-phased-new phased-dep phased-security
   phased-security-same
@@ -208,8 +243,10 @@ done
 testsuccessequal "Reading package lists...
 Building dependency tree...
 Calculating upgrade...
+The following upgrades have been deferred due to phasing:
+  phased phased-depends-ready-dep
 The following packages have been kept back:
-  depends-phased-new phased phased-depends-ready-dep ready-dep
+  depends-phased-new ready-dep
 The following packages will be upgraded:
   depends-phased-dep phased-dep phased-security phased-security-same
 4 upgraded, 0 newly installed, 0 to remove and 4 not upgraded.

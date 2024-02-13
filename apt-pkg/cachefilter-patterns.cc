@@ -498,8 +498,12 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return std::make_unique<Patterns::PackageIsObsolete>();
    if (node->matches("?origin", 1, 1))
       return std::make_unique<Patterns::VersionIsOrigin>(aWord(node->arguments[0]));
+   if (node->matches("?phasing", 0, 0))
+      return std::make_unique<Patterns::PackageIsPhasing>(file);
    if (node->matches("?section", 1, 1))
       return std::make_unique<Patterns::VersionIsSection>(aWord(node->arguments[0]));
+   if (node->matches("?security", 0, 0))
+      return std::make_unique<Patterns::VersionIsSecurity>();
    if (node->matches("?source-package", 1, 1))
       return std::make_unique<Patterns::VersionIsSourcePackage>(aWord(node->arguments[0]));
    if (node->matches("?source-version", 1, 1))
