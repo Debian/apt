@@ -490,6 +490,16 @@ void ShowDel(ostream &out,CacheFile &Cache)
 	 CandidateVersion(&Cache));
 }
 									/*}}}*/
+// ShowPhasing - Show packages kept due to phasing			/*{{{*/
+void ShowPhasing(ostream &out, CacheFile &Cache, APT::PackageVector const &HeldBackPackages)
+{
+   SortedPackageUniverse Universe(Cache);
+   ShowList(out, _("The following upgrades have been deferred due to phasing:"), HeldBackPackages,
+	    &AlwaysTrue,
+	    &PrettyFullName,
+	    CurrentToCandidateVersion(&Cache));
+}
+									/*}}}*/
 // ShowKept - Show kept packages					/*{{{*/
 void ShowKept(ostream &out,CacheFile &Cache, APT::PackageVector const &HeldBackPackages)
 {

@@ -210,11 +210,26 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	 return false;
    }
 
+   APT::PackageVector PhasingPackages;
+   APT::PackageVector NotPhasingHeldBackPackages;
+   for (auto const &Pkg : HeldBackPackages)
+   {
+      if (Cache->PhasingApplied(Pkg))
+	 PhasingPackages.push_back(Pkg);
+      else
+	 NotPhasingHeldBackPackages.push_back(Pkg);
+   }
+
    // Show all the various warning indicators
    ShowDel(c1out,Cache);
    ShowNew(c1out,Cache);
    if (ShwKept == true)
-      ShowKept(c1out,Cache, HeldBackPackages);
+   {
+      ShowPhasing(c1out, Cache, PhasingPackages);
+      ShowKept(c1out, Cache, NotPhasingHeldBackPackages);
+      if (not PhasingPackages.empty() && not NotPhasingHeldBackPackages.empty())
+	 _error->Notice("Some packages may have been kept back due to phasing.");
+   }
    bool const Hold = not ShowHold(c1out,Cache);
    if (_config->FindB("APT::Get::Show-Upgraded",true) == true)
       ShowUpgraded(c1out,Cache);
