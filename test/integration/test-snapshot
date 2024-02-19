@@ -24,7 +24,12 @@ testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' local
 'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
 'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
 
-testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+testsuccessequal "'https://snapshot.debian.org/archive/debian/OPTIONNOTSET/dists/stable/InRelease' snapshot.debian.org_archive_debian_OPTIONNOTSET_dists_stable_InRelease 0 
+'https://snapshot.debian.org/archive/debian/OPTIONNOTSET/dists/stable/main/source/Sources.xz' snapshot.debian.org_archive_debian_OPTIONNOTSET_dists_stable_main_source_Sources 0 
+'https://snapshot.debian.org/archive/debian/OPTIONNOTSET/dists/stable/main/binary-amd64/Packages.xz' snapshot.debian.org_archive_debian_OPTIONNOTSET_dists_stable_main_binary-amd64_Packages 0 
+'https://snapshot.debian.org/archive/debian/OPTIONNOTSET/dists/stable/main/binary-all/Packages.xz' snapshot.debian.org_archive_debian_OPTIONNOTSET_dists_stable_main_binary-all_Packages 0 
+'https://snapshot.debian.org/archive/debian/OPTIONNOTSET/dists/stable/main/i18n/Translation-en.xz' snapshot.debian.org_archive_debian_OPTIONNOTSET_dists_stable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
 'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
 'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
 'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
