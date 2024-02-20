@@ -1315,6 +1315,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    ArchiveURI.Path.erase(0, 1);
 	 std::string Server;
 
+	 auto const PreviousDeb = List.empty() ? nullptr : List.back();
 	 auto const Deb = GetDebReleaseIndexBy(List, URI, Dist, Options);
 	 std::string filename;
 
@@ -1343,7 +1344,13 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	 {
 	    if (APT::String::Endswith(Snapshot, "?"))
 	    {
+	       // Erase the SHADOWED option and remove the release index from the list if we created it.
 	       Options.erase("SHADOWED");
+	       if (Deb && Deb != PreviousDeb) {
+		  assert(List.back() == Deb);
+		  List.pop_back();
+		  delete Deb;
+	       }
 	       goto nosnapshot;
 	    }
 	    if (Server != "no" && filename.empty())
