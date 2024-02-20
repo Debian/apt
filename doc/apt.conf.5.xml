@@ -311,6 +311,61 @@ APT::Compressor::rev {
      <listitem><para>The CDROM subsection controls the &apt-cdrom; tool; please see its
      documentation for more information about the options here.</para></listitem>
      </varlistentry>
+
+    <varlistentry>
+        <term>
+            <option>NeverAutoRemove</option>
+        </term>
+        <listitem>
+            <para>
+                Never autoremove packages that match the regular expression(s).
+            </para>
+        </listitem>
+    </varlistentry>
+
+    <varlistentry>
+        <term>
+            <option>Protect-Kernels</option>
+        </term>
+        <listitem>
+            <para>
+                This option tells apt autoremove that kernels are protected and
+                defaults to true. In case kernels are not protected they are
+                treated as any other package.
+            </para>
+        </listitem>
+    </varlistentry>
+
+    <varlistentry>
+        <term>
+            <option>VersionedKernelPackages</option>
+        </term>
+        <listitem>
+            <para>
+                Define the regular expression(s) for versioned kernel packages.
+                Based on these expressions a rule set is injected into apt
+                similar to APT::NeverAutoRemove regular expressions.
+            </para>
+        </listitem>
+    </varlistentry>
+
+    <varlistentry>
+        <term>
+            <option>NeverAutoRemove::KernelCount</option>
+        </term>
+        <listitem>
+            <para>
+                Keep a custom amount of kernels when autoremoving and defaults
+                to 2, meaning two kernels are kept. Apt will always keep the
+                running kernel and the latest one. If the latest kernel is the
+                same as the running kernel, the second latest kernel is kept.
+                Because of this, any value lower than 2 will be ignored. If you
+                want only the latest kernel, you should set
+                APT::Protect-Kernels to false.
+            </para>
+        </listitem>
+    </varlistentry>
+
    </variablelist>
  </refsect1>
 

@@ -1574,11 +1574,15 @@ std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
    if (version2unames.size() == 0)
       return "";
 
-   auto latest = version2unames.rbegin();
-   auto previous = latest;
-   ++previous;
-
+   auto versions = version2unames.rbegin();
    std::set<std::string> keep;
+
+   auto keepKernels = (unsigned long)_config->FindI("APT::NeverAutoRemove::KernelCount", 2);
+   if (keepKernels < 2)
+      keepKernels = 2;
+
+   if (Debug)
+      std::clog << "Amount of kernels to keep " << keepKernels << std::endl;
 
    if (not bootedVersion.empty())
    {
@@ -1586,18 +1590,21 @@ std::string GetProtectedKernelsRegex(pkgCache *cache, bool ReturnRemove)
 	 std::clog << "Keeping booted kernel " << bootedVersion << std::endl;
       keep.insert(bootedVersion);
    }
-   if (latest != version2unames.rend())
+
+   while (keep.size() < keepKernels && versions != version2unames.rend())
    {
+      auto v = versions->first;
+      if (v == bootedVersion)
+      {
+	 versions++;
+	 continue;
+      }
       if (Debug)
-	 std::clog << "Keeping latest kernel " << latest->first << std::endl;
-      keep.insert(latest->first);
+	 std::clog << "Keeping previous kernel " << v << std::endl;
+      keep.insert(v);
+      versions++;
    }
-   if (keep.size() < 2 && previous != version2unames.rend())
-   {
-      if (Debug)
-	 std::clog << "Keeping previous kernel " << previous->first << std::endl;
-      keep.insert(previous->first);
-   }
+
    // Escape special characters '.' and '+' in version strings so we can build a regular expression
    auto escapeSpecial = [](std::string input) -> std::string {
       for (size_t pos = 0; (pos = input.find_first_of(".+", pos)) != input.npos; pos += 2) {
