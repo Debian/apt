@@ -26,16 +26,16 @@
 #include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
 
+#include <cerrno>
 #include <chrono>
+#include <csignal>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <sstream>
 #include <arpa/inet.h>
-#include <errno.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <sys/select.h>
 #include <sys/stat.h>
 #include <sys/time.h>

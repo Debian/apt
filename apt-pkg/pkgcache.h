@@ -77,10 +77,10 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/mmap.h>
 
-#include <cstddef>       // required for nullptr_t
+#include <cstddef> // required for nullptr_t
+#include <cstdint>
+#include <ctime>
 #include <string>
-#include <stdint.h>
-#include <time.h>
 
 #include <apt-pkg/string_view.h>
 

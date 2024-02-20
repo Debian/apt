@@ -32,8 +32,13 @@
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
-#include <ctime>
+#include <cerrno>
 #include <chrono>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
 #include <iostream>
 #include <memory>
 #include <numeric>
@@ -42,11 +47,6 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
-#include <errno.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 

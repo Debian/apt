@@ -19,11 +19,11 @@
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-output.h>
 
+#include <csignal>
+#include <cstdio>
+#include <cstring>
 #include <iostream>
 #include <sstream>
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 
 #include <apti18n.h>

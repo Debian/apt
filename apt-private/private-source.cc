@@ -31,10 +31,10 @@
 #include <apt-pkg/debindexfile.h>
 #include <apt-pkg/deblistparser.h>
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <sys/stat.h>
 #include <unistd.h>
 

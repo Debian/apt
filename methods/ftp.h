@@ -13,10 +13,10 @@
 #include "connect.h"
 #include <apt-pkg/strutl.h>
 
+#include <ctime>
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <time.h>
 
 class FTPConn
 {

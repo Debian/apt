@@ -3,9 +3,9 @@
 
 #include <apt-pkg/macros.h>
 
+#include <csignal>
 #include <string>
 #include <vector>
-#include <signal.h>
 #include <unistd.h>
 
 namespace APT {

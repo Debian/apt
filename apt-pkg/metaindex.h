@@ -4,7 +4,7 @@
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/init.h>
 
-#include <stddef.h>
+#include <cstddef>
 
 #include <string>
 #include <vector>

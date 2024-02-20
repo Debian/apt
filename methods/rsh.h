@@ -9,8 +9,8 @@
 #ifndef APT_RSH_H
 #define APT_RSH_H
 
+#include <ctime>
 #include <string>
-#include <time.h>
 
 #include <apt-pkg/strutl.h>
 

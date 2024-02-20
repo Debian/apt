@@ -35,10 +35,10 @@
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-main.h>
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 
 #include "apt-extracttemplates.h"

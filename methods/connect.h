@@ -9,9 +9,9 @@
 #ifndef CONNECT_H
 #define CONNECT_H
 
+#include <cstddef>
 #include <memory>
 #include <string>
-#include <stddef.h>
 
 #include "aptmethod.h"
 

@@ -24,7 +24,7 @@
 #include <utility>
 #include <vector>
 
-#include <string.h>
+#include <cstring>
 #include <sys/stat.h>
 
 #include <apti18n.h>

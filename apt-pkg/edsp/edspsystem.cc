@@ -18,8 +18,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgcache.h>
 
-#include <stddef.h>
-#include <stdlib.h>
+#include <cstddef>
+#include <cstdlib>
 #include <unistd.h>
 
 #include <string>

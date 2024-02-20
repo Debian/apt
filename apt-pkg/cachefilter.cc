@@ -14,11 +14,11 @@
 #include <apt-pkg/strutl.h>
 
 #include <algorithm>
+#include <cstring>
 #include <string>
 #include <unordered_map>
 #include <fnmatch.h>
 #include <regex.h>
-#include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -14,10 +14,10 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
+#include <cctype>
+#include <cstdio>
+#include <cstring>
 #include <utility>
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "override.h"
 

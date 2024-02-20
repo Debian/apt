@@ -7,12 +7,12 @@
 
 #include <algorithm>
 #include <cmath>
+#include <csignal>
+#include <cstdio>
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <fcntl.h>
-#include <signal.h>
-#include <stdio.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 

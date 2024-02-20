@@ -12,9 +12,9 @@
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-main.h>
 
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdarg>
+#include <cstdlib>
+#include <cstring>
 #include <unistd.h>
 
 #include <algorithm>

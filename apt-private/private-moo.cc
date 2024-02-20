@@ -17,12 +17,12 @@
 #include <apt-private/private-output.h>
 #include <apt-private/private-utils.h>
 
+#include <cstddef>
+#include <cstring>
+#include <ctime>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <stddef.h>
-#include <string.h>
-#include <time.h>
 
 #include <apti18n.h>
 									/*}}}*/

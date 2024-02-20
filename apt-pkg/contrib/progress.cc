@@ -13,12 +13,12 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/progress.h>
 
-#include <cmath>
 #include <chrono>
+#include <cmath>
+#include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <string>
-#include <stdio.h>
 #include <sys/time.h>
 
 #include <apti18n.h>

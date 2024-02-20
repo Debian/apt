@@ -27,12 +27,12 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/string_view.h>
 
-#include <ctype.h>
+#include <cctype>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <regex.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include <algorithm>
 #include <array>

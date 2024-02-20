@@ -2,11 +2,11 @@
 
 #include <apt-pkg/cdrom.h>
 
+#include <cassert>
+#include <cstddef>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <assert.h>
-#include <stddef.h>
 
 int main()
 {

@@ -17,10 +17,10 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/strutl.h>
 
+#include <cstring>
 #include <string>
 #include <dirent.h>
 #include <fcntl.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>

@@ -25,7 +25,7 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
 
-#include <time.h>
+#include <ctime>
 
 #include <map>
 #include <string>

@@ -15,9 +15,9 @@
 #include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
 
+#include <cstddef>
 #include <string>
 #include <vector>
-#include <stddef.h>
 
 class pkgIndexFile;
 

@@ -35,18 +35,18 @@
 #include <string>
 #include <vector>
 
-#include <ctype.h>
-#include <errno.h>
+#include <cctype>
+#include <cerrno>
+#include <cstdarg>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <cwchar>
 #include <iconv.h>
 #include <regex.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include <unistd.h>
-#include <wchar.h>
 
 #include <apti18n.h>
 									/*}}}*/

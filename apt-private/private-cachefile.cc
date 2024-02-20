@@ -13,8 +13,8 @@
 #include <apt-private/private-output.h>
 
 #include <cstdlib>
+#include <cstring>
 #include <ostream>
-#include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -20,13 +20,13 @@
 #include <apt-private/private-search.h>
 #include <apt-private/private-show.h>
 
+#include <cstring>
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
-#include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -11,8 +11,8 @@
 
 #include <vector>
 #ifndef APT_11_CLEAN_HEADERS
+#include <cstdio>
 #include <string>
-#include <stdio.h>
 #endif
 
 #include <apt-pkg/macros.h>

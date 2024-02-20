@@ -8,17 +8,17 @@
 
 #include "teestream.h"
 
+#include <cerrno>
+#include <csignal>
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
 #include <dirent.h>
-#include <errno.h>
 #include <netinet/in.h>
 #include <regex.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
-#include <time.h>
 #include <unistd.h>
 
 #include <array>

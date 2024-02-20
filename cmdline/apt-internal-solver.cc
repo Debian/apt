@@ -29,12 +29,12 @@
 #include <apt-private/private-output.h>
 
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <list>
 #include <sstream>
 #include <string>
-#include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 
 #include <apti18n.h>

@@ -1,10 +1,10 @@
 #include <config.h>
 
-#include <apt-pkg/error.h>
 #include <apt-pkg/dirstream.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/extracttar.h>
+#include <cstdlib>
 #include <iostream>
-#include <stdlib.h>
 
 #include "assert.h"
 #include <gtest/gtest.h>

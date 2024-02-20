@@ -16,9 +16,9 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
 
+#include <cstddef>
 #include <memory>
 #include <string>
-#include <stddef.h>
 #include <unistd.h>
 									/*}}}*/
 

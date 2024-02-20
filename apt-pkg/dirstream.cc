@@ -15,7 +15,7 @@
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/error.h>
 
-#include <errno.h>
+#include <cerrno>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/time.h>

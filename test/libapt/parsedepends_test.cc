@@ -4,8 +4,8 @@
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/pkgcache.h>
 
+#include <cstring>
 #include <string>
-#include <string.h>
 
 #include <gtest/gtest.h>
 

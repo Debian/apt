@@ -11,9 +11,9 @@
 
 #include <apt-pkg/dirstream.h>
 
+#include <cstddef>
+#include <cstdio>
 #include <string>
-#include <stddef.h>
-#include <stdio.h>
 
 class debDebFile;
 class FileFd;

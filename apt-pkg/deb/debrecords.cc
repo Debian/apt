@@ -20,11 +20,11 @@
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
+#include <cstring>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <langinfo.h>
-#include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/

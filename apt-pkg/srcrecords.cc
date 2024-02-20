@@ -20,9 +20,9 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/srcrecords.h>
 
+#include <cstring>
 #include <string>
 #include <vector>
-#include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/

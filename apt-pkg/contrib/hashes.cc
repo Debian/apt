@@ -21,11 +21,11 @@
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <cstdlib>
 #include <iostream>
 #include <string>
-#include <assert.h>
-#include <stddef.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #include <gcrypt.h>

@@ -39,7 +39,7 @@
 #include <string>
 #include <apt-pkg/string_view.h>
 
-#include <string.h>
+#include <cstring>
 
 // abstract Iterator template						/*{{{*/
 /* This template provides the very basic iterator methods we

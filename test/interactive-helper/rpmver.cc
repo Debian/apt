@@ -1,11 +1,11 @@
 #include <config.h>
 
 #include <apt-pkg/debversion.h>
-#include <ctype.h>
+#include <cctype>
+#include <cstdio>
+#include <cstdlib>
 #include <rpm/misc.h>
 #include <rpm/rpmio.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #define xisdigit(x) isdigit(x)
 #define xisalpha(x) isalpha(x)
