@@ -21,9 +21,9 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/strutl.h>
 
+#include <cstring>
 #include <string>
 #include <vector>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 

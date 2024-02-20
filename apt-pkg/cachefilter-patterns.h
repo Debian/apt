@@ -14,12 +14,12 @@
 #include <apt-pkg/header-is-private.h>
 #include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
+#include <cassert>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <assert.h>
 
 namespace APT
 {

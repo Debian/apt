@@ -73,7 +73,7 @@
 #include <string>
 #include <vector>
 
-#include <stddef.h>
+#include <cstddef>
 #include <sys/select.h>
 #include <sys/time.h>
 

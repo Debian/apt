@@ -29,6 +29,8 @@
 #include <apt-pkg/versionmatch.h>
 
 #include <algorithm>
+#include <cstdio>
+#include <cstring>
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -40,8 +42,6 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <stdio.h>
-#include <string.h>
 
 #include <sys/stat.h>
 

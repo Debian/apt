@@ -22,12 +22,12 @@
 #include <apt-pkg/upgrade.h>
 
 #include <algorithm>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <map>
 #include <set>
 #include <vector>
-#include <stdlib.h>
-#include <string.h>
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-cachefile.h>

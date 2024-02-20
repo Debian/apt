@@ -27,11 +27,11 @@
 #include <apt-private/private-main.h>
 
 #include <algorithm>
+#include <cstdio>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
-#include <stdio.h>
 #include <unistd.h>
 
 #include <apti18n.h>

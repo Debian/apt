@@ -67,14 +67,14 @@
 #include <apt-private/private-upgrade.h>
 #include <apt-private/private-utils.h>
 
-#include <errno.h>
+#include <cerrno>
+#include <csignal>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <grp.h>
 #include <pwd.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <unistd.h>

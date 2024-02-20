@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -26,7 +26,7 @@
 #include <apti18n.h>
 
 #ifdef HAVE_SECCOMP
-#include <signal.h>
+#include <csignal>
 
 #include <seccomp.h>
 #endif

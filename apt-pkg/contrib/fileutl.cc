@@ -35,28 +35,27 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/strutl.h>
 
+#include <cctype>
+#include <cerrno>
+#include <csignal>
+#include <cstdarg>
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <ctype.h>
 #include <dirent.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <glob.h>
 #include <grp.h>
 #include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
 #include <sys/select.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/wait.h>
-#include <time.h>
 #include <unistd.h>
 
 #include <algorithm>
@@ -81,8 +80,8 @@
 #ifdef HAVE_SYSTEMD
 #include <systemd/sd-bus.h>
 #endif
+#include <cstdint>
 #include <endian.h>
-#include <stdint.h>
 
 #if __gnu_linux__
 #include <sys/prctl.h>

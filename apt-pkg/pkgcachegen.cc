@@ -27,12 +27,12 @@
 #include <apt-pkg/version.h>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstring>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
-#include <stddef.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 

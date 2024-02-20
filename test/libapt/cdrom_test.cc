@@ -5,9 +5,9 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
 
+#include <cstring>
 #include <string>
 #include <vector>
-#include <string.h>
 
 #include <gtest/gtest.h>
 

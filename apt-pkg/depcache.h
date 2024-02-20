@@ -41,7 +41,7 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
 
-#include <stddef.h>
+#include <cstddef>
 
 #include <list>
 #include <memory>

@@ -21,10 +21,10 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
 #include <string>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/

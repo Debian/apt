@@ -25,11 +25,11 @@
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
+#include <cctype>
+#include <cstddef>
+#include <cstring>
 #include <string>
 #include <vector>
-#include <ctype.h>
-#include <stddef.h>
-#include <string.h>
 									/*}}}*/
 
 using std::string;

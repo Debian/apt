@@ -13,14 +13,14 @@
 #include <apt-private/private-cachefile.h>
 #include <apt-private/private-output.h>
 
+#include <csignal>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <langinfo.h>
 #include <regex.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 

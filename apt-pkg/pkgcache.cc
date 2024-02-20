@@ -32,11 +32,11 @@
 #include <apt-pkg/version.h>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstring>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <stddef.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <xxhash.h>
 

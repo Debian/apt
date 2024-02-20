@@ -18,10 +18,10 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/fileutl.h>
 
+#include <cstdio>
+#include <ctime>
 #include <string>
-#include <stdio.h>
 #include <sys/types.h>
-#include <time.h>
 
 class MultiCompress
 {

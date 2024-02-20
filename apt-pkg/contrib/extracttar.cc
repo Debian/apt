@@ -25,11 +25,11 @@
 #include <apt-pkg/strutl.h>
 
 #include <algorithm>
+#include <csignal>
+#include <cstring>
 #include <iostream>
 #include <string>
 #include <fcntl.h>
-#include <signal.h>
-#include <string.h>
 #include <unistd.h>
 
 #include <apti18n.h>

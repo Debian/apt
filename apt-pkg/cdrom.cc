@@ -12,16 +12,15 @@
 #include <apt-pkg/strutl.h>
 
 #include <algorithm>
+#include <cstdio>
+#include <cstring>
 #include <fstream>
-#include <iostream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <dirent.h>
 #include <dlfcn.h>
-#include <stdio.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 

@@ -13,9 +13,9 @@
 #include <apt-private/private-sources.h>
 #include <apt-private/private-utils.h>
 
+#include <cstddef>
 #include <iostream>
 #include <string>
-#include <stddef.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>

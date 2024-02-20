@@ -14,14 +14,14 @@
 
 #include <apt-pkg/hashes.h>
 
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <map>
 #include <set>
 #include <string>
 #include <utility>
 #include <vector>
-#include <stdio.h>
-#include <stdlib.h>
 #include <sys/types.h>
 
 #include "apt-ftparchive.h"

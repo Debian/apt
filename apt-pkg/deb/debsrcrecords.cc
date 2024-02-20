@@ -22,12 +22,12 @@
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
-#include <string>
+#include <cctype>
+#include <cstdlib>
+#include <cstring>
 #include <sstream>
+#include <string>
 #include <vector>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
 									/*}}}*/
 
 using std::max;

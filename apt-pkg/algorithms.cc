@@ -32,6 +32,7 @@
 #include <apt-pkg/prettyprinters.h>
 
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <map>
 #include <set>
@@ -39,7 +40,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <string.h>
 #include <sys/utsname.h>
 
 #include <apti18n.h>

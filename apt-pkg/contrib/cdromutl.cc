@@ -18,14 +18,14 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/strutl.h>
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <dirent.h>
 #include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <unistd.h>

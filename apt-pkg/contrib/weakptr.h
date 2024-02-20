@@ -21,8 +21,8 @@
 #ifndef WEAK_POINTER_H
 #define WEAK_POINTER_H
 
+#include <cstddef>
 #include <set>
-#include <stddef.h>
 
 /**
  * Class for objects providing support for weak pointers.

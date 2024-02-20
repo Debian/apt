@@ -71,9 +71,9 @@
 #include <apt-pkg/pkgcache.h>
 
 #include <algorithm>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
-#include <stdlib.h>
-#include <string.h>
 									/*}}}*/
 
 using namespace std;

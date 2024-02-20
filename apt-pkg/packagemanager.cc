@@ -29,10 +29,10 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/version.h>
 
+#include <cstddef>
 #include <iostream>
 #include <list>
 #include <string>
-#include <stddef.h>
 
 #include <apti18n.h>
 									/*}}}*/

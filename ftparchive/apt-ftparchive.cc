@@ -25,16 +25,16 @@
 #include <algorithm>
 #include <chrono>
 #include <climits>
+#include <clocale>
+#include <cmath>
+#include <cstdio>
+#include <ctime>
 #include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <locale.h>
-#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <time.h>
-#include <math.h>
 
 #include "apt-ftparchive.h"
 #include "cachedb.h"

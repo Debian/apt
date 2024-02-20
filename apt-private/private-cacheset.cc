@@ -13,7 +13,7 @@
 
 #include <apt-private/private-cacheset.h>
 
-#include <stddef.h>
+#include <cstddef>
 
 #include <apti18n.h>
 

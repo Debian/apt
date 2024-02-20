@@ -7,10 +7,10 @@
 #include <apt-pkg/strutl.h>
 
 #include <algorithm>
+#include <cstdlib>
+#include <cstring>
 #include <string>
 #include <vector>
-#include <stdlib.h>
-#include <string.h>
 
 #include <gtest/gtest.h>
 

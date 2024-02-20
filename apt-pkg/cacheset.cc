@@ -25,13 +25,13 @@
 #include <apt-pkg/policy.h>
 #include <apt-pkg/versionmatch.h>
 
+#include <cstddef>
+#include <cstdio>
+#include <cstring>
 #include <list>
 #include <string>
 #include <vector>
 #include <regex.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/

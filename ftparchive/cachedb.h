@@ -15,11 +15,11 @@
 #include <apt-pkg/hashes.h>
 
 #include <db.h>
+#include <cerrno>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 #include <string>
-#include <errno.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "contents.h"
 #include "sources.h"

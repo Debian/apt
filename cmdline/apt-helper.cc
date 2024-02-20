@@ -30,7 +30,7 @@
 #include <string>
 #include <vector>
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>

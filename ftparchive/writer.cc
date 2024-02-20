@@ -25,17 +25,17 @@
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
+#include <cctype>
+#include <clocale>
+#include <cstring>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <utility>
-#include <ctype.h>
 #include <fnmatch.h>
 #include <ftw.h>
-#include <locale.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>

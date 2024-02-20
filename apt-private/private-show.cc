@@ -25,9 +25,9 @@
 #include <apt-private/private-install.h>
 #include <apt-private/private-show.h>
 
+#include <cstdio>
 #include <ostream>
 #include <string>
-#include <stdio.h>
 #include <unistd.h>
 
 #include <apti18n.h>

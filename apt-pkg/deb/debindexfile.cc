@@ -25,11 +25,11 @@
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/strutl.h>
 
+#include <cstdio>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
-#include <stdio.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

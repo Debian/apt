@@ -22,13 +22,13 @@
 #include <gnutls/gnutls.h>
 #include <gnutls/x509.h>
 
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
 #include <list>
 #include <set>
 #include <sstream>
 #include <string>
-#include <errno.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 
 // Internet stuff

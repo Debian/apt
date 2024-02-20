@@ -22,9 +22,9 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 
+#include <cstdlib>
 #include <fstream>
 #include <string>
-#include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
 

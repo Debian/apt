@@ -25,11 +25,11 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/strutl.h>
 
+#include <cstring>
 #include <iostream>
 #include <map>
 #include <string>
 #include <vector>
-#include <string.h>
 
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-main.h>

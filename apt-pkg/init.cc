@@ -18,12 +18,12 @@
 #include <apt-pkg/strutl.h>
 
 #include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/

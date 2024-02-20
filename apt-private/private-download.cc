@@ -33,7 +33,7 @@
 #endif
 #include <sys/mount.h>
 #endif
-#include <errno.h>
+#include <cerrno>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 

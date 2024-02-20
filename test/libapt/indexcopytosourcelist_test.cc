@@ -4,8 +4,8 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/indexcopy.h>
 
+#include <cstdio>
 #include <string>
-#include <stdio.h>
 
 #include <gtest/gtest.h>
 

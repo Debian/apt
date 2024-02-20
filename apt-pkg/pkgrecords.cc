@@ -15,8 +15,8 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
 
+#include <cstddef>
 #include <vector>
-#include <stddef.h>
 
 #include <apti18n.h>
 									/*}}}*/

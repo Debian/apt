@@ -20,8 +20,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
+#include <cstring>
 #include <string>
-#include <string.h>
 #include <sys/types.h>
 
 #include <apti18n.h>

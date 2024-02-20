@@ -5,9 +5,9 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/strutl.h>
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
-#include <stdlib.h>
 
 #include <gtest/gtest.h>
 

@@ -28,17 +28,17 @@
 #include <apt-pkg/version.h>
 #include <apt-pkg/versionmatch.h>
 
+#include <cctype>
+#include <cstddef>
+#include <cstring>
 #include <iostream>
 #include <random>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <ctype.h>
-#include <stddef.h>
-#include <string.h>
 
 #include <apti18n.h>
-									/*}}}*/
+   /*}}}*/
 
 using namespace std;
 

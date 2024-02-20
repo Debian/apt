@@ -20,17 +20,17 @@
 
 #include <apt-private/private-cmndline.h>
 
+#include <cstddef>
 #include <iostream>
 #include <list>
 #include <string>
 #include <vector>
-#include <stddef.h>
 
 #include <cassert>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <sys/stat.h>
 #include <sys/time.h>
 

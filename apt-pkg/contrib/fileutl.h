@@ -27,11 +27,11 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/macros.h>
 
+#include <ctime>
 #include <set>
 #include <string>
 #include <vector>
 #include <sys/stat.h>
-#include <time.h>
 
 /* Define this for python-apt */
 #define APT_HAS_GZIP 1
