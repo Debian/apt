@@ -13,6 +13,13 @@ buildsimplenativepackage 'libbar' 'all' '1.0' 'stable'
 
 getlabelfromsuite() { echo 'Testcases'; }
 getoriginfromsuite() { echo 'Debian'; }
+releasechanger() {
+	# modifying the Release files in lists… bad stuff. Good that this is only a test…
+	msgmsg "Changing $1 to $2"
+	sed -i "s#^${1}: .*#${1}: ${2}#" $(find rootdir/var/lib/apt/lists -name '*Release')
+	rm -f rootdir/var/cache/apt/*.bin
+}
+
 
 setupaptarchive --no-update
 changetowebserver
@@ -24,15 +31,35 @@ testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' local
 'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
 'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris
 
-testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+testsuccessequal "'https://snapshot.debian.org/archive/debian/OPTIONNOTSET/dists/stable/InRelease' snapshot.debian.org_archive_debian_OPTIONNOTSET_dists_stable_InRelease 0 
+'https://snapshot.debian.org/archive/debian/OPTIONNOTSET/dists/stable/main/source/Sources.xz' snapshot.debian.org_archive_debian_OPTIONNOTSET_dists_stable_main_source_Sources 0 
+'https://snapshot.debian.org/archive/debian/OPTIONNOTSET/dists/stable/main/binary-amd64/Packages.xz' snapshot.debian.org_archive_debian_OPTIONNOTSET_dists_stable_main_binary-amd64_Packages 0 
+'https://snapshot.debian.org/archive/debian/OPTIONNOTSET/dists/stable/main/binary-all/Packages.xz' snapshot.debian.org_archive_debian_OPTIONNOTSET_dists_stable_main_binary-all_Packages 0 
+'https://snapshot.debian.org/archive/debian/OPTIONNOTSET/dists/stable/main/i18n/Translation-en.xz' snapshot.debian.org_archive_debian_OPTIONNOTSET_dists_stable_main_i18n_Translation-en 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
 'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
 'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
 'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
 'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris --snapshot OPTIONNOTSET
 
+# repository does not support snapshots: we succeed here by silently ignoring the snapshot for the repository because it's not forced-on
+releasechanger 'Origin' 'NoSnapshotsKnown'
+testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-all/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-all_Packages 0 
+'http://localhost:${APTHTTPPORT}/dists/stable/main/i18n/Translation-en.xz' localhost:${APTHTTPPORT}_dists_stable_main_i18n_Translation-en 0 " aptget update --print-uris --snapshot OPTION-NOT-SET-AND-RELEASE-SAYS-NO
+
+
 # Enable the snapshot feature
 sed -i 's/http:/[snapshot=enable] http:/' rootdir/etc/apt/sources.list.d/*
 
+# repository does not support snapshots: we fail here because now, we actually forced the feature enabled
+testfailuremsg "E: Snapshots not supported for http://localhost:${APTHTTPPORT}/ stable
+E: Snapshots not supported for http://localhost:${APTHTTPPORT}/ stable
+E: The list of sources could not be read." aptget update --print-uris -S OPTION-SET-AND-RELEASE-SAYS-NO
+
+releasechanger 'Origin' 'Debian'
 testsuccessequal "'http://localhost:${APTHTTPPORT}/dists/stable/InRelease' localhost:${APTHTTPPORT}_dists_stable_InRelease 0 
 'http://localhost:${APTHTTPPORT}/dists/stable/main/source/Sources.xz' localhost:${APTHTTPPORT}_dists_stable_main_source_Sources 0 
 'http://localhost:${APTHTTPPORT}/dists/stable/main/binary-amd64/Packages.xz' localhost:${APTHTTPPORT}_dists_stable_main_binary-amd64_Packages 0 
@@ -94,12 +121,6 @@ Pinned packages:" \
 testsuccessequal "'http://localhost:${APTHTTPPORT}/snapshot/BANANA/pool/awesome_42_amd64.deb' awesome_42_amd64.deb $(stat -c %s aptarchive/pool/awesome_42_amd64.deb) " \
 	aptget install --print-uris -qq awesome  -o Acquire::Snapshots::URI::Label::Testcases="http://localhost:${APTHTTPPORT}/snapshot/@SNAPSHOTID@/" -SBANANA
 
-
-releasechanger() {
-	# modifying the Release files in lists… bad stuff. Good that this is only a test…
-	sed -i "s#^${1}: .*#${1}: ${2}#" $(find rootdir/var/lib/apt/lists -name '*Release')
-	rm -f rootdir/var/cache/apt/*.bin
-}
 
 msgmsg "Origin: Ubuntu"
 releasechanger 'Origin' 'Ubuntu'
@@ -197,6 +218,16 @@ rm rootdir/etc/apt/apt.conf.d/changelog.conf
 
 msgmsg "Testing host-based seed: Ubuntu"
 
+echo "deb http://security.ubuntu.com/ubuntu/ mantic-security main" > rootdir/etc/apt/security.list
+testsuccessequal "'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic-security/InRelease' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic-security_InRelease 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic-security/main/binary-amd64/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic-security_main_binary-amd64_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic-security/main/binary-all/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic-security_main_binary-all_Packages 0 
+'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic-security/main/i18n/Translation-en.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic-security_main_i18n_Translation-en 0 
+'http://security.ubuntu.com/ubuntu/dists/mantic-security/InRelease' security.ubuntu.com_ubuntu_dists_mantic-security_InRelease 0 
+'http://security.ubuntu.com/ubuntu/dists/mantic-security/main/binary-amd64/Packages.xz' security.ubuntu.com_ubuntu_dists_mantic-security_main_binary-amd64_Packages 0 
+'http://security.ubuntu.com/ubuntu/dists/mantic-security/main/binary-all/Packages.xz' security.ubuntu.com_ubuntu_dists_mantic-security_main_binary-all_Packages 0 
+'http://security.ubuntu.com/ubuntu/dists/mantic-security/main/i18n/Translation-en.xz' security.ubuntu.com_ubuntu_dists_mantic-security_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=security.list -o Dir::Etc::SourceParts=/dev/null -SBANANA
+
 echo "deb [snapshot=BANANA] http://security.ubuntu.com/ubuntu/ mantic-security main" > rootdir/etc/apt/security.list
 testsuccessequal "'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic-security/InRelease' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic-security_InRelease 0 
 'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic-security/main/binary-amd64/Packages.xz' snapshot.ubuntu.com_ubuntu_BANANA_dists_mantic-security_main_binary-amd64_Packages 0 
@@ -244,7 +275,7 @@ testsuccessequal "'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/InRele
 'http://archive.ubuntu.com/ubuntu/dists/mantic/main/binary-all/Packages.xz' archive.ubuntu.com_ubuntu_dists_mantic_main_binary-all_Packages 0 
 'http://archive.ubuntu.com/ubuntu/dists/mantic/main/i18n/Translation-en.xz' archive.ubuntu.com_ubuntu_dists_mantic_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=archive.list -o Dir::Etc::SourceParts=/dev/null -o "Acquire::Snapshots::URI::Host::.archive.ubuntu.com"="https://cc.snapshot.ubuntu.com/@PATH@/@SNAPSHOTID@/"
 
-testfailure "E: Snapshots not supported for http://archive.ubuntu.com/ubuntu/ mantic
+testfailureequal "E: Snapshots not supported for http://archive.ubuntu.com/ubuntu/ mantic
 E: The list of sources could not be read." aptget update --print-uris -o Dir::Etc::SourceList=archive.list -o Dir::Etc::SourceParts=/dev/null -o "Acquire::Snapshots::URI::Host::archive.ubuntu.com"="no"
 
 msgmsg "Testing host based-seeds: PPA"

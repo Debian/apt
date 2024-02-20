@@ -17,6 +17,7 @@
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
+#include <cassert>
 #include <map>
 #include <optional>
 #include <sstream>
@@ -1299,7 +1300,8 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 			   std::string const &Dist, std::string const &Section,
 			   bool const &IsSrc, std::map<std::string, std::string> Options) const
    {
-      auto Snapshot = GetSnapshotOption(Options, "snapshot");
+      std::string SnapshotAptConf = _config->Find("APT::Snapshot");
+      std::string Snapshot = GetSnapshotOption(Options, "snapshot", SnapshotAptConf.empty() ? "" : SnapshotAptConf + "?");
       if (not Snapshot.empty()) {
 	 std::map<std::string, std::string> SnapshotOptions = Options;
 
@@ -1313,6 +1315,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	    ArchiveURI.Path.erase(0, 1);
 	 std::string Server;
 
+	 auto const PreviousDeb = List.empty() ? nullptr : List.back();
 	 auto const Deb = GetDebReleaseIndexBy(List, URI, Dist, Options);
 	 std::string filename;
 
@@ -1339,15 +1342,34 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	 }
 	 if (Server.empty() || Server == "no")
 	 {
+	    if (APT::String::Endswith(Snapshot, "?"))
+	    {
+	       // Erase the SHADOWED option and remove the release index from the list if we created it.
+	       Options.erase("SHADOWED");
+	       if (Deb && Deb != PreviousDeb) {
+		  assert(List.back() == Deb);
+		  List.pop_back();
+		  delete Deb;
+	       }
+	       goto nosnapshot;
+	    }
 	    if (Server != "no" && filename.empty())
 	       return _error->Error("Cannot identify snapshot server for %s %s - run update without snapshot id first", URI.c_str(), Dist.c_str());
 	    return _error->Error("Snapshots not supported for %s %s", URI.c_str(), Dist.c_str());
 	 }
+	 // We have found a server by now, so we enable snapshots for this source.
+	 if (APT::String::Endswith(Snapshot, "?"))
+	 {
+	    Snapshot.pop_back();
+	 }
+
+	 assert(not Snapshot.empty());
 	 auto SnapshotURI = SubstVar(SubstVar(Server, "@SNAPSHOTID@", Snapshot), "@PATH@", ArchiveURI.Path);
 
 	 if (not CreateItemInternalOne(List, SnapshotURI, Dist, Section, IsSrc, SnapshotOptions))
 	    return false;
       }
+   nosnapshot:
       if (not CreateItemInternalOne(List, URI, Dist, Section, IsSrc, Options))
 	 return false;
 
