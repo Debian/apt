@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 2.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-13 16:31+0100\n"
+"POT-Creation-Date: 2024-02-20 18:39+0000\n"
 "PO-Revision-Date: 2023-08-29 23:39+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -960,6 +960,20 @@ msgstr ""
 "bewerken met de teksteditor van uw voorkeur terwijl het ook basale "
 "foutcontroles uitvoert."
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt.8.xml
+#, fuzzy
+#| msgid "(&apt-cache;)"
+msgid "(summarised in &apt-cache;)"
+msgstr "(&apt-cache;)"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt.8.xml
+#, fuzzy
+#| msgid "(&apt-get;)"
+msgid "(summarised in &apt-get;)"
+msgstr "(&apt-get;)"
+
 #. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml
 msgid "Script Usage and Differences from Other APT Tools"
@@ -1522,6 +1536,20 @@ msgstr ""
 "cache bij te houden zonder dat die onbeheersbaar wordt. Door het uitzetten "
 "van de configuratieoptie <literal>APT::Clean-Installed</literal> kan het "
 "opruimen van pakketbestanden van geïnstalleerde pakketten verhinderd worden."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-get.8.xml
+msgid "alias)"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-get.8.xml
+msgid ""
+"<literal>distclean</literal> removes all files under <filename>&statedir;/"
+"lists</filename> except Release, Release.gpg, and InRelease.  It can be used "
+"for example, when finalizing images distributed to users.  The release files "
+"are kept for security reasons, to prevent various types of attacks."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -3047,9 +3075,9 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml
-msgid "apt-key(8) will last be available in Debian 12 and Ubuntu 23.10."
+msgid "apt-key(8) will last be available in Debian 12 and Ubuntu 24.04."
 msgstr ""
-"apt-key(8) zal voor het laatst beschikbaar zijn in Debian 12 en Ubuntu 23.10."
+"apt-key(8) zal voor het laatst beschikbaar zijn in Debian 12 en Ubuntu 24.04."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-key.8.xml
@@ -4928,6 +4956,43 @@ msgid ""
 msgstr ""
 "De onderafdeling CDROM regelt het gereedschap &apt-cdrom; raadpleeg de "
 "documentatie daarover voor meer informatie over de opties in kwestie."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+#, fuzzy
+#| msgid ""
+#| "Selects packages where the name matches the given regular expression."
+msgid "Never autoremove packages that match the regular expression(s)."
+msgstr ""
+"Selecteert pakketten waarvan de naam overeenkomst met de opgegeven reguliere "
+"expressie."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"This option tells apt autoremove that kernels are protected and defaults to "
+"true. In case kernels are not protected they are treated as any other "
+"package."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"Define the regular expression(s) for versioned kernel packages.  Based on "
+"these expressions a rule set is injected into apt similar to APT::"
+"NeverAutoRemove regular expressions."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"Keep a custom amount of kernels when autoremoving and defaults to 2, meaning "
+"two kernels are kept. Apt will always keep the running kernel and the latest "
+"one. If the latest kernel is the same as the running kernel, the second "
+"latest kernel is kept.  Because of this, any value lower than 2 will be "
+"ignored. If you want only the latest kernel, you should set APT::Protect-"
+"Kernels to false."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml
