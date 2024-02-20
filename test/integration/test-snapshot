@@ -249,7 +249,7 @@ testsuccessequal "'https://snapshot.ubuntu.com/ubuntu/BANANA/dists/mantic/InRele
 'http://archive.ubuntu.com/ubuntu/dists/mantic/main/binary-all/Packages.xz' archive.ubuntu.com_ubuntu_dists_mantic_main_binary-all_Packages 0 
 'http://archive.ubuntu.com/ubuntu/dists/mantic/main/i18n/Translation-en.xz' archive.ubuntu.com_ubuntu_dists_mantic_main_i18n_Translation-en 0 " aptget update --print-uris -o Dir::Etc::SourceList=archive.list -o Dir::Etc::SourceParts=/dev/null -o "Acquire::Snapshots::URI::Host::.archive.ubuntu.com"="https://cc.snapshot.ubuntu.com/@PATH@/@SNAPSHOTID@/"
 
-testfailure "E: Snapshots not supported for http://archive.ubuntu.com/ubuntu/ mantic
+testfailureequal "E: Snapshots not supported for http://archive.ubuntu.com/ubuntu/ mantic
 E: The list of sources could not be read." aptget update --print-uris -o Dir::Etc::SourceList=archive.list -o Dir::Etc::SourceParts=/dev/null -o "Acquire::Snapshots::URI::Host::archive.ubuntu.com"="no"
 
 msgmsg "Testing host based-seeds: PPA"
