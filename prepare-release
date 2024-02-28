@@ -178,7 +178,7 @@ elif [ "$1" = 'buildlog' ]; then
 		shift
 	done
 elif [ "$1" = 'travis-ci' ]; then
-	apt-get build-dep -qy .
+	apt-get build-dep -P pkg.apt.ci -qy .
 	apt-get install -qy --no-install-recommends dctrl-tools
 	for t in $(grep '^Tests: ' debian/tests/control | cut -d':' -f 2- | tr ',' '\n'); do
 		apt-get satisfy -qy --no-install-recommends "base-files,$(grep-dctrl -ns Depends -F Tests $t ./debian/tests/control | sed -e 's#@[^,<>()@]*@\s*,\s*##g' -e 's#@\s*,\s*##g')"
