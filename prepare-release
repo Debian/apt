@@ -11,6 +11,7 @@ VERSION=$(dpkg-parsechangelog -S 'Version')
 DISTRIBUTION=$(dpkg-parsechangelog -S 'Distribution')
 
 LIBAPTPKGVERSION="$(awk -v ORS='.' '/^#define APT_PKG_M/ {print $3}' apt-pkg/contrib/macros.h | sed 's/\.$//')"
+LIBSUFFIX="t64"
 
 librarysymbolsfromfile() {
 	local MISSING="$(grep '^+#MISSING' "$1")"
@@ -29,12 +30,12 @@ if [ "$1" = 'pre-export' ]; then
 	libraryversioncheck() {
 		local LIBRARY="$1"
 		local VERSION="$2"
-		if [ ! -e "debian/${LIBRARY}${VERSION}.symbols" ]; then
+		if [ ! -e "debian/${LIBRARY}${VERSION}${LIBSUFFIX}.symbols" ]; then
 		   echo >&2 "Library ${LIBRARY} in version ${VERSION} has no symbols file! (maybe forgot to rename?)"
 		   exit 1
 		fi
-		if [ "$(head -n1 "debian/${LIBRARY}${VERSION}.symbols")" != "${LIBRARY}.so.${VERSION} ${LIBRARY}${VERSION} #MINVER#" ]; then
-		   echo >&2 "Library ${LIBRARY}${VERSION} has incorrect version in symbol header! (»$(head -n1 "debian/${LIBRARY}${VERSION}.symbols")«)"
+		if [ "$(head -n1 "debian/${LIBRARY}${VERSION}${LIBSUFFIX}.symbols")" != "${LIBRARY}.so.${VERSION} ${LIBRARY}${VERSION}${LIBSUFFIX} #MINVER#" ]; then
+		   echo >&2 "Library ${LIBRARY}${VERSION} has incorrect version in symbol header! (»$(head -n1 "debian/${LIBRARY}${VERSION}${LIBSUFFIX}.symbols")«)"
 		   exit 2
 		fi
 	}
@@ -166,7 +167,7 @@ elif [ "$1" = 'library' ]; then
 		fi
 		echo "Checking $1 in version $2 build at $(stat -L -c '%y' "$buildlib")"
 		local tmpfile=$(mktemp)
-		dpkg-gensymbols -p${1}${2} -e${buildlib} -Idebian/${1}${2}.symbols -O/dev/null 2> /dev/null > $tmpfile || true
+		dpkg-gensymbols -p${1}${2} -e${buildlib} -Idebian/${1}${2}${LIBSUFFIX}.symbols -O/dev/null 2> /dev/null > $tmpfile || true
 		librarysymbolsfromfile "$tmpfile" "$(echo "${1}" | cut -c 4- | tr -d '-' | tr 'a-z' 'A-Z')_${2}"
 		rm -f $tmpfile
 	}
