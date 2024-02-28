@@ -108,7 +108,7 @@ static bool IsTheSameKey(std::string const &validsig, std::string const &goodsig
 struct APT_HIDDEN SignersStorage {
    std::vector<std::string> Good;
    std::vector<std::string> Bad;
-   std::vector<std::string> Worthless;
+   std::vector<Signer> Worthless;
    // a worthless signature is a expired or revoked one
    std::vector<Signer> SoonWorthless;
    std::vector<std::string> NoPubKey;
@@ -159,6 +159,16 @@ static void PushEntryWithUID(std::vector<std::string> &Signers, char * const buf
    if (Debug == true)
       std::clog << "Got " << msg << " !" << std::endl;
    Signers.push_back(msg);
+}
+static void PushEntryWithUID(std::vector<Signer> &Signers, char * const buffer, bool const Debug)
+{
+   std::string msg = buffer + sizeof(GNUPGPREFIX);
+   auto const nuke = msg.find_last_not_of("\n\t\r");
+   if (nuke != std::string::npos)
+      msg.erase(nuke + 1);
+   if (Debug == true)
+      std::clog << "Got " << msg << " !" << std::endl;
+   Signers.push_back({msg, ""});
 }
 static void implodeVector(std::vector<std::string> const &vec, std::ostream &out, char const * const sep)
 {
@@ -253,7 +263,11 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
          case Digest::State::Untrusted:
             // Treat them like an expired key: For that a message about expiry
             // is emitted, a VALIDSIG, but no GOODSIG.
-            Signers.Worthless.push_back(sig);
+	    {
+	       std::string note;
+	       strprintf(note, "untrusted digest algorithm: %s", digest.name);
+	       Signers.Worthless.push_back({sig, note});
+	    }
             Signers.Good.erase(std::remove_if(Signers.Good.begin(), Signers.Good.end(), [&](std::string const &goodsig) {
 		     return IsTheSameKey(sig, goodsig); }), Signers.Good.end());
 	    if (Debug == true)
@@ -285,7 +299,9 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    }
    fclose(pipein);
    free(buffer);
-   std::move(ErrSigners.begin(), ErrSigners.end(), std::back_inserter(Signers.Worthless));
+
+   for (auto errSigner : ErrSigners)
+      Signers.Worthless.push_back({errSigner, ""});
 
    // apt-key has a --keyid parameter, but this requires gpg, so we call it without it
    // and instead check after the fact which keyids where used for verification
@@ -381,7 +397,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       std::cerr << "\n  Bad: ";
       implodeVector(Signers.Bad, std::cerr, ", ");
       std::cerr << "\n  Worthless: ";
-      implodeVector(Signers.Worthless, std::cerr, ", ");
+      std::for_each(Signers.Worthless.begin(), Signers.Worthless.end(), [](Signer const &sig) { std::cerr << sig.key << ", "; });
       std::cerr << "\n  SoonWorthless: ";
       std::for_each(Signers.SoonWorthless.begin(), Signers.SoonWorthless.end(), [](Signer const &sig) { std::cerr << sig.key << ", "; });
       std::cerr << "\n  NoPubKey: ";
@@ -549,8 +565,12 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
          if (!Signers.Worthless.empty())
          {
             errmsg += _("The following signatures were invalid:\n");
-            for (auto const &I : Signers.Worthless)
-               errmsg.append(I).append("\n");
+            for (auto const &[key, reason] : Signers.Worthless) {
+               errmsg.append(key);
+	       if (not reason.empty())
+		  errmsg.append(" (").append(reason).append(")");
+	       errmsg.append("\n");
+	    }
          }
          if (!Signers.NoPubKey.empty())
          {
