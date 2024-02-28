@@ -7,7 +7,7 @@ Uploaders: Michael Vogt <mvo@debian.org>,
            David Kalnischkies <donkult@debian.org>
 Rules-Requires-Root: no
 Standards-Version: 4.1.1
-Build-Depends: cmake (>= 3.4),
+Build-Depends: dpkg-dev (>= 1.22.5), cmake (>= 3.4),
                debhelper-compat (= 12),
                docbook-xml <!nodoc>,
                docbook-xsl <!nodoc>,
@@ -39,7 +39,7 @@ Package: apt
 Architecture: any
 Depends: base-passwd (>= 3.6.1) | adduser,
          gpgv,
-         libapt-pkg6.0 (>= ${binary:Version}),
+         libapt-pkg6.0t64 (>= ${binary:Version}),
          ${apt:keyring},
          ${misc:Depends},
          ${shlibs:Depends}
@@ -70,16 +70,17 @@ Description: commandline package manager
   * apt-config as an interface to the configuration settings
   * apt-key as an interface to manage authentication keys
 
-Package: libapt-pkg6.0
+Package: libapt-pkg6.0t64
+Replaces: libapt-pkg6.0
 Architecture: any
 Multi-Arch: same
 Priority: optional
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}, ${shlibs:Depends}
-Breaks: appstream (<< 0.9.0-3~), apt (<< 1.6~), aptitude (<< 0.8.9), libapt-inst1.5 (<< 0.9.9~), dpkg (<< 1.20.8)
+Breaks: libapt-pkg6.0 (<< ${source:Version}), appstream (<< 0.9.0-3~), apt (<< 1.6~), aptitude (<< 0.8.9), libapt-inst1.5 (<< 0.9.9~), dpkg (<< 1.20.8)
 Recommends: apt (>= ${binary:Version})
 Section: libs
-Provides: libapt-pkg (= ${binary:Version})
+Provides: ${t64:Provides}, libapt-pkg (= ${binary:Version})
 Description: package management runtime library
  This library provides the common functionality for searching and
  managing packages as well as information about packages.
