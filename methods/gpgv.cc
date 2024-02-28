@@ -562,7 +562,7 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
       {
 	 std::string msg;
          // TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
-	 strprintf(msg, _("Signature by key %s uses weak digest algorithm (%s)"), Signer.key.c_str(), Signer.note.c_str());
+	 strprintf(msg, _("Signature by key %s uses weak algorithm (%s)"), Signer.key.c_str(), Signer.note.c_str());
          Warning(std::move(msg));
       }
    }
