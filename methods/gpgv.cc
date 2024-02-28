@@ -40,6 +40,9 @@ using std::vector;
 #define GNUPGEXPSIG "[GNUPG:] EXPSIG"
 #define GNUPGREVKEYSIG "[GNUPG:] REVKEYSIG"
 #define GNUPGNODATA "[GNUPG:] NODATA"
+#define GNUPGWARNING "[GNUPG:] WARNING"
+#define GNUPGERROR "[GNUPG:] ERROR"
+#define GNUPGASSERT_PUBKEY_ALGO "[GNUPG:] ASSERT_PUBKEY_ALGO"
 #define APTKEYWARNING "[APTKEY:] WARNING"
 #define APTKEYERROR "[APTKEY:] ERROR"
 
@@ -106,7 +109,7 @@ static bool IsTheSameKey(std::string const &validsig, std::string const &goodsig
 struct APT_HIDDEN SignersStorage {
    std::vector<std::string> Good;
    std::vector<std::string> Bad;
-   std::vector<std::string> Worthless;
+   std::vector<Signer> Worthless;
    // a worthless signature is a expired or revoked one
    std::vector<Signer> SoonWorthless;
    std::vector<std::string> NoPubKey;
@@ -157,6 +160,16 @@ static void PushEntryWithUID(std::vector<std::string> &Signers, char * const buf
    if (Debug == true)
       std::clog << "Got " << msg << " !" << std::endl;
    Signers.push_back(msg);
+}
+static void PushEntryWithUID(std::vector<Signer> &Signers, char * const buffer, bool const Debug)
+{
+   std::string msg = buffer + sizeof(GNUPGPREFIX);
+   auto const nuke = msg.find_last_not_of("\n\t\r");
+   if (nuke != std::string::npos)
+      msg.erase(nuke + 1);
+   if (Debug == true)
+      std::clog << "Got " << msg << " !" << std::endl;
+   Signers.push_back({msg, ""});
 }
 static void implodeVector(std::vector<std::string> const &vec, std::ostream &out, char const * const sep)
 {
@@ -230,6 +243,18 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	 PushEntryWithUID(Signers.Worthless, buffer, Debug);
       else if (strncmp(buffer, GNUPGREVKEYSIG, sizeof(GNUPGREVKEYSIG)-1) == 0)
 	 PushEntryWithUID(Signers.Worthless, buffer, Debug);
+      else if (strncmp(buffer, GNUPGASSERT_PUBKEY_ALGO, sizeof(GNUPGASSERT_PUBKEY_ALGO) - 1) == 0)
+      {
+	 std::istringstream iss(buffer + sizeof(GNUPGASSERT_PUBKEY_ALGO));
+	 vector<string> tokens{std::istream_iterator<string>{iss},
+			       std::istream_iterator<string>{}};
+
+	 auto const fpr = tokens[0];
+	 auto const asserted = atoi(tokens[1].c_str());
+	 auto const pkstr = tokens[2];
+	 if (not asserted)
+	    Signers.SoonWorthless.push_back({fpr, pkstr});
+      }
       else if (strncmp(buffer, GNUPGGOODSIG, sizeof(GNUPGGOODSIG)-1) == 0)
 	 PushEntryWithKeyID(Signers.Good, buffer, Debug);
       else if (strncmp(buffer, GNUPGVALIDSIG, sizeof(GNUPGVALIDSIG)-1) == 0)
@@ -251,7 +276,11 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
          case Digest::State::Untrusted:
             // Treat them like an expired key: For that a message about expiry
             // is emitted, a VALIDSIG, but no GOODSIG.
-            Signers.Worthless.push_back(sig);
+	    {
+	       std::string note;
+	       strprintf(note, "untrusted digest algorithm: %s", digest.name);
+	       Signers.Worthless.push_back({sig, note});
+	    }
             Signers.Good.erase(std::remove_if(Signers.Good.begin(), Signers.Good.end(), [&](std::string const &goodsig) {
 		     return IsTheSameKey(sig, goodsig); }), Signers.Good.end());
 	    if (Debug == true)
@@ -269,6 +298,13 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	 if (tokens.size() > 9 && sig != tokens[9])
 	    SubKeyMapping[tokens[9]].emplace_back(sig);
       }
+      else if (strncmp(buffer, GNUPGWARNING, sizeof(GNUPGWARNING)-1) == 0) {
+	 std::string warning;
+	 strprintf(warning, "GPG: %s", buffer + sizeof(GNUPGWARNING));
+	 Warning(std::move(warning));
+      }
+      else if (strncmp(buffer, GNUPGERROR, sizeof(GNUPGERROR)-1) == 0)
+	 _error->Error("GPG: %s", buffer + sizeof(GNUPGERROR));
       else if (strncmp(buffer, APTKEYWARNING, sizeof(APTKEYWARNING)-1) == 0)
          Warning(buffer + sizeof(APTKEYWARNING));
       else if (strncmp(buffer, APTKEYERROR, sizeof(APTKEYERROR)-1) == 0)
@@ -276,7 +312,9 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    }
    fclose(pipein);
    free(buffer);
-   std::move(ErrSigners.begin(), ErrSigners.end(), std::back_inserter(Signers.Worthless));
+
+   for (auto errSigner : ErrSigners)
+      Signers.Worthless.push_back({errSigner, ""});
 
    // apt-key has a --keyid parameter, but this requires gpg, so we call it without it
    // and instead check after the fact which keyids where used for verification
@@ -372,7 +410,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       std::cerr << "\n  Bad: ";
       implodeVector(Signers.Bad, std::cerr, ", ");
       std::cerr << "\n  Worthless: ";
-      implodeVector(Signers.Worthless, std::cerr, ", ");
+      std::for_each(Signers.Worthless.begin(), Signers.Worthless.end(), [](Signer const &sig) { std::cerr << sig.key << ", "; });
       std::cerr << "\n  SoonWorthless: ";
       std::for_each(Signers.SoonWorthless.begin(), Signers.SoonWorthless.end(), [](Signer const &sig) { std::cerr << sig.key << ", "; });
       std::cerr << "\n  NoPubKey: ";
@@ -517,7 +555,7 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
       {
 	 std::string msg;
          // TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
-	 strprintf(msg, _("Signature by key %s uses weak digest algorithm (%s)"), Signer.key.c_str(), Signer.note.c_str());
+	 strprintf(msg, _("Signature by key %s uses weak algorithm (%s)"), Signer.key.c_str(), Signer.note.c_str());
          Warning(std::move(msg));
       }
    }
@@ -540,8 +578,12 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
          if (!Signers.Worthless.empty())
          {
             errmsg += _("The following signatures were invalid:\n");
-            for (auto const &I : Signers.Worthless)
-               errmsg.append(I).append("\n");
+            for (auto const &[key, reason] : Signers.Worthless) {
+               errmsg.append(key);
+	       if (not reason.empty())
+		  errmsg.append(" (").append(reason).append(")");
+	       errmsg.append("\n");
+	    }
          }
          if (!Signers.NoPubKey.empty())
          {

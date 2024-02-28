@@ -800,7 +800,8 @@ case "$command" in
 	;;
     verify)
 	GPGV=''
-	eval $(apt-config shell GPGV Apt::Key::gpgvcommand)
+	ASSERT_PUBKEY_ALGO=''
+	eval $(apt-config shell GPGV Apt::Key::gpgvcommand ASSERT_PUBKEY_ALGO Apt::Key::assert-pubkey-algo)
 	if [ -n "$GPGV" ] && command_available "$GPGV"; then true;
 	elif command_available 'gpgv'; then GPGV='gpgv';
 	elif command_available 'gpgv2'; then GPGV='gpgv2';
@@ -808,6 +809,20 @@ case "$command" in
 	else
 	   apt_error 'gpgv, gpgv2 or gpgv1 required for verification, but neither seems installed'
 	   exit 29
+	fi
+	GPGV_ARGS=""
+	if [ "$ASSERT_PUBKEY_ALGO" ]; then
+		test="$(LC_ALL=C.UTF-8 "$GPGV" --assert-pubkey-algo 2>&1 || :)"
+		case "$test" in
+			*"missing argument"*)
+				GPGV_ARGS="--assert-pubkey-algo=$ASSERT_PUBKEY_ALGO"
+				;;
+			*[Ii]"nvalid option"*"assert-pubkey-algo"*)
+				;;
+			*)
+				apt_warn "Unknown response from gpgv to --assert-pubkey-algo check: $test"
+				;;
+		esac
 	fi
 	# for a forced keyid we need gpg --export, so full wrapping required
 	if [ -n "$FORCED_KEYID" ]; then
@@ -817,9 +832,9 @@ case "$command" in
 	fi
 	setup_merged_keyring
 	if [ -n "$FORCED_KEYRING" ]; then
-	    "$GPGV" --homedir "${GPGHOMEDIR}" --keyring "$(dearmor_filename "${FORCED_KEYRING}")" --ignore-time-conflict "$@"
+	    "$GPGV" $GPGV_ARGS --homedir "${GPGHOMEDIR}" --keyring "$(dearmor_filename "${FORCED_KEYRING}")" --ignore-time-conflict "$@"
 	else
-	    "$GPGV" --homedir "${GPGHOMEDIR}" --keyring "${GPGHOMEDIR}/pubring.gpg" --ignore-time-conflict "$@"
+	    "$GPGV" $GPGV_ARGS --homedir "${GPGHOMEDIR}" --keyring "${GPGHOMEDIR}/pubring.gpg" --ignore-time-conflict "$@"
 	fi
 	;;
     help)
