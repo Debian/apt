@@ -42,6 +42,7 @@ using std::vector;
 #define GNUPGNODATA "[GNUPG:] NODATA"
 #define GNUPGWARNING "[GNUPG:] WARNING"
 #define GNUPGERROR "[GNUPG:] ERROR"
+#define GNUPGASSERT_PUBKEY_ALGO "[GNUPG:] ASSERT_PUBKEY_ALGO"
 #define APTKEYWARNING "[APTKEY:] WARNING"
 #define APTKEYERROR "[APTKEY:] ERROR"
 
@@ -242,6 +243,25 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	 PushEntryWithUID(Signers.Worthless, buffer, Debug);
       else if (strncmp(buffer, GNUPGREVKEYSIG, sizeof(GNUPGREVKEYSIG)-1) == 0)
 	 PushEntryWithUID(Signers.Worthless, buffer, Debug);
+      else if (strncmp(buffer, GNUPGASSERT_PUBKEY_ALGO, sizeof(GNUPGASSERT_PUBKEY_ALGO) - 1) == 0)
+      {
+	 std::istringstream iss(buffer + sizeof(GNUPGASSERT_PUBKEY_ALGO));
+	 vector<string> tokens{std::istream_iterator<string>{iss},
+			       std::istream_iterator<string>{}};
+
+	 auto const fpr = tokens[0];
+	 auto const asserted = atoi(tokens[1].c_str());
+	 auto const pkstr = tokens[2];
+	 if (not asserted)
+	 {
+	    std::string reason;
+	    strprintf(reason, _("untrusted public key algorithm: %s"), pkstr.c_str());
+	    Signers.Worthless.push_back({fpr, reason});
+	    Signers.Good.erase(std::remove_if(Signers.Good.begin(), Signers.Good.end(), [&](std::string const &goodsig)
+					      { return IsTheSameKey(fpr, goodsig); }),
+			       Signers.Good.end());
+	 }
+      }
       else if (strncmp(buffer, GNUPGGOODSIG, sizeof(GNUPGGOODSIG)-1) == 0)
 	 PushEntryWithKeyID(Signers.Good, buffer, Debug);
       else if (strncmp(buffer, GNUPGVALIDSIG, sizeof(GNUPGVALIDSIG)-1) == 0)

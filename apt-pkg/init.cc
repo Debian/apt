@@ -131,6 +131,7 @@ bool pkgInitConfig(Configuration &Cnf)
       Cnf.Set("APT::Build-Essential::", "build-essential");
    Cnf.CndSet("APT::Install-Recommends", true);
    Cnf.CndSet("APT::Install-Suggests", false);
+   Cnf.CndSet("APT::Key::Assert-Pubkey-Algo", ">=rsa2048,ed25519,ed448");
    Cnf.CndSet("Dir","/");
    
    // State
