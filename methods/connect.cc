@@ -19,8 +19,10 @@
 #include <apt-pkg/srvrec.h>
 #include <apt-pkg/strutl.h>
 
+#ifdef HAVE_GNUTLS
 #include <gnutls/gnutls.h>
 #include <gnutls/x509.h>
+#endif
 
 #include <cerrno>
 #include <cstdio>
@@ -798,7 +800,8 @@ ResultState UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<M
 
    return ResultState::SUCCESSFUL;
 }
-									/*}}}*/
+
+#ifdef HAVE_GNUTLS									/*}}}*/
 // UnwrapTLS - Handle TLS connections 					/*{{{*/
 // ---------------------------------------------------------------------
 /* Performs a TLS handshake on the socket */
@@ -1050,4 +1053,4 @@ ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
 
    return ResultState::SUCCESSFUL;
 }
-									/*}}}*/
+#endif									/*}}}*/
