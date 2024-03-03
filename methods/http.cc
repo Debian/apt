@@ -429,7 +429,9 @@ ResultState HttpServerState::Open()
    Out.Reset();
    Persistent = true;
 
+#ifdef HAVE_GNUTLS
    bool tls = (ServerName.Access == "https" || APT::String::Endswith(ServerName.Access, "+https"));
+#endif
 
    // Determine the proxy setting
    // Used to run AutoDetectProxy(ServerName) here, but we now send a Proxy
@@ -454,6 +456,7 @@ ResultState HttpServerState::Open()
 	   {
 	      char *result = getenv("http_proxy");
 	      Proxy = result ? result : "";
+#ifdef HAVE_GNUTLS
 	      if (tls == true)
 	      {
 		 char *result = getenv("https_proxy");
@@ -462,6 +465,7 @@ ResultState HttpServerState::Open()
 		    Proxy = result;
 		 }
 	      }
+#endif
 	   }
    }
    
@@ -475,8 +479,13 @@ ResultState HttpServerState::Open()
    if (Proxy.empty() == false)
       Owner->AddProxyAuth(Proxy, ServerName);
 
+#ifdef HAVE_GNUTLS
    auto const DefaultService = tls ? "https" : "http";
    auto const DefaultPort = tls ? 443 : 80;
+#else
+   auto const DefaultService = "http";
+   auto const DefaultPort = 80;
+#endif
    if (Proxy.Access == "socks5h")
    {
       auto result = Connect(Proxy.Host, Proxy.Port, "socks", 1080, ServerFd, TimeOut, Owner);
@@ -510,12 +519,15 @@ ResultState HttpServerState::Open()
 	    Port = Proxy.Port;
 	 Host = Proxy.Host;
 
+#ifdef HAVE_GNUTLS
 	 if (Proxy.Access == "https" && Port == 0)
 	    Port = 443;
+#endif
       }
       auto result = Connect(Host, Port, DefaultService, DefaultPort, ServerFd, TimeOut, Owner);
       if (result != ResultState::SUCCESSFUL)
 	 return result;
+#ifdef HAVE_GNUTLS
       if (Host == Proxy.Host && Proxy.Access == "https")
       {
 	 aptConfigWrapperForMethods ProxyConf{std::vector<std::string>{"http", "https"}};
@@ -530,10 +542,13 @@ ResultState HttpServerState::Open()
 	 if (result != ResultState::SUCCESSFUL)
 	    return result;
       }
+#endif
    }
 
+#ifdef HAVE_GNUTLS
    if (tls)
       return UnwrapTLS(ServerName.Host, ServerFd, TimeOut, Owner, Owner);
+#endif
 
    return ResultState::SUCCESSFUL;
 }
