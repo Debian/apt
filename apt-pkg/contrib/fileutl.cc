@@ -2708,32 +2708,28 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 {
    if (d == nullptr || Failed())
       return false;
-   ssize_t Res = 1;
-   errno = 0;
    if (Actual != 0)
       *Actual = 0;
    *((char *)To) = '\0';
-   while (Res > 0 && Size > 0)
+   while (Size > 0)
    {
-      Res = d->InternalRead(To, Size);
+      errno = 0;
+      ssize_t Res = d->InternalRead(To, Size);
 
       if (Res < 0)
       {
 	 if (errno == EINTR)
-	 {
-	    // trick the while-loop into running again
-	    Res = 1;
-	    errno = 0;
 	    continue;
-	 }
 	 return d->InternalReadError();
       }
-      
-      To = (char *)To + Res;
+      if (Res == 0)
+	 break;
+
+      To = static_cast<char *>(To) + Res;
       Size -= Res;
-      if (d != NULL)
+      if (d != nullptr)
 	 d->set_seekpos(d->get_seekpos() + Res);
-      if (Actual != 0)
+      if (Actual != nullptr)
 	 *Actual += Res;
    }
    
@@ -2751,24 +2747,22 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 }
 bool FileFd::Read(int const Fd, void *To, unsigned long long Size, unsigned long long * const Actual)
 {
-   ssize_t Res = 1;
-   errno = 0;
    if (Actual != nullptr)
       *Actual = 0;
    *static_cast<char *>(To) = '\0';
-   while (Res > 0 && Size > 0)
+   while (Size > 0)
    {
-      Res = read(Fd, To, Size);
+      errno = 0;
+      ssize_t const Res = read(Fd, To, Size);
       if (Res < 0)
       {
 	 if (errno == EINTR)
-	 {
-	    Res = 1;
-	    errno = 0;
 	    continue;
-	 }
 	 return _error->Errno("read", _("Read error"));
       }
+      if (Res == 0)
+	 break;
+
       To = static_cast<char *>(To) + Res;
       Size -= Res;
       if (Actual != 0)
@@ -2829,27 +2823,23 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 {
    if (d == nullptr || Failed())
       return false;
-   ssize_t Res = 1;
-   errno = 0;
-   while (Res > 0 && Size > 0)
+   while (Size > 0)
    {
-      Res = d->InternalWrite(From, Size);
+      errno = 0;
+      ssize_t const Res = d->InternalWrite(From, Size);
 
       if (Res < 0)
       {
 	 if (errno == EINTR)
-	 {
-	    // trick the while-loop into running again
-	    Res = 1;
-	    errno = 0;
 	    continue;
-	 }
 	 return d->InternalWriteError();
       }
+      if (Res == 0)
+	 break;
 
-      From = (char const *)From + Res;
+      From = static_cast<char const *>(From) + Res;
       Size -= Res;
-      if (d != NULL)
+      if (d != nullptr)
 	 d->set_seekpos(d->get_seekpos() + Res);
    }
 
@@ -2860,17 +2850,20 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 }
 bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
 {
-   ssize_t Res = 1;
-   errno = 0;
-   while (Res > 0 && Size > 0)
+   while (Size > 0)
    {
-      Res = write(Fd,From,Size);
-      if (Res < 0 && errno == EINTR)
-	 continue;
+      errno = 0;
+      ssize_t const Res = write(Fd, From, Size);
       if (Res < 0)
+      {
+	 if (errno == EINTR)
+	    continue;
 	 return _error->Errno("write",_("Write error"));
+      }
+      if (Res == 0)
+	 break;
 
-      From = (char const *)From + Res;
+      From = static_cast<char const *>(From) + Res;
       Size -= Res;
    }
 
