@@ -1,13 +1,13 @@
 # Translation of apt-doc to Dutch
 # This file is distributed under the same license as the apt-doc package.
-# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2015-2023.
+# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2015-2024.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 2.7.3\n"
+"Project-Id-Version: apt-doc 2.7.12\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-20 18:39+0000\n"
-"PO-Revision-Date: 2023-08-29 23:39+0200\n"
+"POT-Creation-Date: 2024-03-07 16:31+0100\n"
+"PO-Revision-Date: 2024-02-26 22:00+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -962,17 +962,13 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
-#, fuzzy
-#| msgid "(&apt-cache;)"
 msgid "(summarised in &apt-cache;)"
-msgstr "(&apt-cache;)"
+msgstr "(samengevat in &apt-cache;)"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
-#, fuzzy
-#| msgid "(&apt-get;)"
 msgid "(summarised in &apt-get;)"
-msgstr "(&apt-get;)"
+msgstr "(samengevat in &apt-get;)"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml
@@ -1540,7 +1536,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-get.8.xml
 msgid "alias)"
-msgstr ""
+msgstr "alias)"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -1550,6 +1546,11 @@ msgid ""
 "for example, when finalizing images distributed to users.  The release files "
 "are kept for security reasons, to prevent various types of attacks."
 msgstr ""
+"<literal>distclean</literal> verwijdert alle bestanden onder "
+"<filename>&statedir;/lists</filename> behalve Release, Release.gpg en "
+"InRelease. Het kan bijvoorbeeld gebruikt worden bij het afwerken van images "
+"die verspreid worden onder gebruikers. De bestanden release worden bewaard "
+"om veiligheidsredenen, om verschillende soorten aanvallen te voorkomen."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -4959,13 +4960,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
-#, fuzzy
-#| msgid ""
-#| "Selects packages where the name matches the given regular expression."
 msgid "Never autoremove packages that match the regular expression(s)."
 msgstr ""
-"Selecteert pakketten waarvan de naam overeenkomst met de opgegeven reguliere "
-"expressie."
+"Pakketten waarvan de naam overeenkomt met de opgegeven reguliere "
+"expressie(s) nooit automatisch verwijderen."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4974,6 +4972,9 @@ msgid ""
 "true. In case kernels are not protected they are treated as any other "
 "package."
 msgstr ""
+"Deze optie vertelt apt autoremove dat kernels beschermd zijn en staat "
+"standaard op true. In het geval dat kernels niet beschermd zijn, worden ze "
+"behandeld als elk ander pakket."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4982,6 +4983,9 @@ msgid ""
 "these expressions a rule set is injected into apt similar to APT::"
 "NeverAutoRemove regular expressions."
 msgstr ""
+"De reguliere expressie(s) definiëren voor kernelpakketten met versiebeheer. "
+"Op basis van deze expressies wordt een regelset in apt geïnjecteerd, "
+"vergelijkbaar met de reguliere expressies van APT::NeverAutoRemove."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -4993,6 +4997,13 @@ msgid ""
 "ignored. If you want only the latest kernel, you should set APT::Protect-"
 "Kernels to false."
 msgstr ""
+"Een aangepast aantal kernels behouden bij het automatisch verwijderen en is "
+"standaard ingesteld op 2, wat betekent dat er twee kernels behouden blijven. "
+"Apt zal altijd de actieve kernel en de laatste kernel behouden. Als de "
+"laatste kernel hetzelfde is als de actieve kernel, wordt de op één na "
+"laatste kernel behouden. Daarom wordt elke waarde lager dan 2 genegeerd. Als "
+"u alleen de laatste kernel wilt, moet u APT::Protect-Kernels op false "
+"instellen."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml
@@ -6364,12 +6375,6 @@ msgid ""
 msgstr ""
 "Informatie tonen over het proces van benaderen van verzamelingen pakketten "
 "op CD's."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml
-msgid "Describes the process of resolving build-dependencies in &apt-get;."
-msgstr ""
-"Beschrijft het proces van het oplossen van bouwvereisten door &apt-get;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml
@@ -11398,7 +11403,7 @@ msgstr ""
 "wordt de naam van de spiegelserver standaard getoetst aan de identiteit die "
 "in het certificaat gevonden wordt. Dit standaardgedrag is veilig en moet "
 "niet gewijzigd worden, maar indien u weet dat de server die u gebruikt, een "
-"DNS-naam heeft die niet overeenkomst met de identiteit in diens certificaat, "
+"DNS-naam heeft die niet overeenkomt met de identiteit uit diens certificaat, "
 "kunt u de optie instellen op \"<literal>false</literal>\", hetgeen zal "
 "voorkomen dat de vergelijking uitgevoerd wordt."
 
@@ -12182,7 +12187,7 @@ msgstr "<code>~nREGEX</code>"
 #: apt-patterns.7.xml
 msgid "Selects packages where the name matches the given regular expression."
 msgstr ""
-"Selecteert pakketten waarvan de naam overeenkomst met de opgegeven reguliere "
+"Selecteert pakketten waarvan de naam overeenkomt met de opgegeven reguliere "
 "expressie."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
@@ -12203,18 +12208,14 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?false</code>"
 msgid "<code>?phasing</code>"
-msgstr "<code>?false</code>"
+msgstr "<code>?phasing</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "Selects packages that no longer exist in repositories."
 msgid "Selects packages that will be kept back in upgrades due to phasing."
 msgstr ""
-"Selecteert pakketten die niet langer aanwezig zijn in de pakketbronnen."
+"Selecteert pakketten die bij upgrades vastgehouden worden vanwege fasering."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
@@ -12424,20 +12425,16 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "<code>?false</code>"
 msgid "<code>?security</code>"
-msgstr "<code>?false</code>"
+msgstr "<code>?security</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-patterns.7.xml
-#, fuzzy
-#| msgid "Selects packages that can be upgraded (have a newer candidate)."
 msgid ""
 "Selects packages that are a security update or succeed a security update."
 msgstr ""
-"Selecteert pakketten die opgewaardeerd kunnen worden (een nieuwere kandidaat "
-"hebben)."
+"Selecteert pakketten die een beveiligingsupdate zijn of een opvolger zijn "
+"van een beveiligingsupdate."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-patterns.7.xml
@@ -14358,3 +14355,7 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 msgid "Which will use the already fetched archives on the disc."
 msgstr ""
 "En dit zal gebruik maken van de reeds opgehaalde archieven op de schijf."
+
+#~ msgid "Describes the process of resolving build-dependencies in &apt-get;."
+#~ msgstr ""
+#~ "Beschrijft het proces van het oplossen van bouwvereisten door &apt-get;."
