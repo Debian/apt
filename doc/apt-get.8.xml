@@ -62,8 +62,10 @@
      retrieved and installed. New versions of currently installed packages that 
      cannot be upgraded without changing the install status of another package 
      will be left at their current version. An <literal>update</literal> must be 
-     performed first so that <command>apt-get</command> knows that new versions of packages are 
-     available.</para></listitem>
+     performed first so that <command>apt-get</command> knows that new versions
+     of packages are available.</para><para>When a package is supplied as an
+     argument, the package will be installed prior to the upgrade
+     action.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>dist-upgrade</option></term>
@@ -76,7 +78,9 @@
      The <filename>/etc/apt/sources.list</filename> file contains a list of locations 
      from which to retrieve desired package files.
      See also &apt-preferences; for a mechanism for
-     overriding the general settings for individual packages.</para></listitem>
+     overriding the general settings for individual packages.</para><para>When
+     a package is supplied as an argument, the package will be installed prior
+     to the upgrade action.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>dselect-upgrade</option></term>
