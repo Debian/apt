@@ -745,7 +745,7 @@ static bool XVcg(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* Dotty is the graphvis program for generating graphs. It is a fairly
    simple queuing algorithm that just writes dependencies and nodes. 
-   http://www.research.att.com/sw/tools/graphviz/ */
+   https://graphviz.org/ */
 static bool Dotty(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
