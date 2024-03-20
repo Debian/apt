@@ -245,7 +245,7 @@ SHA256-Download:
 	rm -rf rootdir/var/lib/apt/lists
 	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
 	cp Packages-future aptarchive/Packages
-	rm -f rootdir/var/lib/apt/lists/*_Contents-*
+	rm -f rootdir/var/lib/apt/lists/*_Contents-* rootdir/var/lib/apt/lists/*.diff_Index*
 	webserverconfig 'aptwebserver::overwrite::.*Contents-.*::filename' '/hacked-i386.gz'
 	testfailure apt update "$@"
 	cp rootdir/tmp/testfailure.output patchdownload.output
@@ -387,9 +387,12 @@ generatepartialleftovers() {
 	for f in "$@"; do
 		cat "${PKGFILE}" "${PKGFILE}" > "rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_${PREFIX}${f}"
 		printf '\n\nInvalid\nStanza: yes\n\n' >> "rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_${PREFIX}${f}"
+		chmod 777 "rootdir/var/lib/apt/lists-bak/partial/localhost:${APTHTTPPORT}_${PREFIX}${f}"
 	done
-	printf '\n\nInvalid\nStanza: yes\n\n' >> "rootdir/var/lib/apt/lists-bak/localhost:${APTHTTPPORT}_${PREFIX}Packages.diff_Index"
-	printf '\n\nInvalid\nStanza: yes\n\n' >> "rootdir/var/lib/apt/lists-bak/localhost:${APTHTTPPORT}_${PREFIX}Packages.diff_Index.xz"
+	printf '\n\nInvalid\nStanza: yes\n\n' > "rootdir/var/lib/apt/lists-bak/localhost:${APTHTTPPORT}_${PREFIX}Packages.diff_Index"
+	chmod 777 "rootdir/var/lib/apt/lists-bak/localhost:${APTHTTPPORT}_${PREFIX}Packages.diff_Index"
+	printf '\n\nInvalid\nStanza: yes\n\n' > "rootdir/var/lib/apt/lists-bak/localhost:${APTHTTPPORT}_${PREFIX}Packages.diff_Index.xz"
+	chmod 777 "rootdir/var/lib/apt/lists-bak/localhost:${APTHTTPPORT}_${PREFIX}Packages.diff_Index.xz"
 }
 
 partialleftovers() { generatepartialleftovers '' 'Packages' 'Packages-patched'; }
