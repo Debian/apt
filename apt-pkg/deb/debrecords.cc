@@ -31,13 +31,9 @@
 
 using std::string;
 
-struct debRecordParser::Private {
-   unsigned long long Offset = -1;
-};
-
 // RecordParser::debRecordParser - Constructor				/*{{{*/
 debRecordParser::debRecordParser(string FileName,pkgCache &Cache) :
-   debRecordParserBase(), d(new Private), File(FileName, FileFd::ReadOnly, FileFd::Extension),
+   debRecordParserBase(), d(NULL), File(FileName, FileFd::ReadOnly, FileFd::Extension),
    Tags(&File, std::max(Cache.Head().MaxVerFileSize, Cache.Head().MaxDescFileSize) + 200)
 {
 }
@@ -45,24 +41,18 @@ debRecordParser::debRecordParser(string FileName,pkgCache &Cache) :
 // RecordParser::Jump - Jump to a specific record			/*{{{*/
 bool debRecordParser::Jump(pkgCache::VerFileIterator const &Ver)
 {
-   if (d->Offset == Ver->Offset)
-      return true;
    if (Ver.end() == true)
       return false;
-   d->Offset = Ver->Offset;
    return Tags.Jump(Section,Ver->Offset);
 }
 bool debRecordParser::Jump(pkgCache::DescFileIterator const &Desc)
 {
-   if (d->Offset == Desc->Offset)
-      return true;
    if (Desc.end() == true)
       return false;
-   d->Offset = Desc->Offset;
    return Tags.Jump(Section,Desc->Offset);
 }
 									/*}}}*/
-debRecordParser::~debRecordParser() { delete d; }
+debRecordParser::~debRecordParser() {}
 
 debRecordParserBase::debRecordParserBase() : Parser(), d(NULL) {}
 // RecordParserBase::FileName - Return the archive filename on the site	/*{{{*/
