@@ -53,7 +53,8 @@ class APT_HIDDEN debRecordParserBase : public pkgRecords::Parser
 
 class APT_HIDDEN debRecordParser : public debRecordParserBase
 {
-   void * const d;
+   struct Private;
+   Private *d;
  protected:
    FileFd File;
    pkgTagFile Tags;
