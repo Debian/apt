@@ -431,6 +431,11 @@ bool pkgTagFile::Fill()
    that is there */
 bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
 {
+   // Head back to the start of the buffer, in case we get called for the same section
+   // again (d->Start will point to next section already)
+   d->iOffset -= d->Start - d->Buffer;
+   d->Start = d->Buffer;
+
    if ((d->Flags & pkgTagFile::SUPPORT_COMMENTS) == 0 &&
    // We are within a buffer space of the next hit..
 	 Offset >= d->iOffset && d->iOffset + (d->End - d->Start) > Offset)
