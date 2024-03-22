@@ -1,3 +1,35 @@
+apt (2.7.14) unstable; urgency=medium
+
+  [ Steve Langasek ]
+  * Support building without gnutls
+  * Add an artificial Conflicts: against libnettle8
+    to force upgrades in launchpad buildd chroots
+
+  [ David Kalnischkies ]
+  * Handle EINTR in the static FileFd::Write overload
+  * Remove non-existent Debug::BuildDeps from apt.conf(5)
+  * Parse unsupported != relation in dependencies
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #1065513)
+  * Dutch manpages translation update (Closes: #1065517)
+
+  [ Wesley Schwengle ]
+  * Update documentation for apt-get upgrade with pkg arg (Closes: #1065831)
+  * Update documentation for apt upgrade with pkg arg (Closes: #1065831)
+  * Include Dutch translation for apt/apt-get upgrade documenation update
+  * Update Graphviz URL to https://graphviz.org/
+  * Update VCG tool URI to new location
+  * s#http://bugs.debian.org/src/#https://bugs.debian.org/src#
+
+  [ Julian Andres Klode ]
+  * pkgTagFile::Jump: Use lookback buffer to rejump to current position
+    (Closes: #1067440)
+  * debrecords: Do not reparse if given same location (Closes: #1067440)
+  * Revert "debrecords: Do not reparse if given same location"
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 22 Mar 2024 11:11:44 +0100
+
 apt (2.7.13) unstable; urgency=medium
 
   * Acknowledge NMU; thank you, Steve!
