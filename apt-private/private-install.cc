@@ -214,16 +214,6 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	 return false;
    }
 
-   APT::PackageVector PhasingPackages;
-   APT::PackageVector NotPhasingHeldBackPackages;
-   for (auto const &Pkg : HeldBackPackages)
-   {
-      if (Cache->PhasingApplied(Pkg))
-	 PhasingPackages.push_back(Pkg);
-      else
-	 NotPhasingHeldBackPackages.push_back(Pkg);
-   }
-
    // Show all the various warning indicators
    if (_config->FindI("APT::Output-Version") < 30)
       ShowDel(c1out,Cache);
@@ -234,6 +224,16 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
       ShowWeakDependencies(Cache);
    if (ShwKept == true)
    {
+      APT::PackageVector PhasingPackages;
+      APT::PackageVector NotPhasingHeldBackPackages;
+      for (auto const &Pkg : HeldBackPackages)
+      {
+	 if (Cache->PhasingApplied(Pkg))
+	    PhasingPackages.push_back(Pkg);
+	 else
+	    NotPhasingHeldBackPackages.push_back(Pkg);
+      }
+
       ShowPhasing(c1out, Cache, PhasingPackages);
       ShowKept(c1out, Cache, NotPhasingHeldBackPackages);
       if (not PhasingPackages.empty() && not NotPhasingHeldBackPackages.empty())
