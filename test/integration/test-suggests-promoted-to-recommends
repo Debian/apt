@@ -1,0 +1,65 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'oldrec' 'all' '1'
+insertinstalledpackage 'oldsug' 'all' '1'
+insertinstalledpackage 'instreg' 'all' '1'
+insertinstalledpackage 'instsug' 'all' '1'
+
+insertpackage 'unstable' 'unsatrec' 'all' '2'
+insertpackage 'unstable' 'unsatsug' 'all' '2'
+insertpackage 'unstable' 'newrec' 'all' '2'
+insertpackage 'unstable' 'newsug' 'all' '2'
+insertpackage 'unstable' 'promote' 'all' '2'
+
+insertinstalledpackage 'foo' 'all' '1' 'Recommends: oldrec, instrec, unsatrec
+Suggests: oldsug, instsug, unsatsug, promote'
+insertpackage 'unstable' 'foo' 'all' '2' 'Recommends: instrec, unsatrec, promote, newrec
+Suggests: instsug, unsatsug, newsug'
+
+setupaptarchive
+
+testsuccess aptmark auto oldrec instrec oldsug instsug
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+Calculating upgrade...
+The following packages were automatically installed and are no longer required:
+  oldrec oldsug
+Use 'apt autoremove' to remove them.
+The following NEW packages will be installed:
+  newrec promote
+The following packages will be upgraded:
+  foo
+1 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo [1] (2 unstable [all])
+Inst newrec (2 unstable [all])
+Inst promote (2 unstable [all])
+Conf foo (2 unstable [all])
+Conf newrec (2 unstable [all])
+Conf promote (2 unstable [all])" apt full-upgrade -s
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+Calculating upgrade...
+The following packages were automatically installed and are no longer required:
+  oldrec oldsug
+Use 'apt autoremove' to remove them.
+The following NEW packages will be installed:
+  newrec newsug
+The following packages will be upgraded:
+  foo
+1 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo [1] (2 unstable [all])
+Inst newrec (2 unstable [all])
+Inst newsug (2 unstable [all])
+Conf foo (2 unstable [all])
+Conf newrec (2 unstable [all])
+Conf newsug (2 unstable [all])" apt full-upgrade -s --install-suggests
