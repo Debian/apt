@@ -253,7 +253,14 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	 auto const asserted = atoi(tokens[1].c_str());
 	 auto const pkstr = tokens[2];
 	 if (not asserted)
-	    Signers.SoonWorthless.push_back({fpr, pkstr});
+	 {
+	    std::string reason;
+	    strprintf(reason, _("untrusted public key algorithm: %s"), pkstr.c_str());
+	    Signers.Worthless.push_back({fpr, reason});
+	    Signers.Good.erase(std::remove_if(Signers.Good.begin(), Signers.Good.end(), [&](std::string const &goodsig)
+					      { return IsTheSameKey(fpr, goodsig); }),
+			       Signers.Good.end());
+	 }
       }
       else if (strncmp(buffer, GNUPGGOODSIG, sizeof(GNUPGGOODSIG)-1) == 0)
 	 PushEntryWithKeyID(Signers.Good, buffer, Debug);
