@@ -141,6 +141,7 @@ struct WarnUsrMerge {
 #endif
 bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, bool ShwKept, bool Ask, bool Safety, std::string const &Hook, CommandLine const &CmdL)
 {
+   auto outVer = _config->FindI("APT::Output-Version");
 #ifdef REQUIRE_MERGED_USR
    WarnUsrMerge warnUsrMerge(Cache);
 #endif
@@ -221,8 +222,11 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
    }
 
    // Show all the various warning indicators
-   ShowDel(c1out,Cache);
+   if (_config->FindI("APT::Output-Version") < 30)
+      ShowDel(c1out,Cache);
    ShowNew(c1out,Cache);
+   if (_config->FindI("APT::Output-Version") >= 30 && _config->FindB("APT::Get::Show-Upgraded",true) == true)
+      ShowUpgraded(c1out,Cache);
    if (ShwKept == true)
    {
       ShowPhasing(c1out, Cache, PhasingPackages);
@@ -231,10 +235,13 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	 _error->Notice("Some packages may have been kept back due to phasing.");
    }
    bool const Hold = not ShowHold(c1out,Cache);
-   if (_config->FindB("APT::Get::Show-Upgraded",true) == true)
+   if (_config->FindI("APT::Output-Version") < 30 && _config->FindB("APT::Get::Show-Upgraded",true) == true)
       ShowUpgraded(c1out,Cache);
    bool const Downgrade = !ShowDowngraded(c1out,Cache);
 
+   // Show removed packages last
+   if (_config->FindI("APT::Output-Version") >= 30)
+      ShowDel(c1out,Cache);
    bool Essential = false;
    if (_config->FindB("APT::Get::Download-Only",false) == false)
         Essential = !ShowEssential(c1out,Cache);
@@ -312,12 +319,12 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
       if (DebBytes != FetchBytes)
 	 //TRANSLATOR: The required space between number and unit is already included
 	 // in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-	 ioprintf(c1out,_("Need to get %sB/%sB of archives.\n"),
+	 ioprintf(c1out,outVer < 30 ? _("Need to get %sB/%sB of archives.\n") : _("  Download size: %sB/%sB\n"),
 	       SizeToStr(FetchBytes).c_str(),SizeToStr(DebBytes).c_str());
       else if (DebBytes != 0)
 	 //TRANSLATOR: The required space between number and unit is already included
 	 // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-	 ioprintf(c1out,_("Need to get %sB of archives.\n"),
+	 ioprintf(c1out,outVer < 30 ? _("Need to get %sB of archives.\n") : _("  Download size: %sB\n"),
 	       SizeToStr(DebBytes).c_str());
    }
 
@@ -325,14 +332,16 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
    if (Cache->UsrSize() >= 0)
       //TRANSLATOR: The required space between number and unit is already included
       // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-      ioprintf(c1out,_("After this operation, %sB of additional disk space will be used.\n"),
+      ioprintf(c1out,outVer < 30 ? _("After this operation, %sB of additional disk space will be used.\n") : _("  Installed size: %sB\n"),
 	       SizeToStr(Cache->UsrSize()).c_str());
    else
       //TRANSLATOR: The required space between number and unit is already included
       // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-      ioprintf(c1out,_("After this operation, %sB disk space will be freed.\n"),
+      ioprintf(c1out,outVer < 30 ? _("After this operation, %sB disk space will be freed.\n") : _("  Freed space: %sB\n"),
 	       SizeToStr(-1*Cache->UsrSize()).c_str());
 
+   if (outVer >= 30)
+      ioprintf(c1out,"\n");
    if (DownloadAllowed)
       if (CheckFreeSpaceBeforeDownload(_config->FindDir("Dir::Cache::Archives"), (FetchBytes - FetchPBytes)) == false)
 	 return false;
@@ -368,7 +377,7 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	 if (_config->FindI("quiet",0) < 2 &&
 	     _config->FindB("APT::Get::Assume-Yes",false) == false)
 	 {
-	    if (YnPrompt(_("Do you want to continue?")) == false)
+	    if (YnPrompt(outVer < 30 ? _("Do you want to continue?") : _("Continue?")) == false)
 	    {
 	       c2out << _("Abort.") << std::endl;
 	       exit(1);
@@ -933,14 +942,16 @@ bool DoInstall(CommandLine &CmdL)
    /* Print out a list of packages that are going to be installed extra
       to what the user asked */
    SortedPackageUniverse Universe(Cache);
-   if (Cache->InstCount() != verset[MOD_INSTALL].size())
+   if (_config->FindI("APT::Output-Version") < 30 && Cache->InstCount() != verset[MOD_INSTALL].size())
       ShowList(c1out, _("The following additional packages will be installed:"), Universe,
 	    PkgIsExtraInstalled(&Cache, &verset[MOD_INSTALL]),
-	    &PrettyFullName, CandidateVersion(&Cache));
+	    &PrettyFullName, CandidateVersion(&Cache), "APT::Color::Green");
+
 
    /* Print out a list of suggested and recommended packages */
    {
       std::list<std::string> Recommends, Suggests, SingleRecommends, SingleSuggests;
+      SortedPackageUniverse Universe(Cache);
       for (auto const &Pkg: Universe)
       {
 	 /* Just look at the ones we want to install */

@@ -42,14 +42,18 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
       Container const &cont,
       PredicateC Predicate,
       DisplayP PkgDisplay,
-      DisplayV VerboseDisplay)
+      DisplayV VerboseDisplay,
+      std::string colorName = "APT::Color::Neutral")
 {
    size_t const ScreenWidth = (::ScreenWidth > 3) ? ::ScreenWidth - 3 : 0;
    int ScreenUsed = 0;
    bool const ShowVersions = _config->FindB("APT::Get::Show-Versions", false);
-   bool const ListColumns = _config->FindB("APT::Get::List-Columns", true);
+   bool const ListColumns = _config->FindB("APT::Get::List-Columns", _config->FindI("APT::Output-Version") >= 30);
    bool printedTitle = false;
    std::vector<std::string> PackageList;
+
+   auto setColor = _config->FindI("APT::Output-Version") >= 30 ? _config->Find(colorName) : "";
+   auto resetColor = _config->FindI("APT::Output-Version") >= 30 ? _config->Find("APT::Color::Neutral") : "";
 
    for (auto const &Pkg: cont)
    {
@@ -64,7 +68,7 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
 
       if (ShowVersions == true)
       {
-	 out << std::endl << "   " << PkgDisplay(Pkg);
+	 out << std::endl << "   " << setColor << PkgDisplay(Pkg) << resetColor;
 	 std::string const verbose = VerboseDisplay(Pkg);
 	 if (verbose.empty() == false)
 	    out << " (" << verbose << ")";
@@ -87,7 +91,7 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
 	       out << " ";
 	       ++ScreenUsed;
 	    }
-	    out << PkgName;
+	    out << setColor << PkgName << resetColor;
 	    ScreenUsed += PkgName.length();
 	 }
       }
@@ -96,8 +100,13 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
    if (printedTitle == true)
    {
       out << std::endl;
-      if (ListColumns && not PackageList.empty())
+      if (ListColumns && not PackageList.empty()) {
+	 out << setColor;
 	 ShowWithColumns(out, PackageList, 2, ScreenWidth);
+	 out << resetColor;
+      }
+      if (_config->FindI("APT::Output-Version") >= 30)
+	 out << std::endl;
       return false;
    }
    return true;

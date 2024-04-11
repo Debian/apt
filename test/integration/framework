@@ -444,7 +444,7 @@ _setupprojectenvironment() {
 	echo "Dir::Etc \"etc/apt\";" >> aptconfig.conf
 	echo "Dir::Log \"var/log/apt\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
-	echo "APT::Get::List-Columns \"false\";" >> aptconfig.conf
+	echo "Binary::apt::APT::Output-Version \"0\";" >> aptconfig.conf
 	echo "Dir::Bin::Methods \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods\";" >> aptconfig.conf
 	# either store apt-key were we can access it, even if we run it as a different user
 	#cp "${APTCMDLINEBINDIR}/apt-key" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/"
