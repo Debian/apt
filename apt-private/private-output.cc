@@ -760,15 +760,15 @@ void Stats(ostream &out, pkgDepCache &Dep, APT::PackageVector const &HeldBackPac
    }   
    if (outVer >= 30)
       ioprintf(out, _("Summary:\n"));
-   ioprintf(out,outVer < 30 ? _("%lu upgraded, %lu newly installed, ") : _("  Upgrades: %lu, Installs: %lu, "),
+   ioprintf(out,outVer < 30 ? _("%lu upgraded, %lu newly installed, ") : _("  Upgrading: %lu, Installing: %lu, "),
 	    Upgrade,Install);
    
    if (ReInstall != 0)
-      ioprintf(out,outVer < 30 ? _("%lu reinstalled, ") : _("Reinstalls: %lu, "),ReInstall);
+      ioprintf(out,outVer < 30 ? _("%lu reinstalled, ") : _("Reinstalling: %lu, "),ReInstall);
    if (Downgrade != 0)
-      ioprintf(out,outVer < 30 ? _("%lu downgraded, ") : _("Downgrades: %lu, "),Downgrade);
+      ioprintf(out,outVer < 30 ? _("%lu downgraded, ") : _("Downgrading: %lu, "),Downgrade);
 
-   ioprintf(out, outVer < 30 ? _("%lu to remove and %lu not upgraded.\n") : _("Removals: %lu, Not Upgrading: %lu\n"),
+   ioprintf(out, outVer < 30 ? _("%lu to remove and %lu not upgraded.\n") : _("Removing: %lu, Not Upgrading: %lu\n"),
 	    Dep.DelCount(), HeldBackPackages.size());
 
    // FIXME: outVer
