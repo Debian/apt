@@ -1,3 +1,35 @@
+apt (2.9.0) unstable; urgency=medium
+
+  * Welcome to the APT 3.0 development series. It has a new UI for
+    apt(8). It has colors, columnar display, some more padding, and
+    shows removals last (Closes: #755088), making the output more
+    easy to quickly scan.
+
+  [ David Kalnischkies ]
+  * Avoid subshell hiding failure report from testfilestats
+  * Ignore umask of leftover diff_Index in failed pdiff test
+  * Fix and unfuzzy previous VCG/Graphviz URI change
+
+  [ Julian Andres Klode ]
+  * Revert "Temporarily downgrade key assertions to "soon worthless""
+    We temporarily downgraded the errors to warnings to give the
+    launchpad PPAs time to be fixed, but warnings are not safe:
+    Untrusted keys could be hiding on your system, but just not
+    used at the moment. Hence revert this so we get the errors we
+    want.
+    This reverts commit 66998ed3d299bede651ad40368bdb270f5f5b0f9. (LP: #2060721)
+  * columnar: Fix floating point exception (list is empty if -V)
+  * OpProgress: Erase lines when done
+  * apt: Introduce the new terse apt output format 3.0
+  * Show Recommends/Suggests for upgrades too, move them down
+  * Only show Recommends/Suggests for new installs, not upgrades
+  * Use the same words for the summary
+
+  [ Christian Blichmann ]
+  * Columnar output for package lists similar to 'ls'
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 12 Apr 2024 20:17:34 +0200
+
 apt (2.7.14) unstable; urgency=medium
 
   [ Steve Langasek ]

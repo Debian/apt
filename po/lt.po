@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2008-08-02 01:47-0400\n"
 "Last-Translator: Gintautas Miliauskas <gintas@akl.lt>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
@@ -1840,12 +1840,22 @@ msgstr ""
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr "Keista... Dydis neatitinka, Parašykite laišką apt@packages.debian.org"
 
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB/%sB\n"
+msgstr ""
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Reikia parsiųsti %sB/%sB archyvų.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB\n"
+msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1854,12 +1864,23 @@ msgstr "Reikia parsiųsti %sB/%sB archyvų.\n"
 msgid "Need to get %sB of archives.\n"
 msgstr "Reikia parsiųsti %sB archyvų.\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  Įdiegta: "
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "Po šios operacijos bus naudojama %sB papildomos disko vietos.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Freed space: %sB\n"
+msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1876,6 +1897,10 @@ msgstr ""
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -1960,17 +1985,17 @@ msgstr[0] "Norėdami juos pašalinti, paleiskite „%s“"
 msgstr[1] "Norėdami juos pašalinti, paleiskite „%s“"
 
 #: apt-private/private-install.cc
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "Bus įdiegti šie papildomi paketai:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "Siūlomi paketai:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "Rekomenduojami paketai:"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "Bus įdiegti šie papildomi paketai:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2104,8 +2129,29 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Šie paketai turi neįdiegtų priklausomybių:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Failed to satisfy %s dependency for %s: %s"
+msgid "Unsatisfied dependencies:"
+msgstr "Nepavyko patenkinti %s priklausomybės %s: %s"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Bus įdiegti šie NAUJI paketai:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "Installing:"
+msgstr "Įdiegta %s"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "Viso priklausomybių: "
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2118,6 +2164,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "Šių paketų atnaujinimas sulaikomas:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "Šių paketų atnaujinimas sulaikomas:"
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "Šių paketų atnaujinimas sulaikomas:"
 
@@ -2126,8 +2182,22 @@ msgid "The following packages will be upgraded:"
 msgstr "Bus atnaujinti šie paketai:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Bus PAKEISTI SENESNIAIS šie paketai:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "Bus pakeisti šie sulaikyti paketai:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2147,6 +2217,15 @@ msgstr ""
 "Tai NETURĖTŲ būti daroma, kol tiksliai nežinote ką darote!"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu atnaujinti, %lu naujai įdiegti, "
@@ -2157,14 +2236,29 @@ msgid "%lu reinstalled, "
 msgstr "%lu įdiegti iš naujo, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+msgid "Reinstalling: %lu, "
+msgstr "Įdiegta %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu pasendinti, "
 
 #: apt-private/private-output.cc
 #, c-format
+msgid "Downgrading: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu bus pašalinta ir %lu neatnaujinta.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3700,6 +3794,11 @@ msgstr "Užklausti"
 
 #: methods/ftp.cc
 msgid "Unable to invoke "
+msgstr ""
+
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
 msgstr ""
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2008-11-20 23:27+0530\n"
 "Last-Translator: Sampada <sampadanakhare@gmail.com>\n"
 "Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -1853,12 +1853,22 @@ msgstr "अंतर्गत त्रुटी,क्रम अजून स�
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr "किती विचित्र...आकार जुळत नाहीत, ईमेल apt@packages.debian.org"
 
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB/%sB\n"
+msgstr ""
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "अर्काईव्हजच्या %sB/%sB घेण्याची गरज आहे\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB\n"
+msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1867,12 +1877,24 @@ msgstr "अर्काईव्हजच्या %sB/%sB घेण्याच
 msgid "Need to get %sB of archives.\n"
 msgstr "अर्काईव्हज%sB घेण्याची गरज आहे.\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "अधिष्ठापित केले:"
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "या क्रियेनंतर, %sB एवढी अधिक डिस्क जागा वापरली जाईल.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "ग्रहण केलेले नामदर्शक: %s \n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1889,6 +1911,10 @@ msgstr "क्षुल्लक फक्त निर्देशित के
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -1977,17 +2003,17 @@ msgstr[0] "ती काढून टाकण्यासाठी '%s' वा�
 msgstr[1] "ती काढून टाकण्यासाठी '%s' वापरा."
 
 #: apt-private/private-install.cc
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "खालील अतिरिक्त पॅकेजेस संस्थापित होतील:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "सुचवलेली पॅकेजेस:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "शिफारस केलेली पॅकेजेस:"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "खालील अतिरिक्त पॅकेजेस संस्थापित होतील:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2119,8 +2145,30 @@ msgid "The following packages have unmet dependencies:"
 msgstr "खालील पॅकेजेस मध्ये नमिळणाऱ्या निर्भरता/ डिपेन्डन्सीज आहेत:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Failed to satisfy %s dependency for %s: %s"
+msgid "Unsatisfied dependencies:"
+msgstr "%s साठी %s डिपेंडन्सी पूर्ण होण्यास असमर्थ: %s"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "खालील नविन पॅकेजेस संस्थापित होतील:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Installing:"
+msgstr "%s संस्थापित होत आहे"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "एकूण निर्भरता:"
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2133,6 +2181,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "खालील पॅकेजेस परत ठेवली गेली:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "खालील पॅकेजेस परत ठेवली गेली:"
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "खालील पॅकेजेस परत ठेवली गेली:"
 
@@ -2141,8 +2199,22 @@ msgid "The following packages will be upgraded:"
 msgstr "खालील पॅकेजेस पुढिल आवृत्तीकृत होतील:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "खालील पॅकेजेस पुढच्या आवृत्तीकृत होणार नाहीत:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "पुढिल ठेवलेली पॅकेजेस बदलतील:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2162,6 +2234,15 @@ msgstr ""
 "तुम्हाला तुम्ही काय करत आहात हे कळेपर्यंत असं करता येणार नाही!"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu पुढे आवृत्तीकृत केले, %lu नव्याने संस्थापित केले,"
@@ -2172,14 +2253,30 @@ msgid "%lu reinstalled, "
 msgstr "%lu पुनर्संस्थापित केले,"
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Reinstalling: %lu, "
+msgstr "%s संस्थापित होत आहे"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu मागील आवृत्तीकृत केले,"
 
 #: apt-private/private-output.cc
 #, c-format
+msgid "Downgrading: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu कायमचे काढून टाकण्यासाठी आणि %lu पुढच्या आवृत्तीकृत झालेली नाही.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3710,6 +3807,11 @@ msgstr "प्रश्न"
 #: methods/ftp.cc
 msgid "Unable to invoke "
 msgstr "जारी करण्यास करण्यास असमर्थ"
+
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc

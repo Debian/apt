@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.2.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2021-02-22 20:02+0300\n"
 "Last-Translator: Алексей Шилин <rootlexx@mail.ru>\n"
 "Language-Team: русский <debian-l10n-russian@lists.debian.org>\n"
@@ -1976,6 +1976,12 @@ msgstr "Внутренняя ошибка: упорядочение пакето
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr "Странно. Несовпадение размеров, напишите на apt@packages.debian.org"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "  Download size: %sB/%sB\n"
+msgstr "Выполняется загрузка %s %s"
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
@@ -1983,12 +1989,24 @@ msgstr "Странно. Несовпадение размеров, напиши�
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Необходимо скачать %sB/%sB архивов.\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "  Download size: %sB\n"
+msgstr "Выполняется загрузка %s %s"
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Необходимо скачать %sB архивов.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  Установлен: "
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1998,6 +2016,12 @@ msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr ""
 "После данной операции объём занятого дискового пространства возрастёт на "
 "%sB.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "Найдена метка: %s\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2018,6 +2042,10 @@ msgstr ""
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -2115,16 +2143,16 @@ msgstr[1] "Для их удаления используйте «%s»."
 msgstr[2] "Для их удаления используйте «%s»."
 
 #: apt-private/private-install.cc
-msgid "The following additional packages will be installed:"
-msgstr "Будут установлены следующие дополнительные пакеты:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "Предлагаемые пакеты:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "Рекомендуемые пакеты:"
+
+#: apt-private/private-install.cc
+msgid "The following additional packages will be installed:"
+msgstr "Будут установлены следующие дополнительные пакеты:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2258,8 +2286,30 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Следующие пакеты имеют неудовлетворённые зависимости:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "satisfy dependency strings"
+msgid "Unsatisfied dependencies:"
+msgstr "удовлетворить строки зависимостей"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Следующие НОВЫЕ пакеты будут установлены:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Installing:"
+msgstr "Устанавливается %s"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "Всего зависимостей: "
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2272,6 +2322,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "Следующие пакеты будут оставлены в неизменном виде:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "Следующие пакеты будут оставлены в неизменном виде:"
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "Следующие пакеты будут оставлены в неизменном виде:"
 
@@ -2280,8 +2340,22 @@ msgid "The following packages will be upgraded:"
 msgstr "Следующие пакеты будут обновлены:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Следующие пакеты будут заменены на СТАРЫЕ версии:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "Следующие зафиксированные пакеты будут изменены:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2301,6 +2375,15 @@ msgstr ""
 "НЕ ДЕЛАЙТЕ этого, если вы НЕ представляете себе все возможные последствия!"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "Обновлено %lu пакетов, установлено %lu новых пакетов, "
@@ -2311,14 +2394,31 @@ msgid "%lu reinstalled, "
 msgstr "переустановлено %lu пакетов, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Reinstalling: %lu, "
+msgstr "Устанавливается %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu пакетов заменено на старые версии, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "Downgrading: %lu, "
+msgstr "Выполняется загрузка %s %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "для удаления отмечено %lu пакетов, и %lu пакетов не обновлено.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3911,6 +4011,11 @@ msgstr "Запрос"
 msgid "Unable to invoke "
 msgstr "Невозможно вызвать "
 
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
+
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
 #, c-format
@@ -4445,9 +4550,6 @@ msgstr "Пустые файлы не могут быть допустимыми 
 
 #~ msgid "Ignore unavailable target release '%s' of package '%s'"
 #~ msgstr "Игнорируется недоступный выпуск «%s» пакета «%s»"
-
-#~ msgid "Downloading %s %s"
-#~ msgstr "Выполняется загрузка %s %s"
 
 #~ msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 #~ msgstr ""

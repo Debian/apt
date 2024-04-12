@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2008-05-08 12:48+0200\n"
 "Last-Translator: Erdal Ronahi <erdal.ronahi@gmail.com>\n"
 "Language-Team: ku <ubuntu-l10n-kur@lists.ubuntu.com>\n"
@@ -1810,12 +1810,22 @@ msgstr ""
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB/%sB\n"
+msgstr ""
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Anîna %sB/%sB ji arşîvan pêwist e.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB\n"
+msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1824,11 +1834,22 @@ msgstr "Anîna %sB/%sB ji arşîvan pêwist e.\n"
 msgid "Need to get %sB of archives.\n"
 msgstr "Anîna %sB ji arşîvan pêwist e.\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  Sazkirî: "
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr ""
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Freed space: %sB\n"
 msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
@@ -1846,6 +1867,10 @@ msgstr ""
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -1930,17 +1955,17 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: apt-private/private-install.cc
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "Ev pakêtên NÛ dê werine sazkirin:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "Paketên tên pêşniyaz kirin:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "Paketên tên tawsiyê kirin:"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "Ev pakêtên NÛ dê werine sazkirin:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2072,8 +2097,29 @@ msgid "The following packages have unmet dependencies:"
 msgstr ""
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Unsatisfied dependencies:"
+msgstr "Bindestên giştî:"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Ev pakêtên NÛ dê werine sazkirin:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "Installing:"
+msgstr "%s hatine sazkirin"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "Bindestên giştî:"
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2081,6 +2127,14 @@ msgstr "Ev pakêt dê werine RAKIRIN:"
 
 #: apt-private/private-output.cc
 msgid "The following upgrades have been deferred due to phasing:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "Not upgrading yet due to phasing:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
 msgstr ""
 
 #: apt-private/private-output.cc
@@ -2092,7 +2146,19 @@ msgid "The following packages will be upgraded:"
 msgstr "Ev paket dê werine bilindkirin:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "Changing held packages:Changing held packages:"
 msgstr ""
 
 #: apt-private/private-output.cc
@@ -2111,6 +2177,15 @@ msgid ""
 msgstr ""
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu hatine bilindkirin, %lu nû hatine sazkirin."
@@ -2121,14 +2196,29 @@ msgid "%lu reinstalled, "
 msgstr "%lu ji nû ve sazkirî,"
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+msgid "Reinstalling: %lu, "
+msgstr "%s hatine sazkirin"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu hatine nizmkirin."
 
 #: apt-private/private-output.cc
 #, c-format
+msgid "Downgrading: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu werin rakirin û %lu neyên bilindkirin. \n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3596,6 +3686,11 @@ msgstr "Lêpirsîn"
 #, fuzzy
 msgid "Unable to invoke "
 msgstr "%s venebû"
+
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc

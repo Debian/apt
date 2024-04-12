@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -1932,6 +1932,12 @@ msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 "Странно... Размерите не съвпадат, изпратете е-поща на apt@packages.debian.org"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "  Download size: %sB/%sB\n"
+msgstr "Изтегляне на %s %s"
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
@@ -1939,12 +1945,24 @@ msgstr ""
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Необходимо е да се изтеглят %sB/%sB архиви.\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "  Download size: %sB\n"
+msgstr "Изтегляне на %s %s"
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Необходимо е да се изтеглят %sB архиви.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  Инсталирана: "
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1954,6 +1972,12 @@ msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr ""
 "След тази операция ще бъде използвано %sB допълнително дисково "
 "пространство.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "Запазен етикет: %s \n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1970,6 +1994,10 @@ msgstr "Указано е „Trivial Only“, но това не е тривиа
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -2061,17 +2089,17 @@ msgstr[0] "Използвайте „%s“ за да го премахнете."
 msgstr[1] "Използвайте „%s“ за да ги премахнете."
 
 #: apt-private/private-install.cc
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "Следните допълнителни пакети ще бъдат инсталирани:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "Предложени пакети:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "Препоръчвани пакети:"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "Следните допълнителни пакети ще бъдат инсталирани:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2208,8 +2236,30 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Следните пакети имат неудовлетворени зависимости:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Failed to satisfy %s dependency for %s: %s"
+msgid "Unsatisfied dependencies:"
+msgstr "Неуспех при удовлетворяването на зависимост %s за пакета %s: %s"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Следните НОВИ пакети ще бъдат инсталирани:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Installing:"
+msgstr "Инсталиране на %s"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "Общо зависимости: "
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2222,6 +2272,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "Следните пакети няма да бъдат променени:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "Следните пакети няма да бъдат променени:"
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "Следните пакети няма да бъдат променени:"
 
@@ -2230,8 +2290,22 @@ msgid "The following packages will be upgraded:"
 msgstr "Следните пакети ще бъдат актуализирани:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Следните пакети ще бъдат ВЪРНАТИ КЪМ ПО-СТАРА ВЕРСИЯ:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "Следните задържани пакети ще бъдат променени:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2251,6 +2325,15 @@ msgstr ""
 "Това НЕ би трябвало да става освен ако знаете точно какво правите!"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu актуализирани, %lu нови инсталирани, "
@@ -2261,14 +2344,31 @@ msgid "%lu reinstalled, "
 msgstr "%lu преинсталирани, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Reinstalling: %lu, "
+msgstr "Инсталиране на %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu върнати към по-стара версия, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "Downgrading: %lu, "
+msgstr "Изтегляне на %s %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu за премахване и %lu без промяна.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3825,6 +3925,11 @@ msgstr "Запитване"
 msgid "Unable to invoke "
 msgstr "Неуспех при извикването на "
 
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
+
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
 #, c-format
@@ -4344,9 +4449,6 @@ msgstr "Празни файлове не могат да бъдат валидн
 
 #~ msgid "Ignore unavailable target release '%s' of package '%s'"
 #~ msgstr "Игнориране на несъществуващо издание „%s“ на пакета „%s“"
-
-#~ msgid "Downloading %s %s"
-#~ msgstr "Изтегляне на %s %s"
 
 #~ msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 #~ msgstr "Това не е валиден DEB архив, няма елемент „%s“, „%s“ или „%s“"

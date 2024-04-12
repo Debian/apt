@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.X\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -1839,12 +1839,22 @@ msgstr "內部錯誤，排序未能完成"
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr "怪哉... 檔案大小不符，請發信給 apt@packages.debian.org"
 
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB/%sB\n"
+msgstr ""
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "需要下載 %sB/%sB 的套件檔。\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB\n"
+msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1853,12 +1863,24 @@ msgstr "需要下載 %sB/%sB 的套件檔。\n"
 msgid "Need to get %sB of archives.\n"
 msgstr "需要下載 %sB 的套件檔。\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  已安裝："
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "此操作完成之後，會多佔用 %sB 的磁碟空間。\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "保存標籤：%s\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1875,6 +1897,10 @@ msgstr "雖然指定了 Trivial Only（自動答 NO）選項，但這並不是 t
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -1961,16 +1987,16 @@ msgstr[0] "使用 '%s' 來將其移除。"
 msgstr[1] "使用 '%s' 來將其移除。"
 
 #: apt-private/private-install.cc
-msgid "The following additional packages will be installed:"
-msgstr "下列的額外套件將被安裝："
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "建議套件："
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "推薦套件："
+
+#: apt-private/private-install.cc
+msgid "The following additional packages will be installed:"
+msgstr "下列的額外套件將被安裝："
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2102,8 +2128,30 @@ msgid "The following packages have unmet dependencies:"
 msgstr "下列的套件有未滿足的相依關係："
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Failed to satisfy %s dependency for %s: %s"
+msgid "Unsatisfied dependencies:"
+msgstr "無法滿足 %2$s 的相依關係 %1$s：%3$s"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "下列【新】套件將會被安裝："
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Installing:"
+msgstr "正在安裝 %s"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "相依關係合計："
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2116,6 +2164,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "下列套件將會維持其原有版本："
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "下列套件將會維持其原有版本："
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "下列套件將會維持其原有版本："
 
@@ -2124,8 +2182,22 @@ msgid "The following packages will be upgraded:"
 msgstr "下列套件將會被升級："
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "下列套件將會被【降級】："
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "下列被保留 (hold) 的套件將會被更改："
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2145,6 +2217,15 @@ msgstr ""
 "除非您很清楚您在做什麼，否則請勿輕易嘗試！"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "升級 %lu 個，新安裝 %lu 個，"
@@ -2155,14 +2236,30 @@ msgid "%lu reinstalled, "
 msgstr "重新安裝 %lu 個，"
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Reinstalling: %lu, "
+msgstr "正在安裝 %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "降級 %lu 個，"
 
 #: apt-private/private-output.cc
 #, c-format
+msgid "Downgrading: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "移除 %lu 個，有 %lu 個未被升級。\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3689,6 +3786,11 @@ msgstr "查詢"
 #: methods/ftp.cc
 msgid "Unable to invoke "
 msgstr "無法 invoke "
+
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc

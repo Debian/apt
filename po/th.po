@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -113,8 +113,8 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
-"แฟ้มที่เซ็นกำกับครอบข้อความมีเนื้อหาไม่ถูกต้อง ได้รับผลลัพธ์ "
-"'%s' (เครือข่ายต้องยืนยันตัวบุคคลหรือไม่?)"
+"แฟ้มที่เซ็นกำกับครอบข้อความมีเนื้อหาไม่ถูกต้อง ได้รับผลลัพธ์ '%s' "
+"(เครือข่ายต้องยืนยันตัวบุคคลหรือไม่?)"
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -1864,12 +1864,24 @@ msgstr "ข้อผิดพลาดภายใน: การเรียง�
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr "แปลกประหลาด... ขนาดไม่ตรงกัน กรุณาอีเมลแจ้ง apt@packages.debian.org"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "  Download size: %sB/%sB\n"
+msgstr "กำลังดาวน์โหลด %s %s"
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "ต้องดาวน์โหลดแพกเกจ %sB/%sB\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "  Download size: %sB\n"
+msgstr "กำลังดาวน์โหลด %s %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1878,12 +1890,24 @@ msgstr "ต้องดาวน์โหลดแพกเกจ %sB/%sB\n"
 msgid "Need to get %sB of archives.\n"
 msgstr "ต้องดาวน์โหลดแพกเกจ %sB\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  ที่ติดตั้งอยู่: "
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "หลังจากการกระทำนี้ ต้องใช้เนื้อที่บนดิสก์อีก %sB\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "ชื่อที่เก็บไว้: %s\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1900,6 +1924,10 @@ msgstr "Trivial Only ถูกกำหนดไว้ แต่คำสั่�
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -1983,17 +2011,17 @@ msgid_plural "Use '%s' to remove them."
 msgstr[0] "ใช้ '%s' เพื่อถอดถอนแพกเกจดังกล่าวได้"
 
 #: apt-private/private-install.cc
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "จะติดตั้งแพกเกจเพิ่มเติมต่อไปนี้:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "แพกเกจที่แนะนำ:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "แพกเกจที่ควรใช้ร่วมกัน:"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "จะติดตั้งแพกเกจเพิ่มเติมต่อไปนี้:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2125,8 +2153,30 @@ msgid "The following packages have unmet dependencies:"
 msgstr "แพกเกจต่อไปนี้ขาดแพกเกจที่ต้องใช้:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Failed to satisfy %s dependency for %s: %s"
+msgid "Unsatisfied dependencies:"
+msgstr "ไม่สามารถติดตั้งสิ่งเชื่อมโยง %s สำหรับ %s ได้: %s"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "จะติดตั้งแพกเกจ *ใหม่* ต่อไปนี้:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Installing:"
+msgstr "กำลังติดตั้ง %s"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "จำนวนการเชื่อมโยงระหว่างแพกเกจทั้งหมด: "
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2139,6 +2189,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "จะคงรุ่นแพกเกจต่อไปนี้:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "จะคงรุ่นแพกเกจต่อไปนี้:"
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "จะคงรุ่นแพกเกจต่อไปนี้:"
 
@@ -2147,8 +2207,22 @@ msgid "The following packages will be upgraded:"
 msgstr "จะปรับรุ่นแพกเกจต่อไปนี้ขึ้น:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "จะปรับรุ่นแพกเกจต่อไปนี้ *ลง*:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "จะเปลี่ยนแปลงรายการคงรุ่นแพกเกจต่อไปนี้:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2168,6 +2242,15 @@ msgstr ""
 "คุณ *ไม่ควร* ทำเช่นนี้ นอกจากคุณเข้าใจสิ่งที่จะทำ!"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "ปรับรุ่นขึ้น %lu, ติดตั้งใหม่ %lu, "
@@ -2178,14 +2261,31 @@ msgid "%lu reinstalled, "
 msgstr "ติดตั้งซ้ำ %lu, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Reinstalling: %lu, "
+msgstr "กำลังติดตั้ง %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "ปรับรุ่นลง %lu, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "Downgrading: %lu, "
+msgstr "กำลังดาวน์โหลด %s %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "ถอดถอน %lu และไม่ปรับรุ่น %lu\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3715,14 +3815,19 @@ msgstr "สอบถาม"
 msgid "Unable to invoke "
 msgstr "ไม่สามารถเรียก "
 
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
+
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
 #, fuzzy, c-format
 msgid ""
 "Signed file isn't valid, got '%s' (does the network require authentication?)"
 msgstr ""
-"แฟ้มที่เซ็นกำกับครอบข้อความมีเนื้อหาไม่ถูกต้อง ได้รับผลลัพธ์ "
-"'%s' (เครือข่ายต้องยืนยันตัวบุคคลหรือไม่?)"
+"แฟ้มที่เซ็นกำกับครอบข้อความมีเนื้อหาไม่ถูกต้อง ได้รับผลลัพธ์ '%s' "
+"(เครือข่ายต้องยืนยันตัวบุคคลหรือไม่?)"
 
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
@@ -4210,9 +4315,6 @@ msgstr "แฟ้มว่างเปล่าไม่สามารถเป
 
 #~ msgid "Ignore unavailable target release '%s' of package '%s'"
 #~ msgstr "จะละเลยรุ่นเป้าหมาย '%s' ซึ่งไม่มีอยู่ของแพกเกจ '%s'"
-
-#~ msgid "Downloading %s %s"
-#~ msgstr "กำลังดาวน์โหลด %s %s"
 
 #~ msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 #~ msgstr "แฟ้มนี้ไม่ใช่แพกเกจ DEB ที่ใช้การได้ ขาดข้อมูล '%s', '%s' หรือ '%s'"

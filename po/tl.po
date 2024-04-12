@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2007-03-29 21:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -1876,12 +1876,22 @@ msgstr ""
 "Nakapagtataka... Hindi magkatugma ang laki, mag-email sa apt@packages.debian."
 "org"
 
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB/%sB\n"
+msgstr ""
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Kailangang kumuha ng %sB/%sB ng arkibo.\n"
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB\n"
+msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1890,6 +1900,12 @@ msgstr "Kailangang kumuha ng %sB/%sB ng arkibo.\n"
 msgid "Need to get %sB of archives.\n"
 msgstr "Kailangang kumuha ng %sB ng arkibo.\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  Nakaluklok: "
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
@@ -1897,6 +1913,12 @@ msgstr "Kailangang kumuha ng %sB ng arkibo.\n"
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr ""
 "Matapos magbuklat ay %sB na karagdagang puwang sa disk ang magagamit.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "Naka-imbak na Label: %s \n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1913,6 +1935,10 @@ msgstr "Tinakdang Trivial Only ngunit hindi ito operasyong trivial."
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -1998,17 +2024,17 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: apt-private/private-install.cc
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "Ang mga sumusunod na extra na pakete ay luluklokin:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "Mga paketeng mungkahi:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "Mga paketeng rekomendado:"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "Ang mga sumusunod na extra na pakete ay luluklokin:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2142,8 +2168,29 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Ang sumusunod na mga pakete ay may kulang na dependensiya:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Failed to satisfy %s dependency for %s: %s"
+msgid "Unsatisfied dependencies:"
+msgstr "Bigo sa pagbuo ng dependensiyang %s para sa %s: %s"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+msgid "Installing:"
+msgstr "Iniluklok ang %s"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "Kabuuan ng mga Dependensiya: "
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2156,6 +2203,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "Ang sumusunod na mga pakete ay hinayaang maiwanan:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "Ang sumusunod na mga pakete ay hinayaang maiwanan:"
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "Ang sumusunod na mga pakete ay hinayaang maiwanan:"
 
@@ -2164,8 +2221,22 @@ msgid "The following packages will be upgraded:"
 msgstr "Ang susunod na mga pakete ay iu-upgrade:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Ang susunod na mga pakete ay ida-DOWNGRADE:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "Ang susunod na mga hinawakang mga pakete ay babaguhin:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2185,6 +2256,15 @@ msgstr ""
 "HINDI ito dapat gawin kung hindi niyo alam ng husto ang inyong ginagawa!"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu na nai-upgrade, %lu na bagong luklok, "
@@ -2195,14 +2275,29 @@ msgid "%lu reinstalled, "
 msgstr "%lu iniluklok muli, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+msgid "Reinstalling: %lu, "
+msgstr "Iniluklok ang %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu nai-downgrade, "
 
 #: apt-private/private-output.cc
 #, c-format
+msgid "Downgrading: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu na tatanggalin at %lu na hindi inupgrade\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3740,6 +3835,11 @@ msgstr "Tanong"
 #: methods/ftp.cc
 msgid "Unable to invoke "
 msgstr "Hindi ma-invoke "
+
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc

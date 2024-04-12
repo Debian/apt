@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2020-08-09 22:43+0200\n"
 "Last-Translator: Aleix Vidal i Gaya <aleix@softcatala.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -1978,12 +1978,23 @@ msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 "Que estrany… Les mides no coincideixen, informeu-ho a apt@packages.debian.org"
 
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB/%sB\n"
+msgstr ""
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "S'ha d'obtenir %sB/%sB d'arxius.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Download Failed"
+msgid "  Download size: %sB\n"
+msgstr "Ha fallat la baixada"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1992,6 +2003,12 @@ msgstr "S'ha d'obtenir %sB/%sB d'arxius.\n"
 msgid "Need to get %sB of archives.\n"
 msgstr "S'ha d'obtenir %sB d'arxius.\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  Instal·lat: "
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
@@ -1999,6 +2016,12 @@ msgstr "S'ha d'obtenir %sB d'arxius.\n"
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr ""
 "Després d'aquesta operació s'utilitzaran %sB d'espai en disc addicional.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "Etiqueta desada: %s\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2015,6 +2038,10 @@ msgstr "S'ha especificat «Trivial Only» però aquesta operació no és trivial
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -2110,16 +2137,16 @@ msgstr[0] "Empreu «%s» per a suprimir-lo."
 msgstr[1] "Empreu «%s» per a suprimir-los."
 
 #: apt-private/private-install.cc
-msgid "The following additional packages will be installed:"
-msgstr "S'instal·laran els següents paquets extres:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "Paquets suggerits:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "Paquets recomanats:"
+
+#: apt-private/private-install.cc
+msgid "The following additional packages will be installed:"
+msgstr "S'instal·laran els següents paquets extres:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2256,8 +2283,30 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Els següents paquets tenen dependències sense satisfer:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "satisfy dependency strings"
+msgid "Unsatisfied dependencies:"
+msgstr "satisfà cadenes de dependència"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "S'instal·laran els paquets NOUS següents:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Installing:"
+msgstr "S'està instal·lant %s"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "Nombre total de dependències: "
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2270,6 +2319,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "S'han mantingut els paquets següents:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "S'han mantingut els paquets següents:"
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "S'han mantingut els paquets següents:"
 
@@ -2278,8 +2337,22 @@ msgid "The following packages will be upgraded:"
 msgstr "S'actualitzaran els paquets següents:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Es DESACTUALITZARAN els paquets següents:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "Es canviaran els paquets retinguts següents:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2299,6 +2372,15 @@ msgstr ""
 "Això NO s'hauria de fer llevat que sapigueu exactament el que esteu fent!"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu actualitzats, %lu nous a instal·lar, "
@@ -2309,14 +2391,30 @@ msgid "%lu reinstalled, "
 msgstr "%lu reinstal·lats, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Reinstalling: %lu, "
+msgstr "S'està instal·lant %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu desactualitzats, "
 
 #: apt-private/private-output.cc
 #, c-format
+msgid "Downgrading: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu a suprimir i %lu no actualitzats.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3903,6 +4001,11 @@ msgstr "Consulta"
 #: methods/ftp.cc
 msgid "Unable to invoke "
 msgstr "No es pot invocar "
+
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc

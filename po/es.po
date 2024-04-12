@@ -37,7 +37,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2016-01-26 01:51+0100\n"
 "Last-Translator: Manuel \"Venturi\" Porras Peralta <venturi@openmailbox."
 "org>\n"
@@ -2048,12 +2048,23 @@ msgstr ""
 "Qué extraño... Los tamaños no concuerdan, mande un correo a apt@packages."
 "debian.org"
 
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB/%sB\n"
+msgstr ""
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Se necesita descargar %sB/%sB de archivos.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Download Failed"
+msgid "  Download size: %sB\n"
+msgstr "Falló la descarga"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2062,6 +2073,12 @@ msgstr "Se necesita descargar %sB/%sB de archivos.\n"
 msgid "Need to get %sB of archives.\n"
 msgstr "Se necesita descargar %sB de archivos.\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  Instalados: "
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
@@ -2069,6 +2086,12 @@ msgstr "Se necesita descargar %sB de archivos.\n"
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr ""
 "Se utilizarán %sB de espacio de disco adicional después de esta operación.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "Etiqueta guardada: %s \n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2085,6 +2108,10 @@ msgstr "Se especificó «Trivial Only» pero esta no es una operación trivial."
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -2180,16 +2207,16 @@ msgstr[0] "Utilice «%s» para eliminarlo."
 msgstr[1] "Utilice «%s» para eliminarlos."
 
 #: apt-private/private-install.cc
-msgid "The following additional packages will be installed:"
-msgstr "Se instalarán los siguientes paquetes adicionales:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "Paquetes sugeridos:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "Paquetes recomendados:"
+
+#: apt-private/private-install.cc
+msgid "The following additional packages will be installed:"
+msgstr "Se instalarán los siguientes paquetes adicionales:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2324,8 +2351,30 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Los siguientes paquetes tienen dependencias incumplidas:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Failed to satisfy %s dependency for %s: %s"
+msgid "Unsatisfied dependencies:"
+msgstr "No se pudo satisfacer la dependencia %s para %s: %s"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Se instalarán los siguientes paquetes NUEVOS:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Installing:"
+msgstr "Instalando %s"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "Dependencias totales: "
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2338,6 +2387,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "Los siguientes paquetes se han retenido:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "Los siguientes paquetes se han retenido:"
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "Los siguientes paquetes se han retenido:"
 
@@ -2346,8 +2405,22 @@ msgid "The following packages will be upgraded:"
 msgstr "Se actualizarán los siguientes paquetes:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Se DESACTUALIZARÁN los siguientes paquetes:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "Se cambiarán los siguientes paquetes retenidos:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2367,6 +2440,15 @@ msgstr ""
 "¡NO debe hacerse a menos que sepa exactamente lo que está haciendo!"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu actualizados, %lu nuevos se instalarán, "
@@ -2377,14 +2459,30 @@ msgid "%lu reinstalled, "
 msgstr "%lu reinstalados, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Reinstalling: %lu, "
+msgstr "Instalando %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu desactualizados, "
 
 #: apt-private/private-output.cc
 #, c-format
+msgid "Downgrading: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu para eliminar y %lu no actualizados.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3975,6 +4073,11 @@ msgstr "Consulta"
 msgid "Unable to invoke "
 msgstr "No se pudo invocar "
 
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
+
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
 #, fuzzy, c-format
@@ -4179,8 +4282,8 @@ msgstr "Los ficheros vacíos no pueden ser archivos válidos"
 #~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "
 #~ "entry or malformed file)"
 #~ msgstr ""
-#~ "No se pudo encontrar la entrada esperada «%s» en el archivo "
-#~ "«Release» (entrada incorrecta en «sources.list» o fichero mal formado)"
+#~ "No se pudo encontrar la entrada esperada «%s» en el archivo «Release» "
+#~ "(entrada incorrecta en «sources.list» o fichero mal formado)"
 
 #~ msgid "Unmet dependencies. Try using --fix-broken."
 #~ msgstr "Dependencias incumplidas. Pruebe de nuevo utilizando --fix-broken."

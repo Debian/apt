@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2020-12-30 12:20+0200\n"
 "Last-Translator: Vangelis Skarmoutsos <skarmoutsosv@gmail.com>\n"
 "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
@@ -1885,12 +1885,23 @@ msgstr ""
 "Πολύ περίεργο! Τα μεγέθη δεν ταιριάζουν, στείλτε μήνυμα στο apt@packages."
 "debian.org"
 
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB/%sB\n"
+msgstr ""
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Χρειάζεται να μεταφορτωθούν %sB/%sB από αρχεία.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Download Failed"
+msgid "  Download size: %sB\n"
+msgstr "Η λήψη απέτυχε"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1899,6 +1910,12 @@ msgstr "Χρειάζεται να μεταφορτωθούν %sB/%sB από αρ
 msgid "Need to get %sB of archives.\n"
 msgstr "Χρειάζεται να μεταφορτωθούν %sB από αρχεία.\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  Εγκατεστημένα: "
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
@@ -1906,6 +1923,12 @@ msgstr "Χρειάζεται να μεταφορτωθούν %sB από αρχε
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr ""
 "Μετά από αυτή τη λειτουργία, θα χρησιμοποιηθούν %sB χώρου από το δίσκο.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "Αποθήκευση Ετικέτας: %s \n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1923,6 +1946,10 @@ msgstr ""
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -2011,16 +2038,16 @@ msgstr[0] "Χρησιμοποιήστε '%s' για να το διαγράψετ
 msgstr[1] "Χρησιμοποιήστε '%s' για να τα διαγράψετε."
 
 #: apt-private/private-install.cc
-msgid "The following additional packages will be installed:"
-msgstr "Τα ακόλουθα επιπλέον πακέτα θα εγκατασταθούν:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "Προτεινόμενα πακέτα:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "Συνιστώμενα πακέτα:"
+
+#: apt-private/private-install.cc
+msgid "The following additional packages will be installed:"
+msgstr "Τα ακόλουθα επιπλέον πακέτα θα εγκατασταθούν:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2153,8 +2180,30 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Τα ακόλουθα πακέτα έχουν ανεπίλυτες εξαρτήσεις:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "satisfy dependency strings"
+msgid "Unsatisfied dependencies:"
+msgstr "εκπλήρωση των συμβολοσειρών εξαρτήσεων"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Τα ακόλουθα ΝΕΑ πακέτα θα εγκατασταθούν:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Installing:"
+msgstr "Εγκατάσταση του %s"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "Σύνολο Εξαρτήσεων: "
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2167,6 +2216,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "Τα ακόλουθα πακέτα θα μείνουν ως έχουν:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "Τα ακόλουθα πακέτα θα μείνουν ως έχουν:"
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "Τα ακόλουθα πακέτα θα μείνουν ως έχουν:"
 
@@ -2175,8 +2234,22 @@ msgid "The following packages will be upgraded:"
 msgstr "Τα ακόλουθα πακέτα θα αναβαθμιστούν:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Τα ακόλουθα πακέτα θα ΥΠΟΒΑΘΜΙΣΤΟΥΝ:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "Τα ακόλουθα κρατημένα πακέτα θα αλλαχθούν:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2196,6 +2269,15 @@ msgstr ""
 "Αυτό ΔΕΝ θα έπρεπε να συμβεί, εκτός αν ξέρετε τι ακριβώς κάνετε!"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu αναβαθμίστηκαν, %lu νέο εγκατεστημένα, "
@@ -2206,14 +2288,30 @@ msgid "%lu reinstalled, "
 msgstr "%lu επανεγκατεστημένα, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Reinstalling: %lu, "
+msgstr "Εγκατάσταση του %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu υποβαθμισμένα, "
 
 #: apt-private/private-output.cc
 #, c-format
+msgid "Downgrading: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu θα αφαιρεθούν και %lu δεν αναβαθμίζονται.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3722,6 +3820,11 @@ msgstr "Επερώτηση"
 #: methods/ftp.cc
 msgid "Unable to invoke "
 msgstr "Αδύνατη η επίκληση "
+
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc

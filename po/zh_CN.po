@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.5.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2022-10-05 17:20-0400\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
@@ -1862,12 +1862,23 @@ msgstr "内部错误，排序未完成"
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr "怪了……文件大小不符，请发邮件给 apt@packages.debian.org 吧"
 
+#: apt-private/private-install.cc
+#, c-format
+msgid "  Download size: %sB/%sB\n"
+msgstr ""
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "需要下载 %sB/%sB 的归档。\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Download Failed"
+msgid "  Download size: %sB\n"
+msgstr "下载失败"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1876,12 +1887,24 @@ msgstr "需要下载 %sB/%sB 的归档。\n"
 msgid "Need to get %sB of archives.\n"
 msgstr "需要下载 %sB 的归档。\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  已安装："
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "解压缩后会消耗 %sB 的额外空间。\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "已归档文件的标签：%s\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1899,6 +1922,10 @@ msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
 msgstr "不允许移除系统必需的关键软件包。这么做可能损坏系统。"
+
+#: apt-private/private-install.cc
+msgid "Continue?"
+msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
@@ -1977,16 +2004,16 @@ msgid_plural "Use '%s' to remove them."
 msgstr[0] "使用'%s'来卸载它(它们)。"
 
 #: apt-private/private-install.cc
-msgid "The following additional packages will be installed:"
-msgstr "将会同时安装下列软件："
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "建议安装："
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "推荐安装："
+
+#: apt-private/private-install.cc
+msgid "The following additional packages will be installed:"
+msgstr "将会同时安装下列软件："
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2117,8 +2144,30 @@ msgid "The following packages have unmet dependencies:"
 msgstr "下列软件包有未满足的依赖关系："
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "satisfy dependency strings"
+msgid "Unsatisfied dependencies:"
+msgstr "使系统满足依赖关系字符串"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "下列【新】软件包将被安装："
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Installing:"
+msgstr "正在安装 %s"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "按依赖关系共计："
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2131,6 +2180,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "下列软件包的版本将保持不变："
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "下列软件包的版本将保持不变："
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "下列软件包的版本将保持不变："
 
@@ -2139,8 +2198,22 @@ msgid "The following packages will be upgraded:"
 msgstr "下列软件包将被升级："
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "下列软件包将被【降级】："
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "下列被要求保持版本不变的软件包将被改变："
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2160,6 +2233,15 @@ msgstr ""
 "请勿尝试，除非您确实知道您在做什么！"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "升级了 %lu 个软件包，新安装了 %lu 个软件包，"
@@ -2170,14 +2252,30 @@ msgid "%lu reinstalled, "
 msgstr "重新安装了 %lu 个软件包，"
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Reinstalling: %lu, "
+msgstr "正在安装 %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "降级了 %lu 个软件包，"
 
 #: apt-private/private-output.cc
 #, c-format
+msgid "Downgrading: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "要卸载 %lu 个软件包，有 %lu 个软件包未被升级。\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3700,6 +3798,11 @@ msgstr "查询"
 #: methods/ftp.cc
 msgid "Unable to invoke "
 msgstr "无法调用 "
+
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc

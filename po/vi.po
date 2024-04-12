@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -1375,8 +1375,8 @@ msgid ""
 msgstr ""
 "Việc chạy tiến trình cài đặt này sẽ cần thiết gỡ bỏ tạm gói chủ yếu %s, do "
 "vòng lặp Xung đột/Phụ thuộc trước. Trường hợp này thường xấu, nhưng mà nếu "
-"bạn thật sự muốn tiếp tục, có thể hoạt hóa tuy chọn “APT::Force-"
-"LoopBreak” (buộc ngắt vòng lặp)."
+"bạn thật sự muốn tiếp tục, có thể hoạt hóa tuy chọn “APT::Force-LoopBreak” "
+"(buộc ngắt vòng lặp)."
 
 #: apt-pkg/pkgcache.cc
 msgid "Empty package cache"
@@ -1914,12 +1914,24 @@ msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 "Lạ nhỉ... Kích cỡ không khớp nhau. Hãy gửi thư cho <apt@packages.debian.org>"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "  Download size: %sB/%sB\n"
+msgstr "Đang tải về %s %s"
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Cần phải lấy %sB/%sB từ kho chứa.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "  Download size: %sB\n"
+msgstr "Đang tải về %s %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1928,12 +1940,24 @@ msgstr "Cần phải lấy %sB/%sB từ kho chứa.\n"
 msgid "Need to get %sB of archives.\n"
 msgstr "Cần phải lấy %sB từ kho chứa.\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  Đã cài đặt: "
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "Sau thao tác này, %sB dung lượng đĩa sẽ bị chiếm dụng.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "Nhãn đã lưu: %s\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1952,6 +1976,10 @@ msgstr ""
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue?"
 msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
@@ -2037,17 +2065,17 @@ msgid_plural "Use '%s' to remove them."
 msgstr[0] "Hãy dùng lệnh “%s” để gỡ bỏ chúng."
 
 #: apt-private/private-install.cc
-#, fuzzy
-msgid "The following additional packages will be installed:"
-msgstr "Những gói thêm theo đây sẽ được cài đặt:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "Các gói đề nghị:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "Gói khuyến khích:"
+
+#: apt-private/private-install.cc
+#, fuzzy
+msgid "The following additional packages will be installed:"
+msgstr "Những gói thêm theo đây sẽ được cài đặt:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2180,8 +2208,30 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Những gói theo đây chưa thỏa mãn quan hệ phụ thuộc:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Failed to satisfy %s dependency for %s: %s"
+msgid "Unsatisfied dependencies:"
+msgstr "Việc cố thỏa cách phụ thuộc %s cho %s bị lỗi: %s."
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Những gói MỚI sau sẽ được CÀI ĐẶT:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Installing:"
+msgstr "Đang cài đặt %s"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "Tổng gói phụ thuộc: "
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2194,6 +2244,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "Những gói sau đây được giữ lại:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "Những gói sau đây được giữ lại:"
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "Những gói sau đây được giữ lại:"
 
@@ -2202,8 +2262,22 @@ msgid "The following packages will be upgraded:"
 msgstr "Những gói sau đây sẽ được NÂNG CẤP:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Những gói sau đây sẽ bị HẠ CẤP:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "Những gói giữ lại sau đây sẽ bị THAY ĐỔI:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2223,6 +2297,15 @@ msgstr ""
 "ĐỪNG làm như thế trừ khi bạn biết chính xác mình đang làm gì!"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu nâng cấp, %lu được cài đặt mới, "
@@ -2233,14 +2316,31 @@ msgid "%lu reinstalled, "
 msgstr "%lu được cài đặt lại, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Reinstalling: %lu, "
+msgstr "Đang cài đặt %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu bị hạ cấp, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "Downgrading: %lu, "
+msgstr "Đang tải về %s %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu cần gỡ bỏ, và %lu chưa được nâng cấp.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3824,6 +3924,11 @@ msgstr "Truy vấn"
 msgid "Unable to invoke "
 msgstr "Không thể gọi "
 
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
+
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
 #, fuzzy, c-format
@@ -4352,9 +4457,6 @@ msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
 
 #~ msgid "Ignore unavailable target release '%s' of package '%s'"
 #~ msgstr "Bỏ qua bản phát hành đích không sẵn sàng “%s” của gói “%s”"
-
-#~ msgid "Downloading %s %s"
-#~ msgstr "Đang tải về %s %s"
 
 #~ msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 #~ msgstr ""

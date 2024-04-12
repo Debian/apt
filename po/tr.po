@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.6.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-02-28 18:50+0000\n"
+"POT-Creation-Date: 2024-04-12 18:21+0000\n"
 "PO-Revision-Date: 2023-04-19 15:15+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -1954,12 +1954,24 @@ msgstr ""
 "Ne kadar ilginç... Boyutlar eşleşmedi, apt@packages.debian.org adresine e-"
 "posta atın"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "  Download size: %sB/%sB\n"
+msgstr "İndiriliyor %s %s"
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "%sB/%sB arşiv dosyası indirilecek.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "  Download size: %sB\n"
+msgstr "İndiriliyor %s %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1968,12 +1980,24 @@ msgstr "%sB/%sB arşiv dosyası indirilecek.\n"
 msgid "Need to get %sB of archives.\n"
 msgstr "%sB arşiv dosyası indirilecek.\n"
 
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Installed size: %sB\n"
+msgstr "  Kurulu: "
+
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "Bu işlem tamamlandıktan sonra %sB ek disk alanı kullanılacak.\n"
+
+#: apt-private/private-install.cc
+#, fuzzy, c-format
+#| msgid "Stored label: %s\n"
+msgid "  Freed space: %sB\n"
+msgstr "Kayıtlı etiket: %s\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1993,6 +2017,10 @@ msgid ""
 msgstr ""
 "Kritik sistem paketlerini kaldırmak sisteminizi bozabileceği için "
 "yasaklanmıştır."
+
+#: apt-private/private-install.cc
+msgid "Continue?"
+msgstr ""
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
@@ -2084,16 +2112,16 @@ msgstr[0] "Bu paketi kaldırmak için '%s' komutunu kullanın."
 msgstr[1] "Bu paketleri kaldırmak için '%s' komutunu kullanın."
 
 #: apt-private/private-install.cc
-msgid "The following additional packages will be installed:"
-msgstr "Aşağıdaki ek paketler kurulacak:"
-
-#: apt-private/private-install.cc
 msgid "Suggested packages:"
 msgstr "Önerilen paketler:"
 
 #: apt-private/private-install.cc
 msgid "Recommended packages:"
 msgstr "Tavsiye edilen paketler:"
+
+#: apt-private/private-install.cc
+msgid "The following additional packages will be installed:"
+msgstr "Aşağıdaki ek paketler kurulacak:"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2230,8 +2258,30 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Aşağıdaki paketler karşılanmamış bağımlılıklara sahip:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "satisfy dependency strings"
+msgid "Unsatisfied dependencies:"
+msgstr "Bağımlılık dizgilerini karşıla"
+
+#: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Aşağıdaki YENİ paketler kurulacak:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Installing:"
+msgstr "%s kuruluyor"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "Total dependencies: "
+msgid "Installing dependencies:"
+msgstr "Toplam bağımlılıklar: "
+
+#: apt-private/private-output.cc
+msgid "REMOVING:"
+msgstr ""
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2244,6 +2294,16 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "Aşağıdaki paketlerin mevcut durumları korunacak:"
 
 #: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following packages have been kept back:"
+msgid "Not upgrading yet due to phasing:"
+msgstr "Aşağıdaki paketlerin mevcut durumları korunacak:"
+
+#: apt-private/private-output.cc
+msgid "Not upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
 msgstr "Aşağıdaki paketlerin mevcut durumları korunacak:"
 
@@ -2252,8 +2312,22 @@ msgid "The following packages will be upgraded:"
 msgstr "Aşağıdaki paketler yükseltilecek:"
 
 #: apt-private/private-output.cc
+msgid "Upgrading:"
+msgstr ""
+
+#: apt-private/private-output.cc
+msgid "DOWNGRADING:"
+msgstr ""
+
+#: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Aşağıdaki paketlerin SÜRÜMLERİ DÜŞÜRÜLECEK:"
+
+#: apt-private/private-output.cc
+#, fuzzy
+#| msgid "The following held packages will be changed:"
+msgid "Changing held packages:Changing held packages:"
+msgstr "Aşağıdaki eski sürümlerinde tutulan paketler değiştirilecek:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2273,6 +2347,15 @@ msgstr ""
 "Bu işlem ne yaptığınızı tam olarak bilmediğiniz takdirde YAPILMAMALIDIR!"
 
 #: apt-private/private-output.cc
+msgid "Summary:\n"
+msgstr ""
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "  Upgrading: %lu, Installing: %lu, "
+msgstr ""
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu paket yükseltilecek, %lu yeni paket kurulacak, "
@@ -2283,14 +2366,31 @@ msgid "%lu reinstalled, "
 msgstr "%lu paket yeniden kurulacak, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Reinstalling: %lu, "
+msgstr "%s kuruluyor"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu paketin sürümü düşürülecek, "
 
 #: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Downloading %s %s"
+msgid "Downgrading: %lu, "
+msgstr "İndiriliyor %s %s"
+
+#: apt-private/private-output.cc
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu paket kaldırılacak ve %lu paket yükseltilmeyecek.\n"
+
+#: apt-private/private-output.cc
+#, c-format
+msgid "Removing: %lu, Not Upgrading: %lu\n"
+msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3857,6 +3957,11 @@ msgstr "Sorgu"
 msgid "Unable to invoke "
 msgstr "Çağrılamıyor "
 
+#: methods/gpgv.cc
+#, c-format
+msgid "untrusted public key algorithm: %s"
+msgstr ""
+
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
 #, c-format
@@ -4414,9 +4519,6 @@ msgstr "Boş dosyalar geçerli birer arşiv dosyası olamazlar"
 
 #~ msgid "Ignore unavailable target release '%s' of package '%s'"
 #~ msgstr "Mevcut olmayan hedef '%s' sürüm '%s' paketini ihmal et"
-
-#~ msgid "Downloading %s %s"
-#~ msgstr "İndiriliyor %s %s"
 
 #~ msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 #~ msgstr ""
