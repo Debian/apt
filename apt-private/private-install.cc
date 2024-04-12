@@ -923,7 +923,7 @@ static void ShowWeakDependencies(CacheFile &Cache)
    for (auto const &Pkg: Universe)
    {
       /* Just look at the ones we want to install */
-      if ((*Cache)[Pkg].Install() == false)
+      if ((*Cache)[Pkg].NewInstall() == false)
 	continue;
 
       // get the recommends/suggests for the candidate ver
