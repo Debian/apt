@@ -481,6 +481,10 @@ static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, std::vector<
 static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
 {
    std::string const binary = flNotDir(Binary);
+   if (binary == "apt-cdrom" || binary == "apt-config")
+   {
+      _config->CndSet("Binary::apt-cdrom::APT::Internal::OpProgress::EraseLines", false);
+   }
    if (binary == "apt" || binary == "apt-config")
    {
       if (getenv("NO_COLOR") == nullptr)
