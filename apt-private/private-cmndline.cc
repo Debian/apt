@@ -184,7 +184,8 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "show-progress", "DpkgPM::Progress", 0);
       addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
       addArg(0, "purge", "APT::Get::Purge", 0);
-      addArg('V',"verbose-versions","APT::Get::Show-Versions",0);
+      addArg('V',"verbose-versions", "APT::Get::Show-Versions",0);
+      addArg(0, "list-columns", "APT::Get::List-Columns", 0);
       addArg(0, "autoremove", "APT::Get::AutomaticRemove", 0);
       addArg(0, "auto-remove", "APT::Get::AutomaticRemove", 0);
       addArg(0, "reinstall", "APT::Get::ReInstall", 0);
@@ -480,10 +481,15 @@ static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, std::vector<
 static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
 {
    std::string const binary = flNotDir(Binary);
+   if (binary == "apt-cdrom" || binary == "apt-config")
+   {
+      _config->CndSet("Binary::apt-cdrom::APT::Internal::OpProgress::EraseLines", false);
+   }
    if (binary == "apt" || binary == "apt-config")
    {
       if (getenv("NO_COLOR") == nullptr)
          _config->CndSet("Binary::apt::APT::Color", true);
+      _config->CndSet("Binary::apt::APT::Output-Version", 30);
       _config->CndSet("Binary::apt::APT::Cache::Show::Version", 2);
       _config->CndSet("Binary::apt::APT::Cache::AllVersions", false);
       _config->CndSet("Binary::apt::APT::Cache::ShowVirtuals", true);
