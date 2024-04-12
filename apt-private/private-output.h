@@ -96,7 +96,7 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
    if (printedTitle == true)
    {
       out << std::endl;
-      if (ListColumns)
+      if (ListColumns && not PackageList.empty())
 	 ShowWithColumns(out, PackageList, 2, ScreenWidth);
       return false;
    }
