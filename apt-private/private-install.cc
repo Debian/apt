@@ -28,6 +28,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <sys/statvfs.h>
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-cachefile.h>
@@ -333,10 +334,30 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 
    // Size delta
    if (Cache->UsrSize() >= 0)
+   {
       //TRANSLATOR: The required space between number and unit is already included
       // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-      ioprintf(c1out,outVer < 30 ? _("After this operation, %sB of additional disk space will be used.\n") : _("  Space needed: %sB\n"),
-	       SizeToStr(Cache->UsrSize()).c_str());
+      if (outVer < 30)
+	 ioprintf(c1out, _("After this operation, %sB of additional disk space will be used.\n"),
+		  SizeToStr(Cache->UsrSize()).c_str());
+      else
+      {
+	 struct statvfs st;
+	 if (statvfs("/usr", &st) == 0)
+	 {
+	    // TRANSLATOR: The required space between number and unit is already included
+	    //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+	    ioprintf(c1out, _("  Space needed: %sB / approx. %sB available\n"),
+		     SizeToStr(Cache->UsrSize()).c_str(), SizeToStr((st.f_bsize * st.f_bavail)).c_str());
+	 }
+	 else
+	 {
+	    // TRANSLATOR: The required space between number and unit is already included
+	    //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+	    ioprintf(c1out, _("  Space needed: %sB\n"), SizeToStr(Cache->UsrSize()).c_str());
+	 }
+      }
+   }
    else
       //TRANSLATOR: The required space between number and unit is already included
       // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
