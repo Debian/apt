@@ -441,8 +441,9 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	 if (_config->FindI("quiet",0) < 2 &&
 	     _config->FindB("APT::Get::Assume-Yes",false) == false)
 	 {
-	    // YnPrompt shows all warnings before prompting, so ask stronger if we have any
-	    if (YnPrompt(outVer < 30 ? _("Do you want to continue?") : (_error->empty() ? _("Continue?") : _("Continue anyway?"))) == false)
+	    // YnPrompt shows all warnings before prompting, so ask stronger and default to N if we have any.
+	    auto Default = outVer < 30 ? true : _error->empty();
+	    if (not YnPrompt(outVer < 30 ? _("Do you want to continue?") : (Default ? _("Continue?") : _("Continue anyway?")), Default))
 	    {
 	       c2out << _("Abort.") << std::endl;
 	       exit(1);
