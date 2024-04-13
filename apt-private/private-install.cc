@@ -335,7 +335,7 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
    if (Cache->UsrSize() >= 0)
       //TRANSLATOR: The required space between number and unit is already included
       // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-      ioprintf(c1out,outVer < 30 ? _("After this operation, %sB of additional disk space will be used.\n") : _("  Installed size: %sB\n"),
+      ioprintf(c1out,outVer < 30 ? _("After this operation, %sB of additional disk space will be used.\n") : _("  Space needed: %sB\n"),
 	       SizeToStr(Cache->UsrSize()).c_str());
    else
       //TRANSLATOR: The required space between number and unit is already included
