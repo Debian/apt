@@ -324,7 +324,7 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
       if (DebBytes != FetchBytes)
 	 //TRANSLATOR: The required space between number and unit is already included
 	 // in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-	 ioprintf(c1out,outVer < 30 ? _("Need to get %sB/%sB of archives.\n") : _("  Download size: %sB/%sB\n"),
+	 ioprintf(c1out,outVer < 30 ? _("Need to get %sB/%sB of archives.\n") : _("  Download size: %sB / %sB\n"),
 	       SizeToStr(FetchBytes).c_str(),SizeToStr(DebBytes).c_str());
       else if (DebBytes != 0)
 	 //TRANSLATOR: The required space between number and unit is already included
@@ -357,7 +357,7 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	    ioprintf(c1out, "  ");
 	    // TRANSLATOR: The required space between number and unit is already included
 	    //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-	    ioprintf(c1out, _("Space needed: %sB / approx. %sB available\n"),
+	    ioprintf(c1out, _("Space needed: %sB / %sB available\n"),
 		     SizeToStr(Cache->UsrSize() + InitrdSize).c_str(), SizeToStr((st.f_bsize * st.f_bavail)).c_str());
 
 	    if (BootSize != 0)
@@ -368,7 +368,8 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	       //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
 	       //  The first %s is the location of the boot directory (determined from Dir::Boot),
 	       //  and it tells the space being needed there.
-	       ioprintf(c1out, _("in %s: approx. %sB / %sB available\n"),
+	       //  (We have two spaces to align with parent "space needed:"for /boot)
+	       ioprintf(c1out, _("in %s:  %sB / %sB available\n"),
 			_config->FindFile("Dir::Boot").c_str(), SizeToStr(BootSize).c_str(), SizeToStr((st_boot.f_bsize * st_boot.f_bavail)).c_str());
 	    }
 	 }
