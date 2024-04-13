@@ -147,6 +147,8 @@ bool pkgInitConfig(Configuration &Cnf)
 
    // Configuration
    Cnf.CndSet("Dir::Etc", &CONF_DIR[1]);
+   Cnf.CndSet("Dir::Boot", "boot");
+   Cnf.CndSet("Dir::Usr", "usr");
    Cnf.CndSet("Dir::Etc::sourcelist","sources.list");
    Cnf.CndSet("Dir::Etc::sourceparts","sources.list.d");
    Cnf.CndSet("Dir::Etc::main","apt.conf");

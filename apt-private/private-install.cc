@@ -28,6 +28,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <langinfo.h>
 #include <sys/statvfs.h>
 
 #include <apt-private/acqprogress.h>
@@ -343,13 +344,33 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
       else
       {
 	 struct statvfs st;
-	 if (statvfs("/usr", &st) == 0)
+	 if (statvfs(_config->FindDir("Dir::Usr").c_str(), &st) == 0)
 	 {
+	    struct statvfs st_boot;
+	    double BootSize = 0;
+	    double InitrdSize = 0;
+	    if (statvfs(_config->FindDir("Dir::Boot").c_str(), &st_boot) == 0 && st_boot.f_fsid != st.f_fsid)
+	       BootSize = Cache->BootSize(false);
+	    else
+	       InitrdSize = Cache->BootSize(true); /* initrd only, adding to /usr space */
+
 	    ioprintf(c1out, "  ");
 	    // TRANSLATOR: The required space between number and unit is already included
 	    //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 	    ioprintf(c1out, _("Space needed: %sB / approx. %sB available\n"),
 		     SizeToStr(Cache->UsrSize() + InitrdSize).c_str(), SizeToStr((st.f_bsize * st.f_bavail)).c_str());
+
+	    if (BootSize != 0)
+	    {
+	       bool Unicode = strcmp(nl_langinfo(CODESET), "UTF-8") == 0;
+	       ioprintf(c1out,   Unicode ? "  └─ " : "   - ");
+	       // TRANSLATOR: The required space between number and unit is already included
+	       //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
+	       //  The first %s is the location of the boot directory (determined from Dir::Boot),
+	       //  and it tells the space being needed there.
+	       ioprintf(c1out, _("in %s: approx. %sB / %sB available\n"),
+			_config->FindFile("Dir::Boot").c_str(), SizeToStr(BootSize).c_str(), SizeToStr((st_boot.f_bsize * st_boot.f_bavail)).c_str());
+	    }
 	 }
 	 else
 	 {
