@@ -345,16 +345,18 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	 struct statvfs st;
 	 if (statvfs("/usr", &st) == 0)
 	 {
+	    ioprintf(c1out, "  ");
 	    // TRANSLATOR: The required space between number and unit is already included
 	    //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-	    ioprintf(c1out, _("  Space needed: %sB / approx. %sB available\n"),
-		     SizeToStr(Cache->UsrSize()).c_str(), SizeToStr((st.f_bsize * st.f_bavail)).c_str());
+	    ioprintf(c1out, _("Space needed: %sB / approx. %sB available\n"),
+		     SizeToStr(Cache->UsrSize() + InitrdSize).c_str(), SizeToStr((st.f_bsize * st.f_bavail)).c_str());
 	 }
 	 else
 	 {
 	    // TRANSLATOR: The required space between number and unit is already included
 	    //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-	    ioprintf(c1out, _("  Space needed: %sB\n"), SizeToStr(Cache->UsrSize()).c_str());
+	    ioprintf(c1out, "  ");
+	    ioprintf(c1out, _("Space needed: %sB\n"), SizeToStr(Cache->UsrSize()).c_str());
 	 }
       }
    }

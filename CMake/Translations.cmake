@@ -16,6 +16,7 @@ function(apt_add_translation_domain)
     set(domain ${NLS_DOMAIN})
     set(xgettext_params
         --add-comments
+        --from-code=utf-8
         --foreign
         --package-name=${PROJECT_NAME}
         --package-version=${PACKAGE_VERSION}
