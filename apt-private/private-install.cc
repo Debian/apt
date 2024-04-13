@@ -360,6 +360,14 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	    ioprintf(c1out, _("Space needed: %sB / %sB available\n"),
 		     SizeToStr(Cache->UsrSize() + InitrdSize).c_str(), SizeToStr((st.f_bsize * st.f_bavail)).c_str());
 
+	    if (Cache->UsrSize() > 0 && static_cast<unsigned long long>(Cache->UsrSize()) > (st.f_bsize * st.f_bavail))
+	    {
+	       // TRANSLATOR: The required space between number and unit is already included
+	       //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+	       _error->Warning(_("More space needed than available: %sB > %sB, installation may fail"),
+			       SizeToStr(Cache->UsrSize()).c_str(),
+			       SizeToStr((st.f_bsize * st.f_bavail)).c_str());
+	    }
 	    if (BootSize != 0)
 	    {
 	       bool Unicode = strcmp(nl_langinfo(CODESET), "UTF-8") == 0;
@@ -371,6 +379,14 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	       //  (We have two spaces to align with parent "space needed:"for /boot)
 	       ioprintf(c1out, _("in %s:  %sB / %sB available\n"),
 			_config->FindFile("Dir::Boot").c_str(), SizeToStr(BootSize).c_str(), SizeToStr((st_boot.f_bsize * st_boot.f_bavail)).c_str());
+	       if (BootSize > (st_boot.f_bsize * st_boot.f_bavail))
+		  // TRANSLATOR: The required space between number and unit is already included
+		  //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+		  //  The first %s is the location of the boot directory (determined from Dir::Boot)
+		  _error->Warning(_("More space needed in %s than available: %sB > %sB, installation may fail"),
+				  _config->FindFile("Dir::Boot").c_str(),
+				  SizeToStr(BootSize).c_str(),
+				  SizeToStr((st_boot.f_bsize * st_boot.f_bavail)).c_str());
 	    }
 	 }
 	 else
