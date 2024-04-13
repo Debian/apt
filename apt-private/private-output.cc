@@ -642,7 +642,7 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
 	 },
 	 &PrettyFullName,
 	 CurrentToCandidateVersion(&Cache),
-	 "APT::Color::Green");
+	 "APT::Color::Yellow");
 }
 									/*}}}*/
 // ShowHold - Show held but changed packages				/*{{{*/
