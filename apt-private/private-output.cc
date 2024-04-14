@@ -649,7 +649,7 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
 bool ShowHold(ostream &out,CacheFile &Cache)
 {
    SortedPackageUniverse Universe(Cache);
-   auto title = _config->FindI("APT::Output-Version") < 30 ? _("The following held packages will be changed:") : _("Changing held packages:Changing held packages:");
+   auto title = _config->FindI("APT::Output-Version") < 30 ? _("The following held packages will be changed:") : _("Changing held packages:");
    return ShowList(out, title, Universe,
 	 [&Cache](pkgCache::PkgIterator const &Pkg)
 	 {
