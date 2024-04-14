@@ -28,6 +28,8 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <langinfo.h>
+#include <sys/statvfs.h>
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-cachefile.h>
@@ -322,7 +324,7 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
       if (DebBytes != FetchBytes)
 	 //TRANSLATOR: The required space between number and unit is already included
 	 // in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-	 ioprintf(c1out,outVer < 30 ? _("Need to get %sB/%sB of archives.\n") : _("  Download size: %sB/%sB\n"),
+	 ioprintf(c1out,outVer < 30 ? _("Need to get %sB/%sB of archives.\n") : _("  Download size: %sB / %sB\n"),
 	       SizeToStr(FetchBytes).c_str(),SizeToStr(DebBytes).c_str());
       else if (DebBytes != 0)
 	 //TRANSLATOR: The required space between number and unit is already included
@@ -333,10 +335,69 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 
    // Size delta
    if (Cache->UsrSize() >= 0)
+   {
       //TRANSLATOR: The required space between number and unit is already included
       // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-      ioprintf(c1out,outVer < 30 ? _("After this operation, %sB of additional disk space will be used.\n") : _("  Installed size: %sB\n"),
-	       SizeToStr(Cache->UsrSize()).c_str());
+      if (outVer < 30)
+	 ioprintf(c1out, _("After this operation, %sB of additional disk space will be used.\n"),
+		  SizeToStr(Cache->UsrSize()).c_str());
+      else
+      {
+	 struct statvfs st;
+	 if (statvfs(_config->FindDir("Dir::Usr").c_str(), &st) == 0)
+	 {
+	    struct statvfs st_boot;
+	    double BootSize = 0;
+	    double InitrdSize = 0;
+	    if (statvfs(_config->FindDir("Dir::Boot").c_str(), &st_boot) == 0 && st_boot.f_fsid != st.f_fsid)
+	       BootSize = Cache->BootSize(false);
+	    else
+	       InitrdSize = Cache->BootSize(true); /* initrd only, adding to /usr space */
+
+	    ioprintf(c1out, "  ");
+	    // TRANSLATOR: The required space between number and unit is already included
+	    //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+	    ioprintf(c1out, _("Space needed: %sB / %sB available\n"),
+		     SizeToStr(Cache->UsrSize() + InitrdSize).c_str(), SizeToStr((st.f_bsize * st.f_bavail)).c_str());
+
+	    if (Cache->UsrSize() > 0 && static_cast<unsigned long long>(Cache->UsrSize()) > (st.f_bsize * st.f_bavail))
+	    {
+	       // TRANSLATOR: The required space between number and unit is already included
+	       //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+	       _error->Warning(_("More space needed than available: %sB > %sB, installation may fail"),
+			       SizeToStr(Cache->UsrSize()).c_str(),
+			       SizeToStr((st.f_bsize * st.f_bavail)).c_str());
+	    }
+	    if (BootSize != 0)
+	    {
+	       bool Unicode = strcmp(nl_langinfo(CODESET), "UTF-8") == 0;
+	       ioprintf(c1out,   Unicode ? "  └─ " : "   - ");
+	       // TRANSLATOR: The required space between number and unit is already included
+	       //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
+	       //  The first %s is the location of the boot directory (determined from Dir::Boot),
+	       //  and it tells the space being needed there.
+	       //  (We have two spaces to align with parent "space needed:"for /boot)
+	       ioprintf(c1out, _("in %s:  %sB / %sB available\n"),
+			_config->FindFile("Dir::Boot").c_str(), SizeToStr(BootSize).c_str(), SizeToStr((st_boot.f_bsize * st_boot.f_bavail)).c_str());
+	       if (BootSize > (st_boot.f_bsize * st_boot.f_bavail))
+		  // TRANSLATOR: The required space between number and unit is already included
+		  //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+		  //  The first %s is the location of the boot directory (determined from Dir::Boot)
+		  _error->Warning(_("More space needed in %s than available: %sB > %sB, installation may fail"),
+				  _config->FindFile("Dir::Boot").c_str(),
+				  SizeToStr(BootSize).c_str(),
+				  SizeToStr((st_boot.f_bsize * st_boot.f_bavail)).c_str());
+	    }
+	 }
+	 else
+	 {
+	    // TRANSLATOR: The required space between number and unit is already included
+	    //  in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+	    ioprintf(c1out, "  ");
+	    ioprintf(c1out, _("Space needed: %sB\n"), SizeToStr(Cache->UsrSize()).c_str());
+	 }
+      }
+   }
    else
       //TRANSLATOR: The required space between number and unit is already included
       // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -380,7 +441,9 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	 if (_config->FindI("quiet",0) < 2 &&
 	     _config->FindB("APT::Get::Assume-Yes",false) == false)
 	 {
-	    if (YnPrompt(outVer < 30 ? _("Do you want to continue?") : _("Continue?")) == false)
+	    // YnPrompt shows all warnings before prompting, so ask stronger and default to N if we have any.
+	    auto Default = outVer < 30 ? true : _error->empty();
+	    if (not YnPrompt(outVer < 30 ? _("Do you want to continue?") : (Default ? _("Continue?") : _("Continue anyway?")), Default))
 	    {
 	       c2out << _("Abort.") << std::endl;
 	       exit(1);

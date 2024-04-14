@@ -642,7 +642,7 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
 	 },
 	 &PrettyFullName,
 	 CurrentToCandidateVersion(&Cache),
-	 "APT::Color::Green");
+	 "APT::Color::Yellow");
 }
 									/*}}}*/
 // ShowHold - Show held but changed packages				/*{{{*/
@@ -758,9 +758,11 @@ void Stats(ostream &out, pkgDepCache &Dep, APT::PackageVector const &HeldBackPac
       if (Dep[I].Delete() == false && (Dep[I].iFlags & pkgDepCache::ReInstall) == pkgDepCache::ReInstall)
 	 ReInstall++;
    }   
-   if (outVer >= 30)
-      ioprintf(out, _("Summary:\n"));
-   ioprintf(out,outVer < 30 ? _("%lu upgraded, %lu newly installed, ") : _("  Upgrading: %lu, Installing: %lu, "),
+   if (outVer >= 30) {
+      ioprintf(out, _("Summary:"));
+      ioprintf(out, "\n  ");
+   }
+   ioprintf(out,outVer < 30 ? _("%lu upgraded, %lu newly installed, ") : _("Upgrading: %lu, Installing: %lu, "),
 	    Upgrade,Install);
    
    if (ReInstall != 0)
@@ -771,10 +773,12 @@ void Stats(ostream &out, pkgDepCache &Dep, APT::PackageVector const &HeldBackPac
    ioprintf(out, outVer < 30 ? _("%lu to remove and %lu not upgraded.\n") : _("Removing: %lu, Not Upgrading: %lu\n"),
 	    Dep.DelCount(), HeldBackPackages.size());
 
-   // FIXME: outVer
-   if (Dep.BadCount() != 0)
+   if (Dep.BadCount() != 0) {
+      if (outVer >= 30)
+	 ioprintf(out, "  ");
       ioprintf(out,_("%lu not fully installed or removed.\n"),
 	       Dep.BadCount());
+   }
 }
 									/*}}}*/
 // YnPrompt - Yes No Prompt.						/*{{{*/

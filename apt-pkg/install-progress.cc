@@ -13,6 +13,7 @@
 #include <sstream>
 #include <vector>
 #include <fcntl.h>
+#include <langinfo.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
@@ -344,14 +345,23 @@ void PackageManagerFancy::Stop()
 std::string 
 PackageManagerFancy::GetTextProgressStr(float Percent, int OutputSize)
 {
+   bool Unicode = strcmp(nl_langinfo(CODESET), "UTF-8") == 0;
    std::string output;
    if (unlikely(OutputSize < 3))
       return output;
 
    int const BarSize = OutputSize - 2; // bar without the leading "[" and trailing "]"
    int const BarDone = std::max(0, std::min(BarSize, static_cast<int>(std::floor(Percent * BarSize))));
+   double dummy;
+   double const BarDoneFractional = std::modf(Percent * BarSize, &dummy);
+   const char *const BarDoneFractionalChar = (const char *[]){
+      " ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"}[static_cast<int>(std::floor(BarDoneFractional * 8))];
    output.append("[");
-   std::fill_n(std::fill_n(std::back_inserter(output), BarDone, '#'), BarSize - BarDone, '.');
+   for (int i = 0; i < BarDone; i++)
+      output.append(Unicode ? "█" : "#");
+   if (BarDone + 1 <= BarSize)
+      output.append(Unicode ? BarDoneFractionalChar : ".");
+   std::fill_n(std::back_inserter(output), BarSize - BarDone - 1, Unicode ? ' ' : '.');
    output.append("]");
    return output;
 }
