@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-12 18:21+0000\n"
+"POT-Creation-Date: 2024-04-14 16:52+0000\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -1969,7 +1969,7 @@ msgstr "A méretek nem egyeznek, írjon az apt@packages.debian.org címre"
 #: apt-private/private-install.cc
 #, fuzzy, c-format
 #| msgid "Downloading %s %s"
-msgid "  Download size: %sB/%sB\n"
+msgid "  Download size: %sB / %sB\n"
 msgstr "Letöltés: %s %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
@@ -1993,17 +1993,47 @@ msgid "Need to get %sB of archives.\n"
 msgstr "Letöltendő adatmennyiség: %sB.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "  Installed: "
-msgid "  Installed size: %sB\n"
-msgstr "  Telepítve: "
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "A művelet után %sB lemezterület kerül felhasználásra.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "A művelet után %sB lemezterület kerül felhasználásra.\n"
+msgid "Space needed: %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "More space needed than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
+#. The first %s is the location of the boot directory (determined from Dir::Boot),
+#. and it tells the space being needed there.
+#. (We have two spaces to align with parent "space needed:"for /boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid "in %s:  %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#. The first %s is the location of the boot directory (determined from Dir::Boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"More space needed in %s than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Space needed: %sB\n"
+msgstr ""
 
 #: apt-private/private-install.cc
 #, fuzzy, c-format
@@ -2026,6 +2056,10 @@ msgstr "A „Trivial Only” meg van adva, de ez nem egy triviális művelet."
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue anyway?"
 msgstr ""
 
 #: apt-private/private-install.cc
@@ -2334,9 +2368,9 @@ msgstr "Az alábbi csomagok VISSZAFEJLESZTÉSRE kerülnek:"
 
 #: apt-private/private-output.cc
 #, fuzzy
-#| msgid "The following held packages will be changed:"
-msgid "Changing held packages:Changing held packages:"
-msgstr "A következő visszatartott csomagok cseréje:"
+#| msgid "Pinned packages:"
+msgid "Changing held packages:"
+msgstr "Rögzített csomagok:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2356,18 +2390,19 @@ msgstr ""
 "NE tegye ezt, hacsak nem tudja pontosan, mit csinál!"
 
 #: apt-private/private-output.cc
-msgid "Summary:\n"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "  Upgrading: %lu, Installing: %lu, "
+msgid "Summary:"
 msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu frissített, %lu újonnan telepített, "
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Upgrading: %lu, Installing: %lu, "
+msgstr "%s telepítése"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -4065,6 +4100,16 @@ msgstr "A kapcsolat idő előtt lezárult"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Az üres fájlok biztosan nem érvényes csomagok"
+
+#, fuzzy, c-format
+#~| msgid "  Installed: "
+#~ msgid "  Installed size: %sB\n"
+#~ msgstr "  Telepítve: "
+
+#, fuzzy
+#~| msgid "The following held packages will be changed:"
+#~ msgid "Changing held packages:Changing held packages:"
+#~ msgstr "A következő visszatartott csomagok cseréje:"
 
 #~ msgid "Yes, do as I say!"
 #~ msgstr "Igen, tedd amit mondok!"

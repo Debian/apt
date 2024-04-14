@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-12 18:21+0000\n"
+"POT-Creation-Date: 2024-04-14 16:52+0000\n"
 "PO-Revision-Date: 2012-06-29 15:45+0100\n"
 "Last-Translator: Miguel Figueiredo <elmig@debianpt.org>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -1936,7 +1936,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, fuzzy, c-format
 #| msgid "Downloading %s %s"
-msgid "  Download size: %sB/%sB\n"
+msgid "  Download size: %sB / %sB\n"
 msgstr "A obter %s %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
@@ -1960,18 +1960,48 @@ msgid "Need to get %sB of archives.\n"
 msgstr "É necessário obter %sB de arquivos.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "  Installed: "
-msgid "  Installed size: %sB\n"
-msgstr "  Instalado: "
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr ""
+"Após esta operação, serão utilizados %sB adicionais de espaço em disco.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
+msgid "Space needed: %sB / %sB available\n"
 msgstr ""
-"Após esta operação, serão utilizados %sB adicionais de espaço em disco.\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "More space needed than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
+#. The first %s is the location of the boot directory (determined from Dir::Boot),
+#. and it tells the space being needed there.
+#. (We have two spaces to align with parent "space needed:"for /boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid "in %s:  %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#. The first %s is the location of the boot directory (determined from Dir::Boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"More space needed in %s than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Space needed: %sB\n"
+msgstr ""
 
 #: apt-private/private-install.cc
 #, fuzzy, c-format
@@ -1994,6 +2024,10 @@ msgstr "Trivial Only especificado mas isto não é uma operação trivial."
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue anyway?"
 msgstr ""
 
 #: apt-private/private-install.cc
@@ -2306,9 +2340,9 @@ msgstr "Será feito o DOWNGRADE aos seguintes pacotes:"
 
 #: apt-private/private-output.cc
 #, fuzzy
-#| msgid "The following held packages will be changed:"
-msgid "Changing held packages:Changing held packages:"
-msgstr "Os seguintes pacotes mantidos serão mudados:"
+#| msgid "Pinned packages:"
+msgid "Changing held packages:"
+msgstr "Pacotes Marcados:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2328,18 +2362,19 @@ msgstr ""
 "Isso NÃO deverá ser feito a menos que saiba exactamente o que está a fazer!"
 
 #: apt-private/private-output.cc
-msgid "Summary:\n"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "  Upgrading: %lu, Installing: %lu, "
+msgid "Summary:"
 msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu pacotes actualizados, %lu pacotes novos instalados, "
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Upgrading: %lu, Installing: %lu, "
+msgstr "A instalar %s"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -4017,6 +4052,16 @@ msgstr "Ligação encerrada prematuramente"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Ficheiros vazios não podem ser arquivos válidos"
+
+#, fuzzy, c-format
+#~| msgid "  Installed: "
+#~ msgid "  Installed size: %sB\n"
+#~ msgstr "  Instalado: "
+
+#, fuzzy
+#~| msgid "The following held packages will be changed:"
+#~ msgid "Changing held packages:Changing held packages:"
+#~ msgstr "Os seguintes pacotes mantidos serão mudados:"
 
 #~ msgid "Yes, do as I say!"
 #~ msgstr "Sim, faça como eu digo!"

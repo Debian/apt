@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-12 18:21+0000\n"
+"POT-Creation-Date: 2024-04-14 16:52+0000\n"
 "PO-Revision-Date: 2006-10-10 09:48+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -1853,9 +1853,10 @@ msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr "យី អី​ក៏​ចម្លែង​ម្លេះ.. ទំហំ​មិន​ដូច​គ្នា​ឡើយ ។ សូម​ផ្ញើ​អ៊ីមែល​ទៅ apt@packages.debian.org"
 
 #: apt-private/private-install.cc
-#, c-format
-msgid "  Download size: %sB/%sB\n"
-msgstr ""
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Download size: %sB / %sB\n"
+msgstr "  បាន​ដំឡើង ៖ "
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1878,16 +1879,46 @@ msgstr "ត្រូវ​ការយក​ %sB នៃ​ប័ណ្ណសា�
 
 #: apt-private/private-install.cc
 #, fuzzy, c-format
-#| msgid "  Installed: "
-msgid "  Installed size: %sB\n"
-msgstr "  បាន​ដំឡើង ៖ "
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "បន្ទាប់​ពី​ពន្លា​ %sB នៃ​ការ​បន្ថែម​​ទំហំ​ថាស​ត្រូវ​បាន​ប្រើ ។\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "បន្ទាប់​ពី​ពន្លា​ %sB នៃ​ការ​បន្ថែម​​ទំហំ​ថាស​ត្រូវ​បាន​ប្រើ ។\n"
+#, c-format
+msgid "Space needed: %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "More space needed than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
+#. The first %s is the location of the boot directory (determined from Dir::Boot),
+#. and it tells the space being needed there.
+#. (We have two spaces to align with parent "space needed:"for /boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid "in %s:  %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#. The first %s is the location of the boot directory (determined from Dir::Boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"More space needed in %s than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Space needed: %sB\n"
+msgstr ""
 
 #: apt-private/private-install.cc
 #, fuzzy, c-format
@@ -1910,6 +1941,10 @@ msgstr "បានបញ្ជាក់​តែប្រតិបត្តិក
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue anyway?"
 msgstr ""
 
 #: apt-private/private-install.cc
@@ -2208,9 +2243,9 @@ msgstr "កញ្ចប់​ខាងក្រោម​នឹង​​ត្រ
 
 #: apt-private/private-output.cc
 #, fuzzy
-#| msgid "The following held packages will be changed:"
-msgid "Changing held packages:Changing held packages:"
-msgstr "កញ្ចប់​រង់ចាំ​ខាងក្រោម​នឹង​ត្រូវ​​បានផ្លាស់​​ប្តូរ​ ៖"
+#| msgid "Pinned packages:"
+msgid "Changing held packages:"
+msgstr "កញ្ចប់​ដែល​បាន​ខ្ទាស់ ៖"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2230,18 +2265,18 @@ msgstr ""
 "ការយកចេញ​នេះ​មិន​ត្រូវ​បានធ្វើ​ទេ​លុះត្រា​តែ​អ្នកដឹង​ថា​​អ្នក​កំពុង​ធ្វើ​អ្វីឲ្យប្រាកដ !"
 
 #: apt-private/private-output.cc
-msgid "Summary:\n"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "  Upgrading: %lu, Installing: %lu, "
+msgid "Summary:"
 msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu ត្រូវ​បាន​ធ្វើ​ឲ្យ​ប្រសើរ %lu ត្រូវ​បានដំឡើង​ថ្មី "
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+msgid "Upgrading: %lu, Installing: %lu, "
+msgstr "បាន​ដំឡើង %s"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3891,6 +3926,11 @@ msgstr "បាន​បិទ​ការ​តភ្ជាប់​មុន​
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#, fuzzy
+#~| msgid "The following held packages will be changed:"
+#~ msgid "Changing held packages:Changing held packages:"
+#~ msgstr "កញ្ចប់​រង់ចាំ​ខាងក្រោម​នឹង​ត្រូវ​​បានផ្លាស់​​ប្តូរ​ ៖"
 
 #~ msgid "Yes, do as I say!"
 #~ msgstr "បាទ/ចាស ធ្វើ​ដូច​ដែល​ខ្ញុំ​និយាយ !"

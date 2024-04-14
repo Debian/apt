@@ -1,3 +1,23 @@
+apt (2.9.1) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Further UX improvements for apt(8)
+    - Estimate free space and issue warnings if exceeded, incl. /boot
+      + Rename "Installed size:" to "Space needed:"
+      + Space needed: Show space available in /usr
+      + Show space estimate for /boot, if separate; or estimate initrd for /usr
+      + Add warnings if space estimate exceeds free space
+    - Show downgrades as yellow
+    - Use "Continue anyway?" if a warning is queued, and default to N
+    - Use unicode install progress bar on UTF-8 locales
+  * Hide some of the output formatting and details from translatable strings,
+    do expect some more translation churn in upcoming uploads.
+
+  [ Rafael ]
+  * Remove duplicate sentence "Changing held packages:"
+
+ -- Julian Andres Klode <jak@debian.org>  Sun, 14 Apr 2024 18:45:28 +0200
+
 apt (2.9.0) unstable; urgency=medium
 
   * Welcome to the APT 3.0 development series. It has a new UI for

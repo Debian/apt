@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-12 18:21+0000\n"
+"POT-Creation-Date: 2024-04-14 16:52+0000\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -1917,7 +1917,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, fuzzy, c-format
 #| msgid "Downloading %s %s"
-msgid "  Download size: %sB/%sB\n"
+msgid "  Download size: %sB / %sB\n"
 msgstr "Đang tải về %s %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
@@ -1941,17 +1941,47 @@ msgid "Need to get %sB of archives.\n"
 msgstr "Cần phải lấy %sB từ kho chứa.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "  Installed: "
-msgid "  Installed size: %sB\n"
-msgstr "  Đã cài đặt: "
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "Sau thao tác này, %sB dung lượng đĩa sẽ bị chiếm dụng.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "Sau thao tác này, %sB dung lượng đĩa sẽ bị chiếm dụng.\n"
+msgid "Space needed: %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "More space needed than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
+#. The first %s is the location of the boot directory (determined from Dir::Boot),
+#. and it tells the space being needed there.
+#. (We have two spaces to align with parent "space needed:"for /boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid "in %s:  %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#. The first %s is the location of the boot directory (determined from Dir::Boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"More space needed in %s than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Space needed: %sB\n"
+msgstr ""
 
 #: apt-private/private-install.cc
 #, fuzzy, c-format
@@ -1976,6 +2006,10 @@ msgstr ""
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue anyway?"
 msgstr ""
 
 #: apt-private/private-install.cc
@@ -2275,9 +2309,9 @@ msgstr "Những gói sau đây sẽ bị HẠ CẤP:"
 
 #: apt-private/private-output.cc
 #, fuzzy
-#| msgid "The following held packages will be changed:"
-msgid "Changing held packages:Changing held packages:"
-msgstr "Những gói giữ lại sau đây sẽ bị THAY ĐỔI:"
+#| msgid "Pinned packages:"
+msgid "Changing held packages:"
+msgstr "Các gói đã ghim:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2297,18 +2331,19 @@ msgstr ""
 "ĐỪNG làm như thế trừ khi bạn biết chính xác mình đang làm gì!"
 
 #: apt-private/private-output.cc
-msgid "Summary:\n"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "  Upgrading: %lu, Installing: %lu, "
+msgid "Summary:"
 msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu nâng cấp, %lu được cài đặt mới, "
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Upgrading: %lu, Installing: %lu, "
+msgstr "Đang cài đặt %s"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -4012,6 +4047,16 @@ msgstr "Kết nối bị đóng bất ngờ"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
+
+#, fuzzy, c-format
+#~| msgid "  Installed: "
+#~ msgid "  Installed size: %sB\n"
+#~ msgstr "  Đã cài đặt: "
+
+#, fuzzy
+#~| msgid "The following held packages will be changed:"
+#~ msgid "Changing held packages:Changing held packages:"
+#~ msgstr "Những gói giữ lại sau đây sẽ bị THAY ĐỔI:"
 
 #~ msgid "Yes, do as I say!"
 #~ msgstr "Có, làm đi!"

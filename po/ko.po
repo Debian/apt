@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-12 18:21+0000\n"
+"POT-Creation-Date: 2024-04-14 16:52+0000\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -1870,9 +1870,10 @@ msgstr ""
 "시오."
 
 #: apt-private/private-install.cc
-#, c-format
-msgid "  Download size: %sB/%sB\n"
-msgstr ""
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Download size: %sB / %sB\n"
+msgstr "  설치: "
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1894,17 +1895,47 @@ msgid "Need to get %sB of archives.\n"
 msgstr "%s바이트 아카이브를 받아야 합니다.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "  Installed: "
-msgid "  Installed size: %sB\n"
-msgstr "  설치: "
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "이 작업 후 %s바이트의 디스크 공간을 더 사용하게 됩니다.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "이 작업 후 %s바이트의 디스크 공간을 더 사용하게 됩니다.\n"
+msgid "Space needed: %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "More space needed than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
+#. The first %s is the location of the boot directory (determined from Dir::Boot),
+#. and it tells the space being needed there.
+#. (We have two spaces to align with parent "space needed:"for /boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid "in %s:  %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#. The first %s is the location of the boot directory (determined from Dir::Boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"More space needed in %s than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Space needed: %sB\n"
+msgstr ""
 
 #: apt-private/private-install.cc
 #, fuzzy, c-format
@@ -1929,6 +1960,10 @@ msgstr ""
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue anyway?"
 msgstr ""
 
 #: apt-private/private-install.cc
@@ -2229,9 +2264,9 @@ msgstr "다음 패키지를 다운그레이드할 것입니다:"
 
 #: apt-private/private-output.cc
 #, fuzzy
-#| msgid "The following held packages will be changed:"
-msgid "Changing held packages:Changing held packages:"
-msgstr "고정되었던 다음 패키지를 바꿀 것입니다:"
+#| msgid "Pinned packages:"
+msgid "Changing held packages:"
+msgstr "핀 패키지:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2251,18 +2286,19 @@ msgstr ""
 "무슨 일을 하고 있는 지 정확히 알지 못한다면 지우지 마십시오!"
 
 #: apt-private/private-output.cc
-msgid "Summary:\n"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "  Upgrading: %lu, Installing: %lu, "
+msgid "Summary:"
 msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu개 업그레이드, %lu개 새로 설치, "
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Upgrading: %lu, Installing: %lu, "
+msgstr "%s 설치하는 중입니다"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3912,6 +3948,11 @@ msgstr "연결이 너무 빨리 끊어졌습니다"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#, fuzzy
+#~| msgid "The following held packages will be changed:"
+#~ msgid "Changing held packages:Changing held packages:"
+#~ msgstr "고정되었던 다음 패키지를 바꿀 것입니다:"
 
 # 입력을 받아야 한다.  한글 입력을 못 할 수 있으므로 원문 그대로 사용.
 #~ msgid "Yes, do as I say!"

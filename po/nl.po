@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.7.12\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-12 18:21+0000\n"
+"POT-Creation-Date: 2024-04-14 16:52+0000\n"
 "PO-Revision-Date: 2024-02-26 20:56+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -1991,9 +1991,10 @@ msgstr ""
 "org te mailen"
 
 #: apt-private/private-install.cc
-#, c-format
-msgid "  Download size: %sB/%sB\n"
-msgstr ""
+#, fuzzy, c-format
+#| msgid "Download Failed"
+msgid "  Download size: %sB / %sB\n"
+msgstr "Ophalen mislukt"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2016,17 +2017,47 @@ msgid "Need to get %sB of archives.\n"
 msgstr "Er moeten %sB aan archieven opgehaald worden.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "  Installed: "
-msgid "  Installed size: %sB\n"
-msgstr "  Geïnstalleerd: "
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "Na deze bewerking zal er %sB extra schijfruimte gebruikt worden.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "Na deze bewerking zal er %sB extra schijfruimte gebruikt worden.\n"
+msgid "Space needed: %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "More space needed than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
+#. The first %s is the location of the boot directory (determined from Dir::Boot),
+#. and it tells the space being needed there.
+#. (We have two spaces to align with parent "space needed:"for /boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid "in %s:  %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#. The first %s is the location of the boot directory (determined from Dir::Boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"More space needed in %s than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Space needed: %sB\n"
+msgstr ""
 
 #: apt-private/private-install.cc
 #, fuzzy, c-format
@@ -2052,6 +2083,10 @@ msgid ""
 msgstr ""
 "Het verwijderen van essentiële voor het systeem kritieke pakketten is niet "
 "toegestaan. Dit kan het systeem onklaar maken."
+
+#: apt-private/private-install.cc
+msgid "Continue anyway?"
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Continue?"
@@ -2361,9 +2396,9 @@ msgstr "De volgende pakketten zullen GEDEGRADEERD worden:"
 
 #: apt-private/private-output.cc
 #, fuzzy
-#| msgid "The following held packages will be changed:"
-msgid "Changing held packages:Changing held packages:"
-msgstr "De volgende gehandhaafde pakketten zullen gewijzigd worden:"
+#| msgid "Pinned packages:"
+msgid "Changing held packages:"
+msgstr "Vastgepinde pakketten:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2383,18 +2418,19 @@ msgstr ""
 "Dit dient NIET gedaan te worden tenzij u precies weet wat u doet!"
 
 #: apt-private/private-output.cc
-msgid "Summary:\n"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "  Upgrading: %lu, Installing: %lu, "
+msgid "Summary:"
 msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu opgewaardeerd, %lu nieuw geïnstalleerd, "
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Upgrading: %lu, Installing: %lu, "
+msgstr "%s wordt geïnstalleerd"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -4115,3 +4151,13 @@ msgstr "Verbinding werd voortijdig afgebroken"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Lege bestanden kunnen geen geldige archieven zijn"
+
+#, fuzzy, c-format
+#~| msgid "  Installed: "
+#~ msgid "  Installed size: %sB\n"
+#~ msgstr "  Geïnstalleerd: "
+
+#, fuzzy
+#~| msgid "The following held packages will be changed:"
+#~ msgid "Changing held packages:Changing held packages:"
+#~ msgstr "De volgende gehandhaafde pakketten zullen gewijzigd worden:"

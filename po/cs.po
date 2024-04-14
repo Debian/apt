@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.5.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-12 18:21+0000\n"
+"POT-Creation-Date: 2024-04-14 16:52+0000\n"
 "PO-Revision-Date: 2023-02-10 12:58+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -1911,7 +1911,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, fuzzy, c-format
 #| msgid "Downloading %s %s"
-msgid "  Download size: %sB/%sB\n"
+msgid "  Download size: %sB / %sB\n"
 msgstr "Stahuje se %s %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
@@ -1935,17 +1935,47 @@ msgid "Need to get %sB of archives.\n"
 msgstr "Nutno stáhnout %sB archivů.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "  Installed: "
-msgid "  Installed size: %sB\n"
-msgstr "  Instalovaná verze: "
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "Po této operaci bude na disku použito dalších %sB.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "Po této operaci bude na disku použito dalších %sB.\n"
+msgid "Space needed: %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "More space needed than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
+#. The first %s is the location of the boot directory (determined from Dir::Boot),
+#. and it tells the space being needed there.
+#. (We have two spaces to align with parent "space needed:"for /boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid "in %s:  %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#. The first %s is the location of the boot directory (determined from Dir::Boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"More space needed in %s than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Space needed: %sB\n"
+msgstr ""
 
 #: apt-private/private-install.cc
 #, fuzzy, c-format
@@ -1971,6 +2001,10 @@ msgid ""
 msgstr ""
 "Odstranění nezbytných systémově-kritických balíků není povoleno. Může to "
 "rozbít systém."
+
+#: apt-private/private-install.cc
+msgid "Continue anyway?"
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Continue?"
@@ -2283,9 +2317,9 @@ msgstr "Následující balíky budou DEGRADOVÁNY:"
 
 #: apt-private/private-output.cc
 #, fuzzy
-#| msgid "The following held packages will be changed:"
-msgid "Changing held packages:Changing held packages:"
-msgstr "Následující podržené balíky budou změněny:"
+#| msgid "Pinned packages:"
+msgid "Changing held packages:"
+msgstr "Vypíchnuté balíky:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2305,18 +2339,19 @@ msgstr ""
 "Pokud přesně nevíte, co děláte, NEDĚLEJTE to!"
 
 #: apt-private/private-output.cc
-msgid "Summary:\n"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "  Upgrading: %lu, Installing: %lu, "
+msgid "Summary:"
 msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu aktualizováno, %lu nově instalováno, "
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Upgrading: %lu, Installing: %lu, "
+msgstr "Instaluje se %s"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3986,6 +4021,16 @@ msgstr "Spojení bylo předčasně ukončeno"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prázdné soubory nejsou platnými archivy"
+
+#, fuzzy, c-format
+#~| msgid "  Installed: "
+#~ msgid "  Installed size: %sB\n"
+#~ msgstr "  Instalovaná verze: "
+
+#, fuzzy
+#~| msgid "The following held packages will be changed:"
+#~ msgid "Changing held packages:Changing held packages:"
+#~ msgstr "Následující podržené balíky budou změněny:"
 
 #~ msgid "Yes, do as I say!"
 #~ msgstr "Ano, udělej to tak, jak říkám!"

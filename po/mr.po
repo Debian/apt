@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-12 18:21+0000\n"
+"POT-Creation-Date: 2024-04-14 16:52+0000\n"
 "PO-Revision-Date: 2008-11-20 23:27+0530\n"
 "Last-Translator: Sampada <sampadanakhare@gmail.com>\n"
 "Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -1854,9 +1854,10 @@ msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr "किती विचित्र...आकार जुळत नाहीत, ईमेल apt@packages.debian.org"
 
 #: apt-private/private-install.cc
-#, c-format
-msgid "  Download size: %sB/%sB\n"
-msgstr ""
+#, fuzzy, c-format
+#| msgid "  Installed: "
+msgid "  Download size: %sB / %sB\n"
+msgstr "अधिष्ठापित केले:"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1878,17 +1879,47 @@ msgid "Need to get %sB of archives.\n"
 msgstr "अर्काईव्हज%sB घेण्याची गरज आहे.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "  Installed: "
-msgid "  Installed size: %sB\n"
-msgstr "अधिष्ठापित केले:"
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "या क्रियेनंतर, %sB एवढी अधिक डिस्क जागा वापरली जाईल.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "या क्रियेनंतर, %sB एवढी अधिक डिस्क जागा वापरली जाईल.\n"
+msgid "Space needed: %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: apt-private/private-install.cc
+#, c-format
+msgid "More space needed than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
+#. The first %s is the location of the boot directory (determined from Dir::Boot),
+#. and it tells the space being needed there.
+#. (We have two spaces to align with parent "space needed:"for /boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid "in %s:  %sB / %sB available\n"
+msgstr ""
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#. The first %s is the location of the boot directory (determined from Dir::Boot)
+#: apt-private/private-install.cc
+#, c-format
+msgid ""
+"More space needed in %s than available: %sB > %sB, installation may fail"
+msgstr ""
+
+#: apt-private/private-install.cc
+#, c-format
+msgid "Space needed: %sB\n"
+msgstr ""
 
 #: apt-private/private-install.cc
 #, fuzzy, c-format
@@ -1911,6 +1942,10 @@ msgstr "क्षुल्लक फक्त निर्देशित के
 msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
+msgstr ""
+
+#: apt-private/private-install.cc
+msgid "Continue anyway?"
 msgstr ""
 
 #: apt-private/private-install.cc
@@ -2212,9 +2247,9 @@ msgstr "खालील पॅकेजेस पुढच्या आवृत
 
 #: apt-private/private-output.cc
 #, fuzzy
-#| msgid "The following held packages will be changed:"
-msgid "Changing held packages:Changing held packages:"
-msgstr "पुढिल ठेवलेली पॅकेजेस बदलतील:"
+#| msgid "Pinned packages:"
+msgid "Changing held packages:"
+msgstr "एकत्रित पॅकेजेस:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2234,18 +2269,19 @@ msgstr ""
 "तुम्हाला तुम्ही काय करत आहात हे कळेपर्यंत असं करता येणार नाही!"
 
 #: apt-private/private-output.cc
-msgid "Summary:\n"
-msgstr ""
-
-#: apt-private/private-output.cc
-#, c-format
-msgid "  Upgrading: %lu, Installing: %lu, "
+msgid "Summary:"
 msgstr ""
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu पुढे आवृत्तीकृत केले, %lu नव्याने संस्थापित केले,"
+
+#: apt-private/private-output.cc
+#, fuzzy, c-format
+#| msgid "Installing %s"
+msgid "Upgrading: %lu, Installing: %lu, "
+msgstr "%s संस्थापित होत आहे"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3893,6 +3929,11 @@ msgstr "जोडणी अकाली बंद झाली"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#, fuzzy
+#~| msgid "The following held packages will be changed:"
+#~ msgid "Changing held packages:Changing held packages:"
+#~ msgstr "पुढिल ठेवलेली पॅकेजेस बदलतील:"
 
 #~ msgid "Yes, do as I say!"
 #~ msgstr "हो, मी म्ह्टल्याप्रमाणे करा!"
