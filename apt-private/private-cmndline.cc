@@ -487,8 +487,8 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
    }
    if (binary == "apt" || binary == "apt-config")
    {
-      if (getenv("NO_COLOR") == nullptr)
-         _config->CndSet("Binary::apt::APT::Color", true);
+      if (getenv("NO_COLOR") == nullptr && getenv("APT_NO_COLOR") == nullptr)
+	 _config->CndSet("Binary::apt::APT::Color", true);
       _config->CndSet("Binary::apt::APT::Output-Version", 30);
       _config->CndSet("Binary::apt::APT::Cache::Show::Version", 2);
       _config->CndSet("Binary::apt::APT::Cache::AllVersions", false);
