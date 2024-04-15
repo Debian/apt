@@ -34,6 +34,7 @@
 #include <string>
 #include <unistd.h>
 
+#include <apti18n.h>
 									/*}}}*/
 
 // Global Error Object							/*{{{*/
@@ -283,19 +284,23 @@ APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
    {
    case GlobalError::FATAL:
    case GlobalError::ERROR:
-      out << 'E';
+      // TRANSLATOR: This is a warning level displayed before the message
+      out << (out_ver < 30 ? "E:" : _("Error:"));
       break;
    case GlobalError::WARNING:
-      out << 'W';
+      // TRANSLATOR: This is a warning level displayed before the message
+      out << (out_ver < 30 ? "W:" : _("Warning:"));
       break;
    case GlobalError::NOTICE:
-      out << 'N';
+      // TRANSLATOR: This is a warning level displayed before the message
+      out << (out_ver < 30 ? "N:" : _("Notice:"));
       break;
    case GlobalError::DEBUG:
-      out << 'D';
+      // TRANSLATOR: This is a warning level displayed before the message
+      out << _("Debug:");
       break;
    }
-   out << ": ";
+   out << " ";
 
    if (use_color)
    {
