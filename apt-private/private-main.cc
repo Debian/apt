@@ -68,6 +68,8 @@ void CheckIfSimulateMode(CommandLine &CmdL)				/*{{{*/
 	    "      Keep also in mind that locking is deactivated,\n"
 	    "      so don't depend on the relevance to the real current situation!\n"),
 	    _config->Find("Binary").c_str());
+      if (_config->FindI("APT::Output-Version") >= 30)
+	 std::cout << std::endl;
       _config->Set("Debug::NoLocking",true);
    }
 }
