@@ -684,6 +684,16 @@ bool DoAutomaticRemove(CacheFile &Cache)
    // if we don't remove them, we should show them!
    if (doAutoRemove == false && autoRemoveCount != 0)
    {
+      std::string note;
+      std::string autocmd = "apt autoremove";
+      if (getenv("SUDO_USER") != nullptr)
+      {
+	 auto const envsudocmd = getenv("SUDO_COMMAND");
+	 auto const envshell = getenv("SHELL");
+	 if (envsudocmd == nullptr || envshell == nullptr || strcmp(envsudocmd, envshell) != 0)
+	    autocmd = "sudo " + autocmd;
+      }
+      strprintf(note, P_("Use '%s' to remove it.", "Use '%s' to remove them.", autoRemoveCount), autocmd.c_str());
       if (smallList == false)
       {
 	 // trigger marking now so that the package list is correct
@@ -693,21 +703,14 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	          "The following packages were automatically installed and are no longer required:",
 	          autoRemoveCount), Universe,
 	       [&Cache](pkgCache::PkgIterator const &Pkg) { return (*Cache)[Pkg].Garbage == true && (*Cache)[Pkg].Delete() == false; },
-	       &PrettyFullName, CandidateVersion(&Cache));
+	       &PrettyFullName, CandidateVersion(&Cache), "", note);
       }
       else
+      {
 	 ioprintf(c1out, P_("%lu package was automatically installed and is no longer required.\n",
 	          "%lu packages were automatically installed and are no longer required.\n", autoRemoveCount), autoRemoveCount);
-      std::string autocmd = "apt autoremove";
-      if (getenv("SUDO_USER") != nullptr)
-      {
-	 auto const envsudocmd = getenv("SUDO_COMMAND");
-	 auto const envshell = getenv("SHELL");
-	 if (envsudocmd == nullptr || envshell == nullptr || strcmp(envsudocmd, envshell) != 0)
-	    autocmd = "sudo " + autocmd;
+	 c1out << note << std::endl;
       }
-      ioprintf(c1out, P_("Use '%s' to remove it.", "Use '%s' to remove them.", autoRemoveCount), autocmd.c_str());
-      c1out << std::endl;
    }
    return true;
 }

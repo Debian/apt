@@ -43,7 +43,8 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
       PredicateC Predicate,
       DisplayP PkgDisplay,
       DisplayV VerboseDisplay,
-      std::string colorName = "")
+      std::string colorName = "",
+	      std::string Note = "")
 {
    size_t const ScreenWidth = (::ScreenWidth > 3) ? ::ScreenWidth - 3 : 0;
    int ScreenUsed = 0;
@@ -105,6 +106,8 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
 	 ShowWithColumns(out, PackageList, 2, ScreenWidth);
 	 out << resetColor;
       }
+      if (not Note.empty())
+	 out << Note << std::endl;
       if (_config->FindI("APT::Output-Version") >= 30)
 	 out << std::endl;
       return false;
