@@ -166,6 +166,14 @@ class APT_PUBLIC pkgTagSection
     * @return \b true if successful, otherwise \b false
     */
    bool Write(FileFd &File, char const * const * const Order = NULL, std::vector<Tag> const &Rewrite = std::vector<Tag>()) const;
+#ifdef APT_COMPILING_APT
+   enum WriteFlags
+   {
+      WRITE_DEFAULT = 0,
+      WRITE_HUMAN = (1 << 0), /* write human readable output, may include highlighting */
+   };
+   bool Write(FileFd &File, WriteFlags flags, char const *const *const Order = NULL, std::vector<Tag> const &Rewrite = std::vector<Tag>()) const;
+#endif
 };
 
 

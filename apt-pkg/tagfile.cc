@@ -12,6 +12,7 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/string_view.h>
@@ -30,8 +31,9 @@
 #include <apti18n.h>
 									/*}}}*/
 
-using std::string;
 using APT::StringView;
+using APT::Configuration::color;
+using std::string;
 
 class APT_HIDDEN pkgTagFilePrivate					/*{{{*/
 {
@@ -972,19 +974,23 @@ pkgTagSection::Tag pkgTagSection::Tag::Rewrite(std::string const &Name, std::str
    else
       return Tag(REWRITE, Name, Data);
 }
-static bool WriteTag(FileFd &File, std::string Tag, StringView Value)
+static bool WriteTag(FileFd &File, std::string Tag, StringView Value, pkgTagSection::WriteFlags flags)
 {
    if (Value.empty() || isspace_ascii(Value[0]) != 0)
       Tag.append(":");
    else
       Tag.append(": ");
+
+   if (flags & pkgTagSection::WRITE_HUMAN)
+      Tag = color("Show::Field", Tag);
+
    Tag.append(Value.data(), Value.length());
    Tag.append("\n");
    return File.Write(Tag.c_str(), Tag.length());
 }
-static bool RewriteTags(FileFd &File, pkgTagSection const * const This, char const * const Tag,
-      std::vector<pkgTagSection::Tag>::const_iterator &R,
-      std::vector<pkgTagSection::Tag>::const_iterator const &REnd)
+static bool RewriteTags(FileFd &File, pkgTagSection const *const This, char const *const Tag,
+			std::vector<pkgTagSection::Tag>::const_iterator &R,
+			std::vector<pkgTagSection::Tag>::const_iterator const &REnd, pkgTagSection::WriteFlags flags)
 {
    size_t const TagLen = strlen(Tag);
    for (; R != REnd; ++R)
@@ -1002,11 +1008,15 @@ static bool RewriteTags(FileFd &File, pkgTagSection const * const This, char con
       else
 	 continue;
 
-      return WriteTag(File, Tag, data);
+      return WriteTag(File, Tag, data, flags);
    }
    return true;
 }
 bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::vector<Tag> const &Rewrite) const
+{
+   return Write(File, WRITE_DEFAULT, Order, Rewrite);
+}
+bool pkgTagSection::Write(FileFd &File, pkgTagSection::WriteFlags flags, char const *const *const Order, std::vector<Tag> const &Rewrite) const
 {
    // first pass: Write everything we have an order for
    if (Order != NULL)
@@ -1014,7 +1024,7 @@ bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::v
       for (unsigned int I = 0; Order[I] != 0; ++I)
       {
 	 std::vector<Tag>::const_iterator R = Rewrite.begin();
-	 if (RewriteTags(File, this, Order[I], R, Rewrite.end()) == false)
+	 if (RewriteTags(File, this, Order[I], R, Rewrite.end(), flags) == false)
 	    return false;
 	 if (R != Rewrite.end())
 	    continue;
@@ -1022,7 +1032,7 @@ bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::v
 	 if (Exists(Order[I]) == false)
 	    continue;
 
-	 if (WriteTag(File, Order[I], FindRaw(Order[I])) == false)
+	 if (WriteTag(File, Order[I], FindRaw(Order[I]), flags) == false)
 	    return false;
       }
    }
@@ -1047,12 +1057,12 @@ bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::v
 
 	 std::string const name(fieldname, fieldnamelen);
 	 std::vector<Tag>::const_iterator R = Rewrite.begin();
-	 if (RewriteTags(File, this, name.c_str(), R, Rewrite.end()) == false)
+	 if (RewriteTags(File, this, name.c_str(), R, Rewrite.end(), flags) == false)
 	    return false;
 	 if (R != Rewrite.end())
 	    continue;
 
-	 if (WriteTag(File, name, FindRaw(name)) == false)
+	 if (WriteTag(File, name, FindRaw(name), flags) == false)
 	    return false;
       }
    }
@@ -1076,7 +1086,7 @@ bool pkgTagSection::Write(FileFd &File, char const * const * const Order, std::v
 	    continue;
       }
 
-      if (WriteTag(File, name, ((R->Action == Tag::RENAME) ? FindRaw(R->Name) : R->Data)) == false)
+      if (WriteTag(File, name, ((R->Action == Tag::RENAME) ? FindRaw(R->Name) : R->Data), flags) == false)
 	 return false;
    }
    return true;
