@@ -156,12 +156,12 @@ void OpTextProgress::Done()
       char S[300] = {};
       if (_error->PendingError() == true)
 	 snprintf(S,sizeof(S),_("%c%s... Error!"),'\r',OldOp.c_str());
-      else if (not _config->FindB("APT::Internal::OpProgress::EraseLines", true))
+      else if (not _config->FindB("APT::Internal::OpProgress::EraseLines", _config->FindI("APT::Output-Version") >= 30))
 	 snprintf(S,sizeof(S),_("%c%s... Done"),'\r',OldOp.c_str());
       Write(S);
       // FIXME: apt-cdrom relies on this end of line being printed
-      if (_error->PendingError() || not _config->FindB("APT::Internal::OpProgress::EraseLines", true))
-         cout << endl;
+      if (_error->PendingError() || not _config->FindB("APT::Internal::OpProgress::EraseLines", _config->FindI("APT::Output-Version") >= 30))
+	 cout << endl;
       OldOp = string();
    }
 
@@ -202,8 +202,8 @@ void OpTextProgress::Update()
    {
       snprintf(S,sizeof(S),"\r%s",OldOp.c_str());
       Write(S);
-      if (_config->FindB("APT::Internal::OpProgress::EraseLines", true))
-         cout << endl;
+      if (_config->FindB("APT::Internal::OpProgress::EraseLines", _config->FindI("APT::Output-Version") >= 30))
+	 cout << endl;
    }
 
    // Print the spinner. Absolute progress shows us a time progress.
