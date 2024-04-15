@@ -252,7 +252,7 @@ void GlobalError::MergeWithStack() {
 APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
 {
    static constexpr auto COLOR_RESET = "\033[0m";
-   static constexpr auto COLOR_NOTICE = "\033[33m";  // normal yellow
+   static constexpr auto COLOR_NOTICE = "\033[1m";   // bold neutral
    static constexpr auto COLOR_WARN = "\033[1;33m";  // bold yellow
    static constexpr auto COLOR_ERROR = "\033[1;31m"; // bold red
 
