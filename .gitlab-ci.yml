@@ -1,4 +1,4 @@
-image: debian:testing
+image: ubuntu:noble
 variables:
   DEBIAN_FRONTEND: noninteractive
   CCACHE_DIR: $CI_PROJECT_DIR/.ccache
@@ -30,7 +30,7 @@ test as root:
     - unbuffer ./test/integration/run-tests -q -j 4
 
 test as user:
-  image: i386/debian:testing
+  image: ubuntu:noble
   stage: test
   script:
     - apt-get install --no-install-recommends -qq libxml2-utils
