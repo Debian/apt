@@ -1,3 +1,25 @@
+apt (2.8.0) noble; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Revert "Temporarily downgrade key assertions to "soon worthless""
+    We temporarily downgraded the errors to warnings to give the
+    launchpad PPAs time to be fixed, but warnings are not safe:
+    Untrusted keys could be hiding on your system, but just not
+    used at the moment. Hence revert this so we get the errors we
+    want. (LP: #2060721)
+  * Branch off the stable 2.8.y branch for noble:
+    - CI: Test in ubuntu:noble images for 2.8.y
+    - debian/gbp.conf: Point at the 2.8.y branch
+
+  [ David Kalnischkies ]
+  * Test suite fixes:
+    - Avoid subshell hiding failure report from testfilestats
+    - Ignore umask of leftover diff_Index in failed pdiff test
+  * Documentation translation fixes:
+    - Fix and unfuzzy previous VCG/Graphviz URI change
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Tue, 16 Apr 2024 16:59:14 +0200
+
 apt (2.7.14) unstable; urgency=medium
 
   [ Steve Langasek ]
