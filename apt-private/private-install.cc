@@ -227,11 +227,11 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
    // Show all the various warning indicators
    if (_config->FindI("APT::Output-Version") < 30)
       ShowDel(c1out,Cache);
+   if (_config->FindI("APT::Output-Version") >= 30 && _config->FindB("APT::Get::Show-Upgraded",true) == true)
+      ShowUpgraded(c1out,Cache);
    ShowNew(c1out,Cache);
    if (_config->FindI("APT::Output-Version") >= 30)
       ShowWeakDependencies(Cache);
-   if (_config->FindI("APT::Output-Version") >= 30 && _config->FindB("APT::Get::Show-Upgraded",true) == true)
-      ShowUpgraded(c1out,Cache);
    if (ShwKept == true)
    {
       ShowPhasing(c1out, Cache, PhasingPackages);
