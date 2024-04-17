@@ -5,15 +5,15 @@
 #
 # This file originally stated:
 # This file is put in the public domain.
-# Miroslav Kure <kurem@debian.cz>, 2004-2023.
+# Miroslav Kure <kurem@debian.cz>, 2004-2024.
 #
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.5.6\n"
+"Project-Id-Version: apt 2.9.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-14 16:52+0000\n"
-"PO-Revision-Date: 2023-02-10 12:58+0100\n"
+"POT-Creation-Date: 2024-04-17 08:38+0000\n"
+"PO-Revision-Date: 2024-04-13 22:12+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
 "Language: cs\n"
@@ -82,7 +82,7 @@ msgstr "Repositář „%s“ nabízí pouze slabé zabezpečení."
 #: apt-pkg/acquire-item.cc ftparchive/writer.cc
 #, c-format
 msgid "Failed to readlink %s"
-msgstr "Nelze přečíst link %s"
+msgstr "Nelze přečíst odkaz %s"
 
 #: apt-pkg/acquire-item.cc ftparchive/cachedb.cc methods/rred.cc
 #, c-format
@@ -1855,13 +1855,14 @@ msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
 msgstr ""
+"Nesloučený adresář usr již není podporován, převeďte systém na sloučený "
+"nástrojem usrmerge."
 
 #. TRANSLATORS: %s is a url to a page describing merged-usr (bookworm release notes)
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Selected %s for removal.\n"
+#, c-format
 msgid "See %s for more details."
-msgstr "%s byl vybrán pro odstranění.\n"
+msgstr "Více informací naleznete na %s."
 
 #: apt-private/private-install.cc
 msgid ""
@@ -1901,7 +1902,7 @@ msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Internal error, Ordering didn't finish"
-msgstr "Vnitřní chyba, třídění nedoběhlo do konce"
+msgstr "Vnitřní chyba, řazení nedoběhlo do konce"
 
 #: apt-private/private-install.cc
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
@@ -1909,10 +1910,9 @@ msgstr ""
 "Jak podivné… velikosti nesouhlasí, ohlaste to na apt@packages.debian.org"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Downloading %s %s"
+#, c-format
 msgid "  Download size: %sB / %sB\n"
-msgstr "Stahuje se %s %s"
+msgstr "  Stáhne se: %sB / %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1922,10 +1922,9 @@ msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Nutno stáhnout %sB/%sB archivů.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Downloading %s %s"
+#, c-format
 msgid "  Download size: %sB\n"
-msgstr "Stahuje se %s %s"
+msgstr "  Stáhne se: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1978,10 +1977,9 @@ msgid "Space needed: %sB\n"
 msgstr ""
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Stored label: %s\n"
+#, c-format
 msgid "  Freed space: %sB\n"
-msgstr "Uložený název: %s \n"
+msgstr "  Uvolněné místo: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2003,12 +2001,14 @@ msgstr ""
 "rozbít systém."
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Continue?"
 msgid "Continue anyway?"
-msgstr ""
+msgstr "Pokračovat?"
 
 #: apt-private/private-install.cc
 msgid "Continue?"
-msgstr ""
+msgstr "Pokračovat?"
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
@@ -2250,50 +2250,40 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Následující balíky mají nesplněné závislosti:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "satisfy dependency strings"
 msgid "Unsatisfied dependencies:"
-msgstr "splní řetězec závislostí"
+msgstr "Nesplněné závislosti:"
 
 #: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Následující NOVÉ balíky budou nainstalovány:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Installing %s"
 msgid "Installing:"
-msgstr "Instaluje se %s"
+msgstr "K instalaci:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Total dependencies: "
 msgid "Installing dependencies:"
-msgstr "Celkem závislostí: "
+msgstr "Instalace závislostí:"
 
 #: apt-private/private-output.cc
 msgid "REMOVING:"
-msgstr ""
+msgstr "K ODSTRANĚNÍ:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
 msgstr "Následující balíky budou ODSTRANĚNY:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "The following upgrades have been deferred due to phasing:"
-msgstr "Následující balíky jsou podrženy v aktuální verzi:"
+msgstr "Následující aktualizace jsou odloženy kvůli fázování:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "Not upgrading yet due to phasing:"
-msgstr "Následující balíky jsou podrženy v aktuální verzi:"
+msgstr "Zatím neaktualizováno kvůli fázování:"
 
 #: apt-private/private-output.cc
 msgid "Not upgrading:"
-msgstr ""
+msgstr "Neaktualizováno:"
 
 #: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
@@ -2305,21 +2295,19 @@ msgstr "Následující balíky budou aktualizovány:"
 
 #: apt-private/private-output.cc
 msgid "Upgrading:"
-msgstr ""
+msgstr "K aktualizaci:"
 
 #: apt-private/private-output.cc
 msgid "DOWNGRADING:"
-msgstr ""
+msgstr "K DEGRADACI:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Následující balíky budou DEGRADOVÁNY:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Pinned packages:"
 msgid "Changing held packages:"
-msgstr "Vypíchnuté balíky:"
+msgstr "Změna podržených balíků:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2340,7 +2328,7 @@ msgstr ""
 
 #: apt-private/private-output.cc
 msgid "Summary:"
-msgstr ""
+msgstr "Souhrn:"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2348,10 +2336,9 @@ msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu aktualizováno, %lu nově instalováno, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Upgrading: %lu, Installing: %lu, "
-msgstr "Instaluje se %s"
+msgstr "Aktualizací: %lu, Instalací: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2359,10 +2346,9 @@ msgid "%lu reinstalled, "
 msgstr "%lu přeinstalováno, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Reinstalling: %lu, "
-msgstr "Instaluje se %s"
+msgstr "Přeinstalací: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2370,10 +2356,9 @@ msgid "%lu downgraded, "
 msgstr "%lu degradováno, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Downloading %s %s"
+#, c-format
 msgid "Downgrading: %lu, "
-msgstr "Stahuje se %s %s"
+msgstr "Degradací: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2383,7 +2368,7 @@ msgstr "%lu k odstranění a %lu neaktualizováno.\n"
 #: apt-private/private-output.cc
 #, c-format
 msgid "Removing: %lu, Not Upgrading: %lu\n"
-msgstr ""
+msgstr "Odstranění: %lu, Neaktualizovaných: %lu\n"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2657,7 +2642,7 @@ msgstr ""
 #: apt-private/private-update.cc
 #, c-format
 msgid "Missing Signed-By in the %s entry for '%s'"
-msgstr ""
+msgstr "Chybí Signed-By v %s pro „%s“"
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3934,7 +3919,7 @@ msgstr "Nelze vyvolat "
 #: methods/gpgv.cc
 #, c-format
 msgid "untrusted public key algorithm: %s"
-msgstr ""
+msgstr "nedůvěryhodný algoritmus veřejného klíče: %s"
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
@@ -3973,8 +3958,7 @@ msgstr ""
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
-#, fuzzy, c-format
-#| msgid "Signature by key %s uses weak digest algorithm (%s)"
+#, c-format
 msgid "Signature by key %s uses weak algorithm (%s)"
 msgstr "Podpis klíčem %s používá slabý algoritmus (%s)"
 
@@ -4022,15 +4006,9 @@ msgstr "Spojení bylo předčasně ukončeno"
 msgid "Empty files can't be valid archives"
 msgstr "Prázdné soubory nejsou platnými archivy"
 
-#, fuzzy, c-format
-#~| msgid "  Installed: "
+#, c-format
 #~ msgid "  Installed size: %sB\n"
-#~ msgstr "  Instalovaná verze: "
-
-#, fuzzy
-#~| msgid "The following held packages will be changed:"
-#~ msgid "Changing held packages:Changing held packages:"
-#~ msgstr "Následující podržené balíky budou změněny:"
+#~ msgstr "  Velikost po instalaci: %sB\n"
 
 #~ msgid "Yes, do as I say!"
 #~ msgstr "Ano, udělej to tak, jak říkám!"
