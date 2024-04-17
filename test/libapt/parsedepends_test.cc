@@ -278,3 +278,36 @@ test:
    if (runner < 8)
       goto test; // this is the prove: tests are really evil ;)
 }
+
+TEST(ParseDependsTest, SpaceHate)
+{
+   auto const *const Depends = "no(=1), some(<<1),some (<<1),some( <<1),some(<< 1),some(<<1 ),some(<<1) ,last (=1)";
+   const char* const End = Depends + strlen(Depends);
+
+   const char* Start = Depends;
+   std::string Package;
+   std::string Version;
+   unsigned int Op = 29;
+
+   Start = debListParser::ParseDepends(Start, End, Package, Version, Op);
+   EXPECT_NE(nullptr, Start);
+   EXPECT_EQ("no", Package);
+   EXPECT_EQ("1", Version);
+   EXPECT_EQ(pkgCache::Dep::Equals, Op);
+
+   for (int i = 0; i < 6; ++i)
+   {
+      SCOPED_TRACE(i);
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op);
+      EXPECT_NE(nullptr, Start);
+      EXPECT_EQ("some", Package);
+      EXPECT_EQ("1", Version);
+      EXPECT_EQ(pkgCache::Dep::Less, Op);
+   }
+
+   Start = debListParser::ParseDepends(Start, End, Package, Version, Op);
+   EXPECT_EQ(End, Start);
+   EXPECT_EQ("last", Package);
+   EXPECT_EQ("1", Version);
+   EXPECT_EQ(pkgCache::Dep::Equals, Op);
+}

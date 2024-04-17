@@ -608,7 +608,7 @@ const char *debListParser::ParseDepends(const char *Start, const char *Stop,
    {
       // Skip the '('
       for (I++; I != Stop && isspace_ascii(*I) != 0 ; I++);
-      if (I + 3 >= Stop)
+      if (I + 3 > Stop)
 	 return 0;
       I = ConvertRelation(I,Op);
       
