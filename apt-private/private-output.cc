@@ -105,6 +105,12 @@ bool InitOutput(std::basic_streambuf<char> * const out)			/*{{{*/
       _config->CndSet("APT::Color::Magenta", "\x1B[35m");
       _config->CndSet("APT::Color::Cyan", "\x1B[36m");
       _config->CndSet("APT::Color::White", "\x1B[37m");
+
+      _config->CndSet("APT::Color::Action::Upgrade", "green");
+      _config->CndSet("APT::Color::Action::Install", "green");
+      _config->CndSet("APT::Color::Action::Install-Dependencies", "green");
+      _config->CndSet("APT::Color::Action::Downgrade", "yellow");
+      _config->CndSet("APT::Color::Action::Remove", "red");
    }
 
    return true;
@@ -557,7 +563,7 @@ void ShowNew(ostream &out,CacheFile &Cache)
 	    [&Cache](pkgCache::PkgIterator const &Pkg) { return Cache[Pkg].NewInstall(); },
 	    &PrettyFullName,
 	    CandidateVersion(&Cache),
-	    "green");
+	    "action::install");
       return;
    }
 
@@ -565,12 +571,12 @@ void ShowNew(ostream &out,CacheFile &Cache)
 	 [&Cache](pkgCache::PkgIterator const &Pkg) { return Cache[Pkg].NewInstall() && (Cache[Pkg].Flags & pkgCache::Flag::Auto) == 0; },
 	 &PrettyFullName,
 	 CandidateVersion(&Cache),
-	 "green");
+	 "action::install");
    ShowList(out,_("Installing dependencies:"), Universe,
 	 [&Cache](pkgCache::PkgIterator const &Pkg) { return Cache[Pkg].NewInstall() && Cache[Pkg].Flags & pkgCache::Flag::Auto;},
 	 &PrettyFullName,
 	 CandidateVersion(&Cache),
-	 "green");
+	 "action::install-dependencies");
 }
 									/*}}}*/
 // ShowDel - Show packages to delete					/*{{{*/
@@ -588,7 +594,7 @@ void ShowDel(ostream &out,CacheFile &Cache)
 	    return str;
 	 },
 	 CandidateVersion(&Cache),
-	 "red");
+	 "action::remove");
 }
 									/*}}}*/
 // ShowPhasing - Show packages kept due to phasing			/*{{{*/
@@ -627,7 +633,7 @@ void ShowUpgraded(ostream &out,CacheFile &Cache)
 	 },
 	 &PrettyFullName,
 	 CurrentToCandidateVersion(&Cache),
-	 "green");
+	 "action::upgrade");
 }
 									/*}}}*/
 // ShowDowngraded - Show downgraded packages				/*{{{*/
@@ -644,7 +650,7 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
 	 },
 	 &PrettyFullName,
 	 CurrentToCandidateVersion(&Cache),
-	 "yellow");
+	 "action::downgrade");
 }
 									/*}}}*/
 // ShowHold - Show held but changed packages				/*{{{*/
