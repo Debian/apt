@@ -563,4 +563,39 @@ bool Configuration::checkUsrMerged()
    return true;
 }
 									/*}}}*/
+// isUsrMerged - whether usr is merged t			     	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+std::string Configuration::color(std::string const &colorName, std::string const &content)
+{
+   if (not _config->FindB("APT::Color"))
+      return content;
+
+   auto colors = ::Configuration(_config->Tree("APT::Color"));
+   auto color = colors.Find(colorName);
+
+   // Resolve the color recursively. A color string has the following format
+   // <color> :=    \x1B<word>       ; fully resolved color
+   //            | \\x1B<word>       ; color escaped.
+   //            | <word>	     ; a simple color name
+   //            | <color> <color>   ; a sequence of colors
+   if (color.find(" ") != color.npos)
+   {
+      std::string res;
+      for (auto &&colorPart : VectorizeString(color, ' '))
+	 res += Configuration::color(colorPart);
+      color = res;
+   }
+   else if (not color.empty() && color[0] != '\x1B')
+   {
+      if (APT::String::Startswith(color, "\\x1B"))
+	 color = "\x1B" + color.substr(4);
+      else
+	 color = Configuration::color(color);
+   }
+   if (content.empty())
+      return color;
+   return color + content + Configuration::color("Neutral");
+}
+									/*}}}*/
 }

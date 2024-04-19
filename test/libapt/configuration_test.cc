@@ -230,3 +230,33 @@ List::Option2 { "Multi";
    EXPECT_TRUE(Cnf.FindB("Trailing"));
    EXPECT_FALSE(Cnf.Exists("Commented::Out"));
 }
+
+TEST(ConfigurationTest, Color)
+{
+   _config->Clear();
+   _config->Set("APT::Color::Neutral", "\x1B[N");
+   _config->Set("APT::Color::Green", "\x1B[G");
+   // This is escaped for extra fun
+   _config->Set("APT::Color::Bold", "\\x1B[B");
+   _config->Set("APT::Color::BoldGreen", "bold green");
+   _config->Set("APT::Color::BoldGreenRef", "boldgreen");
+   _config->Set("APT::Color::BoldGreenNeutral", "boldgreen neutral");
+   _config->Set("APT::Color::BoldGreenRefNeutral", "boldgreenref neutral");
+
+   EXPECT_EQ("", APT::Configuration::color("bold"));
+   EXPECT_EQ("", APT::Configuration::color("green"));
+   EXPECT_EQ("content", APT::Configuration::color("green", "content"));
+   EXPECT_EQ("", APT::Configuration::color("boldgreen"));
+   EXPECT_EQ("", APT::Configuration::color("boldgreenref"));
+   EXPECT_EQ("", APT::Configuration::color("boldgreenneutral"));
+   EXPECT_EQ("", APT::Configuration::color("boldgreenrefneutral"));
+
+   _config->Set("APT::Color", "true");
+   EXPECT_EQ("\x1B[B", APT::Configuration::color("bold"));
+   EXPECT_EQ("\x1B[G", APT::Configuration::color("green"));
+   EXPECT_EQ("\x1B[Gcontent\x1B[N", APT::Configuration::color("green", "content"));
+   EXPECT_EQ("\x1B[B\x1B[G", APT::Configuration::color("boldgreen"));
+   EXPECT_EQ("\x1B[B\x1B[G", APT::Configuration::color("boldgreenref"));
+   EXPECT_EQ("\x1B[B\x1B[G\x1B[N", APT::Configuration::color("boldgreenneutral"));
+   EXPECT_EQ("\x1B[B\x1B[G\x1B[N", APT::Configuration::color("boldgreenrefneutral"));
+}
