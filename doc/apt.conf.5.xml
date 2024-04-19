@@ -174,6 +174,45 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>Color</option></term>
+         <listitem><para>
+         This scope defines colors and styles. The basic colors supported are
+        <option>red</option>,
+        <option>green</option>,
+        <option>yellow</option>,
+        <option>blue</option>,
+        <option>magenta</option>,
+        <option>cyan</option>, and
+        <option>white</option>.
+        </para>
+        <para>
+        The subscope <option>action</option> defines the colors for package lists
+        in <option>install</option> and similar commands. The following options may be set:
+        <option>APT::Color::Action::Upgrade</option>,
+        <option>APT::Color::Action::Install</option>,
+        <option>APT::Color::Action::Install-Dependencies</option>,
+        <option>APT::Color::Action::Downgrade</option>,
+        <option>APT::Color::Action::Remove</option>; corresponding to their
+        lists in the &apt; output.
+        </para>
+        <para>
+        Each color may reference one or more other color options by name, relative
+        to <option>APT::Color</option>. Their escape sequences will be combined.
+        </para>
+        <informalexample><programlisting>
+APT::Color::Bold "\x1B[1m";
+APT::Color::Action::Install "cyan";
+APT::Color::Action::Upgrade "bold action::install";
+        </programlisting></informalexample>
+        <para>
+        Colors may be turned on or off completely by setting <option>APT::Color</option>
+        to <option>yes</option> or <option>no</option>, by utilizing <envar>NO_COLOR</envar>
+        or <envar>APT_NO_COLOR</envar> environment variables, or using the
+        <option>--color</option>, <option>--no-color</option> command-line options.
+        </para>
+     </listitem>
+     </varlistentry>
+
      <varlistentry><term><option>Compressor</option></term>
      <listitem><para>
      This scope defines which compression formats are supported, how compression
