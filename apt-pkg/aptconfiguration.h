@@ -130,7 +130,9 @@ namespace Configuration {							/*{{{*/
 	APT_PUBLIC bool isChroot();
 	/** \return Check usr is merged or produce error. */
 	APT_PUBLIC bool checkUsrMerged();
+	APT_PUBLIC std::string color(std::string const &colorName, std::string const &content = "");
 #endif
+
 	/*}}}*/
 }
 									/*}}}*/
