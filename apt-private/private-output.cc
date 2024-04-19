@@ -1,6 +1,7 @@
 // Include files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
@@ -30,6 +31,7 @@
 									/*}}}*/
 
 using namespace std;
+using APT::Configuration::color;
 
 std::ostream c0out(0);
 std::ostream c1out(0);
@@ -302,8 +304,8 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
    else if (V.ParentPkg()->CurrentState == pkgCache::State::ConfigFiles)
       StatusStr = _("[residual-config]");
    output = SubstVar(output, "${apt:Status}", StatusStr);
-   output = SubstVar(output, "${color:highlight}", _config->Find("APT::Color::Highlight", ""));
-   output = SubstVar(output, "${color:neutral}", _config->Find("APT::Color::Neutral", ""));
+   output = SubstVar(output, "${color:highlight}", color("Highlight"));
+   output = SubstVar(output, "${color:neutral}", color("Neutral"));
    output = SubstVar(output, "${Description}", GetShortDescription(CacheFile, records, P));
    if (output.find("${LongDescription}") != string::npos)
       output = SubstVar(output, "${LongDescription}", GetLongDescription(CacheFile, records, P));
@@ -555,7 +557,7 @@ void ShowNew(ostream &out,CacheFile &Cache)
 	    [&Cache](pkgCache::PkgIterator const &Pkg) { return Cache[Pkg].NewInstall(); },
 	    &PrettyFullName,
 	    CandidateVersion(&Cache),
-	    "APT::Color::Green");
+	    "green");
       return;
    }
 
@@ -563,12 +565,12 @@ void ShowNew(ostream &out,CacheFile &Cache)
 	 [&Cache](pkgCache::PkgIterator const &Pkg) { return Cache[Pkg].NewInstall() && (Cache[Pkg].Flags & pkgCache::Flag::Auto) == 0; },
 	 &PrettyFullName,
 	 CandidateVersion(&Cache),
-	 "APT::Color::Green");
+	 "green");
    ShowList(out,_("Installing dependencies:"), Universe,
 	 [&Cache](pkgCache::PkgIterator const &Pkg) { return Cache[Pkg].NewInstall() && Cache[Pkg].Flags & pkgCache::Flag::Auto;},
 	 &PrettyFullName,
 	 CandidateVersion(&Cache),
-	 "APT::Color::Green");
+	 "green");
 }
 									/*}}}*/
 // ShowDel - Show packages to delete					/*{{{*/
@@ -586,7 +588,7 @@ void ShowDel(ostream &out,CacheFile &Cache)
 	    return str;
 	 },
 	 CandidateVersion(&Cache),
-	 "APT::Color::Red");
+	 "red");
 }
 									/*}}}*/
 // ShowPhasing - Show packages kept due to phasing			/*{{{*/
@@ -625,7 +627,7 @@ void ShowUpgraded(ostream &out,CacheFile &Cache)
 	 },
 	 &PrettyFullName,
 	 CurrentToCandidateVersion(&Cache),
-	 "APT::Color::Green");
+	 "green");
 }
 									/*}}}*/
 // ShowDowngraded - Show downgraded packages				/*{{{*/
@@ -642,7 +644,7 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
 	 },
 	 &PrettyFullName,
 	 CurrentToCandidateVersion(&Cache),
-	 "APT::Color::Yellow");
+	 "yellow");
 }
 									/*}}}*/
 // ShowHold - Show held but changed packages				/*{{{*/

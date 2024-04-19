@@ -1104,7 +1104,7 @@ bool DoInstall(CommandLine &CmdL)
    if (_config->FindI("APT::Output-Version") < 30 && Cache->InstCount() != verset[MOD_INSTALL].size())
       ShowList(c1out, _("The following additional packages will be installed:"), Universe,
 	    PkgIsExtraInstalled(&Cache, &verset[MOD_INSTALL]),
-	    &PrettyFullName, CandidateVersion(&Cache), "APT::Color::Green");
+	    &PrettyFullName, CandidateVersion(&Cache), "green");
 
    /* Print out a list of suggested and recommended packages */
    if (_config->FindI("APT::Output-Version") < 30)

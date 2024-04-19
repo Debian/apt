@@ -1,6 +1,7 @@
 #ifndef APT_PRIVATE_OUTPUT_H
 #define APT_PRIVATE_OUTPUT_H
 
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/macros.h>
@@ -17,7 +18,6 @@ class pkgCacheFile;
 class CacheFile;
 class pkgDepCache;
 class pkgRecords;
-
 
 APT_PUBLIC extern std::ostream c0out;
 APT_PUBLIC extern std::ostream c1out;
@@ -43,7 +43,7 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
       PredicateC Predicate,
       DisplayP PkgDisplay,
       DisplayV VerboseDisplay,
-      std::string colorName = "APT::Color::Neutral")
+      std::string colorName = "")
 {
    size_t const ScreenWidth = (::ScreenWidth > 3) ? ::ScreenWidth - 3 : 0;
    int ScreenUsed = 0;
@@ -52,8 +52,8 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
    bool printedTitle = false;
    std::vector<std::string> PackageList;
 
-   auto setColor = _config->FindI("APT::Output-Version") >= 30 ? _config->Find(colorName) : "";
-   auto resetColor = _config->FindI("APT::Output-Version") >= 30 ? _config->Find("APT::Color::Neutral") : "";
+   auto setColor = _config->FindI("APT::Output-Version") >= 30 ? APT::Configuration::color(colorName) : "";
+   auto resetColor = _config->FindI("APT::Output-Version") >= 30 && not setColor.empty() ? APT::Configuration::color("neutral") : "";
 
    for (auto const &Pkg: cont)
    {

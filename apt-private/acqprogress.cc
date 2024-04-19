@@ -9,6 +9,7 @@
 // Include files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/acquire.h>
@@ -281,14 +282,14 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 
    // Draw the current status
    if (_config->FindB("Apt::Color", false) == true)
-      out << _config->Find("APT::Color::Yellow");
+      out << APT::Configuration::color("Yellow");
    if (LastLineLength > Line.length())
       clearLastLine();
    else
       out << '\r';
    out << Line << std::flush;
    if (_config->FindB("Apt::Color", false) == true)
-      out << _config->Find("APT::Color::Neutral") << std::flush;
+      out << APT::Configuration::color("Neutral") << std::flush;
 
    LastLineLength = Line.length();
    Update = false;
