@@ -246,10 +246,8 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
    }
    else if (CmdMatches("clean", "autoclean", "auto-clean", "distclean", "dist-clean", "check", "download", "changelog") ||
 	    CmdMatches("markauto", "unmarkauto")) // deprecated commands
-      ;
-   else if (CmdMatches("moo"))
-      addArg(0, "color", "APT::Moo::Color", 0);
-
+   {
+   }
    if (CmdMatches("install", "reinstall", "remove", "purge", "upgrade", "dist-upgrade",
 	    "dselect-upgrade", "autoremove", "auto-remove", "autopurge", "check",
 	    "clean", "autoclean", "auto-clean", "distclean", "dist-clean",
@@ -409,6 +407,7 @@ std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const 
    addArg('h', "help", "help", 0);
    addArg('v', "version", "version", 0);
    // general options
+   addArg(0, "color", "APT::Color", 0);
    addArg('q', "quiet", "quiet", CommandLine::IntLevel);
    addArg('q', "silent", "quiet", CommandLine::IntLevel);
    addArg('c', "config-file", 0, CommandLine::ConfigFile);
