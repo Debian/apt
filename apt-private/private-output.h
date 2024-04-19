@@ -52,8 +52,8 @@ template<class Container, class PredicateC, class DisplayP, class DisplayV> bool
    bool printedTitle = false;
    std::vector<std::string> PackageList;
 
-   auto setColor = _config->FindI("APT::Output-Version") >= 30 ? APT::Configuration::color(colorName) : "";
-   auto resetColor = _config->FindI("APT::Output-Version") >= 30 && not setColor.empty() ? APT::Configuration::color("neutral") : "";
+   auto setColor = APT::Configuration::color(colorName);
+   auto resetColor = not setColor.empty() ? APT::Configuration::color("neutral") : "";
 
    for (auto const &Pkg: cont)
    {
