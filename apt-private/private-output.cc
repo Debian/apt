@@ -799,10 +799,12 @@ bool YnPrompt(char const * const Question, bool const Default, bool const ShowGl
    // if we ask interactively, show warnings/notices before the question
    if (ShowGlobalErrors == true && AssumeYes == false && AssumeNo == false)
    {
-      if (_config->FindI("quiet",0) > 0)
+      if (_config->FindB("APT::Audit"))
+	 _error->DumpErrors(c2o, GlobalError::AUDIT);
+      else if (_config->FindI("quiet",0) > 0)
 	 _error->DumpErrors(c2o);
       else
-	 _error->DumpErrors(c2o, GlobalError::DEBUG);
+	 _error->DumpErrors(c2o, GlobalError::NOTICE);
    }
 
    c2o << Question << std::flush;
