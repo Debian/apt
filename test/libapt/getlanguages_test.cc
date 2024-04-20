@@ -14,7 +14,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 #include "file-helpers.h"
 

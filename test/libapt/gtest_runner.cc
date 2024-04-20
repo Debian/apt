@@ -5,7 +5,7 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/pkgsystem.h>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 int main(int argc, char **argv) {
    ::testing::InitGoogleTest(&argc, argv);

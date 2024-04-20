@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include "assert.h"
-#include <gtest/gtest.h>
+#include "common.h"
 
 class Stream : public pkgDirStream
 {

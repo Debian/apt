@@ -4,7 +4,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-private/private-cmndline.h>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 class CLT: public CommandLine {
    public:

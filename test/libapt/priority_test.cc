@@ -1,6 +1,6 @@
 #include <config.h>
 #include <apt-pkg/pkgcache.h>
-#include <gtest/gtest.h>
+#include "common.h"
 #include <string>
 
 using std::string;

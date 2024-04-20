@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 TEST(TeeStreamTest,TwoStringSinks)
 {

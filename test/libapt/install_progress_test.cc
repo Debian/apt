@@ -5,7 +5,7 @@
 #include <locale>
 #include <string>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 TEST(InstallProgressTest, FancyGetTextProgressStr)
 {

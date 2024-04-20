@@ -7,7 +7,7 @@
 #include <cstring>
 #include <string>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlags, bool const ParseRestrictionsList, std::string Arch)
 {

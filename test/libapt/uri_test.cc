@@ -2,7 +2,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/proxy.h>
 #include <apt-pkg/strutl.h>
-#include <gtest/gtest.h>
+#include "common.h"
 #include <string>
 
 TEST(URITest, BasicHTTP)

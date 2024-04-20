@@ -28,7 +28,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 using namespace std;
 

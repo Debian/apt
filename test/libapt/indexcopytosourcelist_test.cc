@@ -7,7 +7,7 @@
 #include <cstdio>
 #include <string>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 class NoCopy : private IndexCopy {
    public:

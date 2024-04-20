@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 #include "file-helpers.h"
 

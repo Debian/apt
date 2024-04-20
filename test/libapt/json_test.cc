@@ -1,7 +1,7 @@
 #include <config.h>
 #include "../../apt-private/private-cachefile.cc"
 #include "../../apt-private/private-json-hooks.cc"
-#include <gtest/gtest.h>
+#include "common.h"
 #include <string>
 
 TEST(JsonTest, JsonString)

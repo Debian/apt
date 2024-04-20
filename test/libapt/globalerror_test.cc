@@ -7,7 +7,7 @@
 #include <cstring>
 #include <string>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 TEST(GlobalErrorTest,BasicDiscard)
 {

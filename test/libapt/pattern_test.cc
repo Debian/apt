@@ -10,7 +10,7 @@
 #include <apt-pkg/cachefilter-patterns.h>
 #include <apt-pkg/cachefilter.h>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 using namespace APT::Internal;
 

@@ -5,7 +5,7 @@
 
 #include <type_traits>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 TEST(StringViewTest,EmptyString)
 {

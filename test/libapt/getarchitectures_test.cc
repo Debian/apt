@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <gtest/gtest.h>
+#include "common.h"
 
 TEST(ArchitecturesTest,SimpleLists)
 {
