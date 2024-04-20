@@ -259,4 +259,6 @@ TEST(ConfigurationTest, Color)
    EXPECT_EQ("\x1B[B\x1B[G", APT::Configuration::color("boldgreenref"));
    EXPECT_EQ("\x1B[B\x1B[G\x1B[N", APT::Configuration::color("boldgreenneutral"));
    EXPECT_EQ("\x1B[B\x1B[G\x1B[N", APT::Configuration::color("boldgreenrefneutral"));
+   // Reset for other tests
+   _config->Clear();
 }
