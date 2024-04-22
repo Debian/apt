@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-14 16:52+0000\n"
+"POT-Creation-Date: 2024-04-22 17:39+0000\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -228,6 +228,13 @@ msgstr ""
 #, c-format
 msgid "Failed to fetch %s  %s"
 msgstr "Не вдалося завантажити %s  %s"
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Repositories should provide a clear-signed InRelease file, but none found at "
+"%s."
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -654,6 +661,30 @@ msgstr ""
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Синтаксична помилка %s:%u: Зайве сміття в кінці файла"
+
+#. TRANSLATOR: This is a warning level displayed before the message
+#: apt-pkg/contrib/error.cc
+msgid "Error:"
+msgstr ""
+
+#. TRANSLATOR: This is a warning level displayed before the message
+#: apt-pkg/contrib/error.cc
+msgid "Warning:"
+msgstr ""
+
+#. TRANSLATOR: This is a warning level displayed before the message
+#: apt-pkg/contrib/error.cc
+msgid "Notice:"
+msgstr ""
+
+#: apt-pkg/contrib/error.cc
+msgid "Audit:"
+msgstr ""
+
+#. TRANSLATOR: This is a warning level displayed before the message
+#: apt-pkg/contrib/error.cc
+msgid "Debug:"
+msgstr ""
 
 #: apt-pkg/contrib/extracttar.cc
 #, fuzzy, c-format
@@ -2099,6 +2130,14 @@ msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Внутрішня Помилка, AutoRemover щось поламав"
 
 #: apt-private/private-install.cc
+#, c-format
+msgid "Use '%s' to remove it."
+msgid_plural "Use '%s' to remove them."
+msgstr[0] "Використовуйте '%s' щоб видалити його."
+msgstr[1] "Використовуйте '%s' щоб видалити їх."
+msgstr[2] "Використовуйте '%s' щоб видалити їх."
+
+#: apt-private/private-install.cc
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
@@ -2119,14 +2158,6 @@ msgstr[1] ""
 "%lu пакунка було встановлено автоматично і вони більше не потрібні.\n"
 msgstr[2] ""
 "%lu пакунків було встановлено автоматично і вони більше не потрібні.\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Use '%s' to remove it."
-msgid_plural "Use '%s' to remove them."
-msgstr[0] "Використовуйте '%s' щоб видалити його."
-msgstr[1] "Використовуйте '%s' щоб видалити їх."
-msgstr[2] "Використовуйте '%s' щоб видалити їх."
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"

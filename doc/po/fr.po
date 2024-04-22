@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.8.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-12 18:21+0000\n"
+"POT-Creation-Date: 2024-04-22 17:38+0000\n"
 "PO-Revision-Date: 2019-05-01 17:00+0100\n"
 "Last-Translator: Jean-Pierre Giraud <jean-pierregiraud@neuf.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -149,6 +149,33 @@ msgstr ""
 
 #. type: Plain text
 #: apt.ent
+#, fuzzy, no-wrap
+#| msgid ""
+#| "     <varlistentry>\n"
+#| "      <term><option>-v</option></term>\n"
+#| "      <term><option>--version</option></term>\n"
+#| "      <listitem><para>Show the program version.\n"
+#| "     </para>\n"
+#| "     </listitem>\n"
+#| "     </varlistentry>\n"
+msgid ""
+"     <varlistentry>\n"
+"      <term><option>--audit</option></term>\n"
+"      <listitem><para>Show audit (and notice) messages. This overrides the quiet option, but only for notice messages, not progress ones.\n"
+"     </para>\n"
+"     </listitem>\n"
+"     </varlistentry>\n"
+msgstr ""
+"     <varlistentry>\n"
+"      <term><option>-v</option></term>\n"
+"      <term><option>--version</option></term>\n"
+"      <listitem><para>Afficher la version du programme.\n"
+"     </para>\n"
+"     </listitem>\n"
+"     </varlistentry>\n"
+
+#. type: Plain text
+#: apt.ent
 #, no-wrap
 msgid ""
 "     <varlistentry>\n"
@@ -176,7 +203,19 @@ msgstr ""
 
 #. type: Plain text
 #: apt.ent
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "     <varlistentry>\n"
+#| "      <term><option>-o</option></term>\n"
+#| "      <term><option>--option</option></term>\n"
+#| "     <listitem><para>Set a Configuration Option; This will set an arbitrary\n"
+#| "      configuration option. The syntax is <option>-o Foo::Bar=bar</option>.\n"
+#| "      <option>-o</option> and <option>--option</option> can be used multiple\n"
+#| "      times to set different options.\n"
+#| "     </para>\n"
+#| "     </listitem>\n"
+#| "     </varlistentry>\n"
+#| "\">\n"
 msgid ""
 "     <varlistentry>\n"
 "      <term><option>-o</option></term>\n"
@@ -185,6 +224,44 @@ msgid ""
 "      configuration option. The syntax is <option>-o Foo::Bar=bar</option>.\n"
 "      <option>-o</option> and <option>--option</option> can be used multiple\n"
 "      times to set different options.\n"
+"     </para>\n"
+"     </listitem>\n"
+"     </varlistentry>\n"
+msgstr ""
+"     <varlistentry>\n"
+"      <term><option>-o</option></term>\n"
+"      <term><option>--option</option></term>\n"
+"     <listitem><para>Définir une option de configuration ; permet de régler\n"
+"      une option de configuration donnée. La syntaxe est <option>-o Foo::Bar=bar</option>.\n"
+"      <option>-o</option> et <option>--option</option> peuvent être utilisées plusieurs fois\n"
+"      pour définir des options différentes.\n"
+"     </para>\n"
+"     </listitem>\n"
+"     </varlistentry>\n"
+"\">\n"
+
+#. type: Plain text
+#: apt.ent
+#, fuzzy, no-wrap
+#| msgid ""
+#| "     <varlistentry>\n"
+#| "      <term><option>-o</option></term>\n"
+#| "      <term><option>--option</option></term>\n"
+#| "     <listitem><para>Set a Configuration Option; This will set an arbitrary\n"
+#| "      configuration option. The syntax is <option>-o Foo::Bar=bar</option>.\n"
+#| "      <option>-o</option> and <option>--option</option> can be used multiple\n"
+#| "      times to set different options.\n"
+#| "     </para>\n"
+#| "     </listitem>\n"
+#| "     </varlistentry>\n"
+#| "\">\n"
+msgid ""
+"     <varlistentry>\n"
+"      <term><option>--no-color</option></term>\n"
+"      <term><option>--color</option></term>\n"
+"<listitem><para>Turn colors on or off. Colors are on by default on supported terminals for &apt; and\n"
+"can also be disabled using the <envar>NO_COLOR</envar> or <envar>APT_NO_COLOR</envar> environment variables,\n"
+"or further configured by the <option>APT::Color</option> configuration option and scope, see &apt-conf; for information on that.\n"
 "     </para>\n"
 "     </listitem>\n"
 "     </varlistentry>\n"
@@ -4559,6 +4636,53 @@ msgstr ""
 "l'architecture native du système (<literal>APT::Architecture</literal>) et "
 "les autres architectures sont ajoutées à la liste par défaut lorsqu'elles "
 "sont enregistrées avec <command>dpkg --add-architecture</command>."
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"This scope defines colors and styles. The basic colors supported are "
+"<option>red</option>, <option>green</option>, <option>yellow</option>, "
+"<option>blue</option>, <option>magenta</option>, <option>cyan</option>, and "
+"<option>white</option>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"The subscope <option>action</option> defines the colors for package lists in "
+"<option>install</option> and similar commands. The following options may be "
+"set: <option>APT::Color::Action::Upgrade</option>, <option>APT::Color::"
+"Action::Install</option>, <option>APT::Color::Action::Install-Dependencies</"
+"option>, <option>APT::Color::Action::Downgrade</option>, <option>APT::Color::"
+"Action::Remove</option>; corresponding to their lists in the &apt; output."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"Each color may reference one or more other color options by name, relative "
+"to <option>APT::Color</option>. Their escape sequences will be combined."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><informalexample><programlisting>
+#: apt.conf.5.xml
+#, no-wrap
+msgid ""
+"APT::Color::Bold \"\\x1B[1m\";\n"
+"APT::Color::Action::Install \"cyan\";\n"
+"APT::Color::Action::Upgrade \"bold action::install\";\n"
+"        "
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"Colors may be turned on or off completely by setting <option>APT::Color</"
+"option> to <option>yes</option> or <option>no</option>, by utilizing "
+"<envar>NO_COLOR</envar> or <envar>APT_NO_COLOR</envar> environment "
+"variables, or using the <option>--color</option>, <option>--no-color</"
+"option> command-line options."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml

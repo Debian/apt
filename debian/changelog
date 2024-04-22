@@ -1,3 +1,43 @@
+apt (2.9.2) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Output customization and color refactoring:
+    - Also respect an APT_NO_COLOR variable
+    - Add a --color, --no-color option
+    - Add APT::Configuration::color helper to colorize things
+    - Use APT::Configuration::color to apply color to output
+    - Configure individual action colors using APT::Color::Action
+    - apt.conf(5): Document the APT::Color scope
+  * Introduce the new --audit error level
+    - Add an "audit" error level, and change the default to notice
+    - Add an --audit option to switch on audit logging
+    - Add an audit message for missing InRelease files
+  * Change the rendering for notices, warnings, errors:
+    - i18n: Use Error:/Warning:/Notice: instead of E:/W:/N:
+    - Render notices without (yellow) color, just in bold
+    - Keep the entire error/warning/notice message bold
+  * Other UI changes:
+    - apt update: Show upgradable package count in bold
+    - show: Highlight field names and colorize package name
+    - Remove spurious newline inside `apt autoremove` message
+    - Insert blank line following simulation note
+    - Show "Upgrading:" before other sections
+    - Only erase OpProgress lines in output version 3.0
+  * Test fixes:
+    - test: configuration: color: reset _config after tests
+    - build: test: Silence warnings in GTest code
+
+  [ Miroslav Kure ]
+  * Czech program translation update (Closes: #1068943)
+
+  [ Boyuan Yang ]
+  * Simplified Chinese program translation update (Closes: #1069118)
+
+  [ David Kalnischkies ]
+  * Allow no spaces for the last dependency in ParseDepends, too (LP: #2061834)
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 22 Apr 2024 19:36:30 +0200
+
 apt (2.9.1) unstable; urgency=medium
 
   [ Julian Andres Klode ]

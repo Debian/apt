@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-14 16:52+0000\n"
+"POT-Creation-Date: 2024-04-22 17:39+0000\n"
 "PO-Revision-Date: 2024-04-16 13:15-0400\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
@@ -225,6 +225,13 @@ msgstr ""
 #, c-format
 msgid "Failed to fetch %s  %s"
 msgstr "无法下载 %s  %s"
+
+#: apt-pkg/acquire-item.cc
+#, c-format
+msgid ""
+"Repositories should provide a clear-signed InRelease file, but none found at "
+"%s."
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -641,6 +648,30 @@ msgstr "语法错误 %s:%u：clean 指令需要一个选项树作为参数"
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "语法错误 %s:%u：文件尾部有多余的无意义的数据"
+
+#. TRANSLATOR: This is a warning level displayed before the message
+#: apt-pkg/contrib/error.cc
+msgid "Error:"
+msgstr ""
+
+#. TRANSLATOR: This is a warning level displayed before the message
+#: apt-pkg/contrib/error.cc
+msgid "Warning:"
+msgstr ""
+
+#. TRANSLATOR: This is a warning level displayed before the message
+#: apt-pkg/contrib/error.cc
+msgid "Notice:"
+msgstr ""
+
+#: apt-pkg/contrib/error.cc
+msgid "Audit:"
+msgstr ""
+
+#. TRANSLATOR: This is a warning level displayed before the message
+#: apt-pkg/contrib/error.cc
+msgid "Debug:"
+msgstr ""
 
 #: apt-pkg/contrib/extracttar.cc
 #, c-format
@@ -2016,6 +2047,12 @@ msgid "Internal Error, AutoRemover broke stuff"
 msgstr "内部错误，自动卸载工具坏事了"
 
 #: apt-private/private-install.cc
+#, c-format
+msgid "Use '%s' to remove it."
+msgid_plural "Use '%s' to remove them."
+msgstr[0] "使用'%s'来卸载它(它们)。"
+
+#: apt-private/private-install.cc
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
@@ -2029,12 +2066,6 @@ msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] "%lu 个自动安装的的软件包现在已不再需要了。\n"
-
-#: apt-private/private-install.cc
-#, c-format
-msgid "Use '%s' to remove it."
-msgid_plural "Use '%s' to remove them."
-msgstr[0] "使用'%s'来卸载它(它们)。"
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"

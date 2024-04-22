@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-12 18:21+0000\n"
+"POT-Creation-Date: 2024-04-22 17:38+0000\n"
 "PO-Revision-Date: 2004-09-20 17:02+0000\n"
 "Last-Translator: André Luís Lopes <andrelop@debian.org>\n"
 "Language-Team: <debian-l10n-portuguese@lists.debian.org>\n"
@@ -114,6 +114,18 @@ msgstr ""
 #, no-wrap
 msgid ""
 "     <varlistentry>\n"
+"      <term><option>--audit</option></term>\n"
+"      <listitem><para>Show audit (and notice) messages. This overrides the quiet option, but only for notice messages, not progress ones.\n"
+"     </para>\n"
+"     </listitem>\n"
+"     </varlistentry>\n"
+msgstr ""
+
+#. type: Plain text
+#: apt.ent
+#, no-wrap
+msgid ""
+"     <varlistentry>\n"
 "      <term><option>-c</option></term>\n"
 "      <term><option>--config-file</option></term>\n"
 "     <listitem><para>Configuration File; Specify a configuration file to use. \n"
@@ -137,6 +149,21 @@ msgid ""
 "      configuration option. The syntax is <option>-o Foo::Bar=bar</option>.\n"
 "      <option>-o</option> and <option>--option</option> can be used multiple\n"
 "      times to set different options.\n"
+"     </para>\n"
+"     </listitem>\n"
+"     </varlistentry>\n"
+msgstr ""
+
+#. type: Plain text
+#: apt.ent
+#, no-wrap
+msgid ""
+"     <varlistentry>\n"
+"      <term><option>--no-color</option></term>\n"
+"      <term><option>--color</option></term>\n"
+"<listitem><para>Turn colors on or off. Colors are on by default on supported terminals for &apt; and\n"
+"can also be disabled using the <envar>NO_COLOR</envar> or <envar>APT_NO_COLOR</envar> environment variables,\n"
+"or further configured by the <option>APT::Color</option> configuration option and scope, see &apt-conf; for information on that.\n"
 "     </para>\n"
 "     </listitem>\n"
 "     </varlistentry>\n"
@@ -3215,6 +3242,53 @@ msgid ""
 "is always the system's native architecture (<literal>APT::Architecture</"
 "literal>), and foreign architectures are added to the default list when they "
 "are registered via <command>dpkg --add-architecture</command>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"This scope defines colors and styles. The basic colors supported are "
+"<option>red</option>, <option>green</option>, <option>yellow</option>, "
+"<option>blue</option>, <option>magenta</option>, <option>cyan</option>, and "
+"<option>white</option>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"The subscope <option>action</option> defines the colors for package lists in "
+"<option>install</option> and similar commands. The following options may be "
+"set: <option>APT::Color::Action::Upgrade</option>, <option>APT::Color::"
+"Action::Install</option>, <option>APT::Color::Action::Install-Dependencies</"
+"option>, <option>APT::Color::Action::Downgrade</option>, <option>APT::Color::"
+"Action::Remove</option>; corresponding to their lists in the &apt; output."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"Each color may reference one or more other color options by name, relative "
+"to <option>APT::Color</option>. Their escape sequences will be combined."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><informalexample><programlisting>
+#: apt.conf.5.xml
+#, no-wrap
+msgid ""
+"APT::Color::Bold \"\\x1B[1m\";\n"
+"APT::Color::Action::Install \"cyan\";\n"
+"APT::Color::Action::Upgrade \"bold action::install\";\n"
+"        "
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml
+msgid ""
+"Colors may be turned on or off completely by setting <option>APT::Color</"
+"option> to <option>yes</option> or <option>no</option>, by utilizing "
+"<envar>NO_COLOR</envar> or <envar>APT_NO_COLOR</envar> environment "
+"variables, or using the <option>--color</option>, <option>--no-color</"
+"option> command-line options."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
