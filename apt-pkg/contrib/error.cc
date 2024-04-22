@@ -34,6 +34,7 @@
 #include <string>
 #include <unistd.h>
 
+#include <apti18n.h>
 									/*}}}*/
 
 // Global Error Object							/*{{{*/
@@ -254,11 +255,13 @@ void GlobalError::MergeWithStack() {
 APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
 {
    static constexpr auto COLOR_RESET = "\033[0m";
-   static constexpr auto COLOR_NOTICE = "\033[33m";  // normal yellow
+   static constexpr auto COLOR_BOLD = "\033[1m";   // bold neutral
+   static constexpr auto COLOR_NOTICE = "\033[1m";   // bold neutral
    static constexpr auto COLOR_WARN = "\033[1;33m";  // bold yellow
    static constexpr auto COLOR_ERROR = "\033[1;31m"; // bold red
 
    bool use_color = _config->FindB("APT::Color", false);
+   auto out_ver = _config->FindI("APT::Output-Version");
 
    if (use_color)
    {
@@ -284,22 +287,26 @@ APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
    {
    case GlobalError::FATAL:
    case GlobalError::ERROR:
-      out << 'E';
+      // TRANSLATOR: This is a warning level displayed before the message
+      out << (out_ver < 30 ? "E:" : _("Error:"));
       break;
    case GlobalError::WARNING:
-      out << 'W';
+      // TRANSLATOR: This is a warning level displayed before the message
+      out << (out_ver < 30 ? "W:" : _("Warning:"));
       break;
    case GlobalError::NOTICE:
-      out << 'N';
+      // TRANSLATOR: This is a warning level displayed before the message
+      out << (out_ver < 30 ? "N:" : _("Notice:"));
       break;
    case GlobalError::AUDIT:
       out << 'A';
       break;
    case GlobalError::DEBUG:
-      out << 'D';
+      // TRANSLATOR: This is a warning level displayed before the message
+      out << _("Debug:");
       break;
    }
-   out << ": ";
+   out << " ";
 
    if (use_color)
    {
@@ -311,6 +318,8 @@ APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
       case GlobalError::NOTICE:
       case GlobalError::AUDIT:
 	 out << COLOR_RESET;
+	 if (out_ver >= 30)
+	    out << COLOR_BOLD;
 	 break;
       default:
 	 break;

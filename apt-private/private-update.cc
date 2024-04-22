@@ -266,7 +266,11 @@ bool DoUpdate()
       if (upgradable == 0)
          c1out << _("All packages are up to date.") << std::endl;
       else
-         ioprintf(c1out, msg, upgradable);
+      {
+	 c1out << _config->Find("APT::Color::Bold");
+	 ioprintf(c1out, msg, upgradable);
+	 c1out << _config->Find("APT::Color::Neutral");
+      }
 
       RunScripts("APT::Update::Post-Invoke-Stats");
    }

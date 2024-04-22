@@ -96,6 +96,7 @@ bool InitOutput(std::basic_streambuf<char> * const out)			/*{{{*/
    } else {
       // Colors
       _config->CndSet("APT::Color::Highlight", "\x1B[32m");
+      _config->CndSet("APT::Color::Bold", "\x1B[1m");
       _config->CndSet("APT::Color::Neutral", "\x1B[0m");
       
       _config->CndSet("APT::Color::Red", "\x1B[31m");
@@ -111,6 +112,8 @@ bool InitOutput(std::basic_streambuf<char> * const out)			/*{{{*/
       _config->CndSet("APT::Color::Action::Install-Dependencies", "green");
       _config->CndSet("APT::Color::Action::Downgrade", "yellow");
       _config->CndSet("APT::Color::Action::Remove", "red");
+      _config->CndSet("APT::Color::Show::Field", "\x1B[1m");
+      _config->CndSet("APT::Color::Show::Package", "\x1B[32m");
    }
 
    return true;
