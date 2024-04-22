@@ -299,7 +299,7 @@ APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
       out << (out_ver < 30 ? "N:" : _("Notice:"));
       break;
    case GlobalError::AUDIT:
-      out << 'A';
+      out << (out_ver < 30 ? "A:" : _("Audit:"));
       break;
    case GlobalError::DEBUG:
       // TRANSLATOR: This is a warning level displayed before the message
