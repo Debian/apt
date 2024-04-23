@@ -36,17 +36,12 @@ insertinstalledpackage 'libvtk5.4' 'i386' '5.4.2-7'
 testsuccess aptmark markauto 'libvtk5.4'
 testmarkedauto 'libvtk5.4'
 
-AUTOREMOVE='apt autoremove'
-if [ -n "$SUDO_USER" ]; then
-	AUTOREMOVE="sudo $AUTOREMOVE"
-fi
-
 testsuccessequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 The following package was automatically installed and is no longer required:
   libvtk5.4
-Use '$AUTOREMOVE' to remove it.
+Use 'apt autoremove' to remove it.
 The following NEW packages will be installed:
   libavcodec52
 0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
@@ -57,7 +52,7 @@ testsuccessequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 1 package was automatically installed and is no longer required.
-Use '$AUTOREMOVE' to remove it.
+Use 'apt autoremove' to remove it.
 The following NEW packages will be installed:
   libavcodec52
 0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
@@ -69,7 +64,7 @@ Building dependency tree...
 Reading state information...
 The following package was automatically installed and is no longer required:
   libvtk5.4
-Use '$AUTOREMOVE' to remove it.
+Use 'apt autoremove' to remove it.
 The following additional packages will be installed:
   libavcodec52 libopenal-dev
 The following NEW packages will be installed:
@@ -82,7 +77,7 @@ testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 1 package was automatically installed and is no longer required.
-Use '$AUTOREMOVE' to remove it.
+Use 'apt autoremove' to remove it.
 The following additional packages will be installed:
   libavcodec52 libopenal-dev
 The following NEW packages will be installed:

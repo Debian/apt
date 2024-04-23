@@ -60,23 +60,12 @@ all files have been overwritten by other packages:
 Note: This is done automatically and on purpose by dpkg.' tail -n 4 disappear.output
 
 sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d' -e "s#:$(getarchitecture 'native') #:native #"
-if [ -n "$SUDO_USER" ] && [ "$(id -u "$SUDO_USER")" -gt 0  ]; then
-	testfileequal 'rootdir/var/log/apt/history.log' "
-Requested-By: $SUDO_USER ($(id -u "$SUDO_USER"))
-Install: old-pkg:native (1)
-
-Requested-By: $SUDO_USER ($(id -u "$SUDO_USER"))
-Install: new-pkg:native (2, automatic)
-Upgrade: old-pkg:native (1, 2)
-Disappeared: old-pkg (1)"
-else
-	testfileequal 'rootdir/var/log/apt/history.log' '
+testfileequal 'rootdir/var/log/apt/history.log' '
 Install: old-pkg:native (1)
 
 Install: new-pkg:native (2, automatic)
 Upgrade: old-pkg:native (1, 2)
 Disappeared: old-pkg (1)'
-fi
 
 testmarkedauto  # new-pkg should have get the manual flag from old-pkg
 

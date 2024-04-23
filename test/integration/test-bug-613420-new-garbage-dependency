@@ -16,17 +16,13 @@ setupaptarchive
 touch rootdir/var/lib/apt/extended_states
 testsuccess aptmark markauto openoffice.org-officebean
 testmarkedauto openoffice.org-officebean
-AUTOREMOVE='apt autoremove'
-if [ -n "$SUDO_USER" ]; then
-	AUTOREMOVE="sudo $AUTOREMOVE"
-fi
 
 testfailureequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 The following packages were automatically installed and are no longer required:
   libreoffice-officebean openoffice.org-officebean
-Use '$AUTOREMOVE' to remove them.
+Use 'apt autoremove' to remove them.
 The following additional packages will be installed:
   libreoffice-core libreoffice-officebean openoffice.org-officebean
 The following packages will be REMOVED:
@@ -43,7 +39,7 @@ testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 2 packages were automatically installed and are no longer required.
-Use '$AUTOREMOVE' to remove them.
+Use 'apt autoremove' to remove them.
 The following additional packages will be installed:
   libreoffice-core libreoffice-officebean openoffice.org-officebean
 The following packages will be REMOVED:

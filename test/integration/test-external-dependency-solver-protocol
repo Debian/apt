@@ -113,17 +113,13 @@ Remv somestuff [1]
 Remv cool [1]
 Remv stuff [1]' aptget autoremove --solver apt somestuff -s
 
-AUTOREMOVE='apt autoremove'
-if [ -n "$SUDO_USER" ]; then
-	AUTOREMOVE="sudo $AUTOREMOVE"
-fi
 testsuccessequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 Execute external solver...
 The following package was automatically installed and is no longer required:
   stuff
-Use '$AUTOREMOVE' to remove it.
+Use 'apt autoremove' to remove it.
 The following packages will be REMOVED:
   cool* somestuff*
 0 upgraded, 0 newly installed, 2 to remove and 1 not upgraded.
