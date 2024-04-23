@@ -315,11 +315,13 @@ APT_HIDDEN std::ostream &operator<<(std::ostream &out, GlobalError::Item i)
       case GlobalError::FATAL:
       case GlobalError::ERROR:
       case GlobalError::WARNING:
-      case GlobalError::NOTICE:
-      case GlobalError::AUDIT:
 	 out << COLOR_RESET;
 	 if (out_ver >= 30)
 	    out << COLOR_BOLD;
+	 break;
+      case GlobalError::NOTICE:
+      case GlobalError::AUDIT:
+	 out << COLOR_RESET;
 	 break;
       default:
 	 break;
