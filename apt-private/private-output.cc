@@ -740,7 +740,7 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
    }
    return ShowList(out,_("WARNING: The following essential packages will be removed.\n"
 			 "This should NOT be done unless you know exactly what you are doing!"),
-	 pkglist, &AlwaysTrue, withdue, &EmptyString);
+	 pkglist, &AlwaysTrue, withdue, &EmptyString, "action::remove");
 }
 									/*}}}*/
 // Stats - Show some statistics						/*{{{*/
