@@ -1,0 +1,57 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+WORKDIR="${TMPWORKINGDIRECTORY}/badcontrol"
+mkdir -p "${WORKDIR}/DEBIAN"
+cat > "${WORKDIR}/DEBIAN/control" << EOF
+Package: perccli
+Version: 007.2616.0000.0000
+Section: perccli
+Priority: optional
+Architecture: all
+Depends: 
+Pre-Depends: 
+Recommends: 
+Suggests: 
+Installed-Size: 7000
+Maintainer: Jane Doe <foo@example.org>
+Conflicts: 
+Replaces: 
+Provides: 
+Description: Not a real package
+EOF
+buildsimplenativepackage 'perccli' 'all' '007.2616.0000.0000' 'stable' '' '' '' '' "${WORKDIR}/DEBIAN"
+cp -a "${WORKDIR}/DEBIAN/control" aptarchive/Packages
+rm -rf "$WORKDIR"
+
+setupaptarchive --no-update
+echo "deb [trusted=yes] file:${TMPWORKINGDIRECTORY}/aptarchive ./" > rootdir/etc/apt/sources.list.d/00badcontrol.list
+testsuccess apt update
+
+# uses the flat Packages file which includes the line ending spaces
+testsuccess aptcache show perccli
+cp -a rootdir/tmp/testsuccess.output perccli.show
+testsuccessequal '4' grep -c '^\(\(Pre-\|\)Depends\|Provides\|Replaces\): \+$' perccli.show
+
+testdpkgnotinstalled perccli
+testsuccess apt install perccli
+testdpkginstalled perccli
+
+testsuccess apt policy perccli
+cp -a rootdir/tmp/testsuccess.output perccli.policy
+testsuccessequal '3' grep -c '7\.2616\.' perccli.policy
+
+# apt-ftparchive outputs empty fields, but not the space ending
+testsuccess rm rootdir/var/lib/apt/lists/*_._Packages
+testsuccess aptcache show perccli/now
+cp -a rootdir/tmp/testsuccess.output perccli.show
+testsuccessequal '4' grep -c '^\(\(Pre-\|\)Depends\|Provides\|Replaces\):$' perccli.show
+
+testsuccess apt policy perccli
+cp -a rootdir/tmp/testsuccess.output perccli.policy
+testsuccessequal '3' grep -c '7\.2616\.' perccli.policy

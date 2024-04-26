@@ -882,8 +882,12 @@ buildsimplenativepackage() {
                     cp -ar "$FILE_TREE" "${BUILDDIR}/debian/tmp"
                 fi
 
-		(cd "${BUILDDIR}"; dpkg-gencontrol -DArchitecture=$arch)
-		(cd "${BUILDDIR}/debian/tmp"; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
+		if [ ! -e "${BUILDDIR}/debian/tmp/DEBIAN/control" ]; then
+			(cd "${BUILDDIR}"; dpkg-gencontrol -DArchitecture=$arch)
+		fi
+		if [ ! -e "${BUILDDIR}/debian/tmp/DEBIAN/md5sums" ]; then
+			(cd "${BUILDDIR}/debian/tmp"; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
+		fi
 		local LOG="${BUILDDIR}/../${NAME}_${VERSION}_${arch}.dpkg-deb.log"
 		# ensure the right permissions as dpkg-deb insists
 		chmod 755 "${BUILDDIR}/debian/tmp/DEBIAN"

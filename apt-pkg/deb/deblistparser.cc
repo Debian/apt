@@ -887,7 +887,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
    bool const barbarianArch = not APT::Configuration::checkArchitecture(Arch);
    const char *Start;
    const char *Stop;
-   if (Section.Find(pkgTagSection::Key::Provides,Start,Stop) == true)
+   if (Section.Find(pkgTagSection::Key::Provides,Start,Stop) && Start != Stop)
    {
       StringView Package;
       StringView Version;
