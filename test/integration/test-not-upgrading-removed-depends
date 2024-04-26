@@ -1,0 +1,50 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'untouchable-for-solving' 'all' '1' 'Conflicts: main'
+insertpackage 'installed' 'bad' 'all' '1' 'Depends: main (= 1)'
+insertpackage 'unstable' 'bad' 'all' '2' 'Depends: main (= 2), untouchable-for-solving'
+
+insertpackage 'installed' 'main' 'all' '1'
+insertpackage 'unstable' 'main' 'all' '2' 'Breaks: bad'
+
+insertpackage 'unstable' 'else' 'all' '1'
+insertpackage 'unstable' 'meta' 'all' '1' 'Depends: main (= 2) | else'
+
+setupaptarchive
+
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  bad
+The following packages will be upgraded:
+  main
+1 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv bad [1]
+Inst main [1] (2 unstable [all])
+Conf main (2 unstable [all])' apt install -s main
+testsuccess apt install -s main -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
+testfailure grep 'untouchable-for-solving' rootdir/tmp/testsuccess.output
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  main
+The following packages will be REMOVED:
+  bad
+The following NEW packages will be installed:
+  meta
+The following packages will be upgraded:
+  main
+1 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv bad [1]
+Inst main [1] (2 unstable [all])
+Inst meta (1 unstable [all])
+Conf main (2 unstable [all])
+Conf meta (1 unstable [all])' apt install -s meta
+testsuccess apt install -s meta -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
+testfailure grep 'untouchable-for-solving' rootdir/tmp/testsuccess.output

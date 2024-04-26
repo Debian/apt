@@ -3,7 +3,8 @@ include_directories(${PROJECT_BINARY_DIR}/include/apt-pkg)
 
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/apt-pkg/)
 execute_process(COMMAND grep -v "^#" "${CMAKE_CURRENT_SOURCE_DIR}/tagfile-keys.list"
-		OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/tagfile-keys.clean.list")
+		OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/tagfile-keys.clean.list"
+		COMMAND_ERROR_IS_FATAL ANY)
 execute_process(COMMAND ${TRIEHASH_EXECUTABLE}
                         --ignore-case
                          --header ${PROJECT_BINARY_DIR}/include/apt-pkg/tagfile-keys.h
@@ -13,7 +14,8 @@ execute_process(COMMAND ${TRIEHASH_EXECUTABLE}
                          --function-name pkgTagHash
                          --include "<apt-pkg/tagfile.h>"
                          --include "<apt-pkg/header-is-private.h>"
-                         "${CMAKE_CURRENT_BINARY_DIR}/tagfile-keys.clean.list")
+                         "${CMAKE_CURRENT_BINARY_DIR}/tagfile-keys.clean.list"
+                COMMAND_ERROR_IS_FATAL ANY)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "tagfile-keys.list")
 set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/tagfile-keys.cc" PROPERTIES COMPILE_DEFINITIONS APT_COMPILING_APT)
 
@@ -22,11 +24,13 @@ set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/tagfile-keys.cc" PROPER
 execute_process(COMMAND awk -v ORS=. "/^\#define APT_PKG_M/ {print \$3}"
                 COMMAND sed "s/\\.\$//"
                 INPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/contrib/macros.h
-                OUTPUT_VARIABLE MAJOR OUTPUT_STRIP_TRAILING_WHITESPACE)
+                OUTPUT_VARIABLE MAJOR OUTPUT_STRIP_TRAILING_WHITESPACE
+                COMMAND_ERROR_IS_FATAL ANY)
 execute_process(COMMAND grep "^#define APT_PKG_RELEASE"
                 COMMAND cut -d " " -f 3
                 INPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/contrib/macros.h
-                OUTPUT_VARIABLE MINOR OUTPUT_STRIP_TRAILING_WHITESPACE)
+                OUTPUT_VARIABLE MINOR OUTPUT_STRIP_TRAILING_WHITESPACE
+                COMMAND_ERROR_IS_FATAL ANY)
 
 message(STATUS "Building libapt-pkg ${MAJOR} (release ${MINOR})")
 set(APT_PKG_MAJOR ${MAJOR} PARENT_SCOPE) # exporting for methods/CMakeLists.txt

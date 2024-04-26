@@ -1,7 +1,8 @@
 # Determine the current vendor, export to CURRENT_VENDOR
 if (NOT DEFINED CURRENT_VENDOR)
     execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/getinfo current
-                    OUTPUT_VARIABLE CURRENT_VENDOR_OUT OUTPUT_STRIP_TRAILING_WHITESPACE)
+                    OUTPUT_VARIABLE CURRENT_VENDOR_OUT OUTPUT_STRIP_TRAILING_WHITESPACE
+                    COMMAND_ERROR_IS_FATAL ANY)
 
     set(CURRENT_VENDOR "${CURRENT_VENDOR_OUT}" CACHE STRING "Select the system vendor")
     message(STATUS "Detected vendor: ${CURRENT_VENDOR_OUT}")

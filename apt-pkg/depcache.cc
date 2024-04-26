@@ -1463,7 +1463,7 @@ static bool MarkInstall_RemoveConflictsIfNotUpgradeable(pkgDepCache &Cache, bool
    return not failedToRemoveSomething;
 }
 									/*}}}*/
-static bool MarkInstall_CollectReverseDepends(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long Depth, APT::PackageVector &toUpgrade) /*{{{*/
+static bool MarkInstall_CollectReverseDepends(pkgDepCache &Cache, bool const DebugAutoInstall, pkgCache::VerIterator const &PV, unsigned long Depth, APT::PackageVector &toUpgrade, APT::PackageVector const &delayedRemove) /*{{{*/
 {
    auto CurrentVer = PV.ParentPkg().CurrentVer();
    if (CurrentVer.end())
@@ -1473,6 +1473,9 @@ static bool MarkInstall_CollectReverseDepends(pkgDepCache &Cache, bool const Deb
       auto ParentPkg = D.ParentPkg();
       // Skip non-installed versions and packages already marked for upgrade
       if (ParentPkg.CurrentVer() != D.ParentVer() || Cache[ParentPkg].Install())
+	 continue;
+      // Skip rev-depends we already tagged for removal
+      if (Cache[ParentPkg].Delete() || std::find(delayedRemove.begin(), delayedRemove.end(), ParentPkg) != delayedRemove.end())
 	 continue;
       // We only handle important positive dependencies, RemoveConflictsIfNotUpgradeable handles negative
       if (not Cache.IsImportantDep(D) || D.IsNegative())
@@ -1722,7 +1725,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg, bool AutoInst,
 	    return false;
 	 hasFailed = true;
       }
-      if (not MarkInstall_CollectReverseDepends(*this, DebugAutoInstall, PV, Depth, toUpgrade))
+      if (not MarkInstall_CollectReverseDepends(*this, DebugAutoInstall, PV, Depth, toUpgrade, delayedRemove))
       {
 	 if (failEarly)
 	    return false;
