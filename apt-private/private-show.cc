@@ -446,14 +446,22 @@ bool ShowSrcPackage(CommandLine &CmdL)					/*{{{*/
    std::set<std::string> seen;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
+      const char *pkgname = *I;
       SrcRecs.Restart();
 
       pkgSrcRecords::Parser *Parse;
       bool found_this = false;
-      while ((Parse = SrcRecs.Find(*I,false)) != 0) {
+      bool only_source = _config->FindB("APT::Cache::Only-Source", false);
+      if (APT::String::Startswith(pkgname, "src:"))
+      {
+	 only_source = true;
+	 pkgname += 4;
+      }
+      while ((Parse = SrcRecs.Find(pkgname, false)) != 0)
+      {
 	 // SrcRecs.Find() will find both binary and source names
-	 if (_config->FindB("APT::Cache::Only-Source", false) == true)
-	    if (Parse->Package() != *I)
+	 if (only_source)
+	    if (Parse->Package() != pkgname)
 	       continue;
          std::string sha1str = Sha1FromString(Parse->AsStr());
          if (std::find(seen.begin(), seen.end(), sha1str) == seen.end())

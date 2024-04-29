@@ -77,7 +77,14 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
    std::string ArchTag = "";
    std::string RelTag = _config->Find("APT::Default-Release");
    std::string TmpSrc = Name;
+   bool MatchSrcOnly = _config->FindB("APT::Get::Only-Source");
 
+   // Check if we should look by source package
+   if (APT::String::Startswith(TmpSrc, "src:"))
+   {
+      MatchSrcOnly = true;
+      TmpSrc = TmpSrc.substr(4);
+   }
    // extract release
    size_t found = TmpSrc.find_last_of("/");
    if (found != std::string::npos)
@@ -103,7 +110,6 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,
    /* Lookup the version of the package we would install if we were to
       install a version and determine the source package name, then look
       in the archive for a source package of the same name. */
-   bool MatchSrcOnly = _config->FindB("APT::Get::Only-Source");
    pkgCache::PkgIterator Pkg;
    if (ArchTag != "")
       Pkg = Cache.GetPkgCache()->FindPkg(TmpSrc, ArchTag);

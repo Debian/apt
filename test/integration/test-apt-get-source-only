@@ -1,0 +1,114 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture "amd64"
+
+
+# not-foo builds foo, but foo builds not-foo
+insertpackage 'stable' 'foo' 'amd64' '1.0' 'Source: not-foo'
+insertsource 'stable' 'not-foo' 'amd64' '1.0' 'Build-Depends: not-foo-bd' 'foo'
+
+insertpackage 'stable' 'not-foo' 'amd64' '1.0' 'Source: foo'
+insertsource 'stable' 'foo' 'amd64' '1.0' 'Build-Depends: foo-bd' 'not-foo'
+
+insertinstalledpackage 'build-essential' 'amd64' '1.0'
+
+setupaptarchive
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+HEADER='Reading package lists...'
+DOWNLOADFOO="Need to get 0 B/25 B of source archives.
+'file:${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 11 SHA256:ed7c25c832596339bee13e4e7c45cf49f869b60d2bf57252f18191d75866c2a7
+'file:${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 14 SHA256:f3da8c6ebc62c8ef2dae439a498dddcdacc1a07f45ff67ad12f44b6e2353c239"
+DOWNLOADNOTFOO="Need to get 0 B/33 B of source archives.
+'file:${APTARCHIVE}/not-foo_1.0.dsc' not-foo_1.0.dsc 15 SHA256:db578a571c87d2555e90245732042845be4f481755f5b2f5786ac7a26bde9f4f
+'file:${APTARCHIVE}/not-foo_1.0.tar.gz' not-foo_1.0.tar.gz 18 SHA256:8701846f1cba0ca81c552ac0ec93e2a89ae113cf2872b9cd51b29b4a9ff6b122"
+
+BUILDDEPFOO="Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ builddeps:foo : Depends: foo-bd but it is not installable
+E: Unable to correct problems, you have held broken packages."
+
+BUILDDEPNOTFOO="Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ builddeps:not-foo : Depends: not-foo-bd but it is not installable
+E: Unable to correct problems, you have held broken packages."
+
+testsuccessequal "$HEADER
+Picking 'not-foo' as source package instead of 'foo'
+$DOWNLOADNOTFOO" aptget source -q --print-uris foo
+
+testsuccessequal "$HEADER
+Picking 'not-foo' as source package instead of 'foo'
+$DOWNLOADNOTFOO" aptget source -q --print-uris foo:amd64
+
+testsuccessequal "$HEADER
+$DOWNLOADNOTFOO" aptget source -q --print-uris --only-source not-foo
+
+testsuccessequal "$HEADER
+$DOWNLOADNOTFOO" aptget source -q --print-uris src:not-foo
+
+testsuccessequal "$HEADER
+Picking 'foo' as source package instead of 'not-foo'
+$DOWNLOADFOO" aptget source -q --print-uris not-foo
+
+testsuccessequal "$HEADER
+Picking 'foo' as source package instead of 'not-foo'
+$DOWNLOADFOO" aptget source -q --print-uris not-foo:amd64
+
+testsuccessequal "$HEADER
+$DOWNLOADFOO" aptget source -q --print-uris --only-source foo
+
+testsuccessequal "$HEADER
+$DOWNLOADFOO" aptget source -q --print-uris src:foo
+
+# Same dance with build-dep
+testequal "$HEADER
+Picking 'not-foo' as source package instead of 'foo'
+$BUILDDEPNOTFOO" aptget build-dep -q -s foo
+
+testequal "$HEADER
+Picking 'not-foo' as source package instead of 'foo'
+$BUILDDEPNOTFOO" aptget build-dep -q -s foo:amd64
+
+testequal "$HEADER
+$BUILDDEPNOTFOO" aptget build-dep -q -s --only-source not-foo
+
+testequal "$HEADER
+$BUILDDEPNOTFOO" aptget build-dep -q -s src:not-foo
+
+testequal "$HEADER
+Picking 'foo' as source package instead of 'not-foo'
+$BUILDDEPFOO" aptget build-dep -q -s not-foo
+
+testequal "$HEADER
+Picking 'foo' as source package instead of 'not-foo'
+$BUILDDEPFOO" aptget build-dep -q -s not-foo:amd64
+
+testequal "$HEADER
+$BUILDDEPFOO" aptget build-dep -q -s --only-source foo
+
+testequal "$HEADER
+$BUILDDEPFOO" aptget build-dep -q -s src:foo
+
+
+
