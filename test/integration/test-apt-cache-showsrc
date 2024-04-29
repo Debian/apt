@@ -29,3 +29,9 @@ testsuccess grep "Package: unrelated" output.txt
 aptcache showsrc --only-source foo > output.txt
 testsuccess grep "Package: foo" output.txt
 testfailure grep "Package: unrelated" output.txt
+
+# by default apt-cache showsrc will look into "binary" and "source" names
+# and show all matches
+aptcache showsrc src:foo > output.txt
+testsuccess grep "Package: foo" output.txt
+testfailure grep "Package: unrelated" output.txt
