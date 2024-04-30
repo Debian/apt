@@ -350,7 +350,7 @@ struct columnInfo
 void ShowWithColumns(ostream &out, vector<string> const &List, size_t Indent, size_t ScreenWidth)
 {
    constexpr size_t MinColumnWidth = 2;
-   constexpr size_t ColumnSpace = 1;
+   constexpr size_t ColumnSpace = 2;
 
    size_t const ListSize = List.size();
    size_t const MaxScreenCols = (ScreenWidth - Indent) /
