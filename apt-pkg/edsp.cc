@@ -19,6 +19,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/prettyprinters.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/solver3.h>
 #include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>
@@ -765,6 +766,18 @@ static bool CreateDumpFile(char const * const id, char const * const type, FileF
 // EDSP::ResolveExternal - resolve problems by asking external for help	{{{*/
 bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 			 unsigned int const flags, OpProgress *Progress) {
+   if (strcmp(solver, "3.0") == 0)
+   {
+      APT::Solver s(Cache.GetCache(), Cache.GetPolicy());
+      FileFd output;
+      if (not s.FromDepCache(Cache))
+	 return false;
+      if (not s.Solve())
+	 return false;
+      if (not s.ToDepCache(Cache))
+	 return false;
+      return true;
+   }
 	if (strcmp(solver, "internal") == 0)
 	{
 		FileFd output;

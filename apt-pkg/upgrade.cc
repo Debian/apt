@@ -312,6 +312,11 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 // APT::Upgrade::Upgrade - Upgrade using a specific strategy		/*{{{*/
 bool APT::Upgrade::Upgrade(pkgDepCache &Cache, int mode, OpProgress * const Progress)
 {
+   _config->Set("APT::Solver::Upgrade", "true");
+   if (mode & FORBID_REMOVE_PACKAGES)
+      _config->Set("APT::Solver::Remove", "false");
+   if (mode & FORBID_INSTALL_NEW_PACKAGES)
+      _config->Set("APT::Solver::Install", "false");
    if (mode == ALLOW_EVERYTHING)
       return pkgDistUpgrade(Cache, Progress);
    else if ((mode & ~FORBID_REMOVE_PACKAGES) == 0)
