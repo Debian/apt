@@ -13,10 +13,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.7.12\n"
+"Project-Id-Version: apt 2.9.1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-04-22 17:39+0000\n"
-"PO-Revision-Date: 2024-02-26 20:56+0100\n"
+"POT-Creation-Date: 2024-04-26 20:11+0000\n"
+"PO-Revision-Date: 2024-04-20 20:28+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -2000,7 +2000,7 @@ msgstr ""
 #: apt-private/private-install.cc
 msgid "Packages were downgraded and -y was used without --allow-downgrades."
 msgstr ""
-"Er werden pakketten gedegradeerd en -y was gebruikt zonder --allow-"
+"Er werden pakketten gedowngraded en -y was gebruikt zonder --allow-"
 "downgrades."
 
 #: apt-private/private-install.cc
@@ -2022,10 +2022,9 @@ msgstr ""
 "org te mailen"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Download Failed"
+#, c-format
 msgid "  Download size: %sB / %sB\n"
-msgstr "Ophalen mislukt"
+msgstr "  Downloadgrootte: %sB / %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2035,10 +2034,9 @@ msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Er moeten %sB/%sB aan archieven opgehaald worden.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Download Failed"
+#, c-format
 msgid "  Download size: %sB\n"
-msgstr "Ophalen mislukt"
+msgstr "  Downloadgrootte: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2057,7 +2055,7 @@ msgstr "Na deze bewerking zal er %sB extra schijfruimte gebruikt worden.\n"
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB / %sB available\n"
-msgstr ""
+msgstr "Benodigde ruimte: %sB / %sB beschikbaar\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2065,6 +2063,7 @@ msgstr ""
 #, c-format
 msgid "More space needed than available: %sB > %sB, installation may fail"
 msgstr ""
+"Meer ruimte nodig dan beschikbaar: %sB > %sB, de installatie kan mislukken"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
@@ -2074,7 +2073,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "in %s:  %sB / %sB available\n"
-msgstr ""
+msgstr "in %s:  %sB / %sB beschikbaar\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2084,17 +2083,18 @@ msgstr ""
 msgid ""
 "More space needed in %s than available: %sB > %sB, installation may fail"
 msgstr ""
+"Meer ruimte nodig in %s dan beschikbaar: %sB > %sB, de installatie kan "
+"mislukken"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB\n"
-msgstr ""
+msgstr "Benodigde ruimte: %sB\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Stored label: %s\n"
+#, c-format
 msgid "  Freed space: %sB\n"
-msgstr "Opgeslagen label: %s \n"
+msgstr "  Vrijgemaakte ruimte: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2117,11 +2117,11 @@ msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Continue anyway?"
-msgstr ""
+msgstr "Toch doorgaan?"
 
 #: apt-private/private-install.cc
 msgid "Continue?"
-msgstr ""
+msgstr "Doorgaan?"
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
@@ -2362,30 +2362,24 @@ msgid "The following packages have unmet dependencies:"
 msgstr "De volgende pakketten hebben niet-voldane vereisten:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "satisfy dependency strings"
 msgid "Unsatisfied dependencies:"
-msgstr "voldoen aan vereistentekenreeksen"
+msgstr "Niet-voldane vereisten:"
 
 #: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "De volgende NIEUWE pakketten zullen geïnstalleerd worden:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Installing %s"
 msgid "Installing:"
-msgstr "%s wordt geïnstalleerd"
+msgstr "Installeren:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Total dependencies: "
 msgid "Installing dependencies:"
-msgstr "Totaal aantal vereisten: "
+msgstr "Installeren van vereisten:"
 
 #: apt-private/private-output.cc
 msgid "REMOVING:"
-msgstr ""
+msgstr "VERWIJDEREN:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
@@ -2396,14 +2390,12 @@ msgid "The following upgrades have been deferred due to phasing:"
 msgstr "De volgende opwaarderingen zijn uitgesteld vanwege fasering:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following upgrades have been deferred due to phasing:"
 msgid "Not upgrading yet due to phasing:"
-msgstr "De volgende opwaarderingen zijn uitgesteld vanwege fasering:"
+msgstr "Nog niet opgewaardeerd vanwege fasering:"
 
 #: apt-private/private-output.cc
 msgid "Not upgrading:"
-msgstr ""
+msgstr "Niet opgewaardeerd:"
 
 #: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
@@ -2415,21 +2407,19 @@ msgstr "De volgende pakketten zullen opgewaardeerd worden:"
 
 #: apt-private/private-output.cc
 msgid "Upgrading:"
-msgstr ""
+msgstr "Opwaarderen:"
 
 #: apt-private/private-output.cc
 msgid "DOWNGRADING:"
-msgstr ""
+msgstr "DOWNGRADEN:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
-msgstr "De volgende pakketten zullen GEDEGRADEERD worden:"
+msgstr "De volgende pakketten zullen GEDOWNGRADED worden:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Pinned packages:"
 msgid "Changing held packages:"
-msgstr "Vastgepinde pakketten:"
+msgstr "Veranderen vastgehouden pakketten:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2450,7 +2440,7 @@ msgstr ""
 
 #: apt-private/private-output.cc
 msgid "Summary:"
-msgstr ""
+msgstr "Samenvatting:"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2458,10 +2448,9 @@ msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu opgewaardeerd, %lu nieuw geïnstalleerd, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Upgrading: %lu, Installing: %lu, "
-msgstr "%s wordt geïnstalleerd"
+msgstr "Opwaarderen: %lu, Installeren: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2469,20 +2458,19 @@ msgid "%lu reinstalled, "
 msgstr "%lu opnieuw geïnstalleerd, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Reinstalling: %lu, "
-msgstr "%s wordt geïnstalleerd"
+msgstr "Opnieuw installeren: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "%lu downgraded, "
-msgstr "%lu gedegradeerd, "
+msgstr "%lu gedowngraded, "
 
 #: apt-private/private-output.cc
 #, c-format
 msgid "Downgrading: %lu, "
-msgstr ""
+msgstr "Downgraden: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2492,7 +2480,7 @@ msgstr "%lu te verwijderen en %lu niet opgewaardeerd.\n"
 #: apt-private/private-output.cc
 #, c-format
 msgid "Removing: %lu, Not Upgrading: %lu\n"
-msgstr ""
+msgstr "Verwijderen: %lu, Niet opwaarderen: %lu\n"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -4087,7 +4075,7 @@ msgstr "Mislukking bij aanroepen van "
 #: methods/gpgv.cc
 #, c-format
 msgid "untrusted public key algorithm: %s"
-msgstr ""
+msgstr "niet-vertrouwd openbaar sleutelalgoritme: %s"
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
@@ -4131,12 +4119,9 @@ msgstr ""
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
-#, fuzzy, c-format
-#| msgid "Signature by key %s uses weak digest algorithm (%s)"
+#, c-format
 msgid "Signature by key %s uses weak algorithm (%s)"
-msgstr ""
-"De ondertekening door sleutel %s maakt gebruik van een zwak hash-algoritme "
-"(%s)"
+msgstr "Handtekening met sleutel %s gebruikt een zwak algoritme (%s)"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
@@ -4182,13 +4167,3 @@ msgstr "Verbinding werd voortijdig afgebroken"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Lege bestanden kunnen geen geldige archieven zijn"
-
-#, fuzzy, c-format
-#~| msgid "  Installed: "
-#~ msgid "  Installed size: %sB\n"
-#~ msgstr "  Geïnstalleerd: "
-
-#, fuzzy
-#~| msgid "The following held packages will be changed:"
-#~ msgid "Changing held packages:Changing held packages:"
-#~ msgstr "De volgende gehandhaafde pakketten zullen gewijzigd worden:"
