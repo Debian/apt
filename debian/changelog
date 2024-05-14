@@ -1,3 +1,55 @@
+apt (2.9.3) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Initial implementation ("alpha") of the 3.0 solver:
+    This new solver is available using the --solver 3.0 option.
+    Highlights:
+    - Fully backtracking solver, think DPLL without pure literal elimination
+    - Manually installed packages are not offered up for removal
+    - New --no-strict-pinning option allows APT to fallback to non-candidate
+      versions, e.g. apt install --no-strict-pinning foo/experimental installs
+      foo from experimental and will switch dependencies where needed.
+    - Autoremove is more aggressive and only keeps the strongest automatically
+      installed package. For example, gcc-<version> will now be offered for
+      removal and no longer kept around due libtool Depends: gcc | c-compiler
+      and gcc-<version> Provides: c-compiler, as `gcc` is already satisfied.
+    Caveats right now:
+    - Test suite is not yet passing
+    - The list of automatically removable packages is not displayed
+      when automatically installed packages are not removed
+    - Error information gets lost on backtracking (see Debug::APT::Solver=2)
+    - Error information is just rendered as A -> B implication graphs,
+      with some nodes perhaps containing a "not".
+    - The logic for replacing obsolete manually installed packages with
+      new replacement packages (think Conflits/Replaces/Provides) is not
+      yet implemented.
+    - Conflict-driven clause learning is not implemented, so backtracking
+      is technically pretty inefficient.
+  * Solver3 integration fixes:
+    - test: Ignore progress output in comparing output..
+    - test-allow-scores-for-all-dependency-types: Adjust for solver3
+    - EDSP: Add "solver3" alias for apt-internal-solver
+  * UI work:
+    - Highlight essential removals with action::remove color
+    - The text of notices and audits shall not be bold
+    - Separate columns by 2 spaces in lists (Closes: #1070064)
+  * Support src:name shortcuts in showsrc, source, build-dep commands
+
+  [ David Kalnischkies ]
+  * Do not ignore if a cmake execute_process fails
+  * Avoid figuring which kept pkgs are phased if we don't display it
+  * Match version constraints before saving garbage packages
+  * Do not upgrade rev-deps ear-marked for removal
+  * Drop sudo-related envvars in testing framework
+  * Add test for dealing with unsat Suggests promoted to Recommends
+  * Allow parsing an empty Provides line (Closes: #1069874)
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #1070142)
+  * Dutch manpages translation update (Closes: #1070143)
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 14 May 2024 13:01:31 +0200
+
 apt (2.9.2) unstable; urgency=medium
 
   [ Julian Andres Klode ]
