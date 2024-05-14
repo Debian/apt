@@ -81,7 +81,7 @@ _apt()
                   --ignore-hold
                   --force-yes
                   --trivial-only
-                  --reinstall --solver
+                  --reinstall --solver --no-strict-pinning
                   -t --target-release'"$GENERIC_APT_GET_OPTIONS" -- "$cur" ) )
                 return 0
                 ;;
@@ -151,7 +151,7 @@ _apt()
                     -s --simulate --dry-run
                     -P --build-profiles
                     -t --target-release
-                    --purge --solver
+                    --purge --solver --no-strict-pinning
                     '"$GENERIC_APT_GET_OPTIONS" -- "$cur" ) )
                 return 0
                 ;;

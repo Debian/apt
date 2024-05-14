@@ -190,6 +190,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "auto-remove", "APT::Get::AutomaticRemove", 0);
       addArg(0, "reinstall", "APT::Get::ReInstall", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
+      addArg(0, "strict-pinning", "APT::Solver::Strict-Pinning", 0);
       addArg(0, "planner", "APT::Planner", CommandLine::HasArg);
       addArg('U', "update", "APT::Update", 0);
       if (CmdMatches("upgrade"))
@@ -230,6 +231,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg('P', "build-profiles", "APT::Build-Profiles", CommandLine::HasArg);
       addArg(0, "purge", "APT::Get::Purge", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
+      addArg(0, "strict-pinning", "APT::Solver::Strict-Pinning", 0);
       if (CmdMatches("build-dep"))
       {
          addArg(0,"arch-only","APT::Get::Arch-Only",0);
@@ -578,6 +580,12 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
    if (_config->FindB("APT::Get::Force-Yes", false) == true)
    {
       _error->Warning(_("--force-yes is deprecated, use one of the options starting with --allow instead."));
+   }
+
+   if (not _config->FindB("APT::Solver::Strict-Pinning", true) && _config->Find("APT::Solver", "internal") == "internal")
+   {
+      _config->Set("APT::Solver", "3.0");
+      _error->Notice("Automatically enabled --solver 3.0 for --no-strict-pinning");
    }
 
    // See if the help should be shown
