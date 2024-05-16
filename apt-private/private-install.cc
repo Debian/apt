@@ -658,6 +658,24 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		    if (not Cache->VS().CheckDep(PVerStr, R->CompareOp, R.TargetVer()))
 		       continue;
 		 }
+		 // ignore new providers if we have installed providers
+		 if (Pkg->CurrentVer == 0)
+		 {
+		    std::unique_ptr<pkgCache::Version *[]> VList(R.AllTargets());
+		    bool has_installed_alt_prov = false;
+		    for (pkgCache::Version **V = VList.get(); *V != 0; ++V)
+		    {
+		       pkgCache::VerIterator Ver(Cache, *V);
+		       auto const P = Ver.ParentPkg();
+		       if (not P.end() && P->CurrentVer != 0 && Cache[P].InstallVer == *V)
+		       {
+			  has_installed_alt_prov = true;
+			  break;
+		       }
+		    }
+		    if (has_installed_alt_prov)
+		       continue;
+		 }
 		 if (Debug == true)
 		    std::clog << "Save " << APT::PrettyPkg(Cache, Pkg) << " as another installed package depends on it: " << APT::PrettyPkg(Cache, RP) << std::endl;
 		 Cache->MarkInstall(Pkg, false, 0, false);

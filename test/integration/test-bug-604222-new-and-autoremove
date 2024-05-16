@@ -29,19 +29,12 @@ Recommends: libgphoto2-l10n (= 2)'
 
 setupaptarchive
 
-testsuccessequal "Reading package lists...
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 Calculating upgrade...
-The following package was automatically installed and is no longer required:
-  libfoto1t64
-Use 'apt autoremove' to remove it.
-The following NEW packages will be installed:
-  libfoto1t64
 The following packages have been kept back:
   photoapp2
-0 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
-Inst libfoto1t64 (1 stable [i386])
-Conf libfoto1t64 (1 stable [i386])" apt upgrade -s
+0 upgraded, 0 newly installed, 0 to remove and 1 not upgraded.' apt upgrade -s
 
 insertinstalledpackage 'libvtk5.4' 'i386' '5.4.2-7'
 testsuccess aptmark markauto 'libvtk5.4'
