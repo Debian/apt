@@ -635,63 +635,60 @@ const char *debListParser::ParseDepends(const char *Start, const char *Stop,
    // Skip whitespace
    for (;I != Stop && isspace_ascii(*I) != 0; I++);
 
-   if (unlikely(ParseArchFlags == true))
+   // Parse architecture restrictions
+   if (ParseArchFlags && I != Stop && *I == '[')
    {
+      for (++I; I != Stop && isspace_ascii(*I) != 0 && *I != ']'; ++I);
+      // malformed
+      if (unlikely(I == Stop || *I == ']'))
+	 return 0;
+
       APT::CacheFilter::PackageArchitectureMatchesSpecification matchesArch(Arch, false);
 
-      // Parse an architecture
-      if (I != Stop && *I == '[')
+      bool Found = false;
+      bool NegArch = false;
+      while (I < Stop && *I != ']')
       {
-	 ++I;
-	 // malformed
-	 if (unlikely(I == Stop))
+	 // look for whitespace or ending ']' to end current Arch
+	 const char *End = I;
+	 for (;End < Stop && isspace_ascii(*End) == 0 && *End != ']'; ++End);
+
+	 if (unlikely(End >= Stop))
 	    return 0;
 
-	 const char *End = I;
-	 bool Found = false;
-	 bool NegArch = false;
-	 while (I != Stop)
+	 bool CurNegArch = false;
+	 if (*I == '!')
 	 {
-	    // look for whitespace or ending ']'
-	    for (;End != Stop && !isspace_ascii(*End) && *End != ']'; ++End);
-
-	    if (unlikely(End == Stop))
-	       return 0;
-
-	    if (*I == '!')
-	    {
-	       NegArch = true;
-	       ++I;
-	    }
-
-	    std::string const arch(I, End);
-	    if (arch.empty() == false && matchesArch(arch.c_str()) == true)
-	    {
-	       Found = true;
-	       if (I[-1] != '!')
-		  NegArch = false;
-	       // we found a match, so fast-forward to the end of the wildcards
-	       for (; End != Stop && *End != ']'; ++End);
-	    }
-
-	    if (*End++ == ']') {
-	       I = End;
-	       break;
-	    }
-
-	    I = End;
-	    for (;I != Stop && isspace_ascii(*I) != 0; I++);
+	    NegArch = true;
+	    CurNegArch = true;
+	    ++I;
 	 }
 
-	 if (NegArch == true)
-	    Found = !Found;
+	 if (I >= End)
+	    return 0;
+	 std::string const arch(I, End);
+	 if (matchesArch(arch.c_str()))
+	 {
+	    Found = true;
+	    if (not CurNegArch)
+	       NegArch = false;
+	    // we found a match, so fast-forward to the end of the wildcards
+	    for (; End < Stop && *End != ']'; ++End);
+	 }
+	 else
+	    for (; End < Stop && isspace_ascii(*End) != 0; ++End);
 
-	 if (Found == false)
-	    Package = ""; /* not for this arch */
+	 I = End;
       }
 
+      if (NegArch == true)
+	 Found = not Found;
+
+      if (Found == false)
+	 Package = ""; /* not for this arch */
+
       // Skip whitespace
-      for (;I != Stop && isspace_ascii(*I) != 0; I++);
+      for (++I; I < Stop && isspace_ascii(*I) != 0; ++I);
    }
 
    if (unlikely(ParseRestrictionsList == true))
