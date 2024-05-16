@@ -2455,6 +2455,25 @@ static bool MarkPackage(pkgCache::PkgIterator const &Pkg,
 
       if (not unsatisfied_choice)
 	 fullyExplored[T->ID] = true;
+
+      // do not follow newly installed providers if we have already installed providers
+      if (providers_by_source.size() >= 2)
+      {
+	 if (std::any_of(providers_by_source.begin(), providers_by_source.end(), [](auto const PV) {
+			 return std::any_of(PV.second.begin(), PV.second.end(), [](auto const &Prv) {
+			   auto const PP = Prv.ParentPkg();
+			   return not PP.end() && PP->CurrentVer != 0;
+			 });}))
+	 {
+	    for (auto &providers : providers_by_source)
+	       providers.second.erase(std::remove_if(providers.second.begin(), providers.second.end(),
+			[](auto const &Prv) {
+			   auto const PP = Prv.ParentPkg();
+			   return not PP.end() && PP->CurrentVer == 0;
+			}), providers.second.end());
+	 }
+      }
+
       for (auto const &providers : providers_by_source)
       {
 	 for (auto const &PV : providers.second)
