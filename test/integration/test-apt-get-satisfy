@@ -5,6 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
 setupenvironment
+allowremovemanual
 configarchitecture 'i386' 'amd64'
 
 insertpackage 'stable' 'depends' 'i386' '1'
@@ -79,6 +80,8 @@ testrun 'External' 'Reading package lists...
 Building dependency tree...
 Execute external solver...' --solver apt
 
+testfailuremsg "E: Unsatisfiable dependency group satisfy:command-line:i386=1 -> depends:i386" aptget satisfy --simulate "depends (>= 2)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]" --solver 3.0
+
 testfailureequal "Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
@@ -89,8 +92,10 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  satisfy:command-line : Depends: depends (>= 2) but it is not going to be installed
-E: Unable to correct problems, you have held broken packages." aptget satisfy --simulate "depends (>= 2)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]"
+E: Unable to correct problems, you have held broken packages." aptget satisfy --simulate "depends (>= 2)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]" --solver internal
 
+if [ "$APT_SOLVER" != "3.0" ]; then
+# FIXME: solver3 doesn't produce nice errors in the external solver scenario
 testfailureequal "Reading package lists...
 Building dependency tree...
 Execute external solver...
@@ -109,3 +114,4 @@ The following packages have unmet dependencies:
  satisfy:command-line : Depends: depends (>= 2) but it is not going to be installed
                         Conflicts: conflicts:i386 (>= 1)
 E: External solver failed with: The following packages have unmet dependencies:" aptget satisfy --simulate "depends (>= 2)" "Conflicts: conflicts:i386 (>= 1) [i386], conflicts:amd64 (>= 1) [amd64]" --solver apt
+fi

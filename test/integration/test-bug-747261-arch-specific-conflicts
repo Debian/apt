@@ -4,6 +4,7 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
+allowremovemanual
 configarchitecture 'amd64' 'sparc' 'armel'
 
 insertinstalledpackage 'foobar' 'armel' '1'

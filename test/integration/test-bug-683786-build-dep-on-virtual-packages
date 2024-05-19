@@ -41,6 +41,7 @@ The following NEW packages will be installed:
 Inst po-debconf (1 unstable [all])
 Conf po-debconf (1 unstable [all])' aptget build-dep dash -s
 
+testfailuremsg 'E: Unsatisfiable dependency group builddeps:dash:armel=1 -> po-debconf:armel' aptget build-dep -aarmel dash -s --solver 3.0
 testfailureequal 'Reading package lists...
 Reading package lists...
 Building dependency tree...
@@ -52,7 +53,9 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  builddeps:dash:armel : Depends: po-debconf:armel but it is not installable
-E: Unable to correct problems, you have held broken packages.' aptget build-dep -aarmel dash -s
+E: Unable to correct problems, you have held broken packages.' aptget build-dep -aarmel dash -s --solver internal
+
+testfailuremsg 'E: Unsatisfiable dependency group builddeps:diffutils:armel=1 -> texi2html:armel' aptget build-dep -aarmel diffutils -s --solver 3.0
 testfailureequal 'Reading package lists...
 Reading package lists...
 Building dependency tree...
@@ -64,7 +67,7 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  builddeps:diffutils:armel : Depends: texi2html:armel but it is not installable
-E: Unable to correct problems, you have held broken packages.' aptget build-dep -aarmel diffutils -s
+E: Unable to correct problems, you have held broken packages.' aptget build-dep -aarmel diffutils -s --solver internal
 
 testsuccessequal "Reading package lists...
 Reading package lists...
@@ -75,6 +78,7 @@ The following NEW packages will be installed:
 Inst libselinux1-dev (1 unstable [amd64])
 Conf libselinux1-dev (1 unstable [amd64])" aptget build-dep sed -s
 
+testfailuremsg 'E: Unsatisfiable dependency group builddeps:sed:armel=1 -> libselinux-dev:armel' aptget build-dep -aarmel sed -s --solver 3.0
 testfailureequal 'Reading package lists...
 Reading package lists...
 Building dependency tree...
@@ -86,7 +90,7 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  builddeps:sed:armel : Depends: libselinux-dev:armel but it is not installable
-E: Unable to correct problems, you have held broken packages.' aptget build-dep -aarmel sed -s
+E: Unable to correct problems, you have held broken packages.' aptget build-dep -aarmel sed -s --solver internal
 
 testsuccessequal "Reading package lists...
 Reading package lists...

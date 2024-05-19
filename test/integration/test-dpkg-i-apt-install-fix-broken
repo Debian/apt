@@ -14,6 +14,28 @@ setupaptarchive
 testfailure dpkg -i incoming/autopkgtest-*.deb
 testsuccessequal 'Reading package lists...
 Building dependency tree...
+Correcting dependencies...MANUAL autopkgtest-satdep:amd64
+[0] Install:autopkgtest-satdep:amd64 ()
+[0] Install:autopkgtest-satdep:amd64=1 (autopkgtest-satdep:amd64)
+[0] Install:debhelper:amd64=1 (autopkgtest-satdep:amd64 -> autopkgtest-satdep:amd64=1)
+ Done
+Solving dependencies...AUTOMATIC debhelper:amd64 - upgrade
+MANUAL autopkgtest-satdep:amd64
+[0] Install:autopkgtest-satdep:amd64 ()
+[0] Install:autopkgtest-satdep:amd64=1 (autopkgtest-satdep:amd64)
+[0] Install:debhelper:amd64=1 (autopkgtest-satdep:amd64 -> autopkgtest-satdep:amd64=1)
+
+The following additional packages will be installed:
+  debhelper
+The following NEW packages will be installed:
+  debhelper
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+1 not fully installed or removed.
+Inst debhelper (1 stable [all])
+Conf debhelper (1 stable [all])
+Conf autopkgtest-satdep (1 stable [amd64])' apt install -fso Debug::APT::Solver=1 --solver 3.0
+testsuccessequal 'Reading package lists...
+Building dependency tree...
 Correcting dependencies...  MarkInstall autopkgtest-satdep:amd64 < 1 @iU K Nb Ib > FU=0
     MarkInstall debhelper:amd64 < none -> 1 @un uN > FU=0
 Starting pkgProblemResolver with broken count: 0
@@ -31,4 +53,4 @@ The following NEW packages will be installed:
 1 not fully installed or removed.
 Inst debhelper (1 stable [all])
 Conf debhelper (1 stable [all])
-Conf autopkgtest-satdep (1 stable [amd64])' apt install -fso Debug::pkgProblemResolver=1 -o DEbug::pkgDepCache::Marker=1
+Conf autopkgtest-satdep (1 stable [amd64])' apt install -fso Debug::pkgProblemResolver=1 -o DEbug::pkgDepCache::Marker=1 --solver internal

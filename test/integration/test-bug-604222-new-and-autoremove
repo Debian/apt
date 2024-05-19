@@ -93,6 +93,25 @@ E: Trivial Only specified but this is not a trivial operation." aptget install d
 
 rm -f rootdir/var/lib/dpkg/status rootdir/var/lib/apt/extended_states
 
+if [ "$APT_SOLVER" = "3.0" ]; then
+CONFLICTING='Reading package lists...
+Building dependency tree...
+Solving dependencies...MANUAL dummy-archive:i386
+[0] Install:dummy-archive:i386=0.invalid.0 ()
+[0] Install:libavcodec52:i386=4:0.5.2-6 (dummy-archive:i386=0.invalid.0)
+[0] Reject:libvtk5-dev:i386=5.4.2-8 (dummy-archive:i386=0.invalid.0 -> libavcodec52:i386=4:0.5.2-6)
+Item (1@0) dummy-archive:i386=0.invalid.0 ->  | libvtk5-dev:i386=5.4.2-8 | libopenal-dev:i386=1:1.12.854-2
+[0] Install:libopenal-dev:i386=1:1.12.854-2 (dummy-archive:i386=0.invalid.0)
+
+The following additional packages will be installed:
+  libavcodec52 libopenal-dev
+The following NEW packages will be installed:
+  dummy-archive libavcodec52 libopenal-dev
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Need to get 0 B/126 B of archives.
+After this operation, 129 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation.'
+else
 CONFLICTING='Reading package lists...
 Building dependency tree...
   MarkInstall dummy-archive:i386 < none -> 0.invalid.0 @un puN Ib > FU=1
@@ -108,10 +127,11 @@ The following NEW packages will be installed:
 Need to get 0 B/126 B of archives.
 After this operation, 129 kB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation.'
+fi
 
-testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=0
-testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=1
-testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=small
+testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=0 -o Debug::APT::Solver=1
+testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=1 -o Debug::APT::Solver=1
+testfailureequal "$CONFLICTING" aptget install dummy-archive --trivial-only -o Debug::pkgDepCache::Marker=1 -o APT::Get::HideAutoRemove=small -o Debug::APT::Solver=1
 
 insertinstalledpackage 'my-metapackage' 'i386' '1' 'Depends: gwenview'
 insertinstalledpackage 'gwenview' 'i386' '4:15.08.0-1' 'Depends: libkipi-data

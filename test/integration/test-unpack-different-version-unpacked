@@ -14,14 +14,24 @@ cleanstatus() {
 	rm rootdir/var/cache/apt/*.bin
 }
 
-#FIXME: the reported version is wrong, it should be 1, not 2
 insertinstalledpackage 'libqtcore4' 'i386,amd64' '1' 'Multi-Arch: same' '' 'install ok unpacked'
+#FIXME(internal): the reported version is wrong, it should be 1, not 2
 testsuccessequal 'Reading package lists...
 Building dependency tree...
 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
 2 not fully installed or removed.
 Conf libqtcore4 (2 unstable [amd64])
-Conf libqtcore4:i386 (2 unstable [i386])' aptget install -s -f
+Conf libqtcore4:i386 (2 unstable [i386])' aptget install -s -f --solver internal
+
+# FIXED(3.0): the reported version is correct now
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Solving dependencies...
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+2 not fully installed or removed.
+Conf libqtcore4 (1  [amd64])
+Conf libqtcore4:i386 (1  [i386])' aptget install -s -f --solver 3.0
+
 
 cleanstatus
 insertinstalledpackage 'libqtcore4' 'amd64' '2' 'Multi-Arch: same' '' 'install ok unpacked'

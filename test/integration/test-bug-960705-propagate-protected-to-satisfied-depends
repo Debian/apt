@@ -20,6 +20,35 @@ setupaptarchive
 
 testsuccessequal "Reading package lists...
 Building dependency tree...
+Solving dependencies...MANUAL foobar:amd64
+[0] Install:foobar:amd64=1 ()
+[0] Install:requires-foo:amd64=1 (foobar:amd64=1)
+[0] Install:foo:amd64=1 (foobar:amd64=1 -> requires-foo:amd64=1)
+[0] Install:foo-depends:amd64=1 (foobar:amd64=1 -> requires-foo:amd64=1 -> foo:amd64=1)
+Item (2@0) foobar:amd64=1 ->  | conflicts-foo:amd64=1 | fine-foo:amd64=1
+[1] Install:conflicts-foo:amd64=1 (foobar:amd64=1)
+[0] Reject:conflicts-foo:amd64=1 ()
+Item (1@0) foobar:amd64=1 ->  | conflicts-foo:amd64=1 | fine-foo:amd64=1
+[0] Install:fine-foo:amd64=1 (foobar:amd64=1)
+
+The following additional packages will be installed:
+  fine-foo foo foo-depends requires-foo
+The following NEW packages will be installed:
+  fine-foo foo foo-depends foobar requires-foo
+0 upgraded, 5 newly installed, 0 to remove and 0 not upgraded.
+Inst fine-foo (1 unstable [all])
+Inst foo-depends (1 unstable [all])
+Inst foo (1 unstable [all])
+Inst requires-foo (1 unstable [all])
+Inst foobar (1 unstable [all])
+Conf fine-foo (1 unstable [all])
+Conf foo-depends (1 unstable [all])
+Conf foo (1 unstable [all])
+Conf requires-foo (1 unstable [all])
+Conf foobar (1 unstable [all])" apt install foobar -so Debug::APT::Solver=1 --solver 3.0
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
   Installing foo:amd64 as Depends of foobar:amd64
     Installing foo-depends:amd64 as Depends of foo:amd64
   Installing requires-foo:amd64 as Depends of foobar:amd64
@@ -42,4 +71,4 @@ Conf fine-foo (1 unstable [all])
 Conf foo-depends (1 unstable [all])
 Conf foo (1 unstable [all])
 Conf requires-foo (1 unstable [all])
-Conf foobar (1 unstable [all])" apt install foobar -so Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::AutoInstall=1
+Conf foobar (1 unstable [all])" apt install foobar -so Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::AutoInstall=1 --solver internal

@@ -4,6 +4,7 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
+allowremovemanual
 configarchitecture 'amd64' 'i386' 'armel'
 
 insertpackage 'unstable' 'cool-foo' 'amd64,i386' '1.0' 'Depends: foo'
@@ -178,16 +179,18 @@ distribution that some required packages have not yet been created
 or been moved out of Incoming.
 The following information may help to resolve the situation:
 '
+	testfailuremsg "E: Conflict:  -> ${1%:*}:$4=1.0 but hates-foo:amd64=1.0 -> not ${1%:*}:$4=1.0"  aptget install $1 hates-foo -s --solver 3.0
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  hates-foo : Conflicts: foo
              Conflicts: foo:i386
              Conflicts: foo:armel
-E: Unable to correct problems, you have held broken packages." aptget install $1 hates-foo -s
+E: Unable to correct problems, you have held broken packages." aptget install $1 hates-foo -s --solver internal
+	testfailuremsg "E: Conflict: $2:amd64=1.0 -> not foo:$4=1.0 but foo:$4=1.0" aptget install $1 $2 -s --solver 3.0
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  $2 : Conflicts: foo:$4
-E: Unable to correct problems, you have held broken packages." aptget install $1 $2 -s
+E: Unable to correct problems, you have held broken packages." aptget install $1 $2 -s --solver internal
 	testsuccessequal "Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:

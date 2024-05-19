@@ -25,4 +25,24 @@ The following NEW packages will be installed:
   coolstuff
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst coolstuff (1.0 unstable [all])
-Conf coolstuff (1.0 unstable [all])" aptget install coolstuff extracoolstuff- -o Debug::pkgDepCache::Marker=1 -s
+Conf coolstuff (1.0 unstable [all])" aptget install coolstuff extracoolstuff- -o Debug::pkgDepCache::Marker=1 -s --solver internal
+
+# We check the Markers here as the autoremove nuker will also
+# prevent it, but to late - its better to fail earlier
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Package 'extracoolstuff' is not installed, so not removed
+Solving dependencies...MANUAL coolstuff:i386
+[0] Install:coolstuff:i386=1.0 ()
+Delete extracoolstuff:i386
+[0] Reject:extracoolstuff:i386 ()
+[0] Reject:extracoolstuff:i386=1.0 (not extracoolstuff:i386)
+Optional Item (0@0) coolstuff:i386=1.0 ->  | extracoolstuff:i386=1.0
+
+Recommended packages:
+  extracoolstuff
+The following NEW packages will be installed:
+  coolstuff
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst coolstuff (1.0 unstable [all])
+Conf coolstuff (1.0 unstable [all])" aptget install coolstuff extracoolstuff- -o Debug::APT::Solver=1 -s --solver 3.0

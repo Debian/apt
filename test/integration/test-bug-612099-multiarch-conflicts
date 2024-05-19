@@ -4,6 +4,7 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
+allowremovemanual
 configarchitecture 'i386' 'amd64'
 
 buildsimplenativepackage 'libc6' 'i386' '1.0' 'stable'

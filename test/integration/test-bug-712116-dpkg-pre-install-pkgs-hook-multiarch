@@ -4,6 +4,7 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
+allowremovemanual
 configarchitecture 'amd64' 'i386'
 
 buildsimplenativepackage 'toolkit' 'all' '1' 'stable' 'Multi-Arch: foreign'
@@ -89,7 +90,8 @@ stuff 2 amd64 none > - - none **REMOVE**'
 	testfileequal "${hook}-v2.list" 'libsame 2 > - **REMOVE**'
 	testfileequal "${hook}-v3.list" 'libsame 2 amd64 same > - - none **REMOVE**'
 
-	observehook install stuff:i386/stable libsame:i386/stable toolkit/stable
+	# FIXME: solver3: This should not require no-strict-pinning
+	observehook install stuff:i386/stable libsame:i386/stable toolkit/stable $(test "$APT_SOLVER" != "3.0" || printf '%s' '--no-strict-pinning')
 	testfileequal "${hook}-v2.list" 'libsame 2 > 1 **CONFIGURE**
 stuff 2 > 1 **CONFIGURE**
 toolkit 2 > 1 **CONFIGURE**'

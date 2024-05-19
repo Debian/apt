@@ -15,10 +15,15 @@ aptgetupdate() {
 	rm -rf rootdir/var/lib/apt/ rootdir/var/cache/apt/*.bin
 	${1:-testwarning} aptget update --allow-insecure-repositories
 }
-
-PKGTEXT="$(aptget install cool --assume-no -d | head -n 8)"
-DOWNLOG="$(echo "$PKGTEXT" | tail -n 1)"
-PKGTEXT="$(echo "$PKGTEXT" | head -n 7)"
+PKGSIZE=$(aptcache show cool | awk '/^Size:/ {print $2}')
+PKGTEXT="Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  cool
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 0 B/$PKGSIZE B of archives.
+After this operation, 11.3 kB of additional disk space will be used."
+DOWNLOG="Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main i386 cool i386 1.0 [$PKGSIZE B]"
 DEBFILE='rootdir/etc/apt/sources.list.d/apt-test-unstable-*.list'
 
 testsuccessequal "$PKGTEXT
