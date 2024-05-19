@@ -770,13 +770,22 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
    {
       APT::Solver s(Cache.GetCache(), Cache.GetPolicy());
       FileFd output;
-      if (not s.FromDepCache(Cache))
-	 return false;
-      if (not s.Solve())
-	 return false;
-      if (not s.ToDepCache(Cache))
-	 return false;
-      return true;
+      bool res = true;
+      if (Progress != NULL)
+	 Progress->OverallProgress(0, 100, 1, _config->FindB("APT::Solver::Upgrade") ? _("Calculating upgrade") : _("Solving dependencies"));
+      if (res && not s.FromDepCache(Cache))
+	 res = false;
+      if (Progress != NULL)
+	 Progress->Progress(10);
+      if (res && not s.Solve())
+	 res = false;
+      if (Progress != NULL)
+	 Progress->Progress(90);
+      if (res && not s.ToDepCache(Cache))
+	 res = false;
+      if (Progress != NULL)
+	 Progress->Done();
+      return res;
    }
 	if (strcmp(solver, "internal") == 0)
 	{

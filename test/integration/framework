@@ -1554,6 +1554,7 @@ cleanup_output() {
 	cat "$1" | sed \
 		-e '/gpgv: WARNING: This key is not suitable for signing in --compliance=gnupg mode/ d' \
 		-e '/^profiling:/ d' \
+		-e '/Solving dependencies\.\.\./ d' \
 		| sed -e '/\.\.\.profiling:/ {N;s#\.\.\.profiling:.*\n#...#g}' \
 			>"$2"
 }
