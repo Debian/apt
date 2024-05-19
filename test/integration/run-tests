@@ -22,6 +22,15 @@ while [ -n "$1" ]; do
 	elif [ "$1" = '-j' ]; then
 		APT_TEST_JOBS=$2
 		shift
+	elif [ "$1" = '--solver' ]; then
+		export APT_SOLVER="$2"
+		shift
+	elif [ "$1" = '--skip' ]; then
+		export APT_SKIP_TEST_FILE="$2"
+		shift
+	elif [ "$1" = '--only' ]; then
+		TESTLIST="$2"
+		shift
 	elif [ -x "$1" ]; then
 		TESTTORUN="$1"
 	else
@@ -52,14 +61,22 @@ if [ -n "$TESTTORUN" ]; then
 	CURRENTTRAP="rm -f \"$OUTPUT\"; $CURRENTTRAP"
 	trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 	{
-		if [ "$MSGLEVEL" -le 1 ]; then
+		if [ "$APT_SKIP_TEST_FILE" ] && grep -qFx "${TESTTORUN##*/}" "$APT_SKIP_TEST_FILE"; then
+			if [ "$MSGLEVEL" -le 2 ]; then
+				printf "${CTEST}Skip Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}"
+			else
+				printf "${CTEST}Skip Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}\n"
+			fi
+			SKIP='yes'
+		elif [ "$MSGLEVEL" -le 1 ]; then
 			printf "${TESTTORUN##*/}"
 		elif [ "$MSGLEVEL" -le 2 ]; then
 			printf "${CTEST}Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}: "
 		else
 			printf "${CTEST}Run Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}\n"
 		fi
-		if ! "$TESTTORUN"; then
+
+		if [ "$SKIP" != "yes" ] && ! "$TESTTORUN"; then
 			FAIL='yes'
 			if [ "$MSGLEVEL" -le 2 ]; then
 				printf >&2 "\n${CHIGH}Running ${TESTTORUN##*/} -> FAILED${CRESET}\n"
@@ -96,7 +113,11 @@ ALL=0
 FAILED_TESTS=""
 DIR="$(readlink -f "$(dirname "$0")")"
 cd "$DIR"
-TESTLIST="$(find . -mindepth 1 -maxdepth 1 -regex '^\./test-[^/]*$' | sort)"
+if [ -e "$TESTLIST" ]; then
+	TESTLIST="$(sort < "$TESTLIST" | sed 's#^#./#')"
+else
+	TESTLIST="$(find . -mindepth 1 -maxdepth 1 -regex '^\./test-[^/]*$' | sort)"
+fi
 if [ -n "$APT_TEST_JOBS" ]; then
 	if [ "$MSGCOLOR" != 'NO' ]; then
 		export MSGCOLOR='ALWAYS'
@@ -125,6 +146,10 @@ if [ "$MSGLEVEL" -le 1 ]; then
 	printf "${CTEST}Running testcases${CRESET}: "
 fi
 for testcase in $TESTLIST; do
+	if [ "$APT_SKIP_TEST_FILE" ] && grep -qFx "${TESTTORUN##*/}" "$APT_SKIP_TEST_FILE"; then
+		printf "${CTEST}Skipping Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}\n"
+		continue
+	fi
 	if [ "$MSGLEVEL" -le 1 ]; then
 		printf "${testcase##*/}"
 	elif [ "$MSGLEVEL" -le 2 ]; then

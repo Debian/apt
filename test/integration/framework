@@ -19,6 +19,9 @@ while [ -n "$1" -a -z "$CHECK_ARGS" ]; do
 	elif [ "$1" = '--level' ]; then
 		export MSGLEVEL=$2
 		shift
+	elif [ "$1" = '--solver' ]; then
+		export APT_SOLVER=$2
+		shift
 	else
 		echo >&2 "WARNING: Unknown parameter »$1« will be ignored"
 	fi
@@ -537,7 +540,10 @@ exec fakeroot gdb --quiet -ex run '${DPKG:-dpkg}' --args '${DPKG:-dpkg}' --root=
 EOF
 	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
 	echo "Dir::Bin::dpkg \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg\";" > rootdir/etc/apt/apt.conf.d/99dpkg
-
+	# Set the solver for the test case.
+	if [ "$APT_SOLVER" ]; then
+		echo "APT::Solver \"$APT_SOLVER\";" >> aptconfig.conf
+	fi
 	{
 		echo 'quiet "0";'
 		echo 'quiet::NoUpdate "true";'
