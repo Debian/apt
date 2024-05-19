@@ -348,8 +348,6 @@ bool APT::Solver::Install(pkgCache::VerIterator Ver, Reason reason)
       pkgCache::DepIterator end;
       dep.GlobOr(start, end); // advances dep
 
-      if (not policy.IsImportantDep(start))
-	 continue;
       if (not EnqueueOrGroup(start, end, Reason(Ver)))
 	 return false;
    }
@@ -452,8 +450,6 @@ bool APT::Solver::EnqueueCommonDependencies(pkgCache::PkgIterator Pkg)
       }
       if (not allHaveDep)
 	 continue;
-      if (not policy.IsImportantDep(start))
-	 continue;
       if (not EnqueueOrGroup(start, end, Reason(Pkg)))
 	 return false;
    }
@@ -466,6 +462,11 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
    auto TgtPkg = start.TargetPkg();
    auto Ver = start.ParentVer();
    auto fixPolicy = _config->FindB("APT::Get::Fix-Policy-Broken");
+
+   // Non-important dependencies can only be installed if they are currently satisfied, see the check further
+   // below once we have calculated all possible solutions.
+   if (start.ParentPkg()->CurrentVer == 0 && not policy.IsImportantDep(start))
+      return true;
 
    if (unlikely(debug >= 3))
       std::cerr << "Found dependency critical " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " -> " << start.TargetPkg().FullName() << "\n";
@@ -513,32 +514,57 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
    if (not fixPolicy)
       std::sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, TgtPkg});
 
-   // Figure out if the reason is installed
-   bool reasonInstalled = false;
-   if (auto p = workItem.reason.Pkg())
-      reasonInstalled = pkgCache::PkgIterator(cache, cache.PkgP + p)->CurrentVer != 0;
-   else if (auto v = workItem.reason.Ver())
-      reasonInstalled = pkgCache::VerIterator(cache, cache.VerP + v).ParentPkg()->CurrentVer != 0;
-
    // Try to perserve satisfied Recommends. FIXME: We should check if the Recommends was there in the installed version?
-   if (workItem.optional && reasonInstalled && not fixPolicy &&
-       not std::any_of(workItem.solutions.begin(), workItem.solutions.end(), [this](auto ver)
-		       { return pkgCache::VerIterator(cache, ver).ParentPkg()->CurrentVer != 0; }))
+   if (workItem.optional && start.ParentPkg()->CurrentVer)
    {
-      if (unlikely(debug >= 3))
+      bool important = policy.IsImportantDep(start);
+      bool newOptional = true;
+      bool wasImportant = false;
+      for (auto D = start.ParentPkg().CurrentVer().DependsList(); not D.end(); D++)
+	 if (not D.IsCritical() && not D.IsNegative() && D.TargetPkg() == start.TargetPkg())
+	    newOptional = false, wasImportant = policy.IsImportantDep(D);
+
+      bool satisfied = std::any_of(workItem.solutions.begin(), workItem.solutions.end(), [this](auto ver)
+				   { return pkgCache::VerIterator(cache, ver).ParentPkg()->CurrentVer != 0; });
+
+      if (important && wasImportant && not newOptional && not satisfied)
       {
-	 std::cerr << "Ignoring currently unsatisfied Recommends ";
-	 workItem.Dump(cache);
-	 std::cerr << "\n";
+	 if (unlikely(debug >= 3))
+	 {
+	    std::cerr << "Ignoring unsatisfied Recommends ";
+	    workItem.Dump(cache);
+	    std::cerr << "\n";
+	 }
+	 return true;
       }
-      return true;
+      if (not important && not wasImportant && not newOptional && satisfied)
+      {
+	 if (unlikely(debug >= 3))
+	 {
+	    std::cerr << "Promoting satisfied Suggests to Recommends: ";
+	    workItem.Dump(cache);
+	    std::cerr << "\n";
+	 }
+	 important = true;
+      }
+      if (not important)
+      {
+	 if (unlikely(debug >= 3))
+	 {
+	    std::cerr << "Ignoring Suggests ";
+	    workItem.Dump(cache);
+	    std::cerr << "\n";
+	 }
+	 return true;
+      }
    }
+
    if (not workItem.solutions.empty())
    {
       // std::sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, TgtPkg});
       if (unlikely(debug >= 3 && workItem.optional))
       {
-	 std::cerr << "Enqueuing currently satisfied Recommends ";
+	 std::cerr << "Enqueuing Recommends ";
 	 workItem.Dump(cache);
 	 std::cerr << "\n";
       }

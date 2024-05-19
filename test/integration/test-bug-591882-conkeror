@@ -4,6 +4,7 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
+allowremovemanual
 configarchitecture "i386"
 setupaptarchive
 
@@ -73,5 +74,5 @@ After this operation, 36.0 MB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation."
 
 # Test that the old behavior can be restored with the option
-testfailureequal "$UPGRADEFAIL" aptget dist-upgrade --trivial-only -o pkgProblemResolver::FixByInstall=0
+testfailureequal "$UPGRADEFAIL" aptget dist-upgrade --trivial-only -o pkgProblemResolver::FixByInstall=0 --solver internal
 testfailureequal "$UPGRADESUCCESS" aptget dist-upgrade --trivial-only #-o pkgProblemResolver::FixByInstall=0
