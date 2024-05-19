@@ -46,8 +46,15 @@ struct CompareProviders3 /*{{{*/
       {
 	 if (AV == BV)
 	    return false;
-	 if (not upgrade && A->CurrentVer != 0 && A.CurrentVer() == AV)
-	    return true;
+	 // The current version should win, unless we are upgrading and the other is the
+	 // candidate.
+	 // If AV is the current version, AV only wins on upgrades if BV is not the candidate.
+	 if (A.CurrentVer() == AV)
+	    return upgrade ? Policy.GetCandidateVer(A) != BV : true;
+	 // If BV is the current version, AV only wins on upgrades if it is the candidate.
+	 if (A.CurrentVer() == BV)
+	    return upgrade ? Policy.GetCandidateVer(A) == AV : false;
+	 // If neither are the current version, order them by priority.
 	 if (Policy.GetPriority(AV) < Policy.GetPriority(BV))
 	    return false;
 
