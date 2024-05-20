@@ -189,6 +189,8 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
 	 return std::any_of(solutions.begin(), solutions.end(), [b](auto sol) -> bool
 			    { return std::find(b.solutions.begin(), b.solutions.end(), sol) != b.solutions.end(); });
    }
+   if (optional && b.optional && reason.empty() != b.reason.empty())
+      return reason.empty();
    // An optional item is less important than a required one.
    if (optional != b.optional)
       return optional;
