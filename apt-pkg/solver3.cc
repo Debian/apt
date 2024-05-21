@@ -710,7 +710,7 @@ bool APT::Solver::Pop()
 				 if (w.depth > depth) // Deeper decision level is no longer valid.
 				    return true;
 				 // This item is still solved, keep it on the solved list.
-				 if (not std::any_of(w.solutions.begin(), w.solutions.end(), [this](auto ver)
+				 if (std::any_of(w.solutions.begin(), w.solutions.end(), [this](auto ver)
 						     { return (*this)[ver].decision == Decision::MUST; }))
 				    return false;
 				 // We are not longer solved, move it back to work.
