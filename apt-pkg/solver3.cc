@@ -290,7 +290,7 @@ bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Reason reason)
    for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
       if (IsAllowedVersion(ver))
 	 workItem.solutions.push_back(ver);
-   std::sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, Pkg});
+   std::stable_sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, Pkg});
    assert(workItem.solutions.size() > 0);
 
    if (workItem.solutions.size() > 1 || workItem.optional)
@@ -506,7 +506,7 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
       // FIXME: This is not really true, though, we should fix the CompareProviders to ignore the
       // installed state
       if (fixPolicy)
-	 std::sort(workItem.solutions.begin() + begin, workItem.solutions.end(), CompareProviders3{cache, policy, TgtPkg});
+	 std::stable_sort(workItem.solutions.begin() + begin, workItem.solutions.end(), CompareProviders3{cache, policy, TgtPkg});
 
       if (start == end)
 	 break;
@@ -514,7 +514,7 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
    } while (1);
 
    if (not fixPolicy)
-      std::sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, TgtPkg});
+      std::stable_sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, TgtPkg});
 
    // Try to perserve satisfied Recommends. FIXME: We should check if the Recommends was there in the installed version?
    if (workItem.optional && start.ParentPkg()->CurrentVer)
@@ -563,7 +563,7 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 
    if (not workItem.solutions.empty())
    {
-      // std::sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, TgtPkg});
+      // std::stable_sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, TgtPkg});
       if (unlikely(debug >= 3 && workItem.optional))
       {
 	 std::cerr << "Enqueuing Recommends ";
@@ -946,7 +946,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	    for (auto V = P.VersionList(); not V.end(); ++V)
 	       if (IsAllowedVersion(V))
 		  w.solutions.push_back(V);
-	    std::sort(w.solutions.begin(), w.solutions.end(), CompareProviders3{cache, policy, P});
+	    std::stable_sort(w.solutions.begin(), w.solutions.end(), CompareProviders3{cache, policy, P});
 	    AddWork(std::move(w));
 	 }
       }
