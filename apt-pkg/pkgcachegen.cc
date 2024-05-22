@@ -1637,6 +1637,10 @@ static DynamicMMap* CreateDynamicMMap(FileFd * const CacheF, unsigned long Flags
 static bool writeBackMMapToFile(pkgCacheGenerator * const Gen, DynamicMMap * const Map,
       std::string const &FileName)
 {
+   // Do not write the file back to /dev/null or try to change its mode...
+   if (FileName == "/dev/null")
+      return true;
+
    FileFd SCacheF(FileName, FileFd::WriteAtomic);
    if (SCacheF.IsOpen() == false || SCacheF.Failed())
       return false;
