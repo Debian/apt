@@ -987,7 +987,7 @@ bool APT::Solver::ToDepCache(pkgDepCache &depcache)
 	 depcache[P].Marked = 1;
 	 depcache[P].Garbage = 0;
       }
-      else if (P->CurrentVer)
+      else if (P->CurrentVer || depcache[P].Install())
       {
 	 depcache.MarkDelete(P, false, 0, (*this)[P].reason.empty());
 	 depcache[P].Marked = 0;
