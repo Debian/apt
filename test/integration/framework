@@ -585,6 +585,9 @@ EOF
 	# prefer our apt binaries over the system apt binaries
 	export PATH="${APTCMDLINEBINDIR}:${PATH}:/usr/sbin:/sbin"
 }
+allowremovemanual() {
+    echo 'APT::Solver::RemoveManual "true";' >> ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/allow-remove-manual.conf
+}
 
 getarchitecture() {
 	if [ "$1" = "native" -o -z "$1" ]; then

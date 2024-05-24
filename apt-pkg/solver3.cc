@@ -853,6 +853,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
    bool KeepAuto = not _config->FindB("APT::Get::AutomaticRemove");
    bool AllowRemove = _config->FindB("APT::Solver::Remove", true);
    bool AllowInstall = _config->FindB("APT::Solver::Install", true);
+   bool AllowRemoveManual = _config->FindB("APT::Solver::RemoveManual", false);
    DefaultRootSetFunc2 rootSet(&cache);
 
    for (auto P = cache.PkgBegin(); not P.end(); P++)
@@ -863,6 +864,8 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
       auto state = depcache[P];
       auto maybeInstall = state.Install() || (state.Keep() && P->CurrentVer);
       auto reject = state.Delete() || (depcache[P].Keep() && not P->CurrentVer && depcache[P].Protect());
+      auto isAuto = (depcache[P].Flags & pkgCache::Flag::Auto);
+      auto isOptional = isAuto || (AllowRemoveManual && not depcache[P].Protect());
       if (P->SelectedState == pkgCache::State::Hold && not state.Protect())
       {
 	 if (unlikely(debug >= 1))
@@ -884,14 +887,14 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 if (depcache[P].Keep() ? not Install(P, {}) : not Install(depcache.GetCandidateVersion(P), {}))
 	    return false;
       }
-      else if (maybeInstall && not(depcache[P].Flags & pkgCache::Flag::Auto))
+      else if (maybeInstall && not isOptional)
       {
 	 if (unlikely(debug >= 1))
 	    std::cerr << "MANUAL " << P.FullName() << "\n";
 	 if (depcache[P].Keep() ? not Install(P, {}) : not Install(depcache.GetCandidateVersion(P), {}))
 	    return false;
       }
-      else if (maybeInstall && (KeepAuto || rootSet.InRootSet(P)) && (depcache[P].Flags & pkgCache::Flag::Auto))
+      else if (maybeInstall && isOptional && (KeepAuto || rootSet.InRootSet(P) || not isAuto))
       {
 	 auto Upgrade = depcache.GetCandidateVersion(P) != P.CurrentVer();
 	 if (unlikely(debug >= 1))
