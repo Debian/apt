@@ -7,6 +7,7 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
+allowremovemanual
 configarchitecture 'amd64' 'i386'
 
 insertinstalledpackage 'webapp' 'all' '1' 'Depends: httpd'
@@ -393,11 +394,18 @@ Inst needsselfprov12 (1 unstable [amd64])
 Conf selfprov (2 unstable [amd64])
 Conf needsselfprov12 (1 unstable [amd64])" aptget install needsselfprov12 -s --solver $solver
 	if [ "$solver" = 'apt' ]; then
+if [ "$APT_SOLVER" = "3.0" ]; then
+TOPDEPENDS=" needsselfprov123 : Depends: selfprov (= 1)
+                    Depends: selfprov (= 2)
+                    Depends: selfprov (= 3)"
+else
+TOPDEPENDS=" needsselfprov123 : Depends: selfprov (= 3)"
+fi
 		testfailureequal "$HEADER
 The solver encountered an error of type: ERR_UNSOLVABLE
 The following information might help you to understand what is wrong:
 The following packages have unmet dependencies:
- needsselfprov123 : Depends: selfprov (= 3)
+$TOPDEPENDS
 
 $SOMEPACKAGESCOULDNOT
  needsselfprov123 : Depends: selfprov (= 1)
