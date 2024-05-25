@@ -22,6 +22,15 @@ while [ -n "$1" ]; do
 	elif [ "$1" = '-j' ]; then
 		APT_TEST_JOBS=$2
 		shift
+	elif [ "$1" = '--solver' ]; then
+		export APT_SOLVER="$2"
+		shift
+	elif [ "$1" = '--skip' ]; then
+		export APT_SKIP_TEST_FILE="$2"
+		shift
+	elif [ "$1" = '--only' ]; then
+		TESTLIST="$2"
+		shift
 	elif [ -x "$1" ]; then
 		TESTTORUN="$1"
 	else
@@ -52,14 +61,22 @@ if [ -n "$TESTTORUN" ]; then
 	CURRENTTRAP="rm -f \"$OUTPUT\"; $CURRENTTRAP"
 	trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 	{
-		if [ "$MSGLEVEL" -le 1 ]; then
+		if [ "$APT_SKIP_TEST_FILE" ] && grep -qFx "${TESTTORUN##*/}" "$APT_SKIP_TEST_FILE"; then
+			if [ "$MSGLEVEL" -le 2 ]; then
+				printf "${CTEST}Skip Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}"
+			else
+				printf "${CTEST}Skip Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}\n"
+			fi
+			SKIP='yes'
+		elif [ "$MSGLEVEL" -le 1 ]; then
 			printf "${TESTTORUN##*/}"
 		elif [ "$MSGLEVEL" -le 2 ]; then
 			printf "${CTEST}Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}: "
 		else
 			printf "${CTEST}Run Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}\n"
 		fi
-		if ! "$TESTTORUN"; then
+
+		if [ "$SKIP" != "yes" ] && ! "$TESTTORUN"; then
 			FAIL='yes'
 			if [ "$MSGLEVEL" -le 2 ]; then
 				printf >&2 "\n${CHIGH}Running ${TESTTORUN##*/} -> FAILED${CRESET}\n"
@@ -83,6 +100,9 @@ if [ -n "$TESTTORUN" ]; then
 	stty sane || true
 	cat >&2 "$OUTPUT"
 	stty sane || true
+	if [ "$STATS_FILE" ]; then
+		flock "$STATS_FILE" -c "echo $TESTTORUN skip=${SKIP:-no} fail=${FAIL:-no} >> \"$STATS_FILE\""
+	fi
 	if [ "$FAIL" = 'yes' ]; then
 		exit 1
 	else
@@ -96,8 +116,15 @@ ALL=0
 FAILED_TESTS=""
 DIR="$(readlink -f "$(dirname "$0")")"
 cd "$DIR"
-TESTLIST="$(find . -mindepth 1 -maxdepth 1 -regex '^\./test-[^/]*$' | sort)"
+if [ -e "$TESTLIST" ]; then
+	TESTLIST="$(sort < "$TESTLIST" | sed 's#^#./#')"
+else
+	TESTLIST="$(find . -mindepth 1 -maxdepth 1 -regex '^\./test-[^/]*$' | sort)"
+fi
 if [ -n "$APT_TEST_JOBS" ]; then
+	export STATS_FILE="$(mktemp)"
+	CURRENTTRAP="rm -f \"$STATS_FILE\"; $CURRENTTRAP"
+	trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 	if [ "$MSGCOLOR" != 'NO' ]; then
 		export MSGCOLOR='ALWAYS'
 	fi
@@ -107,7 +134,26 @@ if [ -n "$APT_TEST_JOBS" ]; then
 	elif command -v parallel.moreutils >/dev/null 2>&1; then
 		parallel=parallel.moreutils
 	fi
-	exec $parallel -j "$APT_TEST_JOBS" "./$(basename "$0")" -- $(echo "$TESTLIST")
+	$parallel -j "$APT_TEST_JOBS" "./$(basename "$0")" -- $(echo "$TESTLIST") || true
+	ALL=$(wc -l < "$STATS_FILE")
+	SKIP=$(grep -c "skip=yes" "$STATS_FILE" || true)
+	PASS=$(grep -c "skip=no fail=no" "$STATS_FILE" || true)
+	FAIL=$(grep -c "fail=yes" "$STATS_FILE" || true)
+	PASSED_TESTS=$(awk '! /fail=yes/ {print $1}' < "$STATS_FILE" | cut -f2 -d/ | sort | xargs)
+	SKIPPED_TESTS=$(awk '/fail=skip/ {print $1}' < "$STATS_FILE" | cut -f2 -d/ | sort | xargs)
+	FAILED_TESTS=$(awk '/fail=yes/ {print $1}' < "$STATS_FILE" | cut -f2 -d/ | sort | xargs)
+	echo >&2 "Statistics: $ALL tests were run: $PASS successfully and $FAIL failed, $SKIP skipped"
+	if [ -n "$FAILED_TESTS" ]; then
+		if [ $PASS -lt $FAIL ]; then
+			echo >&2 "Passed tests: $PASSED_TESTS"
+		else
+			echo >&2 "Failed tests: $FAILED_TESTS"
+		fi
+	else
+		echo >&2 'All tests seem to have been run successfully. What could possibly go wrong?'
+	fi
+	# ensure we don't overflow
+	exit $((FAIL <= 255 ? FAIL : 255))
 fi
 
 APT_TEST_SIGNINGHOME="$(mktemp --directory --tmpdir 'apt-key-signinghome.XXXXXXXXXX')"
@@ -125,6 +171,10 @@ if [ "$MSGLEVEL" -le 1 ]; then
 	printf "${CTEST}Running testcases${CRESET}: "
 fi
 for testcase in $TESTLIST; do
+	if [ "$APT_SKIP_TEST_FILE" ] && grep -qFx "${TESTTORUN##*/}" "$APT_SKIP_TEST_FILE"; then
+		printf "${CTEST}Skipping Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}\n"
+		continue
+	fi
 	if [ "$MSGLEVEL" -le 1 ]; then
 		printf "${testcase##*/}"
 	elif [ "$MSGLEVEL" -le 2 ]; then

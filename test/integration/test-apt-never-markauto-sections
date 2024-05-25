@@ -47,7 +47,8 @@ Remv foreignpkg:i386 [1]
 Remv nosection [1]
 Remv texteditor [1]' aptget autoremove mydesktop -s
 
-testequal 'Reading package lists...
+testfailuremsg 'E: Conflict: not texteditor:amd64 -> not texteditor:amd64=1 -> not bad-texteditor:amd64=1 -> not mydesktop-core:amd64=1 but mydesktop:amd64 -> mydesktop:amd64=1 -> mydesktop-core:amd64=1' aptget autoremove texteditor -s --solver 3.0 #-o Debug::pkgDepCache::AutoInstall=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
 The following packages will be REMOVED:
@@ -55,8 +56,8 @@ The following packages will be REMOVED:
 0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
 Remv mydesktop [1]
 Remv mydesktop-core [1]
-Remv texteditor [1]' aptget autoremove texteditor -s #-o Debug::pkgDepCache::AutoInstall=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
-testsuccess aptget autoremove texteditor -y
+Remv texteditor [1]' aptget autoremove texteditor -s --solver internal #-o Debug::pkgDepCache::AutoInstall=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
+testsuccess aptget autoremove texteditor -y --solver internal
 
 testdpkgnotinstalled mydesktop mydesktop-core texteditor
 testdpkginstalled browser

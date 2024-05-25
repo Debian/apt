@@ -29,6 +29,20 @@ Inst python3-gnupg (0.3.5-2 stable [all])
 Conf python3 (3.3.2-16 unstable [amd64])
 Conf python3-gnupg (0.3.5-2 stable [all])'
 
+if [ "$APT_SOLVER" = "3.0" ]; then
+FAILLOG='Reading package lists...
+Building dependency tree...
+Solving dependencies...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ python-mips : Depends: python3:mips but it is not installable
+E: Unsatisfiable dependency group python-mips:amd64=3 -> python3:mips:any'
+else
 FAILLOG='Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
@@ -40,6 +54,7 @@ The following information may help to resolve the situation:
 The following packages have unmet dependencies:
  python-mips : Depends: python3:mips but it is not installable
 E: Unable to correct problems, you have held broken packages.'
+fi
 
 testsuccessequal "$INSTALLLOG" aptget install python3-gnupg -s
 aptcache showpkg python3 > showpkg.log

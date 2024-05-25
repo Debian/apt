@@ -4,6 +4,7 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
+allowremovemanual
 configarchitecture 'amd64' 'i386'
 
 insertinstalledpackage 'stuff' 'all' '1'
@@ -19,6 +20,18 @@ setupaptarchive
 
 # We are needlessly removing "stuff" if we don't delay its marking here
 # as we do not question the remove later on
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  bar
+The following NEW packages will be installed:
+  bar foobar
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1 unstable [all])
+Inst foobar (1 unstable [all])
+Conf bar (1 unstable [all])
+Conf foobar (1 unstable [all])" apt install foobar -s
+
 testsuccessequal "Reading package lists...
 Building dependency tree...
   MarkInstall foobar:amd64 < none -> 1 @un puN Ib > FU=1
@@ -41,9 +54,26 @@ The following NEW packages will be installed:
 Inst bar (1 unstable [all])
 Inst foobar (1 unstable [all])
 Conf bar (1 unstable [all])
-Conf foobar (1 unstable [all])" apt install foobar -s -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
+Conf foobar (1 unstable [all])" apt install foobar -s -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1 --solver internal
 
 insertinstalledpackage 'uninstallable' 'all' '1'
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  foo foo-dep
+The following packages will be REMOVED:
+  stuff
+The following NEW packages will be installed:
+  foo foo-dep foobar
+0 upgraded, 3 newly installed, 1 to remove and 0 not upgraded.
+Remv stuff [1]
+Inst foo-dep (1 unstable [all])
+Inst foo (1 unstable [all])
+Inst foobar (1 unstable [all])
+Conf foo-dep (1 unstable [all])
+Conf foo (1 unstable [all])
+Conf foobar (1 unstable [all])" apt install foobar -s
 
 testsuccessequal "Reading package lists...
 Building dependency tree...
@@ -71,9 +101,27 @@ Inst foo (1 unstable [all])
 Inst foobar (1 unstable [all])
 Conf foo-dep (1 unstable [all])
 Conf foo (1 unstable [all])
-Conf foobar (1 unstable [all])" apt install foobar -s -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
+Conf foobar (1 unstable [all])" apt install foobar -s -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1 --solver internal
 
 # Same solution but the installs are considered protected now as there is no other solution
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Package 'bar' is not installed, so not removed
+The following additional packages will be installed:
+  foo foo-dep
+The following packages will be REMOVED:
+  stuff
+The following NEW packages will be installed:
+  foo foo-dep foobar
+0 upgraded, 3 newly installed, 1 to remove and 0 not upgraded.
+Remv stuff [1]
+Inst foo-dep (1 unstable [all])
+Inst foo (1 unstable [all])
+Inst foobar (1 unstable [all])
+Conf foo-dep (1 unstable [all])
+Conf foo (1 unstable [all])
+Conf foobar (1 unstable [all])" apt install foobar bar- -q=0 -s
+
 testsuccessequal "Reading package lists...
 Building dependency tree...
   MarkInstall foobar:amd64 < none -> 1 @un puN Ib > FU=1
@@ -103,4 +151,4 @@ Inst foo (1 unstable [all])
 Inst foobar (1 unstable [all])
 Conf foo-dep (1 unstable [all])
 Conf foo (1 unstable [all])
-Conf foobar (1 unstable [all])" apt install foobar bar- -q=0 -s -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
+Conf foobar (1 unstable [all])" apt install foobar bar- -q=0 -s -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1 --solver internal

@@ -5,6 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
 setupenvironment
+allowremovemanual
 configarchitecture 'i386'
 
 insertpackage 'stable' 'debhelper' 'i386' '7'
@@ -158,6 +159,8 @@ testsuccess aptget build-dep --simulate '..'
 cd ../..
 
 testfailureequal 'E: Must specify at least one package to check builddeps for' aptget build-dep
+testfailuremsg 'W: No architecture information available for armel. See apt.conf(5) APT::Architectures for setup
+E: Unsatisfiable dependency group builddeps:./foo-1.0:armel=1 -> debhelper:armel' aptget build-dep --simulate ./foo-1.0 -a armel --solver 3.0
 testfailureequal "Note, using directory './foo-1.0' to get the build dependencies
 Reading package lists...
 Building dependency tree...
@@ -170,7 +173,7 @@ The following information may help to resolve the situation:
 The following packages have unmet dependencies:
  builddeps:./foo-1.0:armel : Depends: debhelper:armel (>= 7) but it is not installable
 W: No architecture information available for armel. See apt.conf(5) APT::Architectures for setup
-E: Unable to correct problems, you have held broken packages." aptget build-dep --simulate ./foo-1.0 -a armel
+E: Unable to correct problems, you have held broken packages." aptget build-dep --simulate ./foo-1.0 -a armel --solver internal
 testfailureequal 'Reading package lists...
 E: Unable to find a source package for foo' aptget build-dep --simulate foo
 

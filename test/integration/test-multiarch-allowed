@@ -4,6 +4,7 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
+allowremovemanual
 configarchitecture 'amd64' 'i386'
 
 insertpackage 'unstable' 'foo' 'amd64,i386' '1' 'Multi-Arch: allowed'
@@ -63,20 +64,23 @@ Inst needsfoo:i386 (1 unstable [i386])
 Conf foo:i386 (1 unstable [i386])
 Conf needsfoo:i386 (1 unstable [i386])' aptget install needsfoo:i386 -s
 # FIXME: same problem, but two different unmet dependency messages depending on install order
+testfailuremsg "E: Conflict:  -> needsfoo:i386=1 but foo:amd64=1 -> not foo:i386=1 -> not needsfoo:i386=1" aptget install needsfoo:i386 foo:amd64 -s --solver 3.0
 testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  foo : Conflicts: foo:i386 but 1 is to be installed
  foo:i386 : Conflicts: foo but 1 is to be installed
-E: Unable to correct problems, you have held broken packages." aptget install needsfoo:i386 foo:amd64 -s
+E: Unable to correct problems, you have held broken packages." aptget install needsfoo:i386 foo:amd64 -s --solver internal
+testfailuremsg "E: Conflict:  -> needsfoo:i386=1 but foo:amd64=1 -> not foo:i386=1 -> not needsfoo:i386=1" aptget install foo:amd64 needsfoo:i386 -s --solver 3.0
 testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  needsfoo:i386 : Depends: foo:i386 but it is not installable
-E: Unable to correct problems, you have held broken packages." aptget install foo:amd64 needsfoo:i386 -s
+E: Unable to correct problems, you have held broken packages." aptget install foo:amd64 needsfoo:i386 -s --solver internal
+testfailuremsg "E: Conflict:  -> needsfoo:amd64=1 but foo:i386=1 -> not foo:amd64=1 -> not needsfoo:amd64=1" aptget install needsfoo foo:i386 -s --solver 3.0
 testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  foo : Conflicts: foo:i386 but 1 is to be installed
  foo:i386 : Conflicts: foo but 1 is to be installed
-E: Unable to correct problems, you have held broken packages." aptget install needsfoo foo:i386 -s
+E: Unable to correct problems, you have held broken packages." aptget install needsfoo foo:i386 -s --solver internal
 
 solveableinsinglearch1() {
 	testsuccessequal "Reading package lists...
@@ -127,6 +131,16 @@ Conf $1 (1 unstable [amd64])" aptget install $1 foo:i386 -s
 testneedsfooallgood 'needsfooany'
 testneedsfooallgood 'needsfoover1'
 
+if [ "$APT_SOLVER" = "3.0" ]; then
+NEEDSFOO2NATIVE="$BADPREFIX
+The following packages have unmet dependencies:
+ needsfoover2 : Depends: foo:any (>= 2)
+E: Unsatisfiable dependency group needsfoover2:amd64=1 -> foo:any:any"
+NEEDSFOO2FOREIGN="$BADPREFIX
+The following packages have unmet dependencies:
+ needsfoover2:i386 : Depends: foo:any (>= 2)
+E: Unsatisfiable dependency group needsfoover2:i386=1 -> foo:any:any"
+else
 NEEDSFOO2NATIVE="$BADPREFIX
 The following packages have unmet dependencies:
  needsfoover2 : Depends: foo:any (>= 2)
@@ -135,32 +149,38 @@ NEEDSFOO2FOREIGN="$BADPREFIX
 The following packages have unmet dependencies:
  needsfoover2:i386 : Depends: foo:any (>= 2)
 E: Unable to correct problems, you have held broken packages."
+fi
 testfailureequal "$NEEDSFOO2NATIVE" aptget install needsfoover2 -s
 testfailureequal "$NEEDSFOO2FOREIGN" aptget install needsfoover2:i386 -s
 testfailureequal "$NEEDSFOO2FOREIGN" aptget install needsfoover2:i386 foo:i386 -s
 testfailureequal "$NEEDSFOO2NATIVE" aptget install needsfoover2 foo:i386 -s
 
 solveableinsinglearch2() {
+	testfailuremsg 'E: Conflict: hatesfoo:amd64=1 -> not foo:amd64=1 but foo:amd64=1' aptget install foo hatesfoo -s --solver 3.0
+	testfailuremsg 'E: Conflict: hatesfooany:amd64=1 -> not foo:amd64=1 but foo:amd64=1' aptget install foo hatesfooany -s --solver 3.0
+	testfailuremsg 'E: Conflict: hatesfoonative:amd64=1 -> not foo:amd64=1 but foo:amd64=1' aptget install foo hatesfoonative -s --solver 3.0
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  hatesfoo : Conflicts: foo but 1 is to be installed
-E: Unable to correct problems, you have held broken packages." aptget install foo hatesfoo -s
+E: Unable to correct problems, you have held broken packages." aptget install foo hatesfoo -s --solver internal
 	# the message differs slightly between single and multiarch
-	testfailuremsg 'E: Unable to correct problems, you have held broken packages.' aptget install foo hatesfooany -s
+	testfailuremsg 'E: Unable to correct problems, you have held broken packages.' aptget install foo hatesfooany -s --solver internal
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  hatesfoonative : Conflicts: foo:amd64
-E: Unable to correct problems, you have held broken packages." aptget install foo hatesfoonative -s
+E: Unable to correct problems, you have held broken packages." aptget install foo hatesfoonative -s --solver internal
 }
 solveableinsinglearch2
+testfailuremsg "E: Conflict: hatesfoo:amd64=1 -> not foo:i386=1 but foo:i386=1" aptget install foo:i386 hatesfoo -s --solver 3.0
 testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  hatesfoo : Conflicts: foo:i386 but 1 is to be installed
-E: Unable to correct problems, you have held broken packages." aptget install foo:i386 hatesfoo -s
+E: Unable to correct problems, you have held broken packages." aptget install foo:i386 hatesfoo -s --solver internal
+testfailuremsg "E: Conflict: hatesfooany:amd64=1 -> not foo:i386=1 but foo:i386=1" aptget install foo:i386 hatesfooany -s --solver 3.0
 testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  hatesfooany : Conflicts: foo:any
-E: Unable to correct problems, you have held broken packages." aptget install foo:i386 hatesfooany -s
+E: Unable to correct problems, you have held broken packages." aptget install foo:i386 hatesfooany -s --solver internal
 testsuccessequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
@@ -171,11 +191,12 @@ Inst hatesfoonative (1 unstable [amd64])
 Conf foo:i386 (1 unstable [i386])
 Conf hatesfoonative (1 unstable [amd64])' aptget install foo:i386 hatesfoonative -s
 
+testfailuremsg "E: Unsatisfiable dependency group needscoolfoo:i386=1 -> coolfoo:i386" aptget install needscoolfoo:i386 -s --solver 3.0
 testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  needscoolfoo:i386 : Depends: coolfoo:i386 but it is not installable
                      Depends: coolbar:i386 but it is not installable
-E: Unable to correct problems, you have held broken packages." aptget install needscoolfoo:i386 -s
+E: Unable to correct problems, you have held broken packages." aptget install needscoolfoo:i386 -s --solver internal
 solveneedscoolfooanyin() {
 	local NEEDSCOOL='needscoolfooany'
 	if [ "$1" != 'amd64' ]; then NEEDSCOOL="${NEEDSCOOL}:$1"; fi
@@ -243,15 +264,17 @@ Inst needscoolfoover1 (1 unstable [amd64])
 Conf coolfoo (1 unstable [amd64])
 Conf coolfoover (1 unstable [amd64])
 Conf needscoolfoover1 (1 unstable [amd64])' aptget install needscoolfoover1 -s
+	testfailuremsg "E: Unsatisfiable dependency group needscoolfoover2:amd64=1 -> coolfoo:any:any" aptget install needscoolfoover2 -s --solver 3.0
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  needscoolfoover2 : Depends: coolfoo:any (>= 2)
-E: Unable to correct problems, you have held broken packages." aptget install needscoolfoover2 -s
+E: Unable to correct problems, you have held broken packages." aptget install needscoolfoover2 -s --solver internal
+	testfailuremsg "E: Unsatisfiable dependency group needscoolfoover3:amd64=1 -> coolfoo:any:any" aptget install needscoolfoover3 -s --solver 3.0
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  needscoolfoover3 : Depends: coolfoo:any (>= 2)
                     Depends: coolbar:any (>= 3)
-E: Unable to correct problems, you have held broken packages." aptget install needscoolfoover3 -s
+E: Unable to correct problems, you have held broken packages." aptget install needscoolfoover3 -s --solver internal
 }
 solveableinsinglearch3
 

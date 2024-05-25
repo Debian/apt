@@ -83,6 +83,7 @@ testsuccessequal "$(installsfoosamey 'amd64' 'i386')" apt build-dep cool-foo -s 
 testsuccessequal "$(installsfoosamey 'i386' 'i386')" apt build-dep bad-amd64-foo -s -a i386
 testsuccessequal "$(installsfoosamey 'amd64' 'i386')" apt build-dep bad-armel-foo -s -a i386
 testsuccessequal "$(installsfoosamey 'i386' 'i386')" apt build-dep bad-amd64-armel-foo -s -a i386
+testfailuremsg 'E: Conflict: builddeps:bad-amd64-i386-foo:i386=1 -> not foo:i386=1 -> not builddeps:bad-amd64-i386-foo:i386=1 but builddeps:bad-amd64-i386-foo:i386=1'  apt build-dep bad-amd64-i386-foo -s -a i386 --solver 3.0
 testfailureequal 'Reading package lists...
 Reading package lists...
 Building dependency tree...
@@ -94,7 +95,8 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  builddeps:bad-amd64-i386-foo:i386 : Depends: foo:i386
-E: Unable to correct problems, you have held broken packages.' apt build-dep bad-amd64-i386-foo -s -a i386
+E: Unable to correct problems, you have held broken packages.' apt build-dep bad-amd64-i386-foo -s -a i386 --solver internal
+testfailuremsg 'E: Conflict: builddeps:bad-amd64-i386-armel-foo:i386=1 -> not foo:i386=1 -> not builddeps:bad-amd64-i386-armel-foo:i386=1 but builddeps:bad-amd64-i386-armel-foo:i386=1' apt build-dep bad-amd64-i386-armel-foo -s -a i386 --solver 3.0
 testfailureequal 'Reading package lists...
 Reading package lists...
 Building dependency tree...
@@ -106,13 +108,14 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  builddeps:bad-amd64-i386-armel-foo:i386 : Depends: foo:i386
-E: Unable to correct problems, you have held broken packages.' apt build-dep bad-amd64-i386-armel-foo -s -a i386
+E: Unable to correct problems, you have held broken packages.' apt build-dep bad-amd64-i386-armel-foo -s -a i386 --solver internal
 
 testsuccessequal "$(installsfoosamey 'amd64' 'armel')" apt build-dep cool-foo -s -a armel
 testsuccessequal "$(installsfoosamey 'i386' 'armel')" apt build-dep bad-amd64-foo -s -a armel
 testsuccessequal "$(installsfoosamey 'amd64' 'armel')" apt build-dep bad-armel-foo -s -a armel
 testsuccessequal "$(installsfoosamey 'i386' 'armel')" apt build-dep bad-amd64-armel-foo -s -a armel
 testsuccessequal "$(installsfoosamey 'armel' 'armel')" apt build-dep bad-amd64-i386-foo -s -a armel
+FAILUREMSG="E: Conflict: builddeps:bad-amd64-i386-armel-foo:armel=1 -> not foo:armel=1 -> not builddeps:bad-amd64-i386-armel-foo:armel=1 but builddeps:bad-amd64-i386-armel-foo:armel=1"
 FAILURE='Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
@@ -124,8 +127,9 @@ The following information may help to resolve the situation:
 The following packages have unmet dependencies:
  builddeps:bad-amd64-i386-armel-foo:armel : Depends: foo:armel
 E: Unable to correct problems, you have held broken packages.'
+testfailuremsg "$FAILUREMSG" apt build-dep bad-amd64-i386-armel-foo -s -a armel --solver 3.0
 testfailureequal "Reading package lists...
-$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel
+$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel --solver internal
 
 msgmsg 'BarbarianArchitectures' 'cmdline options'
 rm rootdir/etc/apt/apt.conf.d/99barbarianarchs
@@ -134,7 +138,10 @@ testsuccess aptcache gencaches
 testsuccessequal "$(installsfoosamey 'mipsel' 'armel')" apt build-dep bad-amd64-i386-armel-foo -s -a armel
 testsuccess aptcache gencaches -o APT::BarbarianArchitectures::=armel
 testsuccessequal "$(installsfoosamey 'mipsel' 'armel')" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures::=armel
-testfailureequal "$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures::=mipsel
-testfailureequal "$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures::=mipsel -o APT::BarbarianArchitectures::=armel
+testfailuremsg "$FAILUREMSG" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures::=mipsel --solver 3.0
+testfailuremsg "$FAILUREMSG" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures::=mipsel -o APT::BarbarianArchitectures::=armel --solver 3.0
+testfailuremsg "$FAILUREMSG" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures=mipsel,armel --solver 3.0
+testfailureequal "$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures::=mipsel --solver internal
+testfailureequal "$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures::=mipsel -o APT::BarbarianArchitectures::=armel --solver internal
 testfailureequal "Reading package lists...
-$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures=mipsel,armel
+$FAILURE" apt build-dep bad-amd64-i386-armel-foo -s -a armel -o APT::BarbarianArchitectures=mipsel,armel --solver internal

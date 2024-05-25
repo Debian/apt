@@ -5,6 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
 setupenvironment
+allowremovemanual
 configarchitecture 'i386' 'amd64'
 
 insertpackage 'unstable' 'lib32nss-mdns' 'amd64' '0.10-6' 'Depends: libnss-mdns-i386 (= 0.10-6)'
@@ -43,6 +44,7 @@ Remv lib32nss-mdns [0.9-1]
 Inst libnss-mdns [0.9-1] (0.10-6 unstable [amd64])
 Conf libnss-mdns (0.10-6 unstable [amd64])' aptget dist-upgrade -s
 
+testfailuremsg 'E: Unsatisfiable dependency group libfoo:amd64=1 -> libfoo-bin:amd64' aptget install foo -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
@@ -53,7 +55,7 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  libfoo : Depends: libfoo-bin but it is not installable
-E: Unable to correct problems, you have held broken packages.' aptget install foo -s
+E: Unable to correct problems, you have held broken packages.' aptget install foo -s --solver internal
 
 # activate multiarch
 configarchitecture 'amd64' 'i386'

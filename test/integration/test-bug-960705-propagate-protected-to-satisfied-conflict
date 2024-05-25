@@ -15,6 +15,7 @@ Important: yes'
 
 setupaptarchive
 
+# This only works on internal, we do not have magic essential autoswitch ability for 3.0
 testsuccessequal "Reading package lists...
 Building dependency tree...
    Removing: systemd-sysv:amd64 as upgrade is not an option for runit-init:amd64 (1)
@@ -50,4 +51,4 @@ Remv init [1]
   MarkDelete systemd-sysv:amd64 < 1 | none @ii H > FU=1
 Remv systemd-sysv [1]
 Inst runit-init (1 unstable [all])
-Conf runit-init (1 unstable [all])" apt install runit-init -so Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1 -o APT::Get::Allow-Solver-Remove-Essential=1
+Conf runit-init (1 unstable [all])" apt install runit-init -so Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1 -o APT::Get::Allow-Solver-Remove-Essential=1 --solver internal

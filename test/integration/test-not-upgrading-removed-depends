@@ -4,6 +4,7 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
+allowremovemanual
 configarchitecture 'amd64'
 
 insertpackage 'unstable' 'untouchable-for-solving' 'all' '1' 'Conflicts: main'

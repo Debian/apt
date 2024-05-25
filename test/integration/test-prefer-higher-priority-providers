@@ -90,6 +90,10 @@ Inst awesome (1 unstable [all])
 Conf baz (1 unstable [all])
 Conf awesome (1 unstable [all])" aptget install awesome foo- bar- -s
 
+testfailuremsg "E: Unsatisfiable dependency: awesome:amd64=1 -> foo:amd64=1 | bar:amd64=1 | baz:amd64=1
+E: Not considered: foo:amd64=1: not foo:amd64 -> not foo:amd64=1
+E: Not considered: bar:amd64=1: not bar:amd64 -> not bar:amd64=1
+E: Not considered: baz:amd64=1: not baz:amd64 -> not baz:amd64=1" aptget install awesome foo- bar- baz- -s --solver 3.0
 testfailureequal "Reading package lists...
 Building dependency tree...
 Package 'foo' is not installed, so not removed
@@ -103,4 +107,4 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  awesome : Depends: stuff
-E: Unable to correct problems, you have held broken packages." aptget install awesome foo- bar- baz- -s
+E: Unable to correct problems, you have held broken packages." aptget install awesome foo- bar- baz- -s --solver internal

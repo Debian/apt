@@ -19,6 +19,9 @@ while [ -n "$1" -a -z "$CHECK_ARGS" ]; do
 	elif [ "$1" = '--level' ]; then
 		export MSGLEVEL=$2
 		shift
+	elif [ "$1" = '--solver' ]; then
+		export APT_SOLVER=$2
+		shift
 	else
 		echo >&2 "WARNING: Unknown parameter »$1« will be ignored"
 	fi
@@ -537,7 +540,10 @@ exec fakeroot gdb --quiet -ex run '${DPKG:-dpkg}' --args '${DPKG:-dpkg}' --root=
 EOF
 	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
 	echo "Dir::Bin::dpkg \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg\";" > rootdir/etc/apt/apt.conf.d/99dpkg
-
+	# Set the solver for the test case.
+	if [ "$APT_SOLVER" ]; then
+		echo "APT::Solver \"$APT_SOLVER\";" >> aptconfig.conf
+	fi
 	{
 		echo 'quiet "0";'
 		echo 'quiet::NoUpdate "true";'
@@ -584,6 +590,9 @@ EOF
 
 	# prefer our apt binaries over the system apt binaries
 	export PATH="${APTCMDLINEBINDIR}:${PATH}:/usr/sbin:/sbin"
+}
+allowremovemanual() {
+    echo 'APT::Solver::RemoveManual "true";' >> ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/allow-remove-manual.conf
 }
 
 getarchitecture() {
@@ -1550,11 +1559,22 @@ downloadfile() {
 	fi
 }
 
+cleanup_solver3_pipe() {
+	if [ "$APT_SOLVER" != "3.0" ]; then
+		cat
+	else
+		# FIXME: We do not have support for listing autoremovals yet.
+		# FIXME: Progress output is different
+		sed -e '/Solving dependencies\.\.\./ d' \
+			-e "/no longer required[.:]$/,/^Use '.* autoremove'/ d"
+	fi
+}
 cleanup_output() {
 	cat "$1" | sed \
 		-e '/gpgv: WARNING: This key is not suitable for signing in --compliance=gnupg mode/ d' \
 		-e '/^profiling:/ d' \
 		| sed -e '/\.\.\.profiling:/ {N;s#\.\.\.profiling:.*\n#...#g}' \
+		| cleanup_solver3_pipe \
 			>"$2"
 }
 

@@ -7,6 +7,8 @@ setupenvironment
 configarchitecture "i386"
 setupaptarchive
 
+testfailuremsg "E: Conflict:  -> postfix:i386=2.7.1-1 but exim4-daemon-light:i386 -> exim4-daemon-light:i386=4.72-1 -> not postfix:i386=2.7.1-1" aptget install postfix --solver 3.0
+allowremovemanual
 testfailureequal "Reading package lists...
 Building dependency tree...
 The following packages will be REMOVED:

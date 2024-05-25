@@ -5,6 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
 setupenvironment
+allowremovemanual
 configarchitecture 'amd64' 'i386'
 
 buildsimplenativepackage 'foreign-foo' 'amd64,i386' '1' 'stable' 'Multi-Arch: foreign

@@ -13,6 +13,17 @@ insertpackage 'unstable' 'exim4-daemon-heavy' 'all' '1.0' 'Depends: libdb4.8'
 
 setupaptarchive
 
+# This does not work in 3.0 solver: We do not remove manually installed packages.
+testfailuremsg "E: Conflict: not libdb4.8:i386 -> not libdb4.8:i386=1.0 -> not exim4-daemon-light:i386=1.0 -> not exim4:i386=1.0 but exim4:i386 -> exim4:i386=1.0" aptget remove libdb4.8 --solver 3.0 -s
+allowremovemanual
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  exim4 exim4-daemon-light libdb4.8
+0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
+Remv exim4 [1.0]
+Remv exim4-daemon-light [1.0]
+Remv libdb4.8 [1.0]" aptget remove libdb4.8 -s
 testsuccessequal "Reading package lists...
 Building dependency tree...
   MarkDelete libdb4.8:i386 < 1.0 @ii pmK > FU=1
@@ -28,4 +39,4 @@ Remv exim4 [1.0]
   MarkDelete exim4-daemon-light:i386 < 1.0 @ii K > FU=1
 Remv exim4-daemon-light [1.0]
   MarkDelete libdb4.8:i386 < 1.0 @ii K > FU=1
-Remv libdb4.8 [1.0]" aptget remove libdb4.8 -s -o Debug::pkgDepCache::Marker=1
+Remv libdb4.8 [1.0]" aptget remove libdb4.8 -s -o Debug::pkgDepCache::Marker=1 --solver internal

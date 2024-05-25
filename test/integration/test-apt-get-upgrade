@@ -5,6 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 
 setupenvironment
+allowremovemanual
 configarchitecture "i386"
 
 # simple case
@@ -60,6 +61,30 @@ Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
 Conf new-dep (1.0 stable [all])
 Conf upgrade-simple (2.0 unstable [all])
 Conf upgrade-with-new-dep (2.0 unstable [all])'
+if [ "$APT_SOLVER" = "3.0" ]; then
+# FIXME: It would be better if we would keep back the upgrade rather than switch to sysvinit,
+# but it's not clear that is reliably possible.
+UPGRADENEW="Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following NEW packages will be installed:
+  new-dep sysvinit
+The following packages have been kept back:
+  upgrade-with-conflict
+The following packages will be upgraded:
+  init upgrade-simple upgrade-with-new-dep
+3 upgraded, 2 newly installed, 0 to remove and 1 not upgraded.
+Inst sysvinit (2 unstable [all])
+Conf sysvinit (2 unstable [all])
+Inst init [1] (2 unstable [all])
+Inst new-dep (1.0 stable [all])
+Inst upgrade-simple [1.0] (2.0 unstable [all])
+Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
+Conf init (2 unstable [all])
+Conf new-dep (1.0 stable [all])
+Conf upgrade-simple (2.0 unstable [all])
+Conf upgrade-with-new-dep (2.0 unstable [all])"
+fi
 testsuccessequal "$UPGRADENEW" aptget upgrade -s --with-new-pkgs
 testsuccessequal "$UPGRADENEW" apt upgrade -s
 
@@ -142,3 +167,54 @@ Conf upgrade-with-conflict (2.0 unstable [all])
 Conf new-dep (1.0 stable [all])
 Conf upgrade-simple (2.0 unstable [all])
 Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s dist-upgrade
+
+# --no-strict-pinning pulls in systemd due to the dependency
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be REMOVED:
+  conflicting-dep
+The following NEW packages will be installed:
+  new-dep systemd
+The following packages will be upgraded:
+  init upgrade-simple upgrade-with-conflict upgrade-with-new-dep
+4 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv conflicting-dep [1.0]
+Inst systemd (2 unstable [all])
+Conf systemd (2 unstable [all])
+Inst init [1] (2 unstable [all])
+Inst upgrade-with-conflict [1.0] (2.0 unstable [all])
+Inst new-dep (1.0 stable [all])
+Inst upgrade-simple [1.0] (2.0 unstable [all])
+Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
+Conf init (2 unstable [all])
+Conf upgrade-with-conflict (2.0 unstable [all])
+Conf new-dep (1.0 stable [all])
+Conf upgrade-simple (2.0 unstable [all])
+Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s dist-upgrade --no-strict-pinning --solver 3.0
+
+# --no-strict-pinning does not cause a package to be upgraded on its own, though.
+echo 'Package: upgrade-simple
+Pin: release unstable
+Pin-Priority: -1' > rootdir/etc/apt/preferences.d/no-strict-pinning.pref
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be REMOVED:
+  conflicting-dep
+The following NEW packages will be installed:
+  new-dep systemd
+The following packages will be upgraded:
+  init upgrade-with-conflict upgrade-with-new-dep
+3 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv conflicting-dep [1.0]
+Inst systemd (2 unstable [all])
+Conf systemd (2 unstable [all])
+Inst init [1] (2 unstable [all])
+Inst upgrade-with-conflict [1.0] (2.0 unstable [all])
+Inst new-dep (1.0 stable [all])
+Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
+Conf init (2 unstable [all])
+Conf upgrade-with-conflict (2.0 unstable [all])
+Conf new-dep (1.0 stable [all])
+Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s dist-upgrade --no-strict-pinning --solver 3.0

@@ -4,6 +4,7 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
+allowremovemanual
 configarchitecture 'amd64' 'i386'
 
 insertpackage 'unstable' 'libc6' 'amd64,i386' '1' 'Multi-Arch: same'
@@ -193,6 +194,7 @@ The following NEW packages will be installed:
 Inst foo-depender (1 unstable [amd64])
 Conf foo-depender (1 unstable [amd64])' aptget install foo-depender -s
 
+testfailuremsg 'E: Unsatisfiable dependency group foo-depender:i386=1 -> foo:i386' aptget install foo-depender:i386 -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
@@ -203,7 +205,7 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  foo-depender:i386 : Depends: foo:i386 but it is not installable
-E: Unable to correct problems, you have held broken packages.' aptget install foo-depender:i386 -s
+E: Unable to correct problems, you have held broken packages.' aptget install foo-depender:i386 -s --solver internal
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...
@@ -311,6 +313,7 @@ Remv libold [1]
 Inst breaker-x64 (1 unstable [amd64])
 Conf breaker-x64 (1 unstable [amd64])' aptget install breaker-x64:amd64 -s
 
+testfailuremsg 'E: Unsatisfiable dependency group depender-x32:amd64=1 -> libc6:i386:any' aptget install depender-x32 -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
@@ -321,4 +324,4 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  depender-x32 : Depends: libc6:i386 but it is not installable
-E: Unable to correct problems, you have held broken packages.' aptget install depender-x32 -s
+E: Unable to correct problems, you have held broken packages.' aptget install depender-x32 -s --solver internal
