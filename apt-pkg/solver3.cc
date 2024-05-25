@@ -211,7 +211,7 @@ void APT::Solver::Work::Dump(pkgCache &cache)
       std::cerr << "Dirty ";
    if (optional)
       std::cerr << "Optional ";
-   std::cerr << "Item (" << size << "@" << depth << (upgrade ? "u" : "") << ") ";
+   std::cerr << "Item (" << ssize_t(size <= solutions.size() ? size : -1) << "@" << depth << (upgrade ? "u" : "") << ") ";
    if (auto Pkg = reason.Pkg(); Pkg != 0)
       std::cerr << pkgCache::PkgIterator(cache, cache.PkgP + Pkg).FullName();
    if (auto Ver = reason.Ver(); Ver != 0)
