@@ -1,3 +1,30 @@
+apt (2.9.4) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * Fix accidental silencing of output differences in tests
+  * Do not mark new if we have already installed providers
+  * Do not save new if we have already installed providers (Closes: #839546)
+  * Deal better with spurious spaces in arch restrictions (Closes: #1071219)
+
+  [ Julian Andres Klode ]
+  * pkgcachegen: Do not try to chmod or write to /dev/null (LP: #2067138)
+  * test: Show statistics for parallel tests too
+  * test: Run working tests against the 3.0 solver, and adjust as many as possible
+    (more bug fixes in a further release)
+    - test: Temporarily ignore autoremovable lists for solver3
+    - test: Support the 3.0 solver in most existing test cases
+  * Various improvements to the 3.0 solver:
+    - edsp: solver3: Show some progress
+    - solver3: Implement APT::Solver::RemoveManual to allow removing manual packages
+    - solver3: Promote satisfied Suggests to Recommends
+    - solver3: Solve optional dependencies before optional packages
+    - solver3: Try candidate before installed version on upgrade
+    - solver3: Use stable sort
+    - solver3: Actually restore unsolved items rather than solved ones
+    - solver3: Fix translations of removals for marked install
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 25 May 2024 10:58:49 +0200
+
 apt (2.9.3) unstable; urgency=medium
 
   [ Julian Andres Klode ]
