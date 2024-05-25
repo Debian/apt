@@ -36,6 +36,33 @@ class Solver
    struct State;
    struct Work;
 
+   // \brief Groups of works, these are ordered.
+   //
+   // Later items will be skipped if they are optional, or we will when backtracking,
+   // try a different choice for them.
+   enum class Group : uint8_t
+   {
+      HoldOrDelete,
+      NewUnsatRecommends,
+      Satisfy,
+
+      // My intuition tells me that we should try to schedule upgrades first, then
+      // any non-obsolete installed packages, and only finally obsolete ones, such
+      // that newer packages guide resolution of dependencies for older ones, they
+      // may have more stringent dependencies, like a (>> 2) whereas an obsolete
+      // package may have a (>> 1), for example.
+      UpgradeManual,
+      InstallManual,
+      ObsoleteManual,
+
+      // Automatically installed packages must come last in the group, this allows
+      // us to see if they were installed as a dependency of a manually installed package,
+      // allowing a simple implementation of an autoremoval code.
+      UpgradeAuto,
+      KeepAuto,
+      ObsoleteAuto
+   };
+
    // \brief Type to record depth at. This may very well be a 16-bit
    // unsigned integer, then change Solver::State::Decision to be a
    // uint16_t class enum as well to get a more compact space.
@@ -131,13 +158,13 @@ class Solver
    Solver(pkgCache &Cache, pkgDepCache::Policy &Policy);
 
    // \brief Mark the package for install. This is annoying as it incurs a decision
-   bool Install(pkgCache::PkgIterator Pkg, Reason reason);
+   bool Install(pkgCache::PkgIterator Pkg, Reason reason, Group group);
    // \brief Install a version.
-   bool Install(pkgCache::VerIterator Ver, Reason reason);
+   bool Install(pkgCache::VerIterator Ver, Reason reason, Group group);
    // \brief Do not install this package
-   bool Reject(pkgCache::PkgIterator Pkg, Reason reason);
+   bool Reject(pkgCache::PkgIterator Pkg, Reason reason, Group group);
    // \brief Do not install this version.
-   bool Reject(pkgCache::VerIterator Ver, Reason reason);
+   bool Reject(pkgCache::VerIterator Ver, Reason reason, Group group);
 
    // \brief Apply the selections from the dep cache to the solver
    bool FromDepCache(pkgDepCache &depcache);
@@ -203,7 +230,8 @@ struct APT::Solver::Work
    Reason reason;
    // \brief The depth at which the item has been added
    depth_type depth;
-
+   // \brief The group we are in
+   Group group;
    // \brief Possible solutions to this task, ordered in order of preference.
    std::vector<pkgCache::Version *> solutions{};
 
@@ -228,7 +256,7 @@ struct APT::Solver::Work
    // \brief Dump the work item to std::cerr
    void Dump(pkgCache &cache);
 
-   inline Work(Reason reason, depth_type depth, bool optional = false, bool upgrade = false) : reason(reason), depth(depth), size(0), optional(optional), upgrade(upgrade), dirty(false) {}
+   inline Work(Reason reason, depth_type depth, Group group, bool optional = false, bool upgrade = false) : reason(reason), depth(depth), group(group), size(0), optional(optional), upgrade(upgrade), dirty(false) {}
 };
 
 // \brief This essentially describes the install state in RFC2119 terms.
