@@ -5,6 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
 configarchitecture 'native'
+native=$(getarchitecture 'native')
 
 insertpackage 'unstable' 'foo' 'all' '1' 'Provides: stuff' 'important'
 insertpackage 'unstable' 'bar' 'all' '1' 'Provides: stuff' 'optional'
@@ -90,10 +91,10 @@ Inst awesome (1 unstable [all])
 Conf baz (1 unstable [all])
 Conf awesome (1 unstable [all])" aptget install awesome foo- bar- -s
 
-testfailuremsg "E: Unsatisfiable dependency: awesome:amd64=1 -> foo:amd64=1 | bar:amd64=1 | baz:amd64=1
-E: Not considered: foo:amd64=1: not foo:amd64 -> not foo:amd64=1
-E: Not considered: bar:amd64=1: not bar:amd64 -> not bar:amd64=1
-E: Not considered: baz:amd64=1: not baz:amd64 -> not baz:amd64=1" aptget install awesome foo- bar- baz- -s --solver 3.0
+testfailuremsg "E: Unsatisfiable dependency: awesome:$native=1 -> foo:$native=1 | bar:$native=1 | baz:$native=1
+E: Not considered: foo:$native=1: not foo:$native -> not foo:$native=1
+E: Not considered: bar:$native=1: not bar:$native -> not bar:$native=1
+E: Not considered: baz:$native=1: not baz:$native -> not baz:$native=1" aptget install awesome foo- bar- baz- -s --solver 3.0
 testfailureequal "Reading package lists...
 Building dependency tree...
 Package 'foo' is not installed, so not removed
