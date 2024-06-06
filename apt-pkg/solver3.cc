@@ -174,33 +174,11 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
       return not b.optional && b.size < 2;
    if (group != b.group)
       return group > b.group;
-   if (optional && b.optional && reason.empty() && b.reason.empty() && upgrade != b.upgrade)
-   {
-      // Assuming we have libfoo-dev=5.1 Depends libfoo5.1-dev upgrade to libfoo-dev=5.3 Depends libfoo5.3-dev,
-      // We schedule libfoo-dev=5.3|libfoo-dev=5.1, libfoo5.1-dev. The latter would be resolved first, resulting
-      // in libfoo-dev being kept back.
-      //
-      // However, if we schedule not libfoo5.1-dev but bar Recommends libfoo5.1-dev, we should not be breaking that
-      // Recommends, hence we need to ensure that if we order an upgrade before an optional package that this optional
-      // package was a top level package, i.e. b.reason is empty (or our reason in the reverse case).
-      //
-      // So if we are the upgrade, and b also Depends on one of our versions, we need to satisfy b after we
-      // have scheduled the upgrade.
-      if (upgrade)
-	 return std::any_of(b.solutions.begin(), b.solutions.end(), [this](auto bsol) -> bool
-			    { return std::find(solutions.begin(), solutions.end(), bsol) != solutions.end(); });
-      else
-	 return std::any_of(solutions.begin(), solutions.end(), [b](auto sol) -> bool
-			    { return std::find(b.solutions.begin(), b.solutions.end(), sol) != b.solutions.end(); });
-   }
    if (optional && b.optional && reason.empty() != b.reason.empty())
       return reason.empty();
    // An optional item is less important than a required one.
    if (optional != b.optional)
       return optional;
-   // More solutions to explore are more expensive.
-   if (size != b.size)
-      return size > b.size;
    // We enqueue common dependencies at the package level to avoid choosing versions, so let's solve package items first,
    // this improves the implication graph as it now tells you that common dependencies were installed by the package.
    if (reason.Pkg() != b.reason.Pkg())
