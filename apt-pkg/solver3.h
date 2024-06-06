@@ -32,6 +32,7 @@ class Solver
    enum class Decision : uint16_t;
    enum class Hint : uint16_t;
    struct Reason;
+   struct CompareProviders3;
    template <typename T>
    struct State;
    struct Work;
@@ -44,7 +45,15 @@ class Solver
    {
       HoldOrDelete,
       NewUnsatRecommends,
+
+      // Satisfying dependencies on entirely new packages first is a good idea because
+      // it may contain replacement packages like libfoo1t64 whereas we later will see
+      // Depends: libfoo1 where libfoo1t64 Provides libfoo1 and we'd have to choose.
+      SatisfyNew,
       Satisfy,
+      // On a similar note as for SatisfyNew, if the dependency contains obsolete packages
+      // try it last.
+      SatisfyObsolete,
 
       // My intuition tells me that we should try to schedule upgrades first, then
       // any non-obsolete installed packages, and only finally obsolete ones, such
@@ -94,6 +103,9 @@ class Solver
    {
       return verStates[V->ID];
    }
+
+   std::vector<char> verObsolete;
+   bool Obsolete(pkgCache::VerIterator ver);
 
    // \brief Heap of the remaining work.
    //
