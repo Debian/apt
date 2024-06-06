@@ -31,7 +31,7 @@ while [ -n "$1" ]; do
 	elif [ "$1" = '--only' ]; then
 		TESTLIST="$2"
 		shift
-	elif [ -x "$1" ]; then
+	elif [ -e "$1" ]; then
 		TESTTORUN="$1"
 	else
 		echo >&2 "WARNING: Unknown parameter »$1« will be ignored"
