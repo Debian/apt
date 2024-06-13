@@ -811,18 +811,8 @@ case "$command" in
 	   exit 29
 	fi
 	GPGV_ARGS=""
-	if [ "$ASSERT_PUBKEY_ALGO" ]; then
-		test="$(LC_ALL=C.UTF-8 "$GPGV" --assert-pubkey-algo 2>&1 || :)"
-		case "$test" in
-			*"missing argument"*)
-				GPGV_ARGS="--assert-pubkey-algo=$ASSERT_PUBKEY_ALGO"
-				;;
-			*[Ii]"nvalid option"*"assert-pubkey-algo"*)
-				;;
-			*)
-				apt_warn "Unknown response from gpgv to --assert-pubkey-algo check: $test"
-				;;
-		esac
+	if [ "$ASSERT_PUBKEY_ALGO" ] && $GPGV --dump-options | grep -q -- --assert-pubkey-algo; then
+        GPGV_ARGS="--assert-pubkey-algo=$ASSERT_PUBKEY_ALGO"
 	fi
 	# for a forced keyid we need gpg --export, so full wrapping required
 	if [ -n "$FORCED_KEYID" ]; then
