@@ -992,6 +992,8 @@ bool APT::Solver::ToDepCache(pkgDepCache &depcache)
    pkgDepCache::ActionGroup group(depcache);
    for (auto P = cache.PkgBegin(); not P.end(); P++)
    {
+      depcache[P].Marked = 0;
+      depcache[P].Garbage = 0;
       if ((*this)[P].decision == Decision::MUST)
       {
 	 for (auto V = P.VersionList(); not V.end(); V++)
