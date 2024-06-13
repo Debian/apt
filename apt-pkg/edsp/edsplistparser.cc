@@ -44,7 +44,20 @@ edspListParser::edspListParser(FileFd * const File) : edspLikeListParser(File)
 bool edspLikeListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
    _system->SetVersionMapping(Ver->ID, Section.FindI("APT-ID", Ver->ID));
-   return debListParser::NewVersion(Ver);
+   if (not debListParser::NewVersion(Ver))
+      return false;
+
+   // Patch up the source version, it is stored in the Source-Version field in EDSP.
+   if (APT::StringView version = Section.Find(pkgTagSection::Key::Source_Version); not version.empty())
+   {
+      if (version != Ver.VerStr())
+      {
+	 map_stringitem_t const idx = StoreString(pkgCacheGenerator::VERSIONNUMBER, version);
+	 Ver->SourceVerStr = idx;
+      }
+   }
+
+   return true;
 }
 									/*}}}*/
 // ListParser::Description - Return the description string		/*{{{*/
