@@ -480,7 +480,9 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
    // below once we have calculated all possible solutions.
    if (start.ParentPkg()->CurrentVer == 0 && not policy.IsImportantDep(start))
       return true;
-
+   // Replaces and Enhances are not a real dependency.
+   if (start->Type == pkgCache::Dep::Replaces || start->Type == pkgCache::Dep::Enhances)
+      return true;
    if (unlikely(debug >= 3))
       std::cerr << "Found dependency critical " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " -> " << start.TargetPkg().FullName() << "\n";
 
