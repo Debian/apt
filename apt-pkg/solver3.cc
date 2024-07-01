@@ -906,10 +906,7 @@ bool APT::Solver::Solve()
 // \brief Apply the selections from the dep cache to the solver
 bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 {
-   bool KeepAuto = not _config->FindB("APT::Get::AutomaticRemove");
-   bool AllowRemove = _config->FindB("APT::Solver::Remove", true);
-   bool AllowInstall = _config->FindB("APT::Solver::Install", true);
-   bool AllowRemoveManual = _config->FindB("APT::Solver::RemoveManual", false);
+   bool AllowRemoveManual = AllowRemove && _config->FindB("APT::Solver::RemoveManual", false);
    DefaultRootSetFunc2 rootSet(&cache);
 
    for (auto P = cache.PkgBegin(); not P.end(); P++)
@@ -918,10 +915,6 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 continue;
 
       auto state = depcache[P];
-      auto maybeInstall = state.Install() || (state.Keep() && P->CurrentVer);
-      auto reject = state.Delete() || (depcache[P].Keep() && not P->CurrentVer && depcache[P].Protect());
-      auto isAuto = (depcache[P].Flags & pkgCache::Flag::Auto);
-      auto isOptional = isAuto || (AllowRemoveManual && not depcache[P].Protect());
       if (P->SelectedState == pkgCache::State::Hold && not state.Protect())
       {
 	 if (unlikely(debug >= 1))
@@ -929,58 +922,52 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 if (P->CurrentVer ? not Install(P.CurrentVer(), {}, Group::HoldOrDelete) : not Reject(P, {}, Group::HoldOrDelete))
 	    return false;
       }
-      else if (reject)
+      else if (state.Delete()						  // Normal delete request.
+	       || (not P->CurrentVer && state.Keep() && state.Protect())  // Delete request of not installed package.
+	       || (not P->CurrentVer && state.Keep() && not AllowInstall) // New package installs not allowed.
+      )
       {
 	 if (unlikely(debug >= 1))
 	    std::cerr << "Delete " << P.FullName() << "\n";
 	 if (!Reject(P, {}, Group::HoldOrDelete))
 	    return false;
       }
-      else if (maybeInstall && P->Flags & (pkgCache::Flag::Essential | pkgCache::Flag::Important))
+      else if (state.Install() || (state.Keep() && P->CurrentVer))
       {
-	 if (unlikely(debug >= 1))
-	    std::cerr << "ESSENTIAL " << P.FullName() << "\n";
-	 if (depcache[P].Keep() ? not Install(P, {}, Group::InstallManual) : not Install(depcache.GetCandidateVersion(P), {}, Group::InstallManual))
-	    return false;
-      }
-      else if (maybeInstall && not isOptional)
-      {
-	 auto Upgrade = depcache.GetCandidateVersion(P) != P.CurrentVer();
-	 auto Group = (Upgrade ? Group::UpgradeManual : Group::InstallManual);
-	 if (unlikely(debug >= 1))
-	    std::cerr << "MANUAL " << P.FullName() << "\n";
-	 if (depcache[P].Keep() ? not Install(P, {}, Group) : not Install(depcache.GetCandidateVersion(P), {}, Group))
-	    return false;
-      }
-      else if (maybeInstall && isOptional && (KeepAuto || rootSet.InRootSet(P) || not isAuto))
-      {
+	 auto isEssential = P->Flags & (pkgCache::Flag::Essential | pkgCache::Flag::Important);
+	 auto isAuto = (depcache[P].Flags & pkgCache::Flag::Auto);
+	 auto isOptional = ((isAuto && AllowRemove) || AllowRemoveManual) && not isEssential && not depcache[P].Protect();
+	 auto Root = rootSet.InRootSet(P);
 	 auto Upgrade = depcache.GetCandidateVersion(P) != P.CurrentVer();
 	 auto Group = isAuto ? (Upgrade ? Group::UpgradeAuto : Group::KeepAuto)
 			     : (Upgrade ? Group::UpgradeManual : Group::InstallManual);
-	 if (unlikely(debug >= 1))
-	    std::cerr << "AUTOMATIC " << P.FullName() << (Upgrade ? " - upgrade" : "") << "\n";
 
-	 if (not AllowRemove)
+	 if (isAuto && not depcache[P].Protect() && not isEssential && not KeepAuto && not rootSet.InRootSet(P))
 	 {
+	    if (unlikely(debug >= 1))
+	       std::cerr << "Ignore automatic install " << P.FullName() << " (" << (isEssential ? "E" : "") << (isAuto ? "M" : "") << (Root ? "R" : "") << ")"
+			 << "\n";
+	    continue;
+	 }
+	 if (unlikely(debug >= 1))
+	    std::cerr << "Install " << P.FullName() << " (" << (isEssential ? "E" : "") << (isAuto ? "M" : "") << (Root ? "R" : "") << ")"
+		      << "\n";
+
+	 if (not isOptional)
+	 {
+	    // Pre-empt the non-optional requests, as we don't want to queue them, we can just "unit propagate" here.
 	    if (depcache[P].Keep() ? not Install(P, {}, Group) : not Install(depcache.GetCandidateVersion(P), {}, Group))
 	       return false;
 	 }
 	 else
 	 {
-	    Work w{Reason(), depth(), Group, true, Upgrade};
+	    Work w{Reason(), depth(), Group, isOptional, Upgrade};
 	    for (auto V = P.VersionList(); not V.end(); ++V)
 	       if (IsAllowedVersion(V))
 		  w.solutions.push_back(V);
 	    std::stable_sort(w.solutions.begin(), w.solutions.end(), CompareProviders3{cache, policy, P, *this});
 	    AddWork(std::move(w));
 	 }
-      }
-      else if (P->CurrentVer == 0 && not AllowInstall)
-      {
-	 if (unlikely(debug >= 1))
-	    std::cerr << "NOT ALLOWING INSTALL OF " << P.FullName() << "\n";
-	 if (not Reject(P, {}, Group::HoldOrDelete))
-	    return false;
       }
    }
 
@@ -992,6 +979,8 @@ bool APT::Solver::ToDepCache(pkgDepCache &depcache)
    pkgDepCache::ActionGroup group(depcache);
    for (auto P = cache.PkgBegin(); not P.end(); P++)
    {
+      depcache[P].Marked = 0;
+      depcache[P].Garbage = 0;
       if ((*this)[P].decision == Decision::MUST)
       {
 	 for (auto V = P.VersionList(); not V.end(); V++)

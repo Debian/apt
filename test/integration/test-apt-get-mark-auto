@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'package' 'all' '3'
+
+setupaptarchive
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  package
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst package (3 unstable [all])
+Conf package (3 unstable [all])" aptget install package --mark-auto -s
+
+# Specifically if we mark the package as automatically installed but also have auto-remove on,
+# the package should still be installed...
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  package
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst package (3 unstable [all])
+Conf package (3 unstable [all])" aptget install package --mark-auto --auto-remove -s
