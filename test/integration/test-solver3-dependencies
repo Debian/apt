@@ -1,0 +1,65 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'replaces' 'all' '2' 'Replaces: replaced (<< 3)'
+insertinstalledpackage 'replaced' 'all' '2'
+
+insertinstalledpackage 'enhances' 'all' '2' 'Enhances: enhanced (<< 3)'
+insertinstalledpackage 'enhanced' 'all' '2'
+
+insertpackage 'unstable' 'replaces' 'all' '3' 'Replaces: replaced (<< 3)'
+insertpackage 'unstable' 'enhances' 'all' '3' 'Enhances: enhanced (<< 3)'
+insertpackage 'unstable' 'replaced' 'all' '3'
+insertpackage 'unstable' 'enhanced' 'all' '3'
+
+setupaptarchive
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be upgraded:
+  enhanced enhances replaced replaces
+4 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst enhanced [2] (3 unstable [all])
+Inst enhances [2] (3 unstable [all])
+Inst replaced [2] (3 unstable [all])
+Inst replaces [2] (3 unstable [all])
+Conf enhanced (3 unstable [all])
+Conf enhances (3 unstable [all])
+Conf replaced (3 unstable [all])
+Conf replaces (3 unstable [all])" aptget upgrade -s
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be upgraded:
+  enhanced enhances replaced replaces
+4 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst enhanced [2] (3 unstable [all])
+Inst enhances [2] (3 unstable [all])
+Inst replaced [2] (3 unstable [all])
+Inst replaces [2] (3 unstable [all])
+Conf enhanced (3 unstable [all])
+Conf enhances (3 unstable [all])
+Conf replaced (3 unstable [all])
+Conf replaces (3 unstable [all])" apt upgrade -s
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be upgraded:
+  enhanced enhances replaced replaces
+4 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst enhanced [2] (3 unstable [all])
+Inst enhances [2] (3 unstable [all])
+Inst replaced [2] (3 unstable [all])
+Inst replaces [2] (3 unstable [all])
+Conf enhanced (3 unstable [all])
+Conf enhances (3 unstable [all])
+Conf replaced (3 unstable [all])
+Conf replaces (3 unstable [all])" apt dist-upgrade -s
