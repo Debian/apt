@@ -104,8 +104,8 @@ class Solver
       return verStates[V->ID];
    }
 
-   std::vector<char> verObsolete;
-   bool Obsolete(pkgCache::VerIterator ver);
+   std::vector<char> pkgObsolete;
+   bool Obsolete(pkgCache::PkgIterator pkg);
 
    // \brief Heap of the remaining work.
    //
