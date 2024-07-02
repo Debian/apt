@@ -1,3 +1,19 @@
+apt (2.9.6) unstable; urgency=medium
+
+  * solver3: Do not accidentally promote Replaces and Enhances to
+    dependencies; this fixes a regression in 2.9.5 when we added
+    code to promote currently satisfied Suggests to Depends.
+  * solver3: Unmark packages before setting any in ToDepCache
+  * solver3: Refactor (rewrite) FromDepCache() (Closes: #1071519)
+    This was intended to not have any behavioural changes, but verifying
+    the things that changed actually showed that they fixed subtle bugs.
+  * solver3: Consider packages as obsolete and not versions; this makes things
+    a bit easier to reason about.
+  * solver3: Only demote obsolete packages in choices for upgrades; this
+    fixes packages being needlessly replaced in apt install.
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 02 Jul 2024 22:20:36 +0200
+
 apt (2.9.5) unstable; urgency=medium
 
   [ Julian Andres Klode ]
