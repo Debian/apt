@@ -155,8 +155,8 @@ class DefaultRootSetFunc2 : public pkgDepCache::DefaultRootSetFunc
    std::unique_ptr<APT::CacheFilter::Matcher> Kernels;
 
    public:
-   DefaultRootSetFunc2(pkgCache *cache) : Kernels(APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(cache)){};
-   virtual ~DefaultRootSetFunc2(){};
+   DefaultRootSetFunc2(pkgCache *cache) : Kernels(APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(cache)) {};
+   virtual ~DefaultRootSetFunc2() {};
 
    bool InRootSet(const pkgCache::PkgIterator &pkg) APT_OVERRIDE { return pkg.end() == false && ((*Kernels)(pkg) || DefaultRootSetFunc::InRootSet(pkg)); };
 }; // FIXME: DEDUP with pkgDepCache.
@@ -306,7 +306,7 @@ bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Reason reason, Group group)
    // Note decision
    if (unlikely(debug >= 1))
       std::cerr << "[" << depth() << "] Install:" << Pkg.FullName() << " (" << WhyStr(reason) << ")\n";
-   (*this)[Pkg] = {reason, depth(), Decision::MUST,};
+   (*this)[Pkg] = {reason, depth(), Decision::MUST};
 
    // Insert the work item.
    Work workItem{Reason(Pkg), depth(), group};
@@ -356,9 +356,9 @@ bool APT::Solver::Install(pkgCache::VerIterator Ver, Reason reason, Group group)
    // Note decision
    if (unlikely(debug >= 1))
       std::cerr << "[" << depth() << "] Install:" << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " (" << WhyStr(reason) << ")\n";
-   (*this)[Ver] = {reason, depth(), Decision::MUST,};
+   (*this)[Ver] = {reason, depth(), Decision::MUST};
    if ((*this)[Ver.ParentPkg()].decision != Decision::MUST)
-      (*this)[Ver.ParentPkg()] = {Reason(Ver), depth(), Decision::MUST,};
+      (*this)[Ver.ParentPkg()] = {Reason(Ver), depth(), Decision::MUST};
 
    for (auto OV = Ver.ParentPkg().VersionList(); not OV.end(); ++OV)
    {
@@ -395,7 +395,7 @@ bool APT::Solver::Reject(pkgCache::PkgIterator Pkg, Reason reason, Group group)
    // Reject the package and its versions.
    if (unlikely(debug >= 1))
       std::cerr << "[" << depth() << "] Reject:" << Pkg.FullName() << " (" << WhyStr(reason) << ")\n";
-   (*this)[Pkg] = {reason, depth(), Decision::MUSTNOT,};
+   (*this)[Pkg] = {reason, depth(), Decision::MUSTNOT};
    for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
       if (not Reject(ver, Reason(Pkg), group))
 	 return false;
@@ -408,7 +408,7 @@ bool APT::Solver::Reject(pkgCache::PkgIterator Pkg, Reason reason, Group group)
 // \brief Do not install this version
 bool APT::Solver::Reject(pkgCache::VerIterator Ver, Reason reason, Group group)
 {
-   (void) group;
+   (void)group;
 
    if ((*this)[Ver].decision == Decision::MUSTNOT)
       return true;
@@ -423,7 +423,7 @@ bool APT::Solver::Reject(pkgCache::VerIterator Ver, Reason reason, Group group)
    // Mark the package as rejected and propagate up as needed.
    if (unlikely(debug >= 1))
       std::cerr << "[" << depth() << "] Reject:" << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " (" << WhyStr(reason) << ")\n";
-   (*this)[Ver] = {reason, depth(), Decision::MUSTNOT,};
+   (*this)[Ver] = {reason, depth(), Decision::MUSTNOT};
    if (auto pkg = Ver.ParentPkg(); (*this)[pkg].decision != Decision::MUSTNOT)
    {
       bool anyInstallable = false;
