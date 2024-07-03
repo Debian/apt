@@ -596,7 +596,7 @@ void ShowDel(ostream &out,CacheFile &Cache)
 	       str.append("*");
 	    return str;
 	 },
-	 CandidateVersion(&Cache),
+	 CurrentVersion(&Cache),
 	 "action::remove");
 }
 									/*}}}*/
@@ -887,6 +887,14 @@ bool YnPrompt(char const * const Question, bool const Default)
 std::string PrettyFullName(pkgCache::PkgIterator const &Pkg)
 {
    return Pkg.FullName(true);
+}
+std::string CurrentVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg)
+{
+   return (*Cache)[Pkg].CurVersion;
+}
+std::function<std::string(pkgCache::PkgIterator const &)> CurrentVersion(pkgCacheFile * const Cache)
+{
+   return std::bind(static_cast<std::string(*)(pkgCacheFile * const, pkgCache::PkgIterator const&)>(&CurrentVersion), Cache, std::placeholders::_1);
 }
 std::string CandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg)
 {

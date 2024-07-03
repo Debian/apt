@@ -264,3 +264,45 @@ Purg foo-plus-2 [1]' apt autopurge -s
 
 testdpkgstatus 'pi' '1' 'unrelated'
 testsuccess apt purge unrelated -y
+
+insertinstalledpackage 'foo-has-update' 'all' '1'
+insertpackage 'stable' 'foo-has-update' 'all' '2'
+testsuccess aptmark auto 'foo-has-update'
+
+setupaptarchive
+
+# Test removed package version (with -V flag), when package has update
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+   foo-has-update (1)
+   foo-multi1-1 (1)
+   foo-multi1-2 (1)
+   foo-multi2-1 (1)
+   foo-multi2-2 (1)
+   foo-plus-1 (1)
+   foo-plus-2 (1)
+0 upgraded, 0 newly installed, 7 to remove and 0 not upgraded.
+Remv foo-has-update [1]
+Remv foo-multi1-1 [1]
+Remv foo-multi1-2 [1]
+Remv foo-multi2-1 [1]
+Remv foo-multi2-2 [1]
+Remv foo-plus-1 [1]
+Remv foo-plus-2 [1]' apt autoremove -sV
+
+# Test automatic removed package version (with -V flag), when package has update
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages were automatically installed and are no longer required:
+   foo-has-update (1)
+   foo-multi1-1 (1)
+   foo-multi1-2 (1)
+   foo-multi2-1 (1)
+   foo-multi2-2 (1)
+   foo-plus-1 (1)
+   foo-plus-2 (1)
+Use 'apt autoremove' to remove them.
+0 upgraded, 0 newly installed, 0 to remove and 1 not upgraded." apt remove -sV
