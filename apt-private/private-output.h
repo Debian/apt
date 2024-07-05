@@ -132,6 +132,8 @@ APT_PUBLIC bool YnPrompt(char const *const Question, bool Default = true);
 bool YnPrompt(char const * const Question, bool const Default, bool const ShowGlobalErrors, std::ostream &c1o, std::ostream &c2o);
 
 APT_PUBLIC std::string PrettyFullName(pkgCache::PkgIterator const &Pkg);
+std::string CurrentVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg);
+std::function<std::string(pkgCache::PkgIterator const &)> CurrentVersion(pkgCacheFile * const Cache);
 std::string CandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg);
 std::function<std::string(pkgCache::PkgIterator const &)> CandidateVersion(pkgCacheFile * const Cache);
 std::string CurrentToCandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg);

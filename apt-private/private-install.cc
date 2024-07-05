@@ -729,7 +729,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	          "The following packages were automatically installed and are no longer required:",
 	          autoRemoveCount), Universe,
 	       [&Cache](pkgCache::PkgIterator const &Pkg) { return (*Cache)[Pkg].Garbage == true && (*Cache)[Pkg].Delete() == false; },
-	       &PrettyFullName, CandidateVersion(&Cache), "", note);
+	       &PrettyFullName, CurrentVersion(&Cache), "", note);
       }
       else
       {
