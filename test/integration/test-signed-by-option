@@ -71,3 +71,51 @@ sed -i s/^xSigned-By/Signed-By/ rootdir/etc/apt/sources.list.d/deb822.sources
 testsuccess apt update  -o Debug::Acquire::gpgv=1
 # make sure we did not leave leftover files (LP: #1995247)
 testsuccessequal "" ls "${TMPDIR}"
+
+rm -f rootdir/etc/apt/sources.list.d/*
+
+msgtest 'Check that a repository with' 'only the fisrt entry has no Signed-By value works'
+cat > rootdir/etc/apt/sources.list.d/example.sources << EOF
+Types: deb
+URIs: http://example.org/
+Suites: suite
+Components: component
+
+Types: deb
+URIs: http://example.org/
+Suites: suite
+Components: component2
+Signed-By: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
+EOF
+testsuccess --nomsg aptcache policy
+
+msgtest 'Check that a repository with' 'only the second entry has no Signed-By value works'
+cat > rootdir/etc/apt/sources.list.d/example.sources << EOF
+Types: deb
+URIs: http://example.org/
+Suites: suite
+Components: component
+Signed-By: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
+
+Types: deb
+URIs: http://example.org/
+Suites: suite
+Components: component2
+EOF
+testsuccess --nomsg aptcache policy
+
+cat > rootdir/etc/apt/sources.list.d/example.sources << EOF
+Types: deb
+URIs: http://example.org/
+Suites: suite
+Components: component
+Signed-By: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
+
+Types: deb
+URIs: http://example.org/
+Suites: suite
+Components: component2
+Signed-By: DE66AECA9151AFA1877EC31DE8525D47528144E2
+EOF
+testfailuremsg 'E: Conflicting values set for option Signed-By regarding source http://example.org/ suite: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE != DE66AECA9151AFA1877EC31DE8525D47528144E2
+E: The list of sources could not be read.' aptget update --print-uris

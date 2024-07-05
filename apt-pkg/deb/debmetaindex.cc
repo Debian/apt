@@ -817,6 +817,8 @@ bool debReleaseIndex::SetSignedBy(std::string const &pSignedBy)
    else
    {
       auto const normalSignedBy = NormalizeSignedBy(pSignedBy, true);
+      if (normalSignedBy.empty() == true)
+         return true;
       if (normalSignedBy != SignedBy)
 	 return _error->Error(_("Conflicting values set for option %s regarding source %s %s: %s != %s"), "Signed-By", URI.c_str(), Dist.c_str(), SignedBy.c_str(), normalSignedBy.c_str());
    }
