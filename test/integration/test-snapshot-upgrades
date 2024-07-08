@@ -1,0 +1,156 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+for T in T1 T2; do
+	mkdir "aptarchive/${T}"
+	ln -s ../../incoming "aptarchive/${T}/pool"
+done
+
+buildsimplenativepackage 'awesome' 'amd64' '2' 'stable' 'Depends: libfoo (>= 2)'
+buildsimplenativepackage 'libfoo' 'amd64' '2' 'stable'
+setupaptarchive --no-update
+mv aptarchive/dists aptarchive/T1
+rm incoming/stable.main.pkglist incoming/stable.main.srclist
+
+buildsimplenativepackage 'awesome' 'amd64' '3' 'stable' 'Depends: libfoo (>= 2)'
+setupaptarchive --no-update
+mv aptarchive/dists aptarchive/T2
+rm incoming/stable.main.pkglist incoming/stable.main.srclist
+
+buildsimplenativepackage 'libfoo' 'amd64' '42' 'stable'
+buildsimplenativepackage 'awesome' 'amd64' '42' 'stable'
+setupaptarchive --no-update
+
+changetowebserver
+sed -i 's/http:/[snapshot=enable] http:/' rootdir/etc/apt/sources.list.d/*
+echo "Acquire::Snapshots::URI::Host::localhost \"http://localhost:${APTHTTPPORT}/@SNAPSHOTID@/\";" > rootdir/etc/apt/apt.conf.d/snapshot.conf
+testsuccess aptget update --snapshot T1
+testsuccess aptget update --snapshot T2 --no-list-cleanup
+
+insertinstalledpackage 'awesome' 'amd64' '1' 'Depends: libfoo (>= 1)'
+insertinstalledpackage 'libfoo' 'amd64' '1'
+
+msgmsg 'Snapshotting policy'
+testsuccessequal "libfoo:
+  Installed: 1
+  Candidate: 42
+  Version table:
+     42 500
+        500 http://localhost:${APTHTTPPORT} stable/main amd64 Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+awesome:
+  Installed: 1
+  Candidate: 42
+  Version table:
+     42 500
+        500 http://localhost:${APTHTTPPORT} stable/main amd64 Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" apt policy libfoo awesome
+testsuccessequal "libfoo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 http://localhost:${APTHTTPPORT}/T1 stable/main amd64 Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+awesome:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 http://localhost:${APTHTTPPORT}/T1 stable/main amd64 Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" apt policy libfoo awesome -S T1
+testsuccessequal "libfoo:
+  Installed: 1
+  Candidate: 1
+  Version table:
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+awesome:
+  Installed: 1
+  Candidate: 3
+  Version table:
+     3 500
+        500 http://localhost:${APTHTTPPORT}/T2 stable/main amd64 Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" apt policy libfoo awesome -S T2
+
+
+msgmsg 'Snapshotting show'
+testsuccessequalgrep() {
+	local CMP="$1"
+	local GREP="$2"
+	shift 2
+	testsuccess "$@"
+	mv rootdir/tmp/testsuccess.output base.output
+	testsuccessequal "$CMP" grep "$GREP" base.output
+}
+testsuccessequalgrep 'Version: 42
+Version: 1
+Version: 42
+Version: 1' '^Version: ' aptcache show libfoo awesome
+testsuccessequalgrep 'Version: 2
+Version: 1
+Version: 2
+Version: 1' '^Version: ' aptcache show libfoo awesome -S T1
+testsuccessequalgrep 'Version: 1
+Version: 3
+Version: 1' '^Version: ' aptcache show libfoo awesome -S T2
+
+
+msgmsg 'Snapshotting list'
+testsuccessequal 'Listing...
+awesome/stable 42 amd64 [upgradable from: 1]
+libfoo/stable 42 amd64 [upgradable from: 1]' apt list --upgradeable
+testsuccessequal 'Listing...
+awesome/stable 2 amd64 [upgradable from: 1]
+libfoo/stable 2 amd64 [upgradable from: 1]' apt list --upgradeable -S T1
+testsuccessequal "Listing...
+awesome/stable 3 amd64 [upgradable from: 1]
+N: There is 1 additional version. Please use the '-a' switch to see it" apt list --upgradeable -S T2
+
+
+msgmsg 'Snapshotting upgrade'
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be upgraded:
+  awesome libfoo
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst awesome [1] (42 stable [amd64])
+Inst libfoo [1] (42 stable [amd64])
+Conf awesome (42 stable [amd64])
+Conf libfoo (42 stable [amd64])' apt upgrade -s
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be upgraded:
+  awesome libfoo
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst libfoo [1] (2 stable [amd64])
+Inst awesome [1] (2 stable [amd64])
+Conf libfoo (2 stable [amd64])
+Conf awesome (2 stable [amd64])' apt upgrade -s -S T1
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages have been kept back:
+  awesome
+0 upgraded, 0 newly installed, 0 to remove and 1 not upgraded.' apt upgrade -s -S T2
+
+msgmsg 'Snapshotting real installs'
+testsuccessequalgrep 'Version: 1' '^Version: ' apt show libfoo/now
+testsuccess apt install libfoo -S T1 -y
+testsuccessequalgrep 'Version: 2' '^Version: ' apt show libfoo/now
+testsuccessequalgrep 'Version: 1' '^Version: ' apt show awesome/now
+testsuccess apt upgrade -S T2 -y
+testsuccessequalgrep 'Version: 3' '^Version: ' apt show awesome/now
