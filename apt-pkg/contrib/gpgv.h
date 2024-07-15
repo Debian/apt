@@ -86,4 +86,5 @@ APT_PUBLIC bool SplitClearSignedFile(std::string const &InFile, FileFd * const C
  */
 APT_PUBLIC bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &MessageFile);
 
+APT_PUBLIC bool IsAssertedPubKeyAlgo(std::string const &pkstr, std::string const &option);
 #endif
