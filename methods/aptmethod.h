@@ -448,7 +448,7 @@ protected:
       return true;
    }
 
-   void Warning(std::string &&msg)
+   void Message(std::string &&msg, std::string code)
    {
       std::unordered_map<std::string, std::string> fields;
       if (Queue != 0)
@@ -458,7 +458,15 @@ protected:
       if (not UsedMirror.empty())
 	 fields.emplace("UsedMirror", UsedMirror);
       fields.emplace("Message", std::move(msg));
-      SendMessage("104 Warning", std::move(fields));
+      SendMessage(code, std::move(fields));
+   }
+   void Warning(std::string &&msg)
+   {
+      return Message(std::move(msg), "104 Warning");
+   }
+   void Audit(std::string &&msg)
+   {
+      return Message(std::move(msg), "105 Audit");
    }
 
    bool TransferModificationTimes(char const * const From, char const * const To, time_t &LastModified) APT_NONNULL(2, 3)

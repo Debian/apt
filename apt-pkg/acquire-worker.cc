@@ -200,6 +200,7 @@ enum class APT_HIDDEN MessageType
    STATUS = 102,
    REDIRECT = 103,
    WARNING = 104,
+   AUDIT = 105,
    URI_START = 200,
    URI_DONE = 201,
    AUX_REQUEST = 351,
@@ -386,6 +387,10 @@ bool pkgAcquire::Worker::RunMessages()
 
 	 case MessageType::WARNING:
 	    _error->Warning("%s: %s", Itm ? Itm->Owner ? Itm->Owner->DescURI().c_str() : Access.c_str() : Access.c_str(), LookupTag(Message, "Message").c_str());
+	    break;
+
+	 case MessageType::AUDIT:
+	    _error->Audit("%s: %s", Itm ? Itm->Owner ? Itm->Owner->DescURI().c_str() : Access.c_str() : Access.c_str(), LookupTag(Message, "Message").c_str());
 	    break;
 
 	 case MessageType::URI_START:
