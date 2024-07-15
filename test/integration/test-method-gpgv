@@ -48,6 +48,14 @@ testrun() {
 [GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
 [GNUPG:] ASSERT_PUBKEY_ALGO 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 1 rsa1024'
 
+	testgpgv 'Not asserted in the next level' 'SoonWorthless: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE, ' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE!' '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+[GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
+[GNUPG:] ASSERT_PUBKEY_ALGO 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 1 brainpoolP256r1'
+
+	testgpgv 'Not asserted in the future level' 'LaterWorthless: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE, ' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE!' '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+[GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
+[GNUPG:] ASSERT_PUBKEY_ALGO 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 1 nistp256'
+
 	testgpgv 'Good subkey signed with long keyid' 'Good: GOODSIG 5B6896415D44C43E' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE, 4281DEDBD466EAE8C1F4157E5B6896415D44C43E!' '[GNUPG:] GOODSIG 5B6896415D44C43E Sebastian Subkey <subkey@example.org>
 [GNUPG:] VALIDSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E 2018-08-16 1534459673 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
 	testgpgv 'Good subkey signed with fingerprint' 'Good: GOODSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE, 4281DEDBD466EAE8C1F4157E5B6896415D44C43E!' '[GNUPG:] GOODSIG 4281DEDBD466EAE8C1F4157E5B6896415D44C43E Sebastian Subkey <subkey@example.org>
@@ -108,6 +116,9 @@ gpgvmethod() {
 Config-Item: Debug::Acquire::gpgv=1
 Config-Item: Dir::Bin::apt-key=./faked-apt-key
 Config-Item: APT::Hashes::SHA1::Weak=true
+Config-Item: APT::Key::Assert-Pubkey-Algo=>=rsa2048,nistp256,brainpoolP256r1
+Config-Item: APT::Key::Assert-Pubkey-Algo::Next=>=rsa2048,nistp256
+Config-Item: APT::Key::Assert-Pubkey-Algo::Future=>=rsa2048
 
 600 URI Acquire
 URI: file://${TMPWORKINGDIRECTORY}/message.sig
@@ -121,6 +132,9 @@ gpgvmethod() {
 Config-Item: Debug::Acquire::gpgv=1
 Config-Item: Dir::Bin::apt-key=./faked-apt-key
 Config-Item: APT::Hashes::SHA1::Weak=true
+Config-Item: APT::Key::Assert-Pubkey-Algo=>=rsa2048,nistp256,brainpoolP256r1
+Config-Item: APT::Key::Assert-Pubkey-Algo::Next=>=rsa2048,nistp256
+Config-Item: APT::Key::Assert-Pubkey-Algo::Future=>=rsa2048
 
 600 URI Acquire
 URI: file://${TMPWORKINGDIRECTORY}/message.sig
@@ -135,6 +149,9 @@ gpgvmethod() {
 Config-Item: Debug::Acquire::gpgv=1
 Config-Item: Dir::Bin::apt-key=./faked-apt-key
 Config-Item: APT::Hashes::SHA1::Weak=true
+Config-Item: APT::Key::Assert-Pubkey-Algo=>=rsa2048,nistp256,brainpoolP256r1
+Config-Item: APT::Key::Assert-Pubkey-Algo::Next=>=rsa2048,nistp256
+Config-Item: APT::Key::Assert-Pubkey-Algo::Future=>=rsa2048
 
 600 URI Acquire
 URI: file://${TMPWORKINGDIRECTORY}/message.sig
@@ -158,6 +175,9 @@ gpgvmethod() {
 Config-Item: Debug::Acquire::gpgv=1
 Config-Item: Dir::Bin::apt-key=./faked-apt-key
 Config-Item: APT::Hashes::SHA1::Weak=true
+Config-Item: APT::Key::Assert-Pubkey-Algo=>=rsa2048,nistp256,brainpoolP256r1
+Config-Item: APT::Key::Assert-Pubkey-Algo::Next=>=rsa2048,nistp256
+Config-Item: APT::Key::Assert-Pubkey-Algo::Future=>=rsa2048
 
 600 URI Acquire
 URI: file://${TMPWORKINGDIRECTORY}/message.sig
@@ -199,3 +219,26 @@ echo '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Sebastian Subkey <subkey@example.org>
 [GNUPG:] VALIDSIG 0000000000000000000000000000000000000000 2018-08-16 1534459673 0 4 0 1 11 00 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' > gpgv.output
 testfailure apt update -o Dir::Bin::apt-key="./faked-apt-key" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 rm -rf rootdir/var/lib/apt/lists
+
+gpgvmethod() {
+	echo "601 Configuration
+Config-Item: Debug::Acquire::gpgv=1
+Config-Item: Dir::Bin::apt-key=./faked-apt-key
+Config-Item: APT::Hashes::SHA1::Weak=true
+Config-Item: APT::Key::Assert-Pubkey-Algo::Next=>=invalid
+
+600 URI Acquire
+URI: file://${TMPWORKINGDIRECTORY}/message.sig
+Filename: ${TMPWORKINGDIRECTORY}/message.data
+Signed-By: 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE!
+" | runapt "${METHODSDIR}/gpgv"
+}
+
+
+echo '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+[GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2016-09-01 1472742625 0 4 0 1 11 00 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE
+[GNUPG:] ASSERT_PUBKEY_ALGO 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 1 brainpoolP256r1' > gpgv.output
+
+msgtest "Warns about invalid specification" ">=invalid"
+gpgvmethod >method.output 2>&1 || true
+testsuccess --nomsg grep "Message: Unrecognized public key specification '>=invalid' in option APT::Key::Assert-Pubkey-Algo::Next" method.output

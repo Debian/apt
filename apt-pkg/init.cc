@@ -131,7 +131,9 @@ bool pkgInitConfig(Configuration &Cnf)
       Cnf.Set("APT::Build-Essential::", "build-essential");
    Cnf.CndSet("APT::Install-Recommends", true);
    Cnf.CndSet("APT::Install-Suggests", false);
-   Cnf.CndSet("APT::Key::Assert-Pubkey-Algo", ">=rsa2048,ed25519,ed448");
+   Cnf.CndSet("APT::Key::Assert-Pubkey-Algo", ">=rsa2048,ed25519,ed448,nistp256,nistp384,nistp512,brainpoolP256r1,brainpoolP320r1,brainpoolP384r1,brainpoolP512r1,secp256k1");
+   Cnf.CndSet("APT::Key::Assert-Pubkey-Algo::Next", ">=rsa2048,ed25519,ed448,nistp256,nistp384,nistp512");
+   Cnf.CndSet("APT::Key::Assert-Pubkey-Algo::Future", ">=rsa3072,ed25519,ed448");
    Cnf.CndSet("Dir","/");
    
    // State

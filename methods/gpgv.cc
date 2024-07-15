@@ -262,6 +262,17 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 					      { return IsTheSameKey(fpr, goodsig); }),
 			       Signers.Good.end());
 	 }
+	 else if (not IsAssertedPubKeyAlgo(pkstr, "APT::Key::Assert-Pubkey-Algo::Next"))
+	 {
+	    std::string reason;
+	    Signers.SoonWorthless.push_back({fpr, pkstr});
+	 }
+	 else if (not IsAssertedPubKeyAlgo(pkstr, "APT::Key::Assert-Pubkey-Algo::Future"))
+	 {
+	    std::string reason;
+	    strprintf(reason, _("%s will be deprecated in a future release"), pkstr.c_str());
+	    Signers.LaterWorthless.push_back({fpr, reason});
+	 }
       }
       else if (strncmp(buffer, GNUPGGOODSIG, sizeof(GNUPGGOODSIG)-1) == 0)
 	 PushEntryWithKeyID(Signers.Good, buffer, Debug);
