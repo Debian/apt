@@ -566,3 +566,35 @@ bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &Me
    return not MessageFile.Failed();
 }
 									/*}}}*/
+bool IsAssertedPubKeyAlgo(std::string const &pkstr, std::string const &option) /*{{{*/
+{
+   auto fullAss = APT::String::Startswith(option, "APT::Key") ? _config->Find(option) : option;
+   for (auto &ass : VectorizeString(fullAss, ','))
+   {
+      if (ass == pkstr)
+	 return true;
+      // We only implement >= for rsa
+      if (APT::String::Startswith(ass, ">=rsa"))
+      {
+	 if (not APT::String::Startswith(pkstr, "rsa"))
+	    continue;
+	 if (not std::all_of(ass.begin() + 5, ass.end(), isdigit))
+	    return _error->Error("Unrecognized public key specification '%s' in option %s: expect only digits after >=rsa", ass.c_str(), option.c_str());
+
+	 int assBits = std::stoi(ass.substr(5));
+	 int pkBits = std::stoi(pkstr.substr(3));
+
+	 if (pkBits >= assBits)
+	    return true;
+
+	 continue;
+      }
+      if (ass.empty())
+	 return _error->Error("Empty item in public key assertion string option %s", option.c_str());
+      if (not std::all_of(ass.begin(), ass.end(), [](char c)
+			  { return isalpha(c) || isdigit(c); }))
+	 return _error->Error("Unrecognized public key specification '%s' in option %s", ass.c_str(), option.c_str());
+   }
+   return false;
+}
+									/*}}}*/
