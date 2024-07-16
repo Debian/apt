@@ -202,10 +202,10 @@ void APT::Solver::Work::Dump(pkgCache &cache)
    if (optional)
       std::cerr << "Optional ";
    std::cerr << "Item (" << ssize_t(size <= solutions.size() ? size : -1) << "@" << depth << (upgrade ? "u" : "") << ") ";
-   if (auto Pkg = reason.Pkg(); Pkg != 0)
-      std::cerr << pkgCache::PkgIterator(cache, cache.PkgP + Pkg).FullName();
-   if (auto Ver = reason.Ver(); Ver != 0)
-      std::cerr << pkgCache::VerIterator(cache, cache.VerP + Ver).ParentPkg().FullName() << "=" << pkgCache::VerIterator(cache, cache.VerP + Ver).VerStr();
+   if (auto Pkg = reason.Pkg(cache); not Pkg.end())
+      std::cerr << Pkg.FullName();
+   if (auto Ver = reason.Ver(cache); not Ver.end())
+      std::cerr << Ver.ParentPkg().FullName() << "=" << Ver.VerStr();
    std::cerr << " -> ";
    for (auto sol : solutions)
    {
@@ -221,7 +221,7 @@ std::string APT::Solver::WhyStr(Reason reason)
 
    while (not reason.empty())
    {
-      if (auto Pkg = pkgCache::PkgIterator(cache, cache.PkgP + reason.Pkg()); not Pkg.end())
+      if (auto Pkg = reason.Pkg(cache); not Pkg.end())
       {
 	 if ((*this)[Pkg].decision == Decision::MUSTNOT)
 	    out.push_back(std::string("not ") + Pkg.FullName());
@@ -229,7 +229,7 @@ std::string APT::Solver::WhyStr(Reason reason)
 	    out.push_back(Pkg.FullName());
 	 reason = (*this)[Pkg].reason;
       }
-      if (auto Ver = pkgCache::VerIterator(cache, cache.VerP + reason.Ver()); not Ver.end())
+      if (auto Ver = reason.Ver(cache); not Ver.end())
       {
 	 if ((*this)[Ver].decision == Decision::MUSTNOT)
 	    out.push_back(std::string("not ") + Ver.ParentPkg().FullName() + "=" + Ver.VerStr());
