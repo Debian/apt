@@ -81,6 +81,8 @@ void CheckIfCalledByScript(int argc, const char *argv[])		/*{{{*/
    if(!isatty(STDOUT_FILENO) &&
       _config->FindB("Apt::Cmd::Disable-Script-Warning", false) == false)
    {
+      // NOTE: CLI interface is redundant on the I/interface, this is
+      // intentional to make it easier to read.
       std::cerr << std::endl
                 << "WARNING: " << flNotDir(argv[0]) << " "
                 << "does not have a stable CLI interface. "
