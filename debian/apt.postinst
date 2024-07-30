@@ -11,5 +11,15 @@ if [ "$1" = "configure" ] && [ -n "$2" ] && dpkg --compare-versions -- "$2" le-n
     rm -f /etc/apt/apt.conf.d/01autoremove-kernels
 fi
 
+if [ "$1" = "configure" ] && [ -n "$2" ] && [ ! -e /etc/apt/apt.conf.d/00-temporary-rsa1024 ] &&  dpkg --compare-versions -- "$2" gt-nl "2.7.0" && dpkg --compare-versions -- "$2" lt-nl "2.8.0"; then
+cat > /etc/apt/apt.conf.d/00-temporary-rsa1024 << EOF
+# Restore the apt 2.7.x behavior of only warning about weak RSA keys by overriding
+# the >=rsa2048 part to >=rsa1024, as this machine ran 2.7.x before, to give people
+# more time to migrate to stronger keys.
+#
+# A future APT 2.8.x update at the start of 2025 will remove this temporary measure.
+APT::Key::Assert-Pubkey-Algo ">=rsa1024,ed25519,ed448,nistp256,nistp384,nistp512,brainpoolP256r1,brainpoolP320r1,brainpoolP384r1,brainpoolP512r1,secp256k1";
+EOF
+fi
 
 #DEBHELPER#
