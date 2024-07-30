@@ -1,3 +1,16 @@
+apt (2.8.1) noble; urgency=medium
+
+  * Only revoke weak RSA keys for now, add 'next' and 'future' levels
+    (backported from 2.9.7)
+    Note that the changes to warn about keys not matching the future level
+    in the --audit level are not fully included, as the --audit feature
+    has not yet been backported. (LP: #2073126)
+  * Introduce further mitigation on upgrades from 2.7.x to allow these
+    systems to continue using rsa1024 repositories with warnings
+    until the 24.04.2 point release (LP: #2073126)
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Tue, 30 Jul 2024 17:12:00 +0900
+
 apt (2.8.0) noble; urgency=medium
 
   [ Julian Andres Klode ]
