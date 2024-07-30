@@ -112,6 +112,7 @@ struct APT_HIDDEN SignersStorage {
    std::vector<Signer> Worthless;
    // a worthless signature is a expired or revoked one
    std::vector<Signer> SoonWorthless;
+   std::vector<Signer> LaterWorthless;
    std::vector<std::string> NoPubKey;
    std::vector<std::string> Valid;
    std::vector<std::string> SignedBy;
@@ -260,6 +261,17 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	    Signers.Good.erase(std::remove_if(Signers.Good.begin(), Signers.Good.end(), [&](std::string const &goodsig)
 					      { return IsTheSameKey(fpr, goodsig); }),
 			       Signers.Good.end());
+	 }
+	 else if (not IsAssertedPubKeyAlgo(pkstr, "APT::Key::Assert-Pubkey-Algo::Next"))
+	 {
+	    std::string reason;
+	    Signers.SoonWorthless.push_back({fpr, pkstr});
+	 }
+	 else if (not IsAssertedPubKeyAlgo(pkstr, "APT::Key::Assert-Pubkey-Algo::Future"))
+	 {
+	    std::string reason;
+	    strprintf(reason, _("%s will be deprecated in a future release"), pkstr.c_str());
+	    Signers.LaterWorthless.push_back({fpr, reason});
 	 }
       }
       else if (strncmp(buffer, GNUPGGOODSIG, sizeof(GNUPGGOODSIG)-1) == 0)
@@ -420,6 +432,8 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       std::for_each(Signers.Worthless.begin(), Signers.Worthless.end(), [](Signer const &sig) { std::cerr << sig.key << ", "; });
       std::cerr << "\n  SoonWorthless: ";
       std::for_each(Signers.SoonWorthless.begin(), Signers.SoonWorthless.end(), [](Signer const &sig) { std::cerr << sig.key << ", "; });
+      std::cerr << "\n  LaterWorthless: ";
+      std::for_each(Signers.LaterWorthless.begin(), Signers.LaterWorthless.end(), [](Signer const &sig) { std::cerr << sig.key << ", "; });
       std::cerr << "\n  NoPubKey: ";
       implodeVector(Signers.NoPubKey, std::cerr, ", ");
       std::cerr << "\n  Signed-By: ";
@@ -564,6 +578,13 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
          // TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 	 strprintf(msg, _("Signature by key %s uses weak algorithm (%s)"), Signer.key.c_str(), Signer.note.c_str());
          Warning(std::move(msg));
+      }
+      for (auto const &Signer : Signers.LaterWorthless)
+      {
+	 std::string msg;
+	 // TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
+	 strprintf(msg, _("Signature by key %s uses weak algorithm (%s)"), Signer.key.c_str(), Signer.note.c_str());
+	 Audit(std::move(msg));
       }
    }
 
