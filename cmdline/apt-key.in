@@ -803,6 +803,7 @@ case "$command" in
 	ASSERT_PUBKEY_ALGO=''
 	eval $(apt-config shell GPGV Apt::Key::gpgvcommand ASSERT_PUBKEY_ALGO Apt::Key::assert-pubkey-algo)
 	if [ -n "$GPGV" ] && command_available "$GPGV"; then true;
+	elif command_available 'gpgv-sq'; then GPGV='gpgv-sq';
 	elif command_available 'gpgv'; then GPGV='gpgv';
 	elif command_available 'gpgv2'; then GPGV='gpgv2';
 	elif command_available 'gpgv1'; then GPGV='gpgv1';
