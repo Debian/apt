@@ -339,9 +339,9 @@ bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Var reason, Group group)
    if ((*this)[Pkg].decision == Decision::MUST)
       return true;
 
-   // Check conflicting selections
-   if ((*this)[Pkg].decision == Decision::MUSTNOT)
-      return _error->Error("Conflict: %s -> %s but %s", WhyStr(reason).c_str(), Pkg.FullName().c_str(), WhyStr(Var(Pkg)).c_str());
+   // Note decision
+   if (not Enqueue(Var(Pkg), true, reason))
+      return false;
 
    bool anyInstallable = false;
    for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
@@ -356,10 +356,6 @@ bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Var reason, Group group)
 	 _error->Error("Uninstallable version: %s", WhyStr(Var(ver)).c_str());
       return false;
    }
-
-   // Note decision
-   if (not Enqueue(Var(Pkg), true, reason))
-      return false;
 
    // Insert the work item.
    Work workItem{Var(Pkg), depth(), group};
@@ -387,24 +383,6 @@ bool APT::Solver::Install(pkgCache::VerIterator Ver, Var reason, Group group)
 
    if (unlikely(debug >= 1))
       assert(IsAllowedVersion(Ver));
-
-   // Check conflicting selections
-   if ((*this)[Ver].decision == Decision::MUSTNOT)
-      return _error->Error("Conflict: %s -> %s but %s",
-			   WhyStr(reason).c_str(),
-			   (Ver.ParentPkg().FullName() + "=" + Ver.VerStr()).c_str(),
-			   WhyStr(Var(Ver)).c_str());
-   if ((*this)[Ver.ParentPkg()].decision == Decision::MUSTNOT)
-      return _error->Error("Conflict: %s -> %s but %s",
-			   WhyStr(reason).c_str(),
-			   (Ver.ParentPkg().FullName() + "=" + Ver.VerStr()).c_str(),
-			   WhyStr(Var(Ver.ParentPkg())).c_str());
-   for (auto otherVer = Ver.ParentPkg().VersionList(); not otherVer.end(); otherVer++)
-      if (otherVer->ID != Ver->ID && (*this)[otherVer].decision == Decision::MUST)
-	 return _error->Error("Conflict: %s -> %s but %s",
-			      WhyStr(reason).c_str(),
-			      (Ver.ParentPkg().FullName() + "=" + Ver.VerStr()).c_str(),
-			      WhyStr(Var(otherVer)).c_str());
 
    // Note decision
    if (not Enqueue(Var(Ver), true, reason))
@@ -437,13 +415,6 @@ bool APT::Solver::Reject(pkgCache::PkgIterator Pkg, Var reason, Group group)
    if ((*this)[Pkg].decision == Decision::MUSTNOT)
       return true;
 
-   // Check conflicting selections
-   for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
-      if ((*this)[ver].decision == Decision::MUST)
-	 return _error->Error("Conflict: %s -> not %s but %s", WhyStr(reason).c_str(), Pkg.FullName().c_str(), WhyStr(Var(ver)).c_str());
-   if ((*this)[Pkg].decision == Decision::MUST)
-      return _error->Error("Conflict: %s -> not %s but %s", WhyStr(reason).c_str(), Pkg.FullName().c_str(), WhyStr(Var(Pkg)).c_str());
-
    // Reject the package and its versions.
    if (not Enqueue(Var(Pkg), false, reason))
       return false;
@@ -463,13 +434,6 @@ bool APT::Solver::Reject(pkgCache::VerIterator Ver, Var reason, Group group)
 
    if ((*this)[Ver].decision == Decision::MUSTNOT)
       return true;
-
-   // Check conflicting choices.
-   if ((*this)[Ver].decision == Decision::MUST)
-      return _error->Error("Conflict: %s -> not %s but %s",
-			   WhyStr(reason).c_str(),
-			   (Ver.ParentPkg().FullName() + "=" + Ver.VerStr()).c_str(),
-			   WhyStr(Var(Ver)).c_str());
 
    // Mark the package as rejected and propagate up as needed.
    if (not Enqueue(Var(Ver), false, reason))
@@ -494,11 +458,8 @@ bool APT::Solver::Reject(pkgCache::VerIterator Ver, Var reason, Group group)
 			      WhyStr(reason).c_str(),
 			      (Ver.ParentPkg().FullName() + "=" + Ver.VerStr()).c_str());
       }
-      else if ((*this)[Ver.ParentPkg()].decision != Decision::MUSTNOT) // Last installable invalidated
-      {
-	 if (not Enqueue(Var(Ver.ParentPkg()), false, Var(Ver)))
-	    return false;
-      }
+      else if (not Enqueue(Var(Ver.ParentPkg()), false, Var(Ver))) // Last version invalidated
+	 return false;
    }
 
    if (not RejectReverseDependencies(Ver))
