@@ -196,8 +196,8 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
 
 void APT::Solver::Work::Dump(pkgCache &cache)
 {
-   if (dirty)
-      std::cerr << "Dirty ";
+   if (erased)
+      std::cerr << "Erased ";
    if (optional)
       std::cerr << "Optional ";
    std::cerr << "Item (" << ssize_t(size <= solutions.size() ? size : -1) << "@" << depth << (upgrade ? "u" : "") << ") ";
@@ -768,7 +768,7 @@ bool APT::Solver::Pop()
    // We need to remove any work that is at a higher depth.
    choices.pop_back();
    work.erase(std::remove_if(work.begin(), work.end(), [this](Work &w) -> bool
-			     { return w.depth > depth() || w.dirty; }),
+			     { return w.depth > depth() || w.erased; }),
 	      work.end());
    std::make_heap(work.begin(), work.end());
 
@@ -802,7 +802,7 @@ void APT::Solver::RescoreWorkIfNeeded()
    std::vector<Work> resized;
    for (auto &w : work)
    {
-      if (w.dirty)
+      if (w.erased)
 	 continue;
       size_t newSize = std::count_if(w.solutions.begin(), w.solutions.end(), [this](auto V)
 				     { return (*this)[V].decision != Decision::MUSTNOT; });
@@ -815,7 +815,7 @@ void APT::Solver::RescoreWorkIfNeeded()
 	 Work newWork(w);
 	 newWork.size = newSize;
 	 resized.push_back(std::move(newWork));
-	 w.dirty = true;
+	 w.erased = true;
       }
    }
    if (unlikely(debug >= 2))
@@ -837,7 +837,7 @@ bool APT::Solver::Solve()
       std::pop_heap(work.begin(), work.end());
 
       // This item has been replaced with a new one. Remove it.
-      if (work.back().dirty)
+      if (work.back().erased)
       {
 	 work.pop_back();
 	 continue;
