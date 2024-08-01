@@ -32,7 +32,7 @@ class Solver
 {
    enum class Decision : uint16_t;
    enum class Hint : uint16_t;
-   struct Reason;
+   struct Var;
    struct CompareProviders3;
    struct State;
    struct Work;
@@ -105,7 +105,7 @@ class Solver
       return verStates[V->ID];
    }
    // \brief Helper function for safe access to either state.
-   inline State &operator[](Reason r);
+   inline State &operator[](Var r);
 
    mutable std::vector<char> pkgObsolete;
    bool Obsolete(pkgCache::PkgIterator pkg) const;
@@ -151,7 +151,7 @@ class Solver
    // \brief Reject reverse dependencies. Must call std::make_heap() after.
    bool RejectReverseDependencies(pkgCache::VerIterator Ver);
    // \brief Enqueue a single or group
-   bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Reason reason);
+   bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
    // \brief Check if a version is allowed by policy.
    bool IsAllowedVersion(pkgCache::Version *V);
 
@@ -177,13 +177,13 @@ class Solver
    Solver(pkgCache &Cache, pkgDepCache::Policy &Policy);
 
    // \brief Mark the package for install. This is annoying as it incurs a decision
-   bool Install(pkgCache::PkgIterator Pkg, Reason reason, Group group);
+   bool Install(pkgCache::PkgIterator Pkg, Var reason, Group group);
    // \brief Install a version.
-   bool Install(pkgCache::VerIterator Ver, Reason reason, Group group);
+   bool Install(pkgCache::VerIterator Ver, Var reason, Group group);
    // \brief Do not install this package
-   bool Reject(pkgCache::PkgIterator Pkg, Reason reason, Group group);
+   bool Reject(pkgCache::PkgIterator Pkg, Var reason, Group group);
    // \brief Do not install this version.
-   bool Reject(pkgCache::VerIterator Ver, Reason reason, Group group);
+   bool Reject(pkgCache::VerIterator Ver, Var reason, Group group);
 
    // \brief Apply the selections from the dep cache to the solver
    bool FromDepCache(pkgDepCache &depcache);
@@ -194,7 +194,7 @@ class Solver
    bool Solve();
 
    // Print dependency chain
-   std::string WhyStr(Reason reason);
+   std::string WhyStr(Var reason);
 };
 
 }; // namespace APT
@@ -203,18 +203,18 @@ class Solver
  * \brief Tagged union holding either a package, version, or nothing; representing the reason for installing something.
  *
  * We want to keep track of the reason why things are being installed such that
- * we can have sensible debugging abilities.
+ * we can have sensible debugging abilities; and we want to generically refer to
+ * both packages and versions as variables, hence this class was added.
  *
- * If the reason is empty, this means the package is automatically installed.
  */
-struct APT::Solver::Reason
+struct APT::Solver::Var
 {
    uint32_t IsVersion : 1;
    uint32_t MapPtr : 31;
 
-   Reason() : IsVersion(0), MapPtr(0) {}
-   explicit Reason(pkgCache::PkgIterator const &Pkg) : IsVersion(0), MapPtr(Pkg.MapPointer()) {}
-   explicit Reason(pkgCache::VerIterator const &Ver) : IsVersion(1), MapPtr(Ver.MapPointer()) {}
+   Var() : IsVersion(0), MapPtr(0) {}
+   explicit Var(pkgCache::PkgIterator const &Pkg) : IsVersion(0), MapPtr(Pkg.MapPointer()) {}
+   explicit Var(pkgCache::VerIterator const &Ver) : IsVersion(1), MapPtr(Ver.MapPointer()) {}
 
    // \brief Return the package, if any, otherwise 0.
    map_pointer<pkgCache::Package> Pkg() const
@@ -255,8 +255,8 @@ struct APT::Solver::Reason
  */
 struct APT::Solver::Work
 {
-   // \brief Reason for the work
-   Reason reason;
+   // \brief Var for the work
+   Var reason;
    // \brief The depth at which the item has been added
    depth_type depth;
    // \brief The group we are in
@@ -285,7 +285,7 @@ struct APT::Solver::Work
    // \brief Dump the work item to std::cerr
    void Dump(pkgCache &cache);
 
-   inline Work(Reason reason, depth_type depth, Group group, bool optional = false, bool upgrade = false) : reason(reason), depth(depth), group(group), size(0), optional(optional), upgrade(upgrade), dirty(false) {}
+   inline Work(Var reason, depth_type depth, Group group, bool optional = false, bool upgrade = false) : reason(reason), depth(depth), group(group), size(0), optional(optional), upgrade(upgrade), dirty(false) {}
 };
 
 // \brief This essentially describes the install state in RFC2119 terms.
@@ -328,8 +328,8 @@ struct APT::Solver::State
    // You can follow the reason chain upwards as long as the depth
    // doesn't increase to unwind.
    //
-   // Reasons < 0 are package ID, reasons > 0 are version IDs.
-   Reason reason{};
+   // Vars < 0 are package ID, reasons > 0 are version IDs.
+   Var reason{};
 
    // \brief The depth at which the decision has been taken
    depth_type depth{0};
@@ -349,13 +349,13 @@ struct APT::Solver::State
  */
 struct APT::Solver::Solved
 {
-   // \brief A variable that has been assigned. We store this as a reason (FIXME: Rename Reason to Var)
-   Reason assigned;
+   // \brief A variable that has been assigned. We store this as a reason (FIXME: Rename Var to Var)
+   Var assigned;
    // \brief A work item that has been solved. This needs to be put back on the queue.
    std::optional<Work> work;
 };
 
-inline APT::Solver::State &APT::Solver::operator[](Reason r)
+inline APT::Solver::State &APT::Solver::operator[](Var r)
 {
    if (auto P = r.Pkg())
       return (*this)[cache.PkgP + P];
