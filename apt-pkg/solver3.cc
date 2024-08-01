@@ -332,7 +332,11 @@ bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
    solved.push_back(Solved{var, std::nullopt});
 
    if (not decision)
+   {
+      if (not PropagateReject(var))
+	 return false;
       needsRescore = true;
+   }
 
    return true;
 }
@@ -395,7 +399,7 @@ bool APT::Solver::Install(pkgCache::VerIterator Ver, Var reason, Group group)
 
    for (auto OV = Ver.ParentPkg().VersionList(); not OV.end(); ++OV)
    {
-      if (OV != Ver && not Reject(OV, Var(Ver), group))
+      if (OV != Ver && not Enqueue(Var(OV), false, Var(Ver)))
 	 return false;
    }
 
@@ -413,59 +417,40 @@ bool APT::Solver::Install(pkgCache::VerIterator Ver, Var reason, Group group)
    return true;
 }
 
-bool APT::Solver::Reject(pkgCache::PkgIterator Pkg, Var reason, Group group)
+bool APT::Solver::PropagateReject(Var var)
 {
-   if ((*this)[Pkg].decision == Decision::MUSTNOT)
-      return true;
-
-   // Reject the package and its versions.
-   if (not Enqueue(Var(Pkg), false, reason))
-      return false;
-   for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
-      if (not Reject(ver, Var(Pkg), group))
-	 return false;
-
-   return true;
-}
-
-// \brief Do not install this version
-bool APT::Solver::Reject(pkgCache::VerIterator Ver, Var reason, Group group)
-{
-   (void)group;
-
-   if ((*this)[Ver].decision == Decision::MUSTNOT)
-      return true;
-
-   // Mark the package as rejected and propagate up as needed.
-   if (not Enqueue(Var(Ver), false, reason))
-      return false;
-   if (auto pkg = Ver.ParentPkg(); (*this)[pkg].decision != Decision::MUSTNOT)
+   if (auto Pkg = var.Pkg(cache); not Pkg.end())
    {
-      bool anyInstallable = false;
-      for (auto otherVer = pkg.VersionList(); not otherVer.end(); otherVer++)
-	 if (otherVer->ID != Ver->ID && (*this)[otherVer].decision != Decision::MUSTNOT)
-	    anyInstallable = true;
-
-      if (anyInstallable)
-	 ;
-      else if ((*this)[pkg].decision == Decision::MUST) // Must install, but none available
+      for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
+	 if (not Enqueue(Var(ver), false, Var(Pkg)))
+	    return false;
+   }
+   else if (auto Ver = var.Ver(cache); not Ver.end())
+   {
+      if (auto pkg = Ver.ParentPkg(); (*this)[pkg].decision != Decision::MUSTNOT)
       {
-	 _error->Error("Conflict: %s but no versions are installable",
-		       WhyStr(Var(pkg)).c_str());
+	 bool anyInstallable = false;
 	 for (auto otherVer = pkg.VersionList(); not otherVer.end(); otherVer++)
-	    if ((*this)[otherVer].decision == Decision::MUSTNOT)
-	       _error->Error("Uninstallable version: %s", WhyStr(Var(otherVer)).c_str());
-	 return _error->Error("Uninstallable version: %s -> not %s",
-			      WhyStr(reason).c_str(),
-			      (Ver.ParentPkg().FullName() + "=" + Ver.VerStr()).c_str());
+	    if (otherVer->ID != Ver->ID && (*this)[otherVer].decision != Decision::MUSTNOT)
+	       anyInstallable = true;
+
+	 if (anyInstallable)
+	    ;
+	 else if ((*this)[pkg].decision == Decision::MUST) // Must install, but none available
+	 {
+	    _error->Error("Conflict: %s but no versions are installable",
+			  WhyStr(Var(pkg)).c_str());
+	    for (auto otherVer = pkg.VersionList(); not otherVer.end(); otherVer++)
+	       if ((*this)[otherVer].decision == Decision::MUSTNOT)
+		  _error->Error("Uninstallable version: %s", WhyStr(Var(otherVer)).c_str());
+	    return _error->Error("Uninstallable version: %s", WhyStr(Var(Ver)).c_str());
+	 }
+	 else if (not Enqueue(Var(Ver.ParentPkg()), false, Var(Ver))) // Last version invalidated
+	    return false;
       }
-      else if (not Enqueue(Var(Ver.ParentPkg()), false, Var(Ver))) // Last version invalidated
+      if (not RejectReverseDependencies(Ver))
 	 return false;
    }
-
-   if (not RejectReverseDependencies(Ver))
-      return false;
-
    return true;
 }
 
@@ -529,7 +514,7 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 	    if (unlikely(debug >= 3))
 	       std::cerr << "Reject: " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " -> " << tgti.ParentPkg().FullName() << "=" << tgti.VerStr() << "\n";
 	    // FIXME: We should be collecting these and marking the heap only once.
-	    if (not Reject(pkgCache::VerIterator(cache, *tgt), Var(Ver), Group::HoldOrDelete))
+	    if (not Enqueue(Var(pkgCache::VerIterator(cache, *tgt)), false, Var(Ver)))
 	       return false;
 	 }
 	 else
@@ -691,7 +676,7 @@ bool APT::Solver::RejectReverseDependencies(pkgCache::VerIterator Ver)
       if (unlikely(debug >= 3))
 	 std::cerr << "Propagate NOT " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " to " << RDV.ParentPkg().FullName() << "=" << RDV.VerStr() << " for dependency group starting with" << start.TargetPkg().FullName() << std::endl;
 
-      if (not Reject(RDV, Var(Ver), Group::HoldOrDelete))
+      if (not Enqueue(Var(RDV), false, Var(Ver)))
 	 return false;
    }
    return true;
@@ -791,7 +776,7 @@ bool APT::Solver::Pop()
       std::cerr << "Backtracking to choice " << choice.ParentPkg().FullName() << "=" << choice.VerStr() << "\n";
 
    // FIXME: There should be a reason!
-   if (not Reject(choice, {}, Group::HoldOrDelete))
+   if (not Enqueue(Var(choice), false, {}))
       return false;
 
    if (unlikely(debug >= 2))
@@ -952,7 +937,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
       {
 	 if (unlikely(debug >= 1))
 	    std::cerr << "Hold " << P.FullName() << "\n";
-	 if (P->CurrentVer ? not Install(P.CurrentVer(), {}, Group::HoldOrDelete) : not Reject(P, {}, Group::HoldOrDelete))
+	 if (P->CurrentVer ? not Install(P.CurrentVer(), {}, Group::HoldOrDelete) : not Enqueue(Var(P), false, Var()))
 	    return false;
       }
       else if (state.Delete()						  // Normal delete request.
@@ -962,7 +947,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
       {
 	 if (unlikely(debug >= 1))
 	    std::cerr << "Delete " << P.FullName() << "\n";
-	 if (!Reject(P, {}, Group::HoldOrDelete))
+	 if (not Enqueue(Var(P), false, Var()))
 	    return false;
       }
       else if (state.Install() || (state.Keep() && P->CurrentVer))

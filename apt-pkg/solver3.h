@@ -8,6 +8,7 @@
  */
 
 #include <optional>
+#include <queue>
 #include <vector>
 
 #include <apt-pkg/configuration.h>
@@ -152,6 +153,8 @@ class Solver
    bool RejectReverseDependencies(pkgCache::VerIterator Ver);
    // \brief Enqueue a single or group
    bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
+   // \brief Propagate a rejection of a variable
+   bool PropagateReject(Var var);
    // \brief Check if a version is allowed by policy.
    bool IsAllowedVersion(pkgCache::Version *V);
 
@@ -185,10 +188,6 @@ class Solver
    bool Install(pkgCache::PkgIterator Pkg, Var reason, Group group);
    // \brief Install a version.
    bool Install(pkgCache::VerIterator Ver, Var reason, Group group);
-   // \brief Do not install this package
-   bool Reject(pkgCache::PkgIterator Pkg, Var reason, Group group);
-   // \brief Do not install this version.
-   bool Reject(pkgCache::VerIterator Ver, Var reason, Group group);
 
    // \brief Apply the selections from the dep cache to the solver
    bool FromDepCache(pkgDepCache &depcache);
