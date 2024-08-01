@@ -331,6 +331,9 @@ bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
 
    solved.push_back(Solved{var, std::nullopt});
 
+   if (not decision)
+      needsRescore = true;
+
    return true;
 }
 
@@ -422,8 +425,6 @@ bool APT::Solver::Reject(pkgCache::PkgIterator Pkg, Var reason, Group group)
       if (not Reject(ver, Var(Pkg), group))
 	 return false;
 
-   needsRescore = true;
-
    return true;
 }
 
@@ -464,8 +465,6 @@ bool APT::Solver::Reject(pkgCache::VerIterator Ver, Var reason, Group group)
 
    if (not RejectReverseDependencies(Ver))
       return false;
-
-   needsRescore = true;
 
    return true;
 }
