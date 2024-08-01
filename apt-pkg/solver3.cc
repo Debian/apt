@@ -169,8 +169,7 @@ APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy)
       verStates(cache.Head().VersionCount),
       pkgObsolete(cache.Head().PackageCount)
 {
-   static_assert(sizeof(APT::Solver::State<pkgCache::PkgIterator>) == 3 * sizeof(int));
-   static_assert(sizeof(APT::Solver::State<pkgCache::VerIterator>) == 3 * sizeof(int));
+   static_assert(sizeof(APT::Solver::State) == 3 * sizeof(int));
    static_assert(sizeof(APT::Solver::Reason) == sizeof(map_pointer<pkgCache::Package>));
    static_assert(sizeof(APT::Solver::Reason) == sizeof(map_pointer<pkgCache::Version>));
 }
@@ -333,6 +332,7 @@ bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Reason reason, Group group)
    if (unlikely(debug >= 1))
       std::cerr << "[" << depth() << "] Install:" << Pkg.FullName() << " (" << WhyStr(reason) << ")\n";
    (*this)[Pkg] = {reason, depth(), Decision::MUST};
+   solved.push_back(Solved{Reason(Pkg), std::nullopt});
 
    // Insert the work item.
    Work workItem{Reason(Pkg), depth(), group};
@@ -383,8 +383,12 @@ bool APT::Solver::Install(pkgCache::VerIterator Ver, Reason reason, Group group)
    if (unlikely(debug >= 1))
       std::cerr << "[" << depth() << "] Install:" << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " (" << WhyStr(reason) << ")\n";
    (*this)[Ver] = {reason, depth(), Decision::MUST};
+   solved.push_back(Solved{Reason(Ver), std::nullopt});
    if ((*this)[Ver.ParentPkg()].decision != Decision::MUST)
+   {
       (*this)[Ver.ParentPkg()] = {Reason(Ver), depth(), Decision::MUST};
+      solved.push_back(Solved{Reason(Ver.ParentPkg()), std::nullopt});
+   }
 
    for (auto OV = Ver.ParentPkg().VersionList(); not OV.end(); ++OV)
    {
@@ -422,6 +426,7 @@ bool APT::Solver::Reject(pkgCache::PkgIterator Pkg, Reason reason, Group group)
    if (unlikely(debug >= 1))
       std::cerr << "[" << depth() << "] Reject:" << Pkg.FullName() << " (" << WhyStr(reason) << ")\n";
    (*this)[Pkg] = {reason, depth(), Decision::MUSTNOT};
+   solved.push_back(Solved{Reason(Pkg), std::nullopt});
    for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
       if (not Reject(ver, Reason(Pkg), group))
 	 return false;
@@ -450,6 +455,7 @@ bool APT::Solver::Reject(pkgCache::VerIterator Ver, Reason reason, Group group)
    if (unlikely(debug >= 1))
       std::cerr << "[" << depth() << "] Reject:" << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " (" << WhyStr(reason) << ")\n";
    (*this)[Ver] = {reason, depth(), Decision::MUSTNOT};
+   solved.push_back(Solved{Reason(Ver), std::nullopt});
    if (auto pkg = Ver.ParentPkg(); (*this)[pkg].decision != Decision::MUSTNOT)
    {
       bool anyInstallable = false;
@@ -471,7 +477,10 @@ bool APT::Solver::Reject(pkgCache::VerIterator Ver, Reason reason, Group group)
 			      (Ver.ParentPkg().FullName() + "=" + Ver.VerStr()).c_str());
       }
       else if ((*this)[Ver.ParentPkg()].decision != Decision::MUSTNOT) // Last installable invalidated
+      {
 	 (*this)[Ver.ParentPkg()] = {Reason(Ver), depth(), Decision::MUSTNOT};
+	 solved.push_back(Solved{Reason(Ver), std::nullopt});
+      }
    }
 
    if (not RejectReverseDependencies(Ver))
@@ -729,15 +738,55 @@ void APT::Solver::Push(Work work)
       work.Dump(cache);
       std::cerr << "\n";
    }
-   choices.push_back(std::move(work));
+
+   choices.push_back(solved.size());
+   solved.push_back(Solved{Reason(), std::move(work)});
    // Pop() will call MergeWithStack() when reverting to level 0, or RevertToStack after dumping to the debug log.
    _error->PushToStack();
 }
 
+void APT::Solver::UndoOne()
+{
+   auto solvedItem = solved.back();
+
+   if (unlikely(debug >= 4))
+      std::cerr << "Undoing a single decision\n";
+
+   if (not solvedItem.assigned.empty())
+   {
+      if (unlikely(debug >= 4))
+      {
+	 if (auto P = solvedItem.assigned.Pkg(cache); not P.end())
+	    std::cerr << "Unassign " << P.FullName() << "\n";
+	 if (auto V = solvedItem.assigned.Ver(cache); not V.end())
+	    std::cerr << "Unassign " << V.ParentPkg().FullName() << "=" << V.VerStr() << "\n";
+      }
+      auto &state = (*this)[solvedItem.assigned];
+      state.decision = Decision::NONE;
+      state.reason = Reason();
+      state.depth = 0;
+   }
+
+   if (auto work = solvedItem.work)
+   {
+      if (unlikely(debug >= 4))
+      {
+	 std::cerr << "Adding work item ";
+	 work->Dump(cache);
+	 std::cerr << "\n";
+      }
+
+      AddWork(std::move(*work));
+   }
+
+   solved.pop_back();
+
+   // FIXME: Add the undo handling here once we have watchers.
+}
+
 bool APT::Solver::Pop()
 {
-   auto depth = APT::Solver::depth();
-   if (depth == 0)
+   if (depth() == 0)
       return false;
 
    if (unlikely(debug >= 2))
@@ -746,64 +795,30 @@ bool APT::Solver::Pop()
 
    _error->RevertToStack();
 
-   depth--;
+   assert(choices.back() < solved.size());
+   int itemsToUndo = solved.size() - choices.back();
+   pkgCache::VerIterator choice(cache, solved[choices.back()].work->choice);
 
-   // Clean up the higher level states.
-   // FIXME: Do not override the hints here.
-   for (auto &state : pkgStates)
-      if (state.depth > depth)
-	 state = {};
-   for (auto &state : verStates)
-      if (state.depth > depth)
-	 state = {};
+   for (; itemsToUndo; --itemsToUndo)
+      UndoOne();
 
-   // This destroys the invariants that `work` must be a heap. But this is ok:
-   // we are restoring the invariant below, because rejecting a package always
-   // calls std::make_heap.
-   work.erase(std::remove_if(work.begin(), work.end(), [depth](Work &w) -> bool
-			     { return w.depth > depth || w.dirty; }),
+   // We need to remove any work that is at a higher depth.
+   choices.pop_back();
+   work.erase(std::remove_if(work.begin(), work.end(), [this](Work &w) -> bool
+			     { return w.depth > depth() || w.dirty; }),
 	      work.end());
    std::make_heap(work.begin(), work.end());
 
-   // Go over the solved items, see if any of them need to be moved back or deleted.
-   solved.erase(std::remove_if(solved.begin(), solved.end(), [this, depth](Work &w) -> bool
-			       {
-				 if (w.depth > depth) // Deeper decision level is no longer valid.
-				    return true;
-				 // This item is still solved, keep it on the solved list.
-				 if (std::any_of(w.solutions.begin(), w.solutions.end(), [this](auto ver)
-						     { return (*this)[ver].decision == Decision::MUST; }))
-				    return false;
-				 // We are not longer solved, move it back to work.
-				 AddWork(std::move(w));
-				 return true; }),
-		solved.end());
-
-   Work w = std::move(choices.back());
-   choices.pop_back();
    if (unlikely(debug >= 2))
-   {
-      std::cerr << "Backtracking to choice ";
-      w.Dump(cache);
-      std::cerr << "\n";
-   }
-   if (unlikely(debug >= 4))
-   {
-      std::cerr << "choices: ";
-      for (auto &i : choices)
-      {
-	 std::cerr << pkgCache::VerIterator(cache, i.choice).ParentPkg().FullName(true) << "=" << pkgCache::VerIterator(cache, i.choice).VerStr();
-      }
-      std::cerr << std::endl;
-   }
+      std::cerr << "Backtracking to choice " << choice.ParentPkg().FullName() << "=" << choice.VerStr() << "\n";
 
-   assert(w.choice != nullptr);
    // FIXME: There should be a reason!
-   if (not Reject(pkgCache::VerIterator(cache, w.choice), {}, Group::HoldOrDelete))
+   if (not Reject(choice, {}, Group::HoldOrDelete))
       return false;
 
-   w.choice = nullptr;
-   AddWork(std::move(w));
+   if (unlikely(debug >= 2))
+      std::cerr << "Backtracked to choice " << choice.ParentPkg().FullName() << "=" << choice.VerStr() << "\n";
+
    return true;
 }
 
@@ -879,7 +894,7 @@ bool APT::Solver::Solve()
 
       auto item = std::move(work.back());
       work.pop_back();
-      solved.push_back(item);
+      solved.push_back(Solved{Reason(), item});
 
       if (std::any_of(item.solutions.begin(), item.solutions.end(), [this](auto ver)
 		      { return (*this)[ver].decision == Decision::MUST; }))

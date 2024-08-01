@@ -7,6 +7,7 @@
  * SPDX-License-Identifier: GPL-2.0+
  */
 
+#include <optional>
 #include <vector>
 
 #include <apt-pkg/configuration.h>
@@ -33,9 +34,9 @@ class Solver
    enum class Hint : uint16_t;
    struct Reason;
    struct CompareProviders3;
-   template <typename T>
    struct State;
    struct Work;
+   struct Solved;
 
    // \brief Groups of works, these are ordered.
    //
@@ -88,21 +89,23 @@ class Solver
    // Policy is needed for determining candidate version.
    pkgDepCache::Policy &policy;
    // States for packages
-   std::vector<State<pkgCache::Package>> pkgStates{};
+   std::vector<State> pkgStates{};
    // States for versions
-   std::vector<State<pkgCache::Version>> verStates{};
+   std::vector<State> verStates{};
 
    // \brief Helper function for safe access to package state.
-   inline State<pkgCache::Package> &operator[](pkgCache::Package *P)
+   inline State &operator[](pkgCache::Package *P)
    {
       return pkgStates[P->ID];
    }
 
    // \brief Helper function for safe access to version state.
-   inline State<pkgCache::Version> &operator[](pkgCache::Version *V)
+   inline State &operator[](pkgCache::Version *V)
    {
       return verStates[V->ID];
    }
+   // \brief Helper function for safe access to either state.
+   inline State &operator[](Reason r);
 
    mutable std::vector<char> pkgObsolete;
    bool Obsolete(pkgCache::PkgIterator pkg) const;
@@ -118,17 +121,18 @@ class Solver
    // \brief Whether RescoreWork() actually needs to rescore the work.
    bool needsRescore{false};
 
-   // \brief Current decision level.
-   //
-   // Each time a decision needs to be made we can push the item under
-   // consideration to our backlog of choices made and then later we can
-   // restore it easily.
-   std::vector<Work> choices{};
    // \brief Backlog of solved work.
    //
    // Solved work may become invalidated when backtracking, so store it
-   // here to revisit it later.
-   std::vector<Work> solved{};
+   // here to revisit it later. This is similar to what MiniSAT calls the
+   // trail; one distinction is that we have both literals and our work
+   // queue to be concerned about
+   std::vector<Solved> solved{};
+
+   // \brief Current decision level.
+   //
+   // This is an index into the solved vector.
+   std::vector<depth_type> choices{};
 
    /// Various configuration options
    // \brief Debug level
@@ -159,9 +163,11 @@ class Solver
 
    public:
    // \brief Create a new decision level.
-   bool Pop();
-   // \brief Revert to the previous decision level.
    void Push(Work work);
+   // \brief Revert to the previous decision level.
+   bool Pop();
+   // \brief Undo a single assignment / solved work item
+   void UndoOne();
    // \brief Add work to our work queue.
    void AddWork(Work &&work);
    // \brief Rescore the work after a reject or a pop
@@ -310,7 +316,6 @@ enum class APT::Solver::Hint : uint16_t
  * For each version, the solver records a decision at a certain level. It
  * maintains an array mapping from version ID to state.
  */
-template <typename T>
 struct APT::Solver::State
 {
    // \brief The reason for causing this state (invalid for NONE).
@@ -335,3 +340,27 @@ struct APT::Solver::State
    // \brief Any hint.
    Hint hint{Hint::NONE};
 };
+
+/**
+ * \brief A solved item.
+ *
+ * Here we keep track of solved clauses and variable assignments such that we can easily undo
+ * them.
+ */
+struct APT::Solver::Solved
+{
+   // \brief A variable that has been assigned. We store this as a reason (FIXME: Rename Reason to Var)
+   Reason assigned;
+   // \brief A work item that has been solved. This needs to be put back on the queue.
+   std::optional<Work> work;
+};
+
+inline APT::Solver::State &APT::Solver::operator[](Reason r)
+{
+   if (auto P = r.Pkg())
+      return (*this)[cache.PkgP + P];
+   if (auto V = r.Ver())
+      return (*this)[cache.VerP + V];
+
+   abort();
+}
