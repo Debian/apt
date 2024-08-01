@@ -176,6 +176,11 @@ class Solver
    // \brief Basic solver initializer. This cannot fail.
    Solver(pkgCache &Cache, pkgDepCache::Policy &Policy);
 
+   // Assume that the variable is decided as specified.
+   bool Assume(Var var, bool decision, Var reason);
+   // Enqueue a decision fact
+   bool Enqueue(Var var, bool decision, Var reason);
+
    // \brief Mark the package for install. This is annoying as it incurs a decision
    bool Install(pkgCache::PkgIterator Pkg, Var reason, Group group);
    // \brief Install a version.
@@ -240,6 +245,15 @@ struct APT::Solver::Var
    bool empty() const
    {
       return IsVersion == 0 && MapPtr == 0;
+   }
+
+   std::string toString(pkgCache &cache) const
+   {
+      if (auto P = Pkg(cache); not P.end())
+	 return P.FullName();
+      if (auto V = Ver(cache); not V.end())
+	 return V.ParentPkg().FullName() + "=" + V.VerStr();
+      return "(root)";
    }
 };
 

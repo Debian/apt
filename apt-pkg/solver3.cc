@@ -304,6 +304,35 @@ bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg) const
    pkgObsolete[pkg->ID] = 2;
    return true;
 }
+bool APT::Solver::Assume(Var var, bool decision, Var reason)
+{
+   choices.push_back(solved.size());
+   return Enqueue(var, decision, std::move(reason));
+}
+
+bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
+{
+   auto &state = (*this)[var];
+   auto decisionCast = decision ? Decision::MUST : Decision::MUSTNOT;
+
+   if (state.decision != Decision::NONE)
+   {
+      if (state.decision != decisionCast)
+	 return _error->Error("Conflict: %s -> %s%s but %s", WhyStr(reason).c_str(), decision ? "" : "not ", var.toString(cache).c_str(), WhyStr(var).c_str());
+      return true;
+   }
+
+   state.decision = decisionCast;
+   state.depth = depth();
+   state.reason = reason;
+
+   if (unlikely(debug >= 1))
+      std::cerr << "[" << depth() << "] " << (decision ? "Install" : "Reject") << ":" << var.toString(cache) << " (" << WhyStr(state.reason) << ")\n";
+
+   solved.push_back(Solved{var, std::nullopt});
+
+   return true;
+}
 
 bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Var reason, Group group)
 {
@@ -329,10 +358,8 @@ bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Var reason, Group group)
    }
 
    // Note decision
-   if (unlikely(debug >= 1))
-      std::cerr << "[" << depth() << "] Install:" << Pkg.FullName() << " (" << WhyStr(reason) << ")\n";
-   (*this)[Pkg] = {reason, depth(), Decision::MUST};
-   solved.push_back(Solved{Var(Pkg), std::nullopt});
+   if (not Enqueue(Var(Pkg), true, reason))
+      return false;
 
    // Insert the work item.
    Work workItem{Var(Pkg), depth(), group};
@@ -380,15 +407,10 @@ bool APT::Solver::Install(pkgCache::VerIterator Ver, Var reason, Group group)
 			      WhyStr(Var(otherVer)).c_str());
 
    // Note decision
-   if (unlikely(debug >= 1))
-      std::cerr << "[" << depth() << "] Install:" << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " (" << WhyStr(reason) << ")\n";
-   (*this)[Ver] = {reason, depth(), Decision::MUST};
-   solved.push_back(Solved{Var(Ver), std::nullopt});
-   if ((*this)[Ver.ParentPkg()].decision != Decision::MUST)
-   {
-      (*this)[Ver.ParentPkg()] = {Var(Ver), depth(), Decision::MUST};
-      solved.push_back(Solved{Var(Ver.ParentPkg()), std::nullopt});
-   }
+   if (not Enqueue(Var(Ver), true, reason))
+      return false;
+   if (not Enqueue(Var(Ver.ParentPkg()), true, Var(Ver)))
+      return false;
 
    for (auto OV = Ver.ParentPkg().VersionList(); not OV.end(); ++OV)
    {
@@ -423,10 +445,8 @@ bool APT::Solver::Reject(pkgCache::PkgIterator Pkg, Var reason, Group group)
       return _error->Error("Conflict: %s -> not %s but %s", WhyStr(reason).c_str(), Pkg.FullName().c_str(), WhyStr(Var(Pkg)).c_str());
 
    // Reject the package and its versions.
-   if (unlikely(debug >= 1))
-      std::cerr << "[" << depth() << "] Reject:" << Pkg.FullName() << " (" << WhyStr(reason) << ")\n";
-   (*this)[Pkg] = {reason, depth(), Decision::MUSTNOT};
-   solved.push_back(Solved{Var(Pkg), std::nullopt});
+   if (not Enqueue(Var(Pkg), false, reason))
+      return false;
    for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
       if (not Reject(ver, Var(Pkg), group))
 	 return false;
@@ -452,10 +472,8 @@ bool APT::Solver::Reject(pkgCache::VerIterator Ver, Var reason, Group group)
 			   WhyStr(Var(Ver)).c_str());
 
    // Mark the package as rejected and propagate up as needed.
-   if (unlikely(debug >= 1))
-      std::cerr << "[" << depth() << "] Reject:" << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " (" << WhyStr(reason) << ")\n";
-   (*this)[Ver] = {reason, depth(), Decision::MUSTNOT};
-   solved.push_back(Solved{Var(Ver), std::nullopt});
+   if (not Enqueue(Var(Ver), false, reason))
+      return false;
    if (auto pkg = Ver.ParentPkg(); (*this)[pkg].decision != Decision::MUSTNOT)
    {
       bool anyInstallable = false;
@@ -478,8 +496,8 @@ bool APT::Solver::Reject(pkgCache::VerIterator Ver, Var reason, Group group)
       }
       else if ((*this)[Ver.ParentPkg()].decision != Decision::MUSTNOT) // Last installable invalidated
       {
-	 (*this)[Ver.ParentPkg()] = {Var(Ver), depth(), Decision::MUSTNOT};
-	 solved.push_back(Solved{Var(Ver), std::nullopt});
+	 if (not Enqueue(Var(Ver.ParentPkg()), false, Var(Ver)))
+	    return false;
       }
    }
 

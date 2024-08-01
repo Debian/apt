@@ -22,14 +22,21 @@ testsuccessequal "Reading package lists...
 Building dependency tree...
 Solving dependencies...Install foobar:amd64 ()
 [0] Install:foobar:amd64=1 ()
+[0] Install:foobar:amd64 (foobar:amd64=1)
 [0] Install:requires-foo:amd64=1 (foobar:amd64=1)
+[0] Install:requires-foo:amd64 (foobar:amd64=1 -> requires-foo:amd64=1)
 [0] Install:foo:amd64=1 (foobar:amd64=1 -> requires-foo:amd64=1)
+[0] Install:foo:amd64 (foobar:amd64=1 -> requires-foo:amd64=1 -> foo:amd64=1)
 [0] Install:foo-depends:amd64=1 (foobar:amd64=1 -> requires-foo:amd64=1 -> foo:amd64=1)
+[0] Install:foo-depends:amd64 (foobar:amd64=1 -> requires-foo:amd64=1 -> foo:amd64=1 -> foo-depends:amd64=1)
 Item (2@0) foobar:amd64=1 ->  | conflicts-foo:amd64=1 | fine-foo:amd64=1
 [1] Install:conflicts-foo:amd64=1 (foobar:amd64=1)
+[1] Install:conflicts-foo:amd64 (foobar:amd64=1 -> conflicts-foo:amd64=1)
 [0] Reject:conflicts-foo:amd64=1 ()
+[0] Reject:conflicts-foo:amd64 (not conflicts-foo:amd64=1)
 Item (1@0) foobar:amd64=1 ->  | conflicts-foo:amd64=1 | fine-foo:amd64=1
 [0] Install:fine-foo:amd64=1 (foobar:amd64=1)
+[0] Install:fine-foo:amd64 (foobar:amd64=1 -> fine-foo:amd64=1)
 
 The following additional packages will be installed:
   fine-foo foo foo-depends requires-foo
