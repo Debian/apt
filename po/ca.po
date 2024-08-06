@@ -9,20 +9,21 @@
 # Jordi Mallach <jordi@debian.org>, 2004, 2005, 2006, 2008, 2009, 2011, 2012.
 # Agustí Grau <fletxa@gmail.com>, 2010.
 # Oriol Debian <oriol.debian@gmail.com>, 2016.
+# Carles Pina i Estany <cpina@debian.org>, 2024
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
-"PO-Revision-Date: 2020-08-09 22:43+0200\n"
-"Last-Translator: Aleix Vidal i Gaya <aleix@softcatala.org>\n"
+"POT-Creation-Date: 2024-05-25 09:01+0000\n"
+"PO-Revision-Date: 2024-08-06 23:31+0100\n"
+"Last-Translator: Carles Pina i Estany <cpina@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Bookmarks: 502,178,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
 #: apt-pkg/acquire-item.cc
@@ -249,6 +250,8 @@ msgid ""
 "Repositories should provide a clear-signed InRelease file, but none found at "
 "%s."
 msgstr ""
+"Els repositoris han de tenir un fitxer «InRelease» signat, però no se n'ha "
+"trobat cap a %s."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -691,26 +694,26 @@ msgstr "Error de sintaxi %s:%u: Hi ha brossa extra al final del fitxer"
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Error:"
-msgstr ""
+msgstr "Error:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Warning:"
-msgstr ""
+msgstr "Avís:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Notice:"
-msgstr ""
+msgstr "Notificació:"
 
 #: apt-pkg/contrib/error.cc
 msgid "Audit:"
-msgstr ""
+msgstr "Auditoria:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Debug:"
-msgstr ""
+msgstr "Depuració:"
 
 #: apt-pkg/contrib/extracttar.cc
 #, c-format
@@ -1352,10 +1355,8 @@ msgid "Calculating upgrade"
 msgstr "S'està calculant l'actualització"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
-#| msgid "Total dependencies: "
 msgid "Solving dependencies"
-msgstr "Nombre total de dependències: "
+msgstr "S'està resolent les dependències"
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
@@ -1958,21 +1959,22 @@ msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
 msgstr ""
+"Un «usr» no unificat ja no està suportat, useu «usrmerge» per convertir-lo "
+"en un sistema amb l'«usr» unificat."
 
 #. TRANSLATORS: %s is a url to a page describing merged-usr (bookworm release notes)
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Selected %s for removal.\n"
+#, c-format
 msgid "See %s for more details."
-msgstr "Seleccionat %s per eliminar.\n"
+msgstr "Per més detalls, vegeu %s."
 
 #: apt-private/private-install.cc
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
 msgstr ""
-"No es poden obtenir alguns arxius. Proveu a executar apt-get update o "
-"intenteu-ho amb --fix-missing."
+"No es poden obtenir alguns arxius. Voleu provar a executar «apt-get update» "
+"o intentar-ho amb «--fix-missing»?"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -2016,10 +2018,10 @@ msgstr ""
 "Que estrany… Les mides no coincideixen, informeu-ho a apt@packages.debian.org"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
+#, c-format
 #| msgid "Download Failed"
 msgid "  Download size: %sB / %sB\n"
-msgstr "Ha fallat la baixada"
+msgstr "  Mida de la descàrrega: %sB / %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2029,10 +2031,10 @@ msgid "Need to get %sB/%sB of archives.\n"
 msgstr "S'ha d'obtenir %sB/%sB d'arxius.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
+#, c-format
 #| msgid "Download Failed"
 msgid "  Download size: %sB\n"
-msgstr "Ha fallat la baixada"
+msgstr "  Mida de la descàrrega: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2052,7 +2054,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB / %sB available\n"
-msgstr ""
+msgstr "Espai necessari: %sB / %sB disponible\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2060,6 +2062,7 @@ msgstr ""
 #, c-format
 msgid "More space needed than available: %sB > %sB, installation may fail"
 msgstr ""
+"Cal més espai del que hi ha disponible: %sB > %sB, la instal·lació pot fallar"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
@@ -2069,7 +2072,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "in %s:  %sB / %sB available\n"
-msgstr ""
+msgstr "a %s:  %sB / %sB disponible\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2079,17 +2082,18 @@ msgstr ""
 msgid ""
 "More space needed in %s than available: %sB > %sB, installation may fail"
 msgstr ""
+"Cal més espai a %s del que hi ha disponible: %sB > %sB, la instal·lació pot "
+"fallar"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB\n"
-msgstr ""
+msgstr "Espai necessari: %sB\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Stored label: %s\n"
+#, c-format
 msgid "  Freed space: %sB\n"
-msgstr "Etiqueta desada: %s\n"
+msgstr "  Espai recuperat: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2107,14 +2111,16 @@ msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
 msgstr ""
+"No està permès eliminar paquets essencials crítics pel sistema. Això podria "
+"inutilitzar el sistema."
 
 #: apt-private/private-install.cc
 msgid "Continue anyway?"
-msgstr ""
+msgstr "Voleu continuar igualment?"
 
 #: apt-private/private-install.cc
 msgid "Continue?"
-msgstr ""
+msgstr "Voleu continuar?"
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
@@ -2355,50 +2361,41 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Els següents paquets tenen dependències sense satisfer:"
 
 #: apt-private/private-output.cc
-#, fuzzy
 #| msgid "satisfy dependency strings"
 msgid "Unsatisfied dependencies:"
-msgstr "satisfà cadenes de dependència"
+msgstr "Dependències no satisfetes:"
 
 #: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "S'instal·laran els paquets NOUS següents:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Installing %s"
 msgid "Installing:"
-msgstr "S'està instal·lant %s"
+msgstr "S'està instal·lant:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Total dependencies: "
 msgid "Installing dependencies:"
-msgstr "Nombre total de dependències: "
+msgstr "S'està instal·lant les dependències:"
 
 #: apt-private/private-output.cc
 msgid "REMOVING:"
-msgstr ""
+msgstr "S'ESTÀ SUPRIMINT:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
 msgstr "Se SUPRIMIRAN els paquets següents:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "The following upgrades have been deferred due to phasing:"
-msgstr "S'han mantingut els paquets següents:"
+msgstr "S'han ajornat les actualitzacions següents degut a escalonament:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "Not upgrading yet due to phasing:"
-msgstr "S'han mantingut els paquets següents:"
+msgstr "No actualitzant encara degut a escalonament:"
 
 #: apt-private/private-output.cc
 msgid "Not upgrading:"
-msgstr ""
+msgstr "No s'està actualitzant:"
 
 #: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
@@ -2410,21 +2407,19 @@ msgstr "S'actualitzaran els paquets següents:"
 
 #: apt-private/private-output.cc
 msgid "Upgrading:"
-msgstr ""
+msgstr "S'està actualitzant:"
 
 #: apt-private/private-output.cc
 msgid "DOWNGRADING:"
-msgstr ""
+msgstr "S'ESTÀ DESACTUALITZANT:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Es DESACTUALITZARAN els paquets següents:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Pinned packages:"
 msgid "Changing held packages:"
-msgstr "Paquets fixats:"
+msgstr "S'està canviant els paquets retinguts:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2445,7 +2440,7 @@ msgstr ""
 
 #: apt-private/private-output.cc
 msgid "Summary:"
-msgstr ""
+msgstr "Resum:"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2453,10 +2448,10 @@ msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu actualitzats, %lu nous a instal·lar, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
+#, c-format
 #| msgid "Installing %s"
 msgid "Upgrading: %lu, Installing: %lu, "
-msgstr "S'està instal·lant %s"
+msgstr "S'està actualitzant: %lu, s'està instal·lant: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2464,10 +2459,9 @@ msgid "%lu reinstalled, "
 msgstr "%lu reinstal·lats, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Reinstalling: %lu, "
-msgstr "S'està instal·lant %s"
+msgstr "S'està reinstal·lant: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2477,7 +2471,7 @@ msgstr "%lu desactualitzats, "
 #: apt-private/private-output.cc
 #, c-format
 msgid "Downgrading: %lu, "
-msgstr ""
+msgstr "S'està desactualitzant: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2487,7 +2481,7 @@ msgstr "%lu a suprimir i %lu no actualitzats.\n"
 #: apt-private/private-output.cc
 #, c-format
 msgid "Removing: %lu, Not Upgrading: %lu\n"
-msgstr ""
+msgstr "S'està suprimint: %lu, no s'està actualitzant: %lu\n"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2580,7 +2574,7 @@ msgstr "  Taula de versions:"
 
 #: apt-private/private-show.cc
 msgid "phased"
-msgstr ""
+msgstr "escalonat"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -2770,7 +2764,7 @@ msgstr ""
 #: apt-private/private-update.cc
 #, c-format
 msgid "Missing Signed-By in the %s entry for '%s'"
-msgstr ""
+msgstr "No hi ha «Signed-By» a l'entrada %s de «%s»"
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3397,10 +3391,8 @@ msgid "remove packages"
 msgstr "elimina paquets"
 
 #: cmdline/apt.cc
-#, fuzzy
-#| msgid "Remove automatically all unused packages"
 msgid "automatically remove all unused packages"
-msgstr "Suprimeix automàticament tots els paquets no utilitzats"
+msgstr "suprimeix automàticament tots els paquets no utilitzats"
 
 #. system wide stuff
 #: cmdline/apt.cc
@@ -4078,12 +4070,7 @@ msgstr "No es pot invocar "
 #: methods/gpgv.cc
 #, c-format
 msgid "untrusted public key algorithm: %s"
-msgstr ""
-
-#: methods/gpgv.cc
-#, c-format
-msgid "%s will be deprecated in a future release"
-msgstr ""
+msgstr "no es confia en l'algoritme de clau pública: %s"
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
@@ -4121,14 +4108,14 @@ msgid ""
 "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
 "section in apt-key(8) for details."
 msgstr ""
+"La clau està desada en un antic anell de claus «trusted.gpg» (%s); per més "
+"detalls, consulteu la secció DEPRECATION d'«apt-key»(8)."
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
-#, fuzzy, c-format
-#| msgid "Signature by key %s uses weak digest algorithm (%s)"
+#, c-format
 msgid "Signature by key %s uses weak algorithm (%s)"
-msgstr ""
-"La signatura per la clau %s usa un algoritme de resum «hash» dèbil (%s)"
+msgstr "La signatura amb la clau %s usa un algoritme dèbil (%s)"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
