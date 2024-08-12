@@ -247,8 +247,39 @@ std::string APT::Solver::WhyStr(Reason reason)
    return outstr;
 }
 
-bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg)
+// This is essentially asking whether any other binary in the source package has a higher candidate
+// version. This pretends that each package is installed at the same source version as the package
+// under consideration.
+bool APT::Solver::ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) const
 {
+   const auto pkg = cand.ParentPkg();
+   const int candPriority = policy.GetPriority(cand);
+
+   for (auto ver = cand.Cache()->FindGrp(cand.SourcePkgName()).VersionsInSource(); not ver.end(); ver = ver.NextInSource())
+   {
+      // We are only interested in other packages in the same source package; built for the same architecture.
+      if (ver->ParentPkg == cand->ParentPkg || ver.ParentPkg()->Arch != cand.ParentPkg()->Arch || cache.VS->CmpVersion(ver.SourceVerStr(), cand.SourceVerStr()) <= 0)
+	 continue;
+
+      // We also take equal priority here, given that we have a higher version
+      const int priority = policy.GetPriority(ver, true);
+      if (priority == 0 || priority < candPriority)
+	 continue;
+
+      pkgObsolete[pkg->ID] = 2;
+      if (debug >= 3)
+	 std::cerr << "Obsolete: " << cand.ParentPkg().FullName() << "=" << cand.VerStr() << " due to " << ver.ParentPkg().FullName() << "=" << ver.VerStr() << "\n";
+      return true;
+   }
+
+   return false;
+}
+
+bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg) const
+{
+   if (pkgObsolete[pkg->ID] != 0)
+      return pkgObsolete[pkg->ID] == 2;
+
    auto ver = policy.GetCandidateVer(pkg);
 
    if (ver.end() && not StrictPinning)
@@ -256,18 +287,13 @@ bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg)
    if (ver.end())
    {
       std::cerr << "Obsolete: " << pkg.FullName() << " - not installable\n";
+      pkgObsolete[pkg->ID] = 2;
       return true;
    }
-   if (pkgObsolete[pkg->ID] != 0)
-      return pkgObsolete[pkg->ID] == 2;
-   for (auto bin = ver.Cache()->FindGrp(ver.SourcePkgName()).VersionsInSource(); not bin.end(); bin = bin.NextInSource())
-      if (bin != ver && bin.ParentPkg()->Arch == ver.ParentPkg()->Arch && bin->ParentPkg != ver->ParentPkg && (not StrictPinning || policy.GetCandidateVer(bin.ParentPkg()) == bin) && _system->VS->CmpVersion(bin.SourceVerStr(), ver.SourceVerStr()) > 0)
-      {
-	 pkgObsolete[pkg->ID] = 2;
-	 if (debug >= 3)
-	    std::cerr << "Obsolete: " << ver.ParentPkg().FullName() << "=" << ver.VerStr() << " due to " << bin.ParentPkg().FullName() << "=" << bin.VerStr() << "\n";
-	 return true;
-      }
+
+   if (ObsoletedByNewerSourceVersion(ver))
+      return true;
+
    for (auto file = ver.FileList(); !file.end(); file++)
       if ((file.File()->Flags & pkgCache::Flag::NotSource) == 0)
       {

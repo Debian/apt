@@ -1,0 +1,87 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+allowremovemanual
+
+# We need a canary to make it trigger obsolete detection
+insertpackage 'installed' 'canary' 'amd64' '1' 'Depends: good | not-yet-built | obsolete | obsolete-in-experimental | obsolete-reason | obsolete-in-experimental-reason | local-only | current-version | obsolete-in-downgrade | obsolete-in-downgrade-reason'
+
+# This package is good, it still exists in the candidate
+insertpackage 'installed' 'good' 'amd64' '1' 'Source: good (= 1)'
+insertpackage 'unstable' 'good' 'amd64' '2' 'Source: good (= 2)'
+
+# not-yet-built is not yet obsolete, because it has only been built on i386
+insertpackage 'installed,unstable' 'not-yet-built' 'amd64' '1' 'Source: not-yet-built (= 1)'
+insertpackage 'unstable' 'not-yet-built' 'i386' '2' 'Source: not-yet-built (= 2)'
+
+# obsolete is obsolete because obsolete-reason has been built on the same arch and is the source candidate
+insertpackage 'installed,unstable' 'obsolete' 'amd64' '1' 'Source: obsolete (= 1)'
+insertpackage 'unstable' 'obsolete-reason' 'amd64' '2' 'Source: obsolete (= 2)'
+
+# obsolete-in-experimental is only obsoleted in experimental, so it is not yet considered obsolete
+insertpackage 'installed,unstable' 'obsolete-in-experimental' 'amd64' '1' 'Source: obsolete-in-experimental (= 1)'
+insertpackage 'experimental' 'obsolete-in-experimental-reason' 'amd64' '2' 'Source: obsolete-in-experimental (= 2)'
+
+# local-only only exists in the local install
+insertpackage 'installed' 'local-only' 'amd64' '1' 'Source: local-only (= 1)'
+
+# current-version
+insertpackage 'installed,unstable' 'current-version' 'amd64' '1' 'Source: current-version (= 1)'
+
+# obsolete-in-downgrade is only obsoleted in experimental, so it is not yet considered obsolete
+insertpackage 'installed,experimental' 'obsolete-in-downgrade' 'amd64' '2' 'Source: obsolete-in-downgrade (= 2)'
+insertpackage 'unstable' 'obsolete-in-downgrade-reason' 'amd64' '1' 'Source: obsolete-in-downgrade (= 1)'
+
+setupaptarchive
+
+testobsolete() {
+    out="$1"
+    shift
+    testsuccess $@ -o Debug::APT::Solver=4 -o APT::Solver=3.0 -s
+    cp rootdir/tmp/testsuccess.output upgrade.output
+    testsuccessequal "$out" grep "Obsolete:" upgrade.output
+}
+
+testobsolete "Obsolete: obsolete:amd64=1 due to obsolete-reason:amd64=2
+Obsolete: local-only:amd64=1 - not installable" aptget dist-upgrade
+testobsolete "Obsolete: obsolete:amd64=1 due to obsolete-reason:amd64=2
+Obsolete: local-only:amd64=1 - not installable" aptget dist-upgrade --no-strict-pinning
+
+msgmsg "Pinning the installed version down to experimental level means experimental wins"
+printf 'Package: obsolete-in-experimental\nPin: release *\nPin-Priority: 1\n' > rootdir/etc/apt/preferences
+testobsolete "Obsolete: obsolete:amd64=1 due to obsolete-reason:amd64=2
+Obsolete: obsolete-in-experimental:amd64=1 due to obsolete-in-experimental-reason:amd64=2
+Obsolete: local-only:amd64=1 - not installable" aptget dist-upgrade
+testobsolete "Obsolete: obsolete:amd64=1 due to obsolete-reason:amd64=2
+Obsolete: obsolete-in-experimental:amd64=1 due to obsolete-in-experimental-reason:amd64=2
+Obsolete: local-only:amd64=1 - not installable" aptget dist-upgrade --no-strict-pinning
+
+msgmsg "Testing no-strict-pinning with negative pins on all packages"
+printf 'Package: *\nPin: release *\nPin-Priority: -1\n' > rootdir/etc/apt/preferences
+testobsolete "Obsolete: not-yet-built:amd64 - not installable
+Obsolete: good:amd64 - not installable
+Obsolete: obsolete:amd64 - not installable
+Obsolete: obsolete-in-experimental:amd64 - not installable
+Obsolete: current-version:amd64 - not installable
+Obsolete: local-only:amd64 - not installable
+Obsolete: obsolete-in-downgrade:amd64 - not installable" aptget dist-upgrade
+
+testobsolete "Obsolete: obsolete:amd64=1 due to obsolete-reason:amd64=2
+Obsolete: obsolete-in-experimental:amd64=1 due to obsolete-in-experimental-reason:amd64=2
+Obsolete: local-only:amd64=1 - not installable
+Obsolete: obsolete-in-downgrade-reason:amd64=1 due to obsolete-in-downgrade:amd64=2" aptget dist-upgrade --no-strict-pinning
+
+
+msgmsg "Testing that pinning a downgrade does not trigger obsoletes handling"
+printf 'Package: downgrade-reason\nPin: release *\nPin-Priority: 1000\n' > rootdir/etc/apt/preferences
+
+testobsolete "Obsolete: obsolete:amd64=1 due to obsolete-reason:amd64=2
+Obsolete: local-only:amd64=1 - not installable" aptget dist-upgrade
+testobsolete "Obsolete: obsolete:amd64=1 due to obsolete-reason:amd64=2
+Obsolete: local-only:amd64=1 - not installable" aptget dist-upgrade --no-strict-pinning
+
+
