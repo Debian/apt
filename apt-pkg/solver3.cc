@@ -766,6 +766,8 @@ bool APT::Solver::Pop()
       UndoOne();
 
    // We need to remove any work that is at a higher depth.
+   // FIXME: We should just mark the entries as erased and only do a compaction
+   //        of the heap once we have a lot of erased entries in it.
    choices.pop_back();
    work.erase(std::remove_if(work.begin(), work.end(), [this](Work &w) -> bool
 			     { return w.depth > depth() || w.erased; }),
