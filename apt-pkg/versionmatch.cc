@@ -42,7 +42,7 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
       return;
    
    // Cut up the version representation
-   if (Type == Version)
+   if (Type == Version || Type == SourceVersion)
    {
       if (Data.end()[-1] == '*')
       {
@@ -177,6 +177,14 @@ pkgCache::VerIterator pkgVersionMatch::Find(pkgCache::PkgIterator Pkg)
 /* */
 bool pkgVersionMatch::VersionMatches(pkgCache::VerIterator Ver)
 {
+   if (Type == SourceVersion)
+   {
+      if (MatchVer(Ver.SourceVerStr(),VerStr,VerPrefixMatch) == true)
+	 return true;
+      if (ExpressionMatches(VerStr, Ver.SourceVerStr()) == true)
+	 return true;
+      return false;
+   }
    if (Type == Version)
    {
       if (MatchVer(Ver.VerStr(),VerStr,VerPrefixMatch) == true)

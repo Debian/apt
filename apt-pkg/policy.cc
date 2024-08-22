@@ -452,6 +452,8 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
       pkgVersionMatch::MatchType Type;
       if (stringcasecmp(Start,Word,"version") == 0 && Name.empty() == false)
 	 Type = pkgVersionMatch::Version;
+      else if (stringcasecmp(Start,Word,"source-version") == 0 && Name.empty() == false)
+	 Type = pkgVersionMatch::SourceVersion;
       else if (stringcasecmp(Start,Word,"release") == 0)
 	 Type = pkgVersionMatch::Release;
       else if (stringcasecmp(Start,Word,"origin") == 0)
