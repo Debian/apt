@@ -62,7 +62,7 @@ class APT_PUBLIC pkgVersionMatch
 
    public:
 
-   enum MatchType {None = 0,Version,Release,Origin} Type;
+   enum MatchType {None = 0,Version,Release,Origin, SourceVersion} Type;
 
    bool MatchVer(const char *A,std::string B,bool Prefix) APT_PURE;
    static bool ExpressionMatches(const char *pattern, const char *string);

@@ -80,8 +80,9 @@ testglobalpolicy
 
 msgmsg 'Test with specific packages'
 
+# Yeesh, the XB-Source stuff is hacky, hopefully this won't break.
 buildsimplenativepackage "coolstuff" "all" "1.0" "stable"
-buildsimplenativepackage "coolstuff" "all" "2.0~bpo1" "backports"
+buildsimplenativepackage "coolstuff" "all" "2.0~bpo1" "backports" "XB-Source: coolstuff (2.0~bpo1-source-version)"
 
 setupaptarchive
 
@@ -422,6 +423,20 @@ testsuccessequal "coolstuff:
 msgmsg "Check that local-only versions can be pinned correctly (LP: #1821308)"
 echo "Package: coolstuff
 Pin: version 2.0~bpo1
+Pin-Priority: 1000" > rootdir/etc/apt/preferences
+testsuccessequal "coolstuff:
+  Installed: 2.0~bpo1
+  Candidate: 2.0~bpo1
+  Version table:
+     2.0~bpo2 100
+        100 file:${tmppath}/aptarchive backports/main all Packages
+ *** 2.0~bpo1 1000
+        100 ${tmppath}/rootdir/var/lib/dpkg/status
+     1.0 500
+        500 file:${tmppath}/aptarchive stable/main all Packages" aptcache policy coolstuff
+
+echo "Package: coolstuff
+Pin: source-version 2.0~bpo1-source-version
 Pin-Priority: 1000" > rootdir/etc/apt/preferences
 testsuccessequal "coolstuff:
   Installed: 2.0~bpo1
