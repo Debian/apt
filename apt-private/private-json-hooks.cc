@@ -350,11 +350,43 @@ static void NotifyHook(std::ostream &os, std::string const &method, const char *
    jsonWriter.endObject(); // main
 }
 
+static JsonWriter &BuildOptionsArray(JsonWriter &writer)
+{
+   const Configuration::Item *Top = _config->Tree(nullptr);
+   if (Top == 0)
+      return writer.beginArray().endArray();
+
+   writer.beginArray();
+   do
+   {
+      if (not Top->Value.empty())
+	 writer.beginObject().name("name").value(Top->FullTag()).name("value").value(Top->Value).endObject();
+      if (Top->Child != 0)
+      {
+	 Top = Top->Child;
+	 continue;
+      }
+
+      while (Top != 0 && Top->Next == 0)
+	 Top = Top->Parent;
+      if (Top != 0)
+	 Top = Top->Next;
+
+   } while (Top != 0);
+
+   writer.endArray();
+
+   return writer;
+}
+
 /// @brief Build the hello handshake message for 0.1 protocol
 static std::string BuildHelloMessage()
 {
    std::stringstream Hello;
-   JsonWriter(Hello).beginObject().name("jsonrpc").value("2.0").name("method").value("org.debian.apt.hooks.hello").name("id").value(0).name("params").beginObject().name("versions").beginArray().value("0.1").value("0.2").endArray().endObject().endObject();
+   auto writer = JsonWriter(Hello).beginObject().name("jsonrpc").value("2.0").name("method").value("org.debian.apt.hooks.hello").name("id").value(0).name("params").beginObject().name("versions").beginArray().value("0.1").value("0.2").endArray().name("options");
+
+   BuildOptionsArray(writer);
+   writer.endObject().endObject();
 
    return Hello.str();
 }
