@@ -1380,8 +1380,7 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
 	       
 	       // It is not keepable
-	       if (Cache[Pkg].InstallVer == 0 ||
-		   Pkg->CurrentVer == 0)
+	       if (Pkg->CurrentVer == 0)
 		  continue;
 
 	       if (not Cache[Pkg].Protect())
