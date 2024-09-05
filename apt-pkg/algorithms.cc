@@ -1423,6 +1423,9 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 
    delete[] PList;
 
+   if (Cache.BrokenCount() != 0)
+      return _error->Error(_("Unable to correct problems, you have held broken packages."));
+
    if (Debug)
       Cache.CheckConsistency("keep done");
 
