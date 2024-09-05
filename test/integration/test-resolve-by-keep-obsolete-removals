@@ -30,3 +30,24 @@ Package foo:amd64 foo:amd64 Depends on obsolete-dependency:amd64 < 1.0 @ii mR >
 C: dpkg:amd64 < 1.16.2+fake @ii mK >
 C: foo:amd64 < 2.0 @ii mK >
 C: obsolete-dependency:amd64 < 1.0 @ii mK >" runapt ${APTTESTHELPERSBINDIR}/testkeep obsolete-dependency
+
+# We have protected our decision to remove the obsolete dependency, so we fail to resolve it.
+testfailureequal "A: dpkg:amd64 < 1.16.2+fake @ii mK >
+A: foo:amd64 < 2.0 @ii mK >
+A: obsolete-dependency:amd64 < 1.0 @ii mK >
+B: dpkg:amd64 < 1.16.2+fake @ii mK >
+B: foo:amd64 < 2.0 @ii mK Ib >
+B: obsolete-dependency:amd64 < 1.0 @ii pmR >
+Entering ResolveByKeep
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+Keeping package foo:amd64
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+Package foo:amd64 foo:amd64 Depends on obsolete-dependency:amd64 < 1.0 @ii pmR >
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+C: dpkg:amd64 < 1.16.2+fake @ii mK >
+C: foo:amd64 < 2.0 @ii mK Ib >
+C: obsolete-dependency:amd64 < 1.0 @ii pmR >
+E: Unable to correct problems, you have held broken packages." runapt ${APTTESTHELPERSBINDIR}/testkeep obsolete-dependency  --hold
