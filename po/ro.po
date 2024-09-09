@@ -9,35 +9,36 @@
 #
 # Sorin Batariuc <sorin@bonbon.net>, 2004, 2005, 2006.
 # Eddy Petrișor <eddy.petrisor@gmail.com>, 2008.
-# Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, 2023.
+# Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, 2023, 2024.
 #
 # Cronologia traducerii fișierului „apt”:
 # Traducerea inițială, făcută de SB, pentru versiunea apt 0.5.24, noi-2004.
-# Actualizare a traducerii pentru versiunea 0.6.40.1, făcută de SB aug-2005.
-# Actualizare a traducerii pentru versiunea 0.6.4.2, făcută de SB ian-2006.
-# Actualizare a traducerii pentru versiunea 0.6.43.2, făcută de SB mar-2006.
-# Actualizare a traducerii pentru versiunea 0.6.43.3, făcută de SB iun-2006.
-# Actualizare a traducerii pentru versiunea 0.6.44.2, făcută de SB sep-2006.
-# Actualizare a traducerii pentru versiunea 1.0.5, făcută de EP noi-2008.
+# Actualizare a traducerii pentru versiunea 0.6.40.1, făcută de SB, aug-2005.
+# Actualizare a traducerii pentru versiunea 0.6.4.2, făcută de SB, ian-2006.
+# Actualizare a traducerii pentru versiunea 0.6.43.2, făcută de SB, mar-2006.
+# Actualizare a traducerii pentru versiunea 0.6.43.3, făcută de SB, iun-2006.
+# Actualizare a traducerii pentru versiunea 0.6.44.2, făcută de SB, sep-2006.
+# Actualizare a traducerii pentru versiunea 1.0.5, făcută de EP, noi-2008.
 # Actualizare a traducerii pentru versiunea 2.7.2, făcută de R-GC, iul-2023.
+# Actualizare a traducerii pentru versiunea 2.9.8, făcută de R-GC, aug-2024.
 # Actualizare a traducerii pentru versiunea Y, făcută de X, Z(luna-anul).
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.7.2\n"
+"Project-Id-Version: apt 2.9.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
-"PO-Revision-Date: 2023-07-13 19:58+0200\n"
+"POT-Creation-Date: 2024-08-12 14:14+0000\n"
+"PO-Revision-Date: 2024-09-02 00:21+0200\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2;\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Bugs: Report translation errors to the Language-Team address.\n"
+"X-Generator: Poedit 3.4.3\n"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -270,6 +271,8 @@ msgid ""
 "Repositories should provide a clear-signed InRelease file, but none found at "
 "%s."
 msgstr ""
+"Depozitele ar trebui să furnizeze un fișier InRelease cu semnătură clară, "
+"dar nu s-a găsit niciunul la %s."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -732,26 +735,26 @@ msgstr "Eroare de sintaxă %s:%u: deșeuri suplimentare la sfârșitul fișierul
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Error:"
-msgstr ""
+msgstr "Eroare:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Warning:"
-msgstr ""
+msgstr "Avertisment:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Notice:"
-msgstr ""
+msgstr "Aviz:"
 
 #: apt-pkg/contrib/error.cc
 msgid "Audit:"
-msgstr ""
+msgstr "Audit:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Debug:"
-msgstr ""
+msgstr "Depanare:"
 
 #: apt-pkg/contrib/extracttar.cc
 #, c-format
@@ -1399,10 +1402,8 @@ msgid "Calculating upgrade"
 msgstr "Se calculează înnoirea"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
-#| msgid "Total dependencies: "
 msgid "Solving dependencies"
-msgstr "Total dependențe: "
+msgstr "Se rezolvă dependențele"
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
@@ -2019,13 +2020,15 @@ msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
 msgstr ""
+"Un „/usr” neunificat nu mai este acceptat, utilizați «usrmerge» pentru a "
+"converti la un sistem cu un „/usr” unificat (în care directoarele /{bin,sbin,"
+"lib}/ sunt legate simbolic la directoarele corespondente din /usr/)."
 
 #. TRANSLATORS: %s is a url to a page describing merged-usr (bookworm release notes)
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Selected %s for removal.\n"
+#, c-format
 msgid "See %s for more details."
-msgstr "%s a fost selectat pentru eliminare\n"
+msgstr "Consultați %s pentru mai multe detalii."
 
 #: apt-private/private-install.cc
 msgid ""
@@ -2080,10 +2083,9 @@ msgstr ""
 "apt@packages.debian.org"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Download Failed"
+#, c-format
 msgid "  Download size: %sB / %sB\n"
-msgstr "Descărcarea a eșuat"
+msgstr "  Dimensiunea descărcării: %so / %so\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2093,10 +2095,9 @@ msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Este nevoie să descărcați %so/%so de arhive.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Download Failed"
+#, c-format
 msgid "  Download size: %sB\n"
-msgstr "Descărcarea a eșuat"
+msgstr "  Dimensiunea descărcării: %so\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2115,7 +2116,7 @@ msgstr "După această operație vor fi folosiți din disc încă %so.\n"
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB / %sB available\n"
-msgstr ""
+msgstr "Spațiu necesar: %so / %so disponibil\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2123,6 +2124,8 @@ msgstr ""
 #, c-format
 msgid "More space needed than available: %sB > %sB, installation may fail"
 msgstr ""
+"Este necesar mai mult spațiu decât cel disponibil: %so > %so, instalarea "
+"poate eșua"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
@@ -2132,7 +2135,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "in %s:  %sB / %sB available\n"
-msgstr ""
+msgstr "în %s: %so / %so disponibil\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2142,17 +2145,18 @@ msgstr ""
 msgid ""
 "More space needed in %s than available: %sB > %sB, installation may fail"
 msgstr ""
+"Este nevoie de mai mult spațiu pe %s decât este disponibil: %so > %so, "
+"instalarea poate eșua"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB\n"
-msgstr ""
+msgstr "Spațiu necesar: %so\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Stored label: %s\n"
+#, c-format
 msgid "  Freed space: %sB\n"
-msgstr "Etichetă memorată: %s \n"
+msgstr "  Spațiu eliberat: %so\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2177,15 +2181,17 @@ msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Continue anyway?"
-msgstr ""
+msgstr "Continuați totuși?"
 
 #: apt-private/private-install.cc
 msgid "Continue?"
-msgstr ""
+msgstr "Continuați?"
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
-msgstr "Vreți să continuați?"
+msgstr ""
+"Continuați?\n"
+"Doriți să continuați?"
 
 #: apt-private/private-install.cc
 msgid "Abort."
@@ -2440,50 +2446,40 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Următoarele pachete au dependențe neîndeplinite:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "satisfy dependency strings"
 msgid "Unsatisfied dependencies:"
-msgstr "efectuează operațiile pentru satisfacerea lanțurilor de dependențe"
+msgstr "Dependențe nesatisfăcute:"
 
 #: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Următoarele pachete NOI vor fi instalate:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Installing %s"
 msgid "Installing:"
-msgstr "Se instalează %s"
+msgstr "Se instalează:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Total dependencies: "
 msgid "Installing dependencies:"
-msgstr "Total dependențe: "
+msgstr "Se instalează dependențele:"
 
 #: apt-private/private-output.cc
 msgid "REMOVING:"
-msgstr ""
+msgstr "SE ELIMINĂ:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
-msgstr "Următoarele pachete vor fi ȘTERSE:"
+msgstr "Următoarele pachete vor fi ELIMINATE:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "The following upgrades have been deferred due to phasing:"
-msgstr "Următoarele pachete au fost reținute:"
+msgstr "Următoarele actualizări au fost amânate din cauza eșalonării:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "Not upgrading yet due to phasing:"
-msgstr "Următoarele pachete au fost reținute:"
+msgstr "Nu se actualizează încă din cauza eșalonării:"
 
 #: apt-private/private-output.cc
 msgid "Not upgrading:"
-msgstr ""
+msgstr "Nu se actualizează:"
 
 #: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
@@ -2495,21 +2491,19 @@ msgstr "Următoarele pachete vor fi ÎNNOITE:"
 
 #: apt-private/private-output.cc
 msgid "Upgrading:"
-msgstr ""
+msgstr "Se înnoiește:"
 
 #: apt-private/private-output.cc
 msgid "DOWNGRADING:"
-msgstr ""
+msgstr "SE RETROGRADEAZĂ:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Următoarele pachete vor fi RETROGRADATE:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Pinned packages:"
 msgid "Changing held packages:"
-msgstr "Pachete marcate:"
+msgstr "Se schimbă pachetele ținute:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2530,7 +2524,7 @@ msgstr ""
 
 #: apt-private/private-output.cc
 msgid "Summary:"
-msgstr ""
+msgstr "Rezumat:"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2538,10 +2532,9 @@ msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu înnoit(e), %lu nou instalat(e), "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Upgrading: %lu, Installing: %lu, "
-msgstr "Se instalează %s"
+msgstr "Se înnoiește: %lu, Se instalează: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2549,10 +2542,9 @@ msgid "%lu reinstalled, "
 msgstr "%lu reinstalat(e), "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Reinstalling: %lu, "
-msgstr "Se instalează %s"
+msgstr "Se reinstalează: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2562,7 +2554,7 @@ msgstr "%lu retrogragradat(e), "
 #: apt-private/private-output.cc
 #, c-format
 msgid "Downgrading: %lu, "
-msgstr ""
+msgstr "Se retrogradează: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2572,7 +2564,7 @@ msgstr "%lu de eliminat și %lu neactualizat(e).\n"
 #: apt-private/private-output.cc
 #, c-format
 msgid "Removing: %lu, Not Upgrading: %lu\n"
-msgstr ""
+msgstr "Se elimină: %lu, Nu se înnoiește: %lu\n"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -3839,7 +3831,7 @@ msgstr "*** Nu s-a putut face legătura între %s și %s"
 #: ftparchive/writer.cc
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
-msgstr " Limita de %sB a dezlegării a fost atinsă.\n"
+msgstr " Limita de %so a dezlegării a fost atinsă.\n"
 
 #: ftparchive/writer.cc
 msgid "Archive had no package field"
@@ -4185,12 +4177,12 @@ msgstr "Nu s-a putut invoca "
 #: methods/gpgv.cc
 #, c-format
 msgid "untrusted public key algorithm: %s"
-msgstr ""
+msgstr "algoritm de cheie publică nesigur (nu este de încredere): %s"
 
 #: methods/gpgv.cc
 #, c-format
 msgid "%s will be deprecated in a future release"
-msgstr ""
+msgstr "%s va fi depreciat într-o versiune viitoare"
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
@@ -4233,8 +4225,7 @@ msgstr ""
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
-#, fuzzy, c-format
-#| msgid "Signature by key %s uses weak digest algorithm (%s)"
+#, c-format
 msgid "Signature by key %s uses weak algorithm (%s)"
 msgstr ""
 "Semnătura cu cheia %s utilizează un algoritm de sumă de control slab (%s)"
