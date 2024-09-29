@@ -861,9 +861,10 @@ bool YnPrompt(char const * const Question, bool const Default, bool const ShowGl
 
    char response[1024] = "";
    std::cin.getline(response, sizeof(response));
-
    if (!std::cin)
       return false;
+   if (isatty(STDIN_FILENO) == 0)
+      c1o << response << '\n';
 
    if (strlen(response) == 0)
       return Default;
