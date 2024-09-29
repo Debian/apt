@@ -23,6 +23,7 @@
 #include <langinfo.h>
 #include <regex.h>
 #include <sys/ioctl.h>
+#include <termios.h>
 #include <unistd.h>
 
 #include <sstream>
@@ -808,6 +809,12 @@ bool YnPrompt(char const * const Question, bool const Default, bool const ShowGl
 	 _error->DumpErrors(c2o);
       else
 	 _error->DumpErrors(c2o, GlobalError::NOTICE);
+   }
+   // ignore pending input on terminal
+   if (not AssumeYes && not AssumeNo && isatty(STDIN_FILENO) == 1)
+   {
+      tcflush(STDIN_FILENO, TCIFLUSH);
+      std::cin.clear();
    }
 
    c2o << Question << std::flush;
