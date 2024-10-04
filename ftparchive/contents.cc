@@ -1,34 +1,20 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
-   contents - Archive contents generator
-   
-   The GenContents class is a back end for an archive contents generator. 
-   It takes a list of per-deb file name and merges it into a memory 
-   database of all previous output. This database is stored as a set
-   of binary trees linked across directories to form a tree of all files+dirs
-   given to it. The tree will also be sorted as it is built up thus 
-   removing the massive sort time overhead.
-   
-   By breaking all the pathnames into components and storing them 
-   separately a space saving is realized by not duplicating the string
-   over and over again. Ultimately this saving is sacrificed to storage of
-   the tree structure itself but the tree structure yields a speed gain
-   in the sorting and processing. Ultimately it takes about 5 seconds to
-   do 141000 nodes and about 5 meg of ram.
 
-   The tree looks something like:
-   
-     usr/
-      / \             / libslang
-   bin/ lib/ --> libc6
-        /   \         \ libfoo
-   games/  sbin/
-   
-   The ---> is the DirDown link
-   
-   
+   contents - Archive contents generator
+
+   The GenContents class is a back end for an archive contents generator.
+   It takes a list of per-deb file name and merges it into a memory
+   database of all previous output. This database is stored as a set of
+   pairs (path, package).
+
+   This may be very inefficient since it does duplicate all path components,
+   whereas most are shared. A previous implementation used a tree structure
+   with a binary tree for entries in a directory, which was significantly
+   more space-efficient but it did not do rebalancing and implementing custom
+   self-balancing trees here seems a waste of effort.
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -67,7 +53,7 @@ GenContents::~GenContents()
 // ---------------------------------------------------------------------
 /* This strdup also uses a large block allocator to eliminate glibc
    overhead */
-char *GenContents::Mystrdup(const char *From)
+GenContents::StringInBlock GenContents::Mystrdup(const char *From)
 {
    unsigned int Len = strlen(From) + 1;
    if (StrLeft <= Len)
@@ -88,112 +74,7 @@ char *GenContents::Mystrdup(const char *From)
    
    char *Res = StrPool;
    StrPool += Len;
-   return Res;
-}
-									/*}}}*/
-// GenContents::Node::operator new - Big block allocator		/*{{{*/
-// ---------------------------------------------------------------------
-/* This eliminates glibc's malloc overhead by allocating large blocks and
-   having a continuous set of Nodes. This takes about 8 bytes off each nodes
-   space needs. Freeing is not supported. */
-void *GenContents::Node::operator new(size_t Amount,GenContents *Owner)
-{
-   if (Owner->NodeLeft == 0)
-   {
-      Owner->NodeLeft = 10000;
-      Owner->NodePool = static_cast<Node *>(malloc(Amount*Owner->NodeLeft));
-      BigBlock *Block = new BigBlock;
-      Block->Block = Owner->NodePool;
-      Block->Next = Owner->BlockList;
-      Owner->BlockList = Block;
-   }
-   
-   Owner->NodeLeft--;
-   return Owner->NodePool++;
-}
-									/*}}}*/
-// GenContents::Grab - Grab a new node representing Name under Top	/*{{{*/
-// ---------------------------------------------------------------------
-/* This grabs a new node representing the pathname component Name under
-   the node Top. The node is given the name Package. It is assumed that Name
-   is inside of top. If a duplicate already entered name is found then 
-   a note is made on the Dup list and the previous in-tree node is returned. */
-GenContents::Node *GenContents::Grab(GenContents::Node *Top,const char *Name,
-			const char *Package)
-{
-   /* We drop down to the next dir level each call. This simplifies
-      the calling routine */
-   if (Top->DirDown == 0)
-   {
-      Node *Item = new(this) Node;
-      Item->Path = Mystrdup(Name);
-      Item->Package = Package;
-      Top->DirDown = Item;
-      return Item;
-   }
-   Top = Top->DirDown;
-   
-   int Res;
-   while (1)
-   {
-      Res = strcmp(Name,Top->Path);
-      
-      // Collision!
-      if (Res == 0)
-      {
-	 // See if this is the same package (multi-version dup)
-	 if (Top->Package == Package ||
-	     strcasecmp(Top->Package,Package) == 0)
-	    return Top;
-	 
-	 // Look for an already existing Dup
-	 for (Node *I = Top->Dups; I != 0; I = I->Dups)
-	    if (I->Package == Package || 
-		strcasecmp(I->Package,Package) == 0)
-	       return Top;
-
-	 // Add the dup in
-	 Node *Item = new(this) Node;
-	 Item->Path = Top->Path;
-	 Item->Package = Package;
-	 Item->Dups = Top->Dups;
-	 Top->Dups = Item;
-	 return Top;
-      }
-      
-      // Continue to traverse the tree
-      if (Res < 0)
-      {
-	 if (Top->BTreeLeft == 0)
-	    break;
-	 Top = Top->BTreeLeft;
-      }      
-      else
-      {
-	 if (Top->BTreeRight == 0)
-	    break;
-	 Top = Top->BTreeRight;
-      }      
-   }
-
-   // The item was not found in the tree
-   Node *Item = new(this) Node;
-   Item->Path = Mystrdup(Name);
-   Item->Package = Package;
-   
-   // Link it into the tree
-   if (Res < 0)
-   {
-      Item->BTreeLeft = Top->BTreeLeft;
-      Top->BTreeLeft = Item;
-   }
-   else
-   {
-      Item->BTreeRight = Top->BTreeRight;
-      Top->BTreeRight = Item;
-   }
-   
-   return Item;
+   return StringInBlock{Res};
 }
 									/*}}}*/
 // GenContents::Add - Add a path to the tree				/*{{{*/
@@ -201,40 +82,18 @@ GenContents::Node *GenContents::Grab(GenContents::Node *Top,const char *Name,
 /* This takes a full pathname and adds it into the tree. We split the
    pathname into directory fragments adding each one as we go. Technically
    in output from tar this should result in hitting previous items. */
-void GenContents::Add(const char *Dir,const char *Package)
+void GenContents::Add(const char *Dir, StringInBlock Package)
 {
-   Node *Root = &this->Root;
-   
+   // Do not add directories. We do not print out directories!
+   if (APT::String::Endswith(Dir, "/"))
+      return;
    // Drop leading slashes
    while (*Dir == '/')
       Dir++;
-   
-   // Run over the string and grab out each bit up to and including a /
-   const char *Start = Dir;
-   const char *I = Dir;
-   while (*I != 0)
-   {
-      if (*I != '/' || I - Start <= 1)
-      {
-	 I++;
-	 continue;
-      }      
-      I++;
-      
-      // Copy the path fragment over
-      char Tmp[1024];
-      strncpy(Tmp,Start,I - Start);
-      Tmp[I - Start] = 0;
-      
-      // Grab a node for it
-      Root = Grab(Root,Tmp,Package);
-      
-      Start = I;
-   }
-   
-   // The final component if it does not have a trailing /
-   if (I - Start >= 1)
-      Grab(Root,Start,Package);
+
+   // We used to add all parents directories here too, but we never printed
+   // them, so just add the file directly.
+   Entries.emplace(Mystrdup(Dir), Package);
 }
 									/*}}}*/
 // GenContents::WriteSpace - Write a given number of white space chars	/*{{{*/
@@ -263,46 +122,40 @@ void GenContents::WriteSpace(std::string &out, size_t Current, size_t Target)
    summed over all the directory parents of this node. */
 void GenContents::Print(FileFd &Out)
 {
-   char Buffer[1024];
-   Buffer[0] = 0;
-   DoPrint(Out,&Root,Buffer);
-}
-void GenContents::DoPrint(FileFd &Out,GenContents::Node *Top, char *Buf)
-{
-   if (Top == 0)
-      return;
-
-   // Go left
-   DoPrint(Out,Top->BTreeLeft,Buf);
-
-   // Print the current dir location and then descend to lower dirs
-   char *OldEnd = Buf + strlen(Buf);
-   if (Top->Path != 0)
+   const char *last = nullptr;
+   std::string line;
+   for (auto &entry : Entries)
    {
-      strcat(Buf,Top->Path);
-
-      // Do not show the item if it is a directory with dups
-      if (Top->Path[strlen(Top->Path)-1] != '/' /*|| Top->Dups == 0*/)
+      // Do not show the item if it is a directory
+      if (not APT::String::Endswith(entry.first.c_str(), "/"))
       {
-	 std::string out = Buf;
-	 WriteSpace(out, out.length(), 60);
-	 for (Node *I = Top; I != 0; I = I->Dups)
+	 // We are still appending to the same file path
+	 if (last != nullptr && strcmp(entry.first.c_str(), last) == 0)
 	 {
-	    if (I != Top)
-	       out.append(",");
-	    out.append(I->Package);
+	    line.append(",");
+	    line.append(entry.second.c_str());
+	    continue;
 	 }
-         out.append("\n");
-	 Out.Write(out.c_str(), out.length());
+	 // New file. If we saw a file before, write out its line
+	 if (last != nullptr)
+	 {
+	    line.append("\n", 1);
+	    Out.Write(line.data(), line.length());
+	 }
+
+	 // Append the package name, tab(s), and first to the line
+	 line.assign(entry.first.c_str());
+	 WriteSpace(line, line.length(), 60);
+	 line.append(entry.second.c_str());
+	 last = entry.first.c_str();
       }
    }
-
-   // Go along the directory link
-   DoPrint(Out,Top->DirDown,Buf);
-   *OldEnd = 0;
-
-   // Go right
-   DoPrint(Out,Top->BTreeRight,Buf);  
+   // Print the trailing line
+   if (last != nullptr)
+   {
+      line.append("\n", 1);
+      Out.Write(line.c_str(), line.length());
+   }
 }
 									/*}}}*/
 // ContentsExtract Constructor						/*{{{*/
@@ -398,7 +251,7 @@ bool ContentsExtract::TakeContents(const void *NewData,unsigned long long Length
 void ContentsExtract::Add(GenContents &Contents,std::string const &Package)
 {
    const char *Start = Data;
-   char *Pkg = Contents.Mystrdup(Package.c_str());
+   auto Pkg = Contents.Mystrdup(Package.c_str());
    for (const char *I = Data; I < Data + CurSize; I++)
    {
       if (*I == 0)
