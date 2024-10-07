@@ -72,7 +72,9 @@ char *GenContents::Mystrdup(const char *From)
    unsigned int Len = strlen(From) + 1;
    if (StrLeft <= Len)
    {
-      StrLeft = 4096*10;
+      StrLeft = 4 * 1024 * 1024;
+      if (unlikely(StrLeft <= Len))
+	 abort();
       StrPool = (char *)malloc(StrLeft);
       
       BigBlock *Block = new BigBlock;
