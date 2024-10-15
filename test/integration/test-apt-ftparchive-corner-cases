@@ -1,0 +1,48 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+createpkg() {
+	local PKG="pkg-$1"
+	mkdir -p ./incoming/$PKG/DEBIAN
+	if [ -n "$2" ]; then
+		echo -n "$2" >> ./incoming/$PKG/DEBIAN/control
+	fi
+	echo "Package: $PKG
+Version: 0
+Priority: extra
+Maintainer: No Body <no@example.org>
+Architecture: all
+Depends: foo:i386
+Description: test package" >> ./incoming/$PKG/DEBIAN/control
+	if [ -n "$3" ]; then
+		echo -n "$3" >> ./incoming/$PKG/DEBIAN/control
+	fi
+	testsuccess dpkg-deb --build ./incoming/$PKG/ ./incoming
+	#dpkg-deb -I ./incoming/${PKG}_0_all.deb control
+}
+
+msgmsg 'Test a deep tree'
+msgtest 'Test for succesfull execution of' 'mkdir -p <1024 times x/>'
+testsuccess --nomsg mkdir -p incoming/pkg-deep-tree/$(seq 1024 | sed s#.*#x# | tr '\n' '/')
+msgtest 'Test for succesfull execution of' 'touch <1024 times x/>/y'
+testsuccess --nomsg touch incoming/pkg-deep-tree/$(seq 1024 | sed s#.*#x# | tr '\n' '/')/y
+createpkg deep-tree
+
+testsuccessequal "$(seq 1024 | sed s#.*#x# | tr '\n' '/')y pkg-deep-tree" valgrind aptftparchive contents ./incoming/pkg-deep-tree_0_all.deb
+
+
+msgmsg 'Test many files in one directory'
+
+testsuccess mkdir -p incoming/pkg-many-files/usr/lib/many-files
+testsuccess sh -c 'for i in $(seq -w 4096); do touch incoming/pkg-many-files/usr/lib/many-files/$i; done'
+createpkg many-files
+
+# OMG, this formatting is annoying to implement
+testsuccessequal "$(seq -w 4096 | xargs -IA printf "usr/lib/many-files/%s\t\t\t\t\t    %s\n" "A" "pkg-many-files")" valgrind aptftparchive contents ./incoming/pkg-many-files_0_all.deb
+
