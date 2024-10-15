@@ -247,10 +247,13 @@ valgrind() {
 	*) CMD="$1";;
 	esac
 	shift
+	if [ "$CMD" = "apt-ftparchive" ]; then
+		CMD="${APTFTPARCHIVEBINDIR}/${CMD}"
+	fi
 	if [ "${CMD##*/}" = "$CMD" ]; then
 		CMD="${BUILDDIRECTORY}/${CMD}"
 	fi
-	runapt command valgrind "$CMD" "$@"
+	runapt command valgrind -q --error-exitcode=7 "$CMD" "$@"
 }
 
 lastmodification() {
