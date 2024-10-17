@@ -1,3 +1,17 @@
+apt (2.9.8ubuntu0.1) oracular; urgency=medium
+
+  * Fix buffer overflow, stack overflow, exponential complexity in
+    apt-ftparchive Contents generation (LP: #2083697)
+    - ftparchive: Mystrdup: Add safety check and bump buffer size
+    - ftparchive: contents: Avoid exponential complexity and overflows
+    - test framework: Improve valgrind support
+    - test: Check that apt-ftparchive handles deep paths
+  * Workaround valgrind "invalid read" in ExtractTar::Go on ppc64el caught
+    by the new test cases. The fix should have zero effect, but it works!
+  * debian/gbp.conf: Point at oracular branch
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Fri, 18 Oct 2024 13:15:34 +0200
+
 apt (2.9.8) unstable; urgency=medium
 
   [ Aristo Chen ]
