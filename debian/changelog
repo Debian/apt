@@ -1,3 +1,22 @@
+apt (2.9.9) unstable; urgency=medium
+
+  [ Chongyun Lee ]
+  * Fix compilation error with clang/libc++ 18
+
+  [ Julian Andres Klode ]
+  * Implement 'Pin: source-version <foo>'
+  * Fix buffer overflow, stack overflow, exponential complexity in
+    apt-ftparchive Contents generation (LP: #2083697)
+    - ftparchive: Mystrdup: Add safety check and bump buffer size
+    - ftparchive: contents: Avoid exponential complexity and overflows
+    - test framework: Improve valgrind support
+    - test: Check that apt-ftparchive handles deep paths
+
+  [ Remus-Gabriel Chelu ]
+  * Romanian program translation update (Closes: #1080210)
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 17 Oct 2024 09:41:18 +0200
+
 apt (2.9.8) unstable; urgency=medium
 
   [ Aristo Chen ]
