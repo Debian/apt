@@ -147,8 +147,23 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 return _error->Error(_("Corrupted archive"));
       
       /* Compute the checksum field. The actual checksum is blanked out
-         with spaces so it is not included in the computation */
-      unsigned long NewSum = 0;
+         with spaces so it is not included in the computation.
+
+         We would want this to be unsigned long like CheckSum above, but
+         the maximum is 255*512=130560 so we can use unsafe int instead;
+         with unsigned long here, and the following vectorization of the
+         code on ppp64el we get reads beyond the end of the 32KiB buffer
+         that is allocated further down below for reading file contents.
+
+         We could also fix this by reducing the buffer size down below,
+         but it stands to reason that changing the buffer size to 16KiB
+         would have more profound performance changes than missing the
+         vectorization here.
+
+         At this point it seems likely that valgrind just cannot handle
+         the vector instructions gcc generates correctly and issues a
+         false "invalid read" as it trashes its stack a bit or something. */
+      unsigned int NewSum = 0;
       memset(Tar->Checksum,' ',sizeof(Tar->Checksum));
       for (int I = 0; I != sizeof(Block); I++)
 	 NewSum += Block[I];
