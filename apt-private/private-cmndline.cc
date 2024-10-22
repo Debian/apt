@@ -353,6 +353,8 @@ static bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * c
       addArg(0,"manual-installed","APT::Cmd::Manual-Installed",0);
       addArg('v', "verbose", "APT::Cmd::List-Include-Summary", 0);
       addArg('a', "all-versions", "APT::Cmd::All-Versions", 0);
+      addArg('t', "target-release", "APT::Default-Release", CommandLine::HasArg);
+      addArg('t', "default-release", "APT::Default-Release", CommandLine::HasArg);
       addArg('S', "snapshot", "APT::Snapshot", CommandLine::HasArg);
    }
    else if (CmdMatches("show") || CmdMatches("info"))
