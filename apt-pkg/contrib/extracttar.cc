@@ -25,7 +25,9 @@
 #include <apt-pkg/strutl.h>
 
 #include <algorithm>
+#include <array>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <fcntl.h>
 #include <signal.h>
@@ -130,6 +132,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
    // Loop over all blocks
    string LastLongLink, ItemLink;
    string LastLongName, ItemName;
+   auto Junk = std::make_unique<std::array<unsigned char, 32*1024>>();
    while (1)
    {
       bool BadRecord = false;      
@@ -290,22 +293,21 @@ bool ExtractTar::Go(pkgDirStream &Stream)
       {
 	 // Copy the file over the FD
 	 auto Size = Itm.Size;
-	 unsigned char Junk[32*1024];
 	 do
 	 {
-	    auto const Read = std::min<unsigned long long>(Size, sizeof(Junk));
-	    if (not InFd.Read(Junk, ((Read + (sizeof(Block) - 1)) / sizeof(Block)) * sizeof(Block)))
+	    auto const Read = std::min<unsigned long long>(Size, Junk->size());
+	    if (not InFd.Read(Junk->data(), ((Read + (sizeof(Block) - 1)) / sizeof(Block)) * sizeof(Block)))
 	       return false;
 
 	    if (Fd > 0)
 	    {
-	       if (not FileFd::Write(Fd, Junk, Read))
+	       if (not FileFd::Write(Fd, Junk->data(), Read))
 		  return Stream.Fail(Itm, Fd);
 	    }
 	    // An Fd of -2 means to send to a special processing function
 	    else if (Fd == -2)
 	    {
-	       if (not Stream.Process(Itm, Junk, Read, Itm.Size - Size))
+	       if (not Stream.Process(Itm, Junk->data(), Read, Itm.Size - Size))
 		  return Stream.Fail(Itm, Fd);
 	    }
 
