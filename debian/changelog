@@ -1,3 +1,19 @@
+apt (2.4.14) jammy; urgency=medium
+
+  * Fix buffer overflow, stack overflow, exponential complexity in
+    apt-ftparchive Contents generation (LP: #2083697)
+    - ftparchive: Mystrdup: Add safety check and bump buffer size
+    - ftparchive: contents: Avoid exponential complexity and overflows
+    - test framework: Improve valgrind support
+    - test: Check that apt-ftparchive handles deep paths
+    - increase valgrind cleanliness to make the tests pass
+      - pkgcachegen: Use placement new to construct header
+      - Workaround valgrind "invalid read" in ExtractTar::Go by moving large
+        buffer from stack to heap. The large buffer triggered some bugs in
+        valgrind stack clash protection handling.
+
+ -- Julian Andres Klode <juliank@ubuntu.com>  Tue, 22 Oct 2024 15:09:58 +0200
+
 apt (2.4.13) jammy; urgency=medium
 
   * Fix keeping back removals of obsolete packages (LP: #2078720)
