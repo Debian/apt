@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-10-17 09:41+0200\n"
+"POT-Creation-Date: 2024-10-22 16:47+0000\n"
 "PO-Revision-Date: 2023-09-11 20:47+0100\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <>\n"
@@ -3580,6 +3580,13 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-mark.8.xml
+#, fuzzy
+#| msgid "&apt-get; &apt-cache; &apt-conf; &sources-list;"
+msgid "&apt-get;, &aptitude;, &apt-conf;"
+msgstr "&apt-get; &apt-cache; &apt-conf; &sources-list;"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt-mark.8.xml
 msgid ""
 "<command>apt-mark</command> returns zero on normal operation, non-zero on "
 "error."
@@ -4007,11 +4014,11 @@ msgstr ""
 #: apt-secure.8.xml
 msgid ""
 "For more background information you might want to review the <ulink "
-"url=\"https://www.debian.org/doc/manuals/securing-debian-manual/ch07\">Debian "
-"Security Infrastructure</ulink> chapter of the Securing Debian Manual (also "
-"available in the harden-doc package) and the <ulink url=\"http://www."
-"cryptnet.net/fdp/crypto/strong_distro.html\" >Strong Distribution HOWTO</"
-"ulink> by V. Alex Brennen."
+"url=\"https://www.debian.org/doc/manuals/securing-debian-manual/"
+"ch07\">Debian Security Infrastructure</ulink> chapter of the Securing Debian "
+"Manual (also available in the harden-doc package) and the <ulink "
+"url=\"http://www.cryptnet.net/fdp/crypto/strong_distro.html\" >Strong "
+"Distribution HOWTO</ulink> by V. Alex Brennen."
 msgstr ""
 "Para mais informação de fundo você deve querer reler a <ulink url=\"https://"
 "www.debian.org/doc/manuals/securing-debian-manual/ch07\">Infraestrutura de "
@@ -12332,6 +12339,20 @@ msgstr "<code>~DSuggests:PATTERN</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>?depends(PATTERN)</code>"
+msgid "<code>?recommends(PATTERN)</code>"
+msgstr "<code>?depends(PATTERN)</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
+#, fuzzy
+#| msgid "<code>~DReplaces:PATTERN</code>"
+msgid "<code>~DRecommends:PATTERN</code>"
+msgstr "<code>~DReplaces:PATTERN</code>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
+#: apt-patterns.7.xml
 msgid "<code>?conflicts(PATTERN)</code>"
 msgstr "<code>?conflicts(PATTERN)</code>"
 
@@ -12382,9 +12403,13 @@ msgstr "<code>~DEnhances:PATTERN</code>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-patterns.7.xml
+#, fuzzy
+#| msgid ""
+#| "Selects versions depending/pre-depending/suggesting/conflicting/etc on/"
+#| "with/ packages matching PATTERN."
 msgid ""
-"Selects versions depending/pre-depending/suggesting/conflicting/etc on/with/ "
-"packages matching PATTERN."
+"Selects versions depending/pre-depending/suggesting/recommending/conflicting/"
+"etc on/with/ packages matching PATTERN."
 msgstr ""
 "Seleciona versões que dependem/pré-dependem/sugerem/entram em conflito/etc "
 "de/com pacotes que correspondem ao padrão PATTERN."
