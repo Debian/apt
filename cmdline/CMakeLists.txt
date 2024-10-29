@@ -46,10 +46,9 @@ set_target_properties(apt-internal-planner
 
 # Install the executables
 install(TARGETS apt apt-cache apt-get apt-config apt-cdrom apt-mark apt-sortpkgs
-                apt-extracttemplates
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-install(TARGETS apt-helper RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/apt/)
+install(TARGETS apt-helper apt-extracttemplates RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/apt/)
 install(TARGETS apt-dump-solver apt-internal-solver RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/apt/solvers)
 install(TARGETS apt-internal-planner RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/apt/planners)
 
