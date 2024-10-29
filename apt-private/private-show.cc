@@ -221,6 +221,10 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgRecords &Recs, /*{{{*/
    // Check and load the package list file
    pkgCache::PkgFileIterator I = Vf.File();
 
+   // Extract the policy object for use later
+   pkgDepCache::Policy *Policy = CacheFile.GetPolicy();
+   if (Policy == nullptr)
+      return false;
    // find matching sources.list metaindex
    pkgSourceList *SrcList = CacheFile.GetSourceList();
    pkgIndexFile *Index;
@@ -283,6 +287,14 @@ static bool DisplayRecordV2(pkgCacheFile &CacheFile, pkgRecords &Recs, /*{{{*/
    if (manual_installed != nullptr)
       RW.push_back(pkgTagSection::Tag::Rewrite("APT-Manual-Installed", manual_installed));
    RW.push_back(pkgTagSection::Tag::Rewrite("APT-Sources", source_index_file));
+   if (_config->FindB("APT::Cache::ShowFull", false))
+   {
+      RW.push_back(pkgTagSection::Tag::Rewrite("APT-Pin", std::to_string(Policy->GetPriority(V))));
+      if (Policy->GetCandidateVer(V.ParentPkg()) == V)
+	 RW.push_back(pkgTagSection::Tag::Rewrite("APT-Candidate", "yes"));
+      if (auto Release = I.RelStr(); not I.Flagged(pkgCache::Flag::NotSource) && not Release.empty())
+	 RW.push_back(pkgTagSection::Tag::Rewrite("APT-Release", Release));
+   }
 
    FileFd stdoutfd;
    if (stdoutfd.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly, false) == false ||
