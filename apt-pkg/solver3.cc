@@ -351,9 +351,17 @@ bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Var reason, Group group)
       return false;
 
    bool anyInstallable = false;
+   // Insert the work item.
+   Work workItem{Var(Pkg), depth(), group};
    for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
-      if ((*this)[ver].decision != Decision::MUSTNOT)
-	 anyInstallable = true;
+   {
+      if (IsAllowedVersion(ver))
+      {
+	 workItem.solutions.push_back(ver);
+	 if ((*this)[ver].decision != Decision::MUSTNOT)
+	    anyInstallable = true;
+      }
+   }
 
    if (not anyInstallable)
    {
@@ -364,11 +372,6 @@ bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Var reason, Group group)
       return false;
    }
 
-   // Insert the work item.
-   Work workItem{Var(Pkg), depth(), group};
-   for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
-      if (IsAllowedVersion(ver))
-	 workItem.solutions.push_back(ver);
    std::stable_sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, Pkg, *this});
    assert(workItem.solutions.size() > 0);
 
