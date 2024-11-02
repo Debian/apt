@@ -1995,7 +1995,7 @@ class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {		/*{{{*/
    struct LZMAFILE {
       FILE* file;
       FileFd * const filefd;
-      uint8_t buffer[4096];
+      uint8_t buffer[APT_BUFFER_SIZE];
       lzma_stream stream;
       lzma_ret err;
       bool eof;
