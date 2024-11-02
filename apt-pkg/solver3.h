@@ -133,6 +133,9 @@ class Solver
    // queue to be concerned about
    std::vector<Solved> solved{};
 
+   // \brief Propagation queue
+   std::queue<Var> propQ;
+
    // \brief Current decision level.
    //
    // This is an index into the solved vector.
@@ -156,6 +159,8 @@ class Solver
    bool RejectReverseDependencies(pkgCache::VerIterator Ver);
    // \brief Enqueue a single or group
    bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
+   // \brief Propagate all pending propagations
+   bool Propagate();
    // \brief Propagate a "true" value of a variable
    bool PropagateInstall(Var var);
    // \brief Propagate a rejection of a variable
