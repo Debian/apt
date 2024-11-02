@@ -329,9 +329,6 @@ bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
       return true;
    }
 
-   if (auto Ver = var.Ver(cache); !Ver.end() && decision && unlikely(debug >= 1))
-      assert(IsAllowedVersion(Ver));
-
    state.decision = decisionCast;
    state.depth = depth();
    state.reason = reason;
@@ -369,12 +366,9 @@ bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Var reason, Group group)
    Work workItem{Var(Pkg), depth(), group};
    for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
    {
-      if (IsAllowedVersion(ver))
-      {
-	 workItem.solutions.push_back(ver);
-	 if ((*this)[ver].decision != Decision::MUSTNOT)
-	    anyInstallable = true;
-      }
+      workItem.solutions.push_back(ver);
+      if ((*this)[ver].decision != Decision::MUSTNOT)
+	 anyInstallable = true;
    }
 
    if (not anyInstallable)
@@ -535,8 +529,7 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 	 {
 	    if (unlikely(debug >= 3))
 	       std::cerr << "Adding work to  item " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " -> " << tgti.ParentPkg().FullName() << "=" << tgti.VerStr() << "\n";
-	    if (IsAllowedVersion(*tgt))
-	       workItem.solutions.push_back(*tgt);
+	    workItem.solutions.push_back(*tgt);
 	 }
       }
       delete[] all;
@@ -572,7 +565,7 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 	    newOptional = false, wasImportant = policy.IsImportantDep(D);
 
       bool satisfied = std::any_of(workItem.solutions.begin(), workItem.solutions.end(), [this](auto ver)
-				   { return pkgCache::VerIterator(cache, ver).ParentPkg()->CurrentVer != 0; });
+				   { return pkgCache::VerIterator(cache, ver).ParentPkg().CurrentVer() == ver; });
 
       if (important && wasImportant && not newOptional && not satisfied)
       {
@@ -694,17 +687,6 @@ bool APT::Solver::RejectReverseDependencies(pkgCache::VerIterator Ver)
 	 return false;
    }
    return true;
-}
-
-bool APT::Solver::IsAllowedVersion(pkgCache::Version *V)
-{
-   pkgCache::VerIterator ver(cache, V);
-   if (not StrictPinning || ver.ParentPkg().CurrentVer() == ver || policy.GetCandidateVer(ver.ParentPkg()) == ver || (*this)[V].decision == Decision::MUST)
-      return true;
-
-   if (unlikely(debug >= 3))
-      std::cerr << "Ignoring: " << ver.ParentPkg().FullName() << "=" << ver.VerStr() << "(neither candidate nor installed)\n";
-   return false;
 }
 
 void APT::Solver::Push(Work work)
@@ -943,6 +925,18 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
    bool AllowRemoveManual = AllowRemove && _config->FindB("APT::Solver::RemoveManual", false);
    DefaultRootSetFunc2 rootSet(&cache);
 
+   // Enforce strict pinning rules by rejecting all forbidden versions.
+   if (StrictPinning)
+   {
+      for (auto P = cache.PkgBegin(); not P.end(); P++)
+      {
+	 for (auto V = P.VersionList(); not V.end(); ++V)
+	    if (P.CurrentVer() != V && depcache.GetCandidateVersion(P) != V)
+	       if (not Enqueue(Var(V), false, {}))
+		  return false;
+      }
+   }
+
    for (auto P = cache.PkgBegin(); not P.end(); P++)
    {
       if (P->VersionList == nullptr)
@@ -997,8 +991,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 {
 	    Work w{Var(), depth(), Group, isOptional, Upgrade};
 	    for (auto V = P.VersionList(); not V.end(); ++V)
-	       if (IsAllowedVersion(V))
-		  w.solutions.push_back(V);
+	       w.solutions.push_back(V);
 	    std::stable_sort(w.solutions.begin(), w.solutions.end(), CompareProviders3{cache, policy, P, *this});
 	    AddWork(std::move(w));
 	 }

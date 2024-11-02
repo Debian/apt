@@ -157,8 +157,6 @@ class Solver
    bool PropagateInstall(Var var);
    // \brief Propagate a rejection of a variable
    bool PropagateReject(Var var);
-   // \brief Check if a version is allowed by policy.
-   bool IsAllowedVersion(pkgCache::Version *V);
 
    // \brief Return the current depth (choices.size() with casting)
    depth_type depth()

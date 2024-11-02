@@ -95,7 +95,7 @@ Inst coolstuff-provided (1.0-1 unstable [all])
 Conf extrastuff (1.0-1 unstable [all])
 Conf coolstuff-provided (1.0-1 unstable [all])' aptget install coolstuff-provided -s
 
-testfailuremsg 'E: Unsatisfiable dependency group coolstuff-provided-broken:i386=1.0-1 -> cool2:i386' aptget install coolstuff-provided-broken --solver 3.0 -s
+testfailuremsg 'E: Conflict: coolstuff-provided-broken:i386=1.0-1 -> extrastuff:i386=1.0-1 but not extrastuff:i386=1.0-1' aptget install coolstuff-provided-broken --solver 3.0 -s
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
