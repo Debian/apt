@@ -352,52 +352,40 @@ bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
    return true;
 }
 
-bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Var reason, Group group)
-{
-   if ((*this)[Pkg].decision == Decision::MUST)
-      return true;
-
-   // Note decision
-   if (not Enqueue(Var(Pkg), true, reason))
-      return false;
-
-   bool anyInstallable = false;
-   // Insert the work item.
-   Work workItem{Var(Pkg), depth(), group};
-   for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
-   {
-      workItem.solutions.push_back(ver);
-      if ((*this)[ver].decision != Decision::MUSTNOT)
-	 anyInstallable = true;
-   }
-
-   if (not anyInstallable)
-   {
-      _error->Error("Conflict: %s -> %s but no versions are installable",
-		    WhyStr(reason).c_str(), Pkg.FullName().c_str());
-      for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
-	 _error->Error("Uninstallable version: %s", WhyStr(Var(ver)).c_str());
-      return false;
-   }
-
-   std::stable_sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, Pkg, *this});
-   assert(workItem.solutions.size() > 0);
-
-   if (workItem.solutions.size() > 1 || workItem.optional)
-      AddWork(std::move(workItem));
-   else if (not Enqueue(Var(pkgCache::VerIterator(cache, workItem.solutions[0])), true, workItem.reason))
-      return false;
-
-   if (not EnqueueCommonDependencies(Pkg))
-      return false;
-
-   return true;
-}
-
 bool APT::Solver::PropagateInstall(Var var)
 {
    if (auto Pkg = var.Pkg(cache); not Pkg.end())
    {
+      bool anyInstallable = false;
+
+      // Insert the work item.
+      Work workItem{Var(Pkg), depth(), Group::SelectVersion};
+      for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
+      {
+	 workItem.solutions.push_back(ver);
+	 if ((*this)[ver].decision != Decision::MUSTNOT)
+	    anyInstallable = true;
+      }
+
+      if (not anyInstallable)
+      {
+	 _error->Error("Conflict: %s -> %s but no versions are installable",
+		       WhyStr((*this)[Pkg].reason).c_str(), Pkg.FullName().c_str());
+	 for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
+	    _error->Error("Uninstallable version: %s", WhyStr(Var(ver)).c_str());
+	 return false;
+      }
+
+      std::stable_sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, Pkg, *this});
+      assert(workItem.solutions.size() > 0);
+
+      if (workItem.solutions.size() > 1 || workItem.optional)
+	 AddWork(std::move(workItem));
+      else if (not Enqueue(Var(pkgCache::VerIterator(cache, workItem.solutions[0])), true, workItem.reason))
+	 return false;
+
+      if (not EnqueueCommonDependencies(Pkg))
+	 return false;
    }
    else if (auto Ver = var.Ver(cache); not Ver.end())
    {
@@ -894,7 +882,7 @@ bool APT::Solver::Solve()
 	 }
 	 if (unlikely(debug >= 3))
 	    std::cerr << "(try it: " << ver.ParentPkg().FullName() << "=" << ver.VerStr() << ")\n";
-	 if (not Enqueue(Var(pkgCache::VerIterator(cache, ver)), true, item.reason) && not Pop())
+	 if (not Enqueue(Var(ver), true, item.reason) && not Pop())
 	    return false;
 	 foundSolution = true;
 	 break;
@@ -984,7 +972,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 if (not isOptional)
 	 {
 	    // Pre-empt the non-optional requests, as we don't want to queue them, we can just "unit propagate" here.
-	    if (depcache[P].Keep() ? not Install(P, {}, Group) : not Enqueue(Var(depcache.GetCandidateVersion(P)), true, {}))
+	    if (depcache[P].Keep() ? not Enqueue(Var(P), true, {}) : not Enqueue(Var(depcache.GetCandidateVersion(P)), true, {}))
 	       return false;
 	 }
 	 else
