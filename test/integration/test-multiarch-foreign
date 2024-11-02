@@ -179,7 +179,7 @@ distribution that some required packages have not yet been created
 or been moved out of Incoming.
 The following information may help to resolve the situation:
 '
-	testfailuremsg "E: Conflict:  -> ${1%:*}:$4=1.0 but hates-foo:amd64=1.0 -> not ${1%:*}:$4=1.0"  aptget install $1 hates-foo -s --solver 3.0
+	testfailuremsg "E: Conflict: hates-foo:amd64=1.0 -> not ${1%:*}:$4=1.0 but ${1%:*}:$4=1.0"  aptget install $1 hates-foo -s --solver 3.0
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  hates-foo : Conflicts: foo

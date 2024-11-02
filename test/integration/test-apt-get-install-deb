@@ -32,7 +32,7 @@ done
 
 buildsimplenativepackage 'foo' 'i386,amd64' '1.0'
 
-testfailuremsg "E: Conflict:  -> foo:amd64=1.0 but foo:i386=1.0 -> not foo:amd64=1.0" aptget install ./incoming/foo_1.0_i386.deb ./incoming/foo_1.0_amd64.deb -s --solver 3.0
+testfailuremsg "E: Conflict: foo:i386=1.0 -> not foo:amd64=1.0 but foo:amd64=1.0" aptget install ./incoming/foo_1.0_i386.deb ./incoming/foo_1.0_amd64.deb -s --solver 3.0
 testfailureequal "Reading package lists...
 Building dependency tree...
 Note, selecting 'foo:i386' instead of './incoming/foo_1.0_i386.deb'
