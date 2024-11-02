@@ -153,6 +153,8 @@ class Solver
    bool RejectReverseDependencies(pkgCache::VerIterator Ver);
    // \brief Enqueue a single or group
    bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
+   // \brief Propagate a "true" value of a variable
+   bool PropagateInstall(Var var);
    // \brief Propagate a rejection of a variable
    bool PropagateReject(Var var);
    // \brief Check if a version is allowed by policy.
@@ -186,8 +188,6 @@ class Solver
 
    // \brief Mark the package for install. This is annoying as it incurs a decision
    bool Install(pkgCache::PkgIterator Pkg, Var reason, Group group);
-   // \brief Install a version.
-   bool Install(pkgCache::VerIterator Ver, Var reason, Group group);
 
    // \brief Apply the selections from the dep cache to the solver
    bool FromDepCache(pkgDepCache &depcache);

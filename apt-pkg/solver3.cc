@@ -322,6 +322,9 @@ bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
       return true;
    }
 
+   if (auto Ver = var.Ver(cache); !Ver.end() && decision && unlikely(debug >= 1))
+      assert(IsAllowedVersion(Ver));
+
    state.decision = decisionCast;
    state.depth = depth();
    state.reason = reason;
@@ -337,7 +340,11 @@ bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
 	 return false;
       needsRescore = true;
    }
-
+   else
+   {
+      if (not PropagateInstall(var))
+	 return false;
+   }
    return true;
 }
 
@@ -377,7 +384,7 @@ bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Var reason, Group group)
 
    if (workItem.solutions.size() > 1 || workItem.optional)
       AddWork(std::move(workItem));
-   else if (not Install(pkgCache::VerIterator(cache, workItem.solutions[0]), workItem.reason, group))
+   else if (not Enqueue(Var(pkgCache::VerIterator(cache, workItem.solutions[0])), true, workItem.reason))
       return false;
 
    if (not EnqueueCommonDependencies(Pkg))
@@ -386,35 +393,32 @@ bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Var reason, Group group)
    return true;
 }
 
-bool APT::Solver::Install(pkgCache::VerIterator Ver, Var reason, Group group)
+bool APT::Solver::PropagateInstall(Var var)
 {
-   if ((*this)[Ver].decision == Decision::MUST)
-      return true;
-
-   if (unlikely(debug >= 1))
-      assert(IsAllowedVersion(Ver));
-
-   // Note decision
-   if (not Enqueue(Var(Ver), true, reason))
-      return false;
-   if (not Enqueue(Var(Ver.ParentPkg()), true, Var(Ver)))
-      return false;
-
-   for (auto OV = Ver.ParentPkg().VersionList(); not OV.end(); ++OV)
+   if (auto Pkg = var.Pkg(cache); not Pkg.end())
    {
-      if (OV != Ver && not Enqueue(Var(OV), false, Var(Ver)))
-	 return false;
    }
-
-   for (auto dep = Ver.DependsList(); not dep.end();)
+   else if (auto Ver = var.Ver(cache); not Ver.end())
    {
-      // Compute a single dependency element (glob or)
-      pkgCache::DepIterator start;
-      pkgCache::DepIterator end;
-      dep.GlobOr(start, end); // advances dep
-
-      if (not EnqueueOrGroup(start, end, Var(Ver)))
+      if (not Enqueue(Var(Ver.ParentPkg()), true, Var(Ver)))
 	 return false;
+
+      for (auto OV = Ver.ParentPkg().VersionList(); not OV.end(); ++OV)
+      {
+	 if (OV != Ver && not Enqueue(Var(OV), false, Var(Ver)))
+	    return false;
+      }
+
+      for (auto dep = Ver.DependsList(); not dep.end();)
+      {
+	 // Compute a single dependency element (glob or)
+	 pkgCache::DepIterator start;
+	 pkgCache::DepIterator end;
+	 dep.GlobOr(start, end); // advances dep
+
+	 if (not EnqueueOrGroup(start, end, Var(Ver)))
+	    return false;
+      }
    }
 
    return true;
@@ -608,7 +612,7 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
       }
       if (workItem.optional || workItem.solutions.size() > 1)
 	 AddWork(std::move(workItem));
-      else if (not Install(pkgCache::VerIterator(cache, workItem.solutions[0]), reason, workItem.group))
+      else if (not Enqueue(Var(pkgCache::VerIterator(cache, workItem.solutions[0])), true, reason))
 	 return false;
    }
    else if (start.IsCritical() && not start.IsNegative())
@@ -901,7 +905,7 @@ bool APT::Solver::Solve()
 	 }
 	 if (unlikely(debug >= 3))
 	    std::cerr << "(try it: " << ver.ParentPkg().FullName() << "=" << ver.VerStr() << ")\n";
-	 if (not Install(pkgCache::VerIterator(cache, ver), item.reason, Group::Satisfy) && not Pop())
+	 if (not Enqueue(Var(pkgCache::VerIterator(cache, ver)), true, item.reason) && not Pop())
 	    return false;
 	 foundSolution = true;
 	 break;
@@ -942,7 +946,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
       {
 	 if (unlikely(debug >= 1))
 	    std::cerr << "Hold " << P.FullName() << "\n";
-	 if (P->CurrentVer ? not Install(P.CurrentVer(), {}, Group::HoldOrDelete) : not Enqueue(Var(P), false, Var()))
+	 if (P->CurrentVer ? not Enqueue(Var(P.CurrentVer()), true, {}) : not Enqueue(Var(P), false, Var()))
 	    return false;
       }
       else if (state.Delete()						  // Normal delete request.
@@ -979,7 +983,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 if (not isOptional)
 	 {
 	    // Pre-empt the non-optional requests, as we don't want to queue them, we can just "unit propagate" here.
-	    if (depcache[P].Keep() ? not Install(P, {}, Group) : not Install(depcache.GetCandidateVersion(P), {}, Group))
+	    if (depcache[P].Keep() ? not Install(P, {}, Group) : not Enqueue(Var(depcache.GetCandidateVersion(P)), true, {}))
 	       return false;
 	 }
 	 else
