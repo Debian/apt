@@ -685,7 +685,7 @@ bool APT::Solver::RejectReverseDependencies(pkgCache::VerIterator Ver)
 bool APT::Solver::IsAllowedVersion(pkgCache::Version *V)
 {
    pkgCache::VerIterator ver(cache, V);
-   if (not StrictPinning || ver.ParentPkg().CurrentVer() == ver || policy.GetCandidateVer(ver.ParentPkg()) == ver)
+   if (not StrictPinning || ver.ParentPkg().CurrentVer() == ver || policy.GetCandidateVer(ver.ParentPkg()) == ver || (*this)[V].decision == Decision::MUST)
       return true;
 
    if (unlikely(debug >= 3))
