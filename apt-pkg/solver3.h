@@ -56,6 +56,9 @@ class Solver
       // try it last.
       SatisfyObsolete,
 
+      // Select a version of a package chosen for install.
+      SelectVersion,
+
       // My intuition tells me that we should try to schedule upgrades first, then
       // any non-obsolete installed packages, and only finally obsolete ones, such
       // that newer packages guide resolution of dependencies for older ones, they
@@ -182,9 +185,6 @@ class Solver
    bool Assume(Var var, bool decision, Var reason);
    // Enqueue a decision fact
    bool Enqueue(Var var, bool decision, Var reason);
-
-   // \brief Mark the package for install. This is annoying as it incurs a decision
-   bool Install(pkgCache::PkgIterator Pkg, Var reason, Group group);
 
    // \brief Apply the selections from the dep cache to the solver
    bool FromDepCache(pkgDepCache &depcache);
