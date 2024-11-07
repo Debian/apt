@@ -1246,7 +1246,7 @@ public:
    }
    virtual bool InternalSkip(unsigned long long Over)
    {
-      unsigned long long constexpr buffersize = 1024;
+      unsigned long long constexpr buffersize = APT_BUFFER_SIZE;
       char buffer[buffersize];
       while (Over != 0)
       {
@@ -1273,11 +1273,10 @@ public:
    {
       unsigned long long size = 0;
       unsigned long long const oldSeek = filefd->Tell();
-      unsigned long long constexpr ignoresize = 1024;
-      char ignore[ignoresize];
+      char ignore[APT_BUFFER_SIZE];
       unsigned long long read = 0;
       do {
-	 if (filefd->Read(ignore, ignoresize, &read) == false)
+	 if (filefd->Read(ignore, sizeof(ignore), &read) == false)
 	 {
 	    filefd->Seek(oldSeek);
 	    return 0;

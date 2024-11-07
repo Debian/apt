@@ -357,7 +357,7 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
 
    // Copy loop
    unsigned long long MyLen = Resume;
-   unsigned char Buffer[4096];
+   unsigned char Buffer[APT_BUFFER_SIZE];
    while (MyLen < Size)
    {
       // Wait for some data..

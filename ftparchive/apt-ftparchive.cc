@@ -387,7 +387,7 @@ bool PackageMap::GenContents(Configuration &Setup,
 	 return false;
 
       unsigned long long Size = Head.Size();
-      unsigned char Buf[4096];
+      unsigned char Buf[APT_BUFFER_SIZE];
       while (Size != 0)
       {
 	 unsigned long long ToRead = Size;
