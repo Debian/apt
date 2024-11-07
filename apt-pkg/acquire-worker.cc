@@ -98,8 +98,6 @@ bool pkgAcquire::Worker::Start()
    std::string Method;
    if (_config->Exists(confItem))
 	 Method = _config->FindFile(confItem.c_str());
-   else if (Access == "ftp" || Access == "rsh" || Access == "ssh")
-      return _error->Error(_("The method '%s' is unsupported and disabled by default. Consider switching to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."), Access.c_str(), Access.c_str(), Access.c_str());
    else
 	 Method = _config->FindDir(methodsDir) + Access;
    if (FileExists(Method) == false)
