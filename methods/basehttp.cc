@@ -263,6 +263,21 @@ bool RequestState::HeaderLine(string const &Line)			/*{{{*/
       return true;
    }
 
+   if (stringcasecmp(Tag, "Retry-After:") == 0)
+   {
+      unsigned long _retry_after_s;
+      if (RFC1123StrToTime(Val, RetryAfter))
+      {
+	 return true;
+      }
+      if (StrToNum(Val.c_str(), _retry_after_s, 4, 10) == 1)
+      {
+	 RetryAfter = time(nullptr) + _retry_after_s;
+	 return true;
+      }
+      return _error->Error(_("Unknown date format"));
+   }
+
    if (Server->RangesAllowed && stringcasecmp(Tag, "Via:") == 0)
    {
       auto const parts = VectorizeString(Val, ' ');
@@ -884,7 +899,19 @@ int BaseHttpMethod::Loop()
 	       599, // Network Connect Timeout Error
 	    };
 	    if (std::find(std::begin(TransientCodes), std::end(TransientCodes), Req.Result) != std::end(TransientCodes))
-	       Fail(true);
+	    {
+	       if (Req.RetryAfter)
+	       {
+		  std::unordered_map<std::string, std::string> fields;
+		  fields["Retry-After"] = std::to_string(Req.RetryAfter);
+		  SetFailReason("TooManyRequests");
+		  FailWithContext(std::string("TooManyRequests"), true, fields);
+	       }
+	       else
+	       {
+		  Fail(true);
+	       }
+	    }
 	    else
 	       Fail();
 	    break;

@@ -57,6 +57,7 @@ struct RequestState
    enum {Chunked,Stream,Closes} Encoding = Closes;
    enum {Header, Data} State = Header;
    std::string Location;
+   time_t RetryAfter = 0;
 
    FileFd File;
 

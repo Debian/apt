@@ -145,9 +145,15 @@ void pkgAcqMethod::Fail(bool Transient)
 
    Fail("", Transient);
 }
+
+void pkgAcqMethod::Fail(std::string Err, bool Tansient)
+{
+   std::unordered_map<std::string, std::string> fields;
+   FailWithContext(Err, Tansient, fields);
+}
 									/*}}}*/
 // AcqMethod::Fail - A fetch has failed					/*{{{*/
-void pkgAcqMethod::Fail(string Err, bool Transient)
+void pkgAcqMethod::FailWithContext(std::string Err, bool Transient, std::unordered_map<std::string, std::string> &fields)
 {
 
    if (not _error->empty())
@@ -175,7 +181,6 @@ void pkgAcqMethod::Fail(string Err, bool Transient)
    if (IP.empty() == false && _config->FindB("Acquire::Failure::ShowIP", true) == true)
       Err.append(" ").append(IP);
 
-   std::unordered_map<std::string, std::string> fields;
    if (Queue != nullptr)
       try_emplace(fields, "URI", Queue->Uri);
    else
