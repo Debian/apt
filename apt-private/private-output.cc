@@ -902,7 +902,7 @@ std::string CurrentVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator con
 }
 std::function<std::string(pkgCache::PkgIterator const &)> CurrentVersion(pkgCacheFile * const Cache)
 {
-   return std::bind(static_cast<std::string(*)(pkgCacheFile * const, pkgCache::PkgIterator const&)>(&CurrentVersion), Cache, std::placeholders::_1);
+   return [=](pkgCache::PkgIterator const &i) { return CurrentVersion(Cache, i); };
 }
 std::string CandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg)
 {
@@ -910,7 +910,7 @@ std::string CandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator c
 }
 std::function<std::string(pkgCache::PkgIterator const &)> CandidateVersion(pkgCacheFile * const Cache)
 {
-   return std::bind(static_cast<std::string(*)(pkgCacheFile * const, pkgCache::PkgIterator const&)>(&CandidateVersion), Cache, std::placeholders::_1);
+   return [=](pkgCache::PkgIterator const &i) { return CandidateVersion(Cache, i); };
 }
 std::string CurrentToCandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg)
 {
@@ -926,7 +926,7 @@ std::string CurrentToCandidateVersion(pkgCacheFile * const Cache, pkgCache::PkgI
 }
 std::function<std::string(pkgCache::PkgIterator const &)> CurrentToCandidateVersion(pkgCacheFile * const Cache)
 {
-   return std::bind(static_cast<std::string(*)(pkgCacheFile * const, pkgCache::PkgIterator const&)>(&CurrentToCandidateVersion), Cache, std::placeholders::_1);
+   return [=](pkgCache::PkgIterator const &i) { return CurrentToCandidateVersion(Cache, i); };
 }
 bool AlwaysTrue(pkgCache::PkgIterator const &)
 {
