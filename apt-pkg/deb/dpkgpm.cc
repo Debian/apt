@@ -534,10 +534,10 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 */
 void pkgDPkgPM::DoStdin(int master)
 {
-   unsigned char input_buf[256] = {0,}; 
-   ssize_t len = read(STDIN_FILENO, input_buf, sizeof(input_buf));
+   std::array<unsigned char, APT_BUFFER_SIZE> input_buf;
+   ssize_t len = read(STDIN_FILENO, input_buf.data(), input_buf.size());
    if (len)
-      FileFd::Write(master, input_buf, len);
+      FileFd::Write(master, input_buf.data(), len);
    else
       d->stdin_is_dev_null = true;
 }
@@ -549,9 +549,9 @@ void pkgDPkgPM::DoStdin(int master)
  */
 void pkgDPkgPM::DoTerminalPty(int master)
 {
-   unsigned char term_buf[1024] = {0,0, };
+   std::array<unsigned char, APT_BUFFER_SIZE> term_buf;
 
-   ssize_t len=read(master, term_buf, sizeof(term_buf));
+   ssize_t len=read(master, term_buf.data(), term_buf.size());
    if(len == -1 && errno == EIO)
    {
       // this happens when the child is about to exit, we
@@ -563,9 +563,9 @@ void pkgDPkgPM::DoTerminalPty(int master)
    }
    if(len <= 0)
       return;
-   FileFd::Write(1, term_buf, len);
+   FileFd::Write(1, term_buf.data(), len);
    if(d->term_out)
-      fwrite(term_buf, len, sizeof(char), d->term_out);
+      fwrite(term_buf.data(), len, sizeof(char), d->term_out);
 }
 									/*}}}*/
 // DPkgPM::ProcessDpkgStatusBuf						/*{{{*/
