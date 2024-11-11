@@ -117,7 +117,7 @@ public:
    bool stdin_is_dev_null;
    bool status_fd_reached_end_of_file;
    // the buffer we use for the dpkg status-fd reading
-   char dpkgbuf[1024];
+   std::array<char, APT_BUFFER_SIZE> dpkgbuf;
    size_t dpkgbuf_pos;
    FILE *term_out;
    FILE *history_out;
@@ -947,7 +947,7 @@ void pkgDPkgPM::handleCrossUpgradeAction(string const &pkgname)		/*{{{*/
 // DPkgPM::DoDpkgStatusFd						/*{{{*/
 void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
 {
-   auto const remainingBuffer = (sizeof(d->dpkgbuf) / sizeof(d->dpkgbuf[0])) - d->dpkgbuf_pos;
+   auto const remainingBuffer = d->dpkgbuf.size() - d->dpkgbuf_pos;
    if (likely(remainingBuffer > 0) && d->status_fd_reached_end_of_file == false)
    {
       auto const len = read(statusfd, &d->dpkgbuf[d->dpkgbuf_pos], remainingBuffer);
@@ -958,12 +958,12 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
 	 d->status_fd_reached_end_of_file = true;
 	 return;
       }
-      d->dpkgbuf_pos += (len / sizeof(d->dpkgbuf[0]));
+      d->dpkgbuf_pos += len;
    }
 
    // process line by line from the buffer
-   char *p = d->dpkgbuf, *q = nullptr;
-   while((q=(char*)memchr(p, '\n', (d->dpkgbuf + d->dpkgbuf_pos) - p)) != nullptr)
+   char *p = d->dpkgbuf.data(), *q = nullptr;
+   while((q=(char*)memchr(p, '\n', &d->dpkgbuf[d->dpkgbuf_pos] - p)) != nullptr)
    {
       *q = '\0';
       ProcessDpkgStatusLine(p);
@@ -971,15 +971,15 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
    }
 
    // check if we stripped the buffer clean
-   if (p > (d->dpkgbuf + d->dpkgbuf_pos))
+   if (p > (d->dpkgbuf.data() + d->dpkgbuf_pos))
    {
       d->dpkgbuf_pos = 0;
       return;
    }
 
    // otherwise move the unprocessed tail to the start and update pos
-   memmove(d->dpkgbuf, p, (p - d->dpkgbuf));
-   d->dpkgbuf_pos = (d->dpkgbuf + d->dpkgbuf_pos) - p;
+   memmove(d->dpkgbuf.data(), p, (p - d->dpkgbuf.data()));
+   d->dpkgbuf_pos = &d->dpkgbuf[d->dpkgbuf_pos] - p;
 }
 									/*}}}*/
 // DPkgPM::WriteHistoryTag						/*{{{*/
