@@ -69,6 +69,7 @@ Tree "dists/test" {
   Architectures "i386";
   BinOverride "bin-override";
   ExtraOverride "extra-override";
+  //FileList "file-list";
 };
 EOF
 
@@ -126,10 +127,31 @@ testsuccess $db_dump -f dump -p aptarchive-cache/packages-main-i386.db
 testsuccess grep "^ ./aptarchive/pool/main/foo_1_i386.deb:cl$" dump
 testsuccess grep "^ ./aptarchive/pool/main/foo_1_i386.deb:cn$" dump
 testsuccess grep "^ ./aptarchive/pool/main/foo_1_i386.deb:st$" dump
-
 testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1
 
 # file is still found
+testsuccessequal "Filename: pool/main/${longPath}/foo_1_i386.deb" grep ^Filename ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Priority: priority${manyX}" grep ^Priority ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Section: overrideSection" grep ^Section ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Extra: ${manyX}trailer" grep ^Extra ./aptarchive/dists/test/main/binary-i386/Packages
+
+# file is in the database
+testsuccess $db_dump -f dump -p aptarchive-cache/packages-main-i386.db
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:cl$" dump
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:cn$" dump
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:st"$ dump
+
+msgmsg "Test file lists"
+
+# Check that the empty file list produces no packages
+rm aptarchive-cache/packages-main-i386.db
+testsuccess sed -i s#//FileList#FileList# ftparchive.conf
+testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1
+testfileequal ./aptarchive/dists/test/main/binary-i386/Packages ""
+
+# Add the packages and run our checks again
+echo "pool/main/${longPath}/foo_1_i386.deb" > file-list
+testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1
 testsuccessequal "Filename: pool/main/${longPath}/foo_1_i386.deb" grep ^Filename ./aptarchive/dists/test/main/binary-i386/Packages
 testsuccessequal "Priority: priority${manyX}" grep ^Priority ./aptarchive/dists/test/main/binary-i386/Packages
 testsuccessequal "Section: overrideSection" grep ^Section ./aptarchive/dists/test/main/binary-i386/Packages
