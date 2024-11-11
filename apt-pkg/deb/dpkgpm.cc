@@ -486,6 +486,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       close(Pipes[0]);
       FILE *F = fdopen(Pipes[1],"w");
       if (F == 0) {
+         close(Pipes[1]);
          result = _error->Errno("fdopen","Failed to open new FD");
          break;
       }
@@ -764,6 +765,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 	       free(buf);
 	       fclose(dpkg);
 	    }
+	    else
+	       close(outputFd);
 	    ExecWait(dpkgNativeArch, "dpkg --print-architecture", true);
 	    if (pkgname.find(':') != std::string::npos)
 	    {
