@@ -18,7 +18,7 @@ apt_add_translation_domain(
     TARGETS apt apt-cache apt-get apt-config apt-cdrom apt-helper apt-mark
             apt-private
             # Methods
-            connectlib file copy store gpgv cdrom http ftp rred rsh mirror
+            connectlib file copy store gpgv cdrom http rred mirror
     SCRIPTS ../dselect/install ../dselect/update
     EXCLUDE_LANGUAGES ${languages_excluded}
 )
