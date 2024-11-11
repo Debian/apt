@@ -1,0 +1,47 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+
+configarchitecture "amd64"
+
+insertpackage 'installed' 'obsolete-dependency' 'amd64' '1.0'
+insertpackage 'installed,unstable' 'foo' 'amd64' '2.0' 'Depends: obsolete-dependency'
+
+setupaptarchive
+
+echo 'Debug::pkgProblemResolver "1";' > rootdir/etc/apt/apt.conf.d/debug-problemresolver
+
+# We mark obsolete dependency for removal in B, then in C it is restored.
+testsuccessequal "A: foo:amd64 < 2.0 @ii mK >
+A: obsolete-dependency:amd64 < 1.0 @ii mK >
+B: foo:amd64 < 2.0 @ii mK Ib >
+B: obsolete-dependency:amd64 < 1.0 @ii mR >
+Entering ResolveByKeep
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+Keeping package foo:amd64
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+Package foo:amd64 foo:amd64 Depends on obsolete-dependency:amd64 < 1.0 @ii mR >
+  Keeping Package obsolete-dependency:amd64 due to Depends
+C: foo:amd64 < 2.0 @ii mK >
+C: obsolete-dependency:amd64 < 1.0 @ii mK >" runapt ${APTTESTHELPERSBINDIR}/testkeep obsolete-dependency
+
+# We have protected our decision to remove the obsolete dependency, so we fail to resolve it.
+testfailureequal "A: foo:amd64 < 2.0 @ii mK >
+A: obsolete-dependency:amd64 < 1.0 @ii mK >
+B: foo:amd64 < 2.0 @ii mK Ib >
+B: obsolete-dependency:amd64 < 1.0 @ii pmR >
+Entering ResolveByKeep
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+Keeping package foo:amd64
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+Package foo:amd64 foo:amd64 Depends on obsolete-dependency:amd64 < 1.0 @ii pmR >
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+  Dependencies are not satisfied for foo:amd64 < 2.0 @ii mK Ib >
+C: foo:amd64 < 2.0 @ii mK Ib >
+C: obsolete-dependency:amd64 < 1.0 @ii pmR >
+E: Unable to correct problems, you have held broken packages." runapt ${APTTESTHELPERSBINDIR}/testkeep obsolete-dependency  --hold
