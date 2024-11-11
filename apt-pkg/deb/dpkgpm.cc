@@ -77,8 +77,13 @@ APT_PURE static string AptHistoryRequestingUser()			/*{{{*/
          if (uid > 0) {
             struct passwd pwd;
             struct passwd *result;
-            char buf[255];
-            if (getpwuid_r(uid, &pwd, buf, sizeof(buf), &result) == 0 && result != NULL) {
+            int tmp = sysconf(_SC_GETPW_R_SIZE_MAX);
+            if(tmp <= 0)
+               tmp = 256;
+            std::vector<char> buf(tmp);
+            while ((tmp = getpwuid_r(uid, &pwd, buf.data(), buf.size(), &result)) == -1 && errno == ERANGE)
+               buf.resize(buf.size() * 2);
+            if (tmp == 0 && result != NULL) {
                std::string res;
                strprintf(res, "%s (%d)", pwd.pw_name, uid);
                return res;
