@@ -28,18 +28,6 @@
 #include <apti18n.h>
 									/*}}}*/
 
-namespace {
-   struct FILEDeleter {
-      void operator()(FILE *p) {
-         fclose(p);
-      }
-   };
-}
-
-static std::unique_ptr<FILE, FILEDeleter> make_unique_FILE(std::string const &filename, char const *const mode)
-{
-   return {fopen(filename.c_str(), mode), {}};
-}
 
 class LineBuffer							/*{{{*/
 {

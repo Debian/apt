@@ -33,6 +33,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <grp.h>
+#include <limits.h>
 #include <pwd.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
@@ -2233,6 +2234,27 @@ void pkgDPkgPM::Reset()
 {
    List.erase(List.begin(),List.end());
 }
+
+template <class F>
+struct AptScopeWrapper {
+   F func;
+   ~AptScopeWrapper() { func(); }
+};
+template <class F>
+AptScopeWrapper(F) -> AptScopeWrapper<F>;
+
+static void CopyIndented(const char *header, FILE *from, FILE *to)
+{
+   if (!from)
+      return;
+
+   fputs(header, to);
+   char *line{};
+   size_t linelen;
+   AptScopeWrapper line_deleter{[&] { free(line); }};
+   while (getline(&line, &linelen, from) != -1)
+      fprintf(to, " %s", line);
+}
 									/*}}}*/
 // pkgDpkgPM::WriteApportReport - write out error report pkg failure	/*{{{*/
 // ---------------------------------------------------------------------
@@ -2406,35 +2428,12 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    // attach terminal log it if we have it
    string logfile_name = _config->FindFile("Dir::Log::Terminal", "/dev/null");
    if (logfile_name != "/dev/null")
-   {
-      FILE *log = NULL;
-
-      fprintf(report, "DpkgTerminalLog:\n");
-      log = fopen(logfile_name.c_str(),"r");
-      if(log != NULL)
-      {
-	 char buf[1024];
-	 while( fgets(buf, sizeof(buf), log) != NULL)
-	    fprintf(report, " %s", buf);
-         fprintf(report, " \n");
-	 fclose(log);
-      }
-   }
+      CopyIndented("DpkgTerminalLog:\n", make_unique_FILE(logfile_name, "r").get(), report);
 
    // attach history log it if we have it
    string histfile_name = _config->FindFile("Dir::Log::History", "/dev/null");
    if (histfile_name != "/dev/null")
-   {
-      fprintf(report, "DpkgHistoryLog:\n");
-      FILE* log = fopen(histfile_name.c_str(),"r");
-      if(log != NULL)
-      {
-	 char buf[1024];
-	 while( fgets(buf, sizeof(buf), log) != NULL)
-	    fprintf(report, " %s", buf);
-	 fclose(log);
-      }
-   }
+      CopyIndented("DpkgHistoryLog:\n", make_unique_FILE(histfile_name, "r").get(), report);
 
    // log the ordering, see dpkgpm.h and the "Ops" enum there
    fprintf(report, "AptOrdering:\n");
@@ -2458,32 +2457,11 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 
    // attach dmesg log (to learn about segfaults)
    if (FileExists("/bin/dmesg"))
-   {
-      fprintf(report, "Dmesg:\n");
-      FILE *log = popen("/bin/dmesg","r");
-      if(log != NULL)
-      {
-	 char buf[1024];
-	 while( fgets(buf, sizeof(buf), log) != NULL)
-	    fprintf(report, " %s", buf);
-	 pclose(log);
-      }
-   }
+      CopyIndented("Dmesg:\n", make_unique_popen("/bin/dmesg","r").get(), report);
 
    // attach df -l log (to learn about filesystem status)
    if (FileExists("/bin/df"))
-   {
-
-      fprintf(report, "Df:\n");
-      FILE *log = popen("/bin/df -l -x squashfs","r");
-      if(log != NULL)
-      {
-	 char buf[1024];
-	 while( fgets(buf, sizeof(buf), log) != NULL)
-	    fprintf(report, " %s", buf);
-	 pclose(log);
-      }
-   }
+      CopyIndented("Df:\n", make_unique_popen("/bin/df -l -x squashfs","r").get(), report);
 
    fclose(report);
 
