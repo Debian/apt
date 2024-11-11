@@ -760,7 +760,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 	       char* buf = NULL;
 	       size_t bufsize = 0;
 	       if (getline(&buf, &bufsize, dpkg) != -1)
-		  pkgname += ':' + bufsize;
+		  (pkgname += ':') += buf;
 	       free(buf);
 	       fclose(dpkg);
 	    }
