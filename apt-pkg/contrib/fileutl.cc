@@ -176,12 +176,11 @@ bool CopyFile(FileFd &From,FileFd &To)
       return false;
 
    // Buffered copy between fds
-   constexpr size_t BufSize = APT_BUFFER_SIZE;
-   std::unique_ptr<unsigned char[]> Buf(new unsigned char[BufSize]);
+   std::array<unsigned char, APT_BUFFER_SIZE> Buf;
    unsigned long long ToRead = 0;
    do {
-      if (From.Read(Buf.get(),BufSize, &ToRead) == false ||
-	  To.Write(Buf.get(),ToRead) == false)
+      if (From.Read(Buf.data(),Buf.size(), &ToRead) == false ||
+	  To.Write(Buf.data(),ToRead) == false)
 	 return false;
    } while (ToRead != 0);
 
