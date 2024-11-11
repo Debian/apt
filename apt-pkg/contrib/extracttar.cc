@@ -132,7 +132,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
    // Loop over all blocks
    string LastLongLink, ItemLink;
    string LastLongName, ItemName;
-   auto Junk = std::make_unique<std::array<unsigned char, 32*1024>>();
+   std::array<unsigned char, APT_BUFFER_SIZE> Junk;
    while (1)
    {
       bool BadRecord = false;      
@@ -295,19 +295,19 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 auto Size = Itm.Size;
 	 do
 	 {
-	    auto const Read = std::min<unsigned long long>(Size, Junk->size());
-	    if (not InFd.Read(Junk->data(), ((Read + (sizeof(Block) - 1)) / sizeof(Block)) * sizeof(Block)))
+	    auto const Read = std::min<unsigned long long>(Size, Junk.size());
+	    if (not InFd.Read(Junk.data(), ((Read + (sizeof(Block) - 1)) / sizeof(Block)) * sizeof(Block)))
 	       return false;
 
 	    if (Fd > 0)
 	    {
-	       if (not FileFd::Write(Fd, Junk->data(), Read))
+	       if (not FileFd::Write(Fd, Junk.data(), Read))
 		  return Stream.Fail(Itm, Fd);
 	    }
 	    // An Fd of -2 means to send to a special processing function
 	    else if (Fd == -2)
 	    {
-	       if (not Stream.Process(Itm, Junk->data(), Read, Itm.Size - Size))
+	       if (not Stream.Process(Itm, Junk.data(), Read, Itm.Size - Size))
 		  return Stream.Fail(Itm, Fd);
 	    }
 

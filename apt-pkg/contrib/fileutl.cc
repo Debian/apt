@@ -59,6 +59,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <array>
 #include <memory>
 #include <set>
 
@@ -175,12 +176,11 @@ bool CopyFile(FileFd &From,FileFd &To)
       return false;
 
    // Buffered copy between fds
-   constexpr size_t BufSize = APT_BUFFER_SIZE;
-   std::unique_ptr<unsigned char[]> Buf(new unsigned char[BufSize]);
+   std::array<unsigned char, APT_BUFFER_SIZE> Buf;
    unsigned long long ToRead = 0;
    do {
-      if (From.Read(Buf.get(),BufSize, &ToRead) == false ||
-	  To.Write(Buf.get(),ToRead) == false)
+      if (From.Read(Buf.data(),Buf.size(), &ToRead) == false ||
+	  To.Write(Buf.data(),ToRead) == false)
 	 return false;
    } while (ToRead != 0);
 
@@ -1246,12 +1246,11 @@ public:
    }
    virtual bool InternalSkip(unsigned long long Over)
    {
-      unsigned long long constexpr buffersize = APT_BUFFER_SIZE;
-      char buffer[buffersize];
+      std::array<char, APT_BUFFER_SIZE> buffer;
       while (Over != 0)
       {
-	 unsigned long long toread = std::min(buffersize, Over);
-	 if (filefd->Read(buffer, toread) == false)
+	 auto toread = std::min<unsigned long long>(buffer.size(), Over);
+	 if (filefd->Read(buffer.data(), toread) == false)
 	    return filefd->FileFdError("Unable to seek ahead %llu",Over);
 	 Over -= toread;
       }
@@ -1273,10 +1272,10 @@ public:
    {
       unsigned long long size = 0;
       unsigned long long const oldSeek = filefd->Tell();
-      char ignore[APT_BUFFER_SIZE];
+      std::array<char, APT_BUFFER_SIZE> ignore;
       unsigned long long read = 0;
       do {
-	 if (filefd->Read(ignore, sizeof(ignore), &read) == false)
+	 if (filefd->Read(ignore.data(), ignore.size(), &read) == false)
 	 {
 	    filefd->Seek(oldSeek);
 	    return 0;
@@ -1994,7 +1993,7 @@ class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {		/*{{{*/
    struct LZMAFILE {
       FILE* file;
       FileFd * const filefd;
-      uint8_t buffer[APT_BUFFER_SIZE];
+      std::array<unsigned char, APT_BUFFER_SIZE> buffer;
       lzma_stream stream;
       lzma_ret err;
       bool eof;
@@ -2005,19 +2004,18 @@ class APT_HIDDEN LzmaFileFdPrivate: public FileFdPrivate {		/*{{{*/
       {
 	 if (compressing == true && filefd->Failed() == false)
 	 {
-	    size_t constexpr buffersize = sizeof(buffer)/sizeof(buffer[0]);
 	    while(true)
 	    {
-	       stream.avail_out = buffersize;
-	       stream.next_out = buffer;
+	       stream.avail_out = buffer.size();
+	       stream.next_out = buffer.data();
 	       err = lzma_code(&stream, LZMA_FINISH);
 	       if (err != LZMA_OK && err != LZMA_STREAM_END)
 	       {
 		  _error->Error("~LZMAFILE: Compress finalisation failed");
 		  break;
 	       }
-	       size_t const n =  buffersize - stream.avail_out;
-	       if (n && fwrite(buffer, 1, n, file) != n)
+	       size_t const n =  buffer.size() - stream.avail_out;
+	       if (n && fwrite(buffer.data(), 1, n, file) != n)
 	       {
 		  _error->Errno("~LZMAFILE",_("Write error"));
 		  break;
@@ -2112,8 +2110,8 @@ public:
       lzma->stream.avail_out = Size;
       if (lzma->stream.avail_in == 0)
       {
-	 lzma->stream.next_in = lzma->buffer;
-	 lzma->stream.avail_in = fread(lzma->buffer, 1, sizeof(lzma->buffer)/sizeof(lzma->buffer[0]), lzma->file);
+	 lzma->stream.next_in = lzma->buffer.data();
+	 lzma->stream.avail_in = fread(lzma->buffer.data(), 1, lzma->buffer.size(), lzma->file);
       }
       lzma->err = lzma_code(&lzma->stream, LZMA_RUN);
       if (lzma->err == LZMA_STREAM_END)
@@ -2147,13 +2145,13 @@ public:
       ssize_t Res;
       lzma->stream.next_in = (uint8_t *)From;
       lzma->stream.avail_in = Size;
-      lzma->stream.next_out = lzma->buffer;
-      lzma->stream.avail_out = sizeof(lzma->buffer)/sizeof(lzma->buffer[0]);
+      lzma->stream.next_out = lzma->buffer.data();
+      lzma->stream.avail_out = lzma->buffer.size();
       lzma->err = lzma_code(&lzma->stream, LZMA_RUN);
       if (lzma->err != LZMA_OK)
 	 return -1;
-      size_t const n = sizeof(lzma->buffer)/sizeof(lzma->buffer[0]) - lzma->stream.avail_out;
-      size_t const m = (n == 0) ? 0 : fwrite(lzma->buffer, 1, n, lzma->file);
+      size_t const n = lzma->buffer.size() - lzma->stream.avail_out;
+      size_t const m = (n == 0) ? 0 : fwrite(lzma->buffer.data(), 1, n, lzma->file);
       if (m != n)
       {
 	 Res = -1;

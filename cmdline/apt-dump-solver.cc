@@ -17,6 +17,7 @@
 
 #include <apt-private/private-cmndline.h>
 
+#include <array>
 #include <cstdio>
 #include <iostream>
 #include <memory>
@@ -134,10 +135,10 @@ int main(int argc,const char *argv[])					/*{{{*/
       return WriteError("ERR_READ_ERROR", out, stdoutfd, Solver);
    }
 
-   std::unique_ptr<char[]> Buf(new char[APT_BUFFER_SIZE]);
+   std::array<char, APT_BUFFER_SIZE> Buf;
    unsigned long long ToRead = 0;
    do {
-      if (input.Read(Buf.get(), APT_BUFFER_SIZE, &ToRead) == false)
+      if (input.Read(Buf.data(), Buf.size(), &ToRead) == false)
       {
 	 std::ostringstream out;
 	 out << "Writing EDSP solver input to file '" << filename << "' failed as reading from stdin failed!\n";
@@ -145,9 +146,9 @@ int main(int argc,const char *argv[])					/*{{{*/
       }
       if (ToRead == 0)
 	 break;
-      if (forward.IsOpen() && forward.Failed() == false && forward.Write(Buf.get(),ToRead) == false)
+      if (forward.IsOpen() && forward.Failed() == false && forward.Write(Buf.data(),ToRead) == false)
 	 forward.Close();
-      if (dump.IsOpen() && dump.Failed() == false && dump.Write(Buf.get(),ToRead) == false)
+      if (dump.IsOpen() && dump.Failed() == false && dump.Write(Buf.data(),ToRead) == false)
 	 dump.Close();
    } while (true);
    input.Close();

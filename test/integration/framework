@@ -256,7 +256,12 @@ valgrind() {
 	if [ "${CMD##*/}" = "$CMD" ]; then
 		CMD="${APTCMDLINEBINDIR}/${CMD}"
 	fi
-	runapt command valgrind -q --error-exitcode=7 "$CMD" "$@"
+	if command -v valgrind > /dev/null; then
+		runapt command valgrind -q --error-exitcode=7 "$CMD" "$@"
+	else
+		msgdebug "Running without valgrind"
+		runapt command "$CMD" "$@"
+	fi
 }
 
 lastmodification() {

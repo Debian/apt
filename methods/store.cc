@@ -21,6 +21,7 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/strutl.h>
 
+#include <array>
 #include <cstring>
 #include <string>
 #include <vector>
@@ -103,10 +104,10 @@ bool StoreMethod::Fetch(FetchItem *Itm)					/*{{{*/
    Res.Size = 0;
    while (1)
    {
-      unsigned char Buffer[APT_BUFFER_SIZE];
+      std::array<unsigned char, APT_BUFFER_SIZE> Buffer;
       unsigned long long Count = 0;
 
-      if (!From.Read(Buffer,sizeof(Buffer),&Count))
+      if (!From.Read(Buffer.data(),Buffer.size(),&Count))
       {
 	 if (To.IsOpen())
 	    To.OpFail();
@@ -116,8 +117,8 @@ bool StoreMethod::Fetch(FetchItem *Itm)					/*{{{*/
 	 break;
       Res.Size += Count;
 
-      Hash.Add(Buffer,Count);
-      if (To.IsOpen() && To.Write(Buffer,Count) == false)
+      Hash.Add(Buffer.data(),Count);
+      if (To.IsOpen() && To.Write(Buffer.data(),Count) == false)
       {
 	 Failed = true;
 	 break;

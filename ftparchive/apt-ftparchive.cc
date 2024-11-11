@@ -387,17 +387,15 @@ bool PackageMap::GenContents(Configuration &Setup,
 	 return false;
 
       unsigned long long Size = Head.Size();
-      unsigned char Buf[APT_BUFFER_SIZE];
+      std::array<unsigned char, APT_BUFFER_SIZE> Buf;
       while (Size != 0)
       {
-	 unsigned long long ToRead = Size;
-	 if (Size > sizeof(Buf))
-	    ToRead = sizeof(Buf);
+	 auto ToRead = std::min<unsigned long long>(Size, Buf.size());
 
-	 if (Head.Read(Buf,ToRead) == false)
+	 if (Head.Read(Buf.data(),ToRead) == false)
 	    return false;
 
-	 if (Comp.Input.Write(Buf, ToRead) == false)
+	 if (Comp.Input.Write(Buf.data(), ToRead) == false)
 	    return _error->Errno("fwrite",_("Error writing header to contents file"));
 
 	 Size -= ToRead;
