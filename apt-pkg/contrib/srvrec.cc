@@ -16,6 +16,7 @@
 #include <netinet/in.h>
 #include <resolv.h>
 
+#include <array>
 #include <algorithm>
 #include <memory>
 #include <tuple>
@@ -47,7 +48,7 @@ bool GetSrvRecords(std::string host, int port, std::vector<SrvRec> &Result)
    int res;
    struct servent s_ent_buf;
    struct servent *s_ent = nullptr;
-   std::vector<char> buf(1024);
+   std::array<char, 1024> buf;
 
    res = getservbyport_r(htons(port), "tcp", &s_ent_buf, buf.data(), buf.size(), &s_ent);
    if (res != 0 || s_ent == nullptr)
