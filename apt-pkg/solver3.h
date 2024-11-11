@@ -7,6 +7,8 @@
  * SPDX-License-Identifier: GPL-2.0+
  */
 
+#include <optional>
+#include <queue>
 #include <vector>
 
 #include <apt-pkg/configuration.h>
@@ -31,11 +33,11 @@ class Solver
 {
    enum class Decision : uint16_t;
    enum class Hint : uint16_t;
-   struct Reason;
+   struct Var;
    struct CompareProviders3;
-   template <typename T>
    struct State;
    struct Work;
+   struct Solved;
 
    // \brief Groups of works, these are ordered.
    //
@@ -88,21 +90,23 @@ class Solver
    // Policy is needed for determining candidate version.
    pkgDepCache::Policy &policy;
    // States for packages
-   std::vector<State<pkgCache::Package>> pkgStates{};
+   std::vector<State> pkgStates{};
    // States for versions
-   std::vector<State<pkgCache::Version>> verStates{};
+   std::vector<State> verStates{};
 
    // \brief Helper function for safe access to package state.
-   inline State<pkgCache::Package> &operator[](pkgCache::Package *P)
+   inline State &operator[](pkgCache::Package *P)
    {
       return pkgStates[P->ID];
    }
 
    // \brief Helper function for safe access to version state.
-   inline State<pkgCache::Version> &operator[](pkgCache::Version *V)
+   inline State &operator[](pkgCache::Version *V)
    {
       return verStates[V->ID];
    }
+   // \brief Helper function for safe access to either state.
+   inline State &operator[](Var r);
 
    mutable std::vector<char> pkgObsolete;
    bool Obsolete(pkgCache::PkgIterator pkg) const;
@@ -118,17 +122,18 @@ class Solver
    // \brief Whether RescoreWork() actually needs to rescore the work.
    bool needsRescore{false};
 
-   // \brief Current decision level.
-   //
-   // Each time a decision needs to be made we can push the item under
-   // consideration to our backlog of choices made and then later we can
-   // restore it easily.
-   std::vector<Work> choices{};
    // \brief Backlog of solved work.
    //
    // Solved work may become invalidated when backtracking, so store it
-   // here to revisit it later.
-   std::vector<Work> solved{};
+   // here to revisit it later. This is similar to what MiniSAT calls the
+   // trail; one distinction is that we have both literals and our work
+   // queue to be concerned about
+   std::vector<Solved> solved{};
+
+   // \brief Current decision level.
+   //
+   // This is an index into the solved vector.
+   std::vector<depth_type> choices{};
 
    /// Various configuration options
    // \brief Debug level
@@ -147,7 +152,11 @@ class Solver
    // \brief Reject reverse dependencies. Must call std::make_heap() after.
    bool RejectReverseDependencies(pkgCache::VerIterator Ver);
    // \brief Enqueue a single or group
-   bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Reason reason);
+   bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
+   // \brief Propagate a "true" value of a variable
+   bool PropagateInstall(Var var);
+   // \brief Propagate a rejection of a variable
+   bool PropagateReject(Var var);
    // \brief Check if a version is allowed by policy.
    bool IsAllowedVersion(pkgCache::Version *V);
 
@@ -159,9 +168,11 @@ class Solver
 
    public:
    // \brief Create a new decision level.
-   bool Pop();
-   // \brief Revert to the previous decision level.
    void Push(Work work);
+   // \brief Revert to the previous decision level.
+   bool Pop();
+   // \brief Undo a single assignment / solved work item
+   void UndoOne();
    // \brief Add work to our work queue.
    void AddWork(Work &&work);
    // \brief Rescore the work after a reject or a pop
@@ -170,14 +181,13 @@ class Solver
    // \brief Basic solver initializer. This cannot fail.
    Solver(pkgCache &Cache, pkgDepCache::Policy &Policy);
 
+   // Assume that the variable is decided as specified.
+   bool Assume(Var var, bool decision, Var reason);
+   // Enqueue a decision fact
+   bool Enqueue(Var var, bool decision, Var reason);
+
    // \brief Mark the package for install. This is annoying as it incurs a decision
-   bool Install(pkgCache::PkgIterator Pkg, Reason reason, Group group);
-   // \brief Install a version.
-   bool Install(pkgCache::VerIterator Ver, Reason reason, Group group);
-   // \brief Do not install this package
-   bool Reject(pkgCache::PkgIterator Pkg, Reason reason, Group group);
-   // \brief Do not install this version.
-   bool Reject(pkgCache::VerIterator Ver, Reason reason, Group group);
+   bool Install(pkgCache::PkgIterator Pkg, Var reason, Group group);
 
    // \brief Apply the selections from the dep cache to the solver
    bool FromDepCache(pkgDepCache &depcache);
@@ -188,7 +198,7 @@ class Solver
    bool Solve();
 
    // Print dependency chain
-   std::string WhyStr(Reason reason);
+   std::string WhyStr(Var reason);
 };
 
 }; // namespace APT
@@ -197,18 +207,18 @@ class Solver
  * \brief Tagged union holding either a package, version, or nothing; representing the reason for installing something.
  *
  * We want to keep track of the reason why things are being installed such that
- * we can have sensible debugging abilities.
+ * we can have sensible debugging abilities; and we want to generically refer to
+ * both packages and versions as variables, hence this class was added.
  *
- * If the reason is empty, this means the package is automatically installed.
  */
-struct APT::Solver::Reason
+struct APT::Solver::Var
 {
    uint32_t IsVersion : 1;
    uint32_t MapPtr : 31;
 
-   Reason() : IsVersion(0), MapPtr(0) {}
-   explicit Reason(pkgCache::PkgIterator const &Pkg) : IsVersion(0), MapPtr(Pkg.MapPointer()) {}
-   explicit Reason(pkgCache::VerIterator const &Ver) : IsVersion(1), MapPtr(Ver.MapPointer()) {}
+   Var() : IsVersion(0), MapPtr(0) {}
+   explicit Var(pkgCache::PkgIterator const &Pkg) : IsVersion(0), MapPtr(Pkg.MapPointer()) {}
+   explicit Var(pkgCache::VerIterator const &Ver) : IsVersion(1), MapPtr(Ver.MapPointer()) {}
 
    // \brief Return the package, if any, otherwise 0.
    map_pointer<pkgCache::Package> Pkg() const
@@ -235,6 +245,15 @@ struct APT::Solver::Reason
    {
       return IsVersion == 0 && MapPtr == 0;
    }
+
+   std::string toString(pkgCache &cache) const
+   {
+      if (auto P = Pkg(cache); not P.end())
+	 return P.FullName();
+      if (auto V = Ver(cache); not V.end())
+	 return V.ParentPkg().FullName() + "=" + V.VerStr();
+      return "(root)";
+   }
 };
 
 /**
@@ -249,8 +268,8 @@ struct APT::Solver::Reason
  */
 struct APT::Solver::Work
 {
-   // \brief Reason for the work
-   Reason reason;
+   // \brief Var for the work
+   Var reason;
    // \brief The depth at which the item has been added
    depth_type depth;
    // \brief The group we are in
@@ -273,13 +292,13 @@ struct APT::Solver::Work
    // \brief Whether this is an ugprade
    bool upgrade;
    // \brief This item should be removed from the queue.
-   bool dirty;
+   bool erased;
 
    bool operator<(APT::Solver::Work const &b) const;
    // \brief Dump the work item to std::cerr
    void Dump(pkgCache &cache);
 
-   inline Work(Reason reason, depth_type depth, Group group, bool optional = false, bool upgrade = false) : reason(reason), depth(depth), group(group), size(0), optional(optional), upgrade(upgrade), dirty(false) {}
+   inline Work(Var reason, depth_type depth, Group group, bool optional = false, bool upgrade = false) : reason(reason), depth(depth), group(group), size(0), optional(optional), upgrade(upgrade), erased(false) {}
 };
 
 // \brief This essentially describes the install state in RFC2119 terms.
@@ -310,7 +329,6 @@ enum class APT::Solver::Hint : uint16_t
  * For each version, the solver records a decision at a certain level. It
  * maintains an array mapping from version ID to state.
  */
-template <typename T>
 struct APT::Solver::State
 {
    // \brief The reason for causing this state (invalid for NONE).
@@ -323,8 +341,8 @@ struct APT::Solver::State
    // You can follow the reason chain upwards as long as the depth
    // doesn't increase to unwind.
    //
-   // Reasons < 0 are package ID, reasons > 0 are version IDs.
-   Reason reason{};
+   // Vars < 0 are package ID, reasons > 0 are version IDs.
+   Var reason{};
 
    // \brief The depth at which the decision has been taken
    depth_type depth{0};
@@ -335,3 +353,27 @@ struct APT::Solver::State
    // \brief Any hint.
    Hint hint{Hint::NONE};
 };
+
+/**
+ * \brief A solved item.
+ *
+ * Here we keep track of solved clauses and variable assignments such that we can easily undo
+ * them.
+ */
+struct APT::Solver::Solved
+{
+   // \brief A variable that has been assigned. We store this as a reason (FIXME: Rename Var to Var)
+   Var assigned;
+   // \brief A work item that has been solved. This needs to be put back on the queue.
+   std::optional<Work> work;
+};
+
+inline APT::Solver::State &APT::Solver::operator[](Var r)
+{
+   if (auto P = r.Pkg())
+      return (*this)[cache.PkgP + P];
+   if (auto V = r.Ver())
+      return (*this)[cache.VerP + V];
+
+   abort();
+}
