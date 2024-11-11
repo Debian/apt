@@ -21,6 +21,7 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/strutl.h>
 
+#include <array>
 #include <cctype>
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -264,23 +265,23 @@ bool MultiCompress::Child(int const &FD)
    /* Okay, now we just feed data from FD to all the other FDs. Also
       stash a hash of the data to use later. */
    SetNonBlock(FD,false);
-   unsigned char Buffer[32*1024];
+   std::array<unsigned char, APT_BUFFER_SIZE> Buffer;
    unsigned long long FileSize = 0;
    Hashes MD5(Hashes::MD5SUM);
    while (1)
    {
       WaitFd(FD,false);
-      int Res = read(FD,Buffer,sizeof(Buffer));
+      int Res = read(FD,Buffer.data(),Buffer.size());
       if (Res == 0)
 	 break;
       if (Res < 0)
 	 continue;
 
-      MD5.Add(Buffer,Res);
+      MD5.Add(Buffer.data(),Res);
       FileSize += Res;
       for (Files *I = Outputs; I != 0; I = I->Next)
       {
-	 if (I->TmpFile.Write(Buffer, Res) == false)
+	 if (I->TmpFile.Write(Buffer.data(), Res) == false)
 	 {
 	    _error->Errno("write",_("IO to subprocess/file failed"));
 	    break;
@@ -319,12 +320,12 @@ bool MultiCompress::Child(int const &FD)
       while (1)
       {
 	 unsigned long long Res = 0;
-	 if (CompFd.Read(Buffer,sizeof(Buffer), &Res) == false)
+	 if (CompFd.Read(Buffer.data(),Buffer.size(), &Res) == false)
 	    return _error->Errno("read",_("Failed to read while computing MD5"));
 	 if (Res == 0)
 	    break;
 	 NewFileSize += Res;
-	 OldMD5.Add(Buffer,Res);
+	 OldMD5.Add(Buffer.data(),Res);
       }
       CompFd.Close();
 
