@@ -2382,30 +2382,25 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    reportfile = flCombine(_config->FindDir("Dir::Apport", "var/crash"), pkgname+".0.crash");
    if(FileExists(reportfile))
    {
-      struct stat buf;
-      char strbuf[255];
-
       // check atime/mtime
+      struct stat buf{};
       stat(reportfile.c_str(), &buf);
       if(buf.st_mtime > buf.st_atime)
 	 return;
 
+      char *line{};
+      size_t linelen;
+      AptScopeWrapper line_deleter{[&] { free(line); }};
       // check if the existing report is the same version
       report = fopen(reportfile.c_str(),"r");
-      while(fgets(strbuf, sizeof(strbuf), report) != NULL)
+      AptScopeWrapper report_deleter{[&] { fclose(report); }};
+      while(getline(&line, &linelen, report) != -1)
       {
-	 if(strstr(strbuf,"Package:") == strbuf)
-	 {
-	    char pkgname[255], version[255];
-	    if(sscanf(strbuf, "Package: %254s %254s", pkgname, version) == 2)
-	       if(strcmp(pkgver.c_str(), version) == 0)
-	       {
-		  fclose(report);
-		  return;
-	       }
-	 }
+	 char pkgname[255], version[255];
+	 if(sscanf(line, "Package: %254s %254s", pkgname, version) == 2)
+	    if(strcmp(pkgver.c_str(), version) == 0)
+	       return;
       }
-      fclose(report);
    }
 
    // now write the report
@@ -2413,6 +2408,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    report = fopen(reportfile.c_str(),"w");
    if(report == NULL)
       return;
+   AptScopeWrapper report_deleter{[&] { fclose(report); }};
    if(_config->FindB("DPkgPM::InitialReportOnly",false) == true)
       chmod(reportfile.c_str(), 0);
    else
@@ -2467,8 +2463,5 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    // attach df -l log (to learn about filesystem status)
    if (FileExists("/bin/df"))
       CopyIndented("Df:\n", make_unique_popen("/bin/df -l -x squashfs","r").get(), report);
-
-   fclose(report);
-
 }
 									/*}}}*/
