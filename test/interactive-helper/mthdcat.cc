@@ -3,13 +3,14 @@
    the file ends */
 
 #include <config.h>
+#include <apt-pkg/macros.h>
 
 #include <unistd.h>
 
 int main()
 {
-   char Buffer[4096];
-   
+   char Buffer[APT_BUFFER_SIZE];
+
    while (1)
    {
       int Res = read(STDIN_FILENO,Buffer,sizeof(Buffer));
