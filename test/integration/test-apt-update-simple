@@ -34,9 +34,4 @@ main/i18n/Translation-de' aptget indextargets --format '$(METAKEY)'
 
 # Check that -o Acquire::Queue-Mode=access does not crash
 find rootdir/var/lib/apt/lists/ -type f -delete
-if [ "$(command dpkg --print-architecture)" = "armhf" ]; then
-    msgskip "valgrind on armhf is broken"
-    testsuccess aptget update -o Acquire::Queue-Mode=access
-else
-    testsuccess valgrind aptget update -o Acquire::Queue-Mode=access
-fi
+testsuccess valgrind aptget update -o Acquire::Queue-Mode=access
