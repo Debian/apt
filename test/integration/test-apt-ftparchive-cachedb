@@ -1,6 +1,11 @@
 #!/bin/sh
 set -e
 
+db_dump=db_dump
+if command -v db_dump-5 >/dev/null 2>&1; then
+    db_dump=db_dump-5
+fi
+
 ensure_correct_packages_file() {
     testequal "Package: foo
 Architecture: i386
@@ -108,6 +113,33 @@ testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCache
 testsuccessequal "Priority: priority${manyX}" grep ^Priority ./aptarchive/dists/test/main/binary-i386/Packages
 testsuccessequal "Section: overrideSection" grep ^Section ./aptarchive/dists/test/main/binary-i386/Packages
 testsuccessequal "Extra: ${manyX}trailer" grep ^Extra ./aptarchive/dists/test/main/binary-i386/Packages
+
+
+msgmsg "Test long paths"
+x128=$(head -c 128 /dev/zero | tr '\0' 'X')
+longPath=${x128}/${x128}/${x128}/${x128}/${x128}/${x128}/${x128}/${x128}
+mkdir -p aptarchive/pool/main/$longPath
+mv aptarchive/pool/main/foo_1_i386.deb aptarchive/pool/main/$longPath/foo_1_i386.deb
+
+# before
+testsuccess $db_dump -f dump -p aptarchive-cache/packages-main-i386.db
+testsuccess grep "^ ./aptarchive/pool/main/foo_1_i386.deb:cl$" dump
+testsuccess grep "^ ./aptarchive/pool/main/foo_1_i386.deb:cn$" dump
+testsuccess grep "^ ./aptarchive/pool/main/foo_1_i386.deb:st$" dump
+
+testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1
+
+# file is still found
+testsuccessequal "Filename: pool/main/${longPath}/foo_1_i386.deb" grep ^Filename ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Priority: priority${manyX}" grep ^Priority ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Section: overrideSection" grep ^Section ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Extra: ${manyX}trailer" grep ^Extra ./aptarchive/dists/test/main/binary-i386/Packages
+
+# file is in the database
+testsuccess $db_dump -f dump -p aptarchive-cache/packages-main-i386.db
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:cl$" dump
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:cn$" dump
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:st"$ dump
 
 msgmsg "Test Clean"
 # and clean

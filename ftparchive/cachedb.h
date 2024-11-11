@@ -34,7 +34,7 @@ class CacheDB
    // Database state/access
    DBT Key;
    DBT Data;
-   char TmpKey[600];
+   std::string TmpKey;
    DB *Dbp;
    bool DBLoaded;
    bool ReadOnly;
@@ -45,8 +45,9 @@ class CacheDB
    {
       memset(&Key,0,sizeof(Key));
       memset(&Data,0,sizeof(Data));
-      Key.data = TmpKey;
-      Key.size = snprintf(TmpKey,sizeof(TmpKey),"%s:%s",FileName.c_str(), Type);
+      TmpKey.assign(FileName).append(":").append(Type);
+      Key.data = TmpKey.data();
+      Key.size = TmpKey.size();
    }
    
    void InitQueryStats() {
