@@ -2,11 +2,11 @@
 // Description								/*{{{*/
 /* ######################################################################
 
-   Writer 
-   
+   Writer
+
    The file writer classes. These write various types of output, sources,
    packages and contents.
-   
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -103,12 +103,12 @@ int FTWScanner::ScannerFTW(const char *File,const struct stat * /*sb*/,int Flag)
    {
       Owner->NewLine(1);
       ioprintf(c1out, _("W: Unable to read directory %s\n"), File);
-   }   
+   }
    if (Flag == FTW_NS)
    {
       Owner->NewLine(1);
       ioprintf(c1out, _("W: Unable to stat %s\n"), File);
-   }   
+   }
    if (Flag != FTW_F)
       return 0;
 
@@ -154,7 +154,7 @@ int FTWScanner::ProcessFile(const char *const File, bool const ReadLink) /*{{{*/
    }
    else
       Owner->DoPackage(File);
-   
+
    if (_error->empty() == false)
    {
       // Print any errors or warnings found
@@ -163,22 +163,22 @@ int FTWScanner::ProcessFile(const char *const File, bool const ReadLink) /*{{{*/
       while (_error->empty() == false)
       {
 	 Owner->NewLine(1);
-	 
+
 	 bool const Type = _error->PopMessage(Err);
 	 if (Type == true)
 	    cerr << _("E: ") << Err << endl;
 	 else
 	    cerr << _("W: ") << Err << endl;
-	 
+
 	 if (Err.find(File) != string::npos)
 	    SeenPath = true;
-      }      
-      
+      }
+
       if (SeenPath == false)
 	 cerr << _("E: Errors apply to file ") << "'" << File << "'" << endl;
       return 0;
    }
-   
+
    return 0;
 }
 									/*}}}*/
@@ -197,11 +197,11 @@ bool FTWScanner::RecursiveScan(string const &Dir)
       InternalPrefix = RealPath;
       free(RealPath);
    }
-   
+
    // Do recursive directory searching
    Owner = this;
    int const Res = ftw(Dir.c_str(),ScannerFTW,30);
-   
+
    // Error treewalking?
    if (Res != 0)
    {
@@ -236,12 +236,12 @@ bool FTWScanner::LoadFileList(string const &Dir, string const &File)
       InternalPrefix = RealPath;
       free(RealPath);
    }
-   
+
    Owner = this;
    FILE *List = fopen(File.c_str(),"r");
    if (List == 0)
       return _error->Errno("fopen",_("Failed to open %s"),File.c_str());
-   
+
    /* We are a tad tricky here.. We prefix the buffer with the directory
       name, that way if we need a full path with just use line.. Sneaky and
       fully evil. */
@@ -250,20 +250,20 @@ bool FTWScanner::LoadFileList(string const &Dir, string const &File)
    if (Dir.empty() == true || Dir.end()[-1] != '/')
       FileStart = Line + snprintf(Line,sizeof(Line),"%s/",Dir.c_str());
    else
-      FileStart = Line + snprintf(Line,sizeof(Line),"%s",Dir.c_str());   
+      FileStart = Line + snprintf(Line,sizeof(Line),"%s",Dir.c_str());
    while (fgets(FileStart,sizeof(Line) - (FileStart - Line),List) != 0)
    {
       char *FileName = _strstrip(FileStart);
       if (FileName[0] == 0)
 	 continue;
-	 
+
       if (FileName[0] != '/')
       {
 	 if (FileName != FileStart)
 	    memmove(FileStart,FileName,strlen(FileStart));
 	 FileName = Line;
       }
-      
+
 #if 0
       struct stat St;
       int Flag = FTW_F;
@@ -276,7 +276,7 @@ bool FTWScanner::LoadFileList(string const &Dir, string const &File)
       if (ProcessFile(FileName, false) != 0)
 	 break;
    }
-  
+
    fclose(List);
    return true;
 }
@@ -290,7 +290,7 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 {
    // See if this isn't an internally prefix'd file name.
    if (InternalPrefix.empty() == false &&
-       InternalPrefix.length() < FileName.length() && 
+       InternalPrefix.length() < FileName.length() &&
        stringcmp(FileName.begin(),FileName.begin() + InternalPrefix.length(),
 		 InternalPrefix.begin(),InternalPrefix.end()) != 0)
    {
@@ -299,12 +299,12 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 	 // Tidy up the display
 	 if (DeLinkBytes == 0)
 	    cout << endl;
-	 
+
 	 NewLine(1);
 	 ioprintf(c1out, _(" DeLink %s [%s]\n"), (OriginalPath + InternalPrefix.length()),
 		    SizeToStr(FileSize).c_str());
 	 c1out << flush;
-	 
+
 	 if (NoLinkAct == false)
 	 {
 	    char OldLink[400];
@@ -322,19 +322,19 @@ bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
 		     return _error->Errno("link",_("*** Failed to link %s to %s"),
 					  FileName.c_str(),
 					  OriginalPath);
-		  }	       
+		  }
 	       }
-	    }	    
+	    }
 	 }
-	 
+
 	 DeLinkBytes += FileSize;
 	 if (DeLinkBytes/1024 >= DeLinkLimit)
-	    ioprintf(c1out, _(" DeLink limit of %sB hit.\n"), SizeToStr(DeLinkBytes).c_str());      
+	    ioprintf(c1out, _(" DeLink limit of %sB hit.\n"), SizeToStr(DeLinkBytes).c_str());
       }
-      
+
       FileName = OriginalPath;
    }
-   
+
    return true;
 }
 									/*}}}*/
@@ -400,11 +400,11 @@ PackagesWriter::PackagesWriter(FileFd * const GivenOutput, TranslationWriter * c
                                                                         /*}}}*/
 // PackagesWriter::DoPackage - Process a single package			/*{{{*/
 // ---------------------------------------------------------------------
-/* This method takes a package and gets its control information and 
-   MD5, SHA1 and SHA256 then writes out a control record with the proper fields 
+/* This method takes a package and gets its control information and
+   MD5, SHA1 and SHA256 then writes out a control record with the proper fields
    rewritten and the path/size/hash appended. */
 bool PackagesWriter::DoPackage(string FileName)
-{      
+{
    // Pull all the data we need form the DB
    if (Db.GetFileInfo(FileName,
 	    true, /* DoControl */
@@ -419,19 +419,19 @@ bool PackagesWriter::DoPackage(string FileName)
    unsigned long long FileSize = Db.GetFileSize();
    if (Delink(FileName,OriginalPath,Stats.DeLinkBytes,FileSize) == false)
       return false;
-   
+
    // Lookup the override information
    pkgTagSection &Tags = Db.Control.Section;
-   auto const Package = Tags.Find(pkgTagSection::Key::Package).to_string();
-   string Architecture;
+   auto const Package = Tags.Find(pkgTagSection::Key::Package);
+   string_view Architecture;
    // if we generate a Packages file for a given arch, we use it to
-   // look for overrides. if we run in "simple" mode without the 
+   // look for overrides. if we run in "simple" mode without the
    // "Architectures" variable in the config we use the architecture value
    // from the deb file
    if(Arch != "")
       Architecture = Arch;
    else
-      Architecture = Tags.Find(pkgTagSection::Key::Architecture).to_string();
+      Architecture = Tags.Find(pkgTagSection::Key::Architecture);
    unique_ptr<Override::Item> OverItem(Over.GetItem(Package, Architecture));
 
    if (Package.empty() == true)
@@ -443,12 +443,12 @@ bool PackagesWriter::DoPackage(string FileName)
       if (NoOverride == false)
       {
 	 NewLine(1);
-	 ioprintf(c1out, _("  %s has no override entry\n"), Package.c_str());
+	 ioprintf(c1out, _("  %.*s has no override entry\n"), (int)Package.size(), Package.data());
       }
 
       OverItem = unique_ptr<Override::Item>(new Override::Item);
-      OverItem->FieldOverride["Section"] = Tags.Find(pkgTagSection::Key::Section).to_string();
-      OverItem->Priority = Tags.Find(pkgTagSection::Key::Priority).to_string();
+      OverItem->FieldOverride["Section"] = Tags.Find(pkgTagSection::Key::Section);
+      OverItem->Priority = Tags.Find(pkgTagSection::Key::Priority);
    }
 
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
@@ -458,7 +458,7 @@ bool PackagesWriter::DoPackage(string FileName)
        stringcmp(FileName.begin(),FileName.begin() + DirStrip.length(),
 		 DirStrip.begin(),DirStrip.end()) == 0)
       NewFileName = string(FileName.begin() + DirStrip.length(),FileName.end());
-   else 
+   else
       NewFileName = FileName;
    if (PathPrefix.empty() == false)
       NewFileName = flCombine(PathPrefix,NewFileName);
@@ -467,8 +467,9 @@ bool PackagesWriter::DoPackage(string FileName)
       in the package file - instead we want to ship a separated file */
    string desc;
    if (LongDescription == false) {
-      desc = Tags.Find(pkgTagSection::Key::Description).to_string().append("\n");
-      OverItem->FieldOverride["Description"] = desc.substr(0, desc.find('\n')).c_str();
+      desc = Tags.Find(pkgTagSection::Key::Description);
+      desc += '\n';
+      OverItem->FieldOverride["Description"] = desc.substr(0, desc.find('\n'));
    }
 
    // This lists all the changes to the fields we are going to make.
@@ -500,14 +501,15 @@ bool PackagesWriter::DoPackage(string FileName)
 
    // Rewrite the maintainer field if necessary
    bool MaintFailed;
-   string NewMaint = OverItem->SwapMaint(Tags.Find(pkgTagSection::Key::Maintainer).to_string(), MaintFailed);
+   string NewMaint = OverItem->SwapMaint(Tags.Find(pkgTagSection::Key::Maintainer), MaintFailed);
    if (MaintFailed == true)
    {
       if (NoOverride == false)
       {
-	 NewLine(1);
-	 ioprintf(c1out, _("  %s maintainer is %s not %s\n"),
-	       Package.c_str(), Tags.Find(pkgTagSection::Key::Maintainer).to_string().c_str(), OverItem->OldMaint.c_str());
+	 const auto Maint = Tags.Find(pkgTagSection::Key::Maintainer);
+         NewLine(1);
+	 ioprintf(c1out, _("  %.*s maintainer is %.*s not %s\n"),
+	       (int)Package.size(), Package.data(), (int)Maint.size(), Maint.data(), OverItem->OldMaint.c_str());
       }
    }
 
@@ -547,7 +549,7 @@ TranslationWriter::TranslationWriter(string const &File, string const &TransComp
 // TranslationWriter::DoPackage - Process a single package		/*{{{*/
 // ---------------------------------------------------------------------
 /* Create a Translation-Master file for this Packages file */
-bool TranslationWriter::DoPackage(string const &Pkg, string const &Desc,
+bool TranslationWriter::DoPackage(string_view const &Pkg, string const &Desc,
 				  string const &MD5)
 {
    if (Output == NULL)
@@ -555,14 +557,14 @@ bool TranslationWriter::DoPackage(string const &Pkg, string const &Desc,
 
    // Different archs can include different versions and therefore
    // different descriptions - so we need to check for both name and md5.
-   string const Record = Pkg + ":" + MD5;
+   string const Record = string{Pkg} + ":" + MD5;
 
    if (Included.find(Record) != Included.end())
       return true;
 
    std::string out;
-   strprintf(out, "Package: %s\nDescription-md5: %s\nDescription-en: %s\n",
-	   Pkg.c_str(), MD5.c_str(), Desc.c_str());
+   strprintf(out, "Package: %.*s\nDescription-md5: %s\nDescription-en: %s\n",
+	   (int)Pkg.size(), Pkg.data(), MD5.c_str(), Desc.c_str());
    Output->Write(out.c_str(), out.length());
 
    Included.insert(Record);
@@ -590,7 +592,7 @@ SourcesWriter::SourcesWriter(FileFd * const GivenOutput, string const &DB, strin
    DeLinkLimit = 0;
    Buffer = 0;
    BufSize = 0;
-   
+
    // Process the command line options
    ConfigToDoHashes(DoHashes, "APT::FTPArchive::Sources");
    NoOverride = _config->FindB("APT::FTPArchive::NoOverrideMsg",false);
@@ -608,7 +610,7 @@ SourcesWriter::SourcesWriter(FileFd * const GivenOutput, string const &DB, strin
 
    if (ExtOverrides.empty() == false)
       SOver.ReadExtraOverride(ExtOverrides);
-   
+
    if (SOverrides.empty() == false && FileExists(SOverrides) == true)
       SOver.ReadOverride(SOverrides,true);
 }
@@ -622,7 +624,7 @@ static std::string getDscHash(unsigned int const DoHashes,
       return "";
    std::ostringstream out;
    out << "\n " << Hash->HashValue() << " " << std::to_string(Size) << " " << FileName
-      << "\n " << Tags.Find(FieldKey).to_string();
+      << "\n " << Tags.Find(FieldKey);
    return out.str();
 }
 bool SourcesWriter::DoPackage(string FileName)
@@ -664,7 +666,7 @@ bool SourcesWriter::DoPackage(string FileName)
       // Ignore too-long errors.
       char *BinList[400];
       TokSplitString(',',Buffer,BinList,sizeof(BinList)/sizeof(BinList[0]));
-      
+
       // Look at all the binaries
       unsigned char BestPrioV = pkgCache::State::Extra;
       for (unsigned I = 0; BinList[I] != 0; I++)
@@ -678,39 +680,40 @@ bool SourcesWriter::DoPackage(string FileName)
 	 {
 	    BestPrioV = NewPrioV;
 	    BestPrio = Itm->Priority;
-	 }	 
+	 }
 
 	 if (OverItem.get() == 0)
 	    OverItem = std::move(Itm);
       }
    }
-   
+
    // If we need to do any rewriting of the header do it now..
    if (OverItem.get() == 0)
    {
       if (NoOverride == false)
       {
+         const auto Source = Tags.Find(pkgTagSection::Key::Source);
 	 NewLine(1);
-	 ioprintf(c1out, _("  %s has no override entry\n"), Tags.Find(pkgTagSection::Key::Source).to_string().c_str());
+	 ioprintf(c1out, _("  %.*s has no override entry\n"), (int)Source.size(), Source.data());
       }
-      
+
       OverItem.reset(new Override::Item);
    }
-   
+
    struct stat St;
    if (stat(FileName.c_str(), &St) != 0)
       return _error->Errno("fstat","Failed to stat %s",FileName.c_str());
 
-   auto const Package = Tags.Find(pkgTagSection::Key::Source).to_string();
+   auto const Package = Tags.Find(pkgTagSection::Key::Source);
    unique_ptr<Override::Item> SOverItem(SOver.GetItem(Package));
    // const unique_ptr<Override::Item> autoSOverItem(SOverItem);
    if (SOverItem.get() == 0)
    {
-      ioprintf(c1out, _("  %s has no source override entry\n"), Package.c_str());
+      ioprintf(c1out, _("  %.*s has no source override entry\n"), (int)Package.size(), Package.data());
       SOverItem = unique_ptr<Override::Item>(BOver.GetItem(Package));
       if (SOverItem.get() == 0)
       {
-        ioprintf(c1out, _("  %s has no binary override entry either\n"), Package.c_str());
+        ioprintf(c1out, _("  %.*s has no binary override entry either\n"), (int)Package.size(), Package.data());
 	 SOverItem = unique_ptr<Override::Item>(new Override::Item);
 	 *SOverItem = *OverItem;
       }
@@ -729,7 +732,7 @@ bool SourcesWriter::DoPackage(string FileName)
        FileName.length() > DirStrip.length() &&
        stringcmp(DirStrip,OriginalPath,OriginalPath + DirStrip.length()) == 0)
       NewFileName = string(OriginalPath + DirStrip.length());
-   else 
+   else
       NewFileName = OriginalPath;
    if (PathPrefix.empty() == false)
       NewFileName = flCombine(PathPrefix,NewFileName);
@@ -826,7 +829,7 @@ bool SourcesWriter::DoPackage(string FileName)
    std::vector<pkgTagSection::Tag> Changes;
 
    Changes.push_back(pkgTagSection::Tag::Remove("Source"));
-   Changes.push_back(pkgTagSection::Tag::Rewrite("Package", Package));
+   Changes.push_back(pkgTagSection::Tag::Rewrite("Package", std::string{Package}));
    if (Files.empty() == false)
       Changes.push_back(pkgTagSection::Tag::Rewrite("Files", Files));
    else
@@ -850,14 +853,15 @@ bool SourcesWriter::DoPackage(string FileName)
 
    // Rewrite the maintainer field if necessary
    bool MaintFailed;
-   string NewMaint = OverItem->SwapMaint(Tags.Find(pkgTagSection::Key::Maintainer).to_string(), MaintFailed);
+   string NewMaint = OverItem->SwapMaint(Tags.Find(pkgTagSection::Key::Maintainer), MaintFailed);
    if (MaintFailed == true)
    {
       if (NoOverride == false)
       {
-	 NewLine(1);
-	 ioprintf(c1out, _("  %s maintainer is %s not %s\n"), Package.c_str(),
-	       Tags.Find(pkgTagSection::Key::Maintainer).to_string().c_str(), OverItem->OldMaint.c_str());
+	 const auto Maint = Tags.Find(pkgTagSection::Key::Maintainer);
+         NewLine(1);
+	 ioprintf(c1out, _("  %.*s maintainer is %.*s not %s\n"), (int)Package.size(), Package.data(),
+	       (int)Maint.size(), Maint.data(), OverItem->OldMaint.c_str());
       }
    }
    if (NewMaint.empty() == false)
@@ -873,7 +877,7 @@ bool SourcesWriter::DoPackage(string FileName)
       return false;
 
    Stats.Packages++;
-   
+
    return true;
 }
 									/*}}}*/
@@ -909,11 +913,11 @@ bool ContentsWriter::DoPackage(string FileName, string Package)
    // Parse the package name
    if (Package.empty() == true)
    {
-      Package = Db.Control.Section.Find(pkgTagSection::Key::Package).to_string();
+      Package = Db.Control.Section.Find(pkgTagSection::Key::Package);
    }
 
-   Db.Contents.Add(Gen,Package);
-   
+   Db.Contents.Add(Gen,std::move(Package));
+
    return Db.Finish();
 }
 									/*}}}*/
@@ -939,8 +943,8 @@ bool ContentsWriter::ReadFromPkgs(string const &PkgFile,string const &PkgCompres
    pkgTagSection Section;
    while (Tags.Step(Section) == true)
    {
-      auto File = flCombine(Prefix, Section.Find(pkgTagSection::Key::Filename).to_string());
-      auto Package = flCombine(Section.Find(pkgTagSection::Key::Section).to_string(), Section.Find(pkgTagSection::Key::Package).to_string());
+      auto File = flCombine(Prefix, string{Section.Find(pkgTagSection::Key::Filename)});
+      auto Package = flCombine(string{Section.Find(pkgTagSection::Key::Section)}, string{Section.Find(pkgTagSection::Key::Package)});
       DoPackage(std::move(File), std::move(Package));
       if (_error->empty() == false)
       {
@@ -1058,7 +1062,7 @@ bool ReleaseWriter::DoPackage(string FileName)
       while (NewFileName[0] == '/')
          NewFileName = string(NewFileName.begin() + 1,NewFileName.end());
    }
-   else 
+   else
       NewFileName = FileName;
 
    if (PathPrefix.empty() == false)
