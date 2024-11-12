@@ -82,7 +82,6 @@
 #include <ctime>
 #include <string>
 
-#include <apt-pkg/string_view.h>
 
 
 // size of (potentially big) files like debs or the install size of them
@@ -213,7 +212,7 @@ class APT_PUBLIC pkgCache								/*{{{*/
    // Memory mapped cache file
    std::string CacheFile;
    MMap &Map;
-   map_id_t sHash(APT::StringView S) const APT_PURE;
+   map_id_t sHash(std::string_view S) const APT_PURE;
    
    public:
    
@@ -239,7 +238,7 @@ class APT_PUBLIC pkgCache								/*{{{*/
    inline void *DataEnd() {return ((unsigned char *)Map.Data()) + Map.Size();}
       
    // String hashing function (512 range)
-   inline map_id_t Hash(APT::StringView S) const {return sHash(S);}
+   inline map_id_t Hash(std::string_view S) const {return sHash(S);}
 
    APT_HIDDEN uint32_t CacheHash();
 
@@ -248,15 +247,15 @@ class APT_PUBLIC pkgCache								/*{{{*/
    static std::string_view Priority_NoL10n(unsigned char Prio);
 
    // Accessors
-   GrpIterator FindGrp(APT::StringView Name);
-   PkgIterator FindPkg(APT::StringView Name);
-   PkgIterator FindPkg(APT::StringView Name, APT::StringView Arch);
+   GrpIterator FindGrp(std::string_view Name);
+   PkgIterator FindPkg(std::string_view Name);
+   PkgIterator FindPkg(std::string_view Name, std::string_view Arch);
 
-   APT::StringView ViewString(map_stringitem_t idx) const
+   std::string_view ViewString(map_stringitem_t idx) const
    {
       char *name = StrP + idx;
-      uint16_t len = *reinterpret_cast<const uint16_t*>(name - sizeof(uint16_t));
-      return APT::StringView(name, len);
+      size_t len = *reinterpret_cast<const uint16_t*>(name - sizeof(uint16_t));
+      return {name, len};
    }
 
    Header &Head() {return *HeaderP;}

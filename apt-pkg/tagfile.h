@@ -28,7 +28,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <apt-pkg/string_view.h>
 
 
 class FileFd;
@@ -51,8 +50,8 @@ class APT_PUBLIC pkgTagSection
    std::unique_ptr<pkgTagSectionPrivate> const d;
 
    APT_HIDDEN bool FindInternal(unsigned int Pos,const char *&Start, const char *&End) const;
-   APT_HIDDEN APT::StringView FindInternal(unsigned int Pos) const;
-   APT_HIDDEN APT::StringView FindRawInternal(unsigned int Pos) const;
+   APT_HIDDEN std::string_view FindInternal(unsigned int Pos) const;
+   APT_HIDDEN std::string_view FindRawInternal(unsigned int Pos) const;
    APT_HIDDEN signed int FindIInternal(unsigned int Pos,signed long Default = 0) const;
    APT_HIDDEN bool FindBInternal(unsigned int Pos, bool Default = false) const;
    APT_HIDDEN unsigned long long FindULLInternal(unsigned int Pos, unsigned long long const &Default = 0) const;
@@ -68,8 +67,8 @@ class APT_PUBLIC pkgTagSection
    inline bool operator !=(const pkgTagSection &rhs) {return Section != rhs.Section;};
 
    // TODO: Remove internally
-   std::string FindS(APT::StringView sv) const { return std::string{Find(sv)}; }
-   std::string FindRawS(APT::StringView sv) const { return std::string{FindRaw(sv)}; };
+   std::string FindS(std::string_view sv) const { return std::string{Find(sv)}; }
+   std::string FindRawS(std::string_view sv) const { return std::string{FindRaw(sv)}; };
 
    // Functions for lookup with a perfect hash function
    enum class Key;
@@ -82,23 +81,23 @@ class APT_PUBLIC pkgTagSection
    bool FindFlag(Key key,uint8_t &Flags, uint8_t const Flag) const;
    bool FindFlag(Key key,unsigned long &Flags, unsigned long Flag) const;
    bool Exists(Key key) const;
-   APT::StringView Find(Key key) const;
-   APT::StringView FindRaw(Key key) const;
+   std::string_view Find(Key key) const;
+   std::string_view FindRaw(Key key) const;
 #endif
 
-   bool Find(APT::StringView Tag,const char *&Start, const char *&End) const;
-   bool Find(APT::StringView Tag,unsigned int &Pos) const;
-   APT::StringView Find(APT::StringView Tag) const;
-   APT::StringView FindRaw(APT::StringView Tag) const;
-   signed int FindI(APT::StringView Tag,signed long Default = 0) const;
-   bool FindB(APT::StringView, bool Default = false) const;
-   unsigned long long FindULL(APT::StringView Tag, unsigned long long const &Default = 0) const;
+   bool Find(std::string_view Tag,const char *&Start, const char *&End) const;
+   bool Find(std::string_view Tag,unsigned int &Pos) const;
+   std::string_view Find(std::string_view Tag) const;
+   std::string_view FindRaw(std::string_view Tag) const;
+   signed int FindI(std::string_view Tag,signed long Default = 0) const;
+   bool FindB(std::string_view, bool Default = false) const;
+   unsigned long long FindULL(std::string_view Tag, unsigned long long const &Default = 0) const;
 
-   bool FindFlag(APT::StringView Tag,uint8_t &Flags,
+   bool FindFlag(std::string_view Tag,uint8_t &Flags,
 		 uint8_t const Flag) const;
-   bool FindFlag(APT::StringView Tag,unsigned long &Flags,
+   bool FindFlag(std::string_view Tag,unsigned long &Flags,
 		 unsigned long Flag) const;
-   bool Exists(APT::StringView Tag) const;
+   bool Exists(std::string_view Tag) const;
 
    bool static FindFlag(uint8_t &Flags, uint8_t const Flag,
 				const char* const Start, const char* const Stop);

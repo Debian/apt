@@ -1,18 +1,18 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    Package Cache - Accessor code for the cache
-   
-   Please see doc/apt-pkg/cache.sgml for a more detailed description of 
+
+   Please see doc/apt-pkg/cache.sgml for a more detailed description of
    this format. Also be sure to keep that file up-to-date!!
-   
+
    This is the general utility functions for cache management. They provide
    a complete set of accessor functions for the cache. The cacheiterators
    header contains the STL-like iterators that can be used to easially
    navigate the cache as well as seamlessly dereference the mmap'd
    indexes. Use these always.
-   
+
    The main class provides for ways to get package indexes and some
    general lookup functions to start the iterators.
 
@@ -23,6 +23,7 @@
 
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/string_view.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/mmap.h>
@@ -45,7 +46,7 @@
 									/*}}}*/
 
 using std::string;
-using APT::StringView;
+using std::string_view;
 
 
 // Cache::Header::Header - Constructor					/*{{{*/
@@ -128,7 +129,7 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
 /* */
 pkgCache::pkgCache(MMap *Map, bool DoMap) : Map(*Map), VS(nullptr), d(NULL)
 {
-   // call getArchitectures() with cached=false to ensure that the 
+   // call getArchitectures() with cached=false to ensure that the
    // architectures cache is re-evaluated. this is needed in cases
    // when the APT::Architecture field changes between two cache creations
    APT::Configuration::getArchitectures(false);
@@ -162,13 +163,13 @@ bool pkgCache::ReMap(bool const &Errorchecks)
 
    if (Map.Size() == 0 || HeaderP == 0)
       return _error->Error(_("Empty package cache"));
-   
+
    // Check the header
    Header DefHeader;
    if (HeaderP->Signature != DefHeader.Signature ||
        HeaderP->Dirty == true)
       return _error->Error(_("The package cache file is corrupted"));
-   
+
    if (HeaderP->MajorVersion != DefHeader.MajorVersion ||
        HeaderP->MinorVersion != DefHeader.MinorVersion ||
        HeaderP->CheckSizes(DefHeader) == false)
@@ -208,7 +209,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
 /* This is used to generate the hash entries for the HashTable. With my
    package list from bo this function gets 94% table usage on a 512 item
    table (480 used items) */
-map_id_t pkgCache::sHash(StringView Str) const
+map_id_t pkgCache::sHash(string_view Str) const
 {
    uint32_t Hash = 5381;
    auto I = Str.begin();
@@ -265,7 +266,7 @@ uint32_t pkgCache::CacheHash()
 // Cache::FindPkg - Locate a package by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::FindPkg(StringView Name) {
+pkgCache::PkgIterator pkgCache::FindPkg(string_view Name) {
 	auto const found = Name.rfind(':');
 	if (found == string::npos)
 	   return FindPkg(Name, "native");
@@ -281,7 +282,7 @@ pkgCache::PkgIterator pkgCache::FindPkg(StringView Name) {
 // Cache::FindPkg - Locate a package by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::FindPkg(StringView Name, StringView Arch) {
+pkgCache::PkgIterator pkgCache::FindPkg(string_view Name, string_view Arch) {
 	/* We make a detour via the GrpIterator here as
 	   on a multi-arch environment a group is easier to
 	   find than a package (less entries in the buckets) */
@@ -295,7 +296,7 @@ pkgCache::PkgIterator pkgCache::FindPkg(StringView Name, StringView Arch) {
 // Cache::FindGrp - Locate a group by name				/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns End-Pointer on error, pointer to the group otherwise */
-pkgCache::GrpIterator pkgCache::FindGrp(StringView Name) {
+pkgCache::GrpIterator pkgCache::FindGrp(string_view Name) {
 	if (unlikely(Name.empty() == true))
 		return GrpIterator(*this,0);
 
@@ -314,7 +315,7 @@ pkgCache::GrpIterator pkgCache::FindGrp(StringView Name) {
 									/*}}}*/
 // Cache::CompTypeDeb - Return a string describing the compare type	/*{{{*/
 // ---------------------------------------------------------------------
-/* This returns a string representation of the dependency compare 
+/* This returns a string representation of the dependency compare
    type in the weird debian style.. */
 const char *pkgCache::CompTypeDeb(unsigned char Comp)
 {
@@ -380,7 +381,7 @@ std::string_view pkgCache::Priority_NoL10n(unsigned char Prio)
 // GrpIterator::FindPkg - Locate a package by arch			/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns an End-Pointer on error, pointer to the package otherwise */
-pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(StringView Arch) const {
+pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string_view Arch) const {
 	if (unlikely(IsGood() == false || S->FirstPackage == 0))
 		return PkgIterator(*Owner, 0);
 
@@ -407,7 +408,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(StringView Arch) const {
 // ---------------------------------------------------------------------
 /* Returns an End-Pointer on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg(bool const &PreferNonVirtual) const {
-	pkgCache::PkgIterator Pkg = FindPkg(StringView("native", 6));
+	pkgCache::PkgIterator Pkg = FindPkg(string_view("native", 6));
 	if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
 		return Pkg;
 	// native and foreign
@@ -425,7 +426,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg(bool const &Prefer
 			return Pkg;
 	}
 	// packages without an architecture
-	Pkg = FindPkg(StringView("none", 4));
+	Pkg = FindPkg(string_view("none", 4));
 	if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
 		return Pkg;
 	// the "rest" we somehow know about (+ those we tried already again as skipping is hard)
@@ -506,25 +507,25 @@ pkgCache::DepIterator& pkgCache::DepIterator::operator++()		/*{{{*/
 // ---------------------------------------------------------------------
 /* By this we mean if it is either cleanly installed or cleanly removed. */
 pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
-{  
+{
    if (S->InstState == pkgCache::State::ReInstReq ||
        S->InstState == pkgCache::State::HoldReInstReq)
       return NeedsUnpack;
-   
+
    if (S->CurrentState == pkgCache::State::UnPacked ||
        S->CurrentState == pkgCache::State::HalfConfigured)
       // we leave triggers alone completely. dpkg deals with
-      // them in a hard-to-predict manner and if they get 
-      // resolved by dpkg before apt run dpkg --configure on 
+      // them in a hard-to-predict manner and if they get
+      // resolved by dpkg before apt run dpkg --configure on
       // the TriggersPending package dpkg returns a error
       //Pkg->CurrentState == pkgCache::State::TriggersAwaited
       //Pkg->CurrentState == pkgCache::State::TriggersPending)
       return NeedsConfigure;
-   
+
    if (S->CurrentState == pkgCache::State::HalfInstalled ||
        S->InstState != pkgCache::State::Ok)
       return NeedsUnpack;
-      
+
    return NeedsNothing;
 }
 									/*}}}*/
@@ -546,8 +547,8 @@ pkgCache::PkgIterator::CurVersion() const
    Note that the characters <|>() are all literal above. Versions will be omitted
    if they provide no new information (e.g. there is no newer version than candidate)
    If no version and/or section can be found "none" is used. */
-std::ostream& 
-operator<<(std::ostream& out, pkgCache::PkgIterator Pkg) 
+std::ostream&
+operator<<(std::ostream& out, pkgCache::PkgIterator Pkg)
 {
    if (Pkg.end() == true)
       return out << "invalid package";
@@ -610,34 +611,34 @@ bool pkgCache::DepIterator::IsNegative() const
    then it returned. Otherwise the providing list is looked at to
    see if there is one unique providing package if so it is returned.
    Otherwise true is returned and the target package is set. The return
-   result indicates whether the node should be expandable 
- 
-   In Conjunction with the DepCache the value of Result may not be 
+   result indicates whether the node should be expandable
+
+   In Conjunction with the DepCache the value of Result may not be
    super-good since the policy may have made it uninstallable. Using
    AllTargets is better in this case. */
 bool pkgCache::DepIterator::SmartTargetPkg(PkgIterator &Result) const
 {
    Result = TargetPkg();
-   
+
    // No provides at all
    if (Result->ProvidesList == 0)
       return false;
-   
+
    // There is the Base package and the providing ones which is at least 2
    if (Result->VersionList != 0)
       return true;
-      
+
    /* We have to skip over indirect provisions of the package that
       owns the dependency. For instance, if libc5-dev depends on the
       virtual package libc-dev which is provided by libc5-dev and libc6-dev
-      we must ignore libc5-dev when considering the provides list. */ 
+      we must ignore libc5-dev when considering the provides list. */
    PrvIterator PStart = Result.ProvidesList();
    for (; PStart.end() != true && PStart.OwnerPkg() == ParentPkg(); ++PStart);
 
    // Nothing but indirect self provides
    if (PStart.end() == true)
       return false;
-   
+
    // Check for single packages in the provides list
    PrvIterator P = PStart;
    for (; P.end() != true; ++P)
@@ -650,11 +651,11 @@ bool pkgCache::DepIterator::SmartTargetPkg(PkgIterator &Result) const
    }
 
    Result = PStart.OwnerPkg();
-   
+
    // Check for non dups
    if (P.end() != true)
       return true;
-   
+
    return false;
 }
 									/*}}}*/
@@ -685,7 +686,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
 	 if (Res != 0)
 	    *End++ = I;
       }
-      
+
       // Follow all provides
       for (PrvIterator I = DPkg.ProvidesList(); I.end() == false; ++I)
       {
@@ -698,7 +699,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
 	 if (Res != 0)
 	    *End++ = I.OwnerVer();
       }
-      
+
       // Do it again and write it into the array
       if (Res == 0)
       {
@@ -709,9 +710,9 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       {
 	 *End = 0;
 	 break;
-      }      
+      }
    }
-   
+
    return Res;
 }
 									/*}}}*/
@@ -845,7 +846,7 @@ int pkgCache::VerIterator::CompareVer(const VerIterator &B) const
       return -1;
    if (B.end() == true)
       return 1;
-       
+
    /* Start at A and look for B. If B is found then A > B otherwise
       B was before A so A < B */
    VerIterator I = *this;
@@ -869,7 +870,7 @@ APT_PURE bool pkgCache::VerIterator::Downloadable() const
 									/*}}}*/
 // VerIterator::Automatic - Check if this version is 'automatic'	/*{{{*/
 // ---------------------------------------------------------------------
-/* This checks to see if any of the versions files are not NotAutomatic. 
+/* This checks to see if any of the versions files are not NotAutomatic.
    True if this version is selectable for automatic installation. */
 APT_PURE bool pkgCache::VerIterator::Automatic() const
 {
@@ -894,13 +895,13 @@ pkgCache::VerFileIterator pkgCache::VerIterator::NewestFile() const
       if (Owner->VS->CmpReleaseVer(Files.File().Version(),Highest.File().Version()) > 0)
 	 Highest = Files;
    }
-   
+
    return Highest;
 }
 									/*}}}*/
 // VerIterator::RelStr - Release description string			/*{{{*/
 // ---------------------------------------------------------------------
-/* This describes the version from a release-centric manner. The output is a 
+/* This describes the version from a release-centric manner. The output is a
    list of Label:Version/Archive */
 static std::string PkgFileIteratorToRelString(pkgCache::PkgFileIterator const &File)
 {
@@ -1004,7 +1005,7 @@ string pkgCache::PkgFileIterator::RelStr()				/*{{{*/
 // ---------------------------------------------------------------------
 /* return a DescIter for the specified language
  */
-pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescriptionForLanguage(StringView lang) const
+pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescriptionForLanguage(string_view lang) const
 {
    for (pkgCache::DescIterator Desc = DescriptionList(); Desc.end() == false; ++Desc)
       if (lang == Desc.LanguageCode())

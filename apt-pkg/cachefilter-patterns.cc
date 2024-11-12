@@ -588,7 +588,7 @@ BaseRegexMatcher::~BaseRegexMatcher()
 } // namespace Internal
 
 // The bridge into the public world
-std::unique_ptr<APT::CacheFilter::Matcher> APT::CacheFilter::ParsePattern(APT::StringView pattern, pkgCacheFile *file)
+std::unique_ptr<APT::CacheFilter::Matcher> APT::CacheFilter::ParsePattern(std::string_view pattern, pkgCacheFile *file)
 {
    if (file != nullptr && !file->BuildDepCache())
       return nullptr;

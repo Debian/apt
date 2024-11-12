@@ -15,7 +15,6 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
@@ -31,9 +30,9 @@
 #include <apti18n.h>
 									/*}}}*/
 
-using APT::StringView;
 using APT::Configuration::color;
 using std::string;
+using std::string_view;
 
 class APT_HIDDEN pkgTagFilePrivate					/*{{{*/
 {
@@ -628,7 +627,7 @@ void pkgTagSection::Trim()
 }
 									/*}}}*/
 // TagSection::Exists - return True if a tag exists			/*{{{*/
-bool pkgTagSection::Exists(StringView Tag) const
+bool pkgTagSection::Exists(string_view Tag) const
 {
    unsigned int tmp;
    return Find(Tag, tmp);
@@ -648,7 +647,7 @@ bool pkgTagSection::Find(Key key,unsigned int &Pos) const
    Pos = Bucket - 1;
    return Bucket != 0;
 }
-bool pkgTagSection::Find(StringView TagView,unsigned int &Pos) const
+bool pkgTagSection::Find(string_view TagView,unsigned int &Pos) const
 {
    const char * const Tag = TagView.data();
    size_t const Length = TagView.length();
@@ -693,7 +692,7 @@ bool pkgTagSection::FindInternal(unsigned int Pos, const char *&Start,
 
    return true;
 }
-bool pkgTagSection::Find(StringView Tag,const char *&Start,
+bool pkgTagSection::Find(string_view Tag,const char *&Start,
 		         const char *&End) const
 {
    unsigned int Pos;
@@ -707,25 +706,25 @@ bool pkgTagSection::Find(Key key,const char *&Start,
 }
 									/*}}}*/
 // TagSection::FindS - Find a string					/*{{{*/
-StringView pkgTagSection::Find(StringView Tag) const
+string_view pkgTagSection::Find(string_view Tag) const
 {
    const char *Start;
    const char *End;
    if (Find(Tag,Start,End) == false)
-      return StringView();
-   return StringView(Start, End - Start);
+      return string_view();
+   return string_view(Start, End - Start);
 }
-StringView pkgTagSection::Find(Key key) const
+string_view pkgTagSection::Find(Key key) const
 {
    const char *Start;
    const char *End;
    if (Find(key,Start,End) == false)
-      return StringView();
-   return StringView(Start, End - Start);
+      return string_view();
+   return string_view(Start, End - Start);
 }
 									/*}}}*/
 // TagSection::FindRawS - Find a string					/*{{{*/
-StringView pkgTagSection::FindRawInternal(unsigned int Pos) const
+string_view pkgTagSection::FindRawInternal(unsigned int Pos) const
 {
    if (unlikely(Pos + 1 >= d->Tags.size() || Pos >= d->Tags.size()))
       return _error->Error("Internal parsing error"), "";
@@ -743,14 +742,14 @@ StringView pkgTagSection::FindRawInternal(unsigned int Pos) const
 
    for (; isspace_ascii(End[-1]) != 0 && End > Start; --End);
 
-   return StringView(Start, End - Start);
+   return string_view(Start, End - Start);
 }
-StringView pkgTagSection::FindRaw(StringView Tag) const
+string_view pkgTagSection::FindRaw(std::string_view Tag) const
 {
    unsigned int Pos;
    return Find(Tag, Pos) ? FindRawInternal(Pos) : "";
 }
-StringView pkgTagSection::FindRaw(Key key) const
+string_view pkgTagSection::FindRaw(Key key) const
 {
    unsigned int Pos;
    return Find(key, Pos) ? FindRawInternal(Pos) : "";
@@ -791,7 +790,7 @@ signed int pkgTagSection::FindI(Key key,signed long Default) const
 
    return Find(key, Pos) ? FindIInternal(Pos) : Default;
 }
-signed int pkgTagSection::FindI(StringView Tag,signed long Default) const
+signed int pkgTagSection::FindI(string_view Tag,signed long Default) const
 {
    unsigned int Pos;
 
@@ -827,7 +826,7 @@ unsigned long long pkgTagSection::FindULL(Key key, unsigned long long const &Def
 
    return Find(key, Pos) ? FindULLInternal(Pos, Default) : Default;
 }
-unsigned long long pkgTagSection::FindULL(StringView Tag, unsigned long long const &Default) const
+unsigned long long pkgTagSection::FindULL(string_view Tag, unsigned long long const &Default) const
 {
    unsigned int Pos;
 
@@ -849,7 +848,7 @@ bool pkgTagSection::FindB(Key key, bool Default) const
    unsigned int Pos;
    return Find(key, Pos) ? FindBInternal(Pos, Default): Default;
 }
-bool pkgTagSection::FindB(StringView Tag, bool Default) const
+bool pkgTagSection::FindB(string_view Tag, bool Default) const
 {
    unsigned int Pos;
    return Find(Tag, Pos) ? FindBInternal(Pos, Default) : Default;
@@ -875,7 +874,7 @@ bool pkgTagSection::FindFlag(Key key, uint8_t &Flags,
       return true;
    return FindFlagInternal(Pos, Flags, Flag);
 }
-bool pkgTagSection::FindFlag(StringView Tag, uint8_t &Flags,
+bool pkgTagSection::FindFlag(string_view Tag, uint8_t &Flags,
 			     uint8_t const Flag) const
 {
    unsigned int Pos;
@@ -917,7 +916,7 @@ bool pkgTagSection::FindFlag(Key key,unsigned long &Flags,
    unsigned int Pos;
    return Find(key, Pos) ? FindFlagInternal(Pos, Flags, Flag) : true;
 }
-bool pkgTagSection::FindFlag(StringView Tag,unsigned long &Flags,
+bool pkgTagSection::FindFlag(string_view Tag,unsigned long &Flags,
 			     unsigned long Flag) const
 {
    unsigned int Pos;
@@ -986,7 +985,7 @@ pkgTagSection::Tag pkgTagSection::Tag::Rewrite(std::string const &Name, std::str
    else
       return Tag(REWRITE, Name, Data);
 }
-static bool WriteTag(FileFd &File, std::string Tag, StringView Value, pkgTagSection::WriteFlags flags)
+static bool WriteTag(FileFd &File, std::string Tag, string_view Value, pkgTagSection::WriteFlags flags)
 {
    if (Value.empty() || isspace_ascii(Value[0]) != 0)
       Tag.append(":");
