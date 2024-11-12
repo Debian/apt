@@ -20,7 +20,6 @@
 
 #include <string>
 #include <vector>
-#include <apt-pkg/string_view.h>
 
 
 class FileFd;
@@ -32,7 +31,7 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    // Parser Helper
    struct WordList
    {
-      APT::StringView Str;
+      std::string_view Str;
       unsigned char Val;
    };
 
@@ -52,7 +51,7 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 		     unsigned int Type);
    bool ParseProvides(pkgCache::VerIterator &Ver);
 
-   APT_HIDDEN static bool GrabWord(APT::StringView Word,const WordList *List,unsigned char &Out);
+   APT_HIDDEN static bool GrabWord(std::string_view Word,const WordList *List,unsigned char &Out);
    APT_HIDDEN unsigned char ParseMultiArch(bool const showErrors);
 
    public:
@@ -83,8 +82,8 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 					      std::string const &Arch = "");
 
    APT_PUBLIC static const char *ParseDepends(const char *Start, const char *Stop,
-					      APT::StringView &Package,
-					      APT::StringView &Ver, unsigned int &Op,
+					      std::string_view &Package,
+					      std::string_view &Ver, unsigned int &Op,
 					      bool const ParseArchFlags = false, bool StripMultiArch = true,
 					      bool const ParseRestrictionsList = false,
 					      std::string Arch = "");
@@ -95,7 +94,7 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    virtual ~debListParser();
 
 #ifdef APT_COMPILING_APT
-   APT::StringView SHA256() const
+   std::string_view SHA256() const
    {
       return Section.Find(pkgTagSection::Key::SHA256);
    }
