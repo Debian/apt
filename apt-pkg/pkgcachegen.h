@@ -209,7 +209,7 @@ class APT_HIDDEN pkgCacheListParser
    virtual APT::StringView Version() = 0;
    virtual bool NewVersion(pkgCache::VerIterator &Ver) = 0;
    virtual std::vector<std::string> AvailableDescriptionLanguages() = 0;
-   virtual APT::StringView Description_md5() = 0;
+   virtual std::string_view Description_md5() = 0;
    virtual uint32_t VersionHash() = 0;
    /** compare currently parsed version with given version
     *

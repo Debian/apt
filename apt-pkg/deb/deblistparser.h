@@ -66,7 +66,7 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    virtual APT::StringView Version() APT_OVERRIDE;
    virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
    virtual std::vector<std::string> AvailableDescriptionLanguages() APT_OVERRIDE;
-   virtual APT::StringView Description_md5() APT_OVERRIDE;
+   virtual std::string_view Description_md5() APT_OVERRIDE;
    virtual uint32_t VersionHash() APT_OVERRIDE;
    virtual bool SameVersion(uint32_t Hash, pkgCache::VerIterator const &Ver) APT_OVERRIDE;
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,

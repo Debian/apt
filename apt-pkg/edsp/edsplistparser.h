@@ -18,15 +18,12 @@
 #include <string>
 
 
-namespace APT {
-   class StringView;
-}
 class APT_HIDDEN edspLikeListParser : public debListParser
 {
    public:
    virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
    virtual std::vector<std::string> AvailableDescriptionLanguages() APT_OVERRIDE;
-   virtual APT::StringView Description_md5() APT_OVERRIDE;
+   virtual std::string_view Description_md5() APT_OVERRIDE;
    virtual uint32_t VersionHash() APT_OVERRIDE;
 
    explicit edspLikeListParser(FileFd *File);

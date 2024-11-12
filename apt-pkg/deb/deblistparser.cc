@@ -280,7 +280,7 @@ std::vector<std::string> debListParser::AvailableDescriptionLanguages()
    description. If no Description-md5 is found in the section it will be
    calculated.
  */
-APT::StringView debListParser::Description_md5()
+std::string_view debListParser::Description_md5()
 {
    return Section.Find(pkgTagSection::Key::Description_md5);
 }

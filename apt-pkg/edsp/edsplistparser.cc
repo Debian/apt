@@ -17,7 +17,6 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile-keys.h>
 #include <apt-pkg/tagfile.h>
@@ -48,7 +47,7 @@ bool edspLikeListParser::NewVersion(pkgCache::VerIterator &Ver)
       return false;
 
    // Patch up the source version, it is stored in the Source-Version field in EDSP.
-   if (APT::StringView version = Section.Find(pkgTagSection::Key::Source_Version); not version.empty())
+   if (std::string_view version = Section.Find(pkgTagSection::Key::Source_Version); not version.empty())
    {
       if (version != Ver.VerStr())
       {
@@ -67,9 +66,9 @@ std::vector<std::string> edspLikeListParser::AvailableDescriptionLanguages()
 {
    return {};
 }
-APT::StringView edspLikeListParser::Description_md5()
+std::string_view edspLikeListParser::Description_md5()
 {
-   return APT::StringView();
+   return {};
 }
 									/*}}}*/
 // ListParser::VersionHash - Compute a unique hash for this version	/*{{{*/
