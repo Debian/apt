@@ -24,7 +24,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
-#include <apt-pkg/string_view.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/version.h>
 
 #include <algorithm>
