@@ -191,7 +191,7 @@ bool DoUpdate()
       {
 	 /* Try to notify users who have installed firmware packages at some point, but
 	    have not enabled non-free currently – they might want to opt into updates now */
-	 APT::StringView const affected_pkgs[] = {
+	 std::string_view const affected_pkgs[] = {
 	    "amd64-microcode", "atmel-firmware", "bluez-firmware", "dahdi-firmware-nonfree",
 	    "firmware-amd-graphics", "firmware-ast", "firmware-atheros", "firmware-bnx2",
 	    "firmware-bnx2x", "firmware-brcm80211", "firmware-cavium", "firmware-intel-sound",
