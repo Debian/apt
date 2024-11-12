@@ -605,7 +605,7 @@ static bool IsAccessibleBySandboxUser(std::string const &filename, bool const Re
 
       char const * const filetag = ".apt-acquire-privs-test.XXXXXX";
       std::string const tmpfile_tpl = flCombine(dirname, filetag);
-      std::unique_ptr<char, decltype(std::free) *> tmpfile { strdup(tmpfile_tpl.c_str()), std::free };
+      std::unique_ptr<char, FreeDeleter> tmpfile { strdup(tmpfile_tpl.c_str()) };
       int const fd = mkstemp(tmpfile.get());
       if (fd == -1 && errno == EACCES)
 	 return false;

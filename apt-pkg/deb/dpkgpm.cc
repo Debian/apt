@@ -33,6 +33,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <grp.h>
+#include <limits.h>
 #include <pwd.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
@@ -76,8 +77,13 @@ APT_PURE static string AptHistoryRequestingUser()			/*{{{*/
          if (uid > 0) {
             struct passwd pwd;
             struct passwd *result;
-            char buf[255];
-            if (getpwuid_r(uid, &pwd, buf, sizeof(buf), &result) == 0 && result != NULL) {
+            int tmp = sysconf(_SC_GETPW_R_SIZE_MAX);
+            if(tmp <= 0)
+               tmp = 256;
+            std::vector<char> buf(tmp);
+            while ((tmp = getpwuid_r(uid, &pwd, buf.data(), buf.size(), &result)) == -1 && errno == ERANGE)
+               buf.resize(buf.size() * 2);
+            if (tmp == 0 && result != NULL) {
                std::string res;
                strprintf(res, "%s (%d)", pwd.pw_name, uid);
                return res;
@@ -116,7 +122,7 @@ public:
    bool stdin_is_dev_null;
    bool status_fd_reached_end_of_file;
    // the buffer we use for the dpkg status-fd reading
-   char dpkgbuf[1024];
+   std::array<char, APT_BUFFER_SIZE> dpkgbuf;
    size_t dpkgbuf_pos;
    FILE *term_out;
    FILE *history_out;
@@ -480,6 +486,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       close(Pipes[0]);
       FILE *F = fdopen(Pipes[1],"w");
       if (F == 0) {
+         close(Pipes[1]);
          result = _error->Errno("fdopen","Failed to open new FD");
          break;
       }
@@ -528,10 +535,10 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 */
 void pkgDPkgPM::DoStdin(int master)
 {
-   unsigned char input_buf[256] = {0,}; 
-   ssize_t len = read(STDIN_FILENO, input_buf, sizeof(input_buf));
+   std::array<unsigned char, APT_BUFFER_SIZE> input_buf;
+   ssize_t len = read(STDIN_FILENO, input_buf.data(), input_buf.size());
    if (len)
-      FileFd::Write(master, input_buf, len);
+      FileFd::Write(master, input_buf.data(), len);
    else
       d->stdin_is_dev_null = true;
 }
@@ -543,9 +550,9 @@ void pkgDPkgPM::DoStdin(int master)
  */
 void pkgDPkgPM::DoTerminalPty(int master)
 {
-   unsigned char term_buf[1024] = {0,0, };
+   std::array<unsigned char, APT_BUFFER_SIZE> term_buf;
 
-   ssize_t len=read(master, term_buf, sizeof(term_buf));
+   ssize_t len=read(master, term_buf.data(), term_buf.size());
    if(len == -1 && errno == EIO)
    {
       // this happens when the child is about to exit, we
@@ -557,9 +564,9 @@ void pkgDPkgPM::DoTerminalPty(int master)
    }
    if(len <= 0)
       return;
-   FileFd::Write(1, term_buf, len);
+   FileFd::Write(1, term_buf.data(), len);
    if(d->term_out)
-      fwrite(term_buf, len, sizeof(char), d->term_out);
+      fwrite(term_buf.data(), len, sizeof(char), d->term_out);
 }
 									/*}}}*/
 // DPkgPM::ProcessDpkgStatusBuf						/*{{{*/
@@ -754,10 +761,12 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 	       char* buf = NULL;
 	       size_t bufsize = 0;
 	       if (getline(&buf, &bufsize, dpkg) != -1)
-		  pkgname += ':' + bufsize;
+		  (pkgname += ':') += buf;
 	       free(buf);
 	       fclose(dpkg);
 	    }
+	    else
+	       close(outputFd);
 	    ExecWait(dpkgNativeArch, "dpkg --print-architecture", true);
 	    if (pkgname.find(':') != std::string::npos)
 	    {
@@ -946,7 +955,7 @@ void pkgDPkgPM::handleCrossUpgradeAction(string const &pkgname)		/*{{{*/
 // DPkgPM::DoDpkgStatusFd						/*{{{*/
 void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
 {
-   auto const remainingBuffer = (sizeof(d->dpkgbuf) / sizeof(d->dpkgbuf[0])) - d->dpkgbuf_pos;
+   auto const remainingBuffer = d->dpkgbuf.size() - d->dpkgbuf_pos;
    if (likely(remainingBuffer > 0) && d->status_fd_reached_end_of_file == false)
    {
       auto const len = read(statusfd, &d->dpkgbuf[d->dpkgbuf_pos], remainingBuffer);
@@ -957,12 +966,12 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
 	 d->status_fd_reached_end_of_file = true;
 	 return;
       }
-      d->dpkgbuf_pos += (len / sizeof(d->dpkgbuf[0]));
+      d->dpkgbuf_pos += len;
    }
 
    // process line by line from the buffer
-   char *p = d->dpkgbuf, *q = nullptr;
-   while((q=(char*)memchr(p, '\n', (d->dpkgbuf + d->dpkgbuf_pos) - p)) != nullptr)
+   char *p = d->dpkgbuf.data(), *q = nullptr;
+   while((q=(char*)memchr(p, '\n', &d->dpkgbuf[d->dpkgbuf_pos] - p)) != nullptr)
    {
       *q = '\0';
       ProcessDpkgStatusLine(p);
@@ -970,15 +979,15 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
    }
 
    // check if we stripped the buffer clean
-   if (p > (d->dpkgbuf + d->dpkgbuf_pos))
+   if (p > (d->dpkgbuf.data() + d->dpkgbuf_pos))
    {
       d->dpkgbuf_pos = 0;
       return;
    }
 
    // otherwise move the unprocessed tail to the start and update pos
-   memmove(d->dpkgbuf, p, (p - d->dpkgbuf));
-   d->dpkgbuf_pos = (d->dpkgbuf + d->dpkgbuf_pos) - p;
+   memmove(d->dpkgbuf.data(), p, (p - d->dpkgbuf.data()));
+   d->dpkgbuf_pos = &d->dpkgbuf[d->dpkgbuf_pos] - p;
 }
 									/*}}}*/
 // DPkgPM::WriteHistoryTag						/*{{{*/
@@ -2233,6 +2242,27 @@ void pkgDPkgPM::Reset()
 {
    List.erase(List.begin(),List.end());
 }
+
+template <class F>
+struct AptScopeWrapper {
+   F func;
+   ~AptScopeWrapper() { func(); }
+};
+template <class F>
+AptScopeWrapper(F) -> AptScopeWrapper<F>;
+
+static void CopyIndented(const char *header, FILE *from, FILE *to)
+{
+   if (!from)
+      return;
+
+   fputs(header, to);
+   char *line{};
+   size_t linelen;
+   AptScopeWrapper line_deleter{[&] { free(line); }};
+   while (getline(&line, &linelen, from) != -1)
+      fprintf(to, " %s", line);
+}
 									/*}}}*/
 // pkgDpkgPM::WriteApportReport - write out error report pkg failure	/*{{{*/
 // ---------------------------------------------------------------------
@@ -2355,30 +2385,25 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    reportfile = flCombine(_config->FindDir("Dir::Apport", "var/crash"), pkgname+".0.crash");
    if(FileExists(reportfile))
    {
-      struct stat buf;
-      char strbuf[255];
-
       // check atime/mtime
+      struct stat buf{};
       stat(reportfile.c_str(), &buf);
       if(buf.st_mtime > buf.st_atime)
 	 return;
 
+      char *line{};
+      size_t linelen;
+      AptScopeWrapper line_deleter{[&] { free(line); }};
       // check if the existing report is the same version
       report = fopen(reportfile.c_str(),"r");
-      while(fgets(strbuf, sizeof(strbuf), report) != NULL)
+      AptScopeWrapper report_deleter{[&] { fclose(report); }};
+      while(getline(&line, &linelen, report) != -1)
       {
-	 if(strstr(strbuf,"Package:") == strbuf)
-	 {
-	    char pkgname[255], version[255];
-	    if(sscanf(strbuf, "Package: %254s %254s", pkgname, version) == 2)
-	       if(strcmp(pkgver.c_str(), version) == 0)
-	       {
-		  fclose(report);
-		  return;
-	       }
-	 }
+	 char pkgname[255], version[255];
+	 if(sscanf(line, "Package: %254s %254s", pkgname, version) == 2)
+	    if(strcmp(pkgver.c_str(), version) == 0)
+	       return;
       }
-      fclose(report);
    }
 
    // now write the report
@@ -2386,6 +2411,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    report = fopen(reportfile.c_str(),"w");
    if(report == NULL)
       return;
+   AptScopeWrapper report_deleter{[&] { fclose(report); }};
    if(_config->FindB("DPkgPM::InitialReportOnly",false) == true)
       chmod(reportfile.c_str(), 0);
    else
@@ -2406,35 +2432,12 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    // attach terminal log it if we have it
    string logfile_name = _config->FindFile("Dir::Log::Terminal", "/dev/null");
    if (logfile_name != "/dev/null")
-   {
-      FILE *log = NULL;
-
-      fprintf(report, "DpkgTerminalLog:\n");
-      log = fopen(logfile_name.c_str(),"r");
-      if(log != NULL)
-      {
-	 char buf[1024];
-	 while( fgets(buf, sizeof(buf), log) != NULL)
-	    fprintf(report, " %s", buf);
-         fprintf(report, " \n");
-	 fclose(log);
-      }
-   }
+      CopyIndented("DpkgTerminalLog:\n", make_unique_FILE(logfile_name, "r").get(), report);
 
    // attach history log it if we have it
    string histfile_name = _config->FindFile("Dir::Log::History", "/dev/null");
    if (histfile_name != "/dev/null")
-   {
-      fprintf(report, "DpkgHistoryLog:\n");
-      FILE* log = fopen(histfile_name.c_str(),"r");
-      if(log != NULL)
-      {
-	 char buf[1024];
-	 while( fgets(buf, sizeof(buf), log) != NULL)
-	    fprintf(report, " %s", buf);
-	 fclose(log);
-      }
-   }
+      CopyIndented("DpkgHistoryLog:\n", make_unique_FILE(histfile_name, "r").get(), report);
 
    // log the ordering, see dpkgpm.h and the "Ops" enum there
    fprintf(report, "AptOrdering:\n");
@@ -2458,34 +2461,10 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 
    // attach dmesg log (to learn about segfaults)
    if (FileExists("/bin/dmesg"))
-   {
-      fprintf(report, "Dmesg:\n");
-      FILE *log = popen("/bin/dmesg","r");
-      if(log != NULL)
-      {
-	 char buf[1024];
-	 while( fgets(buf, sizeof(buf), log) != NULL)
-	    fprintf(report, " %s", buf);
-	 pclose(log);
-      }
-   }
+      CopyIndented("Dmesg:\n", make_unique_popen("/bin/dmesg","r").get(), report);
 
    // attach df -l log (to learn about filesystem status)
    if (FileExists("/bin/df"))
-   {
-
-      fprintf(report, "Df:\n");
-      FILE *log = popen("/bin/df -l -x squashfs","r");
-      if(log != NULL)
-      {
-	 char buf[1024];
-	 while( fgets(buf, sizeof(buf), log) != NULL)
-	    fprintf(report, " %s", buf);
-	 pclose(log);
-      }
-   }
-
-   fclose(report);
-
+      CopyIndented("Df:\n", make_unique_popen("/bin/df -l -x squashfs","r").get(), report);
 }
 									/*}}}*/

@@ -201,11 +201,11 @@ public:
       SUPPORT_COMMENTS = 1 << 0,
    };
 
-   void Init(FileFd * const F, pkgTagFile::Flags const Flags, unsigned long long Size = 32*1024);
-   void Init(FileFd * const F,unsigned long long const Size = 32*1024);
+   void Init(FileFd * const F, pkgTagFile::Flags const Flags, unsigned long long Size = APT_BUFFER_SIZE);
+   void Init(FileFd * const F,unsigned long long const Size = APT_BUFFER_SIZE);
 
-   pkgTagFile(FileFd * const F, pkgTagFile::Flags const Flags, unsigned long long Size = 32*1024);
-   pkgTagFile(FileFd * const F,unsigned long long Size = 32*1024);
+   pkgTagFile(FileFd * const F, pkgTagFile::Flags const Flags, unsigned long long Size = APT_BUFFER_SIZE);
+   pkgTagFile(FileFd * const F,unsigned long long Size = APT_BUFFER_SIZE);
    virtual ~pkgTagFile();
 };
 
