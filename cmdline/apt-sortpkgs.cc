@@ -1,13 +1,13 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    APT Sort Packages - Program to sort Package and Source files
 
    This program is quite simple, it just sorts the package files by
    package and sorts the fields inside by the internal APT sort order.
    Input is taken from a named file and sent to stdout.
-   
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -46,7 +46,7 @@ struct PkgName								/*{{{*/
    string Arch;
    unsigned long Offset;
    unsigned long Length;
-   
+
    inline int Compare3(const PkgName &x) const
    {
       int A = stringcasecmp(Name,x.Name);
@@ -58,7 +58,7 @@ struct PkgName								/*{{{*/
       }
       return A;
    }
-   
+
    bool operator <(const PkgName &x) const {return Compare3(x) < 0;};
    bool operator >(const PkgName &x) const {return Compare3(x) > 0;};
    bool operator ==(const PkgName &x) const {return Compare3(x) == 0;};
@@ -73,7 +73,7 @@ static bool DoIt(string InFile)
    pkgTagFile Tags(&Fd);
    if (_error->PendingError() == true)
       return false;
-   
+
    // Parse.
    vector<PkgName> List;
    pkgTagSection Section;
@@ -83,28 +83,28 @@ static bool DoIt(string InFile)
    while (Tags.Step(Section) == true)
    {
       PkgName Tmp;
-      
-      /* Fetch the name, auto-detecting if this is a source file or a 
+
+      /* Fetch the name, auto-detecting if this is a source file or a
          package file */
-      Tmp.Name = Section.Find(pkgTagSection::Key::Package).to_string();
-      Tmp.Ver = Section.Find(pkgTagSection::Key::Version).to_string();
-      Tmp.Arch = Section.Find(pkgTagSection::Key::Architecture).to_string();
-      
+      Tmp.Name = Section.Find(pkgTagSection::Key::Package);
+      Tmp.Ver = Section.Find(pkgTagSection::Key::Version);
+      Tmp.Arch = Section.Find(pkgTagSection::Key::Architecture);
+
       if (Tmp.Name.empty() == true)
 	 return _error->Error(_("Unknown package record!"));
-      
+
       Tmp.Offset = Offset;
       Tmp.Length = Section.size();
       if (Largest < Tmp.Length)
 	 Largest = Tmp.Length;
-      
+
       List.push_back(Tmp);
-      
+
       Offset = Tags.Offset();
    }
    if (_error->PendingError() == true)
       return false;
-   
+
    // Sort it
    sort(List.begin(),List.end());
 
