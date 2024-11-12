@@ -38,6 +38,7 @@ public:
 
     StringView(const char *data) : data_(data), size_(strlen(data)) {}
     StringView(std::string const & str): data_(str.data()), size_(str.size()) {}
+    inline StringView(std::string_view const & str): data_(str.data()), size_(str.size()) {}
 
     /* Modifiers */
     void remove_prefix(size_t n) { data_ += n; size_ -= n; }
@@ -136,17 +137,24 @@ public:
     constexpr char operator [](size_t i) const { return data_[i]; }
     constexpr size_t size() const { return size_; }
     constexpr size_t length() const { return size_; }
+
+    inline constexpr operator std::string_view() const { return {data_, size_}; }
 };
+
+inline std::ostream& operator<<(std::ostream& os, const StringView& sv)
+{
+    return os << static_cast<std::string_view>(sv);
+}
 
 /**
  * \brief Faster comparison for string views (compare size before data)
  *
  * Still stable, but faster than the normal ordering. */
-static inline int StringViewCompareFast(StringView a, StringView b) {
+static inline int StringViewCompareFast(const std::string_view & a, const std::string_view & b) {
     if (a.size() != b.size())
         return a.size() - b.size();
 
-    return memcmp(a.data(), b.data(), a.size());
+    return a.compare(b);
 }
 
 static constexpr inline APT::StringView operator""_sv(const char *data, size_t size)
@@ -157,7 +165,8 @@ static constexpr inline APT::StringView operator""_sv(const char *data, size_t s
 
 inline bool operator ==(const char *other, APT::StringView that);
 inline bool operator ==(const char *other, APT::StringView that) { return that.operator==(other); }
-inline bool operator ==(std::string const &other, APT::StringView that);
-inline bool operator ==(std::string const &other, APT::StringView that) { return that.operator==(other); }
+template<class = void> bool operator ==(std::string_view const &other, APT::StringView const &that) { return that.operator==(other); }
+template<class = void> bool operator !=(std::string_view const &other, APT::StringView const &that) { return that.operator!=(other); }
+template<class = void> bool operator !=(APT::StringView const &that, std::string_view const &other) { return that.operator!=(other); }
 
 #endif
