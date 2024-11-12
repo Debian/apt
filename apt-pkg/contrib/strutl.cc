@@ -104,7 +104,7 @@ std::string Join(std::vector<std::string> list, const std::string &sep)
 }
 
 // Returns string display length honoring multi-byte characters
-size_t DisplayLength(StringView str)
+size_t DisplayLength(string_view str)
 {
    size_t len = 0;
 
@@ -930,7 +930,7 @@ string TimeRFC1123(time_t Date, bool const NumericTimezone)
    auto const posix = std::locale::classic();
    std::ostringstream datestr;
    datestr.imbue(posix);
-   APT::StringView const fmt("%a, %d %b %Y %H:%M:%S");
+   std::string_view const fmt("%a, %d %b %Y %H:%M:%S");
    std::use_facet<std::time_put<char>>(posix).put(
                     std::ostreambuf_iterator<char>(datestr),
                     datestr, ' ', &Conv, fmt.data(), fmt.data() + fmt.size());
@@ -1307,7 +1307,7 @@ static int HexDigit(int c)
 // Hex2Num - Convert a long hex number into a buffer			/*{{{*/
 // ---------------------------------------------------------------------
 /* The length of the buffer must be exactly 1/2 the length of the string. */
-bool Hex2Num(const APT::StringView Str,unsigned char *Num,unsigned int Length)
+bool Hex2Num(const std::string_view Str,unsigned char *Num,unsigned int Length)
 {
    if (Str.length() != Length*2)
       return false;

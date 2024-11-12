@@ -120,9 +120,9 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
 {
    unsigned char MA;
    auto const MultiArch = Section.Find(pkgTagSection::Key::Multi_Arch);
-   if (MultiArch.empty() == true || MultiArch == "no")
+   if (MultiArch.empty() == true || MultiArch == "no"sv)
       MA = pkgCache::Version::No;
-   else if (MultiArch == "same") {
+   else if (MultiArch == "same"sv) {
       if (ArchitectureAll() == true)
       {
 	 if (showErrors == true)
@@ -133,9 +133,9 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
       else
 	 MA = pkgCache::Version::Same;
    }
-   else if (MultiArch == "foreign")
+   else if (MultiArch == "foreign"sv)
       MA = pkgCache::Version::Foreign;
-   else if (MultiArch == "allowed")
+   else if (MultiArch == "allowed"sv)
       MA = pkgCache::Version::Allowed;
    else
    {

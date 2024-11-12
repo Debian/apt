@@ -1,17 +1,17 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    Cache Iterators - Iterators for navigating the cache structure
-   
+
    The iterators all provides ++,==,!=,->,* and end for their type.
    The end function can be used to tell if the list has been fully
    traversed.
-   
+
    Unlike STL iterators these contain helper functions to access the data
    that is being iterated over. This is because the data structures can't
    be formed in a manner that is intuitive to use and also mmapable.
-   
+
    For each variable in the target structure that would need a translation
    to be accessed correctly a translating function of the same name is
    present in the iterator. If applicable the translating function will
@@ -22,9 +22,9 @@
    structure passed to the constructor, which should be the structure
    that has the depends pointer as a member. The provide iterator has the
    same system.
-   
+
    This header is not user includable, please use apt-pkg/pkgcache.h
-   
+
    ##################################################################### */
 									/*}}}*/
 #ifndef PKGLIB_CACHEITERATORS_H
@@ -37,7 +37,6 @@
 #include <iosfwd>
 #include <iterator>
 #include <string>
-#include <apt-pkg/string_view.h>
 
 #include <cstring>
 
@@ -123,7 +122,7 @@ class APT_PUBLIC pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;}
 	inline PkgIterator PackageList() const;
 	inline VerIterator VersionsInSource() const;
-	PkgIterator FindPkg(APT::StringView Arch = APT::StringView("any", 3)) const;
+	PkgIterator FindPkg(std::string_view Arch = {"any", 3}) const;
 	/** \brief find the package with the "best" architecture
 
 	    The best architecture is either the "native" or the first
@@ -234,7 +233,7 @@ class APT_PUBLIC pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + S->ParentPkg);}
 
 	inline DescIterator DescriptionList() const;
-	DescIterator TranslatedDescriptionForLanguage(APT::StringView lang) const;
+	DescIterator TranslatedDescriptionForLanguage(std::string_view lang) const;
 	DescIterator TranslatedDescription() const;
 	inline DepIterator DependsList() const;
 	inline PrvIterator ProvidesList() const;
