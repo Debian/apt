@@ -533,7 +533,7 @@ bool debReleaseIndex::Load(std::string const &Filename, std::string * const Erro
 	 if (!parseSumData(Start, End, Name, Hash, Size))
 	    return false;
 
-	 HashString const hs(hashinfo.name.to_string(), Hash);
+	 HashString const hs(std::string{hashinfo.name}, Hash);
          if (Entries.find(Name) == Entries.end())
          {
             metaIndex::checkSum *Sum = new metaIndex::checkSum;
@@ -698,7 +698,7 @@ bool debReleaseIndex::parseSumData(const char *&Start, const char *End,	/*{{{*/
       Start++;
    if (Start >= End)
       return false;
-   
+
    EntryEnd = Start;
    /* Find the end of the second entry (the size) */
    while ((*EntryEnd != '\t' && *EntryEnd != ' ' )
@@ -706,19 +706,19 @@ bool debReleaseIndex::parseSumData(const char *&Start, const char *End,	/*{{{*/
       EntryEnd++;
    if (EntryEnd == End)
       return false;
-   
+
    Size = strtoull (Start, NULL, 10);
-      
+
    /* Skip over intermediate blanks */
    Start = EntryEnd;
    while (*Start == '\t' || *Start == ' ')
       Start++;
    if (Start >= End)
       return false;
-   
+
    EntryEnd = Start;
    /* Find the end of the third entry (the filename) */
-   while ((*EntryEnd != '\t' && *EntryEnd != ' ' && 
+   while ((*EntryEnd != '\t' && *EntryEnd != ' ' &&
            *EntryEnd != '\n' && *EntryEnd != '\r')
 	  && EntryEnd < End)
       EntryEnd++;
@@ -1255,7 +1255,7 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
    }
 
    protected:
-   // This is a duplicate of pkgAcqChangelog::URITemplate()  with some changes to work 
+   // This is a duplicate of pkgAcqChangelog::URITemplate()  with some changes to work
    // on metaIndex instead of cache structures, and using Snapshots
    std::string SnapshotServer(debReleaseIndex const *Rls) const
    {
