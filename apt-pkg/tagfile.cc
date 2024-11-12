@@ -1004,7 +1004,7 @@ static bool RewriteTags(FileFd &File, pkgTagSection const *const This, char cons
       }
       else if(R->Action == pkgTagSection::Tag::RENAME && R->Data.length() == TagLen &&
 	    strncasecmp(R->Data.c_str(), Tag, R->Data.length()) == 0)
-	 data = This->FindRaw(R->Name.c_str()).to_string();
+	 data = This->FindRaw(R->Name.c_str());
       else
 	 continue;
 
