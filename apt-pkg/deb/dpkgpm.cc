@@ -2250,6 +2250,8 @@ struct AptScopeWrapper {
 };
 template <class F>
 AptScopeWrapper(F) -> AptScopeWrapper<F>;
+#define PASTE(a, b) a##b
+#define DEFER(lambda) AptScopeWrapper PASTE(defer, __LINE__){lambda};
 
 static void CopyIndented(const char *header, FILE *from, FILE *to)
 {
@@ -2259,7 +2261,7 @@ static void CopyIndented(const char *header, FILE *from, FILE *to)
    fputs(header, to);
    char *line{};
    size_t linelen;
-   AptScopeWrapper line_deleter{[&] { free(line); }};
+   DEFER([&] { free(line); });
    while (getline(&line, &linelen, from) != -1)
       fprintf(to, " %s", line);
 }
@@ -2393,10 +2395,10 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 
       char *line{};
       size_t linelen;
-      AptScopeWrapper line_deleter{[&] { free(line); }};
+      DEFER([&] { free(line); });
       // check if the existing report is the same version
       report = fopen(reportfile.c_str(),"r");
-      AptScopeWrapper report_deleter{[&] { fclose(report); }};
+      DEFER([&] { fclose(report); });
       while(getline(&line, &linelen, report) != -1)
       {
 	 char pkgname[255], version[255];
@@ -2411,7 +2413,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    report = fopen(reportfile.c_str(),"w");
    if(report == NULL)
       return;
-   AptScopeWrapper report_deleter{[&] { fclose(report); }};
+   DEFER([&] { fclose(report); });
    if(_config->FindB("DPkgPM::InitialReportOnly",false) == true)
       chmod(reportfile.c_str(), 0);
    else
