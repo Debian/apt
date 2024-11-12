@@ -23,7 +23,6 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/proxy.h>
-#include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
 
 #include <cerrno>
@@ -977,12 +976,12 @@ void HttpMethod::SendReq(FetchItem *Itm)
 #ifdef HAVE_SYSTEMD
    if (ConfigFindB("User-Agent-Non-Interactive", false))
    {
-      using APT::operator""_sv;
+      using std::literals::operator""sv;
       char *unit = nullptr;
       sd_pid_get_unit(getpid(), &unit);
       if (unit != nullptr && *unit != '\0' && not APT::String::Startswith(unit, "user@") // user@ _is_ interactive
-	  && "packagekit.service"_sv != unit						 // packagekit likely is interactive
-	  && "dbus.service"_sv != unit)							 // aptdaemon and qapt don't have systemd services
+	  && "packagekit.service"sv != unit						 // packagekit likely is interactive
+	  && "dbus.service"sv != unit)							 // aptdaemon and qapt don't have systemd services
 	 Req << " non-interactive";
 
       free(unit);
