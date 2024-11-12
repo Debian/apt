@@ -1,9 +1,9 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    Debian Package Records - Parser for debian package records
-     
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -58,13 +58,13 @@ debRecordParserBase::debRecordParserBase() : Parser(), d(NULL) {}
 // RecordParserBase::FileName - Return the archive filename on the site	/*{{{*/
 string debRecordParserBase::FileName()
 {
-   return Section.Find(pkgTagSection::Key::Filename).to_string();
+   return string{Section.Find(pkgTagSection::Key::Filename)};
 }
 									/*}}}*/
 // RecordParserBase::Name - Return the package name			/*{{{*/
 string debRecordParserBase::Name()
 {
-   auto Result = Section.Find(pkgTagSection::Key::Package).to_string();
+   auto Result = string{Section.Find(pkgTagSection::Key::Package)};
 
    // Normalize mixed case package names to lower case, like dpkg does
    // See Bug#807012 for details
@@ -76,7 +76,7 @@ string debRecordParserBase::Name()
 // RecordParserBase::Homepage - Return the package homepage		/*{{{*/
 string debRecordParserBase::Homepage()
 {
-   return Section.Find(pkgTagSection::Key::Homepage).to_string();
+   return string{Section.Find(pkgTagSection::Key::Homepage)};
 }
 									/*}}}*/
 // RecordParserBase::Hashes - return the available archive hashes	/*{{{*/
@@ -87,7 +87,7 @@ HashStringList debRecordParserBase::Hashes() const
    {
       std::string const hash = Section.FindS(*type);
       if (hash.empty() == false)
-	 hashes.push_back(HashString(*type, hash));
+	 hashes.push_back(HashString(*type, std::move(hash)));
    }
    auto const size = Section.FindULL(pkgTagSection::Key::Size, 0);
    if (size != 0)
@@ -98,7 +98,7 @@ HashStringList debRecordParserBase::Hashes() const
 // RecordParserBase::Maintainer - Return the maintainer email		/*{{{*/
 string debRecordParserBase::Maintainer()
 {
-   return Section.Find(pkgTagSection::Key::Maintainer).to_string();
+   return string{Section.Find(pkgTagSection::Key::Maintainer)};
 }
 									/*}}}*/
 // RecordParserBase::RecordField - Return the value of an arbitrary field	/*{{*/
@@ -135,20 +135,20 @@ string debRecordParserBase::LongDesc(std::string const &lang)
 	    break;
 	 else if (*l == "en")
 	 {
-	    orig = Section.Find(pkgTagSection::Key::Description).to_string();
+	    orig = Section.Find(pkgTagSection::Key::Description);
 	    if (orig.empty() == false)
 	       break;
 	 }
       }
       if (orig.empty() == true)
-	 orig = Section.Find(pkgTagSection::Key::Description).to_string();
+	 orig = Section.Find(pkgTagSection::Key::Description);
    }
    else
    {
       std::string const tagname = "Description-" + lang;
       orig = Section.FindS(tagname.c_str());
       if (orig.empty() == true && lang == "en")
-	 orig = Section.Find(pkgTagSection::Key::Description).to_string();
+	 orig = Section.Find(pkgTagSection::Key::Description);
    }
 
    char const * const codeset = nl_langinfo(CODESET);
@@ -166,7 +166,7 @@ static const char * const SourceVerSeparators = " ()";
 // RecordParserBase::SourcePkg - Return the source package name if any	/*{{{*/
 string debRecordParserBase::SourcePkg()
 {
-   auto Res = Section.Find(pkgTagSection::Key::Source).to_string();
+   auto Res = string{Section.Find(pkgTagSection::Key::Source)};
    auto const Pos = Res.find_first_of(SourceVerSeparators);
    if (Pos != std::string::npos)
       Res.erase(Pos);
@@ -176,22 +176,22 @@ string debRecordParserBase::SourcePkg()
 // RecordParserBase::SourceVer - Return the source version number if present	/*{{{*/
 string debRecordParserBase::SourceVer()
 {
-   auto const Pkg = Section.Find(pkgTagSection::Key::Source).to_string();
-   string::size_type Pos = Pkg.find_first_of(SourceVerSeparators);
-   if (Pos == string::npos)
+   std::string_view Pkg = Section.Find(pkgTagSection::Key::Source);
+   auto Pos = Pkg.find_first_of(SourceVerSeparators);
+   if (Pos == std::string_view::npos)
       return "";
 
-   string::size_type VerStart = Pkg.find_first_not_of(SourceVerSeparators, Pos);
-   if(VerStart == string::npos)
+   auto VerStart = Pkg.find_first_not_of(SourceVerSeparators, Pos);
+   if(VerStart == std::string_view::npos)
      return "";
 
-   string::size_type VerEnd = Pkg.find_first_of(SourceVerSeparators, VerStart);
-   if(VerEnd == string::npos)
+   auto VerEnd = Pkg.find_first_of(SourceVerSeparators, VerStart);
+   if(VerEnd == std::string_view::npos)
      // Corresponds to the case of, e.g., "foo (1.2" without a closing
      // paren.  Be liberal and guess what it means.
-     return string(Pkg, VerStart);
+     return string(Pkg.data(), VerStart);
    else
-     return string(Pkg, VerStart, VerEnd - VerStart);
+     return string(Pkg.data(), VerStart, VerEnd - VerStart);
 }
 									/*}}}*/
 // RecordParserBase::GetRec - Return the whole record			/*{{{*/
