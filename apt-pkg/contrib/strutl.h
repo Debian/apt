@@ -19,7 +19,6 @@
 #ifndef STRUTL_H
 #define STRUTL_H
 
-#include <apt-pkg/string_view.h>
 #include <cstddef>
 #include <cstring>
 #include <ctime>
@@ -48,7 +47,7 @@ namespace APT {
       APT_PUBLIC bool Startswith(const std::string &s, const std::string &starting);
       APT_PUBLIC std::string Join(std::vector<std::string> list, const std::string &sep);
       // Returns string display length honoring multi-byte characters
-      APT_PUBLIC size_t DisplayLength(StringView str);
+      APT_PUBLIC size_t DisplayLength(std::string_view str);
    }
 }
 
@@ -106,7 +105,7 @@ APT_PUBLIC bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigne
 APT_PUBLIC bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base = 0);
 APT_PUBLIC bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len);
 APT_PUBLIC bool Base256ToNum(const char *Str,unsigned long long &Res,unsigned int Len);
-APT_PUBLIC bool Hex2Num(const APT::StringView Str,unsigned char *Num,unsigned int Length);
+APT_PUBLIC bool Hex2Num(const std::string_view Str,unsigned char *Num,unsigned int Length);
 // input changing string split
 APT_PUBLIC bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
