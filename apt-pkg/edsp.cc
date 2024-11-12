@@ -20,7 +20,6 @@
 #include <apt-pkg/prettyprinters.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/solver3.h>
-#include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/tagfile.h>
 
@@ -55,7 +54,7 @@ constexpr char const * const DepMap[] = {
 
 // WriteOkay - varaidic helper to easily Write to a FileFd		/*{{{*/
 static bool WriteOkay_fn(FileFd &) { return true; }
-template<typename... Tail> static bool WriteOkay_fn(FileFd &output, APT::StringView data, Tail... more_data)
+template<typename... Tail> static bool WriteOkay_fn(FileFd &output, std::string_view data, Tail... more_data)
 {
    return likely(output.Write(data.data(), data.length()) && WriteOkay_fn(output, more_data...));
 }
@@ -217,7 +216,7 @@ static bool checkKnownArchitecture(std::string const &arch)		/*{{{*/
    return std::find(veryforeign.begin(), veryforeign.end(), arch) != veryforeign.end();
 }
 									/*}}}*/
-static bool WriteGenericRequestHeaders(FileFd &output, APT::StringView const head)/*{{{*/
+static bool WriteGenericRequestHeaders(FileFd &output, std::string_view const head)/*{{{*/
 {
    bool Okay = WriteOkay(output, head, "Architecture: ", _config->Find("APT::Architecture"), "\n",
 	 "Architectures:");
@@ -537,7 +536,7 @@ static bool localStringToBool(std::string answer, bool const defValue) {
    return defValue;
 }
 									/*}}}*/
-static bool LineStartsWithAndStrip(std::string &line, APT::StringView const with)/*{{{*/
+static bool LineStartsWithAndStrip(std::string &line, std::string_view const with)/*{{{*/
 {
    if (line.compare(0, with.size(), with.data()) != 0)
       return false;
@@ -545,7 +544,7 @@ static bool LineStartsWithAndStrip(std::string &line, APT::StringView const with
    return true;
 }
 									/*}}}*/
-static bool ReadFlag(unsigned int &flags, std::string &line, APT::StringView const name, unsigned int const setflag)/*{{{*/
+static bool ReadFlag(unsigned int &flags, std::string &line, std::string_view const name, unsigned int const setflag)/*{{{*/
 {
    if (LineStartsWithAndStrip(line, name) == false)
       return false;
@@ -985,14 +984,14 @@ bool EIPP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress * const 
 	 pkgset[P->ID] = true;
 	 if (strcmp(P.Arch(), "any") == 0)
 	 {
-	    APT::StringView const pkgname(P.Name());
+	    std::string_view const pkgname(P.Name());
 	    auto const idxColon = pkgname.find(':');
-	    if (idxColon != APT::StringView::npos)
+	    if (idxColon != std::string_view::npos)
 	    {
 	       pkgCache::PkgIterator PA;
 	       if (pkgname.substr(idxColon + 1) == "any")
 	       {
-		  auto const GA = Cache.FindGrp(pkgname.substr(0, idxColon).to_string());
+		  auto const GA = Cache.FindGrp(pkgname.substr(0, idxColon));
 		  for (auto PA = GA.PackageList(); PA.end() == false; PA = GA.NextPkg(PA))
 		  {
 		     pkgset[PA->ID] = true;
@@ -1000,7 +999,7 @@ bool EIPP::WriteScenario(pkgDepCache &Cache, FileFd &output, OpProgress * const 
 	       }
 	       else
 	       {
-		  auto const PA = Cache.FindPkg(pkgname.to_string());
+		  auto const PA = Cache.FindPkg(pkgname);
 		  if (PA.end() == false)
 		     pkgset[PA->ID] = true;
 	       }
