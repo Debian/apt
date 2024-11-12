@@ -31,6 +31,15 @@
 #include "macros.h"
 
 
+namespace {
+   struct FreeDeleter {
+      void operator()(void *p) {
+         free(p);
+      }
+   };
+}
+
+
 namespace APT {
    namespace String {
       APT_PUBLIC std::string Strip(const std::string &s);

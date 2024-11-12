@@ -1421,7 +1421,7 @@ unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
    and to allow reordering of parameters */
 bool iovprintf(std::ostream &out, const char *format,
 		      va_list &args, ssize_t &size) {
-   auto S = std::unique_ptr<char,decltype(&free)>{static_cast<char*>(malloc(size)), &free};
+   auto S = std::unique_ptr<char,FreeDeleter>{static_cast<char*>(malloc(size))};
    ssize_t const n = vsnprintf(S.get(), size, format, args);
    if (n > -1 && n < size) {
       out << S.get();

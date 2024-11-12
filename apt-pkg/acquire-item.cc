@@ -4065,7 +4065,7 @@ static std::string GetAuxFileNameFromURIInLists(std::string const &uri)
    auto const dirname = flCombine(_config->FindDir("Dir::State::lists"), "auxfiles/");
    char const * const filetag = ".apt-acquire-privs-test.XXXXXX";
    std::string const tmpfile_tpl = flCombine(dirname, filetag);
-   std::unique_ptr<char, decltype(std::free) *> tmpfile { strdup(tmpfile_tpl.c_str()), std::free };
+   std::unique_ptr<char, FreeDeleter> tmpfile { strdup(tmpfile_tpl.c_str()) };
    int const fd = mkstemp(tmpfile.get());
    if (fd == -1)
       return "";
@@ -4081,7 +4081,7 @@ static std::string GetAuxFileNameFromURI(std::string const &uri)
 
    std::string tmpdir_tpl;
    strprintf(tmpdir_tpl, "%s/apt-auxfiles-XXXXXX", GetTempDir().c_str());
-   std::unique_ptr<char, decltype(std::free) *> tmpdir { strndup(tmpdir_tpl.data(), tmpdir_tpl.length()), std::free };
+   std::unique_ptr<char, FreeDeleter> tmpdir { strndup(tmpdir_tpl.data(), tmpdir_tpl.length()) };
    if (mkdtemp(tmpdir.get()) == nullptr)
    {
       _error->Errno("GetAuxFileNameFromURI", "mkdtemp of %s failed", tmpdir.get());

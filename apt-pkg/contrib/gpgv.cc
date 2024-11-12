@@ -28,14 +28,17 @@
 #include <apti18n.h>
 									/*}}}*/
 
-// syntactic sugar to wrap a raw pointer with a custom deleter in a std::unique_ptr
-static std::unique_ptr<char, decltype(&free)> make_unique_char(void *const str = nullptr)
-{
-   return {static_cast<char *>(str), &free};
+namespace {
+   struct FILEDeleter {
+      void operator()(FILE *p) {
+         fclose(p);
+      }
+   };
 }
-static std::unique_ptr<FILE, decltype(&fclose)> make_unique_FILE(std::string const &filename, char const *const mode)
+
+static std::unique_ptr<FILE, FILEDeleter> make_unique_FILE(std::string const &filename, char const *const mode)
 {
-   return {fopen(filename.c_str(), mode), &fclose};
+   return {fopen(filename.c_str(), mode), {}};
 }
 
 class LineBuffer							/*{{{*/
@@ -207,9 +210,9 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    }
 
    enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
-   auto sig = make_unique_char();
-   auto data = make_unique_char();
-   auto conf = make_unique_char();
+   std::unique_ptr<char, FreeDeleter> sig;
+   std::unique_ptr<char, FreeDeleter> data;
+   std::unique_ptr<char, FreeDeleter> conf;
 
    // Dump the configuration so apt-key picks up the correct Dir values
    {
