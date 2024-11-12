@@ -12,7 +12,6 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
 
 #include <algorithm>
@@ -89,7 +88,7 @@ bool AutoDetectProxy(URI &URL)
    // and apt will use the generic proxy settings
    if (goodread == false)
       return true;
-   APT::StringView const cleanedbuf = _strstrip(buf);
+   std::string_view const cleanedbuf = _strstrip(buf);
    // We warn about this as the implementor probably meant to use DIRECT instead
    if (cleanedbuf.empty())
    {
