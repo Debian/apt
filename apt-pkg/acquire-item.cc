@@ -140,10 +140,11 @@ static void ReportMirrorFailureToCentral(pkgAcquire::Item const &I, std::string 
    if(!FileExists(report))
       return;
 
+   const auto DescURI = I.DescURI();
    std::vector<char const*> const Args = {
       report.c_str(),
       I.UsedMirror.c_str(),
-      I.DescURI().c_str(),
+      DescURI.c_str(),
       FailCode.c_str(),
       Details.c_str(),
       NULL
