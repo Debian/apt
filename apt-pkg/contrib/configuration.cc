@@ -4,7 +4,7 @@
 /* ######################################################################
 
    Configuration Class
-   
+
    This class provides a configuration file and command line parser
    for a tree-oriented configuration environment. All runtime configuration
    is stored in here.
@@ -25,7 +25,6 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/string_view.h>
 
 #include <cctype>
 #include <cstddef>
@@ -219,7 +218,7 @@ Configuration::~Configuration()
 {
    if (ToFree == false)
       return;
-   
+
    Item *Top = Root;
    for (; Top != 0;)
    {
@@ -228,13 +227,13 @@ Configuration::~Configuration()
 	 Top = Top->Child;
 	 continue;
       }
-            
+
       while (Top != 0 && Top->Next == 0)
       {
 	 Item *Parent = Top->Parent;
 	 delete Top;
 	 Top = Parent;
-      }      
+      }
       if (Top != 0)
       {
 	 Item *Next = Top->Next;
@@ -246,7 +245,7 @@ Configuration::~Configuration()
 									/*}}}*/
 // Configuration::Lookup - Lookup a single item				/*{{{*/
 // ---------------------------------------------------------------------
-/* This will lookup a single item by name below another item. It is a 
+/* This will lookup a single item by name below another item. It is a
    helper function for the main lookup function */
 Configuration::Item *Configuration::Lookup(Item *Head,const char *S,
 					   unsigned long const &Len,bool const &Create)
@@ -254,7 +253,7 @@ Configuration::Item *Configuration::Lookup(Item *Head,const char *S,
    int Res = 1;
    Item *I = Head->Child;
    Item **Last = &Head->Child;
-   
+
    // Empty strings match nothing. They are used for lists.
    if (Len != 0)
    {
@@ -264,12 +263,12 @@ Configuration::Item *Configuration::Lookup(Item *Head,const char *S,
    }
    else
       for (; I != 0; Last = &I->Next, I = I->Next);
-      
+
    if (Res == 0)
       return I;
    if (Create == false)
       return 0;
-   
+
    I = new Item;
    I->Tag.assign(S,Len);
    I->Next = *Last;
@@ -286,7 +285,7 @@ Configuration::Item *Configuration::Lookup(const char *Name,bool const &Create)
 {
    if (Name == 0)
       return Root->Child;
-   
+
    const char *Start = Name;
    const char *End = Start + strlen(Name);
    const char *TagEnd = Name;
@@ -298,9 +297,9 @@ Configuration::Item *Configuration::Lookup(const char *Name,bool const &Create)
 	 Itm = Lookup(Itm,Start,TagEnd - Start,Create);
 	 if (Itm == 0)
 	    return 0;
-	 TagEnd = Start = TagEnd + 2;	 
+	 TagEnd = Start = TagEnd + 2;
       }
-   }   
+   }
 
    // This must be a trailing ::, we create unique items in a list
    if (End - Start == 0)
@@ -308,7 +307,7 @@ Configuration::Item *Configuration::Lookup(const char *Name,bool const &Create)
       if (Create == false)
 	 return 0;
    }
-   
+
    Itm = Lookup(Itm,Start,End - Start,Create);
    return Itm;
 }
@@ -327,7 +326,7 @@ string Configuration::Find(const char *Name,const char *Default) const
       else
 	 return Default;
    }
-   
+
    return Itm->Value;
 }
 									/*}}}*/
@@ -440,12 +439,12 @@ int Configuration::FindI(const char *Name,int const &Default) const
    const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
       return Default;
-   
+
    char *End;
    int Res = strtol(Itm->Value.c_str(),&End,0);
    if (End == Itm->Value.c_str())
       return Default;
-   
+
    return Res;
 }
 									/*}}}*/
@@ -458,7 +457,7 @@ bool Configuration::FindB(const char *Name,bool const &Default) const
    const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
       return Default;
-   
+
    return StringToBool(Itm->Value,Default);
 }
 									/*}}}*/
@@ -479,19 +478,19 @@ string Configuration::FindAny(const char *Name,const char *Default) const
    switch (type)
    {
       // file
-      case 'f': 
+      case 'f':
       return FindFile(key.c_str(), Default);
-      
+
       // directory
-      case 'd': 
+      case 'd':
       return FindDir(key.c_str(), Default);
-      
+
       // bool
-      case 'b': 
+      case 'b':
       return FindB(key, Default) ? "true" : "false";
-      
+
       // int
-      case 'i': 
+      case 'i':
       {
 	 char buf[16];
 	 snprintf(buf, sizeof(buf)-1, "%d", FindI(key, Default ? atoi(Default) : 0 ));
@@ -590,7 +589,7 @@ void Configuration::Clear(string const &Name, string const &Value)
 	 I = I->Next;
       }
    }
-     
+
 }
 									/*}}}*/
 // Configuration::Clear - Clear everything				/*{{{*/
@@ -611,7 +610,7 @@ void Configuration::Clear()
 void Configuration::Clear(string const &Name)
 {
    Item *Top = Lookup(Name.c_str(),false);
-   if (Top == 0) 
+   if (Top == 0)
       return;
 
    Top->Value.clear();
@@ -631,11 +630,11 @@ void Configuration::Clear(string const &Name)
 	 Item *Tmp = Top;
 	 Top = Top->Parent;
 	 delete Tmp;
-	 
+
 	 if (Top == Stop)
 	    return;
       }
-      
+
       Item *Tmp = Top;
       if (Top != 0)
 	 Top = Top->Next;
@@ -827,10 +826,10 @@ string Configuration::Item::FullTag(const Item *Stop) const
 // ReadConfigFile - Read a configuration file				/*{{{*/
 // ---------------------------------------------------------------------
 /* The configuration format is very much like the named.conf format
-   used in bind8, in fact this routine can parse most named.conf files. 
-   Sectional config files are like bind's named.conf where there are 
+   used in bind8, in fact this routine can parse most named.conf files.
+   Sectional config files are like bind's named.conf where there are
    sections like 'zone "foo.org" { .. };' This causes each section to be
-   added in with a tag like "zone::foo.org" instead of being split 
+   added in with a tag like "zone::foo.org" instead of being split
    tag/value. AsSectional enables Sectional parsing.*/
 static void leaveCurrentScope(std::stack<std::string> &Stack, std::string &ParentTag)
 {
@@ -873,13 +872,13 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 
       // Now strip comments; if the whole line is contained in a
       // comment, skip this line.
-      APT::StringView Line{Input.data(), Input.size()};
+      std::string_view Line{Input.data(), Input.size()};
 
       // continued Multi line comment
       if (InComment)
       {
 	 size_t end = Line.find("*/");
-	 if (end != APT::StringView::npos)
+	 if (end != std::string_view::npos)
 	 {
 	    Line.remove_prefix(end + 2);
 	    InComment = false;
@@ -891,7 +890,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
       // Discard single line comments
       {
 	 size_t start = 0;
-	 while ((start = Line.find("//", start)) != APT::StringView::npos)
+	 while ((start = Line.find("//", start)) != std::string_view::npos)
 	 {
 	    if (std::count(Line.begin(), Line.begin() + start, '"') % 2 != 0)
 	    {
@@ -901,10 +900,10 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	    Line.remove_suffix(Line.length() - start);
 	    break;
 	 }
-	 using APT::operator""_sv;
-	 constexpr std::array<APT::StringView, 3> magicComments { "clear"_sv, "include"_sv, "x-apt-configure-index"_sv };
+	 using std::literals::operator""sv;
+	 constexpr std::array<std::string_view, 3> magicComments { "clear"sv, "include"sv, "x-apt-configure-index"sv };
 	 start = 0;
-	 while ((start = Line.find('#', start)) != APT::StringView::npos)
+	 while ((start = Line.find('#', start)) != std::string_view::npos)
 	 {
 	    if (std::count(Line.begin(), Line.begin() + start, '"') % 2 != 0 ||
 		std::any_of(magicComments.begin(), magicComments.end(), [&](auto const m) { return Line.compare(start+1, m.length(), m) == 0; }))
@@ -922,7 +921,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
       Fragment.reserve(Line.length());
       {
 	 size_t start = 0;
-	 while ((start = Line.find("/*", start)) != APT::StringView::npos)
+	 while ((start = Line.find("/*", start)) != std::string_view::npos)
 	 {
 	    if (std::count(Line.begin(), Line.begin() + start, '"') % 2 != 0)
 	    {
@@ -931,9 +930,9 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	    }
 	    Fragment.append(Line.data(), start);
 	    auto const end = Line.find("*/", start + 2);
-	    if (end == APT::StringView::npos)
+	    if (end == std::string_view::npos)
 	    {
-	       Line.clear();
+	       Line = {};
 	       InComment = true;
 	       break;
 	    }
