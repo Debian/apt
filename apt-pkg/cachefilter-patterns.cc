@@ -12,6 +12,8 @@
 
 #include <apti18n.h>
 
+using namespace std::literals;
+
 namespace APT
 {
 namespace Internal
@@ -19,50 +21,50 @@ namespace Internal
 
 static const constexpr struct
 {
-   APT::StringView shortName;
-   APT::StringView longName;
+   std::string_view shortName;
+   std::string_view longName;
    bool takesArgument;
 } shortPatterns[] = {
-   {"r"_sv, "?architecture"_sv, true},
-   {"A"_sv, "?archive"_sv, true},
-   {"M"_sv, "?automatic"_sv, false},
-   {"b"_sv, "?broken"_sv, false},
-   {"c"_sv, "?config-files"_sv, false},
+   {"r"sv, "?architecture"sv, true},
+   {"A"sv, "?archive"sv, true},
+   {"M"sv, "?automatic"sv, false},
+   {"b"sv, "?broken"sv, false},
+   {"c"sv, "?config-files"sv, false},
    // FIXME: The words after ~D should be case-insensitive
-   {"DDepends:"_sv, "?depends"_sv, true},
-   {"DPre-Depends:"_sv, "?pre-depends"_sv, true},
-   {"DSuggests:"_sv, "?suggests"_sv, true},
-   {"DRecommends:"_sv, "?recommends"_sv, true},
-   {"DConflicts:"_sv, "?conflicts"_sv, true},
-   {"DReplaces:"_sv, "?replaces"_sv, true},
-   {"DObsoletes:"_sv, "?obsoletes"_sv, true},
-   {"DBreaks:"_sv, "?breaks"_sv, true},
-   {"DEnhances:"_sv, "?enhances"_sv, true},
-   {"D"_sv, "?depends"_sv, true},
-   {"RDepends:"_sv, "?reverse-depends"_sv, true},
-   {"RPre-Depends:"_sv, "?reverse-pre-depends"_sv, true},
-   {"RSuggests:"_sv, "?reverse-suggests"_sv, true},
-   {"RRecommends:"_sv, "?reverse-recommends"_sv, true},
-   {"RConflicts:"_sv, "?reverse-conflicts"_sv, true},
-   {"RReplaces:"_sv, "?reverse-replaces"_sv, true},
-   {"RObsoletes:"_sv, "?reverse-obsoletes"_sv, true},
-   {"RBreaks:"_sv, "?reverse-breaks"_sv, true},
-   {"REnhances:"_sv, "?reverse-enhances"_sv, true},
-   {"R"_sv, "?reverse-depends"_sv, true},
-   {"E"_sv, "?essential"_sv, false},
-   {"F"_sv, "?false"_sv, false},
-   {"g"_sv, "?garbage"_sv, false},
-   {"i"_sv, "?installed"_sv, false},
-   {"n"_sv, "?name"_sv, true},
-   {"o"_sv, "?obsolete"_sv, false},
-   {"O"_sv, "?origin"_sv, true},
-   {"p"_sv, "?priority"_sv, true},
-   {"s"_sv, "?section"_sv, true},
-   {"e"_sv, "?source-package"_sv, true},
-   {"T"_sv, "?true"_sv, false},
-   {"U"_sv, "?upgradable"_sv, false},
-   {"V"_sv, "?version"_sv, true},
-   {"v"_sv, "?virtual"_sv, false},
+   {"DDepends:"sv, "?depends"sv, true},
+   {"DPre-Depends:"sv, "?pre-depends"sv, true},
+   {"DSuggests:"sv, "?suggests"sv, true},
+   {"DRecommends:"sv, "?recommends"sv, true},
+   {"DConflicts:"sv, "?conflicts"sv, true},
+   {"DReplaces:"sv, "?replaces"sv, true},
+   {"DObsoletes:"sv, "?obsoletes"sv, true},
+   {"DBreaks:"sv, "?breaks"sv, true},
+   {"DEnhances:"sv, "?enhances"sv, true},
+   {"D"sv, "?depends"sv, true},
+   {"RDepends:"sv, "?reverse-depends"sv, true},
+   {"RPre-Depends:"sv, "?reverse-pre-depends"sv, true},
+   {"RSuggests:"sv, "?reverse-suggests"sv, true},
+   {"RRecommends:"sv, "?reverse-recommends"sv, true},
+   {"RConflicts:"sv, "?reverse-conflicts"sv, true},
+   {"RReplaces:"sv, "?reverse-replaces"sv, true},
+   {"RObsoletes:"sv, "?reverse-obsoletes"sv, true},
+   {"RBreaks:"sv, "?reverse-breaks"sv, true},
+   {"REnhances:"sv, "?reverse-enhances"sv, true},
+   {"R"sv, "?reverse-depends"sv, true},
+   {"E"sv, "?essential"sv, false},
+   {"F"sv, "?false"sv, false},
+   {"g"sv, "?garbage"sv, false},
+   {"i"sv, "?installed"sv, false},
+   {"n"sv, "?name"sv, true},
+   {"o"sv, "?obsolete"sv, false},
+   {"O"sv, "?origin"sv, true},
+   {"p"sv, "?priority"sv, true},
+   {"s"sv, "?section"sv, true},
+   {"e"sv, "?source-package"sv, true},
+   {"T"sv, "?true"sv, false},
+   {"U"sv, "?upgradable"sv, false},
+   {"V"sv, "?version"sv, true},
+   {"v"sv, "?virtual"sv, false},
 };
 
 template <class... Args>
@@ -270,7 +272,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
    static constexpr auto CHARS = ("0123456789"
 				  "abcdefghijklmnopqrstuvwxyz"
 				  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-				  "-"_sv);
+				  "-"sv);
    if (sentence[state.offset] != '?')
       return nullptr;
 
@@ -278,7 +280,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parsePattern()
    node->end = node->start = state.offset;
    state.offset++;
 
-   while (CHARS.find(sentence[state.offset]) != APT::StringView::npos)
+   while (CHARS.find(sentence[state.offset]) != std::string_view::npos)
    {
       ++state.offset;
    }
@@ -356,20 +358,20 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseQuotedWord()
 std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord(bool shrt)
 {
    // Characters not allowed at the start of a word (also see ..._SHRT)
-   static const constexpr auto DISALLOWED_START = "!?~|,() \0"_sv;
+   static const constexpr auto DISALLOWED_START = "!?~|,() \0"sv;
    // Characters terminating a word inside a long pattern
-   static const constexpr auto DISALLOWED_LONG = "|,()\0"_sv;
+   static const constexpr auto DISALLOWED_LONG = "|,()\0"sv;
    // Characters terminating a word as a short form argument, should contain all of START.
-   static const constexpr auto DISALLOWED_SHRT = "!?~|,() \0"_sv;
+   static const constexpr auto DISALLOWED_SHRT = "!?~|,() \0"sv;
    const auto DISALLOWED = shrt ? DISALLOWED_SHRT : DISALLOWED_LONG;
 
-   if (DISALLOWED_START.find(sentence[state.offset]) != APT::StringView::npos)
+   if (DISALLOWED_START.find(sentence[state.offset]) != std::string_view::npos)
       return nullptr;
 
    auto node = std::make_unique<WordNode>();
    node->start = state.offset;
 
-   while (DISALLOWED.find(sentence[state.offset]) == APT::StringView::npos)
+   while (DISALLOWED.find(sentence[state.offset]) == std::string_view::npos)
       state.offset++;
 
    node->end = state.offset;
@@ -381,7 +383,7 @@ std::unique_ptr<PatternTreeParser::Node> PatternTreeParser::parseWord(bool shrt)
 std::ostream &PatternTreeParser::PatternNode::render(std::ostream &os)
 {
 
-   os << term.to_string();
+   os << term;
    if (haveArgumentList)
    {
       os << "(";
@@ -394,7 +396,7 @@ std::ostream &PatternTreeParser::PatternNode::render(std::ostream &os)
 
 std::ostream &PatternTreeParser::WordNode::render(std::ostream &os)
 {
-   return quoted ? os << '"' << word.to_string() << '"' : os << word.to_string();
+   return quoted ? os << '"' << word << '"' : os << word;
 }
 
 std::nullptr_t PatternTreeParser::Node::error(std::string message)
@@ -402,20 +404,20 @@ std::nullptr_t PatternTreeParser::Node::error(std::string message)
    throw Error{*this, message};
 }
 
-bool PatternTreeParser::PatternNode::matches(APT::StringView name, int min, int max)
+bool PatternTreeParser::PatternNode::matches(std::string_view name, int min, int max)
 {
    if (name != term)
       return false;
    if (max != 0 && !haveArgumentList)
-      error(rstrprintf("%s expects an argument list", term.to_string().c_str()));
+      error(rstrprintf("%.*s expects an argument list", (int)term.size(), term.data()));
    if (max == 0 && haveArgumentList)
-      error(rstrprintf("%s does not expect an argument list", term.to_string().c_str()));
+      error(rstrprintf("%.*s does not expect an argument list", (int)term.size(), term.data()));
    if (min >= 0 && min == max && (arguments.size() != size_t(min)))
-      error(rstrprintf("%s expects %d arguments, but received %d arguments", term.to_string().c_str(), min, arguments.size()));
+      error(rstrprintf("%.*s expects %d arguments, but received %d arguments", (int)term.size(), term.data(), min, arguments.size()));
    if (min >= 0 && arguments.size() < size_t(min))
-      error(rstrprintf("%s expects at least %d arguments, but received %d arguments", term.to_string().c_str(), min, arguments.size()));
+      error(rstrprintf("%.*s expects at least %d arguments, but received %d arguments", (int)term.size(), term.data(), min, arguments.size()));
    if (max >= 0 && arguments.size() > size_t(max))
-      error(rstrprintf("%s expects at most %d arguments, but received %d arguments", term.to_string().c_str(), max, arguments.size()));
+      error(rstrprintf("%.*s expects at most %d arguments, but received %d arguments", (int)term.size(), term.data(), max, arguments.size()));
    return true;
 }
 
@@ -538,7 +540,7 @@ std::unique_ptr<APT::CacheFilter::Matcher> PatternParser::aPattern(std::unique_p
       return pattern;
    }
 
-   node->error(rstrprintf("Unrecognized pattern '%s'", node->term.to_string().c_str()));
+   node->error(rstrprintf("Unrecognized pattern '%.*s'", (int)node->term.size(), node->term.data()));
 
    return nullptr;
 }
@@ -549,7 +551,7 @@ std::string PatternParser::aWord(std::unique_ptr<PatternTreeParser::Node> &nodeP
    auto node = dynamic_cast<PatternTreeParser::WordNode *>(nodeP.get());
    if (node == nullptr)
       nodeP->error("Expected a word");
-   return node->word.to_string();
+   return std::string{node->word};
 }
 
 namespace Patterns
@@ -602,7 +604,7 @@ std::unique_ptr<APT::CacheFilter::Matcher> APT::CacheFilter::ParsePattern(APT::S
    {
       std::stringstream ss;
       ss << "input:" << e.location.start << "-" << e.location.end << ": error: " << e.message << "\n";
-      ss << pattern.to_string() << "\n";
+      ss << pattern << "\n";
       for (size_t i = 0; i < e.location.start; i++)
 	 ss << " ";
       for (size_t i = e.location.start; i < e.location.end; i++)
