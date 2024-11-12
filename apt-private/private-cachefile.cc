@@ -46,7 +46,7 @@ void SortedPackageUniverse::LazyInit() const
    List.reserve(Owner->Head().GroupCount);
    for (pkgCache::GrpIterator I{Owner->GrpBegin()}; I.end() != true; ++I)
       GrpList.emplace_back(I - Owner->GrpP);
-   std::stable_sort(GrpList.begin(), GrpList.end(), std::bind( &SortPackagesByName, Owner, std::placeholders::_1, std::placeholders::_2 ));
+   std::stable_sort(GrpList.begin(), GrpList.end(), [&](auto && l, auto && r) { return SortPackagesByName(Owner, l, r); });
    List.reserve(Owner->Head().PackageCount);
    for (auto G : GrpList)
    {

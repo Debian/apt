@@ -134,8 +134,8 @@ class APT_PUBLIC FileFd
 
    bool Open(std::string FileName,unsigned int const Mode,CompressMode Compress,unsigned long const AccessMode = 0666);
    bool Open(std::string FileName,unsigned int const Mode,APT::Configuration::Compressor const &compressor,unsigned long const AccessMode = 0666);
-   inline bool Open(std::string const &FileName,unsigned int const Mode, unsigned long const AccessMode = 0666) {
-      return Open(FileName, Mode, None, AccessMode);
+   inline bool Open(std::string FileName,unsigned int const Mode, unsigned long const AccessMode = 0666) {
+      return Open(std::move(FileName), Mode, None, AccessMode);
    };
    bool OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compress, bool AutoClose=false);
    bool OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration::Compressor const &compressor, bool AutoClose=false);
