@@ -1,10 +1,10 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
-   Debian Package List Parser - This implements the abstract parser 
+
+   Debian Package List Parser - This implements the abstract parser
    interface for Debian package files
-   
+
    ##################################################################### */
 									/*}}}*/
 #ifndef PKGLIB_DEBLISTPARSER_H
@@ -58,12 +58,12 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    public:
 
    APT_PUBLIC static unsigned char GetPrio(std::string Str);
-      
+
    // These all operate against the current section
    virtual std::string Package() APT_OVERRIDE;
    virtual bool ArchitectureAll() APT_OVERRIDE;
-   virtual APT::StringView Architecture() APT_OVERRIDE;
-   virtual APT::StringView Version() APT_OVERRIDE;
+   virtual std::string_view Architecture() APT_OVERRIDE;
+   virtual std::string_view Version() APT_OVERRIDE;
    virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
    virtual std::vector<std::string> AvailableDescriptionLanguages() APT_OVERRIDE;
    virtual std::string_view Description_md5() APT_OVERRIDE;
@@ -117,8 +117,8 @@ class APT_HIDDEN debTranslationsParser : public debListParser
 {
  public:
    // a translation can never be a real package
-   virtual APT::StringView Architecture() APT_OVERRIDE { return ""; }
-   virtual APT::StringView Version() APT_OVERRIDE { return ""; }
+   virtual std::string_view Architecture() APT_OVERRIDE { return ""; }
+   virtual std::string_view Version() APT_OVERRIDE { return ""; }
 
    explicit debTranslationsParser(FileFd *File)
       : debListParser(File) {};
