@@ -211,7 +211,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &/*Source*/)
 Override::Item* Override::GetItem(std::string_view const &Package, std::string_view const &Architecture)
 {
    map<string,Item>::const_iterator I = Mapping.find(Package);
-   map<string,Item>::iterator J = Mapping.find((std::string{Package} += '/') += Architecture);
+   map<string,Item>::iterator J = Mapping.find(std::string{Package}.append("/").append(Architecture));
 
    if (I == Mapping.end() && J == Mapping.end())
    {

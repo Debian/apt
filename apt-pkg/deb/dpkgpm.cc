@@ -761,7 +761,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 	       char* buf = NULL;
 	       size_t bufsize = 0;
 	       if (getline(&buf, &bufsize, dpkg) != -1)
-		  (pkgname += ':') += buf;
+		  pkgname.append(":").append(buf);
 	       free(buf);
 	       fclose(dpkg);
 	    }
@@ -2376,7 +2376,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    pkgver = Ver.VerStr() == NULL ? "unknown" : Ver.VerStr();
 
    // if the file exists already, we check:
-   // - if it was reported already (touched by apport). 
+   // - if it was reported already (touched by apport).
    //   If not, we do nothing, otherwise
    //    we overwrite it. This is the same behaviour as apport
    // - if we have a report with the same pkgversion already

@@ -755,9 +755,11 @@ string flCombine(string Dir,string File)
       return File;
    if (File.length() >= 2 && File[0] == '.' && File[1] == '/')
       return File;
-   if (Dir[Dir.length()-1] == '/')
-      return Dir += File;
-   return (Dir += '/') += File;
+
+   if (Dir.back() != '/')
+      Dir.append("/");
+   Dir.append(File);
+   return Dir;
 }
 									/*}}}*/
 // flAbsPath - Return the absolute path of the filename			/*{{{*/
