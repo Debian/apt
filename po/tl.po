@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2007-03-29 21:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -241,13 +241,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Kumokonekta sa %s (%s)"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -779,11 +772,11 @@ msgstr "Naghudyat ang sub-process %s ng error code (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Ang sub-process %s ay lumabas ng di inaasahan"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Error sa pagbasa"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Error sa pagsulat"
 
@@ -3464,7 +3457,7 @@ msgstr "Hindi kilalang algorithmong compression '%s'"
 msgid "Compressed output %s needs a compression set"
 msgstr "Kailangan ng compression set ang compressed output %s"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Bigo sa paglikha ng IPC pipe sa subprocess"
 
@@ -3637,7 +3630,7 @@ msgstr "Maling datos sa panimula"
 msgid "Connection failed"
 msgstr "Bigo ang koneksyon"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3679,7 +3672,7 @@ msgstr "Hindi mai-unmount ang CD-ROM sa %s, maaaring ginagamit pa ito."
 msgid "Disk not found."
 msgstr "Hindi nahanap ang Disk."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Hindi Nahanap ang Talaksan"
 
@@ -3715,7 +3708,7 @@ msgstr "Hindi makalikha ng socket para sa %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Hindi maumpisahan ang koneksyon sa %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Bigo"
 
@@ -3729,9 +3722,7 @@ msgstr "Hindi maka-konekta sa %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Hindi maka-konekta sa %s:%s (%s), nag-timeout ang koneksyon"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Kumokonekta sa %s"
@@ -3768,145 +3759,6 @@ msgstr "Bigo ang pag-stat"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Di tanggap na URI, mga lokal na URI ay di dapat mag-umpisa ng //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Pumapasok"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Hindi malaman ang pangalan ng peer"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Hindi malaman ang pangalang lokal"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Inayawan ng server ang ating koneksyon at ang sabi ay: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "Bigo ang USER/GUMAGAMIT, sabi ng server ay: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "Bigo ang PASS, sabi ng server ay: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"May tinakdang katuwang na server ngunit walang login script, walang laman "
-"ang Acquire::ftp::ProxyLogin."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Bigo ang utos sa login script '%s', sabi ng server ay: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "Bigo ang TYPE, sabi ng server ay: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Lumipas ang koneksyon"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Sinarhan ng server ang koneksyon"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "May sagot na bumubo sa buffer."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Sira ang protocol"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Hindi maka-likha ng socket"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Hindi maka-konekta sa socket ng datos, nag-time-out ang koneksyon"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Hindi maka-konekta sa socket na passive."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "di makakuha ang getaddrinfo ng socket na nakikinig"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Hindi maka-bind ng socket"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Hindi makarinig sa socket"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Hindi malaman ang pangalan ng socket"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Hindi makapagpadala ng utos na PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Di kilalang pamilya ng address %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "Bigo ang EPRT, sabi ng server ay: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Nag-timeout ang socket ng datos"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Hindi makatanggap ng koneksyon"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Problema sa pag-hash ng talaksan"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Hindi makakuha ng talaksan, sabi ng server ay '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Nag-timeout ang socket ng datos"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Bigo ang paglipat ng datos, sabi ng server ay '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Tanong"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Hindi ma-invoke "
 
 #: methods/gpgv.cc
 #, c-format
@@ -3991,17 +3843,123 @@ msgstr "Bigo ang pagpili"
 msgid "Connection timed out"
 msgstr "Nag-timeout ang koneksyon"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Problema sa pag-hash ng talaksan"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Bigo ang pagtakda ng oras ng pagbago"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Nagsara ng maaga ang koneksyon"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Logging in"
+#~ msgstr "Pumapasok"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Hindi malaman ang pangalan ng peer"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Hindi malaman ang pangalang lokal"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Inayawan ng server ang ating koneksyon at ang sabi ay: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "Bigo ang USER/GUMAGAMIT, sabi ng server ay: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "Bigo ang PASS, sabi ng server ay: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "May tinakdang katuwang na server ngunit walang login script, walang laman "
+#~ "ang Acquire::ftp::ProxyLogin."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "Bigo ang utos sa login script '%s', sabi ng server ay: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "Bigo ang TYPE, sabi ng server ay: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Lumipas ang koneksyon"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Sinarhan ng server ang koneksyon"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "May sagot na bumubo sa buffer."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Sira ang protocol"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Hindi maka-likha ng socket"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "Hindi maka-konekta sa socket ng datos, nag-time-out ang koneksyon"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Hindi maka-konekta sa socket na passive."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "di makakuha ang getaddrinfo ng socket na nakikinig"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Hindi maka-bind ng socket"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Hindi makarinig sa socket"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Hindi malaman ang pangalan ng socket"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Hindi makapagpadala ng utos na PORT"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Di kilalang pamilya ng address %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "Bigo ang EPRT, sabi ng server ay: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Nag-timeout ang socket ng datos"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Hindi makatanggap ng koneksyon"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Hindi makakuha ng talaksan, sabi ng server ay '%s'"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Nag-timeout ang socket ng datos"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Bigo ang paglipat ng datos, sabi ng server ay '%s'"
+
+#~ msgid "Query"
+#~ msgstr "Tanong"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Hindi ma-invoke "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Nagsara ng maaga ang koneksyon"
 
 #, fuzzy
 #~| msgid "The following held packages will be changed:"

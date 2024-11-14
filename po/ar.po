@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2006-10-20 21:28+0300\n"
 "Last-Translator: Ossama M. Khayat <okhayat@yahoo.com>\n"
 "Language-Team: Arabic <support@arabeyes.org>\n"
@@ -242,13 +242,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "الاتصال بـ%s (%s)"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -760,11 +753,11 @@ msgstr ""
 msgid "Sub-process %s exited unexpectedly"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "خطأ في القراءة"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "خطأ في الكتابة"
 
@@ -3320,7 +3313,7 @@ msgstr ""
 msgid "Compressed output %s needs a compression set"
 msgstr ""
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr ""
 
@@ -3493,7 +3486,7 @@ msgstr "بيانات ترويسة سيئة"
 msgid "Connection failed"
 msgstr "فشل الاتصال"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3535,7 +3528,7 @@ msgstr "تعذر فكّ القرص المدمج من %s، إذ قد يكون ل�
 msgid "Disk not found."
 msgstr "لم يُعثر على القرص."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "لم يُعثر على الملف"
 
@@ -3571,7 +3564,7 @@ msgstr ""
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "تعذر تمهيد الاتصال بـ%s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "فشل"
 
@@ -3585,9 +3578,7 @@ msgstr "تعذر الاتصال بـ%s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "تعذر الاتصال بـ%s:%s (%s)، انتهى وقت الاتصال"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "الاتصال بـ%s"
@@ -3623,145 +3614,6 @@ msgstr "فشيل تنفيذ stat"
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
-msgstr ""
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "تسجيل الدخول"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "رفض الخادم اتصالنا بالرد: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "فشل USER، ردّ الخادم: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "فشل PASS، ردّ الخادم: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"تم تحديد خادم بروكسي ولكن دون نص تسجيل دخول برمجي،  Acquire::ftp::ProxyLogin "
-"فارغ."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "فشل أمر نص تسجيل الدخول البرمجي '%s'، ردّ الخادم: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "فشل TYPE، ردّ الخادم: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "انتهى وقت الاتصال"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "أغلق الخادم الاتصال"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr ""
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "تعذر إرسال الأمر PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "فشل EPRT، ردّ الخادم: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "تعذر قبول الاتصال"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "تعذر إحضار الملف، ردّ الخادم '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "فشل نقل البيانات، ردّ الخادم '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "استعلام"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
 msgstr ""
 
 #: methods/gpgv.cc
@@ -3841,17 +3693,74 @@ msgstr "فشل التحديد"
 msgid "Connection timed out"
 msgstr "انتهى وقت الاتصال"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr ""
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "فشل تعيين وقت التعديل"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr ""
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Logging in"
+#~ msgstr "تسجيل الدخول"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "رفض الخادم اتصالنا بالرد: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "فشل USER، ردّ الخادم: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "فشل PASS، ردّ الخادم: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "تم تحديد خادم بروكسي ولكن دون نص تسجيل دخول برمجي،  Acquire::ftp::"
+#~ "ProxyLogin فارغ."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "فشل أمر نص تسجيل الدخول البرمجي '%s'، ردّ الخادم: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "فشل TYPE، ردّ الخادم: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "انتهى وقت الاتصال"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "أغلق الخادم الاتصال"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "تعذر إرسال الأمر PORT"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "فشل EPRT، ردّ الخادم: %s"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "تعذر قبول الاتصال"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "تعذر إحضار الملف، ردّ الخادم '%s'"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "فشل نقل البيانات، ردّ الخادم '%s'"
+
+#~ msgid "Query"
+#~ msgstr "استعلام"
 
 #, fuzzy
 #~| msgid "The following held packages will be changed:"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -238,13 +238,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s (%s) मा जडान गरिदैछ"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -761,11 +754,11 @@ msgstr "सहायक प्रक्रिया %s ले एउटा त�
 msgid "Sub-process %s exited unexpectedly"
 msgstr "सहायक प्रक्रिया %s अनपेक्षित बन्द भयो"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "त्रुटि पढ्नुहोस्"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "त्रुटि लेख्नुहोस्"
 
@@ -3433,7 +3426,7 @@ msgstr "अज्ञात सङ्कुचन अल्गोरिद्म 
 msgid "Compressed output %s needs a compression set"
 msgstr "सङ्कुचन गरिएको निर्गात %s लाई सङ्कुचन सेटको आवश्यक्ता पर्दछ"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "सहायक प्रक्रियामा IPC पाइप सिर्जना गर्न असफल"
 
@@ -3606,7 +3599,7 @@ msgstr "खराब हेडर डेटा"
 msgid "Connection failed"
 msgstr "जडान असफल भयो"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3648,7 +3641,7 @@ msgstr "%s मा सिडी रोम अनमाउन्ट गर्न �
 msgid "Disk not found."
 msgstr "डिस्क फेला परेन ।"
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "फाइल फेला परेन "
 
@@ -3684,7 +3677,7 @@ msgstr "%s (f=%u t=%u p=%u) को लागि सकेट सिर्जन�
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr " %s:%s (%s) मा जडान सुरुवात गर्न सकेन"
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "असफल भयो"
 
@@ -3698,9 +3691,7 @@ msgstr " %s:%s (%s) मा जडान गर्न सकिएन ।"
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "%s:%s (%s) मा जडान गर्न सकिएन, जडान समय सकियो"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "%s मा जडान गरिदैछ"
@@ -3737,145 +3728,6 @@ msgstr "स्थिर गर्न असफल भयो"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "अवैध URl, स्थानिय URIS // संग सुरू हुन सक्दैन"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "लगइन भइरहेछ"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "समान नाम निर्धारण गर्न असक्षम भयो"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "स्थानिय नाम निर्धारण गर्न असक्षम भयो"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "सर्भरले जडान अस्वीकार गर्यो र भन्यो: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "प्रयोगकर्ता असफल भयो, सर्भरले भन्यो: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "पास असफल भयो, सर्भरले भन्यो: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"प्रोक्सी सर्भर निर्दिष्ट गरियो तर कुनै स्क्रिफ्ट लगइन भएन, Acquire::ftp::ProxyLogin  "
-"खाली छ ।"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "लगइन स्क्रिफ्ट आदेश '%s' असफल भयो, सर्भरले भन्यो: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "टाइप असफल भयो: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "जडान समय सकियो"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "सर्भरले जडान बन्द गर्यो"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "एउटा प्रतिक्रियाले बफर अधिप्रवाह गर्यो"
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "प्रोटोकल दूषित"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "एउटा सकेट सिर्जना गर्न सकेन"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "डेटा सकेट जडान गर्न सकिएन, जडान समय सकियो"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "निस्क्रिय सकेट जडान गर्न सकिएन"
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo सुन्ने सकेट प्राप्त गर्न असक्षम भयो"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "सकेट बाँध्न सकिएन"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "सकेटमा सुन्न सकिएन"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "सकेट नाम निर्धारण गर्न सकिएन"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "पोर्ट आदेश पठाउन असक्षम भयो"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "अज्ञात ठेगाना परिवार %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT असफल भयो, सर्भरले भन्यो: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "डेटा सकेटको जडान समय सकियो"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "जडान स्वीकार गर्न असक्षम भयो"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "समस्या द्रुतान्वेषण फाइल"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "फाइल तान्न असक्षम भयो, सर्भरले भन्यो '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "डेटा सकेट समय सकियो"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "डेटा स्थान्तरण असफल भयो, सर्भरले भन्यो '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "क्वेरी"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "आह्वान गर्न असक्षम भयो"
 
 #: methods/gpgv.cc
 #, c-format
@@ -3955,17 +3807,123 @@ msgstr "असफल चयन गर्नुहोस्"
 msgid "Connection timed out"
 msgstr "जडान समय सकियो"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "समस्या द्रुतान्वेषण फाइल"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "परिमार्जन समय सेट असफल भयो"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "जडान असमायिक बन्द भयो"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Logging in"
+#~ msgstr "लगइन भइरहेछ"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "समान नाम निर्धारण गर्न असक्षम भयो"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "स्थानिय नाम निर्धारण गर्न असक्षम भयो"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "सर्भरले जडान अस्वीकार गर्यो र भन्यो: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "प्रयोगकर्ता असफल भयो, सर्भरले भन्यो: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "पास असफल भयो, सर्भरले भन्यो: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "प्रोक्सी सर्भर निर्दिष्ट गरियो तर कुनै स्क्रिफ्ट लगइन भएन, Acquire::ftp::"
+#~ "ProxyLogin  खाली छ ।"
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "लगइन स्क्रिफ्ट आदेश '%s' असफल भयो, सर्भरले भन्यो: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "टाइप असफल भयो: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "जडान समय सकियो"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "सर्भरले जडान बन्द गर्यो"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "एउटा प्रतिक्रियाले बफर अधिप्रवाह गर्यो"
+
+#~ msgid "Protocol corruption"
+#~ msgstr "प्रोटोकल दूषित"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "एउटा सकेट सिर्जना गर्न सकेन"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "डेटा सकेट जडान गर्न सकिएन, जडान समय सकियो"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "निस्क्रिय सकेट जडान गर्न सकिएन"
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo सुन्ने सकेट प्राप्त गर्न असक्षम भयो"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "सकेट बाँध्न सकिएन"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "सकेटमा सुन्न सकिएन"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "सकेट नाम निर्धारण गर्न सकिएन"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "पोर्ट आदेश पठाउन असक्षम भयो"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "अज्ञात ठेगाना परिवार %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT असफल भयो, सर्भरले भन्यो: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "डेटा सकेटको जडान समय सकियो"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "जडान स्वीकार गर्न असक्षम भयो"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "फाइल तान्न असक्षम भयो, सर्भरले भन्यो '%s'"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "डेटा सकेट समय सकियो"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "डेटा स्थान्तरण असफल भयो, सर्भरले भन्यो '%s'"
+
+#~ msgid "Query"
+#~ msgstr "क्वेरी"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "आह्वान गर्न असक्षम भयो"
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "जडान असमायिक बन्द भयो"
 
 #, fuzzy
 #~| msgid "The following held packages will be changed:"

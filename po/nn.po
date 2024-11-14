@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2005-02-14 23:30+0100\n"
 "Last-Translator: Havard Korsvoll <korsvoll@skulelinux.no>\n"
 "Language-Team: Norwegian nynorsk <i18n-nn@lister.ping.uio.no>\n"
@@ -242,13 +242,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Koplar til %s (%s)"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -769,11 +762,11 @@ msgstr "Underprosessen %s returnerte ein feilkode (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Underprosessen %s avslutta uventa"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Lesefeil"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Skrivefeil"
 
@@ -3446,7 +3439,7 @@ msgstr "Ukjend komprimeringsalgoritme %s"
 msgid "Compressed output %s needs a compression set"
 msgstr "Komprimert utdata %s treng eit komprimeringssett"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Klarte ikkje oppretta IPC-røyr til underprosessen"
 
@@ -3619,7 +3612,7 @@ msgstr "Øydelagde hovuddata"
 msgid "Connection failed"
 msgstr "Sambandet mislukkast"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3663,7 +3656,7 @@ msgstr ""
 msgid "Disk not found."
 msgstr "Fann ikkje fila"
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Fann ikkje fila"
 
@@ -3699,7 +3692,7 @@ msgstr "Klarte ikkje oppretta sokkel for %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Klarte ikkje initiera sambandet til %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Mislukkast"
 
@@ -3713,9 +3706,7 @@ msgstr "Klarte ikkje kopla til %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Klarte ikkje kopla til %s:%s (%s), tidsavbrot på sambandet"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Koplar til %s"
@@ -3752,145 +3743,6 @@ msgstr "Klarte ikkje få status"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Ugyldig URI. Lokale URI-ar kan ikkje starta med //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Loggar inn"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Klarte ikkje avgjera namnet på motparten"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Klarte ikkje avgjera det lokale namnet"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Tenaren nekta oss å kopla til, og sa: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER mislukkast, tenaren sa: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS mislukkast, tenaren sa: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Ein mellomtenar er oppgitt, men ikkje noko innloggingsskript. Feltet "
-"«Acquire::ftp::ProxyLogin» er tomt."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Kommandoen «%s» i innlogginsskriptet mislukkast, tenaren sa: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE mislukkast, tenaren sa: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Tidsavbrot på samband"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Tenaren lukka sambandet"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Eit svar flaumde over bufferen."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Protokolløydeleggjing"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Klarte ikkje oppretta sokkel"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Klarte ikkje kopla til datasokkel, tidsavbrot på sambandet"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Klarte ikkje kopla til passiv sokkel."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo klarte ikkje oppretta ein lyttesokkel"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Klarte ikkje binda til sokkel"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Klarte ikkje lytta til sokkel"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Klarte ikkje avgjera sokkelnamnet"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Klarte ikkje senda PORT-kommandoen"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Ukjend adressefamilie %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT mislukkast, tenaren sa: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Tidsavbrot på tilkopling til datasokkel"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Klarte ikkje godta tilkoplinga"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Problem ved oppretting av nøkkel for fil"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Klarte ikkje henta fila, tenaren sa «%s»"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Tidsavbrot på datasokkelen"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Dataoverføringa mislukkast, tenaren sa «%s»"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Spørjing"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Klarte ikkje starta "
 
 #: methods/gpgv.cc
 #, c-format
@@ -3970,17 +3822,123 @@ msgstr "Utvalet mislukkast"
 msgid "Connection timed out"
 msgstr "Tidsavbrot på sambandet"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Problem ved oppretting av nøkkel for fil"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Klarte ikkje setja endringstidspunkt"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Sambandet vart uventa stengd"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Logging in"
+#~ msgstr "Loggar inn"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Klarte ikkje avgjera namnet på motparten"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Klarte ikkje avgjera det lokale namnet"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Tenaren nekta oss å kopla til, og sa: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "USER mislukkast, tenaren sa: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "PASS mislukkast, tenaren sa: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Ein mellomtenar er oppgitt, men ikkje noko innloggingsskript. Feltet "
+#~ "«Acquire::ftp::ProxyLogin» er tomt."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "Kommandoen «%s» i innlogginsskriptet mislukkast, tenaren sa: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "TYPE mislukkast, tenaren sa: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Tidsavbrot på samband"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Tenaren lukka sambandet"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Eit svar flaumde over bufferen."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Protokolløydeleggjing"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Klarte ikkje oppretta sokkel"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "Klarte ikkje kopla til datasokkel, tidsavbrot på sambandet"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Klarte ikkje kopla til passiv sokkel."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo klarte ikkje oppretta ein lyttesokkel"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Klarte ikkje binda til sokkel"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Klarte ikkje lytta til sokkel"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Klarte ikkje avgjera sokkelnamnet"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Klarte ikkje senda PORT-kommandoen"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Ukjend adressefamilie %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT mislukkast, tenaren sa: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Tidsavbrot på tilkopling til datasokkel"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Klarte ikkje godta tilkoplinga"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Klarte ikkje henta fila, tenaren sa «%s»"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Tidsavbrot på datasokkelen"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Dataoverføringa mislukkast, tenaren sa «%s»"
+
+#~ msgid "Query"
+#~ msgstr "Spørjing"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Klarte ikkje starta "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Sambandet vart uventa stengd"
 
 #, fuzzy
 #~| msgid "The following held packages will be changed:"

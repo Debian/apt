@@ -27,7 +27,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-08-12 14:14+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2024-09-02 00:21+0200\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -294,16 +294,6 @@ msgstr "Nu se poate găsi o sursă pentru a descărca versiunea „%s” a „%s
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Jurnalul de modificări nu este disponibil pentru %s=%s"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
-"Metoda „%s” nu este acceptată și este dezactivată în mod implicit. Luați în "
-"considerare trecerea la http(s). Configurați Dir::Bin::Methods::%s la „%s” "
-"pentru a o activa din nou."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -872,11 +862,11 @@ msgstr "Subprocesul %s a returnat un cod de eroare (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Subprocesul %s a ieșit în mod neașteptat"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Eroare de citire"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Eroare de scriere"
 
@@ -3720,7 +3710,7 @@ msgstr "Algoritm de comprimare necunoscut „%s”"
 msgid "Compressed output %s needs a compression set"
 msgstr "Rezultatul comprimat %s are nevoie de o ajustare a comprimării"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Eșec la crearea conductei IPC către subproces"
 
@@ -3893,7 +3883,7 @@ msgstr "Antet de date necorespunzător"
 msgid "Connection failed"
 msgstr "Conectare eșuată"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3942,7 +3932,7 @@ msgstr ""
 msgid "Disk not found."
 msgstr "Disc negăsit."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Fișier negăsit"
 
@@ -3977,7 +3967,7 @@ msgstr "Nu s-a putut crea un soclu pentru %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Nu s-a putut iniția conexiunea cu %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Eșec"
 
@@ -3992,9 +3982,7 @@ msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr ""
 "Nu s-a putut realiza conexiunea cu %s:%s (%s), timpul de conectare expirat"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Conectare la %s"
@@ -4031,148 +4019,6 @@ msgstr "Nu s-au putut obține atributele (executarea stat() a eșuat)"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Adresă URI nevalidă, adresele URI locale nu trebuie să înceapă cu //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Autentificare în curs"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Nu se poate determina numele mașinii de la distanță"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Nu s-a putut detecta numele local"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Serverul a refuzat conexiunea și a răspuns: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "„USER” a eșuat, serverul a răspuns: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "„PASS” a eșuat, serverul a răspuns: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Un server proxy a fost precizat, dar nu există nici un script de conectare, "
-"valoarea opțiunii „Acquire::ftp::ProxyLogin” este goală."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr ""
-"Comanda scriptului de autentificare „%s” a eșuat, serverul a răspuns: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "„TYPE” a eșuat, serverul a răspuns: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Timpul de conectare a expirat"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Serverul a închis conexiunea"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Un răspuns a depășit zona memoriei tampon."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Protocol corupt"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Nu s-a putut crea un soclu"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr ""
-"Nu s-a putut realiza conectarea la soclul de date, timpul de conectare a "
-"expirat"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Nu s-a putut realiza conectarea la un soclu pasiv."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo() n-a reușit să obțină un soclu de ascultare"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Nu s-a putut realiza asocierea la un soclu"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Nu s-a putut asculta pe soclu"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Nu s-a putut detecta numele soclului"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Nu s-a putut trimite comanda PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Familie de adrese necunoscută %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "Comanda „EPRT” a eșuat, serverul a răspuns: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Timpul de conectare la soclul de date a expirat"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Nu s-a putut accepta conexiunea"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Problemă la calcularea sumei de control pentru fișierul"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Nu s-a putut aduce fișierul, serverul a răspuns „%s”"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Timp expirat pentru soclul de date"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Transferul de date a eșuat, serverul a răspuns: „%s”"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Interogare"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Nu s-a putut invoca "
 
 #: methods/gpgv.cc
 #, c-format
@@ -4263,17 +4109,136 @@ msgstr "Selecția a eșuat"
 msgid "Connection timed out"
 msgstr "Timp de conectare expirat"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Problemă la calcularea sumei de control pentru fișierul"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Eșec la ajustarea timpului de modificare"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Conexiune închisă prematur"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Fișierele goale nu pot fi arhive valide"
+
+#, c-format
+#~ msgid ""
+#~ "The method '%s' is unsupported and disabled by default. Consider "
+#~ "switching to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it "
+#~ "again."
+#~ msgstr ""
+#~ "Metoda „%s” nu este acceptată și este dezactivată în mod implicit. Luați "
+#~ "în considerare trecerea la http(s). Configurați Dir::Bin::Methods::%s la "
+#~ "„%s” pentru a o activa din nou."
+
+#~ msgid "Logging in"
+#~ msgstr "Autentificare în curs"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Nu se poate determina numele mașinii de la distanță"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Nu s-a putut detecta numele local"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Serverul a refuzat conexiunea și a răspuns: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "„USER” a eșuat, serverul a răspuns: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "„PASS” a eșuat, serverul a răspuns: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Un server proxy a fost precizat, dar nu există nici un script de "
+#~ "conectare, valoarea opțiunii „Acquire::ftp::ProxyLogin” este goală."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr ""
+#~ "Comanda scriptului de autentificare „%s” a eșuat, serverul a răspuns: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "„TYPE” a eșuat, serverul a răspuns: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Timpul de conectare a expirat"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Serverul a închis conexiunea"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Un răspuns a depășit zona memoriei tampon."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Protocol corupt"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Nu s-a putut crea un soclu"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr ""
+#~ "Nu s-a putut realiza conectarea la soclul de date, timpul de conectare a "
+#~ "expirat"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Nu s-a putut realiza conectarea la un soclu pasiv."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo() n-a reușit să obțină un soclu de ascultare"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Nu s-a putut realiza asocierea la un soclu"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Nu s-a putut asculta pe soclu"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Nu s-a putut detecta numele soclului"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Nu s-a putut trimite comanda PORT"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Familie de adrese necunoscută %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "Comanda „EPRT” a eșuat, serverul a răspuns: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Timpul de conectare la soclul de date a expirat"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Nu s-a putut accepta conexiunea"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Nu s-a putut aduce fișierul, serverul a răspuns „%s”"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Timp expirat pentru soclul de date"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Transferul de date a eșuat, serverul a răspuns: „%s”"
+
+#~ msgid "Query"
+#~ msgstr "Interogare"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Nu s-a putut invoca "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Conexiune închisă prematur"
 
 #, fuzzy, c-format
 #~| msgid "  Installed: "

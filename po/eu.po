@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2009-05-17 00:41+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
@@ -239,13 +239,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Konektatzen -> %s.(%s)"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -768,11 +761,11 @@ msgstr "%s azpiprozesuak errore kode bat itzuli du (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "%s azpiprozesua ustekabean amaitu da"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Irakurketa errorea"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Idazketa errorea"
 
@@ -3455,7 +3448,7 @@ msgstr "'%s' Konpresio Algoritmo Ezezaguna"
 msgid "Compressed output %s needs a compression set"
 msgstr "%s irteera konprimituak konpresio-tresna bat behar du"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Huts egin du azpiprozesuarentzako IPC kanalizazio bat sortzean"
 
@@ -3628,7 +3621,7 @@ msgstr "Goiburu data gaizki dago"
 msgid "Connection failed"
 msgstr "Konexioak huts egin du"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3671,7 +3664,7 @@ msgstr ""
 msgid "Disk not found."
 msgstr "Ez da diska aurkitu"
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Ez da fitxategia aurkitu"
 
@@ -3707,7 +3700,7 @@ msgstr "Ezin izan da socket-ik sortu honentzat: %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Ezin izan da konexioa hasi -> %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Huts egin du"
 
@@ -3722,9 +3715,7 @@ msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr ""
 "Ezin izan da konektatu -> %s:%s (%s). Konexioak denbora muga gainditu du"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Konektatzen -> %s..."
@@ -3761,148 +3752,6 @@ msgstr "Huts egin du atzitzean"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "URI baliogabea. URI lokalek ezin dute // eduki hasieran"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Sartzen"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Ezin izan da peer edo parekoaren izena zehaztu"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Ezin izan da izen lokala zehaztu"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Zerbitzariak gure konexioa ukatu eta hau esan du: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USERek huts egin du, eta zerbitzariak hau esan du: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASSek huts egin du, eta zerbitzariak hau esan du: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Proxy zerbitzari bat zehaztu da, baina sarrerako script-ik ez. Acquire::ftp::"
-"ProxyLogin hutsik dago."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr ""
-"Sarrerako script-eko '%s' komandoak huts egin du, eta zerbitzariak hau esan "
-"du: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPEk huts egin du, eta zerbitzariak hau esan du: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Konexioa denboraz kanpo"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Zerbitzariak konexioa itxi du"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Erantzun batek bufferrari gainez eragin dio."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Protokolo hondatzea"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Ezin izan da socket-a sortu"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr ""
-"Ezin izan da datu-socketa konektatu; konexioak denbora muga gainditu du"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Ezin izan da socket pasibora konektatu."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo-k ezin izan du socket entzule bat eskuratu"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Ezin izan da socket bat lotu"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Ezin izan da socket-ean entzun"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Ezin izan da socket-aren izena zehaztu"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Ezin da PORT komandoa bidali"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Helbide familia ezezagunaa: %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRTek huts egin du, eta zerbitzariak hau esan du: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Datu-socket konexioak denbora muga gainditu du"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Ezin da konexioa onartu"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Arazoa fitxategiaren hash egitean"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Ezin da fitxategia lortu; zerbitzariak hau esan du: '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Datu-socketak denbora muga gainditu du"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Datu transferentziak huts egin du, eta zerbitzariak hau esan du: '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Kontsulta"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Ezin da deitu "
 
 #: methods/gpgv.cc
 #, c-format
@@ -3985,17 +3834,127 @@ msgstr "Hautapenak huts egin du"
 msgid "Connection timed out"
 msgstr "Konexioaren denbora muga gainditu da"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Arazoa fitxategiaren hash egitean"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Huts egin du aldaketa ordua ezartzean"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Konexioa behar baino lehenago itxi da"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Logging in"
+#~ msgstr "Sartzen"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Ezin izan da peer edo parekoaren izena zehaztu"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Ezin izan da izen lokala zehaztu"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Zerbitzariak gure konexioa ukatu eta hau esan du: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "USERek huts egin du, eta zerbitzariak hau esan du: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "PASSek huts egin du, eta zerbitzariak hau esan du: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Proxy zerbitzari bat zehaztu da, baina sarrerako script-ik ez. Acquire::"
+#~ "ftp::ProxyLogin hutsik dago."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr ""
+#~ "Sarrerako script-eko '%s' komandoak huts egin du, eta zerbitzariak hau "
+#~ "esan du: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "TYPEk huts egin du, eta zerbitzariak hau esan du: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Konexioa denboraz kanpo"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Zerbitzariak konexioa itxi du"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Erantzun batek bufferrari gainez eragin dio."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Protokolo hondatzea"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Ezin izan da socket-a sortu"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr ""
+#~ "Ezin izan da datu-socketa konektatu; konexioak denbora muga gainditu du"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Ezin izan da socket pasibora konektatu."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo-k ezin izan du socket entzule bat eskuratu"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Ezin izan da socket bat lotu"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Ezin izan da socket-ean entzun"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Ezin izan da socket-aren izena zehaztu"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Ezin da PORT komandoa bidali"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Helbide familia ezezagunaa: %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRTek huts egin du, eta zerbitzariak hau esan du: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Datu-socket konexioak denbora muga gainditu du"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Ezin da konexioa onartu"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Ezin da fitxategia lortu; zerbitzariak hau esan du: '%s'"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Datu-socketak denbora muga gainditu du"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr ""
+#~ "Datu transferentziak huts egin du, eta zerbitzariak hau esan du: '%s'"
+
+#~ msgid "Query"
+#~ msgstr "Kontsulta"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Ezin da deitu "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Konexioa behar baino lehenago itxi da"
 
 #, fuzzy
 #~| msgid "The following held packages will be changed:"

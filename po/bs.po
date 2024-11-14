@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2004-05-06 15:25+0100\n"
 "Last-Translator: Safir Šećerović <sapphire@linux.org.ba>\n"
 "Language-Team: Bosnian <lokal@lugbih.org>\n"
@@ -235,13 +235,6 @@ msgstr ""
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Changelog unavailable for %s=%s"
-msgstr ""
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
 msgstr ""
 
 #: apt-pkg/acquire-worker.cc
@@ -755,11 +748,11 @@ msgstr ""
 msgid "Sub-process %s exited unexpectedly"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Greška pri čitanju"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Greška pri pisanju"
 
@@ -3305,7 +3298,7 @@ msgstr ""
 msgid "Compressed output %s needs a compression set"
 msgstr ""
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr ""
 
@@ -3478,7 +3471,7 @@ msgstr ""
 msgid "Connection failed"
 msgstr "Povezivanje neuspješno"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3520,7 +3513,7 @@ msgstr "Ne mogu demontirati CD-ROM na %s, moguće je da se još uvijek koristi."
 msgid "Disk not found."
 msgstr "Datoteka nije pronađena"
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Datoteka nije pronađena"
 
@@ -3556,7 +3549,7 @@ msgstr ""
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr ""
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Neuspješno"
 
@@ -3570,9 +3563,7 @@ msgstr ""
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr ""
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Povezujem se sa %s"
@@ -3608,144 +3599,6 @@ msgstr ""
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
-msgstr ""
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Prijavljujem se"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Server je zatvorio vezu"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr ""
-
-#: methods/ftp.cc
-#, fuzzy
-msgid "Protocol corruption"
-msgstr "Oštećenje protokola"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr ""
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr ""
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr ""
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr ""
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
 msgstr ""
 
 #: methods/gpgv.cc
@@ -3826,17 +3679,27 @@ msgstr ""
 msgid "Connection timed out"
 msgstr ""
 
-#: methods/rred.cc
-msgid "Failed to set modification time"
+#: methods/http.cc
+msgid "Problem hashing file"
 msgstr ""
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
+#: methods/rred.cc
+msgid "Failed to set modification time"
 msgstr ""
 
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Logging in"
+#~ msgstr "Prijavljujem se"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Server je zatvorio vezu"
+
+#, fuzzy
+#~ msgid "Protocol corruption"
+#~ msgstr "Oštećenje protokola"
 
 #~ msgid "Yes, do as I say!"
 #~ msgstr "Da, uradi kako kažem!"

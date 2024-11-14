@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2024-04-16 13:15-0400\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
@@ -252,15 +252,6 @@ msgstr "没有源可以用来下载 %s 版本的 %s"
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s=%s 的 Changelog 不可用"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
-"目前“%s”方法不受支持且默认禁用。请考虑切换至 http(s)。您可以将 Dir::Bin::"
-"Methods::%s 设置为“%s”来重新启用。"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -780,11 +771,11 @@ msgstr "子进程 %s 返回了一个错误号 (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "子进程 %s 异常退出"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "读错误"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "写出错"
 
@@ -3412,7 +3403,7 @@ msgstr "未知的压缩算法“%s”"
 msgid "Compressed output %s needs a compression set"
 msgstr "压缩后的输出文件 %s 要求有一个压缩文件集合"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "无法为子进程创建 IPC 管道"
 
@@ -3585,7 +3576,7 @@ msgstr "错误的报头数据"
 msgid "Connection failed"
 msgstr "连接失败"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr "文件尺寸不符(%llu != %llu)。您使用的镜像正在同步中？"
@@ -3627,7 +3618,7 @@ msgstr "无法卸载挂载于 %s 的 CD-ROM，它可能正被使用。"
 msgid "Disk not found."
 msgstr "找不到盘片。"
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "无法找到文件"
 
@@ -3662,7 +3653,7 @@ msgstr "无法为 %s 创建套接字(f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "无法发起与 %s:%s (%s) 的连接。"
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "失败"
 
@@ -3676,9 +3667,7 @@ msgstr "无法连接上 %s:%s (%s)。"
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "无法连接上 %s:%s (%s)，连接超时"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "正在连接 %s"
@@ -3715,144 +3704,6 @@ msgstr "无法读取状态"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "无效的 URI，本地 URI 不能以 // 开头"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "正在登录"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "无法获知对方主机名"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "无法获知本地主机名"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "服务器拒绝了我们的连接，响应信息为：%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER 指令出错，服务器响应信息为：%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS 指令出错，服务器响应信息为：%s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"您指定了代理服务器，但是没有登陆脚本，Acquire::ftp::ProxyLogin 设置为空。"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "登录脚本命令“%s”出错，服务器响应信息为：%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE 指令出错，服务器响应信息为：%s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "连接超时"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "服务器关闭了连接"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "回应超出了缓存区大小。"
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "协议有误"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "无法创建套接字"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "无法连接数据套接字，连接超时"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "无法连接被动模式的套接字。"
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo 无法得到监听套接字"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "无法绑定套接字"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "无法在套接字上监听"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "无法确定套接字的名字"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "无法发出 PORT 指令"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "无法识别的地址族 %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT 指令失败，服务器响应为：%s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "数据套接字连接超时"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "无法接受连接"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "把文件加入哈希表时出错"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "无法获取文件，服务器响应为“%s”"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "数据套接字超时"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "数据传送出错，服务器响应为“%s”"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "查询"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "无法调用 "
 
 #: methods/gpgv.cc
 #, c-format
@@ -3933,17 +3784,131 @@ msgstr "Select 调用出错"
 msgid "Connection timed out"
 msgstr "连接超时"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "把文件加入哈希表时出错"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "无法设置文件的修改日期"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "连接被永久关闭"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "空文件不是有效归档"
+
+#, c-format
+#~ msgid ""
+#~ "The method '%s' is unsupported and disabled by default. Consider "
+#~ "switching to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it "
+#~ "again."
+#~ msgstr ""
+#~ "目前“%s”方法不受支持且默认禁用。请考虑切换至 http(s)。您可以将 Dir::Bin::"
+#~ "Methods::%s 设置为“%s”来重新启用。"
+
+#~ msgid "Logging in"
+#~ msgstr "正在登录"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "无法获知对方主机名"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "无法获知本地主机名"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "服务器拒绝了我们的连接，响应信息为：%s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "USER 指令出错，服务器响应信息为：%s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "PASS 指令出错，服务器响应信息为：%s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "您指定了代理服务器，但是没有登陆脚本，Acquire::ftp::ProxyLogin 设置为空。"
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "登录脚本命令“%s”出错，服务器响应信息为：%s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "TYPE 指令出错，服务器响应信息为：%s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "连接超时"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "服务器关闭了连接"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "回应超出了缓存区大小。"
+
+#~ msgid "Protocol corruption"
+#~ msgstr "协议有误"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "无法创建套接字"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "无法连接数据套接字，连接超时"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "无法连接被动模式的套接字。"
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo 无法得到监听套接字"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "无法绑定套接字"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "无法在套接字上监听"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "无法确定套接字的名字"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "无法发出 PORT 指令"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "无法识别的地址族 %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT 指令失败，服务器响应为：%s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "数据套接字连接超时"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "无法接受连接"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "无法获取文件，服务器响应为“%s”"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "数据套接字超时"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "数据传送出错，服务器响应为“%s”"
+
+#~ msgid "Query"
+#~ msgstr "查询"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "无法调用 "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "连接被永久关闭"
 
 #, fuzzy, c-format
 #~| msgid "  Installed: "

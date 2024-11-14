@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -251,13 +251,6 @@ msgstr "Не е открит източник, от който да се изт�
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Журнал на промените в %s (%s)"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -797,11 +790,11 @@ msgstr "Подпроцесът %s върна код за грешка (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Подпроцесът %s завърши неочаквано"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Грешка при четене"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Грешка при запис"
 
@@ -3551,7 +3544,7 @@ msgstr "Непознат алгоритъм за компресия „%s“"
 msgid "Compressed output %s needs a compression set"
 msgstr "Компресираният изход %s изисква настройка за компресирането"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Неуспех при създаването на IPC pipe към подпроцеса"
 
@@ -3724,7 +3717,7 @@ msgstr "Невалидни данни на заглавната част"
 msgid "Connection failed"
 msgstr "Неуспех при свързването"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3766,7 +3759,7 @@ msgstr "Неуспех при демонтирането на CD-ROM в %s, мо
 msgid "Disk not found."
 msgstr "Дискът не е намерен."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Файлът не е намерен"
 
@@ -3802,7 +3795,7 @@ msgstr "Неуспех при създаването на гнездо за %s (
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Не може да се започне свързване с %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Неуспех"
 
@@ -3816,9 +3809,7 @@ msgstr "Неуспех при свързване с %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Неуспех при свързване с %s:%s (%s), допустимото време изтече"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Свързване с %s"
@@ -3855,147 +3846,6 @@ msgstr "Неуспех при получаването на атрибути"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Невалиден адрес-URI, локалните адреси-URI не трябва да започват с „//“"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Влизане"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Неуспех при установяването на името на отдалечения сървър"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Неуспех при установяването на локалното име"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Сървърът отказа свързване и съобщи: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER се провали, сървърът съобщи: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS се провали, сървърът съобщи: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Беше указан сървър-посредник, но няма скрипт за влизане, Acquire::ftp::"
-"ProxyLogin е празен."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Командата „%s“ на скрипта за влизане се провали, сървърът съобщи: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE се провали, сървърът съобщи: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Допустимото време за свързването изтече"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Сървърът разпадна връзката"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Отговорът препълни буфера."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Развален протокол"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Неуспех при създаването на гнездо"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr ""
-"Неуспех при свързването на гнездо за данни, допустимото време за свързване "
-"изтече"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Неуспех при свързването на пасивно гнездо."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo не успя да се добере до слушащо гнездо"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Неуспех при свързването на гнездо"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Неуспех при слушането на гнездото"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Неуспех при определянето на името на гнездото"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Неуспех при изпращането на командата PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Неизвестно семейство адреси %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT се провали, сървърът съобщи: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Времето за установяване на връзка с гнездо за данни изтече"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Невъзможно е да се приеме свързването"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Проблем при хеширане на файла"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Неуспех при изтеглянето на файла, сървърът съобщи „%s“"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Времето за връзка с гнездо за данни изтече"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Неуспех при прехвърлянето на данни, сървърът съобщи: „%s“"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Запитване"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Неуспех при извикването на "
 
 #: methods/gpgv.cc
 #, c-format
@@ -4080,17 +3930,126 @@ msgstr "Неуспех на избора"
 msgid "Connection timed out"
 msgstr "Допустимото време за свързване изтече"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Проблем при хеширане на файла"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Неуспех при задаването на време на промяна"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Връзката прекъсна преждевременно"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Празни файлове не могат да бъдат валидни архиви"
+
+#~ msgid "Logging in"
+#~ msgstr "Влизане"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Неуспех при установяването на името на отдалечения сървър"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Неуспех при установяването на локалното име"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Сървърът отказа свързване и съобщи: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "USER се провали, сървърът съобщи: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "PASS се провали, сървърът съобщи: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Беше указан сървър-посредник, но няма скрипт за влизане, Acquire::ftp::"
+#~ "ProxyLogin е празен."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr ""
+#~ "Командата „%s“ на скрипта за влизане се провали, сървърът съобщи: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "TYPE се провали, сървърът съобщи: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Допустимото време за свързването изтече"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Сървърът разпадна връзката"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Отговорът препълни буфера."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Развален протокол"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Неуспех при създаването на гнездо"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr ""
+#~ "Неуспех при свързването на гнездо за данни, допустимото време за "
+#~ "свързване изтече"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Неуспех при свързването на пасивно гнездо."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo не успя да се добере до слушащо гнездо"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Неуспех при свързването на гнездо"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Неуспех при слушането на гнездото"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Неуспех при определянето на името на гнездото"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Неуспех при изпращането на командата PORT"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Неизвестно семейство адреси %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT се провали, сървърът съобщи: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Времето за установяване на връзка с гнездо за данни изтече"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Невъзможно е да се приеме свързването"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Неуспех при изтеглянето на файла, сървърът съобщи „%s“"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Времето за връзка с гнездо за данни изтече"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Неуспех при прехвърлянето на данни, сървърът съобщи: „%s“"
+
+#~ msgid "Query"
+#~ msgstr "Запитване"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Неуспех при извикването на "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Връзката прекъсна преждевременно"
 
 #, fuzzy, c-format
 #~| msgid "  Installed: "

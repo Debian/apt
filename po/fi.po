@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -240,13 +240,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Avataan yhteys %s (%s)"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -765,11 +758,11 @@ msgstr "Aliprosessi %s palautti virhekoodin (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Aliprosessi %s lopetti odottamatta"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Lukuvirhe"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Virhe kirjoitettaessa"
 
@@ -3452,7 +3445,7 @@ msgstr "Tuntematon pakkausalgoritmi \"%s\""
 msgid "Compressed output %s needs a compression set"
 msgstr "Pakattu tulostus %s tarvitsee pakkausjoukon"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "IPC-putken luominen aliprosessiin ei onnistunut"
 
@@ -3625,7 +3618,7 @@ msgstr "Virheellinen otsikkotieto"
 msgid "Connection failed"
 msgstr "Yhteys ei toiminut"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3667,7 +3660,7 @@ msgstr "Rompun %s irrottaminen ei onnistu, se on ehkä käytössä."
 msgid "Disk not found."
 msgstr "Levyä ei löydy"
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Tiedostoa ei löydy"
 
@@ -3703,7 +3696,7 @@ msgstr "Pistokeen luonti ei onnistu %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Yhteyden %s avaus ei onnistu: %s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Ei onnistunut"
 
@@ -3717,9 +3710,7 @@ msgstr "Yhteyttä %s ei voitu muodostaa: %s (%s)"
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Yhteyttä %s ei voitu muodostaa: %s (%s), yhteys aikakatkaistiin"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Avataan yhteys %s"
@@ -3756,145 +3747,6 @@ msgstr "Komento stat ei toiminut"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "URI on kelvoton, paikallinen URI ei saa alkaa //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Kirjaudutaan sisään"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Vastapään nimeä ei saa selville"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Paikallista nimeä ei saa selville"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Palvelin ei huolinut yhteyttä ilmoituksella: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER ei onnistunut, palvelimen ilmoitus: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS ei onnistunut, palvelimen ilmoitus: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Määritettiin välipalvelin mutta ei komentotiedostoa kirjautumiseen, Acquire::"
-"ftp::ProxyLogin on tyhjä."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Komentotiedoston rivi \"%s\" ei toiminut, palvelin ilmoitti: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE ei toiminut, palvelin ilmoitti: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Yhteys aikakatkaistiin"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Palvelin sulki yhteyden"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Vastaus aiheutti puskurin ylivuodon."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Yhteyskäytäntö on turmeltunut"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Pistoketta ei voitu luoda"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Pistoketta ei voitu kytkeä, yhteys aikakatkaistiin"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Passiivista pistoketta ei voitu kytkeä."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo ei saanut kuuntelupistoketta"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Pistoketta ei voitu nimetä"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Pistoketta ei voitu kuunnella"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Pistokkeen nimeä ei saatu selville"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Komennon PORT lähetys ei onnistu"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Tuntematon osoiteperhe %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT ei onnistunut, palvelin ilmoitti: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Pistokkeen kytkeminen aikakatkaistiin"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Yhteyttä ei voitu hyväksyä"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Pulmia tiedoston hajautuksessa"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Tiedostoa ei saatu noudettua, palvelin ilmoitti \"%s\""
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Pistoke aikakatkaistiin"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Tiedonsiirto ei onnistunut, palvelin ilmoitti \"%s\""
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Kysely"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Käynnistys ei onnistu"
 
 #: methods/gpgv.cc
 #, c-format
@@ -3978,17 +3830,123 @@ msgstr "Select ei toiminut"
 msgid "Connection timed out"
 msgstr "Yhteys aikakatkaistiin"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Pulmia tiedoston hajautuksessa"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Tiedoston muutospäivämäärää ei saatu vaihdettua"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Yhteys katkesi ennenaikaisesti"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Logging in"
+#~ msgstr "Kirjaudutaan sisään"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Vastapään nimeä ei saa selville"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Paikallista nimeä ei saa selville"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Palvelin ei huolinut yhteyttä ilmoituksella: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "USER ei onnistunut, palvelimen ilmoitus: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "PASS ei onnistunut, palvelimen ilmoitus: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Määritettiin välipalvelin mutta ei komentotiedostoa kirjautumiseen, "
+#~ "Acquire::ftp::ProxyLogin on tyhjä."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "Komentotiedoston rivi \"%s\" ei toiminut, palvelin ilmoitti: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "TYPE ei toiminut, palvelin ilmoitti: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Yhteys aikakatkaistiin"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Palvelin sulki yhteyden"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Vastaus aiheutti puskurin ylivuodon."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Yhteyskäytäntö on turmeltunut"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Pistoketta ei voitu luoda"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "Pistoketta ei voitu kytkeä, yhteys aikakatkaistiin"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Passiivista pistoketta ei voitu kytkeä."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo ei saanut kuuntelupistoketta"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Pistoketta ei voitu nimetä"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Pistoketta ei voitu kuunnella"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Pistokkeen nimeä ei saatu selville"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Komennon PORT lähetys ei onnistu"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Tuntematon osoiteperhe %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT ei onnistunut, palvelin ilmoitti: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Pistokkeen kytkeminen aikakatkaistiin"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Yhteyttä ei voitu hyväksyä"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Tiedostoa ei saatu noudettua, palvelin ilmoitti \"%s\""
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Pistoke aikakatkaistiin"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Tiedonsiirto ei onnistunut, palvelin ilmoitti \"%s\""
+
+#~ msgid "Query"
+#~ msgstr "Kysely"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Käynnistys ei onnistu"
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Yhteys katkesi ennenaikaisesti"
 
 #, fuzzy
 #~| msgid "The following held packages will be changed:"

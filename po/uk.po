@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -255,13 +255,6 @@ msgstr "Неможливо знайти джерело для завантаже
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Журнал змін для %s (%s)"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -800,11 +793,11 @@ msgstr "Підпроцес %s повернув код помилки (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Підпроцес %s раптово завершився"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Помилка зчитування"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Помилка запису"
 
@@ -3577,7 +3570,7 @@ msgstr "Невідомий алгоритм стиснення '%s'"
 msgid "Compressed output %s needs a compression set"
 msgstr "Для отримання стиснутого виводу %s необхідно ввімкнути стиснення"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Не вдалося створити IPC канал для підпроцесу"
 
@@ -3750,7 +3743,7 @@ msgstr "Погана заголовкова інформація"
 msgid "Connection failed"
 msgstr "З'єднання не вдалося"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3793,7 +3786,7 @@ msgstr ""
 msgid "Disk not found."
 msgstr "Диск не знайдено."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Файл не знайдено"
 
@@ -3829,7 +3822,7 @@ msgstr "Неможливо створити сокет для %s (f=%u t=%u p=%u
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Неможливо почати з'єднання з %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Невдача"
 
@@ -3843,9 +3836,7 @@ msgstr "Неможливо під'єднатися до %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Неможливо з'єднатися з %s:%s (%s), час з'єднання вичерпався"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "З'єднання з %s"
@@ -3883,145 +3874,6 @@ msgstr "Не вдалося одержати атрибути (stat)"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Невірне посилання (URI), локальні посилання не повинні починатися з //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Логінюсь в"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Неможливо визначити назву вузла"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Неможливо визначити локальну назву"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Сервер розірвав з'єднання, відповівши: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER невдало, сервер мовив: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS невдало, сервер мовив: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Вказано проксі-сервер, але відсутній скрипт логіну, Acquire::ftp::ProxyLogin "
-"пустий."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Команда '%s' у скрипті логіна не вдалася, сервер мовив: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE невдало, сервер мовив: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Час з'єднання вичерпався"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Сервер закрив з'єднання"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Відповідь переповнила буфер."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Спотворений протокол"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Неможливо створити сокет (socket)"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Неможливо під'єднати сокет (socket) з даними, час з'єднання вичерпався"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Неможливо під'єднати пасивний сокет (passive socket)."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "Виклик getaddrinfo не зміг отримати слухаючий сокет"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Неможливо приєднатися до сокета"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Неможливо прослухати на сокеті"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Не вдалося визначити назву сокета"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Неможливо відіслати команду PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Невідоме адресове сімейство %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT невдало, сервер мовив: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Час з'єднання з сокетом даних вичерпався"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Неможливо прийняти з'єднання"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Проблема хешування файла"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Неможливо завантажити файл, сервер мовив: '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Час з'єднання з сокетом (socket) з даними вичерпався"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Передача даних обірвалася, сервер мовив '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Черга"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Неможливо викликати "
 
 #: methods/gpgv.cc
 #, c-format
@@ -4105,17 +3957,124 @@ msgstr "Вибір провалився"
 msgid "Connection timed out"
 msgstr "Час очікування з'єднання вийшов"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Проблема хешування файла"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Не вдалося встановити час модифікації"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "З'єднання завершено передчасно"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Пусті файли не можуть бути правильними архівами"
+
+#~ msgid "Logging in"
+#~ msgstr "Логінюсь в"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Неможливо визначити назву вузла"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Неможливо визначити локальну назву"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Сервер розірвав з'єднання, відповівши: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "USER невдало, сервер мовив: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "PASS невдало, сервер мовив: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Вказано проксі-сервер, але відсутній скрипт логіну, Acquire::ftp::"
+#~ "ProxyLogin пустий."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "Команда '%s' у скрипті логіна не вдалася, сервер мовив: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "TYPE невдало, сервер мовив: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Час з'єднання вичерпався"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Сервер закрив з'єднання"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Відповідь переповнила буфер."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Спотворений протокол"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Неможливо створити сокет (socket)"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr ""
+#~ "Неможливо під'єднати сокет (socket) з даними, час з'єднання вичерпався"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Неможливо під'єднати пасивний сокет (passive socket)."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "Виклик getaddrinfo не зміг отримати слухаючий сокет"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Неможливо приєднатися до сокета"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Неможливо прослухати на сокеті"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Не вдалося визначити назву сокета"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Неможливо відіслати команду PORT"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Невідоме адресове сімейство %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT невдало, сервер мовив: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Час з'єднання з сокетом даних вичерпався"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Неможливо прийняти з'єднання"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Неможливо завантажити файл, сервер мовив: '%s'"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Час з'єднання з сокетом (socket) з даними вичерпався"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Передача даних обірвалася, сервер мовив '%s'"
+
+#~ msgid "Query"
+#~ msgstr "Черга"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Неможливо викликати "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "З'єднання завершено передчасно"
 
 #, fuzzy, c-format
 #~| msgid "  Installed: "

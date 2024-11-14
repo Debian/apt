@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.6.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2023-04-19 15:15+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -273,17 +273,6 @@ msgstr "'%2$s' paketinin '%1$s' sürümü hiçbir kaynakta bulunamadı"
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s=%s için değişim günlüğü mevcut değil"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
-"'%s' indirme yöntemi desteklenmemektedir ve öntanımlı olarak devre dışı "
-"bırakılmıştır. Bunun yerine 'http(s)' yöntemine geçmeyi düşünebilirsiniz. "
-"Yine de bu yöntemi kullanmak istiyorsanız Dir::Bin::Methods::%s ayarını "
-"\"%s\" yaparak etkin hale getirebilirsiniz."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -824,11 +813,11 @@ msgstr "%s altsüreci bir hata kodu gönderdi (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "%s altsüreci beklenmeyen bir şekilde sona erdi"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Okuma hatası"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Yazma hatası"
 
@@ -3582,7 +3571,7 @@ msgstr "Bilinmeyen sıkıştırma algoritması '%s'"
 msgid "Compressed output %s needs a compression set"
 msgstr "Sıkıştırılmış %s çıktısı bir sıkıştırma kümesine ihtiyaç duymaktadır"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Altsürece IPC borusu oluşturulamadı"
 
@@ -3755,7 +3744,7 @@ msgstr "Kötü başlık verisi"
 msgid "Connection failed"
 msgstr "Bağlantı başarısız"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3801,7 +3790,7 @@ msgstr "%s konumundaki CD-ROM çıkarılamıyor, hâlâ kullanımda olabilir."
 msgid "Disk not found."
 msgstr "Disk bulunamadı."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Dosya bulunamadı"
 
@@ -3836,7 +3825,7 @@ msgstr "%s için bir soket oluşturulamadı (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "%s:%s bağlantısı başlatılamıyor (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Başarısız"
 
@@ -3850,9 +3839,7 @@ msgstr "Adrese bağlanılamadı: %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Adrese bağlanılamadı: %s:%s (%s), bağlantı zaman aşımına uğradı"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Bağlanılıyor: %s"
@@ -3889,145 +3876,6 @@ msgstr "Durum bilgisi okunamadı"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Geçersiz URI, yerel URI'ler // ile başlamamalıdır"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Giriş yapılıyor"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Eş adı belirlenemiyor"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Yerel ad belirlenemiyor"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Sunucu bağlantıyı reddetti, sunucunun iletisi: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER başarısız, sunucunun iletisi: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS başarısız, sunucunun iletisi: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Bir Vekil sunucu belirtildi ancak oturum açma betiği belirtilmedi, Acquire::"
-"ftp::ProxyLogin boş."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Oturum açma betiği komutu '%s' başarısız oldu, sunucunun iletisi: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE başarısız, sunucunun iletisi: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Bağlantı zaman aşımına uğradı"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Sunucu bağlantıyı kesti"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Bir yanıt arabelleği taşırdı."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "İletişim kuralları bozulması"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Bir soket oluşturulamadı"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Veri soketine bağlanılamadı, bağlantı zaman aşımına uğradı"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Edilgen sokete bağlanılamadı."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo bir dinleme soketi alamıyor"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Bir sokete bağlanılamadı"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Soket dinlenemedi"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Soketin adı belirlenemedi"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "PORT komutu gönderilemedi"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Bilinmeyen adres ailesi %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT başarısız, sunucunun iletisi: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Veri soketi bağlantısı zaman aşımına uğradı"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Bağlantı kabul edilemiyor"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Dosya sağlaması yapılamadı"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Dosya alınamıyor, sunucunun iletisi: '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Veri soketi zaman aşımına uğradı"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Veri aktarımı başarısız, sunucunun iletisi: '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Sorgu"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Çağrılamıyor "
 
 #: methods/gpgv.cc
 #, c-format
@@ -4111,17 +3959,135 @@ msgstr "Seçme başarısız"
 msgid "Connection timed out"
 msgstr "Bağlantı zaman aşımına uğradı"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Dosya sağlaması yapılamadı"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Değişiklik zamanı ayarlanamadı"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Bağlantı vaktinden önce kapandı"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Boş dosyalar geçerli birer arşiv dosyası olamazlar"
+
+#, c-format
+#~ msgid ""
+#~ "The method '%s' is unsupported and disabled by default. Consider "
+#~ "switching to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it "
+#~ "again."
+#~ msgstr ""
+#~ "'%s' indirme yöntemi desteklenmemektedir ve öntanımlı olarak devre dışı "
+#~ "bırakılmıştır. Bunun yerine 'http(s)' yöntemine geçmeyi düşünebilirsiniz. "
+#~ "Yine de bu yöntemi kullanmak istiyorsanız Dir::Bin::Methods::%s ayarını "
+#~ "\"%s\" yaparak etkin hale getirebilirsiniz."
+
+#~ msgid "Logging in"
+#~ msgstr "Giriş yapılıyor"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Eş adı belirlenemiyor"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Yerel ad belirlenemiyor"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Sunucu bağlantıyı reddetti, sunucunun iletisi: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "USER başarısız, sunucunun iletisi: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "PASS başarısız, sunucunun iletisi: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Bir Vekil sunucu belirtildi ancak oturum açma betiği belirtilmedi, "
+#~ "Acquire::ftp::ProxyLogin boş."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr ""
+#~ "Oturum açma betiği komutu '%s' başarısız oldu, sunucunun iletisi: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "TYPE başarısız, sunucunun iletisi: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Bağlantı zaman aşımına uğradı"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Sunucu bağlantıyı kesti"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Bir yanıt arabelleği taşırdı."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "İletişim kuralları bozulması"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Bir soket oluşturulamadı"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "Veri soketine bağlanılamadı, bağlantı zaman aşımına uğradı"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Edilgen sokete bağlanılamadı."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo bir dinleme soketi alamıyor"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Bir sokete bağlanılamadı"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Soket dinlenemedi"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Soketin adı belirlenemedi"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "PORT komutu gönderilemedi"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Bilinmeyen adres ailesi %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT başarısız, sunucunun iletisi: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Veri soketi bağlantısı zaman aşımına uğradı"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Bağlantı kabul edilemiyor"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Dosya alınamıyor, sunucunun iletisi: '%s'"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Veri soketi zaman aşımına uğradı"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Veri aktarımı başarısız, sunucunun iletisi: '%s'"
+
+#~ msgid "Query"
+#~ msgstr "Sorgu"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Çağrılamıyor "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Bağlantı vaktinden önce kapandı"
 
 #, fuzzy, c-format
 #~| msgid "  Installed: "

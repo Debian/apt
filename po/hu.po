@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -273,13 +273,6 @@ msgstr "Nem található forrás a(z) „%2$s” „%1$s” verziójának letölt
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Nem érhető el változásnapló ehhez: %s=%s"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -826,11 +819,11 @@ msgstr "%s alfolyamat hibakóddal tért vissza (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "%s alfolyamat váratlanul kilépett"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Olvasási hiba"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Írási hiba"
 
@@ -3597,7 +3590,7 @@ msgstr "„%s” tömörítési algoritmus ismeretlen"
 msgid "Compressed output %s needs a compression set"
 msgstr "%s tömörített kimenetnek egy tömörítő készletre van szüksége"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Nem sikerült IPC-adatcsatornát létrehozni az alfolyamathoz"
 
@@ -3770,7 +3763,7 @@ msgstr "Rossz fejlécadatok"
 msgid "Connection failed"
 msgstr "Sikertelen kapcsolódás"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3815,7 +3808,7 @@ msgstr ""
 msgid "Disk not found."
 msgstr "A lemez nem található."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "A fájl nem található"
 
@@ -3851,7 +3844,7 @@ msgstr "Foglalat létrehozása sikertelen ehhez: %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Kapcsolat létrehozása sikertelen ehhez: %s: %s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Sikertelen"
 
@@ -3865,9 +3858,7 @@ msgstr "Nem lehet kapcsolódni ehhez: %s: %s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Időtúllépés miatt nem lehet kapcsolódni a következőhöz: %s: %s (%s)"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Kapcsolódás: %s"
@@ -3904,148 +3895,6 @@ msgstr "Nem érhető el"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Érvénytelen URI, helyi URI-k nem kezdődhetnek //-rel"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Bejelentkezés"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Nem lehet a partner nevét megállapítani"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Nem lehet a helyi nevet megállapítani"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "A kiszolgáló visszautasította a kapcsolatot: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "Hibás USER, a kiszolgáló üzenete: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "Hibás PASS, a kiszolgáló üzenete: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Meg lett adva proxy kiszolgáló, de nincs bejelentkezési parancsfájl és az "
-"Acquire::ftp::ProxyLogin üres."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr ""
-"A bejelentkezési parancsfájl „%s” parancsa sikertelen, a kiszolgáló üzenete: "
-"%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "Hibás TYPE, a kiszolgáló üzenete: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Időtúllépés a kapcsolatban"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "A kiszolgáló lezárta a kapcsolatot"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "A válasz túlcsordította a puffert."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Protokollhiba"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Nem lehet létrehozni a foglalatot"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr ""
-"Nem lehet kapcsolódni az adatfoglalathoz, a kapcsolat túllépte az időkorlátot"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Nem lehet kapcsolódni a passzív foglalathoz."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "A getaddrinfo nem talált figyelőfoglalatot"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Nem lehet összekapcsolódni a foglalattal"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Nem lehet figyelni a foglalaton"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Nem lehet megállapítani a foglalat nevét"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Nem lehet PORT parancsot küldeni"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Ismeretlen címcsalád: %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "Hibás EPRT, a kiszolgáló üzenete: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Az adatfoglalathoz kapcsolódás túllépte az időkorlátot"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Nem lehet elfogadni a kapcsolatot"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Probléma a fájl hash értékének meghatározásakor"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Nem lehet letölteni a fájlt, a kiszolgáló üzenete: „%s”"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Az adatfoglalat túllépte az időkorlátot"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Az adatátvitel sikertelen, a kiszolgáló üzenete: „%s”"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Lekérdezés"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Nem lehet meghívni "
 
 #: methods/gpgv.cc
 #, c-format
@@ -4131,17 +3980,127 @@ msgstr "A kiválasztás sikertelen"
 msgid "Connection timed out"
 msgstr "Időtúllépés a kapcsolatban"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Probléma a fájl hash értékének meghatározásakor"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "A módosítási idő beállítása sikertelen"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "A kapcsolat idő előtt lezárult"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Az üres fájlok biztosan nem érvényes csomagok"
+
+#~ msgid "Logging in"
+#~ msgstr "Bejelentkezés"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Nem lehet a partner nevét megállapítani"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Nem lehet a helyi nevet megállapítani"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "A kiszolgáló visszautasította a kapcsolatot: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "Hibás USER, a kiszolgáló üzenete: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "Hibás PASS, a kiszolgáló üzenete: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Meg lett adva proxy kiszolgáló, de nincs bejelentkezési parancsfájl és az "
+#~ "Acquire::ftp::ProxyLogin üres."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr ""
+#~ "A bejelentkezési parancsfájl „%s” parancsa sikertelen, a kiszolgáló "
+#~ "üzenete: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "Hibás TYPE, a kiszolgáló üzenete: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Időtúllépés a kapcsolatban"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "A kiszolgáló lezárta a kapcsolatot"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "A válasz túlcsordította a puffert."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Protokollhiba"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Nem lehet létrehozni a foglalatot"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr ""
+#~ "Nem lehet kapcsolódni az adatfoglalathoz, a kapcsolat túllépte az "
+#~ "időkorlátot"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Nem lehet kapcsolódni a passzív foglalathoz."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "A getaddrinfo nem talált figyelőfoglalatot"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Nem lehet összekapcsolódni a foglalattal"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Nem lehet figyelni a foglalaton"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Nem lehet megállapítani a foglalat nevét"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Nem lehet PORT parancsot küldeni"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Ismeretlen címcsalád: %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "Hibás EPRT, a kiszolgáló üzenete: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Az adatfoglalathoz kapcsolódás túllépte az időkorlátot"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Nem lehet elfogadni a kapcsolatot"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Nem lehet letölteni a fájlt, a kiszolgáló üzenete: „%s”"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Az adatfoglalat túllépte az időkorlátot"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Az adatátvitel sikertelen, a kiszolgáló üzenete: „%s”"
+
+#~ msgid "Query"
+#~ msgstr "Lekérdezés"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Nem lehet meghívni "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "A kapcsolat idő előtt lezárult"
 
 #, fuzzy, c-format
 #~| msgid "  Installed: "

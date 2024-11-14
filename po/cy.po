@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2005-06-06 13:46+0100\n"
 "Last-Translator: Dafydd Harries <daf@muse.19inch.net>\n"
 "Language-Team: Welsh <cy@pengwyn.linux.org.uk>\n"
@@ -239,13 +239,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Yn cysylltu i %s (%s)"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -775,11 +768,11 @@ msgstr "Dychwelodd is-broses %s gôd gwall (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Gorffenodd is-broses %s yn annisgwyl"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Gwall darllen"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Gwall ysgrifennu"
 
@@ -3496,7 +3489,7 @@ msgstr "Dull Cywasgu Anhysbys '%s'"
 msgid "Compressed output %s needs a compression set"
 msgstr "Mae'r allbwn cywasgiedig %s angen cywasgiad wedi ei osod"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Methwyd creu pibell cyfathrebu at isbroses"
 
@@ -3676,7 +3669,7 @@ msgstr "Data pennawd gwael"
 msgid "Connection failed"
 msgstr "Methodd y cysylltiad"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3722,7 +3715,7 @@ msgstr ""
 msgid "Disk not found."
 msgstr "Ffeil heb ei ganfod"
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Ffeil heb ei ganfod"
 
@@ -3758,7 +3751,7 @@ msgstr "Methwyd creu soced ar gyfer %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Ni ellir cychwyn y cysylltiad i %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Methwyd"
 
@@ -3772,9 +3765,7 @@ msgstr "Methwyd cysylltu i %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Methwyd cysylltu i %s:%s (%s), goramserodd y cysylltiad"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Yn cysylltu i %s"
@@ -3811,149 +3802,6 @@ msgstr "Methwyd stat()"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "URI annilys: rhaid i URIs lleol beidio a cychwyn efo \"//\""
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Yn mewngofnodi"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Ni ellir darganfod enw'r cymar"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Ni ellir darganfod yr enw lleol"
-
-#: methods/ftp.cc
-#, fuzzy, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Gwrthodwyd y gweinydd ein cysyllriad, a dwedodd: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "Methodd gorchymyn USER; meddai'r gweinydd: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "Methodd gorchymyn PASS; meddai'r gweinydd: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Penodwyd gweinydd dirprwy ond dim sgript mengofnodi. (Mae Acquire::ftp::"
-"ProxyLogin yn wag.)"
-
-# FIXME
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Methodd y gorchymyn sgript mewngofnodi '%s'; meddai'r gweinydd: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "Methodd gorchymyn TYPE; meddai'r gweinydd: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Goramser cysylltu"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Caeodd y gweinydd y cysylltiad"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Gorlifodd ateb y byffer."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Llygr protocol"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Methwyd creu soced"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Methwyd cysylltu soced data, goramserodd y cyslltiad"
-
-#: methods/ftp.cc
-#, fuzzy
-msgid "Could not connect passive socket."
-msgstr "Methwyd cysylltu soced goddefol"
-
-# FIXME
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "Methodd getaddrinfo gael soced gwrando"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Methwyd rhwymo soced"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Methwyd gwrando ar y soced"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Methwyd canfod enw'r soced"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Methwyd danfod gorchymyn PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Teulu cyfeiriad anhysbys %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "Methodd gorchymyn EPRT; meddai'r gweinydd: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Goramserodd cysylltiad y soced data"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Methwyd derbyn cysylltiad"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Problem wrth stwnshio ffeil"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Methwyd cyrchu ffeil; meddai'r gweinydd '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Goramserodd soced data"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Methodd trosgludiad data; meddai'r gweinydd '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Ymholiad"
-
-# FIXME
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Methwyd gweithredu "
 
 #: methods/gpgv.cc
 #, c-format
@@ -4034,17 +3882,127 @@ msgstr "Methwyd dewis"
 msgid "Connection timed out"
 msgstr "Goramserodd y cysylltiad"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Problem wrth stwnshio ffeil"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Methwyd gosod amser newid"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Caewyd y cysylltiad yn gynnar"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Logging in"
+#~ msgstr "Yn mewngofnodi"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Ni ellir darganfod enw'r cymar"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Ni ellir darganfod yr enw lleol"
+
+#, fuzzy, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Gwrthodwyd y gweinydd ein cysyllriad, a dwedodd: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "Methodd gorchymyn USER; meddai'r gweinydd: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "Methodd gorchymyn PASS; meddai'r gweinydd: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Penodwyd gweinydd dirprwy ond dim sgript mengofnodi. (Mae Acquire::ftp::"
+#~ "ProxyLogin yn wag.)"
+
+# FIXME
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "Methodd y gorchymyn sgript mewngofnodi '%s'; meddai'r gweinydd: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "Methodd gorchymyn TYPE; meddai'r gweinydd: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Goramser cysylltu"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Caeodd y gweinydd y cysylltiad"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Gorlifodd ateb y byffer."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Llygr protocol"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Methwyd creu soced"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "Methwyd cysylltu soced data, goramserodd y cyslltiad"
+
+#, fuzzy
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Methwyd cysylltu soced goddefol"
+
+# FIXME
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "Methodd getaddrinfo gael soced gwrando"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Methwyd rhwymo soced"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Methwyd gwrando ar y soced"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Methwyd canfod enw'r soced"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Methwyd danfod gorchymyn PORT"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Teulu cyfeiriad anhysbys %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "Methodd gorchymyn EPRT; meddai'r gweinydd: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Goramserodd cysylltiad y soced data"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Methwyd derbyn cysylltiad"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Methwyd cyrchu ffeil; meddai'r gweinydd '%s'"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Goramserodd soced data"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Methodd trosgludiad data; meddai'r gweinydd '%s'"
+
+#~ msgid "Query"
+#~ msgstr "Ymholiad"
+
+# FIXME
+#~ msgid "Unable to invoke "
+#~ msgstr "Methwyd gweithredu "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Caewyd y cysylltiad yn gynnar"
 
 #, fuzzy
 #~| msgid "The following held packages will be changed:"

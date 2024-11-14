@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-10-22 16:47+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2024-11-09 20:38+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -265,16 +265,6 @@ msgstr "Nelze najít zdroj pro stažení verze „%s“ balíku „%s“"
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Seznam změn pro %s=%s není dostupný"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
-"Metoda „%s“ není podporovaná a je ve výchozím nastavení zakázaná. Zvažte "
-"přechod na http(s). Pro znovupovolení nastavte Dir::Bin::Methods::%s na "
-"\"%s\"."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -804,11 +794,11 @@ msgstr "Podproces %s vrátil chybový kód (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Podproces %s neočekávaně skončil"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Chyba čtení"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Chyba zápisu"
 
@@ -3507,7 +3497,7 @@ msgstr "Neznámý kompresní algoritmus „%s“"
 msgid "Compressed output %s needs a compression set"
 msgstr "Komprimovaný výstup %s potřebuje kompresní sadu"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Selhalo vytvoření meziprocesové roury k podprocesu"
 
@@ -3680,7 +3670,7 @@ msgstr "Špatné datové záhlaví"
 msgid "Connection failed"
 msgstr "Spojení selhalo"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3726,7 +3716,7 @@ msgstr "Nelze odpojit CD-ROM v %s - možná se stále používá."
 msgid "Disk not found."
 msgstr "Disk nebyl nalezen."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Soubor nebyl nalezen"
 
@@ -3761,7 +3751,7 @@ msgstr "Nelze vytvořit socket pro %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Nelze navázat spojení na %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Selhalo"
 
@@ -3775,9 +3765,7 @@ msgstr "Nelze se připojit k %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Nelze se připojit k %s:%s (%s), čas spojení vypršel"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Připojování k %s"
@@ -3814,145 +3802,6 @@ msgstr "Selhalo vyhodnocení"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Neplatné URI, lokální URI nesmí začínat na //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Přihlašování"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Nelze určit jméno druhé strany"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Nelze určit lokální jméno"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Server zamítl naše spojení a řekl: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER selhal, server řekl: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS selhal, server řekl: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Byl zadán proxy server, ale ne přihlašovací skript. Acquire::ftp::ProxyLogin "
-"je prázdný."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Příkaz „%s“ přihlašovacího skriptu selhal, server řekl: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE selhal, server řekl: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Čas spojení vypršel"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Server uzavřel spojení"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Odpověď přeplnila buffer."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Porušení protokolu"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Nelze vytvořit socket"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Nelze připojit datový socket, čas spojení vypršel"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Nelze připojit pasivní socket."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo nezískal naslouchající socket"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Nelze navázat socket"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Nelze naslouchat na socketu"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Nelze určit jméno socketu"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Nelze odeslat příkaz PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Neznámá rodina adres %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT selhal, server řekl: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Spojení datového socketu vypršelo"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Nelze přijmout spojení"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Problém s kontrolním součtem souboru"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Nelze stáhnout soubor, server řekl „%s“"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Datový socket vypršel"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Přenos dat selhal, server řekl „%s“"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Dotaz"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Nelze vyvolat "
 
 #: methods/gpgv.cc
 #, c-format
@@ -4037,17 +3886,133 @@ msgstr "Výběr selhal"
 msgid "Connection timed out"
 msgstr "Čas spojení vypršel"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Problém s kontrolním součtem souboru"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Nelze nastavit čas modifikace"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Spojení bylo předčasně ukončeno"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prázdné soubory nejsou platnými archivy"
+
+#, c-format
+#~ msgid ""
+#~ "The method '%s' is unsupported and disabled by default. Consider "
+#~ "switching to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it "
+#~ "again."
+#~ msgstr ""
+#~ "Metoda „%s“ není podporovaná a je ve výchozím nastavení zakázaná. Zvažte "
+#~ "přechod na http(s). Pro znovupovolení nastavte Dir::Bin::Methods::%s na "
+#~ "\"%s\"."
+
+#~ msgid "Logging in"
+#~ msgstr "Přihlašování"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Nelze určit jméno druhé strany"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Nelze určit lokální jméno"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Server zamítl naše spojení a řekl: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "USER selhal, server řekl: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "PASS selhal, server řekl: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Byl zadán proxy server, ale ne přihlašovací skript. Acquire::ftp::"
+#~ "ProxyLogin je prázdný."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "Příkaz „%s“ přihlašovacího skriptu selhal, server řekl: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "TYPE selhal, server řekl: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Čas spojení vypršel"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Server uzavřel spojení"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Odpověď přeplnila buffer."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Porušení protokolu"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Nelze vytvořit socket"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "Nelze připojit datový socket, čas spojení vypršel"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Nelze připojit pasivní socket."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo nezískal naslouchající socket"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Nelze navázat socket"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Nelze naslouchat na socketu"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Nelze určit jméno socketu"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Nelze odeslat příkaz PORT"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Neznámá rodina adres %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT selhal, server řekl: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Spojení datového socketu vypršelo"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Nelze přijmout spojení"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Nelze stáhnout soubor, server řekl „%s“"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Datový socket vypršel"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Přenos dat selhal, server řekl „%s“"
+
+#~ msgid "Query"
+#~ msgstr "Dotaz"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Nelze vyvolat "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Spojení bylo předčasně ukončeno"
 
 #, c-format
 #~ msgid "  Installed size: %sB\n"

@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2015-08-19 21:33+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
@@ -253,13 +253,6 @@ msgstr "Kan inte hitta en källa för att hämta version ”%s” av ”%s”"
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Ändringslogg för %s (%s)"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -797,11 +790,11 @@ msgstr "Underprocessen %s svarade med en felkod (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Underprocessen %s avslutades oväntat"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Läsfel"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Skrivfel"
 
@@ -3545,7 +3538,7 @@ msgstr "Okänd komprimeringsalgoritm ”%s”"
 msgid "Compressed output %s needs a compression set"
 msgstr "Komprimerade utdata %s behöver en komprimeringsuppsättning"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Misslyckades med att skapa IPC-rör till underprocess"
 
@@ -3723,7 +3716,7 @@ msgstr "Felaktiga data i huvud"
 msgid "Connection failed"
 msgstr "Anslutningen misslyckades"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3767,7 +3760,7 @@ msgstr "Kunde inte avmontera cd-rom:en i %s, den kanske fortfarande används."
 msgid "Disk not found."
 msgstr "Skivan hittades inte."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Filen hittades inte"
 
@@ -3804,7 +3797,7 @@ msgstr "Kunde inte skapa ett uttag (socket) för %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Kunde inte initiera anslutningen till %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Misslyckades"
 
@@ -3818,9 +3811,7 @@ msgstr "Kunde inte ansluta till %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Kunde inte ansluta till %s:%s (%s), anslutningen överskred tidsgräns"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Ansluter till %s"
@@ -3859,146 +3850,6 @@ msgstr "Misslyckades med att ta status"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Ogiltig URI, lokala URI:er får inte börja med //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Loggar in"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Kunde inte fastställa namnet på partnern"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Kunde inte fastställa det lokala namnet"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Servern nekade anslutningen och sade: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER misslyckades, servern sade: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS misslyckades, servern sade: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"En mellanserver (proxy) angavs men inget inloggningsskript, Acquire::ftp::"
-"ProxyLogin är tom."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Kommandot ”%s” i inloggningsskriptet misslyckades, servern sade: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE misslyckades, servern sade: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Tidsgränsen för anslutningen överskreds"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Servern stängde anslutningen"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Ett svar spillde bufferten."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Protokollet skadat"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Kunde inte skapa ett uttag (socket)"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Kunde inte ansluta datauttaget (socket), inget svar inom tidsgräns"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Kunde inte ansluta passivt uttag (socket)."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo kunde inte få tag i ett lyssnande uttag (socket)"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Kunde inte binda ett uttag (socket)"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Kunde inte lyssna på uttaget (socket)"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Kunde inte fastställa uttagets namn (socket)"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Kunde inte sända PORT-kommando"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Okänd adressfamilj %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT misslyckades, servern sade: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Anslutet datauttag (socket) fick inte svar inom tidsgränsen"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Kunde inte ta emot anslutningen"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Problem med att lägga filen till hashtabellen"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Kunde inte hämta filen, servern sade ”%s”"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Datauttag (socket) fick inte svar inom tidsgränsen"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Dataöverföringen misslyckades, servern sade ”%s”"
-
-# Statusmeddelande, byter från substantiv till verb
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Frågar"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Kunde inte starta "
 
 #: methods/gpgv.cc
 #, c-format
@@ -4084,17 +3935,124 @@ msgstr "”Select” misslyckades"
 msgid "Connection timed out"
 msgstr "Anslutningen överskred tidsgränsen"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Problem med att lägga filen till hashtabellen"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Misslyckades med att ställa in ändringstid"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Anslutningen stängdes i förtid"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomma filer kan inte vara giltiga arkiv"
+
+#~ msgid "Logging in"
+#~ msgstr "Loggar in"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Kunde inte fastställa namnet på partnern"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Kunde inte fastställa det lokala namnet"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Servern nekade anslutningen och sade: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "USER misslyckades, servern sade: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "PASS misslyckades, servern sade: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "En mellanserver (proxy) angavs men inget inloggningsskript, Acquire::ftp::"
+#~ "ProxyLogin är tom."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "Kommandot ”%s” i inloggningsskriptet misslyckades, servern sade: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "TYPE misslyckades, servern sade: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Tidsgränsen för anslutningen överskreds"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Servern stängde anslutningen"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Ett svar spillde bufferten."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Protokollet skadat"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Kunde inte skapa ett uttag (socket)"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "Kunde inte ansluta datauttaget (socket), inget svar inom tidsgräns"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Kunde inte ansluta passivt uttag (socket)."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo kunde inte få tag i ett lyssnande uttag (socket)"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Kunde inte binda ett uttag (socket)"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Kunde inte lyssna på uttaget (socket)"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Kunde inte fastställa uttagets namn (socket)"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Kunde inte sända PORT-kommando"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Okänd adressfamilj %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT misslyckades, servern sade: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Anslutet datauttag (socket) fick inte svar inom tidsgränsen"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Kunde inte ta emot anslutningen"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Kunde inte hämta filen, servern sade ”%s”"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Datauttag (socket) fick inte svar inom tidsgränsen"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Dataöverföringen misslyckades, servern sade ”%s”"
+
+# Statusmeddelande, byter från substantiv till verb
+#~ msgid "Query"
+#~ msgstr "Frågar"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Kunde inte starta "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Anslutningen stängdes i förtid"
 
 #, fuzzy, c-format
 #~| msgid "  Installed: "
