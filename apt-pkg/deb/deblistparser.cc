@@ -846,7 +846,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	 // … but this is probably the best thing to do anyway
 	 if (Package.substr(found + 1) == "native")
 	 {
-	    std::string const Pkg = (std::string{Package.substr(0, found)} += ':') += Ver.Cache()->NativeArch();
+	    std::string const Pkg = std::string{Package, 0, found}.append(":").append(Ver.Cache()->NativeArch());
 	    if (NewDepends(Ver, Pkg, "any", Version, Op | pkgCache::Dep::ArchSpecific, Type) == false)
 	       return false;
 	 }
