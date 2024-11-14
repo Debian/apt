@@ -15,6 +15,11 @@
 #include <cstring>
 #include <string>
 
+#if APT_PKG_ABI > 600
+namespace APT {
+using StringView = std::string_view;
+}
+#else
 namespace APT {
 
 /**
@@ -157,5 +162,6 @@ inline bool operator ==(const char *other, APT::StringView that) { return that.o
 template<class = void> bool operator ==(std::string_view const &other, APT::StringView const &that) { return that.operator==(other); }
 template<class = void> bool operator !=(std::string_view const &other, APT::StringView const &that) { return that.operator!=(other); }
 template<class = void> bool operator !=(APT::StringView const &that, std::string_view const &other) { return that.operator!=(other); }
+#endif
 
 #endif
