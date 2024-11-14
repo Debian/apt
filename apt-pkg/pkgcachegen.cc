@@ -1,11 +1,11 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    Package Cache Generator - Generator for the cache structure.
-   
-   This builds the cache structure from the abstract package list parser. 
-   
+
+   This builds the cache structure from the abstract package list parser.
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -24,6 +24,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
+#include <apt-pkg/string_view.h>
 #include <apt-pkg/version.h>
 
 #include <algorithm>
@@ -45,10 +46,10 @@ typedef std::vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 
 static bool IsDuplicateDescription(pkgCache &Cache, pkgCache::DescIterator Desc,
-			    APT::StringView CurMd5, std::string const &CurLang);
+			    std::string_view CurMd5, std::string const &CurLang);
 
 using std::string;
-using APT::StringView;
+using std::string_view;
 
 // Convert an offset returned from e.g. DynamicMMap or ptr difference to
 // an uint32_t location without data loss.
@@ -129,7 +130,7 @@ bool pkgCacheGenerator::Start()
    else
    {
       // Map directly from the existing file
-      Cache.ReMap(); 
+      Cache.ReMap();
       Map.UsePools(*Cache.HeaderP->Pools,sizeof(Cache.HeaderP->Pools)/sizeof(Cache.HeaderP->Pools[0]));
       if (Cache.VS != _system->VS)
 	 return _error->Error(_("Cache has an incompatible versioning system"));
@@ -150,7 +151,7 @@ pkgCacheGenerator::~pkgCacheGenerator()
       return;
    if (Map.Sync() == false)
       return;
-   
+
    Cache.HeaderP->Dirty = false;
    Cache.HeaderP->CacheFileSize = Cache.CacheHash();
 
@@ -192,7 +193,7 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void * const newMap, si
    APT_REMAP(pkgCache::RlsFileIterator);
 #undef APT_REMAP
 
-   for (APT::StringView* ViewP : Dynamic<APT::StringView>::toReMap) {
+   for (std::string_view* ViewP : Dynamic<std::string_view>::toReMap) {
       if (std::get<1>(seen.insert(ViewP)) == false)
 	 continue;
       // Ignore views outside of the cache.
@@ -200,7 +201,7 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void * const newMap, si
 	 || ViewP->data() > static_cast<const char*>(oldMap) + oldSize)
 	 continue;
       const char *data = ViewP->data() + (static_cast<const char*>(newMap) - static_cast<const char*>(oldMap));
-      *ViewP = StringView(data , ViewP->size());
+      *ViewP = string_view(data , ViewP->size());
    }
 }									/*}}}*/
 // CacheGenerator::WriteStringInMap					/*{{{*/
@@ -255,10 +256,10 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       if (Counter % 100 == 0 && Progress != 0)
 	 Progress->Progress(List.Offset());
 
-      APT::StringView Arch = List.Architecture();
-      Dynamic<APT::StringView> DynArch(Arch);
-      APT::StringView Version = List.Version();
-      Dynamic<APT::StringView> DynVersion(Version);
+      std::string_view Arch = List.Architecture();
+      Dynamic<std::string_view> DynArch(Arch);
+      std::string_view Version = List.Version();
+      Dynamic<std::string_view> DynVersion(Version);
       if (Version.empty() == true && Arch.empty() == true)
       {
 	 // package descriptions
@@ -339,7 +340,7 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 			   Pkg.Name(), "UsePackage", 1);
 
    // Find the right version to write the description
-   StringView CurMd5 = List.Description_md5();
+   string_view CurMd5 = List.Description_md5();
    std::vector<std::string> availDesc = List.AvailableDescriptionLanguages();
    for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
    {
@@ -369,7 +370,7 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 									/*}}}*/
 // CacheGenerator::MergeListVersion					/*{{{*/
 bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
-					 APT::StringView const &Version, pkgCache::VerIterator* &OutVer)
+					 std::string_view const &Version, pkgCache::VerIterator* &OutVer)
 {
    pkgCache::VerIterator Ver = Pkg.VersionList();
    Dynamic<pkgCache::VerIterator> DynVer(Ver);
@@ -377,7 +378,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    void const * oldMap = Map.Data();
 
    auto Hash = List.VersionHash();
-   APT::StringView ListSHA256;
+   std::string_view ListSHA256;
 
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
    auto DebList = dynamic_cast<debListParser *>(&List);
@@ -405,10 +406,10 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
                if (ListSHA256.empty() || VersionExtra[Ver->ID].SHA256[0] == 0)
                   break;
                // We have SHA256 for both, so they must match.
-               if (ListSHA256 == APT::StringView(VersionExtra[Ver->ID].SHA256, 64))
+               if (ListSHA256 == std::string_view(VersionExtra[Ver->ID].SHA256, 64))
                   break;
 	       if (Debug)
-		  std::cerr << "Found differing SHA256 for " << Pkg.Name() << "=" << Version.to_string() << std::endl;
+		  std::cerr << "Found differing SHA256 for " << Pkg.Name() << "=" << Version << std::endl;
 	    }
 
 	    // sort (volatile) sources above not-sources like the status file
@@ -506,7 +507,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    }
 
    /* Record the Description(s) based on their master md5sum */
-   StringView CurMd5 = List.Description_md5();
+   string_view CurMd5 = List.Description_md5();
 
    /* Before we add a new description we first search in the group for
       a version with a description of the same MD5 - if so we reuse this
@@ -532,7 +533,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    return true;
 }
 									/*}}}*/
-bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterator &Ver, std::string const &lang, APT::StringView CurMd5, map_stringitem_t &md5idx) /*{{{*/
+bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterator &Ver, std::string const &lang, std::string_view CurMd5, map_stringitem_t &md5idx) /*{{{*/
 {
    pkgCache::DescIterator Desc;
    Dynamic<pkgCache::DescIterator> DynDesc(Desc);
@@ -563,9 +564,9 @@ bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterato
 // CacheGenerator::NewGroup - Add a new group				/*{{{*/
 // ---------------------------------------------------------------------
 /* This creates a new group structure and adds it to the hash table */
-bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, StringView Name)
+bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, string_view Name)
 {
-   Dynamic<StringView> DName(Name);
+   Dynamic<string_view> DName(Name);
    Grp = Cache.FindGrp(Name);
    if (Grp.end() == false)
       return true;
@@ -598,11 +599,11 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, StringView Name)
 // CacheGenerator::NewPackage - Add a new package			/*{{{*/
 // ---------------------------------------------------------------------
 /* This creates a new package structure and adds it to the hash table */
-bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
-					StringView Arch) {
+bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, string_view Name,
+					string_view Arch) {
    pkgCache::GrpIterator Grp;
-   Dynamic<StringView> DName(Name);
-   Dynamic<StringView> DArch(Arch);
+   Dynamic<string_view> DName(Name);
+   Dynamic<string_view> DArch(Arch);
    Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
    if (unlikely(NewGroup(Grp, Name) == false))
       return false;
@@ -714,24 +715,24 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, StringView Name,
    if (Arch == "any")
    {
       size_t const found = Name.rfind(':');
-      StringView ArchA = Name.substr(found + 1);
+      string_view ArchA = Name.substr(found + 1);
       if (ArchA != "any")
       {
 	 // ArchA is used inside the loop which might remap (NameA is not used)
-	 Dynamic<StringView> DynArchA(ArchA);
-	 StringView NameA = Name.substr(0, found);
+	 Dynamic<string_view> DynArchA(ArchA);
+	 string_view NameA = Name.substr(0, found);
 	 pkgCache::PkgIterator PkgA = Cache.FindPkg(NameA, ArchA);
 	 Dynamic<pkgCache::PkgIterator> DynPkgA(PkgA);
 	 if (PkgA.end())
 	 {
-	    Dynamic<StringView> DynNameA(NameA);
+	    Dynamic<string_view> DynNameA(NameA);
 	    if (NewPackage(PkgA, NameA, ArchA) == false)
 	       return false;
 	 }
 	 if (unlikely(PkgA.end()))
-	    return _error->Fatal("NewPackage was successful for %s:%s,"
+	    return _error->Fatal("NewPackage was successful for %.*s:%.*s,"
 		  "but the package doesn't exist anyhow!",
-		  NameA.to_string().c_str(), ArchA.to_string().c_str());
+		  (int)NameA.size(), NameA.data(), (int)ArchA.size(), ArchA.data());
 	 else
 	 {
 	    pkgCache::PrvIterator Prv = PkgA.ProvidesList();
@@ -763,8 +764,8 @@ bool pkgCacheGenerator::AddImplicitDepends(pkgCache::GrpIterator &G,
 					   pkgCache::PkgIterator &P,
 					   pkgCache::VerIterator &V)
 {
-   APT::StringView Arch = P.Arch() == NULL ? "" : P.Arch();
-   Dynamic<APT::StringView> DynArch(Arch);
+   std::string_view Arch = P.Arch() == NULL ? "" : P.Arch();
+   Dynamic<std::string_view> DynArch(Arch);
    map_pointer<pkgCache::Dependency> *OldDepLast = NULL;
    /* MultiArch handling introduces a lot of implicit Dependencies:
       - MultiArch: same → Co-Installable if they have the same version
@@ -836,28 +837,28 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
 {
    if (CurrentFile == nullptr)
       return true;
-   
+
    // Get a structure
    auto const VerFile = AllocateInMap<pkgCache::VerFile>();
    if (VerFile == 0)
       return false;
-   
+
    pkgCache::VerFileIterator VF(Cache,Cache.VerFileP + VerFile);
    VF->File = map_pointer<pkgCache::PackageFile>{NarrowOffset(CurrentFile - Cache.PkgFileP)};
-   
+
    // Link it to the end of the list
    map_pointer<pkgCache::VerFile> *Last = &Ver->FileList;
    for (pkgCache::VerFileIterator V = Ver.FileList(); V.end() == false; ++V)
       Last = &V->NextFile;
    VF->NextFile = *Last;
    *Last = VF.MapPointer();
-   
+
    VF->Offset = List.Offset();
    VF->Size = List.Size();
    if (Cache.HeaderP->MaxVerFileSize < VF->Size)
       Cache.HeaderP->MaxVerFileSize = VF->Size;
    Cache.HeaderP->VerFileCount++;
-   
+
    return true;
 }
 									/*}}}*/
@@ -865,7 +866,7 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
 // ---------------------------------------------------------------------
 /* This puts a version structure in the linked list */
 map_pointer<pkgCache::Version> pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
-					    APT::StringView const &VerStr,
+					    std::string_view const &VerStr,
 					    map_pointer<pkgCache::Package> const ParentPkg,
 					    uint32_t Hash,
 					    map_pointer<pkgCache::Version> const Next)
@@ -874,7 +875,7 @@ map_pointer<pkgCache::Version> pkgCacheGenerator::NewVersion(pkgCache::VerIterat
    auto const Version = AllocateInMap<pkgCache::Version>();
    if (Version == 0)
       return 0;
-   
+
    // Fill it in
    Ver = pkgCache::VerIterator(Cache,Cache.VerP + Version);
    auto d = AllocateInMap<pkgCache::Version::Extra>(); // sequence point so Ver can be moved if needed
@@ -930,7 +931,7 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
 {
    if (CurrentFile == nullptr)
       return true;
-   
+
    // Get a structure
    auto const DescFile = AllocateInMap<pkgCache::DescFile>();
    if (DescFile == 0)
@@ -946,13 +947,13 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
 
    DF->NextFile = *Last;
    *Last = DF.MapPointer();
-   
+
    DF->Offset = List.Offset();
    DF->Size = List.Size();
    if (Cache.HeaderP->MaxDescFileSize < DF->Size)
       Cache.HeaderP->MaxDescFileSize = DF->Size;
    Cache.HeaderP->DescFileCount++;
-   
+
    return true;
 }
 									/*}}}*/
@@ -961,7 +962,7 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
 /* This puts a description structure in the linked list */
 map_pointer<pkgCache::Description> pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
 					    const string &Lang,
-					    APT::StringView md5sum,
+					    std::string_view md5sum,
 					    map_stringitem_t const idxmd5str)
 {
    // Get a structure
@@ -1094,17 +1095,17 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 /* This creates a Group and the Package to link this dependency to if
    needed and handles also the caching of the old endpoint */
 bool pkgCacheListParser::NewDepends(pkgCache::VerIterator &Ver,
-					       StringView PackageName,
-					       StringView Arch,
-					       StringView Version,
+					       string_view PackageName,
+					       string_view Arch,
+					       string_view Version,
 					       uint8_t const Op,
 					       uint8_t const Type)
 {
    pkgCache::GrpIterator Grp;
    Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
-   Dynamic<StringView> DynPackageName(PackageName);
-   Dynamic<StringView> DynArch(Arch);
-   Dynamic<StringView> DynVersion(Version);
+   Dynamic<string_view> DynPackageName(PackageName);
+   Dynamic<string_view> DynArch(Arch);
+   Dynamic<string_view> DynVersion(Version);
    if (unlikely(Owner->NewGroup(Grp, PackageName) == false))
       return false;
 
@@ -1166,18 +1167,18 @@ bool pkgCacheListParser::NewDepends(pkgCache::VerIterator &Ver,
 									/*}}}*/
 // ListParser::NewProvides - Create a Provides element			/*{{{*/
 bool pkgCacheListParser::NewProvides(pkgCache::VerIterator &Ver,
-						StringView PkgName,
-						StringView PkgArch,
-						StringView Version,
+						string_view PkgName,
+						string_view PkgArch,
+						string_view Version,
 						uint8_t const Flags)
 {
    pkgCache const &Cache = Owner->Cache;
-   Dynamic<StringView> DynPkgName(PkgName);
-   Dynamic<StringView> DynArch(PkgArch);
-   Dynamic<StringView> DynVersion(Version);
+   Dynamic<string_view> DynPkgName(PkgName);
+   Dynamic<string_view> DynArch(PkgArch);
+   Dynamic<string_view> DynVersion(Version);
 
    // We do not add self referencing provides
-   if (Ver.ParentPkg().Name() == PkgName && (PkgArch == Ver.ParentPkg().Arch() ||
+   if (string_view{Ver.ParentPkg().Name()} == PkgName && (PkgArch == Ver.ParentPkg().Arch() ||
 	(PkgArch == "all" && strcmp((Cache.StrP + Cache.HeaderP->Architecture), Ver.ParentPkg().Arch()) == 0)) &&
 	 (Version.empty() || Version == Ver.VerStr()))
       return true;
@@ -1223,13 +1224,13 @@ bool pkgCacheGenerator::NewProvides(pkgCache::VerIterator &Ver,
 }
 									/*}}}*/
 // ListParser::NewProvidesAllArch - add provides for all architectures	/*{{{*/
-bool pkgCacheListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, StringView Package,
-				StringView Version, uint8_t const Flags) {
+bool pkgCacheListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, string_view Package,
+				string_view Version, uint8_t const Flags) {
    pkgCache &Cache = Owner->Cache;
    pkgCache::GrpIterator Grp = Cache.FindGrp(Package);
    Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
-   Dynamic<StringView> DynPackage(Package);
-   Dynamic<StringView> DynVersion(Version);
+   Dynamic<string_view> DynPackage(Package);
+   Dynamic<string_view> DynVersion(Version);
 
    if (Grp.end() == true || Grp->FirstPackage == 0)
       return NewProvides(Ver, Package, Cache.NativeArch(), Version, Flags);
@@ -1615,7 +1616,7 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 									/*}}}*/
 // CacheGenerator::MakeStatusCache - Construct the status cache		/*{{{*/
 // ---------------------------------------------------------------------
-/* This makes sure that the status cache (the cache that has all 
+/* This makes sure that the status cache (the cache that has all
    index files from the sources list and all local ones) is ready
    to be mmaped. If OutMap is not zero then a MMap object representing
    the cache will be stored there. This is pretty much mandatory if you
@@ -1868,13 +1869,13 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
    if (_error->PendingError() == true)
       return false;
    *OutMap = Map.release();
-   
+
    return true;
 }
 									/*}}}*/
 // IsDuplicateDescription						/*{{{*/
 static bool IsDuplicateDescription(pkgCache &Cache, pkgCache::DescIterator Desc,
-			    APT::StringView CurMd5, std::string const &CurLang)
+			    std::string_view CurMd5, std::string const &CurLang)
 {
    // Descriptions in the same link-list have all the same md5
    if (Desc.end() == true || Cache.ViewString(Desc->md5sum) != CurMd5)

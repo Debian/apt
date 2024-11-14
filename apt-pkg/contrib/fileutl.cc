@@ -2,20 +2,20 @@
 // SPDX-License-Identifier: GPL-2.0+
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    File Utilities
-   
+
    CopyFile - Buffered copy of a single file
    GetLock - dpkg compatible lock file manipulation (fcntl)
-   
+
    This file had this historic note, but now includes further changes
    under the GPL-2.0+:
 
-   Most of this source is placed in the Public Domain, do with it what 
+   Most of this source is placed in the Public Domain, do with it what
    you will
    It was originally written by Jason Gunthorpe <jgg@debian.org>.
    FileFd gzip support added by Martin Pitt <martin.pitt@canonical.com>
-   
+
    The exception is RunScripts() it is under the GPLv2
 
    We believe that this reference to GPLv2 was not meant to exclude later
@@ -105,16 +105,16 @@ bool RunScripts(const char *Cnf)
 
    // Fork for running the system calls
    pid_t Child = ExecFork();
-   
+
    // This is the child
    if (Child == 0)
    {
       if (_system != nullptr && _system->IsLocked() == true && (stringcasecmp(Cnf, "dpkg::post-invoke") == 0 || stringcasecmp(Cnf, "dpkg::pre-invoke") == 0))
 	 setenv("DPKG_FRONTEND_LOCKED", "true", 1);
-      if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
+      if (_config->FindDir("DPkg::Chroot-Directory","/") != "/")
       {
-         std::cerr << "Chrooting into " 
-                   << _config->FindDir("DPkg::Chroot-Directory") 
+         std::cerr << "Chrooting into "
+                   << _config->FindDir("DPkg::Chroot-Directory")
                    << std::endl;
          if (chroot(_config->FindDir("DPkg::Chroot-Directory","/").c_str()) != 0)
             _exit(100);
@@ -122,7 +122,7 @@ bool RunScripts(const char *Cnf)
 
       if (chdir("/tmp/") != 0)
 	 _exit(100);
-	 
+
       unsigned int Count = 1;
       for (; Opts != 0; Opts = Opts->Next, Count++)
       {
@@ -137,7 +137,7 @@ bool RunScripts(const char *Cnf)
 	    _exit(100+Count);
       }
       _exit(0);
-   }      
+   }
 
    // Wait for the child
    int Status = 0;
@@ -158,10 +158,10 @@ bool RunScripts(const char *Cnf)
 	 for (; Opts != 0 && Count != 1; Opts = Opts->Next, Count--);
 	 _error->Error("Problem executing scripts %s '%s'",Cnf,Opts->Value.c_str());
       }
-      
+
       return _error->Error("Sub-process returned an error code");
    }
-   
+
    return true;
 }
 									/*}}}*/
@@ -260,7 +260,7 @@ int GetLock(string File,bool Errors)
 	 _error->Warning(_("Not using locking for read only lock file %s"),File.c_str());
 	 return dup(0);       // Need something for the caller to close
       }
-      
+
       if (Errors == true)
 	 _error->Errno("open",_("Could not open lock file %s"),File.c_str());
 
@@ -269,7 +269,7 @@ int GetLock(string File,bool Errors)
       return -1;
    }
    SetCloseExec(FD,true);
-      
+
    // Acquire a write lock
    struct flock fl;
    fl.l_type = F_WRLCK;
@@ -300,9 +300,9 @@ int GetLock(string File,bool Errors)
       if (errno == ENOLCK)
       {
 	 _error->Warning(_("Not using locking for nfs mounted lock file %s"),File.c_str());
-	 return dup(0);       // Need something for the caller to close	 
+	 return dup(0);       // Need something for the caller to close
       }
-  
+
       if (Errors == true)
       {
 	 // We only do the lookup in the if ((errno == EACCES || errno == EAGAIN))
@@ -462,7 +462,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
 
    Configuration::MatchAgainstConfig SilentIgnore("Dir::Ignore-Files-Silently");
    DIR *D = opendir(Dir.c_str());
-   if (D == 0) 
+   if (D == 0)
    {
       if (errno == EACCES)
 	 _error->WarningE("opendir", _("Unable to read %s"), Dir.c_str());
@@ -471,7 +471,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
       return List;
    }
 
-   for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) 
+   for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D))
    {
       // skip "hidden" files
       if (Ent->d_name[0] == '.')
@@ -586,7 +586,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, bool SortList)
       return List;
    }
 
-   for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) 
+   for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D))
    {
       // skip "hidden" files
       if (Ent->d_name[0] == '.')
@@ -713,9 +713,9 @@ string flNoLink(string File)
       return File;
    if (stat(File.c_str(),&St) != 0)
       return File;
-   
-   /* Loop resolving the link. There is no need to limit the number of 
-      loops because the stat call above ensures that the symlink is not 
+
+   /* Loop resolving the link. There is no need to limit the number of
+      loops because the stat call above ensures that the symlink is not
       circular */
    char Buffer[1024];
    string NFile = File;
@@ -723,23 +723,23 @@ string flNoLink(string File)
    {
       // Read the link
       ssize_t Res;
-      if ((Res = readlink(NFile.c_str(),Buffer,sizeof(Buffer))) <= 0 || 
+      if ((Res = readlink(NFile.c_str(),Buffer,sizeof(Buffer))) <= 0 ||
 	  (size_t)Res >= sizeof(Buffer))
 	  return File;
-      
+
       // Append or replace the previous path
       Buffer[Res] = 0;
       if (Buffer[0] == '/')
 	 NFile = Buffer;
       else
 	 NFile = flNotFile(NFile) + Buffer;
-      
+
       // See if we are done
       if (lstat(NFile.c_str(),&St) != 0)
 	 return File;
       if (S_ISLNK(St.st_mode) == 0)
-	 return NFile;      
-   }   
+	 return NFile;
+   }
 }
 									/*}}}*/
 // flCombine - Combine a file and a directory				/*{{{*/
@@ -750,14 +750,14 @@ string flCombine(string Dir,string File)
 {
    if (File.empty() == true)
       return string();
-   
+
    if (File[0] == '/' || Dir.empty() == true)
       return File;
    if (File.length() >= 2 && File[0] == '.' && File[1] == '/')
       return File;
    if (Dir[Dir.length()-1] == '/')
-      return Dir + File;
-   return Dir + '/' + File;
+      return Dir += File;
+   return (Dir += '/') += File;
 }
 									/*}}}*/
 // flAbsPath - Return the absolute path of the filename			/*{{{*/
@@ -799,7 +799,7 @@ std::string flNormalize(std::string file)				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void SetCloseExec(int Fd,bool Close)
-{   
+{
    if (fcntl(Fd,F_SETFD,(Close == false)?0:FD_CLOEXEC) != 0)
    {
       cerr << "FATAL -> Could not set close on exec " << strerror(errno) << endl;
@@ -811,7 +811,7 @@ void SetCloseExec(int Fd,bool Close)
 // ---------------------------------------------------------------------
 /* */
 void SetNonBlock(int Fd,bool Block)
-{   
+{
    int Flags = fcntl(Fd,F_GETFL) & (~O_NONBLOCK);
    if (fcntl(Fd,F_SETFL,Flags | ((Block == false)?0:O_NONBLOCK)) != 0)
    {
@@ -823,7 +823,7 @@ void SetNonBlock(int Fd,bool Block)
 // WaitFd - Wait for a FD to become readable				/*{{{*/
 // ---------------------------------------------------------------------
 /* This waits for a FD to become readable using select. It is useful for
-   applications making use of non-blocking sockets. The timeout is 
+   applications making use of non-blocking sockets. The timeout is
    in seconds. */
 bool WaitFd(int Fd,bool write,unsigned long timeout)
 {
@@ -833,19 +833,19 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
    FD_SET(Fd,&Set);
    tv.tv_sec = timeout;
    tv.tv_usec = 0;
-   if (write == true) 
-   {      
+   if (write == true)
+   {
       int Res;
       do
       {
 	 Res = select(Fd+1,0,&Set,0,(timeout != 0?&tv:0));
       }
       while (Res < 0 && errno == EINTR);
-      
+
       if (Res <= 0)
 	 return false;
-   } 
-   else 
+   }
+   else
    {
       int Res;
       do
@@ -853,11 +853,11 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
 	 Res = select(Fd+1,&Set,0,0,(timeout != 0?&tv:0));
       }
       while (Res < 0 && errno == EINTR);
-      
+
       if (Res <= 0)
 	 return false;
    }
-   
+
    return true;
 }
 									/*}}}*/
@@ -884,13 +884,13 @@ void MergeKeepFdsFromConfiguration(std::set<int> &KeepFDs)
 									/*}}}*/
 // ExecFork - Magical fork that sanitizes the context before execing	/*{{{*/
 // ---------------------------------------------------------------------
-/* This is used if you want to cleanse the environment for the forked 
+/* This is used if you want to cleanse the environment for the forked
    child, it fixes up the important signals and nukes all of the fds,
    otherwise acts like normal fork. */
 pid_t ExecFork()
 {
       set<int> KeepFDs;
-      // we need to merge the Keep-Fds as external tools like 
+      // we need to merge the Keep-Fds as external tools like
       // debconf-apt-progress use it
       MergeKeepFdsFromConfiguration(KeepFDs);
       return ExecFork(KeepFDs);
@@ -939,20 +939,20 @@ pid_t ExecFork(std::set<int> KeepFDs)
 	 }
       }
    }
-   
+
    return Process;
 }
 									/*}}}*/
 // ExecWait - Fancy waitpid						/*{{{*/
 // ---------------------------------------------------------------------
-/* Waits for the given sub process. If Reap is set then no errors are 
+/* Waits for the given sub process. If Reap is set then no errors are
    generated. Otherwise a failed subprocess will generate a proper descriptive
    message */
 bool ExecWait(pid_t Pid,const char *Name,bool Reap)
 {
    if (Pid <= 1)
       return true;
-   
+
    // Wait and collect the error code
    int Status;
    while (waitpid(Pid,&Status,0) != Pid)
@@ -962,11 +962,11 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
 
       if (Reap == true)
 	 return false;
-      
+
       return _error->Error(_("Waited for %s but it wasn't there"),Name);
    }
 
-   
+
    // Check for an error code.
    if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
    {
@@ -976,16 +976,16 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
       {
 	 if( WTERMSIG(Status) == SIGSEGV)
 	    return _error->Error(_("Sub-process %s received a segmentation fault."),Name);
-	 else 
+	 else
 	    return _error->Error(_("Sub-process %s received signal %u."),Name, WTERMSIG(Status));
       }
 
       if (WIFEXITED(Status) != 0)
 	 return _error->Error(_("Sub-process %s returned an error code (%u)"),Name,WEXITSTATUS(Status));
-      
+
       return _error->Error(_("Sub-process %s exited unexpectedly"),Name);
-   }      
-   
+   }
+
    return true;
 }
 									/*}}}*/
@@ -2729,10 +2729,10 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
       if (Actual != nullptr)
 	 *Actual += Res;
    }
-   
+
    if (Size == 0)
       return true;
-   
+
    // Eof handling
    if (Actual != 0)
    {

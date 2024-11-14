@@ -1,10 +1,10 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    Debian Source Package Records - Parser implementation for Debian style
                                    source indexes
-   
+
    ##################################################################### */
 									/*}}}*/
 #ifndef PKGLIB_DEBSRCRECORDS_H
@@ -33,7 +33,7 @@ class APT_HIDDEN debSrcRecordParser : public pkgSrcRecords::Parser
    std::vector<const char*> StaticBinList;
    unsigned long iOffset;
    char *Buffer;
-   
+
    public:
 
    virtual bool Restart() APT_OVERRIDE {return Jump(0);};
@@ -41,13 +41,13 @@ class APT_HIDDEN debSrcRecordParser : public pkgSrcRecords::Parser
    virtual bool Jump(unsigned long const &Off) APT_OVERRIDE {iOffset = Off; return Tags.Jump(Sect,Off);};
 
    virtual std::string Package() const APT_OVERRIDE;
-   virtual std::string Version() const APT_OVERRIDE {return Sect.Find(pkgTagSection::Key::Version).to_string();};
-   virtual std::string Maintainer() const APT_OVERRIDE {return Sect.Find(pkgTagSection::Key::Maintainer).to_string();};
-   virtual std::string Section() const APT_OVERRIDE {return Sect.Find(pkgTagSection::Key::Section).to_string();};
+   virtual std::string Version() const APT_OVERRIDE {return std::string{Sect.Find(pkgTagSection::Key::Version)};};
+   virtual std::string Maintainer() const APT_OVERRIDE {return std::string{Sect.Find(pkgTagSection::Key::Maintainer)};};
+   virtual std::string Section() const APT_OVERRIDE {return std::string{Sect.Find(pkgTagSection::Key::Section)};};
    virtual const char **Binaries() APT_OVERRIDE;
    virtual bool BuildDepends(std::vector<BuildDepRec> &BuildDeps, bool const &ArchOnly, bool const &StripMultiArch = true) APT_OVERRIDE;
    virtual unsigned long Offset() APT_OVERRIDE {return iOffset;};
-   virtual std::string AsStr() APT_OVERRIDE 
+   virtual std::string AsStr() APT_OVERRIDE
    {
       const char *Start=0,*Stop=0;
       Sect.GetSection(Start,Stop);

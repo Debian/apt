@@ -3,9 +3,9 @@
 /* ######################################################################
 
    Index Copying - Aid for copying and verifying the index files
-   
-   This class helps apt-cache reconstruct a damaged index files. 
-   
+
+   This class helps apt-cache reconstruct a damaged index files.
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -48,13 +48,13 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    OpProgress *Progress = NULL;
    if (List.empty() == true)
       return true;
-   
-   if(log) 
+
+   if(log)
       Progress = log->GetOpProgress();
-   
+
    bool NoStat = _config->FindB("APT::CDROM::Fast",false);
    bool Debug = _config->FindB("Debug::aptcdrom",false);
-   
+
    // Prepare the progress indicator
    off_t TotalSize = 0;
    std::vector<APT::Configuration::Compressor> const compressor = APT::Configuration::getCompressors();
@@ -91,7 +91,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       pkgTagFile Parser(&Pkg);
       if (Pkg.IsOpen() == false || Pkg.Failed())
 	 return false;
-      
+
       // Open the output file
       char S[400];
       snprintf(S,sizeof(S),"cdrom:[%s]/%s%s",Name.c_str(),
@@ -282,14 +282,14 @@ bool IndexCopy::ReconstructPrefix(string &Prefix,string OrigPath,string CD,
 	    cout << "Failed, " << CD + MyPrefix + File << endl;
 	 if (GrabFirst(OrigPath,MyPrefix,Depth++) == true)
 	    continue;
-	 
+
 	 return false;
       }
       else
       {
 	 Prefix = MyPrefix;
 	 return true;
-      }      
+      }
    }
    return false;
 }
@@ -324,16 +324,16 @@ bool IndexCopy::ReconstructChop(unsigned long &Chop,string Dir,string File)
 									/*}}}*/
 // IndexCopy::ConvertToSourceList - Convert a Path to a sourcelist 	/*{{{*/
 // ---------------------------------------------------------------------
-/* We look for things in dists/ notation and convert them to 
+/* We look for things in dists/ notation and convert them to
    <dist> <component> form otherwise it is left alone. This also strips
-   the CD path. 
- 
-   This implements a regex sort of like: 
-    (.*)/dists/([^/]*)/(.*)/binary-* 
+   the CD path.
+
+   This implements a regex sort of like:
+    (.*)/dists/([^/]*)/(.*)/binary-*
      ^          ^      ^- Component
      |          |-------- Distribution
      |------------------- Path
-   
+
    It was deciced to use only a single word for dist (rather than say
    unstable/non-us) to increase the chance that each CD gets a single
    line in sources.list.
@@ -344,22 +344,22 @@ void IndexCopy::ConvertToSourceList(string CD,string &Path)
    Path = string(Path,CD.length());
    if (Path.empty() == true)
       Path = "/";
-   
+
    // Too short to be a dists/ type
    if (Path.length() < strlen("dists/"))
       return;
-   
+
    // Not a dists type.
    if (stringcmp(Path.c_str(),Path.c_str()+strlen("dists/"),"dists/") != 0)
       return;
-      
+
    // Isolate the dist
    string::size_type Slash = strlen("dists/");
    string::size_type Slash2 = Path.find('/',Slash + 1);
    if (Slash2 == string::npos || Slash2 + 2 >= Path.length())
       return;
    string Dist = string(Path,Slash,Slash2 - Slash);
-   
+
    // Isolate the component
    Slash = Slash2;
    for (unsigned I = 0; I != 10; I++)
@@ -368,13 +368,13 @@ void IndexCopy::ConvertToSourceList(string CD,string &Path)
       if (Slash == string::npos || Slash + 2 >= Path.length())
 	 return;
       string Comp = string(Path,Slash2+1,Slash - Slash2-1);
-	 
+
       // Verify the trailing binary- bit
       string::size_type BinSlash = Path.find('/',Slash + 1);
       if (Slash == string::npos)
 	 return;
       string Binary = string(Path,Slash+1,BinSlash - Slash-1);
-      
+
       if (strncmp(Binary.c_str(), "binary-", strlen("binary-")) == 0)
       {
 	 Binary.erase(0, strlen("binary-"));
@@ -386,7 +386,7 @@ void IndexCopy::ConvertToSourceList(string CD,string &Path)
 
       Path = Dist + ' ' + Comp;
       return;
-   }   
+   }
 }
 									/*}}}*/
 // IndexCopy::GrabFirst - Return the first Depth path components	/*{{{*/
@@ -401,7 +401,7 @@ bool IndexCopy::GrabFirst(string Path,string &To,unsigned int Depth)
       Depth--;
    }
    while (I != string::npos && Depth != 0);
-   
+
    if (I == string::npos)
       return false;
 
@@ -414,7 +414,7 @@ bool IndexCopy::GrabFirst(string Path,string &To,unsigned int Depth)
 /* */
 bool PackageCopy::GetFile(string &File,unsigned long long &Size)
 {
-   File = Section->Find(pkgTagSection::Key::Filename).to_string();
+   File = Section->Find(pkgTagSection::Key::Filename);
    Size = Section->FindULL(pkgTagSection::Key::Size);
    if (File.empty() || Size == 0)
       return _error->Error("Cannot find filename or size tag");
@@ -440,7 +440,7 @@ bool SourceCopy::GetFile(string &File,unsigned long long &Size)
    std::string Files;
    for (auto hashinfo : HashString::SupportedHashesInfo())
    {
-      Files = Section->Find(hashinfo.chksumskey).to_string();
+      Files = Section->Find(hashinfo.chksumskey);
       if (not Files.empty())
 	 break;
    }
@@ -451,17 +451,17 @@ bool SourceCopy::GetFile(string &File,unsigned long long &Size)
    const char *C = Files.c_str();
    string sSize;
    string MD5Hash;
-   
+
    // Parse each of the elements
    if (ParseQuoteWord(C,MD5Hash) == false ||
        ParseQuoteWord(C,sSize) == false ||
        ParseQuoteWord(C,File) == false)
       return _error->Error("Error parsing file record");
-   
+
    // Parse the size and append the directory
    Size = strtoull(sSize.c_str(), NULL, 10);
    auto const Base = Section->Find(pkgTagSection::Key::Directory);
-   File = flCombine(Base.to_string(), File);
+   File = flCombine(std::string{Base}, File);
    return true;
 }
 									/*}}}*/
@@ -552,7 +552,7 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 	 cout << "Signature verify for: " << *I << endl;
 
       metaIndex *MetaIndex = new debReleaseIndex("","", {});
-      string prefix = *I; 
+      string prefix = *I;
 
       string const releasegpg = *I+"Release.gpg";
       string const release = *I+"Release";
@@ -604,18 +604,18 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
       // if so, remove them from our copy of the lists
       vector<string> keys = MetaIndex->MetaKeys();
       for (vector<string>::iterator I = keys.begin(); I != keys.end(); ++I)
-      { 
+      {
 	 if(!Verify(prefix,*I, MetaIndex)) {
 	    // something went wrong, don't copy the Release.gpg
 	    // FIXME: delete any existing gpg file?
 	    _error->Discard();
-	    continue;	 
+	    continue;
 	 }
       }
 
       // we need a fresh one for the Release.gpg
       delete MetaIndex;
-   
+
       // everything was fine, copy the Release and Release.gpg file
       if (useInRelease == true)
 	 CopyMetaIndex(CDROM, Name, prefix, "InRelease");
@@ -624,7 +624,7 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 	 CopyMetaIndex(CDROM, Name, prefix, "Release");
 	 CopyMetaIndex(CDROM, Name, prefix, "Release.gpg");
       }
-   }   
+   }
 
    return true;
 }
@@ -635,12 +635,12 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    OpProgress *Progress = NULL;
    if (List.empty() == true)
       return true;
-   
-   if(log) 
+
+   if(log)
       Progress = log->GetOpProgress();
-   
+
    bool Debug = _config->FindB("Debug::aptcdrom",false);
-   
+
    // Prepare the progress indicator
    off_t TotalSize = 0;
    std::vector<APT::Configuration::Compressor> const compressor = APT::Configuration::getCompressors();

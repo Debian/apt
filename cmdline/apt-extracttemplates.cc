@@ -1,14 +1,14 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    APT Extract Templates - Program to extract debconf config and template
                            files
 
-   This is a simple program to extract config and template information 
+   This is a simple program to extract config and template information
    from Debian packages. It can be used to speed up the preconfiguration
    process for debconf-enabled packages
-   
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -75,7 +75,7 @@ DebFile::~DebFile()
 string DebFile::GetInstalledVer(const string &package)
 {
 	pkgCache::PkgIterator Pkg = Cache->FindPkg(package);
-	if (Pkg.end() == false) 
+	if (Pkg.end() == false)
 	{
 		pkgCache::VerIterator V = Pkg.CurrentVer();
 		if (V.end() == false)
@@ -120,8 +120,8 @@ bool DebFile::DoItem(Item &I, int &Fd)
 		Config = new char[I.Size+1];
 		Config[I.Size] = 0;
 		Which = IsConfig;
-		Fd = -2; 
-	} 
+		Fd = -2;
+	}
 	else if (strcmp(I.Name, "templates") == 0)
 	{
 		delete [] Template;
@@ -129,8 +129,8 @@ bool DebFile::DoItem(Item &I, int &Fd)
 		Template[I.Size] = 0;
 		Which = IsTemplate;
 		Fd = -2;
-	} 
-	else 
+	}
+	else
 	{
 		// Ignore it
 		Fd = -1;
@@ -171,7 +171,7 @@ bool DebFile::ParseInfo()
 	if (Section.Scan(Control, ControlLen) == false)
 		return false;
 
-	Package = Section.Find(pkgTagSection::Key::Package).to_string();
+	Package = Section.Find(pkgTagSection::Key::Package);
 	Version = GetInstalledVer(Package);
 
 	const char *Start, *Stop;
@@ -210,7 +210,7 @@ bool DebFile::ParseInfo()
 			if (Start == Stop) break;
 		}
 	}
-	
+
 	return true;
 }
 									/*}}}*/
@@ -249,7 +249,7 @@ static void WriteConfig(const DebFile &file)
 
 	if (templatefile.empty() == true || configscript.empty() == true)
 		return;
-	cout << file.Package << " " << file.Version << " " 
+	cout << file.Package << " " << file.Version << " "
 	     << templatefile << " " << configscript << endl;
 }
 									/*}}}*/
@@ -257,7 +257,7 @@ static void WriteConfig(const DebFile &file)
 // ---------------------------------------------------------------------
 /* */
 static bool Go(CommandLine &CmdL)
-{	
+{
 	// Initialize the apt cache
 	MMap *Map = 0;
 	pkgSourceList List;
@@ -303,17 +303,17 @@ static bool Go(CommandLine &CmdL)
 			if (file.PreDepVer != "" &&
 			    DebFile::Cache->VS->CheckDep(debconfver.c_str(),
 			                file.PreDepOp,file.PreDepVer.c_str()
-							 ) == false) 
+							 ) == false)
 				continue;
 
 			WriteConfig(file);
 		}
 	}
-	
+
 
 	delete Map;
 	delete DebFile::Cache;
-	
+
 	return !_error->PendingError();
 }
 									/*}}}*/

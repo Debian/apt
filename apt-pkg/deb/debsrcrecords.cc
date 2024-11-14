@@ -1,10 +1,10 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    Debian Source Package Records - Parser implementation for Debian style
                                    source indexes
-      
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -46,8 +46,8 @@ std::string debSrcRecordParser::Package() const				/*{{{*/
 {
    auto const name = Sect.Find(pkgTagSection::Key::Package);
    if (iIndex != nullptr || name.empty() == false)
-      return name.to_string();
-   return Sect.Find(pkgTagSection::Key::Source).to_string();
+      return std::string{name};
+   return std::string{Sect.Find(pkgTagSection::Key::Source)};
 }
 									/*}}}*/
 // SrcRecordParser::Binaries - Return the binaries field		/*{{{*/
@@ -93,9 +93,9 @@ const char **debSrcRecordParser::Binaries()
 									/*}}}*/
 // SrcRecordParser::BuildDepends - Return the Build-Depends information	/*{{{*/
 // ---------------------------------------------------------------------
-/* This member parses the build-depends information and returns a list of 
-   package/version records representing the build dependency. The returned 
-   array need not be freed and will be reused by the next call to this 
+/* This member parses the build-depends information and returns a list of
+   package/version records representing the build dependency. The returned
+   array need not be freed and will be reused by the next call to this
    function */
 bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDepRec> &BuildDeps,
 					bool const &ArchOnly, bool const &StripMultiArch)
@@ -165,7 +165,7 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
    List.clear();
 
    // Stash the / terminated directory prefix
-   std::string Base = Sect.Find(pkgTagSection::Key::Directory).to_string();
+   std::string Base{Sect.Find(pkgTagSection::Key::Directory)};
    if (Base.empty() == false && Base[Base.length()-1] != '/')
       Base += '/';
 
@@ -177,7 +177,7 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
       auto const Files = Sect.Find(hashinfo.chksumskey);
       if (Files.empty() == true)
 	 continue;
-      std::istringstream ss(Files.to_string());
+      std::istringstream ss(std::string{Files});  // TODO: replace with std::string_view_stream in C++23
       ss.imbue(posix);
 
       while (ss.good())
@@ -193,9 +193,9 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 	    ss >> hash >> size >> path;
 
 	 if (ss.fail() || hash.empty() || path.empty())
-	    return _error->Error("Error parsing file record in %s of source package %s", hashinfo.chksumsname.to_string().c_str(), Package().c_str());
+	    return _error->Error("Error parsing file record in %.*s of source package %s", (int)hashinfo.chksumsname.size(), hashinfo.chksumsname.data(), Package().c_str());
 
-	 HashString const hashString(hashinfo.name.to_string(), hash);
+	 HashString const hashString(std::string{hashinfo.name}, hash);
 	 if (Base.empty() == false)
 	    path = Base + path;
 
@@ -210,7 +210,7 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 	 {
 	    // an error here indicates that we have two different hashes for the same file
 	    if (file->Hashes.push_back(hashString) == false)
-	       return _error->Error("Error parsing checksum in %s of source package %s", hashinfo.chksumsname.to_string().c_str(), Package().c_str());
+	       return _error->Error("Error parsing checksum in %.*s of source package %s", (int)hashinfo.chksumsname.size(), hashinfo.chksumsname.data(), Package().c_str());
 	    continue;
 	 }
 

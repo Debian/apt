@@ -12,7 +12,6 @@
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/header-is-private.h>
-#include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
 #include <cassert>
 #include <iostream>
@@ -59,17 +58,17 @@ struct APT_PUBLIC PatternTreeParser
 
    struct PatternNode : public Node
    {
-      APT::StringView term;
+      std::string_view term;
       std::vector<std::unique_ptr<Node>> arguments;
       bool haveArgumentList = false;
 
       APT_HIDDEN std::ostream &render(std::ostream &stream) override;
-      APT_HIDDEN bool matches(APT::StringView name, int min, int max);
+      APT_HIDDEN bool matches(std::string_view name, int min, int max);
    };
 
    struct WordNode : public Node
    {
-      APT::StringView word;
+      std::string_view word;
       bool quoted = false;
       APT_HIDDEN std::ostream &render(std::ostream &stream) override;
    };
@@ -79,10 +78,10 @@ struct APT_PUBLIC PatternTreeParser
       size_t offset = 0;
    };
 
-   APT::StringView sentence;
+   std::string_view sentence;
    State state;
 
-   PatternTreeParser(APT::StringView sentence) : sentence(sentence){};
+   PatternTreeParser(std::string_view sentence) : sentence(sentence){};
    off_t skipSpace()
    {
       while (sentence[state.offset] == ' ' || sentence[state.offset] == '\t' || sentence[state.offset] == '\r' || sentence[state.offset] == '\n')

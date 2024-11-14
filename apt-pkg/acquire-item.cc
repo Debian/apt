@@ -5,7 +5,7 @@
    Acquire Item - Item to acquire
 
    Each item can download to exactly one file at a time. This means you
-   cannot create an item that fetches two uri's to two files at the same 
+   cannot create an item that fetches two uri's to two files at the same
    time. The pkgAcqIndex class creates a second class upon instantiation
    to fetch the other index files because of this.
 
@@ -140,10 +140,11 @@ static void ReportMirrorFailureToCentral(pkgAcquire::Item const &I, std::string 
    if(!FileExists(report))
       return;
 
+   const auto DescURI = I.DescURI();
    std::vector<char const*> const Args = {
       report.c_str(),
       I.UsedMirror.c_str(),
-      I.DescURI().c_str(),
+      DescURI.c_str(),
       FailCode.c_str(),
       Details.c_str(),
       NULL
@@ -2388,7 +2389,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
       string hash;
       unsigned long long size;
-      std::stringstream ss(tmp.to_string());
+      std::istringstream ss(std::string{tmp});  // TODO: replace with std::string_view_stream in C++23
       ss.imbue(posix);
       ss >> hash >> size;
       if (unlikely(hash.empty() == true))
@@ -2458,7 +2459,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
       string hash, filename;
       unsigned long long size;
-      std::stringstream ss(tmp.to_string());
+      std::stringstream ss(std::string{tmp});  // TODO: replace with std::string_view_stream in C++23
       ss.imbue(posix);
 
       while (ss >> hash >> size >> filename)
@@ -2515,7 +2516,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
       string hash, filename;
       unsigned long long size;
-      std::stringstream ss(tmp.to_string());
+      std::stringstream ss(std::string{tmp});  // TODO: replace with std::string_view_stream in C++23
       ss.imbue(posix);
 
       while (ss >> hash >> size >> filename)
@@ -2553,7 +2554,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string const &IndexDiffFile)	/*{{{*/
 
       string hash, filename;
       unsigned long long size;
-      std::stringstream ss(tmp.to_string());
+      std::stringstream ss(std::string{tmp});  // TODO: replace with std::string_view_stream in C++23
       ss.imbue(posix);
 
       // FIXME: all of pdiff supports only .gz compressed patches
@@ -2823,7 +2824,7 @@ void pkgAcqIndexDiffs::Failed(string const &Message,pkgAcquire::MethodConfig con
 void pkgAcqIndexDiffs::Finish(bool allDone)
 {
    if(Debug)
-      std::clog << "pkgAcqIndexDiffs::Finish(): " 
+      std::clog << "pkgAcqIndexDiffs::Finish(): "
                 << allDone << " "
                 << Desc.URI << std::endl;
 
@@ -3253,7 +3254,7 @@ void pkgAcqIndex::Done(string const &Message,
 {
    Item::Done(Message,Hashes,Cfg);
 
-   switch(Stage) 
+   switch(Stage)
    {
       case STAGE_DOWNLOAD:
          StageDownloadDone(Message);

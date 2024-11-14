@@ -1,6 +1,5 @@
 #include <config.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/string_view.h>
 #include <apt-pkg/strutl.h>
 #include <limits>
 #include <string>
@@ -259,7 +258,7 @@ TEST(StrUtilTest,QuoteString)
    EXPECT_EQ("Eltville-Erbach", DeQuoteString(QuoteString("Eltville-Erbach", "")));
 }
 
-static void EXPECT_STRTONUM(APT::StringView const str, bool const success, unsigned long const expected, unsigned const base)
+static void EXPECT_STRTONUM(std::string_view const str, bool const success, unsigned long const expected, unsigned const base)
 {
    SCOPED_TRACE(std::string(str.data(), str.length()));
    SCOPED_TRACE(base);

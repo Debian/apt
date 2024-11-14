@@ -27,7 +27,6 @@
 #if __cplusplus >= 201103L
 #include <unordered_set>
 #endif
-#include <apt-pkg/string_view.h>
 
 #ifdef APT_COMPILING_APT
 #include <xxhash.h>
@@ -41,7 +40,7 @@ class pkgCacheListParser;
 
 class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 {
-   APT_HIDDEN map_stringitem_t WriteStringInMap(APT::StringView String) { return WriteStringInMap(String.data(), String.size()); };
+   APT_HIDDEN map_stringitem_t WriteStringInMap(std::string_view String) { return WriteStringInMap(String.data(), String.size()); };
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String);
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String, const unsigned long &Len);
    APT_HIDDEN uint32_t AllocateInMap(const unsigned long &size);
@@ -115,12 +114,12 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    std::string PkgFileName;
    pkgCache::PackageFile *CurrentFile;
 
-   bool NewGroup(pkgCache::GrpIterator &Grp, APT::StringView Name);
-   bool NewPackage(pkgCache::PkgIterator &Pkg, APT::StringView Name, APT::StringView Arch);
-   map_pointer<pkgCache::Version> NewVersion(pkgCache::VerIterator &Ver, APT::StringView const &VerStr,
+   bool NewGroup(pkgCache::GrpIterator &Grp, std::string_view Name);
+   bool NewPackage(pkgCache::PkgIterator &Pkg, std::string_view Name, std::string_view Arch);
+   map_pointer<pkgCache::Version> NewVersion(pkgCache::VerIterator &Ver, std::string_view const &VerStr,
 			    map_pointer<pkgCache::Package> const ParentPkg, uint32_t Hash,
 			    map_pointer<pkgCache::Version> const Next);
-   map_pointer<pkgCache::Description> NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang, APT::StringView md5sum,map_stringitem_t const idxmd5str);
+   map_pointer<pkgCache::Description> NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang, std::string_view md5sum,map_stringitem_t const idxmd5str);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
@@ -134,7 +133,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    enum StringType { MIXED, VERSIONNUMBER, SECTION };
    map_stringitem_t StoreString(StringType const type, const char * S, unsigned int const Size);
 
-   inline map_stringitem_t StoreString(enum StringType const type, APT::StringView S) {return StoreString(type, S.data(),S.length());};
+   inline map_stringitem_t StoreString(enum StringType const type, std::string_view S) {return StoreString(type, S.data(),S.length());};
 
    void DropProgress() {Progress = 0;};
    bool SelectFile(const std::string &File,pkgIndexFile const &Index, std::string const &Architecture, std::string const &Component, unsigned long Flags = 0);
@@ -163,14 +162,14 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    APT_HIDDEN bool MergeListGroup(ListParser &List, std::string const &GrpName);
    APT_HIDDEN bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
    APT_HIDDEN bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
-			 APT::StringView const &Version, pkgCache::VerIterator* &OutVer);
+			 std::string_view const &Version, pkgCache::VerIterator* &OutVer);
 
    APT_HIDDEN bool AddImplicitDepends(pkgCache::GrpIterator &G, pkgCache::PkgIterator &P,
 			   pkgCache::VerIterator &V);
    APT_HIDDEN bool AddImplicitDepends(pkgCache::VerIterator &V, pkgCache::PkgIterator &D);
 
    APT_HIDDEN bool AddNewDescription(ListParser &List, pkgCache::VerIterator &Ver,
-	 std::string const &lang, APT::StringView CurMd5, map_stringitem_t &md5idx);
+	 std::string const &lang, std::string_view CurMd5, map_stringitem_t &md5idx);
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/
@@ -186,30 +185,30 @@ class APT_HIDDEN pkgCacheListParser
    void * const d;
 
    protected:
-   inline bool NewGroup(pkgCache::GrpIterator &Grp, APT::StringView Name) { return Owner->NewGroup(Grp, Name); }
+   inline bool NewGroup(pkgCache::GrpIterator &Grp, std::string_view Name) { return Owner->NewGroup(Grp, Name); }
    inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, const char *S,unsigned int Size) {return Owner->StoreString(type, S, Size);};
-   inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, APT::StringView S) {return Owner->StoreString(type, S);};
-   inline map_stringitem_t WriteString(APT::StringView S) {return Owner->WriteStringInMap(S.data(), S.size());};
+   inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, std::string_view S) {return Owner->StoreString(type, S);};
+   inline map_stringitem_t WriteString(std::string_view S) {return Owner->WriteStringInMap(S.data(), S.size());};
 
    inline map_stringitem_t WriteString(const char *S,unsigned int Size) {return Owner->WriteStringInMap(S,Size);};
-   bool NewDepends(pkgCache::VerIterator &Ver,APT::StringView Package, APT::StringView Arch,
-		   APT::StringView Version,uint8_t const Op,
+   bool NewDepends(pkgCache::VerIterator &Ver,std::string_view Package, std::string_view Arch,
+		   std::string_view Version,uint8_t const Op,
 		   uint8_t const Type);
-   bool NewProvides(pkgCache::VerIterator &Ver,APT::StringView PkgName,
-		    APT::StringView PkgArch, APT::StringView Version,
+   bool NewProvides(pkgCache::VerIterator &Ver,std::string_view PkgName,
+		    std::string_view PkgArch, std::string_view Version,
 		    uint8_t const Flags);
-   bool NewProvidesAllArch(pkgCache::VerIterator &Ver, APT::StringView Package,
-			   APT::StringView Version, uint8_t const Flags);
+   bool NewProvidesAllArch(pkgCache::VerIterator &Ver, std::string_view Package,
+			   std::string_view Version, uint8_t const Flags);
    public:
    
    // These all operate against the current section
    virtual std::string Package() = 0;
    virtual bool ArchitectureAll() = 0;
-   virtual APT::StringView Architecture() = 0;
-   virtual APT::StringView Version() = 0;
+   virtual std::string_view Architecture() = 0;
+   virtual std::string_view Version() = 0;
    virtual bool NewVersion(pkgCache::VerIterator &Ver) = 0;
    virtual std::vector<std::string> AvailableDescriptionLanguages() = 0;
-   virtual APT::StringView Description_md5() = 0;
+   virtual std::string_view Description_md5() = 0;
    virtual uint32_t VersionHash() = 0;
    /** compare currently parsed version with given version
     *
