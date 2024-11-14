@@ -3,10 +3,10 @@
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
-   
+
    This uses a rotating buffer to load the package information into.
    The scanner runs over it and isolates and indexes a single section.
-   
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -199,7 +199,7 @@ bool pkgTagFile::Resize(unsigned long long const newSize)
 									/*}}}*/
 // TagFile::Step - Advance to the next section				/*{{{*/
 // ---------------------------------------------------------------------
-/* If the Section Scanner fails we refill the buffer and try again. 
+/* If the Section Scanner fails we refill the buffer and try again.
  * If that fails too, double the buffer size and try again until a
  * maximum buffer is reached.
  */
@@ -466,14 +466,14 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
 
    if (Tag.Scan(d->Start, d->End - d->Start) == true)
       return true;
-   
+
    // This appends a double new line (for the real eof handling)
    if (Fill() == false)
       return false;
-   
+
    if (Tag.Scan(d->Start, d->End - d->Start, false) == false)
       return _error->Error(_("Unable to parse package file %s (%d)"),d->Fd->Name().c_str(), 2);
-   
+
    return true;
 }
 									/*}}}*/
@@ -602,7 +602,7 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const R
 	 TrimRecord(false,End);
 	 return true;
       }
-      
+
       Stop++;
    }
 
@@ -814,7 +814,7 @@ unsigned long long pkgTagSection::FindULLInternal(unsigned int Pos, unsigned lon
       return Default;
    strncpy(S,Start,Stop-Start);
    S[Stop - Start] = 0;
-   
+
    char *End;
    unsigned long long Result = strtoull(S,&End,10);
    if (S == End)
@@ -959,15 +959,27 @@ APT_PURE unsigned int pkgTagSection::Count() const {			/*{{{*/
 }
 									/*}}}*/
 // TagSection::Write - Ordered (re)writing of fields			/*{{{*/
+#if APT_PKG_ABI > 600
+pkgTagSection::Tag pkgTagSection::Tag::Remove(std::string_view Name)
+#else
 pkgTagSection::Tag pkgTagSection::Tag::Remove(std::string const &Name)
+#endif
 {
    return Tag(REMOVE, Name, "");
 }
+#if APT_PKG_ABI > 600
+pkgTagSection::Tag pkgTagSection::Tag::Rename(std::string_view OldName, std::string_view NewName)
+#else
 pkgTagSection::Tag pkgTagSection::Tag::Rename(std::string const &OldName, std::string const &NewName)
+#endif
 {
    return Tag(RENAME, OldName, NewName);
 }
+#if APT_PKG_ABI > 600
+pkgTagSection::Tag pkgTagSection::Tag::Rewrite(std::string_view Name, std::string_view Data)
+#else
 pkgTagSection::Tag pkgTagSection::Tag::Rewrite(std::string const &Name, std::string const &Data)
+#endif
 {
    if (Data.empty() == true)
       return Tag(REMOVE, Name, "");

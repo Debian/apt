@@ -3,17 +3,17 @@
 /* ######################################################################
 
    Fast scanner for RFC-822 type header information
-   
+
    This parser handles Debian package files (and others). Their form is
    RFC-822 type header fields in groups separated by a blank line.
-   
+
    The parser reads the file and provides methods to step linearly
    over it or to jump to a pre-recorded start point and read that record.
-   
+
    A second class is used to perform pre-parsing of the record. It works
-   by indexing the start of each header field and providing lookup 
+   by indexing the start of each header field and providing lookup
    functions for header fields.
-   
+
    ##################################################################### */
 									/*}}}*/
 #ifndef PKGLIB_TAGFILE_H
@@ -150,11 +150,17 @@ class APT_PUBLIC pkgTagSection
       std::string Name;
       std::string Data;
 
+#if APT_PKG_ABI > 600
+      static Tag Remove(std::string_view Name);
+      static Tag Rename(std::string_view OldName, std::string_view NewName);
+      static Tag Rewrite(std::string_view Name, std::string_view Data);
+#else
       static Tag Remove(std::string const &Name);
       static Tag Rename(std::string const &OldName, std::string const &NewName);
       static Tag Rewrite(std::string const &Name, std::string const &Data);
+#endif
       private:
-      Tag(ActionType const Action, std::string const &Name, std::string const &Data) :
+      Tag(ActionType const Action, std::string_view Name, std::string_view Data) :
 	 Action(Action), Name(Name), Data(Data) {}
    };
 
