@@ -549,6 +549,8 @@ std::vector<std::string> debSystem::ArchitecturesSupported() const		/*{{{*/
 	 }
       }
    }
+   else
+        close(outputFd);
    ExecWait(dpkgMultiArch, "dpkg --print-foreign-architectures", true);
    return archs;
 }
