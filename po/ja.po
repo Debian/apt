@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2022-08-14 14:30+0900\n"
 "Last-Translator: Hideki Yamane <henrich@debian.org>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -274,13 +274,6 @@ msgstr "'%2$s' のバージョン '%1$s' をダウンロードするソースが
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s=%s のため変更履歴が利用できません"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -825,11 +818,11 @@ msgstr "子プロセス %s がエラーコード (%u) を返しました"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "子プロセス %s が予期せず終了しました"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "読み込みエラー"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "書き込みエラー"
 
@@ -3587,7 +3580,7 @@ msgstr "'%s' は未知の圧縮アルゴリズムです"
 msgid "Compressed output %s needs a compression set"
 msgstr "圧縮出力 %s には圧縮セットが必要です"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "子プロセスへの IPC パイプの作成に失敗しました"
 
@@ -3760,7 +3753,7 @@ msgstr "不正なヘッダです"
 msgid "Connection failed"
 msgstr "接続失敗"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3804,7 +3797,7 @@ msgstr "%s の CD-ROM は使用中のためアンマウントすることがで�
 msgid "Disk not found."
 msgstr "ディスクが見つかりません。"
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "ファイルが見つかりません"
 
@@ -3840,7 +3833,7 @@ msgstr "%s (f=%u t=%u p=%u) に対するソケットを作成できません"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "%s:%s (%s) への接続を開始できません。"
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "失敗"
 
@@ -3854,9 +3847,7 @@ msgstr "%s:%s (%s) へ接続できませんでした。"
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "%s:%s (%s) へ接続できませんでした。接続がタイムアウトしました"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "%s へ接続しています"
@@ -3893,145 +3884,6 @@ msgstr "状態の取得に失敗しました"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "不正な URI です。ローカルの URI は // で始まってはいけません"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "ログインしています"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "ピアネームを決定することができません"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "ローカルネームを決定することができません"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "サーバから接続を拒絶されました。応答: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER 失敗、サーバ応答: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS 失敗、サーバ応答: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"プロキシサーバが指定されていますが、ログインスクリプトが設定されていません。"
-"Acquire::ftp::ProxyLogin が空です。"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "ログインスクリプトのコマンド '%s' 失敗、サーバ応答: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE 失敗、サーバ応答: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "接続タイムアウト"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "サーバが接続を切断しました"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "レスポンスがバッファをオーバフローさせました。"
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "プロトコルが壊れています"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "ソケットを作成できません"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "データソケットへ接続できませんでした。接続がタイムアウトしました"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "パッシブソケットに接続できません。"
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo はリスニングソケットを取得できませんでした"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "ソケットをバインドできませんでした"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "ソケットをリスンできませんでした"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "ソケットの名前を特定できませんでした"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "PORT コマンドを送信できません"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "未知のアドレスファミリ %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT に失敗しました。サーバ応答: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "データソケット接続タイムアウト"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "接続を accept できません"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "ファイルのハッシュでの問題"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "ファイルを取得できません。サーバ応答 '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "データソケットタイムアウト"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "データ転送に失敗しました。サーバ応答 '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "問い合わせ"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "呼び出せません"
 
 #: methods/gpgv.cc
 #, c-format
@@ -4114,17 +3966,123 @@ msgstr "select に失敗しました"
 msgid "Connection timed out"
 msgstr "接続タイムアウト"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "ファイルのハッシュでの問題"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "変更時刻の設定に失敗しました"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "途中で接続がクローズされました"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "空のファイルは有効なアーカイブと認められません"
+
+#~ msgid "Logging in"
+#~ msgstr "ログインしています"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "ピアネームを決定することができません"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "ローカルネームを決定することができません"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "サーバから接続を拒絶されました。応答: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "USER 失敗、サーバ応答: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "PASS 失敗、サーバ応答: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "プロキシサーバが指定されていますが、ログインスクリプトが設定されていませ"
+#~ "ん。Acquire::ftp::ProxyLogin が空です。"
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "ログインスクリプトのコマンド '%s' 失敗、サーバ応答: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "TYPE 失敗、サーバ応答: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "接続タイムアウト"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "サーバが接続を切断しました"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "レスポンスがバッファをオーバフローさせました。"
+
+#~ msgid "Protocol corruption"
+#~ msgstr "プロトコルが壊れています"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "ソケットを作成できません"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "データソケットへ接続できませんでした。接続がタイムアウトしました"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "パッシブソケットに接続できません。"
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo はリスニングソケットを取得できませんでした"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "ソケットをバインドできませんでした"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "ソケットをリスンできませんでした"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "ソケットの名前を特定できませんでした"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "PORT コマンドを送信できません"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "未知のアドレスファミリ %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT に失敗しました。サーバ応答: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "データソケット接続タイムアウト"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "接続を accept できません"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "ファイルを取得できません。サーバ応答 '%s'"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "データソケットタイムアウト"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "データ転送に失敗しました。サーバ応答 '%s'"
+
+#~ msgid "Query"
+#~ msgstr "問い合わせ"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "呼び出せません"
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "途中で接続がクローズされました"
 
 #, fuzzy, c-format
 #~| msgid "  Installed: "

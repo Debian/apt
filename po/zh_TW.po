@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.X\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -240,13 +240,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "正和 %s (%s) 連線"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -762,11 +755,11 @@ msgstr "子程序 %s 傳回錯誤碼 (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "子程序 %s 不預期得結束"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "讀取錯誤"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "寫入錯誤"
 
@@ -3418,7 +3411,7 @@ msgstr "未知的壓縮演算法 '%s'"
 msgid "Compressed output %s needs a compression set"
 msgstr "要壓縮輸出 %s 需搭配壓縮動作"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "無法和子程序建立 IPC 管線"
 
@@ -3591,7 +3584,7 @@ msgstr "錯誤的標頭資料"
 msgid "Connection failed"
 msgstr "連線失敗"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3632,7 +3625,7 @@ msgstr "無法卸載 %s 裡的光碟片，或許它仍在使用中。"
 msgid "Disk not found."
 msgstr "找不到磁碟。"
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "找不到檔案"
 
@@ -3668,7 +3661,7 @@ msgstr "無法建立 socket 指向 %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "無法初始和 %s:%s (%s) 的連線。"
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "失敗"
 
@@ -3682,9 +3675,7 @@ msgstr "無法和 %s:%s (%s) 連線。"
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "無法和 %s:%s (%s) 連線，連線逾時"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "正連線至 %s"
@@ -3721,144 +3712,6 @@ msgstr "無法取得狀態"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "不正確的 URI，本機 URI 不應以 // 開頭"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "登入中"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "無法解析對方主機名稱"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "無法解析本機名稱"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "伺服器不接受連線，並回應：%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER 指令失敗，伺服器回應：%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS 指令失敗，伺服器回應：%s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"指定了代理伺服器，但沒有指定登入 script，Acquire::ftp::ProxyLogin 是空的。"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "登入 script 指令 '%s' 失敗，伺服器回應：%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE 指令失敗，伺服器回應：%s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "連線逾時"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "伺服器已關閉連線"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "回應超過緩衝區長度。"
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "協定失敗"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "無法建立 Socket"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "無法和 data socket 連線，連線逾時"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "無法和 passive socket 連線。"
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo 無法取得監聽 socket"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "無法 bind 至 socket"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "無法監聽 socket"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "無法解析 socket 名稱"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "無法送出 PORT 指令"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "未知的地址家族 %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT 指令失敗，伺服器回應：%s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Data socket 連線逾時"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "無法接受連線"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "有問題的雜湊檔"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "無法取得檔案，伺服器回應 '%s'"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Data socket 連線逾時"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "資料傳輸失敗，伺服器回應 '%s'"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "查詢"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "無法 invoke "
 
 #: methods/gpgv.cc
 #, c-format
@@ -3938,17 +3791,122 @@ msgstr "選擇失敗"
 msgid "Connection timed out"
 msgstr "連線逾時"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "有問題的雜湊檔"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "無法設定修改時間"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "連線突然終止"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Logging in"
+#~ msgstr "登入中"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "無法解析對方主機名稱"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "無法解析本機名稱"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "伺服器不接受連線，並回應：%s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "USER 指令失敗，伺服器回應：%s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "PASS 指令失敗，伺服器回應：%s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "指定了代理伺服器，但沒有指定登入 script，Acquire::ftp::ProxyLogin 是空的。"
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "登入 script 指令 '%s' 失敗，伺服器回應：%s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "TYPE 指令失敗，伺服器回應：%s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "連線逾時"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "伺服器已關閉連線"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "回應超過緩衝區長度。"
+
+#~ msgid "Protocol corruption"
+#~ msgstr "協定失敗"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "無法建立 Socket"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "無法和 data socket 連線，連線逾時"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "無法和 passive socket 連線。"
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo 無法取得監聽 socket"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "無法 bind 至 socket"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "無法監聽 socket"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "無法解析 socket 名稱"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "無法送出 PORT 指令"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "未知的地址家族 %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT 指令失敗，伺服器回應：%s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Data socket 連線逾時"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "無法接受連線"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "無法取得檔案，伺服器回應 '%s'"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Data socket 連線逾時"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "資料傳輸失敗，伺服器回應 '%s'"
+
+#~ msgid "Query"
+#~ msgstr "查詢"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "無法 invoke "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "連線突然終止"
 
 #, fuzzy
 #~| msgid "The following held packages will be changed:"

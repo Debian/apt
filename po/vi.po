@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -255,13 +255,6 @@ msgstr "Không tìm thấy nguồn cho việc tải về phiên bản “%s” o
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Changelog cho %s (%s)"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -792,11 +785,11 @@ msgstr "Tiến trình con %s đã trả về một mã lỗi (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Tiến trình con %s đã thoát bất thường"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Lỗi đọc"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Lỗi ghi"
 
@@ -3548,7 +3541,7 @@ msgstr "Không biết thuật toán nén “%s”"
 msgid "Compressed output %s needs a compression set"
 msgstr "Dữ liệu xuất đã nén %s cần một bộ nén"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Gặp lỗi khi tạo ống IPC đến tiến trình con"
 
@@ -3725,7 +3718,7 @@ msgstr "Dữ liệu phần đầu sai"
 msgid "Connection failed"
 msgstr "Kết nối bị lỗi"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3767,7 +3760,7 @@ msgstr "Không thể bỏ gắn đĩa CD-ROM trong %s. Có lẽ nó vẫn đang 
 msgid "Disk not found."
 msgstr "Không tìm thấy đĩa."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Không tìm thấy tập tin"
 
@@ -3803,7 +3796,7 @@ msgstr "Không thể tạo ổ cắm cho %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Không thể khởi tạo kết nối đến %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Gặp lỗi"
 
@@ -3817,9 +3810,7 @@ msgstr "Không thể kết nối đến %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Không thể kết nối đến %s:%s (%s), kết nối bị quá giờ"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Đang kết nối đến %s"
@@ -3856,145 +3847,6 @@ msgstr "Gặp lỗi khi lấy thống kê"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Địa chỉ URI không hợp lệ, URI nội bộ không thể bắt đầu bằng “//”"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Đang đăng nhập vào"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Không thể quyết định tên ngang hàng"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Không thể phân giải tên cục bộ"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Máy phục vụ đã từ chối kết nối, và đã nói: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "Lệnh USER (người dùng) đã thất bại: máy chủ nói: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "Lệnh PASS (mật khẩu) đã thất bại: máy chủ nói: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Đã ghi rõ máy phục vụ ủy nhiệm, nhưng mà chưa ghi rõ tập lệnh đăng nhập. "
-"“Acquire::ftp::ProxyLogin” là rỗng."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Văn lệnh đăng nhập “%s” đã thất bại: máy chủ nói: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "Lệnh TYPE (kiểu) đã thất bại: máy chủ nói: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Thời hạn kết nối"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Máy phục vụ đã đóng kết nối"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Một trả lời đã tràn bộ đệm."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Giao thức bị hỏng"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Không thể tạo ổ cắm"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Không thể kết nối ổ cắm dữ liệu, kết nối đã quá giờ"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Không thể kết nối ổ cắm bị động."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo (lấy thông tin địa chỉ) không thể lấy ổ cắm lắng nghe"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Không thể ràng buộc ổ cắm"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Không thể lắng nghe trên ổ cắm đó"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Không thể quyết định tên ổ cắm đó"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Không thể gửi lệnh PORT (cổng)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Không biết họ địa chỉ %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "Lệnh EPRT (thông báo lỗi) đã thất bại: máy chủ nói: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Quá giờ kết nối ổ cắm dữ liệu"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Không thể chấp nhận kết nối"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Gặp vấn đề băm tập tin"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Không thể lấy tập tin: máy phục vụ nói “%s”"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Ổ cắm dữ liệu đã quá giờ"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Việc truyền dữ liệu bị lỗi: máy phục vụ nói “%s”"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Truy vấn"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Không thể gọi "
 
 #: methods/gpgv.cc
 #, c-format
@@ -4078,17 +3930,123 @@ msgstr "Việc chọn bị lỗi"
 msgid "Connection timed out"
 msgstr "Kết nối đã quá giờ"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Gặp vấn đề băm tập tin"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Gặp lỗi khi đặt giờ sửa đổi"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Kết nối bị đóng bất ngờ"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
+
+#~ msgid "Logging in"
+#~ msgstr "Đang đăng nhập vào"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Không thể quyết định tên ngang hàng"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Không thể phân giải tên cục bộ"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Máy phục vụ đã từ chối kết nối, và đã nói: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "Lệnh USER (người dùng) đã thất bại: máy chủ nói: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "Lệnh PASS (mật khẩu) đã thất bại: máy chủ nói: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Đã ghi rõ máy phục vụ ủy nhiệm, nhưng mà chưa ghi rõ tập lệnh đăng nhập. "
+#~ "“Acquire::ftp::ProxyLogin” là rỗng."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "Văn lệnh đăng nhập “%s” đã thất bại: máy chủ nói: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "Lệnh TYPE (kiểu) đã thất bại: máy chủ nói: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Thời hạn kết nối"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Máy phục vụ đã đóng kết nối"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Một trả lời đã tràn bộ đệm."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Giao thức bị hỏng"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Không thể tạo ổ cắm"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "Không thể kết nối ổ cắm dữ liệu, kết nối đã quá giờ"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Không thể kết nối ổ cắm bị động."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo (lấy thông tin địa chỉ) không thể lấy ổ cắm lắng nghe"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Không thể ràng buộc ổ cắm"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Không thể lắng nghe trên ổ cắm đó"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Không thể quyết định tên ổ cắm đó"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Không thể gửi lệnh PORT (cổng)"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Không biết họ địa chỉ %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "Lệnh EPRT (thông báo lỗi) đã thất bại: máy chủ nói: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Quá giờ kết nối ổ cắm dữ liệu"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Không thể chấp nhận kết nối"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Không thể lấy tập tin: máy phục vụ nói “%s”"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Ổ cắm dữ liệu đã quá giờ"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Việc truyền dữ liệu bị lỗi: máy phục vụ nói “%s”"
+
+#~ msgid "Query"
+#~ msgstr "Truy vấn"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Không thể gọi "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Kết nối bị đóng bất ngờ"
 
 #, fuzzy, c-format
 #~| msgid "  Installed: "

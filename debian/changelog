@@ -1,3 +1,43 @@
+apt (2.9.11) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Various refactorings to the 3.0 solver
+  * Remove ftp, rsh, ssh methods (disabled since 1.8)
+  * Apply messaging fixes from Robert Krátký
+  * Fix keeping back removals of obsolete packages (LP: #2078720)
+  * Return an error if ResolveByKeep() is unsuccessful (LP: #2078720)
+  * Move apt-extracttemplates to /usr/lib/apt in 'apt' package
+  * json: Add "options" array to JSON hooks; adjust test cases accordingly
+
+  [ наб ]
+  * Refactor buffers into std::array and bump sizes, improving performance:
+    - Bump various buffer sizes to the default APT_BUFFER_SIZE
+    - Turn char[APT_BUFFER_SIZE] buffers into std::array<char, APT_BUFFER_SIZE>
+    - Turn std::unique_ptr<char[]/std::array<char>>(APT_BUFFER_SIZE) buffers into std::array<char, APT_BUFFER_SIZE>
+    - dpkgpm: use sysconf(_SC_GETPW_R_SIZE_MAX)-sized + growing buffer for getpwuid_r() instead of 255
+    - dpkgpm: use std::array<unsigned char, APT_BUFFER_SIZE> for I/O copy buffers
+  * File reading changes, fixing static line size limitations:
+    - dpkgpm: lift out CopyIndented() and make_unique_*() for FILEs; use getline() for reading lines instead of 1k buffer
+    - dpkgpm: use getline() for Apport var/crash lines
+    - dpkgpm: fdopen() failing doesn't close the fd
+  * Only run valgrind in tests if valgrind available on host
+  * ReportMirrorFailureToCentral: fix use-after-free
+  * Non-functional changes:
+    - Replace constant-size never-reallicated getservbyport_r() std::vector buffer with std::array
+    - FileFd::Open: don't needlessly copy filename in three-arg constructor
+    - Replace std::bind with lambdas
+    - Turn unique_ptr<decltype(fclose and free)> into real deleter types (warnings now, UB in C++20)
+    - dpkgpm: append ":$printarchitecture" instead of ':'+${#printarchitecture} to package name
+    - Prepare for APT::StringView -> std::string_view
+
+  [ Américo Monteiro ]
+  * Portuguese manpages translation update (Closes: #1086336)
+
+  [ Miroslav Kure ]
+  * Czech program translation update (Closes: #1087220)
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 14 Nov 2024 18:29:35 +0100
+
 apt (2.9.10) unstable; urgency=medium
 
   [ Rafael Marian ]

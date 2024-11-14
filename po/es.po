@@ -37,7 +37,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2016-01-26 01:51+0100\n"
 "Last-Translator: Manuel \"Venturi\" Porras Peralta <venturi@openmailbox."
 "org>\n"
@@ -331,13 +331,6 @@ msgstr ""
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "No está disponible el informe de cambios para %s=%s"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -896,11 +889,11 @@ msgstr "El subproceso %s devolvió un código de error (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "El subproceso %s terminó de forma inesperada"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Error de lectura"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Error de escritura"
 
@@ -3700,7 +3693,7 @@ msgstr "Algoritmo desconocido de compresión «%s»"
 msgid "Compressed output %s needs a compression set"
 msgstr "Salida comprimida %s necesita una herramienta de compresión"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Fallo al crear una tubería IPC para el subproceso"
 
@@ -3873,7 +3866,7 @@ msgstr "Datos de cabecera incorrectos"
 msgid "Connection failed"
 msgstr "Falló la conexión"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3917,7 +3910,7 @@ msgstr "No se puede desmontar el CD-ROM de %s, tal vez aún se está utilizando.
 msgid "Disk not found."
 msgstr "Disco no encontrado."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Fichero no encontrado"
 
@@ -3953,7 +3946,7 @@ msgstr "No se pudo crear un socket para %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "No se puede iniciar la conexión a %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Falló"
 
@@ -3967,9 +3960,7 @@ msgstr "No se pudo conectar a %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "No se pudo conectar a %s:%s (%s), caducó el tiempo para conexión"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Conectando a %s"
@@ -4006,145 +3997,6 @@ msgstr "Fallo al leer"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "URI inválido, los URIS locales no deben empezar por //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Ingresando"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "No se pudo determinar el nombre del par"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "No se pudo determinar el nombre local"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "El servidor rechazó la conexión y devolvió: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "Usuario (USER) falló, el servidor devolvió: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "Clave (PASS) falló, el servidor devolvió: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Se especificó un servidor proxy pero no un script de entrada, «Acquire::ftp::"
-"ProxyLogin» está vacío."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "Falló la orden «%s» del script de entrada, el servidor devolvió: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "Tipo (TYPE) falló, el servidor devolvió: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Caducó la conexión"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "El servidor cerró la conexión"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "La respuesta desbordó la memoria intermedia (buffer)."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Fallo del protocolo"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "No se pudo crear el socket"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "No se pudo conectar el socket de datos, caducó el tiempo de conexión"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "No se pudo conectar el socket pasivo."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "«getaddrinfo» no pudo obtener un socket pasivo"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "No se pudo asociar el socket"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "No se pudo escuchar en el socket"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "No se pudo determinar el nombre del socket"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "No se pudo mandar la orden PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Familia de direcciones %u desconocida (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT falló, el servidor devolvió: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Caducó conexión al socket de datos"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "No se pudo aceptar la conexión"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Problema al cifrar el fichero"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "No se pudo obtener el fichero, el servidor devolvió «%s»"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Caducó el socket de datos"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Falló transferencia de datos, el servidor devolvió «%s»"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Consulta"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "No se pudo invocar "
 
 #: methods/gpgv.cc
 #, c-format
@@ -4231,17 +4083,124 @@ msgstr "Falló la selección"
 msgid "Connection timed out"
 msgstr "Caducó la conexión"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Problema al cifrar el fichero"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Fallo al establecer el tiempo de modificación"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "La conexión se cerró prematuramente"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Los ficheros vacíos no pueden ser archivos válidos"
+
+#~ msgid "Logging in"
+#~ msgstr "Ingresando"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "No se pudo determinar el nombre del par"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "No se pudo determinar el nombre local"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "El servidor rechazó la conexión y devolvió: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "Usuario (USER) falló, el servidor devolvió: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "Clave (PASS) falló, el servidor devolvió: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Se especificó un servidor proxy pero no un script de entrada, «Acquire::"
+#~ "ftp::ProxyLogin» está vacío."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "Falló la orden «%s» del script de entrada, el servidor devolvió: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "Tipo (TYPE) falló, el servidor devolvió: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Caducó la conexión"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "El servidor cerró la conexión"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "La respuesta desbordó la memoria intermedia (buffer)."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Fallo del protocolo"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "No se pudo crear el socket"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr ""
+#~ "No se pudo conectar el socket de datos, caducó el tiempo de conexión"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "No se pudo conectar el socket pasivo."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "«getaddrinfo» no pudo obtener un socket pasivo"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "No se pudo asociar el socket"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "No se pudo escuchar en el socket"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "No se pudo determinar el nombre del socket"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "No se pudo mandar la orden PORT"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Familia de direcciones %u desconocida (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "EPRT falló, el servidor devolvió: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Caducó conexión al socket de datos"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "No se pudo aceptar la conexión"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "No se pudo obtener el fichero, el servidor devolvió «%s»"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Caducó el socket de datos"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Falló transferencia de datos, el servidor devolvió «%s»"
+
+#~ msgid "Query"
+#~ msgstr "Consulta"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "No se pudo invocar "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "La conexión se cerró prematuramente"
 
 #, fuzzy, c-format
 #~| msgid "  Installed: "

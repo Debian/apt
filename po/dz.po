@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -240,13 +240,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "%s (%s)་ལུ་མཐུད་དོ།"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -766,11 +759,11 @@ msgstr "ཡན་ལག་ལས་སྦྱོར་%s་གིས་འཛོ�
 msgid "Sub-process %s exited unexpectedly"
 msgstr "ཡན་ལག་ལས་སྦྱོར་་%s་གིས་རེ་བ་མེད་པར་ཕྱིར་ཐོན་ཡོདཔ་ཨིན།"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "འཛོལ་བ་ལྷབ།"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "འཛོལ་བ་འབྲི།"
 
@@ -3458,7 +3451,7 @@ msgstr " མ་ཤེས་ཨེབ་བཙུགས་ཨཱལ་གོ་�
 msgid "Compressed output %s needs a compression set"
 msgstr "ཨེབ་བཙུགས་འབད་ཡོད་པའི་ཨའུཊི་པུཊི་%sལུ་ཨེབ་བཙུགས་ཆ་ཚན་ཅིག་དགོཔ་འདུག"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "ཡན་ལག་ལས་སྦྱོར་ལུ་ཨའི་པི་སི་རྒྱུད་དུང་གསར་བསྐྲུན་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
 
@@ -3631,7 +3624,7 @@ msgstr "མགོ་ཡིག་གནད་སྡུད་བྱང་ཉེས
 msgid "Connection failed"
 msgstr "བཐུད་ལམ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3674,7 +3667,7 @@ msgstr ""
 msgid "Disk not found."
 msgstr "ཌིཀསི་དེ་འཚོལ་མ་ཐོབ།"
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "ཡིག་སྣོད་འཚོལ་མ་ཐོབ།"
 
@@ -3710,7 +3703,7 @@ msgstr "%s (f=%u t=%u p=%u)གི་དོན་ལུ་སོ་ཀེཊི�
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "%s:%s (%s)ལུ་མཐུད་ལམ་དེ་འགོ་འབྱེད་འབད་མ་ཚུགས།"
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "འཐུས་ཤོར་བྱུང་ཡོད།"
 
@@ -3724,9 +3717,7 @@ msgstr " %s:%s (%s)ལུ་མཐུད་མ་ཚུགས།"
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr " %s:%s (%s)ལུ་མཐུད་མ་ཚུགས་  མཐུད་ལམ་ངལ་མཚམས།"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "%s་ལུ་མཐུད་དོ།"
@@ -3763,145 +3754,6 @@ msgstr "ངོ་བཤུས་འབད་ནི་ལུ་འཐུས་ཤ
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "ཡུ་ཨར་ཨེལ་ ནུས་མེད་  ཉེ་གནས་ ཡུ་ཨར་ཨེལ་ཨེསི་འདི་གིས་//་དང་གཅིག་ཁར་འགོ་བཙུགས་ནི་མི་འོང་།"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "ནང་བསྐྱོད་འབད་དོ།"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "དོ་བཉམ་གི་མིང་འདི་གཏན་འབེབས་བཟོ་མ་ཚུགས།"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "ཉེ་གནས་མིང་འདི་གཏན་འབེེབས་བཟོ་མ་ཚུགས།"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "སར་བར་འདི་གིས་ མཐུད་ལམ་འདི་ངོས་ལེན་འབད་མ་བཏུབ་པར་སླབ་མས: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "ལག་ལེན་པ་འཐུས་ཤོར་བྱུང་ཡོད་  སར་བར་གྱིས་སླབ་མས་: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "རྩི་སྤྲོད་འཐུས་ཤོར་བྱུང་ཡོད་  སར་བར་གྱིས་སླབ་མས་: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"པོརོ་སི་སར་བར་ཅིག་གསལ་བཀོད་འབད་ཡོད་འདི་འབདཝ་ད་  ནང་བསྐྱོད་ཡིག་ཚུགས་མིན་འདུག་ Acquire::ftp::"
-"ProxyLoginའདི་སྟོངམ་ཨིན་པས།"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "ནང་བསྐྱོད་ཡིག་ཚུགས་ བརྡ་བཀོད་'%s'་འདི་འཐོས་ཤོར་བྱུང་ཡོད་ སར་བར་གྱིས་སླབ་མས:%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "ཡིག་དཔར་རྐྱབ་མ་བཏུབ་སར་བར་གྱིས་སླབ་མས། %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "མཐུད་ལམ་ངལ་མཚམས"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "སར་བར་གྱིས་མཐུད་ལམ་འདི་ཁ་བསྡམས་ཏེ་ཡོདཔ་ཨིན།"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "ལན་གྱིས་ གནད་ཁོངས་གུར་ལས་ ལུད་སོང་སྟེ་ཡོདཔ་ཨིན།"
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "གནད་སྤེལ་ལམ་ལུགས་ ངན་ཅན།"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "སོ་ཀེཊི་ཅིག་གསར་བསྐྲུན་འབད་མ་ཚུགས་པར་ཡོདཔ་ཨིན།"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "གནད་སྡུད་སོ་ཀེཊི་མཐུད་མ་ཚུགས་པར་ཡོདཔ་ཨིན་  མཐུད་ལམ་ངལ་མཚམས།"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "བྱ་ཡུལ་གྱི་སོ་ཀེཊི་མཐུད་མ་ཚུགས།"
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo་འདི་གིས་ཉན་ནིའི་སོ་ཀེཊི་ཅིག་ལེན་མ་ཚུགས།"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "སོ་ཀེཊི་ཅིག་བསྡམས་མ་ཚུགས།"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "སོ་ཀེཊི་གུར་ཉེན་མ་ཚུགས།"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "སོ་ཀེཊི་གི་མིང་འདི་གཏན་འབེབས་བཟོ་མ་ཚུགས།"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "འདྲེན་ལམ་གྱི་བརྡ་བཀོད་འདི་བཏང་མ་ཚུགས།"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "མ་ཤེས་པའི་ཁ་བྱང་གི་རིགས་ཚན་%u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "ཨི་པི་ཨར་ཊི་ འཐུས་ཤོར་བྱུང་ཡོད་  སར་བར་གིས་སླབ་མས:%s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "གནད་སྡུད་སོ་ཀེཊི་ མཐུད་ནི་ངལ་མཚམས་བྱུང་ནུག"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "མཐུད་ལམ་འདི་དང་ལེན་འབད་མ་ཚུགས།"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "ཡིག་སྣོད་ལུ་་དྲྭ་རྟགས་བཀལ་བའི་བསྒང་དཀའ་ངལ།"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "ཡིག་སྣོད་ལེན་མ་ཚུགས་ སར་བར་'%s'གིས་སླབ་མས"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "གནད་སྡུད་སོ་ཀེཊི་ངལ་མཚམས།"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "གནད་སྡུད་གནས་སོར་དེ་འཐུས་ཤོར་བྱུང་ཡོད་  སར་བར་'%s'་གིས་སླབ་མས།"
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "འདྲི་དཔྱད།"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "ལས་བཀོལ་འབད་མ་ཚུགས།"
 
 #: methods/gpgv.cc
 #, c-format
@@ -3986,17 +3838,123 @@ msgstr "སེལ་འཐུ་འཐུས་ཤོར་བྱུང་ཡོ
 msgid "Connection timed out"
 msgstr "མཐུད་ལམ་ངལ་མཚམས་འབད་ཡོད།"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "ཡིག་སྣོད་ལུ་་དྲྭ་རྟགས་བཀལ་བའི་བསྒང་དཀའ་ངལ།"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "ཆུ་ཚོད་ལེགས་བཅོས་གཞི་སྒྲིག་འབཐ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "དུས་སུ་མ་འབབ་པ་རང་མཐུད་ལམ་འདི་ག་བསྡམས་ཡོད།"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Logging in"
+#~ msgstr "ནང་བསྐྱོད་འབད་དོ།"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "དོ་བཉམ་གི་མིང་འདི་གཏན་འབེབས་བཟོ་མ་ཚུགས།"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "ཉེ་གནས་མིང་འདི་གཏན་འབེེབས་བཟོ་མ་ཚུགས།"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "སར་བར་འདི་གིས་ མཐུད་ལམ་འདི་ངོས་ལེན་འབད་མ་བཏུབ་པར་སླབ་མས: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "ལག་ལེན་པ་འཐུས་ཤོར་བྱུང་ཡོད་  སར་བར་གྱིས་སླབ་མས་: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "རྩི་སྤྲོད་འཐུས་ཤོར་བྱུང་ཡོད་  སར་བར་གྱིས་སླབ་མས་: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "པོརོ་སི་སར་བར་ཅིག་གསལ་བཀོད་འབད་ཡོད་འདི་འབདཝ་ད་  ནང་བསྐྱོད་ཡིག་ཚུགས་མིན་འདུག་ Acquire::"
+#~ "ftp::ProxyLoginའདི་སྟོངམ་ཨིན་པས།"
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr "ནང་བསྐྱོད་ཡིག་ཚུགས་ བརྡ་བཀོད་'%s'་འདི་འཐོས་ཤོར་བྱུང་ཡོད་ སར་བར་གྱིས་སླབ་མས:%s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "ཡིག་དཔར་རྐྱབ་མ་བཏུབ་སར་བར་གྱིས་སླབ་མས། %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "མཐུད་ལམ་ངལ་མཚམས"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "སར་བར་གྱིས་མཐུད་ལམ་འདི་ཁ་བསྡམས་ཏེ་ཡོདཔ་ཨིན།"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "ལན་གྱིས་ གནད་ཁོངས་གུར་ལས་ ལུད་སོང་སྟེ་ཡོདཔ་ཨིན།"
+
+#~ msgid "Protocol corruption"
+#~ msgstr "གནད་སྤེལ་ལམ་ལུགས་ ངན་ཅན།"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "སོ་ཀེཊི་ཅིག་གསར་བསྐྲུན་འབད་མ་ཚུགས་པར་ཡོདཔ་ཨིན།"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr "གནད་སྡུད་སོ་ཀེཊི་མཐུད་མ་ཚུགས་པར་ཡོདཔ་ཨིན་  མཐུད་ལམ་ངལ་མཚམས།"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "བྱ་ཡུལ་གྱི་སོ་ཀེཊི་མཐུད་མ་ཚུགས།"
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo་འདི་གིས་ཉན་ནིའི་སོ་ཀེཊི་ཅིག་ལེན་མ་ཚུགས།"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "སོ་ཀེཊི་ཅིག་བསྡམས་མ་ཚུགས།"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "སོ་ཀེཊི་གུར་ཉེན་མ་ཚུགས།"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "སོ་ཀེཊི་གི་མིང་འདི་གཏན་འབེབས་བཟོ་མ་ཚུགས།"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "འདྲེན་ལམ་གྱི་བརྡ་བཀོད་འདི་བཏང་མ་ཚུགས།"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "མ་ཤེས་པའི་ཁ་བྱང་གི་རིགས་ཚན་%u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "ཨི་པི་ཨར་ཊི་ འཐུས་ཤོར་བྱུང་ཡོད་  སར་བར་གིས་སླབ་མས:%s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "གནད་སྡུད་སོ་ཀེཊི་ མཐུད་ནི་ངལ་མཚམས་བྱུང་ནུག"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "མཐུད་ལམ་འདི་དང་ལེན་འབད་མ་ཚུགས།"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "ཡིག་སྣོད་ལེན་མ་ཚུགས་ སར་བར་'%s'གིས་སླབ་མས"
+
+#~ msgid "Data socket timed out"
+#~ msgstr "གནད་སྡུད་སོ་ཀེཊི་ངལ་མཚམས།"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "གནད་སྡུད་གནས་སོར་དེ་འཐུས་ཤོར་བྱུང་ཡོད་  སར་བར་'%s'་གིས་སླབ་མས།"
+
+#~ msgid "Query"
+#~ msgstr "འདྲི་དཔྱད།"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "ལས་བཀོལ་འབད་མ་ཚུགས།"
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "དུས་སུ་མ་འབབ་པ་རང་མཐུད་ལམ་འདི་ག་བསྡམས་ཡོད།"
 
 #, fuzzy
 #~| msgid "The following held packages will be changed:"

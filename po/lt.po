@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2008-08-02 01:47-0400\n"
 "Last-Translator: Gintautas Miliauskas <gintas@akl.lt>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
@@ -238,13 +238,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Jungiamasi prie %s (%s)"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -760,11 +753,11 @@ msgstr "Procesas %s grąžino klaidos kodą (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Procesas %s netikėtai išėjo"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Skaitymo klaida"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Rašymo klaida"
 
@@ -3428,7 +3421,7 @@ msgstr "Nežinomas suspaudimo algoritmas „%s“"
 msgid "Compressed output %s needs a compression set"
 msgstr "Suspaustai išvesčiai %s reikia suspaudimo rinkinio"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Nepavyko subprocesui sukurti IPC gijos"
 
@@ -3601,7 +3594,7 @@ msgstr ""
 msgid "Connection failed"
 msgstr "Prisijungti nepavyko"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3641,7 +3634,7 @@ msgstr "Nepavyko atjungti CD-ROM įrenginyje %s, galbūt jis vis dar naudojamas.
 msgid "Disk not found."
 msgstr "Diskas nerastas."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Failas nerastas"
 
@@ -3677,7 +3670,7 @@ msgstr ""
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr ""
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Nepavyko"
 
@@ -3691,9 +3684,7 @@ msgstr "Nepavyko prisijungti prie %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Nepavyko prisijungti prie %s:%s (%s), prisijungimas per ilgai užtruko"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Jungiamasi prie %s"
@@ -3729,143 +3720,6 @@ msgstr ""
 
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
-msgstr ""
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Jungiamasi"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Jungiamasi per ilgai"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr ""
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr ""
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr ""
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr ""
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Nepavyko atsiųsti failo, serveris atsakė „%s“"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr ""
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr ""
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Užklausti"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
 msgstr ""
 
 #: methods/gpgv.cc
@@ -3945,17 +3799,30 @@ msgstr ""
 msgid "Connection timed out"
 msgstr "Prisijungimo laiko limitas baigėsi"
 
-#: methods/rred.cc
-msgid "Failed to set modification time"
+#: methods/http.cc
+msgid "Problem hashing file"
 msgstr ""
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
+#: methods/rred.cc
+msgid "Failed to set modification time"
 msgstr ""
 
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#~ msgid "Logging in"
+#~ msgstr "Jungiamasi"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Jungiamasi per ilgai"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Nepavyko atsiųsti failo, serveris atsakė „%s“"
+
+#~ msgid "Query"
+#~ msgstr "Užklausti"
 
 #, fuzzy
 #~| msgid "The following held packages will be changed:"

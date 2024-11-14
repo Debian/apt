@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-07-30 04:29+0000\n"
+"POT-Creation-Date: 2024-11-14 17:31+0000\n"
 "PO-Revision-Date: 2024-07-08 17:53+0200\n"
 "Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -275,16 +275,6 @@ msgstr "Nie można znaleźć źródła do pobrania wersji \"%s\" pakietu \"%s\""
 #, c-format
 msgid "Changelog unavailable for %s=%s"
 msgstr "Dziennik zmian dla %s=%s jest niedostępny"
-
-#: apt-pkg/acquire-worker.cc
-#, c-format
-msgid ""
-"The method '%s' is unsupported and disabled by default. Consider switching "
-"to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it again."
-msgstr ""
-"Metoda \"%s\" jest nieobsługiwana i domyślnie wyłączona. Proszę rozważyć "
-"przejście na http(s). Aby włączyć ją ponownie, konieczne jest ustawienie "
-"Dir::Bin::Methods::%s na \"%s\"."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -841,11 +831,11 @@ msgstr "Podproces %s zwrócił kod błędu (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Podproces %s zakończył się niespodziewanie"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Read error"
 msgstr "Błąd odczytu"
 
-#: apt-pkg/contrib/fileutl.cc methods/ftp.cc methods/rsh.cc
+#: apt-pkg/contrib/fileutl.cc
 msgid "Write error"
 msgstr "Błąd zapisu"
 
@@ -3636,7 +3626,7 @@ msgstr "Nieznany algorytm kompresji \"%s\""
 msgid "Compressed output %s needs a compression set"
 msgstr "Skompresowany plik wynikowy %s wymaga podania kompresji"
 
-#: ftparchive/multicompress.cc methods/rsh.cc
+#: ftparchive/multicompress.cc
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Nie udało się utworzyć potoku IPC do podprocesu"
 
@@ -3809,7 +3799,7 @@ msgstr "Błędne dane nagłówka"
 msgid "Connection failed"
 msgstr "Połączenie nie powiodło się"
 
-#: methods/basehttp.cc methods/ftp.cc methods/http.cc
+#: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
 msgstr ""
@@ -3855,7 +3845,7 @@ msgstr "Nie udało się odmontować CD-ROM-u w %s, być może wciąż jest używ
 msgid "Disk not found."
 msgstr "Nie odnaleziono dysku."
 
-#: methods/cdrom.cc methods/file.cc methods/rsh.cc
+#: methods/cdrom.cc methods/file.cc
 msgid "File not found"
 msgstr "Nie odnaleziono pliku"
 
@@ -3890,7 +3880,7 @@ msgstr "Nie udało się utworzyć gniazda dla %s (f=%u t=%u p=%u)"
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Nie udało się zainicjalizować połączenia z %s:%s (%s)."
 
-#: methods/connect.cc methods/ftp.cc methods/rsh.cc
+#: methods/connect.cc
 msgid "Failed"
 msgstr "Nie udało się"
 
@@ -3904,9 +3894,7 @@ msgstr "Nie udało się połączyć z %s:%s (%s)."
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Nie udało się połączyć z %s:%s (%s), przekroczenie czasu połączenia"
 
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc methods/rsh.cc
+#: methods/connect.cc
 #, c-format
 msgid "Connecting to %s"
 msgstr "Łączenie z %s"
@@ -3943,147 +3931,6 @@ msgstr "Nie udało się wykonać operacji stat"
 #: methods/file.cc
 msgid "Invalid URI, local URIS must not start with //"
 msgstr "Nieprawidłowe URI, lokalne URI nie mogą zaczynać się od //"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc
-msgid "Logging in"
-msgstr "Logowanie się"
-
-#: methods/ftp.cc
-msgid "Unable to determine the peer name"
-msgstr "Nie można określić nazwy zdalnego systemu"
-
-#: methods/ftp.cc
-msgid "Unable to determine the local name"
-msgstr "Nie udało się określić nazwy lokalnego systemu"
-
-#: methods/ftp.cc
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "Serwer odrzucił połączenie, otrzymana odpowiedź: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "Polecenie USER nie powiodło się, odpowiedź serwera: %s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "Polecenie PASS nie powiodło się, odpowiedź serwera: %s"
-
-#: methods/ftp.cc
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"Określono serwer pośredniczący, ale nie określono skryptu rejestrowania, "
-"Acquire::ftp::ProxyLogin jest puste."
-
-#: methods/ftp.cc
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr ""
-"Polecenie skryptu rejestrowania \"%s\" nie powiodło się, odpowiedź serwera: "
-"%s"
-
-#: methods/ftp.cc
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "Polecenie TYPE nie powiodło się, odpowiedź serwera: %s"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Connection timeout"
-msgstr "Przekroczenie czasu połączenia"
-
-#: methods/ftp.cc
-msgid "Server closed the connection"
-msgstr "Serwer zamknął połączenie"
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "A response overflowed the buffer."
-msgstr "Odpowiedź przepełniła bufor."
-
-#: methods/ftp.cc
-msgid "Protocol corruption"
-msgstr "Naruszenie zasad protokołu"
-
-#: methods/ftp.cc
-msgid "Could not create a socket"
-msgstr "Nie udało się utworzyć gniazda"
-
-#: methods/ftp.cc
-msgid "Could not connect data socket, connection timed out"
-msgstr "Nie udało się połączyć gniazda danych, przekroczenie czasu połączenia"
-
-#: methods/ftp.cc
-msgid "Could not connect passive socket."
-msgstr "Nie udało się połączyć pasywnego gniazda."
-
-#: methods/ftp.cc
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo nie było w stanie uzyskać nasłuchującego gniazda"
-
-#: methods/ftp.cc
-msgid "Could not bind a socket"
-msgstr "Nie udało się przyłączyć gniazda"
-
-#: methods/ftp.cc
-msgid "Could not listen on the socket"
-msgstr "Nie udało się nasłuchiwać na gnieździe"
-
-#: methods/ftp.cc
-msgid "Could not determine the socket's name"
-msgstr "Nie udało się określić nazwy gniazda"
-
-#: methods/ftp.cc
-msgid "Unable to send PORT command"
-msgstr "Nie można wysłać polecenia PORT"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "Nieznana rodzina adresów %u (AF_*)"
-
-#: methods/ftp.cc
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "Polecenie EPRT nie powiodło się, odpowiedź serwera: %s"
-
-#: methods/ftp.cc
-msgid "Data socket connect timed out"
-msgstr "Przekroczono czas połączenia gniazda danych"
-
-#: methods/ftp.cc
-msgid "Unable to accept connection"
-msgstr "Nie udało się przyjąć połączenia"
-
-#: methods/ftp.cc methods/http.cc methods/rsh.cc
-msgid "Problem hashing file"
-msgstr "Nie udało się obliczyć skrótu pliku"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "Nie można pobrać pliku, odpowiedź serwera: \"%s\""
-
-#: methods/ftp.cc methods/rsh.cc
-msgid "Data socket timed out"
-msgstr "Przekroczono czas oczekiwania na dane"
-
-#: methods/ftp.cc
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "Nie udało się przesłać danych, odpowiedź serwera: \"%s\""
-
-#. Get the files information
-#: methods/ftp.cc
-msgid "Query"
-msgstr "Info"
-
-#: methods/ftp.cc
-msgid "Unable to invoke "
-msgstr "Nie można wywołać "
 
 #: methods/gpgv.cc
 #, c-format
@@ -4173,14 +4020,133 @@ msgstr "Operacja select nie powiodła się"
 msgid "Connection timed out"
 msgstr "Przekroczenie czasu połączenia"
 
+#: methods/http.cc
+msgid "Problem hashing file"
+msgstr "Nie udało się obliczyć skrótu pliku"
+
 #: methods/rred.cc
 msgid "Failed to set modification time"
 msgstr "Nie udało się ustawić czasu modyfikacji"
 
-#: methods/rsh.cc
-msgid "Connection closed prematurely"
-msgstr "Połączenie zostało przedwcześnie zamknięte"
-
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Puste pliki nie mogą być prawidłowymi archiwami"
+
+#, c-format
+#~ msgid ""
+#~ "The method '%s' is unsupported and disabled by default. Consider "
+#~ "switching to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it "
+#~ "again."
+#~ msgstr ""
+#~ "Metoda \"%s\" jest nieobsługiwana i domyślnie wyłączona. Proszę rozważyć "
+#~ "przejście na http(s). Aby włączyć ją ponownie, konieczne jest ustawienie "
+#~ "Dir::Bin::Methods::%s na \"%s\"."
+
+#~ msgid "Logging in"
+#~ msgstr "Logowanie się"
+
+#~ msgid "Unable to determine the peer name"
+#~ msgstr "Nie można określić nazwy zdalnego systemu"
+
+#~ msgid "Unable to determine the local name"
+#~ msgstr "Nie udało się określić nazwy lokalnego systemu"
+
+#, c-format
+#~ msgid "The server refused the connection and said: %s"
+#~ msgstr "Serwer odrzucił połączenie, otrzymana odpowiedź: %s"
+
+#, c-format
+#~ msgid "USER failed, server said: %s"
+#~ msgstr "Polecenie USER nie powiodło się, odpowiedź serwera: %s"
+
+#, c-format
+#~ msgid "PASS failed, server said: %s"
+#~ msgstr "Polecenie PASS nie powiodło się, odpowiedź serwera: %s"
+
+#~ msgid ""
+#~ "A proxy server was specified but no login script, Acquire::ftp::"
+#~ "ProxyLogin is empty."
+#~ msgstr ""
+#~ "Określono serwer pośredniczący, ale nie określono skryptu rejestrowania, "
+#~ "Acquire::ftp::ProxyLogin jest puste."
+
+#, c-format
+#~ msgid "Login script command '%s' failed, server said: %s"
+#~ msgstr ""
+#~ "Polecenie skryptu rejestrowania \"%s\" nie powiodło się, odpowiedź "
+#~ "serwera: %s"
+
+#, c-format
+#~ msgid "TYPE failed, server said: %s"
+#~ msgstr "Polecenie TYPE nie powiodło się, odpowiedź serwera: %s"
+
+#~ msgid "Connection timeout"
+#~ msgstr "Przekroczenie czasu połączenia"
+
+#~ msgid "Server closed the connection"
+#~ msgstr "Serwer zamknął połączenie"
+
+#~ msgid "A response overflowed the buffer."
+#~ msgstr "Odpowiedź przepełniła bufor."
+
+#~ msgid "Protocol corruption"
+#~ msgstr "Naruszenie zasad protokołu"
+
+#~ msgid "Could not create a socket"
+#~ msgstr "Nie udało się utworzyć gniazda"
+
+#~ msgid "Could not connect data socket, connection timed out"
+#~ msgstr ""
+#~ "Nie udało się połączyć gniazda danych, przekroczenie czasu połączenia"
+
+#~ msgid "Could not connect passive socket."
+#~ msgstr "Nie udało się połączyć pasywnego gniazda."
+
+#~ msgid "getaddrinfo was unable to get a listening socket"
+#~ msgstr "getaddrinfo nie było w stanie uzyskać nasłuchującego gniazda"
+
+#~ msgid "Could not bind a socket"
+#~ msgstr "Nie udało się przyłączyć gniazda"
+
+#~ msgid "Could not listen on the socket"
+#~ msgstr "Nie udało się nasłuchiwać na gnieździe"
+
+#~ msgid "Could not determine the socket's name"
+#~ msgstr "Nie udało się określić nazwy gniazda"
+
+#~ msgid "Unable to send PORT command"
+#~ msgstr "Nie można wysłać polecenia PORT"
+
+#, c-format
+#~ msgid "Unknown address family %u (AF_*)"
+#~ msgstr "Nieznana rodzina adresów %u (AF_*)"
+
+#, c-format
+#~ msgid "EPRT failed, server said: %s"
+#~ msgstr "Polecenie EPRT nie powiodło się, odpowiedź serwera: %s"
+
+#~ msgid "Data socket connect timed out"
+#~ msgstr "Przekroczono czas połączenia gniazda danych"
+
+#~ msgid "Unable to accept connection"
+#~ msgstr "Nie udało się przyjąć połączenia"
+
+#, c-format
+#~ msgid "Unable to fetch file, server said '%s'"
+#~ msgstr "Nie można pobrać pliku, odpowiedź serwera: \"%s\""
+
+#~ msgid "Data socket timed out"
+#~ msgstr "Przekroczono czas oczekiwania na dane"
+
+#, c-format
+#~ msgid "Data transfer failed, server said '%s'"
+#~ msgstr "Nie udało się przesłać danych, odpowiedź serwera: \"%s\""
+
+#~ msgid "Query"
+#~ msgstr "Info"
+
+#~ msgid "Unable to invoke "
+#~ msgstr "Nie można wywołać "
+
+#~ msgid "Connection closed prematurely"
+#~ msgstr "Połączenie zostało przedwcześnie zamknięte"
