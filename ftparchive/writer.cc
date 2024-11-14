@@ -549,7 +549,7 @@ TranslationWriter::TranslationWriter(string const &File, string const &TransComp
 // TranslationWriter::DoPackage - Process a single package		/*{{{*/
 // ---------------------------------------------------------------------
 /* Create a Translation-Master file for this Packages file */
-bool TranslationWriter::DoPackage(string_view const &Pkg, string const &Desc,
+bool TranslationWriter::DoPackage(string_view Pkg, string const &Desc,
 				  string const &MD5)
 {
    if (Output == NULL)
