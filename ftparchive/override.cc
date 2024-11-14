@@ -3,9 +3,9 @@
 /* ######################################################################
 
    Override
-   
+
    Store the override file.
-   
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -31,11 +31,11 @@ bool Override::ReadOverride(string const &File,bool const &Source)
 {
    if (File.empty() == true)
       return true;
-   
+
    FILE *F = fopen(File.c_str(),"r");
    if (F == 0)
       return _error->Errno("fopen",_("Unable to open %s"),File.c_str());
-   
+
    char Line[1000];
    unsigned long long Counter = 0;
    while (fgets(Line,sizeof(Line),F) != 0)
@@ -43,7 +43,7 @@ bool Override::ReadOverride(string const &File,bool const &Source)
       Counter++;
       Item Itm;
 
-      // Silence 
+      // Silence
       for (char *I = Line; *I != 0; I++)
 	 if (*I == '#')
 	    *I = 0;
@@ -113,10 +113,10 @@ bool Override::ReadOverride(string const &File,bool const &Source)
 	 {
 	    *End = 0;
 	    Itm.OldMaint = _strstrip(Start);
-	    
+
 	    End += 3;
 	    Itm.NewMaint = _strstrip(End);
-	 }	 
+	 }
       }
 
       Mapping[Pkg] = Itm;
@@ -135,18 +135,18 @@ bool Override::ReadExtraOverride(string const &File,bool const &/*Source*/)
 {
    if (File.empty() == true)
       return true;
-   
+
    FILE *F = fopen(File.c_str(),"r");
    if (F == 0)
       return _error->Errno("fopen",_("Unable to open %s"),File.c_str());
-  
+
    char Line[1000];
    unsigned long long Counter = 0;
    while (fgets(Line,sizeof(Line),F) != 0)
    {
       Counter++;
 
-      // Silence 
+      // Silence
       for (char *I = Line; *I != 0; I++)
 	 if (*I == '#')
 	    *I = 0;
@@ -165,7 +165,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &/*Source*/)
 	 _error->Warning(_("Malformed override %s line %llu #1"),File.c_str(),
 			 Counter);
 	 continue;
-      }      
+      }
       *End = 0;
 
       // Find the field
@@ -179,8 +179,8 @@ bool Override::ReadExtraOverride(string const &File,bool const &/*Source*/)
 	 continue;
       }
       *End = 0;
-      
-      // Find the field value 
+
+      // Find the field value
       for (End++; isspace(*End) != 0 && *End != 0; End++);
       char *Value = End;
       for (; *End != 0; End++);
@@ -190,7 +190,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &/*Source*/)
 	 _error->Warning(_("Malformed override %s line %llu #3"),File.c_str(),
 			 Counter);
 	 continue;
-      }      
+      }
       *End = 0;
 
       Mapping[Pkg].FieldOverride[Field] = Value;
@@ -208,10 +208,10 @@ bool Override::ReadExtraOverride(string const &File,bool const &/*Source*/)
 /* Returns a override item for the given package and the given architecture.
  * Treats "all" special
  */
-Override::Item* Override::GetItem(string const &Package, string const &Architecture)
+Override::Item* Override::GetItem(std::string_view const &Package, std::string_view const &Architecture)
 {
    map<string,Item>::const_iterator I = Mapping.find(Package);
-   map<string,Item>::iterator J = Mapping.find(Package + "/" + Architecture);
+   map<string,Item>::iterator J = Mapping.find((std::string{Package} += '/') += Architecture);
 
    if (I == Mapping.end() && J == Mapping.end())
    {
@@ -246,17 +246,17 @@ Override::Item* Override::GetItem(string const &Package, string const &Architect
    there is a rule but it does not match then the empty string is returned,
    also if there was no rewrite rule the empty string is returned. Failed
    indicates if there was some kind of problem while rewriting. */
-string Override::Item::SwapMaint(string const &Orig,bool &Failed)
+string Override::Item::SwapMaint(std::string_view const &Orig,bool &Failed)
 {
    Failed = false;
-   
+
    // Degenerate case..
    if (NewMaint.empty() == true)
 	 return OldMaint;
-   
+
    if (OldMaint == "*")
       return NewMaint;
-   
+
    /* James: ancient, eliminate it, however it is still being used in the main
       override file. Thus it persists.*/
 #if 1
@@ -264,13 +264,13 @@ string Override::Item::SwapMaint(string const &Orig,bool &Failed)
    string::const_iterator End = OldMaint.begin();
    while (1)
    {
-      string::const_iterator Start = End;      
+      string::const_iterator Start = End;
       for (; End < OldMaint.end() &&
-	   (End + 3 >= OldMaint.end() || End[0] != ' ' || 
+	   (End + 3 >= OldMaint.end() || End[0] != ' ' ||
 	    End[1] != '/' || End[2] != '/'); ++End);
       if (stringcasecmp(Start,End,Orig.begin(),Orig.end()) == 0)
 	 return NewMaint;
-      
+
       if (End >= OldMaint.end())
 	 break;
 
@@ -279,9 +279,9 @@ string Override::Item::SwapMaint(string const &Orig,bool &Failed)
    }
 #else
    if (stringcasecmp(OldMaint.begin(),OldMaint.end(),Orig.begin(),Orig.end()) == 0)
-      return NewMaint;   
+      return NewMaint;
 #endif
-   
+
    Failed = true;
    return string();
 }
