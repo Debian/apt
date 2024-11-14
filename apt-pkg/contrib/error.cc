@@ -89,6 +89,7 @@ bool GlobalError::InsertErrno(MsgType type, const char* Function,
 			      const char* Description, va_list &args,
 			      int const errsv, size_t &msgSize) {
 	char* S = (char*) malloc(msgSize);
+	DEFER([&] { free(S); });
 	int const n = snprintf(S, msgSize, "%s - %s (%i: %s)", Description,
 			       Function, errsv, strerror(errsv));
 	if (n > -1 && ((unsigned int) n) < msgSize);
@@ -97,13 +98,10 @@ bool GlobalError::InsertErrno(MsgType type, const char* Function,
 			msgSize = n + 1;
 		else
 			msgSize *= 2;
-		free(S);
 		return true;
 	}
 
-	bool const geins = Insert(type, S, args, msgSize);
-	free(S);
-	return geins;
+	return Insert(type, S, args, msgSize);
 }
 									/*}}}*/
 // GlobalError::Fatal, Error, Warning, Notice and Debug - Add to the list/*{{{*/
@@ -145,6 +143,7 @@ bool GlobalError::Insert(MsgType const &type, const char *Description,...)
 bool GlobalError::Insert(MsgType type, const char* Description,
 			 va_list &args, size_t &msgSize) {
 	char* S = (char*) malloc(msgSize);
+	DEFER([&] { free(S); });
 	int const n = vsnprintf(S, msgSize, Description, args);
 	if (n > -1 && ((unsigned int) n) < msgSize);
 	else {
@@ -152,7 +151,6 @@ bool GlobalError::Insert(MsgType type, const char* Description,
 			msgSize = n + 1;
 		else
 			msgSize *= 2;
- 		free(S);
 		return true;
 	}
 
@@ -165,7 +163,6 @@ bool GlobalError::Insert(MsgType type, const char* Description,
 	if (type == FATAL || type == DEBUG)
 		std::clog << m << std::endl;
 
-	free(S);
 	return false;
 }
 									/*}}}*/

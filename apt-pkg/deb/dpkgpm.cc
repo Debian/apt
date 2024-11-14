@@ -2243,16 +2243,6 @@ void pkgDPkgPM::Reset()
    List.erase(List.begin(),List.end());
 }
 
-template <class F>
-struct AptScopeWrapper {
-   F func;
-   ~AptScopeWrapper() { func(); }
-};
-template <class F>
-AptScopeWrapper(F) -> AptScopeWrapper<F>;
-#define PASTE(a, b) a##b
-#define DEFER(lambda) AptScopeWrapper PASTE(defer, __LINE__){lambda};
-
 static void CopyIndented(const char *header, FILE *from, FILE *to)
 {
    if (!from)
@@ -2378,7 +2368,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    pkgver = Ver.VerStr() == NULL ? "unknown" : Ver.VerStr();
 
    // if the file exists already, we check:
-   // - if it was reported already (touched by apport). 
+   // - if it was reported already (touched by apport).
    //   If not, we do nothing, otherwise
    //    we overwrite it. This is the same behaviour as apport
    // - if we have a report with the same pkgversion already

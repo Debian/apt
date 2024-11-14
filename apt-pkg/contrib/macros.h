@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0+
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    Macros Header - Various useful macro definitions
 
    This file had this historic note, but now includes further changes
@@ -10,7 +10,7 @@
 
    This source is placed in the Public Domain, do with it what you will
    It was originally written by Brian C. White.
-   
+
    ##################################################################### */
 									/*}}}*/
 // Private header
@@ -127,5 +127,16 @@
 
 /* Should be a multiple of the common page size (4096) */
 static constexpr unsigned long long APT_BUFFER_SIZE = 64 * 1024;
+
+template <class F>
+struct AptScopeWrapper {
+   F func;
+   ~AptScopeWrapper() { func(); }
+};
+template <class F>
+AptScopeWrapper(F) -> AptScopeWrapper<F>;
+#define PASTE2(a, b) a##b
+#define PASTE(a, b) PASTE2(a, b)
+#define DEFER(lambda) AptScopeWrapper PASTE(defer, __LINE__){lambda};
 
 #endif

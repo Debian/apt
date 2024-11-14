@@ -744,6 +744,7 @@ static void * handleClient(int const client, size_t const id)		/*{{{*/
 	    for (::Configuration::Item *I = Overwrite->Child; I != NULL; I = I->Next)
 	    {
 	       regex_t *pattern = new regex_t;
+	       DEFER([&] { regfree(pattern); });
 	       int const res = regcomp(pattern, I->Tag.c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB);
 	       if (res != 0)
 	       {
@@ -764,10 +765,8 @@ static void * handleClient(int const client, size_t const id)		/*{{{*/
 		     filename.erase(0,1);
 		  if (filename.empty())
 		     filename = "./";
-		  regfree(pattern);
 		  break;
 	       }
-	       regfree(pattern);
 	    }
 	 }
 
