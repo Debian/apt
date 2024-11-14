@@ -38,13 +38,39 @@ started multiple times. Hooks should thus be stateless.
 
 APT performs a call to the method `org.debian.apt.hooks.hello` with
 the named parameter `versions` containing a list of supported protocol
-versions. The hook picks the version it supports. The current version
-is `"0.1"`, and support for that version is mandatory.
+versions, and an optional `options` array. The hook picks the version it supports. The current version
+is `"0.2"`, and support for "0.1" or "0.2" is mandatory.
+
+The `options` array is an optional list of all options currently set in the apt
+configuration object. Note that not all options are present, and the default can vary,
+you cannot rely on the default being `true` or `false` for example for a boolean option
+-- it depends on the context.
+
+APT options are internally stored as a tree leading to the awkward situation that a list
+item could have a name, e.g. `APT::Architectures "unused" { first "amd64"; "i386"; };`. This will
+be represented as
+
+```json
+[
+    {"name": "APT::Architectures", "value": "unused"},
+    {"name": "APT::Architectures::first", "amd64"},
+    {"name": "APT::Architectures::", ""}
+]
+```
+
+To interpret an option name as a list, with trailing `::`, for example, `APT::Architectures`, you
+will need to write a function similar to:
+
+```python
+def get_list(options, key):
+    """key includes trailing ::"""
+    return [value for name, value in options if name.startswith(key) and "::" not in name[len(key):]]
+```
 
 *Example*:
 
 1. APT:
-   ```{"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1"]}}```
+   ```{"jsonrpc":"2.0","method":"org.debian.apt.hooks.hello","id":0,"params":{"versions":["0.1", "0.2"], "options": [{"name": "APT::Architecture", "value": "amd64"}]}}```
 
 
 2. Hook:
