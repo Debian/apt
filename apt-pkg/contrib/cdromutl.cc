@@ -1,11 +1,11 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    CDROM Utilities - Some functions to manipulate CDROM mounts.
-   
+
    These are here for the cdrom method and apt-cdrom.
-   
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -39,7 +39,7 @@ using std::string;
 // ---------------------------------------------------------------------
 /* This is a simple algorithm that should always work, we stat the mount point
    and the '..' file in the mount point and see if they are on the same device.
-   By definition if they are the same then it is not mounted. This should 
+   By definition if they are the same then it is not mounted. This should
    account for symlinked mount points as well. */
 bool IsMounted(string &Path)
 {
@@ -59,7 +59,7 @@ bool IsMounted(string &Path)
       stating the path and the previous directory (careful of links!)
       and comparing their device fields. */
    struct stat Buf,Buf2;
-   if (stat(Path.c_str(),&Buf) != 0 || 
+   if (stat(Path.c_str(),&Buf) != 0 ||
        stat((Path + "../").c_str(),&Buf2) != 0)
       return _error->Errno("stat",_("Unable to stat the mount point %s"),Path.c_str());
 
@@ -70,7 +70,7 @@ bool IsMounted(string &Path)
 									/*}}}*/
 // UnmountCdrom - Unmount a cdrom					/*{{{*/
 // ---------------------------------------------------------------------
-/* Forking umount works much better than the umount syscall which can 
+/* Forking umount works much better than the umount syscall which can
    leave /etc/mtab inconsistent. We drop all messages this produces. */
 bool UnmountCdrom(string Path)
 {
@@ -85,7 +85,7 @@ bool UnmountCdrom(string Path)
 
    for (int i=0;i<3;i++)
    {
-   
+
       int Child = ExecFork();
 
       // The child
@@ -100,7 +100,7 @@ bool UnmountCdrom(string Path)
 	 {
 	    if (system(_config->Find("Acquire::cdrom::"+Path+"::UMount").c_str()) != 0)
 	       _exit(100);
-	    _exit(0);	 	 
+	    _exit(0);
 	 }
 	 else
 	 {
@@ -151,13 +151,13 @@ bool MountCdrom(string Path, string DeviceName)
       {
 	 if (system(_config->Find("Acquire::cdrom::"+Path+"::Mount").c_str()) != 0)
 	    _exit(100);
-	 _exit(0);	 
+	 _exit(0);
       }
       else
       {
 	 const char *Args[10];
 	 Args[0] = "mount";
-	 if (DeviceName == "") 
+	 if (DeviceName == "")
 	 {
 	    Args[1] = Path.c_str();
 	    Args[2] = 0;
@@ -166,9 +166,9 @@ bool MountCdrom(string Path, string DeviceName)
 	    Args[2] = Path.c_str();
 	    Args[3] = 0;
 	 }
-	 execvp(Args[0],(char **)Args);      
+	 execvp(Args[0],(char **)Args);
 	 _exit(100);
-      }      
+      }
    }
 
    // Wait for mount
@@ -265,11 +265,11 @@ string FindMountPointForDevice(const char *devnode)
    std::vector<std::string> const mounts = _config->FindVector("Dir::state::MountPoints", "/etc/mtab,/proc/mount");
 
    for (std::vector<std::string>::const_iterator m = mounts.begin(); m != mounts.end(); ++m)
-      if (FileExists(*m) == true)
+      if (FILE * f = fopen(m->c_str(), "r"))
       {
 	 char * line = NULL;
 	 size_t line_len = 0;
-	 FILE * f = fopen(m->c_str(), "r");
+	 DEFER([&] { fclose(f); free(line); });
 	 while(getline(&line, &line_len, f) != -1)
 	 {
 	    char * out[] = { NULL, NULL, NULL };
@@ -278,14 +278,10 @@ string FindMountPointForDevice(const char *devnode)
 	       continue;
 	    if (strcmp(out[0], devnode) != 0)
 	       continue;
-	    fclose(f);
 	    // unescape the \0XXX chars in the path
 	    string mount_point = out[1];
-	    free(line);
 	    return DeEscapeString(mount_point);
 	 }
-	 fclose(f);
-	 free(line);
       }
 
    return string();

@@ -5,7 +5,7 @@
    System - Abstraction for running on different systems.
 
    Basic general structure..
-   
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -53,7 +53,7 @@ public:
    int FrontendLockFD;
    int LockFD;
    unsigned LockCount;
-   
+
    debStatusIndex *StatusFile;
 };
 
@@ -146,7 +146,7 @@ bool debSystem::Lock(OpProgress *const Progress)
       close(d->FrontendLockFD);
       return false;
    }
-   
+
    // See if we need to abort with a dirty journal
    if (CheckUpdates() == true)
    {
@@ -166,7 +166,7 @@ bool debSystem::Lock(OpProgress *const Progress)
    }
 
 	 d->LockCount++;
-      
+
    return true;
 }
 
@@ -193,7 +193,7 @@ bool debSystem::UnLock(bool NoErrors)
 {
    if (d->LockCount == 0 && NoErrors == true)
       return false;
-   
+
    if (d->LockCount < 1)
       return _error->Error(_("Not locked"));
    if (--d->LockCount == 0)
@@ -202,7 +202,7 @@ bool debSystem::UnLock(bool NoErrors)
       close(d->FrontendLockFD);
       d->LockCount = 0;
    }
-   
+
    return true;
 }
 bool debSystem::UnLockInner(bool NoErrors) {
@@ -222,7 +222,7 @@ bool debSystem::IsLocked()
 									/*}}}*/
 // System::CheckUpdates - Check if the updates dir is dirty		/*{{{*/
 // ---------------------------------------------------------------------
-/* This does a check of the updates directory (dpkg journal) to see if it has 
+/* This does a check of the updates directory (dpkg journal) to see if it has
    any entries in it. */
 bool debSystem::CheckUpdates()
 {
@@ -231,8 +231,8 @@ bool debSystem::CheckUpdates()
    DIR *DirP = opendir(File.c_str());
    if (DirP == 0)
       return false;
-   
-   /* We ignore any files that are not all digits, this skips .,.. and 
+
+   /* We ignore any files that are not all digits, this skips .,.. and
       some tmp files dpkg will leave behind.. */
    bool Damaged = false;
    for (struct dirent *Ent = readdir(DirP); Ent != 0; Ent = readdir(DirP))
@@ -373,7 +373,7 @@ bool debSystem::FindIndex(pkgCache::PkgFileIterator File,
       Found = d->StatusFile;
       return true;
    }
-   
+
    return false;
 }
 									/*}}}*/
@@ -528,10 +528,10 @@ std::vector<std::string> debSystem::ArchitecturesSupported() const		/*{{{*/
    if (dpkgMultiArch == -1)
       return archs;
 
-   FILE *dpkg = fdopen(outputFd, "r");
-   if(dpkg != NULL) {
+   if(FILE *dpkg = fdopen(outputFd, "r")) {
       char* buf = NULL;
       size_t bufsize = 0;
+      DEFER([&] { fclose(dpkg); free(buf); });
       while (getline(&buf, &bufsize, dpkg) != -1)
       {
 	 char* tok_saveptr;
@@ -548,9 +548,9 @@ std::vector<std::string> debSystem::ArchitecturesSupported() const		/*{{{*/
 	    arch = strtok_r(NULL, " ", &tok_saveptr);
 	 }
       }
-      free(buf);
-      fclose(dpkg);
    }
+   else
+        close(outputFd);
    ExecWait(dpkgMultiArch, "dpkg --print-foreign-architectures", true);
    return archs;
 }

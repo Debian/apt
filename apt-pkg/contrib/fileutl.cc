@@ -1001,24 +1001,18 @@ bool StartsWithGPGClearTextSignature(string const &FileName)
    char * lineptr = nullptr;
    size_t n = 0;
    errno = 0;
+   DEFER([&] { fclose(gpg); free(lineptr); });
    ssize_t const result = getline(&lineptr, &n, gpg);
    if (errno != 0)
    {
       _error->Errno("getline", "Could not read from %s", FileName.c_str());
-      fclose(gpg);
-      free(lineptr);
       return false;
    }
-   fclose(gpg);
 
    _strrstrip(lineptr);
    static const char* SIGMSG = "-----BEGIN PGP SIGNED MESSAGE-----";
    if (result == -1 || strcmp(lineptr, SIGMSG) != 0)
-   {
-      free(lineptr);
       return false;
-   }
-   free(lineptr);
    return true;
 }
 									/*}}}*/
