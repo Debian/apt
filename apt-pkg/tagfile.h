@@ -67,8 +67,8 @@ class APT_PUBLIC pkgTagSection
    inline bool operator !=(const pkgTagSection &rhs) {return Section != rhs.Section;};
 
    // TODO: Remove internally
-   std::string FindS(APT::StringView sv) const { return Find(sv).to_string(); }
-   std::string FindRawS(APT::StringView sv) const { return FindRaw(sv).to_string(); };
+   std::string FindS(APT::StringView sv) const { return std::string{Find(sv)}; }
+   std::string FindRawS(APT::StringView sv) const { return std::string{FindRaw(sv)}; };
 
    // Functions for lookup with a perfect hash function
    enum class Key;
