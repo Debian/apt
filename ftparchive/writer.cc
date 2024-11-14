@@ -829,7 +829,11 @@ bool SourcesWriter::DoPackage(string FileName)
    std::vector<pkgTagSection::Tag> Changes;
 
    Changes.push_back(pkgTagSection::Tag::Remove("Source"));
+#if APT_PKG_ABI > 600
+   Changes.push_back(pkgTagSection::Tag::Rewrite("Package", Package));
+#else
    Changes.push_back(pkgTagSection::Tag::Rewrite("Package", std::string{Package}));
+#endif
    if (Files.empty() == false)
       Changes.push_back(pkgTagSection::Tag::Rewrite("Files", Files));
    else

@@ -3,10 +3,10 @@
 /* ######################################################################
 
    Hashes - Simple wrapper around the hash functions
-   
+
    This is just used to make building the methods simpler, this is the
    only interface required..
-   
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -66,7 +66,11 @@ HashString::HashString(std::string Type, std::string Hash) : Type(Type), Hash(Ha
 {
 }
 
-HashString::HashString(std::string StringedHash)			/*{{{*/
+#if APT_PKG_ABI > 600
+HashString::HashString(std::string_view StringedHash)			/*{{{*/
+#else
+HashString::HashString(std::string StringedHash)        /*{{{*/
+#endif
 {
    if (StringedHash.find(":") == std::string::npos)
    {
@@ -80,7 +84,7 @@ HashString::HashString(std::string StringedHash)			/*{{{*/
 	 std::clog << "HashString(string): invalid StringedHash " << StringedHash << std::endl;
       return;
    }
-   std::string::size_type pos = StringedHash.find(":");
+   auto pos = StringedHash.find(":");
    Type = StringedHash.substr(0,pos);
    Hash = StringedHash.substr(pos+1, StringedHash.size() - pos);
 

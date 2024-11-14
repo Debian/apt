@@ -4,16 +4,16 @@
 /* ######################################################################
 
    String Util - These are some useful string functions
-   
+
    _strstrip is a function to remove whitespace from the front and end
    of a string.
-   
+
    This file had this historic note, but now includes further changes
    under the GPL-2.0+:
 
    This source is placed in the Public Domain, do with it what you will
-   It was originally written by Jason Gunthorpe <jgg@gpu.srv.ualberta.ca>   
-   
+   It was originally written by Jason Gunthorpe <jgg@gpu.srv.ualberta.ca>
+
    ##################################################################### */
 									/*}}}*/
 #ifndef STRUTL_H
@@ -26,6 +26,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "macros.h"
@@ -121,13 +122,13 @@ APT_PUBLIC std::vector<std::string> VectorizeString(std::string const &haystack,
  *
  * \param maxsplit (optional) The maximum amount of splitting that
  * should be done .
- * 
+ *
  * The optional "maxsplit" argument can be used to limit the splitting,
  * if used the string is only split on maxsplit places and the last
  * item in the vector contains the remainder string.
  */
 APT_PUBLIC std::vector<std::string> StringSplit(std::string const &input,
-                                     std::string const &sep, 
+                                     std::string const &sep,
                                      unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) APT_PURE;
 
 
@@ -229,7 +230,7 @@ class APT_PUBLIC URI
    std::string Host;
    std::string Path;
    unsigned int Port;
-   
+
    operator std::string();
    inline void operator =(const std::string &From) {CopyFrom(From);}
    inline bool empty() {return Access.empty();};
@@ -257,5 +258,16 @@ struct RxChoiceList
 };
 APT_PUBLIC unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
 		      const char **ListEnd);
+
+/**
+ * \brief Faster comparison for string views (compare size before data)
+ *
+ * Still stable, but faster than the normal ordering. */
+static inline int StringViewCompareFast(const std::string_view & a, const std::string_view & b) {
+    if (a.size() != b.size())
+        return a.size() - b.size();
+
+    return a.compare(b);
+}
 
 #endif
