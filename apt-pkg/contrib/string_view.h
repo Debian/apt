@@ -146,17 +146,6 @@ inline std::ostream& operator<<(std::ostream& os, const StringView& sv)
     return os << static_cast<std::string_view>(sv);
 }
 
-/**
- * \brief Faster comparison for string views (compare size before data)
- *
- * Still stable, but faster than the normal ordering. */
-static inline int StringViewCompareFast(const std::string_view & a, const std::string_view & b) {
-    if (a.size() != b.size())
-        return a.size() - b.size();
-
-    return a.compare(b);
-}
-
 static constexpr inline APT::StringView operator""_sv(const char *data, size_t size)
 {
    return APT::StringView(data, size);
