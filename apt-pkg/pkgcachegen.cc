@@ -370,7 +370,7 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 									/*}}}*/
 // CacheGenerator::MergeListVersion					/*{{{*/
 bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
-					 std::string_view const &Version, pkgCache::VerIterator* &OutVer)
+					 std::string_view Version, pkgCache::VerIterator* &OutVer)
 {
    pkgCache::VerIterator Ver = Pkg.VersionList();
    Dynamic<pkgCache::VerIterator> DynVer(Ver);
@@ -866,7 +866,7 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
 // ---------------------------------------------------------------------
 /* This puts a version structure in the linked list */
 map_pointer<pkgCache::Version> pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
-					    std::string_view const &VerStr,
+					    std::string_view VerStr,
 					    map_pointer<pkgCache::Package> const ParentPkg,
 					    uint32_t Hash,
 					    map_pointer<pkgCache::Version> const Next)

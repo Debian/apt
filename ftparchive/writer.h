@@ -95,7 +95,7 @@ class TranslationWriter
    FileFd *Output;
 
    public:
-   bool DoPackage(std::string_view const &Pkg, string const &Desc, string const &MD5);
+   bool DoPackage(std::string_view Pkg, string const &Desc, string const &MD5);
 
    TranslationWriter(string const &File, string const &TransCompress, mode_t const &Permissions);
    ~TranslationWriter();

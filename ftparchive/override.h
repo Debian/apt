@@ -28,17 +28,17 @@ class Override
       string NewMaint;
 
       map<string,string> FieldOverride;
-      string SwapMaint(std::string_view const &Orig,bool &Failed);
+      string SwapMaint(std::string_view Orig,bool &Failed);
       ~Item() {};
    };
 
    map<string,Item,std::less<>> Mapping;
 
-   inline Item *GetItem(std::string_view const &Package)
+   inline Item *GetItem(std::string_view Package)
    {
       return GetItem(Package, "");
    }
-   Item *GetItem(std::string_view const &Package, std::string_view const &Architecture);
+   Item *GetItem(std::string_view Package, std::string_view Architecture);
 
    bool ReadOverride(string const &File,bool const &Source = false);
    bool ReadExtraOverride(string const &File,bool const &Source = false);

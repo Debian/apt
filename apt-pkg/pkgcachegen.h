@@ -1,18 +1,18 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   
+
    Package Cache Generator - Generator for the cache structure.
-   
-   This builds the cache structure from the abstract package list parser. 
+
+   This builds the cache structure from the abstract package list parser.
    Each archive source has it's own list parser that is instantiated by
-   the caller to provide data for the generator. 
-   
+   the caller to provide data for the generator.
+
    Parts of the cache are created by this generator class while other
    parts are created by the list parser. The list parser is responsible
    for creating version, depends and provides structures, and some of
    their contents
-   
+
    ##################################################################### */
 									/*}}}*/
 #ifndef PKGLIB_PKGCACHEGEN_H
@@ -116,7 +116,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
 
    bool NewGroup(pkgCache::GrpIterator &Grp, std::string_view Name);
    bool NewPackage(pkgCache::PkgIterator &Pkg, std::string_view Name, std::string_view Arch);
-   map_pointer<pkgCache::Version> NewVersion(pkgCache::VerIterator &Ver, std::string_view const &VerStr,
+   map_pointer<pkgCache::Version> NewVersion(pkgCache::VerIterator &Ver, std::string_view VerStr,
 			    map_pointer<pkgCache::Package> const ParentPkg, uint32_t Hash,
 			    map_pointer<pkgCache::Version> const Next);
    map_pointer<pkgCache::Description> NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang, std::string_view md5sum,map_stringitem_t const idxmd5str);
@@ -162,7 +162,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    APT_HIDDEN bool MergeListGroup(ListParser &List, std::string const &GrpName);
    APT_HIDDEN bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
    APT_HIDDEN bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
-			 std::string_view const &Version, pkgCache::VerIterator* &OutVer);
+			 std::string_view Version, pkgCache::VerIterator* &OutVer);
 
    APT_HIDDEN bool AddImplicitDepends(pkgCache::GrpIterator &G, pkgCache::PkgIterator &P,
 			   pkgCache::VerIterator &V);
@@ -200,7 +200,7 @@ class APT_HIDDEN pkgCacheListParser
    bool NewProvidesAllArch(pkgCache::VerIterator &Ver, std::string_view Package,
 			   std::string_view Version, uint8_t const Flags);
    public:
-   
+
    // These all operate against the current section
    virtual std::string Package() = 0;
    virtual bool ArchitectureAll() = 0;
@@ -220,9 +220,9 @@ class APT_HIDDEN pkgCacheListParser
 			   pkgCache::VerIterator &Ver) = 0;
    virtual map_filesize_t Offset() = 0;
    virtual map_filesize_t Size() = 0;
-   
+
    virtual bool Step() = 0;
-   
+
    virtual bool CollectFileProvides(pkgCache &/*Cache*/,
 				    pkgCache::VerIterator &/*Ver*/) {return true;};
 

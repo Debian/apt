@@ -208,7 +208,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &/*Source*/)
 /* Returns a override item for the given package and the given architecture.
  * Treats "all" special
  */
-Override::Item* Override::GetItem(std::string_view const &Package, std::string_view const &Architecture)
+Override::Item* Override::GetItem(std::string_view Package, std::string_view Architecture)
 {
    map<string,Item>::const_iterator I = Mapping.find(Package);
    map<string,Item>::iterator J = Mapping.find(std::string{Package}.append("/").append(Architecture));
@@ -246,7 +246,7 @@ Override::Item* Override::GetItem(std::string_view const &Package, std::string_v
    there is a rule but it does not match then the empty string is returned,
    also if there was no rewrite rule the empty string is returned. Failed
    indicates if there was some kind of problem while rewriting. */
-string Override::Item::SwapMaint(std::string_view const &Orig,bool &Failed)
+string Override::Item::SwapMaint(std::string_view Orig,bool &Failed)
 {
    Failed = false;
 
