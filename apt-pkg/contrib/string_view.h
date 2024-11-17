@@ -12,8 +12,11 @@
 #if !defined(APT_STRINGVIEW_H)
 #define APT_STRINGVIEW_H
 #include <apt-pkg/macros.h>
+#include <algorithm>
 #include <cstring>
+#include <iosfwd>
 #include <string>
+#include <string_view>
 
 #if APT_PKG_ABI > 600
 namespace APT {
