@@ -85,6 +85,7 @@ add_optional_compile_options(Wdouble-promotion)
 add_optional_compile_options(Wsuggest-override)
 add_optional_compile_options(Werror=suggest-override)
 add_optional_compile_options(Werror=return-type)
+add_optional_compile_options(Wp,-D_GLIBCXX_ASSERTIONS)
 # apt-ftparchive dependencies
 find_package(Berkeley REQUIRED)
 if (BERKELEY_FOUND)
