@@ -1087,6 +1087,8 @@ bool pkgDPkgPM::OpenLog()
       std::string RequestingUser = AptHistoryRequestingUser();
       if (RequestingUser != "")
          WriteHistoryTag("Requested-By", RequestingUser);
+      if (auto comment = _config->Find("APT::History::Comment"); not comment.empty())
+	 WriteHistoryTag("Comment", comment);
       WriteHistoryTag("Install", install);
       WriteHistoryTag("Reinstall", reinstall);
       WriteHistoryTag("Upgrade", upgrade);
