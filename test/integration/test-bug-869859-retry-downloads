@@ -51,6 +51,15 @@ Err:1 http://localhost:${APTHTTPPORT} stable/main all testpkg all 1
 E: Failed to fetch http://localhost:${APTHTTPPORT}/pool/testpkg_1_all.deb  429  Unknown HTTP code" apt download testpkg -o acquire::retries=3 -o debug::acquire::retries=true -q
 testfailure test -f testpkg_1_all.deb
 
+msgmsg 'Retry 429 TooManyRequests after Retry-After time'
+webserverconfig 'aptwebserver::failrequest' '429'
+webserverconfig 'aptwebserver::failrequest::retryafter' '5'
+webserverconfig 'aptwebserver::failrequest::pool/testpkg_1_all.deb' '1'
+testsecondsgreaterequal 5 testsuccess apt download testpkg -o acquire::retries=1 -o acquire::retries::handleretryafter=true -o debug::acquire::retries=true -q
+webserverconfig 'aptwebserver::failrequest::retryafter' '0'
+testsuccess test -f testpkg_1_all.deb
+rm -f testpkg_1_all.deb
+
 msgmsg 'Success in the third try'
 webserverconfig 'aptwebserver::failrequest::pool/testpkg_1_all.deb' '2'
 testsuccess apt download testpkg -o acquire::retries=3 -o acquire::retries::delay=false

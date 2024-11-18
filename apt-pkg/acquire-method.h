@@ -92,6 +92,7 @@ class APT_PUBLIC pkgAcqMethod
 
    // Outgoing messages
    void Fail(bool Transient = false);
+   void FailWithContext(std::string Why, bool Transient, std::unordered_map<std::string, std::string> &fields);
    inline void Fail(const char *Why, bool Transient = false) {Fail(std::string(Why),Transient);};
    virtual void Fail(std::string Why, bool Transient = false);
    virtual void URIStart(FetchResult &Res);
