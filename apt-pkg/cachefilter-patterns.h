@@ -78,7 +78,23 @@ struct APT_PUBLIC PatternTreeParser
       size_t offset = 0;
    };
 
-   std::string_view sentence;
+   /// \brief Zero-terminated wrapper for std::string_view
+   ///
+   /// The code peeks a character ahead and assumes the input is zero-terminated, but it may not be,
+   /// this class provides a peek-ahead character access in operator[] by returning 0 for [size()].
+   struct ZeroStringView : private std::string_view
+   {
+      explicit ZeroStringView(std::string_view s) : std::string_view(s) {}
+      char operator[](size_t i)
+      {
+	 assert(i <= size());
+	 if (likely(i < size()))
+	    return std::string_view::operator[](i);
+	 return '\0';
+      }
+      using std::string_view::size;
+      using std::string_view::substr;
+   } sentence;
    State state;
 
    PatternTreeParser(std::string_view sentence) : sentence(sentence){};
