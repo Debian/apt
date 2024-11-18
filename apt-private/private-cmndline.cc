@@ -192,6 +192,7 @@ static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const 
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
       addArg(0, "strict-pinning", "APT::Solver::Strict-Pinning", 0);
       addArg(0, "planner", "APT::Planner", CommandLine::HasArg);
+      addArg(0, "comment", "APT::History::Comment", CommandLine::HasArg);
       addArg('U', "update", "APT::Update", 0);
       if (CmdMatches("upgrade"))
       {

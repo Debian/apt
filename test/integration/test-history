@@ -1,0 +1,40 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'pkg1' 'amd64' '1' 'stable'
+buildsimplenativepackage 'pkg2' 'amd64' '1' 'stable'
+
+
+setupaptarchive
+
+cathistory() {
+    sed rootdir/var/log/apt/history.log -re 's/^(Commandline|Start-Date|End-Date):.*/\1: dummy/'
+}
+
+
+testsuccess aptget install pkg1
+
+testequal "
+Start-Date: dummy
+Commandline: dummy
+Install: pkg1:amd64 (1)
+End-Date: dummy" cathistory
+
+testsuccess aptget install pkg2 --comment="A test comment"
+
+testequal "
+Start-Date: dummy
+Commandline: dummy
+Install: pkg1:amd64 (1)
+End-Date: dummy
+
+Start-Date: dummy
+Commandline: dummy
+Comment: A test comment
+Install: pkg2:amd64 (1)
+End-Date: dummy" cathistory
