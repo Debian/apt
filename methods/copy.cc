@@ -24,7 +24,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-class CopyMethod : public aptMethod
+class CopyMethod final : public aptMethod
 {
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
 

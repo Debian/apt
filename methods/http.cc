@@ -279,7 +279,7 @@ CircleBuf::~CircleBuf()							/*{{{*/
 // UnwrapHTTPConnect - Does the HTTP CONNECT handshake			/*{{{*/
 // ---------------------------------------------------------------------
 /* Performs a TLS handshake on the socket */
-struct HttpConnectFd : public MethodFd
+struct HttpConnectFd final : public MethodFd
 {
    std::unique_ptr<MethodFd> UnderlyingFd;
    std::string Buffer;

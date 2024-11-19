@@ -85,7 +85,7 @@ static bool ConnectionAllowed(char const * const Service, std::string const &Hos
 									/*}}}*/
 
 // File Descriptor based Fd /*{{{*/
-struct FdFd : public MethodFd
+struct FdFd final : public MethodFd
 {
    int fd = -1;
    int Fd() APT_OVERRIDE { return fd; }
@@ -805,7 +805,7 @@ ResultState UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<M
 // UnwrapTLS - Handle TLS connections 					/*{{{*/
 // ---------------------------------------------------------------------
 /* Performs a TLS handshake on the socket */
-struct TlsFd : public MethodFd
+struct TlsFd final : public MethodFd
 {
    std::unique_ptr<MethodFd> UnderlyingFd;
    gnutls_session_t session;
