@@ -154,14 +154,16 @@ function(xsltproc_one)
     if (DOC_MANPAGE)
         if (language)
         set(manpage_output "${CMAKE_CURRENT_BINARY_DIR}/${language}/${document}.${section}")
+        set(manpage_l10npath "/${language}")
         else()
+        set(manpage_l10npath "")
         set(manpage_output "${CMAKE_CURRENT_BINARY_DIR}/${document}.${section}")
         endif()
         set(manpage_stylesheet "${CMAKE_CURRENT_BINARY_DIR}/manpage-style.xsl")
         set(manpage_params)
 
         install(FILES ${manpage_output}
-                DESTINATION ${CMAKE_INSTALL_MANDIR}/${language}/man${section}
+                DESTINATION ${CMAKE_INSTALL_MANDIR}${manpage_l10npath}/man${section}
                 OPTIONAL)
     endif()
     if (DOC_HTML)

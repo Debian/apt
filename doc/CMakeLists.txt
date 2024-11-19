@@ -22,13 +22,14 @@ set(ENTITIES
     apt-verbatim.ent
     ../vendor/${CURRENT_VENDOR}/apt-vendor.ent
 )
+set(USR_SHARE_DOC "${CMAKE_INSTALL_DATAROOTDIR}/doc")
 
 if(WITH_DOC OR WITH_DOC_GUIDES)
 add_docbook(apt-doc HTML TEXT ALL
     DOCUMENTS
         guide.dbk
         offline.dbk
-    INSTALL ${CMAKE_INSTALL_DOCDIR}/../apt-doc
+    INSTALL ${USR_SHARE_DOC}/apt-doc
     LINGUAS ${LINGUAS}
     TRANSLATED_ENTITIES ${TRANSLATED_ENTITIES}
     DEPENDS ${ENTITIES}
@@ -40,7 +41,7 @@ add_docbook(libapt-pkg-doc HTML TEXT ALL
         dpkg-tech.dbk
         files.dbk
         method.dbk
-    INSTALL ${CMAKE_INSTALL_DOCDIR}/../libapt-pkg-doc
+    INSTALL ${USR_SHARE_DOC}/libapt-pkg-doc
     LINGUAS ${LINGUAS}
     TRANSLATED_ENTITIES ${TRANSLATED_ENTITIES}
     DEPENDS ${ENTITIES}
@@ -65,7 +66,7 @@ add_custom_target(apt-doxygen ALL
 )
 
 install(DIRECTORY  ${PROJECT_BINARY_DIR}/doc/doxygen/html
-        DESTINATION ${CMAKE_INSTALL_DOCDIR}/../libapt-pkg-doc
+        DESTINATION ${USR_SHARE_DOC}/libapt-pkg-doc
         PATTERN "*.map" EXCLUDE
         PATTERN "*.md5" EXCLUDE
 )
