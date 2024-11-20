@@ -1,6 +1,11 @@
 #!/bin/sh
 set -e
 
+db_dump=db_dump
+if command -v db_dump-5 >/dev/null 2>&1; then
+    db_dump=db_dump-5
+fi
+
 ensure_correct_packages_file() {
     testequal "Package: foo
 Architecture: i386
@@ -33,6 +38,8 @@ mkdir -p aptarchive/dists/test/main/binary-i386
 mkdir -p aptarchive/pool/main
 
 mkdir aptarchive-overrides
+touch aptarchive-overrides/bin-override
+touch aptarchive-overrides/extra-override
 mkdir aptarchive-cache
 cat > ftparchive.conf <<"EOF"
 Dir {
@@ -60,7 +67,9 @@ TreeDefault {
 Tree "dists/test" {
   Sections "main";
   Architectures "i386";
-
+  BinOverride "bin-override";
+  ExtraOverride "extra-override";
+  //FileList "file-list";
 };
 EOF
 
@@ -94,6 +103,67 @@ ensure_correct_contents_file
 testsuccessequal ' Misses in Cache: 0
  dists/test/Contents-i386: New 402 B  Misses in Cache: 0' grep Misses stats-out.txt
 
+msgmsg "Test overrides"
+
+manyX=$(head -c2000 /dev/zero  | tr '\0' 'X')
+
+echo "foo priority${manyX} overrideSection" > aptarchive-overrides/bin-override
+echo "foo Extra ${manyX}trailer" > aptarchive-overrides/extra-override
+
+testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1
+testsuccessequal "Priority: priority${manyX}" grep ^Priority ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Section: overrideSection" grep ^Section ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Extra: ${manyX}trailer" grep ^Extra ./aptarchive/dists/test/main/binary-i386/Packages
+
+
+msgmsg "Test long paths"
+x128=$(head -c 128 /dev/zero | tr '\0' 'X')
+longPath=${x128}/${x128}/${x128}/${x128}/${x128}/${x128}/${x128}/${x128}
+mkdir -p aptarchive/pool/main/$longPath
+mv aptarchive/pool/main/foo_1_i386.deb aptarchive/pool/main/$longPath/foo_1_i386.deb
+
+# before
+testsuccess $db_dump -f dump -p aptarchive-cache/packages-main-i386.db
+testsuccess grep "^ ./aptarchive/pool/main/foo_1_i386.deb:cl$" dump
+testsuccess grep "^ ./aptarchive/pool/main/foo_1_i386.deb:cn$" dump
+testsuccess grep "^ ./aptarchive/pool/main/foo_1_i386.deb:st$" dump
+testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1
+
+# file is still found
+testsuccessequal "Filename: pool/main/${longPath}/foo_1_i386.deb" grep ^Filename ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Priority: priority${manyX}" grep ^Priority ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Section: overrideSection" grep ^Section ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Extra: ${manyX}trailer" grep ^Extra ./aptarchive/dists/test/main/binary-i386/Packages
+
+# file is in the database
+testsuccess $db_dump -f dump -p aptarchive-cache/packages-main-i386.db
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:cl$" dump
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:cn$" dump
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:st"$ dump
+
+msgmsg "Test file lists"
+
+# Check that the empty file list produces no packages
+rm aptarchive-cache/packages-main-i386.db
+testsuccess sed -i s#//FileList#FileList# ftparchive.conf
+testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1
+testfileequal ./aptarchive/dists/test/main/binary-i386/Packages ""
+
+# Add the packages and run our checks again
+echo "pool/main/${longPath}/foo_1_i386.deb" > file-list
+testsuccess aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1
+testsuccessequal "Filename: pool/main/${longPath}/foo_1_i386.deb" grep ^Filename ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Priority: priority${manyX}" grep ^Priority ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Section: overrideSection" grep ^Section ./aptarchive/dists/test/main/binary-i386/Packages
+testsuccessequal "Extra: ${manyX}trailer" grep ^Extra ./aptarchive/dists/test/main/binary-i386/Packages
+
+# file is in the database
+testsuccess $db_dump -f dump -p aptarchive-cache/packages-main-i386.db
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:cl$" dump
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:cn$" dump
+testsuccess grep "^ ./aptarchive/pool/main/${longPath}/foo_1_i386.deb:st"$ dump
+
+msgmsg "Test Clean"
 # and clean
 rm -rf aptarchive/pool/main/*
 testsuccessequal "packages-main-i386.db" aptftparchive clean ftparchive.conf
@@ -101,3 +171,4 @@ testsuccess aptftparchive clean ftparchive.conf -o Debug::APT::FTPArchive::Clean
 cp rootdir/tmp/testsuccess.output clean-out.txt
 testsuccessequal "0	Number of unique keys in the tree" grep unique clean-out.txt
 testsuccessequal "packages-main-i386.db" grep packages-main-i386.db clean-out.txt
+

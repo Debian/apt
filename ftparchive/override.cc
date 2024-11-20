@@ -36,9 +36,10 @@ bool Override::ReadOverride(string const &File,bool const &Source)
    if (F == 0)
       return _error->Errno("fopen",_("Unable to open %s"),File.c_str());
 
-   char Line[1000];
+   char *Line = nullptr;
+   size_t LineSize = 0;
    unsigned long long Counter = 0;
-   while (fgets(Line,sizeof(Line),F) != 0)
+   while (getline(&Line, &LineSize, F) != -1)
    {
       Counter++;
       Item Itm;
@@ -124,6 +125,7 @@ bool Override::ReadOverride(string const &File,bool const &Source)
 
    if (ferror(F))
       _error->Errno("fgets",_("Failed to read the override file %s"),File.c_str());
+   free(Line);
    fclose(F);
    return true;
 }
@@ -140,9 +142,10 @@ bool Override::ReadExtraOverride(string const &File,bool const &/*Source*/)
    if (F == 0)
       return _error->Errno("fopen",_("Unable to open %s"),File.c_str());
 
-   char Line[1000];
+   char *Line = nullptr;
+   size_t LineSize = 0;
    unsigned long long Counter = 0;
-   while (fgets(Line,sizeof(Line),F) != 0)
+   while (getline(&Line, &LineSize, F) != -1)
    {
       Counter++;
 
@@ -198,6 +201,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &/*Source*/)
 
    if (ferror(F))
       _error->Errno("fgets",_("Failed to read the override file %s"),File.c_str());
+   free(Line);
    fclose(F);
    return true;
 }

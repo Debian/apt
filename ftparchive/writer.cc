@@ -242,34 +242,26 @@ bool FTWScanner::LoadFileList(string const &Dir, string const &File)
    if (List == 0)
       return _error->Errno("fopen",_("Failed to open %s"),File.c_str());
 
-   /* We are a tad tricky here.. We prefix the buffer with the directory
-      name, that way if we need a full path with just use line.. Sneaky and
-      fully evil. */
-   char Line[1000];
-   char *FileStart;
-   if (Dir.empty() == true || Dir.end()[-1] != '/')
-      FileStart = Line + snprintf(Line,sizeof(Line),"%s/",Dir.c_str());
-   else
-      FileStart = Line + snprintf(Line,sizeof(Line),"%s",Dir.c_str());
-   while (fgets(FileStart,sizeof(Line) - (FileStart - Line),List) != 0)
+   std::string FilePathBuf;
+   char *Line = nullptr;
+   size_t LineLength = 0;
+   while (getline(&Line, &LineLength, List) != -1)
    {
-      char *FileName = _strstrip(FileStart);
+      const char *FileName = _strstrip(Line);
       if (FileName[0] == 0)
 	 continue;
 
+      // Relative path, prepend directory to make absolute
       if (FileName[0] != '/')
       {
-	 if (FileName != FileStart)
-	    memmove(FileStart,FileName,strlen(FileStart));
-	 FileName = Line;
+	 if (Dir.empty() == true || Dir.end()[-1] != '/')
+	    strprintf(FilePathBuf, "%s/%s", Dir.c_str(), FileName);
+	 else
+	    strprintf(FilePathBuf, "%s%s", Dir.c_str(), FileName);
+
+	 FileName = FilePathBuf.c_str();
       }
 
-#if 0
-      struct stat St;
-      int Flag = FTW_F;
-      if (stat(FileName,&St) != 0)
-	 Flag = FTW_NS;
-#endif
       if (FileMatchesPatterns(FileName, Patterns) == false)
 	 continue;
 
@@ -277,6 +269,7 @@ bool FTWScanner::LoadFileList(string const &Dir, string const &File)
 	 break;
    }
 
+   free(Line);
    fclose(List);
    return true;
 }
