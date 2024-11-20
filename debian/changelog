@@ -1,3 +1,22 @@
+apt (2.9.13) unstable; urgency=medium
+
+  * Add a --comment option to record Comment: in history
+  * Hardening: Add -Wp,-D_GLIBCXX_ASSERTIONS to CXXFLAGS to enable bounds
+    checking for all STL containers.
+  * patterns: Avoid out-of-bounds std::string_view read.
+    We only pass NUL-terminated strings to the function, and the code expects
+    that but we pass through an interface which doesn't guarantee that, so
+    we trigger an index < size() assertion when accessing the terminating
+    NUL byte when compiled with -Wp,-D_GLIBCXX_ASSERTIONS.
+  * ftparchive: Remove fixed size buffers on trusted inputs (LP: #2087848)
+    - ftparchive: override: Remove fixed-size line buffers in override files
+    - ftparchive: cachedb: Remove 600-byte key (and hence file path) limit
+    - ftparchive: writer: Remove line length limit on file lists
+  * tests: Temporarily disable valgrind-if-available on armhf and ppc64el
+    to avoid having to wait for a new valgrind without those architectures
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 20 Nov 2024 15:59:46 +0100
+
 apt (2.9.12) unstable; urgency=medium
 
   [ наб ]
