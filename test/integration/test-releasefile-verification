@@ -420,6 +420,28 @@ runtest2() {
 " aptcache show apt
 	failaptnew
 
+	msgmsg 'Cold archive signed by' 'Empty signature'
+	rm -rf rootdir/var/lib/apt/lists
+	find aptarchive -name Release -exec touch {}.gpg \;
+	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  Release: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update -o Debug::gpgv=1
+
+	msgmsg 'Cold archive signed by' 'Unknown format signature'
+	rm -rf rootdir/var/lib/apt/lists
+	find aptarchive -name Release -exec sh -c "echo Hello > {}.gpg" \;
+	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  Release: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update
+
+	msgmsg 'Cold archive signed by' 'Empty inline'
+	rm -rf rootdir/var/lib/apt/lists
+	find aptarchive -name Release -exec sh -c '( echo -----BEGIN PGP SIGNED MESSAGE-----; echo Hash: SHA512; echo; cat {} ; echo; echo -----BEGIN PGP SIGNATURE-----; echo ; echo -----END PGP SIGNATURE----- ) > $(dirname {})/In$(basename {})' \;
+	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  InRelease: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update
+
+	msgmsg 'Cold archive signed by' 'Bad inline'
+	rm -rf rootdir/var/lib/apt/lists
+	find aptarchive -name Release -exec sh -c '( echo -----BEGIN PGP SIGNED MESSAGE-----; echo Hash: SHA512; echo; cat {} ; echo; echo -----BEGIN PGP SIGNATURE-----; echo ; echo SGVsbG8K; echo =nFa9; echo -----END PGP SIGNATURE----- ) > $(dirname {})/In$(basename {})' \;
+	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  InRelease: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update
+
+	find aptarchive/ \( -name InRelease -o -name Release.gpg \) -delete
+
 	# Unsigned archive from the beginning must also be detected.
 	msgmsg 'Cold archive signed by' 'nobody'
 	rm -rf rootdir/var/lib/apt/lists
