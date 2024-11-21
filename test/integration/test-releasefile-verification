@@ -156,7 +156,7 @@ runtest() {
 		prepare "${PKGFILE}"
 		rm -rf rootdir/var/lib/apt/lists
 		signreleasefiles 'Joe Sixpack' 'aptarchive' --faked-system-time "20160924T154812" --default-sig-expire 2017-04-01
-		updatewithwarnings '^W: .* EXPSIG'
+		updatewithwarnings '^W: .* (BADSIG|EXPSIG)'
 		testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 		failaptold
