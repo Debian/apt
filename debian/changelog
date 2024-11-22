@@ -1,3 +1,42 @@
+apt (2.9.14) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * test: Do not fail if valgrind is not available
+  * test: Handle gpgv-sq differeces and test with it
+  * apt-key: Prefer gpgv-sq if installed
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #1087458)
+  * Dutch manpages translation update (Closes: #1087461)
+
+  [ Алексей Шилин ]
+  * Russian program translation update (Closes: #1087804)
+
+  [ Luca Vercelli ]
+  * Italian program translation update (Closes: #1081992)
+
+  [ David Kalnischkies ]
+  * Fixes for several compile-time warnings:
+    - Acknowledge non-erase usage of remove_if for volatile sources
+    - Fix expired std::string usage in APT::StringView testcase
+    - Add a virtual destructor to private CacheSet Matcher
+    - Avoid unnormalized paths for CMake install destinations
+    - Tag hidden acquire classes as final for devirtualization
+  * Support uncompressed indexes from partial file:/ mirrors, and
+    other fixes for the acquire system:
+    - Show hashes calculated by main thread in error messages
+    - Alternatively calculate alternative file hashes in file method
+    - Rewrite hidden config option checker for more patterns
+    - Allow AutoDetectProxy to work with more than just http(s)
+    - Do not assume mirror-URIs end in a filename causing a hang
+    - Do not change UsedMirror on local copy of InRelease
+    - Clear previous ignored errors before processing acquire item again
+    - Never consider file/copy/cdrom sources bad sites due to errors
+    - Allow HashSum mismatches to fallback to other mirrors
+    - Look at non by-hash paths in copy and file methods
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 22 Nov 2024 17:13:23 +0100
+
 apt (2.9.13) unstable; urgency=medium
 
   * Add a --comment option to record Comment: in history
