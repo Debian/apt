@@ -28,9 +28,7 @@ testwarning aptget update --allow-insecure-repositories
 rm -rf rootdir/var/lib/apt/lists
 find "$APTARCHIVE/dists/unstable" -name '*Release*' -delete
 # update without authenticated files leads to warning
-testfailureequal "Get:1 file:$APTARCHIVE unstable InRelease
-Ign:1 file:$APTARCHIVE unstable InRelease
-Get:2 file:$APTARCHIVE unstable Release
+testfailureequal "Ign:1 file:$APTARCHIVE unstable InRelease
 Err:2 file:$APTARCHIVE unstable Release
   File not found - ${APTARCHIVE}/dists/unstable/Release (2: No such file or directory)
 Reading package lists...
@@ -44,48 +42,50 @@ testequal 'auxfiles
 lock
 partial' ls rootdir/var/lib/apt/lists
 
+# allow override
+testwarningequal "Ign:1 file:$APTARCHIVE unstable InRelease
+Ign:2 file:$APTARCHIVE unstable Release
+Get:3 file:$APTARCHIVE unstable/main Sources
+Get:4 file:$APTARCHIVE unstable/main i386 Packages
+Get:5 file:$APTARCHIVE unstable/main all Packages
+Get:6 file:$APTARCHIVE unstable/main Translation-en
+Reading package lists...
+W: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file.
+N: Data from such a repository can't be authenticated and is therefore potentially dangerous to use.
+N: See apt-secure(8) manpage for repository creation and user configuration details." aptget update --allow-insecure-repositories
+# ensure we can not install the package
+testfailureequal "WARNING: The following packages cannot be authenticated!
+  foo
+E: There were unauthenticated packages and -y was used without --allow-unauthenticated" aptget install -qq -y foo
+
+rm -rf rootdir/var/lib/apt/lists
+changetowebserver
+
 filesize() {
 	local CREATEDBY="$1"
 	shift
-	stat -c%s "/$(aptget indextargets --no-release-info --format '$(URI)' "Created-By: $CREATEDBY" "$@" | cut -d'/' -f 2- ).gz"
+	stat -c%s "${APTARCHIVE}/$(aptget indextargets --no-release-info --format '$(URI)' "Created-By: $CREATEDBY" "$@" | cut -d'/' -f 4- ).gz"
 }
-# allow override
-#aptget update --allow-insecure-repositories -o Debug::pkgAcquire::worker=1
-#exit
-testwarningequal "Get:1 file:$APTARCHIVE unstable InRelease
-Ign:1 file:$APTARCHIVE unstable InRelease
-Get:2 file:$APTARCHIVE unstable Release
-Ign:2 file:$APTARCHIVE unstable Release
-Get:3 file:$APTARCHIVE unstable/main Sources
-Ign:3 file:$APTARCHIVE unstable/main Sources
-Get:4 file:$APTARCHIVE unstable/main i386 Packages
-Ign:4 file:$APTARCHIVE unstable/main i386 Packages
-Get:5 file:$APTARCHIVE unstable/main all Packages
-Ign:5 file:$APTARCHIVE unstable/main all Packages
-Get:6 file:$APTARCHIVE unstable/main Translation-en
-Ign:6 file:$APTARCHIVE unstable/main Translation-en
-Get:3 file:$APTARCHIVE unstable/main Sources
-Ign:3 file:$APTARCHIVE unstable/main Sources
-Get:4 file:$APTARCHIVE unstable/main i386 Packages
-Ign:4 file:$APTARCHIVE unstable/main i386 Packages
-Get:5 file:$APTARCHIVE unstable/main all Packages
-Ign:5 file:$APTARCHIVE unstable/main all Packages
-Get:6 file:$APTARCHIVE unstable/main Translation-en
-Ign:6 file:$APTARCHIVE unstable/main Translation-en
-Get:3 file:$APTARCHIVE unstable/main Sources
-Ign:3 file:$APTARCHIVE unstable/main Sources
-Get:4 file:$APTARCHIVE unstable/main i386 Packages
-Ign:4 file:$APTARCHIVE unstable/main i386 Packages
-Get:5 file:$APTARCHIVE unstable/main all Packages
-Ign:5 file:$APTARCHIVE unstable/main all Packages
-Get:6 file:$APTARCHIVE unstable/main Translation-en
-Ign:6 file:$APTARCHIVE unstable/main Translation-en
-Get:3 file:$APTARCHIVE unstable/main Sources [$(filesize 'Sources') B]
-Get:4 file:$APTARCHIVE unstable/main i386 Packages [$(filesize 'Packages' 'Architecture: i386') B]
-Get:5 file:$APTARCHIVE unstable/main all Packages [$(filesize 'Packages' 'Architecture: all') B]
-Get:6 file:$APTARCHIVE unstable/main Translation-en [$(filesize 'Translations') B]
+testwarningequal "Ign:1 http://localhost:$APTHTTPPORT unstable InRelease
+Ign:2 http://localhost:$APTHTTPPORT unstable Release
+Ign:3 http://localhost:$APTHTTPPORT unstable/main Sources
+Ign:4 http://localhost:$APTHTTPPORT unstable/main i386 Packages
+Ign:5 http://localhost:$APTHTTPPORT unstable/main all Packages
+Ign:6 http://localhost:$APTHTTPPORT unstable/main Translation-en
+Ign:3 http://localhost:$APTHTTPPORT unstable/main Sources
+Ign:4 http://localhost:$APTHTTPPORT unstable/main i386 Packages
+Ign:5 http://localhost:$APTHTTPPORT unstable/main all Packages
+Ign:6 http://localhost:$APTHTTPPORT unstable/main Translation-en
+Ign:3 http://localhost:$APTHTTPPORT unstable/main Sources
+Ign:4 http://localhost:$APTHTTPPORT unstable/main i386 Packages
+Ign:5 http://localhost:$APTHTTPPORT unstable/main all Packages
+Ign:6 http://localhost:$APTHTTPPORT unstable/main Translation-en
+Get:3 http://localhost:$APTHTTPPORT unstable/main Sources [$(filesize 'Sources') B]
+Get:4 http://localhost:$APTHTTPPORT unstable/main i386 Packages [$(filesize 'Packages' 'Architecture: i386') B]
+Get:5 http://localhost:$APTHTTPPORT unstable/main all Packages [$(filesize 'Packages' 'Architecture: all') B]
+Get:6 http://localhost:$APTHTTPPORT unstable/main Translation-en [$(filesize 'Translations') B]
 Reading package lists...
-W: The repository 'file:$APTARCHIVE unstable Release' does not have a Release file.
+W: The repository 'http://localhost:$APTHTTPPORT unstable Release' does not have a Release file.
 N: Data from such a repository can't be authenticated and is therefore potentially dangerous to use.
 N: See apt-secure(8) manpage for repository creation and user configuration details." aptget update --allow-insecure-repositories
 # ensure we can not install the package

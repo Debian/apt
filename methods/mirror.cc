@@ -326,7 +326,11 @@ std::string MirrorMethod::GetMirrorFileURI(std::string const &Message, FetchItem
    {
       if (APT::String::Startswith(Itm->Uri, uristr))
       {
-	 uristr.erase(uristr.length() - 1); // remove the ending '/'
+	 if (::URI uri{uristr}; uri.Path.length() > 1 && APT::String::Endswith(uri.Path, "/"))
+	 {
+	    uri.Path.erase(uri.Path.length() - 1); // remove the ending '/'
+	    uristr = uri;
+	 }
 	 auto const colon = uristr.find(':');
 	 if (unlikely(colon == std::string::npos))
 	    continue;
@@ -375,7 +379,10 @@ bool MirrorMethod::URIAcquire(std::string const &Message, FetchItem *Itm) /*{{{*
       msgCache[Itm->Uri] = Message;
       MirrorListInfo info;
       info.state = REQUESTED;
-      info.baseuri = mirrorfileuri + '/';
+      if (not APT::String::Endswith(mirrorfileuri, "/"))
+	 info.baseuri = mirrorfileuri + '/';
+      else
+	 info.baseuri = mirrorfileuri;
       auto const colon = info.baseuri.find(':');
       if (unlikely(colon == std::string::npos))
 	 return false;

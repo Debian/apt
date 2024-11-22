@@ -124,9 +124,22 @@ msgmsg 'all mirrored via file'
 APTARCHIVE="$(readlink -f ./aptarchive)"
 sed -i -e "s#mirror+http://localhost:${APTHTTPPORT}#mirror+file:${APTARCHIVE}#" rootdir/etc/apt/sources.list.d/*
 testrun '*_localhost_*' '*_aptarchive_mirror.txt.gz_*'
+sed -i -e 's#/mirror\.txt\.gz stable#/mirror.txt stable#' rootdir/etc/apt/sources.list.d/*
+
+mv rootdir/etc/apt/sources.list.d rootdir/etc/apt/sources.list.d.bak
+mkdir rootdir/etc/apt/sources.list.d
+msgmsg 'fail gracefully if mirror uri has no filename'
+echo "deb mirror://localhost:${APTHTTPPORT}/ stable main" > rootdir/etc/apt/sources.list.d/mirrordir.list
+testfailure apt update
+
+msgmsg 'but succeed if it is indeed a mirror list'
+ln -s mirror.txt aptarchive/index.html
+testsuccess apt update
+rm aptarchive/index.html rootdir/etc/apt/sources.list.d/mirrordir.list
+rmdir rootdir/etc/apt/sources.list.d
+mv rootdir/etc/apt/sources.list.d.bak rootdir/etc/apt/sources.list.d
 
 msgmsg 'fallback mirrors are used if needed' 'as usual'
-sed -i -e 's#/mirror\.txt\.gz stable#/mirror.txt stable#' rootdir/etc/apt/sources.list.d/*
 echo "http://localhost:${APTHTTPPORT}/failure2	priority:3
 http://localhost:${APTHTTPPORT}/redirectme	priority:2
 http://localhost:${APTHTTPPORT}/failure	priority:1" > aptarchive/mirror.txt
@@ -242,7 +255,6 @@ echo "file:/nonexistent/apt/archive	priority:1
 http://localhost:${APTHTTPPORT}/redirectme
 " > aptarchive/mirror.txt
 testsuccessequal "Get:1 foo+file:${APTARCHIVE}/mirror.txt Mirrorlist [$(stat -c%s 'aptarchive/mirror.txt') B]
-Get:2 foo+file:/nonexistent/apt/archive unstable InRelease
 Ign:2 foo+file:/nonexistent/apt/archive unstable InRelease
   File not found - /nonexistent/apt/archive/dists/unstable/InRelease (2: No such file or directory)
 Hit:2 foo+http://localhost:${APTHTTPPORT}/redirectme unstable InRelease

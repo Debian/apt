@@ -74,10 +74,11 @@ E: Download Failed"
 setupproxydetect() {
 	local METH="$1"
 	shift
-	{
-		echo '#!/bin/sh -e'
-		echo "$@"
-	} > "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
+	cat >"${TMPWORKINGDIRECTORY}/apt-proxy-detect" <<EOF
+#!/bin/sh
+set -e
+$*
+EOF
 	chmod 755 "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
 	echo "Acquire::${METH}::${CONFNAME} \"${TMPWORKINGDIRECTORY}/apt-proxy-detect\";" > rootdir/etc/apt/apt.conf.d/02proxy-detect
 }
@@ -97,15 +98,38 @@ W: ProxyAutoDetect command returned an empty line" apthelper auto-detect-proxy h
     chmod -x "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
     testfailureequal "E: ProxyAutoDetect command '${TMPWORKINGDIRECTORY}/apt-proxy-detect' can not be executed! - access (13: Permission denied)" apthelper auto-detect-proxy http://example.com/
 
-    msgmsg "apt-helper $CONFNAME" 'http proxy'
-    setupproxydetect 'http' 'echo "http://some-proxy"'
-    testsuccessequal "Using proxy 'http://some-proxy' for URL 'http://www.example.com/'" apthelper auto-detect-proxy http://www.example.com
-    testsuccessequal "Using proxy '' for URL 'https://ssl.example.com/'" apthelper auto-detect-proxy https://ssl.example.com
+    for meth in 'http' 'https'; do
+	msgmsg "apt-helper $CONFNAME" "${meth} proxy"
+	for type in 'http' 'https' 'socks5h'; do
+		setupproxydetect "$meth" "echo '${type}://some-proxy'"
+		testsuccessequal "Using proxy '${type}://some-proxy' for URL '${meth}://www.example.com/'" apthelper auto-detect-proxy "${meth}://www.example.com"
+		if [ "$meth" = 'http' ]; then
+			testsuccessequal "Using proxy '' for URL 'https://ssl.example.com/'" apthelper auto-detect-proxy 'https://ssl.example.com'
+		else
+			testsuccessequal "Using proxy '' for URL 'http://no-ssl.example.com/'" apthelper auto-detect-proxy 'http://no-ssl.example.com'
+		fi
+	done
+    done
 
-    msgmsg "apt-helper $CONFNAME" 'https proxy'
-    setupproxydetect 'https' 'echo "https://https-proxy"'
-    testsuccessequal "Using proxy '' for URL 'http://no-ssl.example.com/'" apthelper auto-detect-proxy http://no-ssl.example.com
-    testsuccessequal "Using proxy 'https://https-proxy' for URL 'https://ssl.example.com/'" apthelper auto-detect-proxy https://ssl.example.com
+    msgmsg "apt-helper $CONFNAME" 'no strange proxy'
+    for meth in gpgv copy store file; do
+	setupproxydetect "$meth" "echo '${meth}://some-proxy'"
+	testsuccessequal "Using proxy '' for URL '${meth}:/foo/bar'" apthelper auto-detect-proxy "${meth}:/foo/bar"
+	testsuccessequal "Using proxy '' for URL '${meth}://./foo/bar'" apthelper auto-detect-proxy "${meth}://./foo/bar"
+    done
+    for url in 'cdrom://Moo Cow Rom/debian' 'cdrom://[The Debian 1.2 disk, 1/2 R16]/debian/'; do
+	setupproxydetect "${url%%:*}" "echo 'cdrom://some-proxy'"
+	testsuccessequal "Using proxy '' for URL '${url}'" apthelper auto-detect-proxy "$url"
+    done
+    for meth in tor tor+http tor+https; do
+	setupproxydetect "$meth" "echo 'socks5h://some-proxy'"
+	testsuccessequal "Using proxy 'socks5h://some-proxy' for URL '${meth}://example.org/'" apthelper auto-detect-proxy "${meth}://example.org"
+
+	setupproxydetect "$meth" "echo 'DIRECT'"
+	testwarningequal "Using proxy '' for URL '${meth}://example.org/'
+W: ProxyAutoDetect command returned incompatible proxy 'DIRECT' for access type ${meth}" apthelper auto-detect-proxy "${meth}://example.org"
+    done
+
     rm -f rootdir/etc/apt/apt.conf.d/02proxy-detect "${TMPWORKINGDIRECTORY}/apt-proxy-detect"
 }
 

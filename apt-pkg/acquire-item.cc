@@ -32,7 +32,9 @@
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
+#include <array>
 #include <cerrno>
+#include <ctime>
 #include <chrono>
 #include <cstddef>
 #include <cstdio>
@@ -471,15 +473,16 @@ bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
       // now add the actual by-hash uris
       auto const Expected = GetExpectedHashes();
       auto const TargetHash = Expected.find(nullptr);
-      auto const PushByHashURI = [&](std::string U) {
+      auto const PushByHashURI = [&](std::string const &U) {
 	 if (unlikely(TargetHash == nullptr))
 	    return false;
-	 auto const trailing_slash = U.find_last_of("/");
+	 ::URI uri{U};
+	 auto const trailing_slash = uri.Path.find_last_of("/");
 	 if (unlikely(trailing_slash == std::string::npos))
 	    return false;
-	 auto byhashSuffix = "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
-	 U.replace(trailing_slash, U.length() - trailing_slash, std::move(byhashSuffix));
-	 PushAlternativeURI(std::move(U), {}, false);
+	 auto altPath = uri.Path.substr(0, trailing_slash) + "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
+	 std::swap(uri.Path, altPath);
+	 PushAlternativeURI(uri, {{"Alternate-Paths", "../../" + flNotDir(altPath)}}, false);
 	 return true;
       };
       PushByHashURI(Item.URI);
@@ -843,8 +846,17 @@ void pkgAcquire::Item::PushAlternativeURI(std::string &&NewURI, std::unordered_m
       d->AlternativeURIs.emplace_front(std::move(NewURI), std::move(fields));
 }
 									/*}}}*/
-void pkgAcquire::Item::RemoveAlternativeSite(std::string &&OldSite) /*{{{*/
+void pkgAcquire::Item::RemoveAlternativeSite(std::string const &AltUriStr)/*{{{*/
 {
+   ::URI AltUri{AltUriStr};
+   // the hostnames for these methods are empty for absolute paths which would result
+   // in the elimination of all sites accessed via those methods. On the upside, those
+   // methods are local and fast to reply with failure, so it doesn't hurt that much to
+   // keep them in the loop – so we just exit here rather than trying to guess the site.
+   std::array const badhosts{"file", "copy", "cdrom"};
+   if (std::find(badhosts.begin(), badhosts.end(), AltUri.Access) != badhosts.end())
+      return;
+   auto const OldSite = URI::SiteOnly(AltUriStr);
    d->AlternativeURIs.erase(std::remove_if(d->AlternativeURIs.begin(), d->AlternativeURIs.end(),
 					   [&](decltype(*d->AlternativeURIs.cbegin()) AltUri) {
 					      return URI::SiteOnly(AltUri.URI) == OldSite;
@@ -939,7 +951,7 @@ void pkgAcquire::Item::FailMessage(string const &Message)
       failreason = WEAK_HASHSUMS;
    else if (FailReason == "RedirectionLoop")
       failreason = REDIRECTION_LOOP;
-   else if (Status == StatAuthError)
+   else if (Status == StatAuthError || FailReason == "HashSumMismatch")
       failreason = HASHSUM_MISMATCH;
 
    if(ErrorText.empty())
@@ -964,7 +976,7 @@ void pkgAcquire::Item::FailMessage(string const &Message)
 	    break;
       }
 
-      if (Status == StatAuthError)
+      if (Status == StatAuthError || failreason == HASHSUM_MISMATCH)
       {
 	 auto const ExpectedHashes = GetExpectedHashes();
 	 if (ExpectedHashes.empty() == false)
@@ -976,13 +988,25 @@ void pkgAcquire::Item::FailMessage(string const &Message)
 	 if (failreason == HASHSUM_MISMATCH)
 	 {
 	    out << "Hashes of received file:" << std::endl;
+	    size_t hashes = 0;
 	    for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
 	    {
 	       std::string const tagname = std::string(*type) + "-Hash";
 	       std::string const hashsum = LookupTag(Message, tagname.c_str());
-	       if (hashsum.empty() == false)
+	       if (not hashsum.empty())
+	       {
 		  formatHashsum(out, HashString(*type, hashsum));
+		  ++hashes;
+	       }
 	    }
+	    if (hashes == 0)
+	       for (char const *const *type = HashString::SupportedHashes(); *type != nullptr; ++type)
+	       {
+		  std::string const tagname = std::string("Alt-") + *type + "-Hash";
+		  std::string const hashsum = LookupTag(Message, tagname.c_str());
+		  if (not hashsum.empty())
+		     formatHashsum(out, HashString(*type, hashsum));
+	       }
 	 }
 	 auto const lastmod = LookupTag(Message, "Last-Modified", "");
 	 if (lastmod.empty() == false)
@@ -1024,8 +1048,7 @@ void pkgAcquire::Item::Start(string const &/*Message*/, unsigned long long const
 bool pkgAcquire::Item::VerifyDone(std::string const &Message,
 	 pkgAcquire::MethodConfig const * const /*Cnf*/)
 {
-   std::string const FileName = LookupTag(Message,"Filename");
-   if (FileName.empty() == true)
+   if (LookupTag(Message,"Filename").empty() && LookupTag(Message, "Alt-Filename").empty())
    {
       Status = StatError;
       ErrorText = "Method gave a blank filename";
@@ -1413,7 +1436,7 @@ bool pkgAcqMetaBase::CheckDownloadDone(pkgAcqTransactionItem * const I, const st
    // verified yet)
 
    // Save the final base URI we got this Release file from
-   if (I->UsedMirror.empty() == false && _config->FindB("Acquire::SameMirrorForAllIndexes", true))
+   if (not I->Local && not I->UsedMirror.empty() && _config->FindB("Acquire::SameMirrorForAllIndexes", true))
    {
       auto InReleasePath = Target.Option(IndexTarget::INRELEASE_PATH);
       if (InReleasePath.empty())
