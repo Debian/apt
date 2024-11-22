@@ -123,39 +123,63 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
    AssignItemID(Itm);
    clearLastLine();
 
-   bool ShowErrorText = true;
+   bool ShowErrorText = false;
    if (Itm.Owner->Status == pkgAcquire::Item::StatDone || Itm.Owner->Status == pkgAcquire::Item::StatIdle)
    {
       // TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
       // which failed to download, but the error is ignored (compare "Err:")
       ioprintf(out, _("Ign:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
-      if (Itm.Owner->ErrorText.empty() ||
-	    _config->FindB("Acquire::Progress::Ignore::ShowErrorText", false) == false)
-	 ShowErrorText = false;
+      if (not Itm.Owner->ErrorText.empty())
+      {
+	 if (_config->FindB("Acquire::Progress::Ignore::ShowErrorText", false))
+	    ShowErrorText = true;
+	 else
+	 {
+	    if (auto const ignored = IgnoredErrorTexts.find(Itm.Owner->ID); ignored != IgnoredErrorTexts.end())
+	    {
+	       if (std::find(ignored->second.begin(), ignored->second.end(), Itm.Owner->ErrorText) == ignored->second.end())
+		  ignored->second.emplace_back(Itm.Owner->ErrorText);
+	    }
+	    else
+	       IgnoredErrorTexts.emplace(Itm.Owner->ID, std::vector<std::string>{Itm.Owner->ErrorText});
+	 }
+      }
    }
    else
    {
       // TRANSLATOR: Very short word to be displayed for files in 'apt-get update'
       // which failed to download and the error is critical (compare "Ign:")
       ioprintf(out, _("Err:%lu %s"), Itm.Owner->ID, Itm.Description.c_str());
+      ShowErrorText = true;
    }
 
-   if (ShowErrorText)
+   if (ShowErrorText && not Itm.Owner->ErrorText.empty())
    {
-      std::string::size_type line_start = 0;
-      std::string::size_type line_end;
-      while ((line_end = Itm.Owner->ErrorText.find_first_of("\n\r", line_start)) != std::string::npos) {
-	 out << std::endl << "  " << Itm.Owner->ErrorText.substr(line_start, line_end - line_start);
-	 line_start = Itm.Owner->ErrorText.find_first_not_of("\n\r", line_end + 1);
-	 if (line_start == std::string::npos)
-	    break;
+      auto const printErrorText = [](std::ostream &out, std::string_view errortext) {
+	 while (not errortext.empty())
+	 {
+	    auto const line_end = errortext.find_first_of("\n\r");
+	    out << "\n  " << errortext.substr(0, line_end);
+	    if (line_end == std::string_view::npos)
+	       break;
+	    errortext.remove_prefix(line_end);
+	    auto const line_start = errortext.find_first_not_of("\n\r");
+	    if (line_start == std::string_view::npos)
+	       break;
+	    errortext.remove_prefix(line_start);
+	 }
+      };
+      if (auto const ignored = IgnoredErrorTexts.find(Itm.Owner->ID); ignored != IgnoredErrorTexts.end())
+      {
+	 for (auto const &text : ignored->second)
+	    printErrorText(out, text);
+	 if (std::find(ignored->second.begin(), ignored->second.end(), Itm.Owner->ErrorText) == ignored->second.end())
+	    printErrorText(out, Itm.Owner->ErrorText);
       }
-      if (line_start == 0)
-	 out << std::endl << "  " << Itm.Owner->ErrorText;
-      else if (line_start != std::string::npos)
-	 out << std::endl << "  " << Itm.Owner->ErrorText.substr(line_start);
+      else
+	 printErrorText(out, Itm.Owner->ErrorText);
    }
-   out << std::endl;
+   out << '\n' << std::flush;
 
    Update = true;
 }
