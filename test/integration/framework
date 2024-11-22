@@ -2029,6 +2029,9 @@ testfailure() {
  BAD signature from 
  signature could not be verified" "$OUTPUT"; then
 					msgpass
+				elif [ -e "$OUTPUT" -a ! -s "$OUTPUT" ]; then
+					msgwarn "apt-key failed without output, this is normal for gpgv-sq (see sequoia-chameleon-gnupg#88)"
+					msgpass
 				else
 					msgfailoutput "run failed with exitcode ${EXITCODE}, but no signature error" "$OUTPUT" "$@"
 				fi

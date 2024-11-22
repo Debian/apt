@@ -101,6 +101,16 @@ updatewithwarnings() {
 	testsuccess grep -E "$1" rootdir/tmp/testwarning.output
 }
 
+foreachgpg() {
+    rm -f rootdir/etc/apt/apt.conf.d/00gpgvcmd
+	"$@"
+	for GPGV in "gpgv-sq" "gpgv-g10code"; do
+		msgmsg "Forcing $GPGV to be used"
+		echo "APT::Key::GPGVCommand \"$GPGV\";" > "rootdir/etc/apt/apt.conf.d/00gpgvcmd"
+		"$@"
+	done
+}
+
 runtest() {
 	msgmsg 'Cold archive signed by' 'Joe Sixpack'
 	prepare "${PKGFILE}"
@@ -155,8 +165,8 @@ runtest() {
 	if [ -e rootdir/etc/apt/apt.conf.d/99gnupg2 ]; then
 		prepare "${PKGFILE}"
 		rm -rf rootdir/var/lib/apt/lists
-		signreleasefiles 'Joe Sixpack' 'aptarchive' --faked-system-time "20070924T154812" --default-sig-expire 2016-04-01
-		updatewithwarnings '^W: .* EXPSIG'
+		signreleasefiles 'Joe Sixpack' 'aptarchive' --faked-system-time "20160924T154812" --default-sig-expire 2017-04-01
+		updatewithwarnings '^W: .* (BADSIG|EXPSIG)'
 		testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 		failaptold
@@ -420,6 +430,28 @@ runtest2() {
 " aptcache show apt
 	failaptnew
 
+	msgmsg 'Cold archive signed by' 'Empty signature'
+	rm -rf rootdir/var/lib/apt/lists
+	find aptarchive -name Release -exec touch {}.gpg \;
+	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  Release: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update -o Debug::gpgv=1
+
+	msgmsg 'Cold archive signed by' 'Unknown format signature'
+	rm -rf rootdir/var/lib/apt/lists
+	find aptarchive -name Release -exec sh -c "echo Hello > {}.gpg" \;
+	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  Release: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update
+
+	msgmsg 'Cold archive signed by' 'Empty inline'
+	rm -rf rootdir/var/lib/apt/lists
+	find aptarchive -name Release -exec sh -c '( echo -----BEGIN PGP SIGNED MESSAGE-----; echo Hash: SHA512; echo; cat {} ; echo; echo -----BEGIN PGP SIGNATURE-----; echo ; echo -----END PGP SIGNATURE----- ) > $(dirname {})/In$(basename {})' \;
+	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  InRelease: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update
+
+	msgmsg 'Cold archive signed by' 'Bad inline'
+	rm -rf rootdir/var/lib/apt/lists
+	find aptarchive -name Release -exec sh -c '( echo -----BEGIN PGP SIGNED MESSAGE-----; echo Hash: SHA512; echo; cat {} ; echo; echo -----BEGIN PGP SIGNATURE-----; echo ; echo SGVsbG8K; echo =nFa9; echo -----END PGP SIGNATURE----- ) > $(dirname {})/In$(basename {})' \;
+	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  InRelease: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update
+
+	find aptarchive/ \( -name InRelease -o -name Release.gpg \) -delete
+
 	# Unsigned archive from the beginning must also be detected.
 	msgmsg 'Cold archive signed by' 'nobody'
 	rm -rf rootdir/var/lib/apt/lists
@@ -458,7 +490,7 @@ successfulaptgetupdate() {
 		testsuccess grep "$1" aptupdate.output
 	fi
 }
-runtest3 'Trusted'
+foreachgpg runtest3 'Trusted'
 
 successfulaptgetupdate() {
 	testwarning aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
@@ -467,7 +499,7 @@ successfulaptgetupdate() {
 	fi
 	testsuccess grep 'uses weak algorithm' rootdir/tmp/testwarning.output
 }
-runtest3 'Weak'
+foreachgpg runtest3 'Weak'
 
 msgmsg "Running test with apt-untrusted digest"
 echo "APT::Hashes::$APT_TESTS_DIGEST_ALGO::Untrusted \"yes\";" > rootdir/etc/apt/apt.conf.d/truststate
@@ -502,8 +534,8 @@ runfailure() {
 		export APT_DONT_SIGN='Release.gpg'
 	done
 }
-runfailure
+foreachgpg runfailure
 
 msgmsg "Running test with gpgv-untrusted digest"
 export APT_TESTS_DIGEST_ALGO='MD5'
-runfailure
+foreachgpg runfailure
