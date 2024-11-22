@@ -258,7 +258,7 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 	msgtest 'Test verify a file' 'with no sig'
 	testfailure --nomsg aptkey --quiet --readonly --keyring "${KEYDIR}/testcase-multikey.pub.${EXT}" verify "${SIGNATURE}" "${SIGNATURE}2"
 
-	for GPGV in '' 'gpgv' 'gpgv1' 'gpgv2'; do
+	for GPGV in '' 'gpgv' 'gpgv1' 'gpgv2' 'gpgv-sq' 'gpgv-g10code'; do
 		echo "APT::Key::GPGVCommand \"$GPGV\";" > "${ROOTDIR}/etc/apt/apt.conf.d/00gpgvcmd"
 		if [ -n "$GPGV" ] && ! command dpkg -l gnupg1 2>&1 | grep -q '^ii'; then continue; fi
 
@@ -330,7 +330,7 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 		adv --batch --yes -u 'Marvin' -u 'Joe' --armor --detach-sign --sign --output "${SIGNATURE}.gpg" "${SIGNATURE}"
 	testsuccess test -s "${SIGNATURE}.gpg" -a -s "${SIGNATURE}"
 
-	for GPGV in '' 'gpgv' 'gpgv1' 'gpgv2'; do
+	for GPGV in '' 'gpgv' 'gpgv1' 'gpgv2' 'gpgv-sq' 'gpgv-g10code'; do
 		echo "APT::Key::GPGVCommand \"$GPGV\";" > "${ROOTDIR}/etc/apt/apt.conf.d/00gpgvcmd"
 		if [ -n "$GPGV" ] && ! command dpkg -l gnupg1 2>&1 | grep -q '^ii'; then continue; fi
 

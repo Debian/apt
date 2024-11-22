@@ -101,6 +101,16 @@ updatewithwarnings() {
 	testsuccess grep -E "$1" rootdir/tmp/testwarning.output
 }
 
+foreachgpg() {
+    rm -f rootdir/etc/apt/apt.conf.d/00gpgvcmd
+	"$@"
+	for GPGV in "gpgv-sq" "gpgv-g10code"; do
+		msgmsg "Forcing $GPGV to be used"
+		echo "APT::Key::GPGVCommand \"$GPGV\";" > "rootdir/etc/apt/apt.conf.d/00gpgvcmd"
+		"$@"
+	done
+}
+
 runtest() {
 	msgmsg 'Cold archive signed by' 'Joe Sixpack'
 	prepare "${PKGFILE}"
@@ -480,7 +490,7 @@ successfulaptgetupdate() {
 		testsuccess grep "$1" aptupdate.output
 	fi
 }
-runtest3 'Trusted'
+foreachgpg runtest3 'Trusted'
 
 successfulaptgetupdate() {
 	testwarning aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
@@ -489,7 +499,7 @@ successfulaptgetupdate() {
 	fi
 	testsuccess grep 'uses weak algorithm' rootdir/tmp/testwarning.output
 }
-runtest3 'Weak'
+foreachgpg runtest3 'Weak'
 
 msgmsg "Running test with apt-untrusted digest"
 echo "APT::Hashes::$APT_TESTS_DIGEST_ALGO::Untrusted \"yes\";" > rootdir/etc/apt/apt.conf.d/truststate
@@ -524,8 +534,8 @@ runfailure() {
 		export APT_DONT_SIGN='Release.gpg'
 	done
 }
-runfailure
+foreachgpg runfailure
 
 msgmsg "Running test with gpgv-untrusted digest"
 export APT_TESTS_DIGEST_ALGO='MD5'
-runfailure
+foreachgpg runfailure
