@@ -90,7 +90,7 @@ class CircleBuf
    ~CircleBuf();
 };
 
-struct HttpServerState: public ServerState
+struct HttpServerState final : public ServerState
 {
    // This is the connection itself. Output is data FROM the server
    CircleBuf In;
@@ -121,7 +121,7 @@ struct HttpServerState: public ServerState
    virtual ~HttpServerState() {Close();};
 };
 
-class HttpMethod : public BaseHttpMethod
+class HttpMethod final : public BaseHttpMethod
 {
    public:
    virtual void SendReq(FetchItem *Itm) APT_OVERRIDE;

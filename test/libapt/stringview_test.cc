@@ -35,7 +35,8 @@ TEST(StringViewTest,FooString)
    static_assert( 3 == defString.length(), "def right size");
    EXPECT_EQ(0, defString.to_string().compare(0, defString.length(), defString.data(), 3));
 
-   APT::StringView strString{std::string{"foo"}};
+   std::string strstr{"foo"};
+   APT::StringView strString{strstr};
    EXPECT_EQ(3u, strString.length());
    EXPECT_EQ(0, strString.to_string().compare(0, strString.length(), strString.data(), 3));
 

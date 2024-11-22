@@ -986,7 +986,7 @@ std::vector<PseudoPkg> GetAllPackagesAsPseudo(pkgSourceList *const SL, CommandLi
 std::vector<PseudoPkg> GetPseudoPackages(pkgSourceList *const SL, CommandLine &CmdL, bool (*Add)(pkgSourceList *const, PseudoPkg &&, std::vector<PseudoPkg> &), std::string const &pseudoArch)/*{{{*/
 {
    std::vector<PseudoPkg> VolatileCmdL;
-   std::remove_if(CmdL.FileList + 1, CmdL.FileList + 1 + CmdL.FileSize(), [&](char const *const I) {
+   (void)std::remove_if(CmdL.FileList + 1, CmdL.FileList + 1 + CmdL.FileSize(), [&](char const *const I) {
       return AddIfVolatile(SL, VolatileCmdL, Add, I, pseudoArch);
    });
    return VolatileCmdL;

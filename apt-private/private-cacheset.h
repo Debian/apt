@@ -68,6 +68,7 @@ class Matcher {
 public:
     virtual bool operator () (const pkgCache::PkgIterator &/*P*/) {
         return true;}
+    virtual ~Matcher() = default;
 };
 
 // FIXME: add default argument for OpProgress (or overloaded function)

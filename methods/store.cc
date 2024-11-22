@@ -31,7 +31,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-class StoreMethod : public aptMethod
+class StoreMethod final : public aptMethod
 {
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
 

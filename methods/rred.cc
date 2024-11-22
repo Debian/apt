@@ -598,7 +598,7 @@ class Patch {
 };
 
 #ifndef APT_EXCLUDE_RRED_METHOD_CODE
-class RredMethod : public aptMethod {
+class RredMethod final : public aptMethod {
    private:
       bool Debug;
 

@@ -27,7 +27,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-class FileMethod : public aptMethod
+class FileMethod final : public aptMethod
 {
    virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
 

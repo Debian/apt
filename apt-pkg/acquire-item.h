@@ -530,7 +530,7 @@ class APT_HIDDEN pkgAcqMetaIndex : public pkgAcqMetaBase
  *
  *  \sa pkgAcqMetaIndex
  */
-class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
+class APT_HIDDEN pkgAcqMetaSig final : public pkgAcqTransactionItem
 {
    void * const d;
 
@@ -560,7 +560,7 @@ class APT_HIDDEN pkgAcqMetaSig : public pkgAcqTransactionItem
 };
 									/*}}}*/
 /** \brief An item responsible for downloading clearsigned metaindexes	{{{*/
-class APT_HIDDEN pkgAcqMetaClearSig : public pkgAcqMetaIndex
+class APT_HIDDEN pkgAcqMetaClearSig final : public pkgAcqMetaIndex
 {
    void * const d;
    IndexTarget const DetachedDataTarget;
@@ -707,7 +707,7 @@ struct APT_HIDDEN DiffInfo {						/*{{{*/
  *
  *  \sa pkgAcqIndexDiffs, pkgAcqIndex
  */
-class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqIndex
+class APT_HIDDEN pkgAcqDiffIndex final : public pkgAcqIndex
 {
    void * const d;
    std::vector<pkgAcqIndexMergeDiffs*> * diffs;
@@ -773,7 +773,7 @@ class APT_HIDDEN pkgAcqDiffIndex : public pkgAcqIndex
  *
  *  \sa pkgAcqDiffIndex, pkgAcqIndex
  */
-class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
+class APT_HIDDEN pkgAcqIndexMergeDiffs final : public pkgAcqBaseIndex
 {
    protected:
 
@@ -848,7 +848,7 @@ class APT_HIDDEN pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
  *
  *  \sa pkgAcqDiffIndex, pkgAcqIndex
  */
-class APT_HIDDEN pkgAcqIndexDiffs : public pkgAcqBaseIndex
+class APT_HIDDEN pkgAcqIndexDiffs final : public pkgAcqBaseIndex
 {
    private:
 
@@ -1194,7 +1194,7 @@ class APT_PUBLIC pkgAcqFile : public pkgAcquire::Item
    virtual ~pkgAcqFile();
 };
 									/*}}}*/
-class APT_HIDDEN pkgAcqAuxFile : public pkgAcqFile /*{{{*/
+class APT_HIDDEN pkgAcqAuxFile final : public pkgAcqFile		/*{{{*/
 {
    pkgAcquire::Item *const Owner;
    pkgAcquire::Worker *const Worker;

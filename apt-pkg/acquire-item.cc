@@ -717,7 +717,7 @@ bool pkgAcqIndexDiffs::AcquireByHash() const
 }
 									/*}}}*/
 
-class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
+class APT_HIDDEN NoActionItem final : public pkgAcquire::Item		/*{{{*/
 /* The sole purpose of this class is having an item which does nothing to
    reach its done state to prevent cleanup deleting the mentioned file.
    Handy in cases in which we know we have the file already, like IMS-Hits. */
@@ -741,7 +741,7 @@ class APT_HIDDEN NoActionItem : public pkgAcquire::Item			/*{{{*/
    }
 };
 									/*}}}*/
-class APT_HIDDEN CleanupItem : public pkgAcqTransactionItem		/*{{{*/
+class APT_HIDDEN CleanupItem final : public pkgAcqTransactionItem	/*{{{*/
 /* This class ensures that a file which was configured but isn't downloaded
    for various reasons isn't kept in an old version in the lists directory.
    In a way its the reverse of NoActionItem as it helps with removing files
