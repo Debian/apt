@@ -12,21 +12,21 @@
 # Yuri Kozlov <kozlov.y@gmail.com>, 2004, 2005, 2006, 2007, 2008.
 # Yuri Kozlov <yuray@komyakino.ru>, 2009, 2010, 2012, 2015, 2016.
 # Lev Lamberov <dogsleg@debian.org>, 2018.
-# Алексей Шилин <rootlexx@mail.ru>, 2017-2021.
+# Алексей Шилин <shilin.aleksej@gmail.com>, 2017-2024.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.2.0\n"
+"Project-Id-Version: apt 2.9.11\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-11-14 17:31+0000\n"
-"PO-Revision-Date: 2021-02-22 20:02+0300\n"
-"Last-Translator: Алексей Шилин <rootlexx@mail.ru>\n"
-"Language-Team: русский <debian-l10n-russian@lists.debian.org>\n"
+"POT-Creation-Date: 2024-11-20 15:03+0000\n"
+"PO-Revision-Date: 2024-11-18 23:14+0300\n"
+"Last-Translator: Алексей Шилин <shilin.aleksej@gmail.com>\n"
+"Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Gtranslator 3.30.1\n"
+"X-Generator: Gtranslator 42.0\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
@@ -255,6 +255,8 @@ msgid ""
 "Repositories should provide a clear-signed InRelease file, but none found at "
 "%s."
 msgstr ""
+"Репозитории должны предоставлять незашифрованный подписанный файл InRelease, "
+"однако он не найден в %s."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -688,26 +690,26 @@ msgstr "Синтаксическая ошибка %s:%u: лишние симво
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Error:"
-msgstr ""
+msgstr "Ошибка:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Warning:"
-msgstr ""
+msgstr "Предупреждение:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Notice:"
-msgstr ""
+msgstr "Уведомление:"
 
 #: apt-pkg/contrib/error.cc
 msgid "Audit:"
-msgstr ""
+msgstr "Аудит:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Debug:"
-msgstr ""
+msgstr "Отладка:"
 
 #: apt-pkg/contrib/extracttar.cc
 #, c-format
@@ -1349,10 +1351,8 @@ msgid "Calculating upgrade"
 msgstr "Расчёт обновлений"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
-#| msgid "Total dependencies: "
 msgid "Solving dependencies"
-msgstr "Всего зависимостей: "
+msgstr "Разрешение зависимостей"
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
@@ -1948,13 +1948,14 @@ msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
 msgstr ""
+"Необъединённый usr более не поддерживается, воспользуйтесь usrmerge для "
+"перехода к системе с объединённым usr."
 
 #. TRANSLATORS: %s is a url to a page describing merged-usr (bookworm release notes)
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Selected %s for removal.\n"
+#, c-format
 msgid "See %s for more details."
-msgstr "Выбран %s для удаления.\n"
+msgstr "См. %s для получения дополнительной информации."
 
 #: apt-private/private-install.cc
 msgid ""
@@ -2001,13 +2002,12 @@ msgstr "Внутренняя ошибка: упорядочение пакето
 
 #: apt-private/private-install.cc
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
-msgstr "Странно. Несовпадение размеров, напишите на apt@packages.debian.org"
+msgstr "Странно… Несовпадение размеров, напишите на apt@packages.debian.org"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Downloading %s %s"
+#, c-format
 msgid "  Download size: %sB / %sB\n"
-msgstr "Выполняется загрузка %s %s"
+msgstr "  Объём загрузки: %sB / %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2017,10 +2017,9 @@ msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Необходимо скачать %sB/%sB архивов.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Downloading %s %s"
+#, c-format
 msgid "  Download size: %sB\n"
-msgstr "Выполняется загрузка %s %s"
+msgstr "  Объём загрузки: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2041,7 +2040,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB / %sB available\n"
-msgstr ""
+msgstr "Требуемое пространство: %sB / %sB доступно\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2049,7 +2048,10 @@ msgstr ""
 #, c-format
 msgid "More space needed than available: %sB > %sB, installation may fail"
 msgstr ""
+"Требуется больше дискового пространства, чем доступно: %sB > %sB, установка "
+"может завершиться с ошибкой"
 
+# "Лишние" пробелы служат для выравнивания с выводимым выше сообщением.
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
 #. The first %s is the location of the boot directory (determined from Dir::Boot),
@@ -2058,7 +2060,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "in %s:  %sB / %sB available\n"
-msgstr ""
+msgstr "в %s:             %sB / %sB доступно\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2068,17 +2070,18 @@ msgstr ""
 msgid ""
 "More space needed in %s than available: %sB > %sB, installation may fail"
 msgstr ""
+"В %s требуется больше дискового пространства, чем доступно: %sB > %sB, "
+"установка может завершиться с ошибкой"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB\n"
-msgstr ""
+msgstr "Требуемое пространство: %sB\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Stored label: %s\n"
+#, c-format
 msgid "  Freed space: %sB\n"
-msgstr "Найдена метка: %s\n"
+msgstr "  Освобождаемое пространство: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2100,14 +2103,16 @@ msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
 msgstr ""
+"Удаление критически важных для системы пакетов запрещено. Это может привести "
+"к поломке системы."
 
 #: apt-private/private-install.cc
 msgid "Continue anyway?"
-msgstr ""
+msgstr "Всё равно продолжить?"
 
 #: apt-private/private-install.cc
 msgid "Continue?"
-msgstr ""
+msgstr "Продолжить?"
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
@@ -2347,50 +2352,41 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Следующие пакеты имеют неудовлетворённые зависимости:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "satisfy dependency strings"
 msgid "Unsatisfied dependencies:"
-msgstr "удовлетворить строки зависимостей"
+msgstr "Неудовлетворённые зависимости:"
 
 #: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Следующие НОВЫЕ пакеты будут установлены:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Installing %s"
 msgid "Installing:"
-msgstr "Устанавливается %s"
+msgstr "Установка:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Total dependencies: "
 msgid "Installing dependencies:"
-msgstr "Всего зависимостей: "
+msgstr "Установка зависимостей:"
 
 #: apt-private/private-output.cc
 msgid "REMOVING:"
-msgstr ""
+msgstr "УДАЛЕНИЕ:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
 msgstr "Следующие пакеты будут УДАЛЕНЫ:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "The following upgrades have been deferred due to phasing:"
-msgstr "Следующие пакеты будут оставлены в неизменном виде:"
+msgstr ""
+"Обновление следующих пакетов отложено из-за поэтапного распространения:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "Not upgrading yet due to phasing:"
-msgstr "Следующие пакеты будут оставлены в неизменном виде:"
+msgstr "Обновление отложено из-за поэтапного распространения:"
 
 #: apt-private/private-output.cc
 msgid "Not upgrading:"
-msgstr ""
+msgstr "Пропуск обновления:"
 
 #: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
@@ -2402,21 +2398,19 @@ msgstr "Следующие пакеты будут обновлены:"
 
 #: apt-private/private-output.cc
 msgid "Upgrading:"
-msgstr ""
+msgstr "Обновление:"
 
 #: apt-private/private-output.cc
 msgid "DOWNGRADING:"
-msgstr ""
+msgstr "Замена на СТАРЫЕ версии:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Следующие пакеты будут заменены на СТАРЫЕ версии:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Pinned packages:"
 msgid "Changing held packages:"
-msgstr "Привязанные пакеты:"
+msgstr "Изменение зафиксированных пакетов:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2437,7 +2431,7 @@ msgstr ""
 
 #: apt-private/private-output.cc
 msgid "Summary:"
-msgstr ""
+msgstr "Сводка:"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2445,10 +2439,9 @@ msgid "%lu upgraded, %lu newly installed, "
 msgstr "Обновлено %lu пакетов, установлено %lu новых пакетов, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Upgrading: %lu, Installing: %lu, "
-msgstr "Устанавливается %s"
+msgstr "Обновление: %lu, Установка: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2456,10 +2449,9 @@ msgid "%lu reinstalled, "
 msgstr "переустановлено %lu пакетов, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Reinstalling: %lu, "
-msgstr "Устанавливается %s"
+msgstr "Переустановка: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2467,10 +2459,9 @@ msgid "%lu downgraded, "
 msgstr "%lu пакетов заменено на старые версии, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Downloading %s %s"
+#, c-format
 msgid "Downgrading: %lu, "
-msgstr "Выполняется загрузка %s %s"
+msgstr "Замена на старые версии: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2480,7 +2471,7 @@ msgstr "для удаления отмечено %lu пакетов, и %lu па
 #: apt-private/private-output.cc
 #, c-format
 msgid "Removing: %lu, Not Upgrading: %lu\n"
-msgstr ""
+msgstr "Удаление: %lu, Пропуск обновления: %lu\n"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2758,7 +2749,7 @@ msgstr ""
 #: apt-private/private-update.cc
 #, c-format
 msgid "Missing Signed-By in the %s entry for '%s'"
-msgstr ""
+msgstr "Отсутствует поле Signed-By в записи %s для '%s'"
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3384,8 +3375,6 @@ msgid "remove packages"
 msgstr "удалить пакеты"
 
 #: cmdline/apt.cc
-#, fuzzy
-#| msgid "Remove automatically all unused packages"
 msgid "automatically remove all unused packages"
 msgstr "автоматически удалить все неиспользуемые пакеты"
 
@@ -3932,12 +3921,12 @@ msgstr "Неправильный URI: локальный URI не должен �
 #: methods/gpgv.cc
 #, c-format
 msgid "untrusted public key algorithm: %s"
-msgstr ""
+msgstr "ненадёжный алгоритм с открытым ключом: %s"
 
 #: methods/gpgv.cc
 #, c-format
 msgid "%s will be deprecated in a future release"
-msgstr ""
+msgstr "%s будет признан устаревшим в будущем выпуске"
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
@@ -3975,13 +3964,14 @@ msgid ""
 "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
 "section in apt-key(8) for details."
 msgstr ""
+"Ключ сохранён в устаревшей связке ключей trusted.gpg (%s), обратитесь к "
+"разделу DEPRECATION справочной страницы apt-key(8) для подробной информации."
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
-#, fuzzy, c-format
-#| msgid "Signature by key %s uses weak digest algorithm (%s)"
+#, c-format
 msgid "Signature by key %s uses weak algorithm (%s)"
-msgstr "При подписи ключом %s используется нестойкий алгоритм свёртки (%s)"
+msgstr "При подписи ключом %s используется нестойкий алгоритм (%s)"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
