@@ -14,6 +14,8 @@
 
 #include <iostream>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus
 {
@@ -22,6 +24,7 @@ class APT_PUBLIC AcqTextStatus : public pkgAcquireStatus
    size_t LastLineLength;
    unsigned long ID;
    unsigned long Quiet;
+   std::unordered_map<unsigned long, std::vector<std::string>> IgnoredErrorTexts;
 
    APT_HIDDEN void clearLastLine();
    APT_HIDDEN void AssignItemID(pkgAcquire::ItemDesc &Itm);

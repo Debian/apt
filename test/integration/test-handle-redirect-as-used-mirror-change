@@ -67,7 +67,18 @@ Get:3 http://0.0.0.0:${APTHTTPPORT} unstable/main all Packages [$(stat -c %s apt
 Get:4 http://0.0.0.0:${APTHTTPPORT} unstable/main Translation-en [$(stat -c %s aptarchive/dists/unstable/main/i18n/Translation-en.gz) B]
 Reading package lists...
 Building dependency tree...
-All packages are up to date." apt update
+All packages are up to date." apt update -o Acquire::Progress::Ignore::ShowErrorText=true
+rm -rf rootdir/var/lib/apt/lists
+testsuccessequal "Get:1 http://0.0.0.0:${APTHTTPPORT}/storage unstable InRelease [$(stat -c %s aptarchive/storage/dists/unstable/InRelease) B]
+Ign:2 http://0.0.0.0:${APTHTTPPORT}/storage unstable/main Sources
+Ign:3 http://0.0.0.0:${APTHTTPPORT}/storage unstable/main all Packages
+Ign:4 http://0.0.0.0:${APTHTTPPORT}/storage unstable/main Translation-en
+Get:2 http://0.0.0.0:${APTHTTPPORT} unstable/main Sources [$(stat -c %s aptarchive/dists/unstable/main/source/Sources.gz) B]
+Get:3 http://0.0.0.0:${APTHTTPPORT} unstable/main all Packages [$(stat -c %s aptarchive/dists/unstable/main/binary-all/Packages.gz) B]
+Get:4 http://0.0.0.0:${APTHTTPPORT} unstable/main Translation-en [$(stat -c %s aptarchive/dists/unstable/main/i18n/Translation-en.gz) B]
+Reading package lists...
+Building dependency tree...
+All packages are up to date." apt update -o Acquire::Progress::Ignore::ShowErrorText=false
 
 find aptarchive -name 'InRelease' -delete
 rm -rf rootdir/var/lib/apt/lists
