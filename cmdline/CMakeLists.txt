@@ -11,14 +11,6 @@ add_executable(apt-extracttemplates apt-extracttemplates.cc)
 add_executable(apt-internal-solver apt-internal-solver.cc)
 add_executable(apt-dump-solver apt-dump-solver.cc)
 add_executable(apt-internal-planner apt-internal-planner.cc)
-add_vendor_file(OUTPUT apt-key
-                INPUT apt-key.in
-                MODE 755
-                VARIABLES keyring-filename
-                          keyring-removed-filename
-                          keyring-master-filename
-                          keyring-uri keyring-package)
-
 
 # Link the executables against the libraries
 target_link_libraries(apt apt-pkg apt-private)
@@ -54,6 +46,3 @@ install(TARGETS apt-internal-planner RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXEC
 
 add_links(${CMAKE_INSTALL_LIBEXECDIR}/apt/planners ../solvers/dump planners/dump)
 add_links(${CMAKE_INSTALL_LIBEXECDIR}/apt/solvers apt solver3)
-
-# Install the not-to-be-compiled programs
-INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/apt-key DESTINATION ${CMAKE_INSTALL_BINDIR})
