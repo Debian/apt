@@ -153,18 +153,19 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 
    bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
    struct exiter {
-      std::vector<const char *> files;
+      std::vector<std::string> files;
       void operator ()(int code) APT_NORETURN {
-	 std::for_each(files.begin(), files.end(), unlink);
+	 std::for_each(files.begin(), files.end(), [](auto f)
+		       { unlink(f.c_str()); });
 	 exit(code);
       }
    } local_exit;
 
 
-   std::vector<const char *> Args;
+   std::vector<std::string> Args;
    Args.reserve(10);
 
-   Args.push_back(aptkey.c_str());
+   Args.push_back(aptkey);
    Args.push_back("--quiet");
    Args.push_back("--readonly");
    auto maybeAddKeyring = [&](std::string const &k)
@@ -177,7 +178,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 return;
       }
       Args.push_back("--keyring");
-      Args.push_back(k.c_str());
+      Args.push_back(k);
       return;
    };
 
@@ -195,7 +196,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       else
       {
 	 Args.push_back("--keyid");
-	 Args.push_back(k.c_str());
+	 Args.push_back(k);
       }
    }
 
@@ -238,38 +239,28 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       {
 	 if (Opts->Value.empty())
 	    continue;
-	 Args.push_back(Opts->Value.c_str());
+	 Args.push_back(Opts->Value);
       }
    }
 
    enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
-   std::unique_ptr<char, FreeDeleter> sig;
-   std::unique_ptr<char, FreeDeleter> data;
-   std::unique_ptr<char, FreeDeleter> conf;
 
    // Dump the configuration so apt-key picks up the correct Dir values
    {
-      {
-	 std::string tmpfile;
-	 strprintf(tmpfile, "%s/apt.conf.XXXXXX", GetTempDir().c_str());
-	 conf.reset(strdup(tmpfile.c_str()));
-      }
-      if (conf == nullptr) {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't create tempfile names for passing config to apt-key");
-	 local_exit(EINTERNAL);
-      }
-      int confFd = mkstemp(conf.get());
+      std::string tmpfile;
+      strprintf(tmpfile, "%s/apt.conf.XXXXXX", GetTempDir().c_str());
+      int confFd = mkstemp(tmpfile.data());
       if (confFd == -1) {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't create temporary file %s for passing config to apt-key", conf.get());
+	 apt_error(std::cerr, statusfd, fd, "Couldn't create temporary file %s for passing config to apt-key", tmpfile.c_str());
 	 local_exit(EINTERNAL);
       }
-      local_exit.files.push_back(conf.get());
+      local_exit.files.push_back(tmpfile);
 
-      std::ofstream confStream(conf.get());
+      std::ofstream confStream(tmpfile);
       close(confFd);
       _config->Dump(confStream);
       confStream.close();
-      setenv("APT_CONFIG", conf.get(), 1);
+      setenv("APT_CONFIG", tmpfile.c_str(), 1);
    }
 
    // Tell apt-key not to emit warnings
@@ -352,21 +343,19 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 local_exit(112);
       }
 
-      Args.push_back(FileGPG.c_str());
-      Args.push_back(File.c_str());
+      Args.push_back(FileGPG);
+      Args.push_back(File);
    }
    else // clear-signed file
    {
       FileFd signature;
       if (GetTempFile("apt.sig", false, &signature) == nullptr)
 	 local_exit(EINTERNAL);
-      sig.reset(strdup(signature.Name().c_str()));
-      local_exit.files.push_back(sig.get());
+      local_exit.files.push_back(signature.Name());
       FileFd message;
       if (GetTempFile("apt.data", false, &message) == nullptr)
 	 local_exit(EINTERNAL);
-      data.reset(strdup(message.Name().c_str()));
-      local_exit.files.push_back(data.get());
+      local_exit.files.push_back(message.Name());
 
       if (signature.Failed() || message.Failed() ||
 	  not SplitClearSignedFile(File, &message, nullptr, &signature))
@@ -374,17 +363,15 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 apt_error(std::cerr, statusfd, fd, "Splitting up %s into data and signature failed", File.c_str());
 	 local_exit(112);
       }
-      Args.push_back(sig.get());
-      Args.push_back(data.get());
+      Args.push_back(signature.Name());
+      Args.push_back(message.Name());
    }
-
-   Args.push_back(NULL);
 
    if (Debug)
    {
       std::clog << "Preparing to exec: ";
-      for (std::vector<const char *>::const_iterator a = Args.begin(); *a != NULL; ++a)
-	 std::clog << " " << *a;
+      for (auto const &a : Args)
+	 std::clog << " " << a;
       std::clog << std::endl;
    }
 
@@ -410,15 +397,20 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    // and we do an additional check, so fork yet another time …
    pid_t pid = ExecFork();
    if(pid < 0) {
-      apt_error(std::cerr, statusfd, fd, "Fork failed for %s to check %s", Args[0], File.c_str());
+      apt_error(std::cerr, statusfd, fd, "Fork failed for %s to check %s", Args[0].c_str(), File.c_str());
       local_exit(EINTERNAL);
    }
    if(pid == 0)
    {
       if (statusfd != -1)
 	 dup2(fd[1], statusfd);
-      execvp(Args[0], (char **) &Args[0]);
-      apt_error(std::cerr, statusfd, fd, "Couldn't execute %s to check %s", Args[0], File.c_str());
+      std::vector<const char*> cArgs;
+      cArgs.reserve(Args.size() + 1);
+      for (auto const & arg : Args)
+	 cArgs.push_back(arg.c_str());
+      cArgs.push_back(nullptr);
+      execvp(cArgs[0], (char **) &cArgs[0]);
+      apt_error(std::cerr, statusfd, fd, "Couldn't execute %s to check %s", Args[0].c_str(), File.c_str());
       local_exit(EINTERNAL);
    }
 
