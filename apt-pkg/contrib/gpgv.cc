@@ -297,6 +297,29 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       Args.push_back(statusfdstr);
    }
 
+   if (auto assertPubkeyAlgo = _config->Find("Apt::Key::assert-pubkey-algo"); not assertPubkeyAlgo.empty())
+   {
+      FileFd dumpOptions;
+      pid_t child;
+      if (Debug)
+	 std::clog << "Calling " << gpgv << " --dump-options" << std::endl;
+      const char* argv[] = {gpgv.c_str(), "--dump-options", nullptr};
+      if (not Popen(argv, dumpOptions, child, FileFd::ReadOnly) && Debug)
+	 std::clog << "Failed to call " << gpgv << " --dump-options" << std::endl;
+      for (std::string line; dumpOptions.ReadLine(line); )
+      {
+	 if (Debug)
+	    std::clog << "Read line: " << line << std::endl;
+	 if (APT::String::Strip(line) == "--assert-pubkey-algo")
+	 {
+	    Args.push_back("--assert-pubkey-algo=" + assertPubkeyAlgo);
+	    break;
+	 }
+      }
+      dumpOptions.Close();
+      waitpid(child, NULL, 0);
+   }
+
    Configuration::Item const *Opts;
    Opts = _config->Tree("Acquire::gpgv::Options");
    if (Opts != 0)
