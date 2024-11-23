@@ -457,15 +457,8 @@ _setupprojectenvironment() {
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Binary::apt::APT::Output-Version \"0\";" >> aptconfig.conf
 	echo "Dir::Bin::Methods \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/methods\";" >> aptconfig.conf
-	# either store apt-key were we can access it, even if we run it as a different user
-	#cp "${APTCMDLINEBINDIR}/apt-key" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/"
-	#chmod o+rx "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/apt-key"
-	#echo "Dir::Bin::apt-key \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/apt-key\";" >> aptconfig.conf
-	# destroys coverage reporting though, so we disable changing user for the calling gpgv
-	echo "Dir::Bin::apt-key \"${APTCMDLINEBINDIR}/apt-key\";" >> aptconfig.conf
 	if [ "$(id -u)" = '0' ]; then
-		echo 'Binary::gpgv::APT::Sandbox::User "root";' >> aptconfig.conf
-		# same for the solver executables
+		# run the solvers as root so we don't lose coverage data
 		echo 'APT::Solver::RunAsUser "root";' >> aptconfig.conf
 		echo 'APT::Planner::RunAsUser "root";' >> aptconfig.conf
 	fi

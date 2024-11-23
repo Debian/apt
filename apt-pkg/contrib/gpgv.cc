@@ -149,8 +149,12 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	      int const &statusfd, int fd[2], std::vector<std::string> const &KeyFiles)
 {
    #define EINTERNAL 111
-   std::string const aptkey = _config->Find("Dir::Bin::apt-key", CMAKE_INSTALL_FULL_BINDIR "/apt-key");
-
+   const std::string gpgvVariants[] = {
+      "/usr/bin/gpgv-sq",
+      "/usr/bin/gpgv",
+      "/usr/bin/gpgv2",
+      "/usr/bin/gpgv",
+   };
    bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
    struct exiter {
       std::vector<std::string> files;
@@ -161,13 +165,32 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       }
    } local_exit;
 
+   std::string gpgv = _config->Find("Apt::Key::gpgvcommand");
+   if (gpgv.empty() || !FileExists(gpgv))
+   {
+      gpgv = "";
+      for (auto gpgvVariant : gpgvVariants)
+      {
+	 if (FileExists(gpgvVariant))
+	 {
+	    gpgv = gpgvVariant;
+	    break;
+	 }
+      }
+
+      if (gpgv.empty())
+      {
+	 apt_error(std::cerr, statusfd, fd, "Couldn't find a gpgv binary");
+	 local_exit(EINTERNAL);
+      }
+   }
 
    std::vector<std::string> Args;
    Args.reserve(10);
 
-   Args.push_back(aptkey);
-   Args.push_back("--quiet");
-   Args.push_back("--readonly");
+   Args.push_back(gpgv);
+   Args.push_back("--ignore-time-conflict");
+
    auto dearmorKeyOrCheckFormat = [&](std::string const &k) -> std::string
    {
       FileFd keyFd(k, FileFd::ReadOnly);
@@ -270,7 +293,6 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       Args.push_back("/dev/null");
    }
 
-   Args.push_back("verify");
    char statusfdstr[10];
    if (statusfd != -1)
    {
@@ -293,27 +315,6 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    }
 
    enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
-
-   // Dump the configuration so apt-key picks up the correct Dir values
-   {
-      std::string tmpfile;
-      strprintf(tmpfile, "%s/apt.conf.XXXXXX", GetTempDir().c_str());
-      int confFd = mkstemp(tmpfile.data());
-      if (confFd == -1) {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't create temporary file %s for passing config to apt-key", tmpfile.c_str());
-	 local_exit(EINTERNAL);
-      }
-      local_exit.files.push_back(tmpfile);
-
-      std::ofstream confStream(tmpfile);
-      close(confFd);
-      _config->Dump(confStream);
-      confStream.close();
-      setenv("APT_CONFIG", tmpfile.c_str(), 1);
-   }
-
-   // Tell apt-key not to emit warnings
-   setenv("APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE", "1", 1);
 
    if (releaseSignature == DETACHED)
    {
