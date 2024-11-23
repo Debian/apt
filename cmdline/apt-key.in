@@ -312,7 +312,7 @@ is_supported_keyring() {
 	return 0
     fi
     local FILEEXT="${1##*.}"
-    if [ "$FILEEXT" = 'gpg' ]; then
+    if [ "$FILEEXT" = 'gpg' -o "$FILEEXT" = 'pub' ]; then
 	# 0x98, 0x99 and 0xC6 via octal as hex isn't supported by dashs printf
 	if printf '\231' | cmp -s -n 1 - "$1"; then
 	    true
