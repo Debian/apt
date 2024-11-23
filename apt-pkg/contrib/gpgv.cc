@@ -141,6 +141,13 @@ static void APT_PRINTF(5) apt_msg(std::string const &tag, std::ostream &outterm,
 void ExecGPGV(std::string const &File, std::string const &FileGPG,
              int const &statusfd, int fd[2], std::string const &key)
 {
+   auto const keyFiles = VectorizeString(key, ',');
+   return ExecGPGV(File, FileGPG, statusfd, fd, keyFiles);
+}
+
+void ExecGPGV(std::string const &File, std::string const &FileGPG,
+	      int const &statusfd, int fd[2], std::vector<std::string> const &KeyFiles)
+{
    #define EINTERNAL 111
    std::string const aptkey = _config->Find("Dir::Bin::apt-key", CMAKE_INSTALL_FULL_BINDIR "/apt-key");
 
@@ -160,8 +167,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    Args.push_back(aptkey.c_str());
    Args.push_back("--quiet");
    Args.push_back("--readonly");
-   auto const keysFileFpr = VectorizeString(key, ',');
-   for (auto const &k: keysFileFpr)
+   for (auto const &k : KeyFiles)
    {
       if (unlikely(k.empty()))
 	 continue;

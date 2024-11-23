@@ -201,9 +201,8 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    else if (pid == 0)
    {
       std::ostringstream keys;
-      implodeVector(keyFiles, keys, ",");
       setenv("APT_KEY_NO_LEGACY_KEYRING", "1", true);
-      ExecGPGV(outfile, file, 3, fd, keys.str());
+      ExecGPGV(outfile, file, 3, fd, keyFiles);
    }
    close(fd[1]);
 
