@@ -179,6 +179,24 @@ TEST(StrUtilTest,Base64Encode)
    EXPECT_EQ("/A==", Base64Encode("\xfc"));
    EXPECT_EQ("//8=", Base64Encode("\xff\xff"));
 }
+TEST(StrUtilTest,Base64Decode)
+{
+   EXPECT_EQ(Base64Decode("QWxhZGRpbjpvcGVuIHNlc2FtZQ=="), "Aladdin:open sesame");
+   EXPECT_EQ(Base64Decode("cGxlYXN1cmUu"), "pleasure.");
+   EXPECT_EQ(Base64Decode("bGVhc3VyZS4="), "leasure.");
+   EXPECT_EQ(Base64Decode("ZWFzdXJlLg=="), "easure.");
+   EXPECT_EQ(Base64Decode("YXN1cmUu"), "asure.");
+   EXPECT_EQ(Base64Decode("c3VyZS4="), "sure.");
+   EXPECT_EQ(Base64Decode("dXJlLg=="), "ure.");
+   EXPECT_EQ(Base64Decode("cmUu"), "re.");
+   EXPECT_EQ(Base64Decode("ZS4="), "e.");
+   EXPECT_EQ(Base64Decode("Lg=="), ".");
+   EXPECT_EQ(Base64Decode(""), "");
+   EXPECT_EQ(Base64Decode("IA=="), "\x20");
+   EXPECT_EQ(Base64Decode("/w=="), "\xff");
+   EXPECT_EQ(Base64Decode("/A=="), "\xfc");
+   EXPECT_EQ(Base64Decode("//8="), "\xff\xff");
+}
 static void ReadMessagesTestWithNewLine(char const * const nl, char const * const ab)
 {
    SCOPED_TRACE(SubstVar(SubstVar(nl, "\n", "n"), "\r", "r") + " # " + ab);
@@ -318,7 +336,8 @@ TEST(StrUtilTest,RFC1123StrToTime)
       time_t t;
       EXPECT_TRUE(RFC1123StrToTime("Sun, 06 Nov 1994 08:49:37 GMT", t));
       EXPECT_EQ(784111777, t);
-   } {
+   }
+   {
       time_t t;
       EXPECT_TRUE(RFC1123StrToTime("Sun, 6 Nov 1994 08:49:37 UTC", t));
       EXPECT_EQ(784111777, t);
