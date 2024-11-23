@@ -181,25 +181,41 @@
 </refsect1>
 
 <refsect1><title>User Configuration</title>
-   <para>
-   <command>apt-key</command> is the program that manages the list of keys used
-   by APT to trust repositories. It can be used to add or remove keys as well
-   as list the trusted keys. Limiting which key(s) are able to sign which archive
-   is possible via the <option>Signed-By</option> in &sources-list;.
-   </para><para>
+    <para>
+        User-managed keys should usually be included inside their corresponding <literal>.sources</literal>
+        by embedding the ASCII-enarmored key (as produced by <command>--export-options export-minimal --armor --export</command>)
+        in the <literal>Signed-By</literal> option. To do so, you need to replace the empty line with a dot, and then indent
+        all lines by two spaces. See &sources-list; for more information.
+    </para>
+
+    <para>
+        Alternative keys can be placed in <filename>/etc/apt/keyrings</filename> for local keys,
+        or <filename>/usr/share/keyrings</filename> for keys managed by packages, and then referenced
+        by <literal>Signed-By: /etc/apt/keyrings/example.gpg</literal> option in a <literal>.sources</literal>
+        file or using <literal>deb [signed-by=/etc/apt/keyrings/example.gpg] ...</literal> in the legacy
+        <literal>.list</literal> format. This may be useful for APT versions prior to 2.4, which do not
+        support embedded keys.
+    </para>
+    <para>For external keys, APT supports only the binary OpenPGP format (also known as "GPG key
+    public ring") in files with the "<literal>gpg</literal>" extension, not
+    the keybox database format introduced in newer &gpg; versions as default
+    for keyring files. Binary keyring files intended to be used with any apt
+    version should therefore always be created with <command>gpg --export</command>.
+    </para>
+    <para>Alternatively, if all systems which should be using the created keyring
+    have at least apt version >= 1.4 installed, you can use the ASCII armored
+    format with the "<literal>asc</literal>" extension instead which can be
+    created with <command>gpg --export-options export-minimal --armor --export</command>.
+    </para>
+
+  <para>
    Note that a default installation already contains all keys to securely
-   acquire packages from the default repositories, so fiddling with
-   <command>apt-key</command> is only needed if third-party repositories are
-   added.
-   </para><para>
-   In order to add a new key you need to first download it
-   (you should make sure you are using a trusted communication channel
-   when retrieving it), add it with <command>apt-key</command> and
-   then run <command>apt-get update</command> so that apt can download
-   and verify the <filename>InRelease</filename> or <filename>Release.gpg</filename>
-   files from the archives you have configured.
+   acquire packages from the default repositories, so managing keys
+   is only needed if third-party repositories are added. The <command>extrepo</command>
+   package can be used to manage several external repositories with ease.
    </para>
 </refsect1>
+
 
 <refsect1><title>Repository Configuration</title>
    <para>

@@ -84,7 +84,6 @@ add_docbook(apt-man MANPAGE ALL
         apt-extracttemplates.1.xml
         apt-ftparchive.1.xml
         apt-get.8.xml
-        apt-key.8.xml
         apt-mark.8.xml
         apt_preferences.5.xml
         apt-patterns.7.xml
