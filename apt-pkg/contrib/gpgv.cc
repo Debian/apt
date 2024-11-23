@@ -112,7 +112,9 @@ static bool operator!=(LineBuffer const &buf, std::string_view const exp) noexce
    And as a cherry on the cake, we use our apt-key wrapper to do part
    of the lifting in regards to merging keyrings. Fun for the whole family.
 */
-static void APT_PRINTF(4) apt_error(std::ostream &outterm, int const statusfd, int fd[2], const char *format, ...)
+#define apt_error(...) apt_msg("ERROR", __VA_ARGS__)
+#define apt_warning(...) apt_msg("WARNING", __VA_ARGS__)
+static void APT_PRINTF(5) apt_msg(std::string const &tag, std::ostream &outterm, int const statusfd, int fd[2], const char *format, ...)
 {
    std::ostringstream outstr;
    std::ostream &out = (statusfd == -1) ? outterm : outstr;
@@ -128,10 +130,10 @@ static void APT_PRINTF(4) apt_error(std::ostream &outterm, int const statusfd, i
    }
    if (statusfd != -1)
    {
-      auto const errtag = "[APTKEY:] ERROR ";
+      auto const errtag = "[APTKEY:] " + tag + " ";
       outstr << '\n';
       auto const errtext = outstr.str();
-      if (not FileFd::Write(fd[1], errtag, strlen(errtag)) ||
+      if (not FileFd::Write(fd[1], errtag.data(), errtag.size()) ||
 	    not FileFd::Write(fd[1], errtext.data(), errtext.size()))
 	 outterm << errtext << std::flush;
    }
