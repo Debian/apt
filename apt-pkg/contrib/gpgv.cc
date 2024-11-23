@@ -167,14 +167,30 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    Args.push_back(aptkey.c_str());
    Args.push_back("--quiet");
    Args.push_back("--readonly");
+   auto maybeAddKeyring = [&](std::string const &k)
+   {
+      if (struct stat st; stat(k.c_str(), &st) != 0 || st.st_size == 0)
+	 return;
+      if (access(k.c_str(), R_OK) != 0)
+      {
+	 apt_warning(std::cerr, statusfd, fd, "The key(s) in the keyring %s are ignored as the file is not readable by user executing apt-key.\n", k.c_str());
+	 return;
+      }
+      Args.push_back("--keyring");
+      Args.push_back(k.c_str());
+      return;
+   };
+
    for (auto const &k : KeyFiles)
    {
       if (unlikely(k.empty()))
 	 continue;
       if (k[0] == '/')
       {
-	 Args.push_back("--keyring");
-	 Args.push_back(k.c_str());
+	 if (Debug)
+	    std::clog << "Trying Signed-By: " << k << std::endl;
+
+	 maybeAddKeyring(k);
       }
       else
       {
@@ -182,8 +198,29 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 Args.push_back(k.c_str());
       }
    }
-   Args.push_back("verify");
 
+   std::vector<std::string> Parts;
+   if (std::find(Args.begin(), Args.end(), "--keyring") == Args.end())
+   {
+      Parts = GetListOfFilesInDir(_config->FindDir("Dir::Etc::TrustedParts"), std::vector<std::string>{"gpg", "asc"}, true);
+      if (char *env = getenv("APT_KEY_NO_LEGACY_KEYRING"); env == nullptr || not StringToBool(env, false))
+	 Parts.insert(Parts.begin(), _config->FindFile("Dir::Etc::Trusted"));
+      for (auto &Part : Parts)
+      {
+	 if (Debug)
+	    std::clog << "Trying TrustedPart: " << Part << std::endl;
+	 maybeAddKeyring(Part);
+      }
+   }
+
+   // If we do not give it any keyring, gpgv shouts keydb errors at us
+   if (std::find(Args.begin(), Args.end(), "--keyring") == Args.end())
+   {
+      Args.push_back("--keyring");
+      Args.push_back("/dev/null");
+   }
+
+   Args.push_back("verify");
    char statusfdstr[10];
    if (statusfd != -1)
    {
