@@ -470,7 +470,9 @@ dearmor_filename() {
     fi
 }
 catfile() {
-    cat "$(dearmor_filename "$1")" >> "$2"
+    if accessible_file_exists "$1" && is_supported_keyring "$1"; then
+        cat "$(dearmor_filename "$1")" >> "$2"
+    fi
 }
 
 merge_all_trusted_keyrings_into_pubring() {
