@@ -69,6 +69,7 @@ APT_PUBLIC std::string DeEscapeString(const std::string &input);
 APT_PUBLIC std::string SizeToStr(double Bytes);
 APT_PUBLIC std::string TimeToStr(unsigned long Sec);
 APT_PUBLIC std::string Base64Encode(const std::string &Str);
+APT_PUBLIC std::string Base64Decode(const std::string_view in);
 APT_PUBLIC std::string OutputInDepth(const unsigned long Depth, const char* Separator="  ");
 APT_PUBLIC std::string URItoFileName(const std::string &URI);
 /** returns a datetime string as needed by HTTP/1.1 and Debian files.
