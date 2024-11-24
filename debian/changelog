@@ -1,3 +1,20 @@
+apt (2.9.14+noAptKey1) experimental; urgency=medium
+
+  * Stop installing apt-key, make it a test suite helper
+    - gpgv: Generalize apt_error to apt_msg(), add apt_warning()
+    - Do not implode key file name vector for calling gpgv
+    - apt-key: Only cat supported keyrings into the merged one
+    - apt-key: Temporarily accept 'pub' as an extension for binary gpg keys
+    - gpgv: Explictly pass all the keyrings to gpgv from apt
+    - gpgv: Use std::string instead of const char *
+    - strutl: Add Base64Decode
+    - gpgv: Verify keyrings and dearmor outside apt-key
+    - Directly call gpgv instead of apt-key
+    - gpgv: Add direct support for --assert-pubkey-algo
+    - Remove the apt-key manual page and add documentation to apt-secure
+
+ -- Julian Andres Klode <jak@debian.org>  Sun, 24 Nov 2024 10:11:55 +0100
+
 apt (2.9.14) unstable; urgency=medium
 
   [ Julian Andres Klode ]
