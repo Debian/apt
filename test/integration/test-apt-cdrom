@@ -32,6 +32,7 @@ aptcdromlog() {
 	sed -e '/gpgv\?:\s*Signature made/ d' \
 		-e '/gpgv\?:\s*Good signature/ d' \
 		-e '/gpgv\?:\s*using RSA key/ d' \
+		-e '/gpgv\?:\s*asserted signer/d' \
 		-e '/gpgv\?:\s*issuer/ d' \
 		-e '/^Identifying/ d' \
 		-e '/Reading / d' rootdir/tmp/apt-cdrom.log
@@ -41,23 +42,6 @@ aptcdromlog() {
 aptautotest_aptcdromlog_add() { aptautotest_aptget_update "$@"; }
 
 
-msgtest "Checking --assert-pubkey-algo support"
-gpgv_msg=""
-test="$(LC_ALL=C.UTF-8 gpgv --assert-pubkey-algo 2>&1 || :)"
-case "$test" in
-	*"missing argument"*)
-		gpgv_msg="
-gpgv: asserted signer '34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE' with algo rsa2048"
-		msgpass
-		;;
-	*[Ii]"nvalid option"*"assert-pubkey-algo"*)
-		msgskip
-		;;
-	*)
-		msgfail "Unknown response from gpgv to --assert-pubkey-algo check: $test"
-		;;
-esac
-
 CDROM_PRE="Using CD-ROM mount point $(readlink -f ./rootdir/media)/cdrom/
 Unmounting CD-ROM...
 Waiting for disc...
@@ -65,7 +49,7 @@ Please insert a Disc in the drive and press [Enter]
 Mounting CD-ROM...
 Scanning disc for index files..."
 CDROM_POST="This disc is called: 
-'Debian APT Testdisk 0.8.15'$gpgv_msg
+'Debian APT Testdisk 0.8.15'
 Writing new source list
 Source list entries for this disc are:
 deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
