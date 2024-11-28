@@ -11,11 +11,19 @@
 
 #include <apt-pkg/macros.h>
 
+#include <forward_list>
 #include <string>
 #include <vector>
 
 
 class FileFd;
+
+#ifdef APT_COMPILING_APT
+namespace APT::Internal
+{
+APT_PUBLIC std::pair<std::string, std::forward_list<std::string>> FindGPGV(bool Debug);
+}
+#endif
 
 /** \brief generates and run the command to verify a file with gpgv
  *

@@ -18,11 +18,13 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <forward_list>
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <apti18n.h>
@@ -138,6 +140,54 @@ static void APT_PRINTF(5) apt_msg(std::string const &tag, std::ostream &outterm,
 	 outterm << errtext << std::flush;
    }
 }
+
+static bool CheckGPGV(std::unordered_map<std::string, std::forward_list<std::string>> &checkedCommands, std::string gpgv, bool Debug)
+{
+   if (checkedCommands.find(gpgv) == checkedCommands.end())
+   {
+      // Create entry
+      checkedCommands[gpgv];
+      FileFd dumpOptions;
+      pid_t child;
+      const char *argv[] = {gpgv.c_str(), "--dump-options", nullptr};
+      if (unlikely(Debug))
+	 std::clog << "Executing " << gpgv << " --dump-options" << std::endl;
+      if (not Popen(argv, dumpOptions, child, FileFd::ReadOnly) && Debug)
+	 return false;
+
+      for (std::string line; dumpOptions.ReadLine(line);)
+      {
+	 if (unlikely(Debug))
+	    std::clog << "Read line: " << line << std::endl;
+	 checkedCommands[gpgv].push_front(APT::String::Strip(line));
+      }
+      dumpOptions.Close();
+      waitpid(child, NULL, 0);
+   }
+   return not checkedCommands[gpgv].empty();
+}
+
+std::pair<std::string, std::forward_list<std::string>> APT::Internal::FindGPGV(bool Debug)
+{
+   static thread_local std::unordered_map<std::string, std::forward_list<std::string>> checkedCommands;
+   const std::string gpgvVariants[] = {
+      _config->Find("Apt::Key::gpgvcommand"),
+      // Prefer absolute path
+      "/usr/bin/gpgv-sq",
+      "/usr/bin/gpgv",
+      "/usr/bin/gpgv2",
+      "/usr/bin/gpgv1",
+      "gpgv-sq",
+      "gpgv",
+      "gpgv2",
+      "gpgv1",
+   };
+   for (auto gpgv : gpgvVariants)
+      if (CheckGPGV(checkedCommands, gpgv, Debug))
+	 return std::make_pair(gpgv, checkedCommands[gpgv]);
+   return {};
+}
+
 void ExecGPGV(std::string const &File, std::string const &FileGPG,
              int const &statusfd, int fd[2], std::string const &key)
 {
@@ -148,13 +198,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	      int const &statusfd, int fd[2], std::vector<std::string> const &KeyFiles)
 {
-   #define EINTERNAL 111
-   const std::string gpgvVariants[] = {
-      "/usr/bin/gpgv-sq",
-      "/usr/bin/gpgv",
-      "/usr/bin/gpgv2",
-      "/usr/bin/gpgv",
-   };
+#define EINTERNAL 111
    bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
    struct exiter {
       std::vector<std::string> files;
@@ -165,24 +209,11 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       }
    } local_exit;
 
-   std::string gpgv = _config->Find("Apt::Key::gpgvcommand");
-   if (gpgv.empty() || !FileExists(gpgv))
+   auto [gpgv, supportedOptions] = APT::Internal::FindGPGV(Debug);
+   if (gpgv.empty())
    {
-      gpgv = "";
-      for (auto gpgvVariant : gpgvVariants)
-      {
-	 if (FileExists(gpgvVariant))
-	 {
-	    gpgv = gpgvVariant;
-	    break;
-	 }
-      }
-
-      if (gpgv.empty())
-      {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't find a gpgv binary");
-	 local_exit(EINTERNAL);
-      }
+      apt_error(std::cerr, statusfd, fd, "Couldn't find a gpgv binary");
+      local_exit(EINTERNAL);
    }
 
    std::vector<std::string> Args;
@@ -303,25 +334,8 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 
    if (auto assertPubkeyAlgo = _config->Find("Apt::Key::assert-pubkey-algo"); not assertPubkeyAlgo.empty())
    {
-      FileFd dumpOptions;
-      pid_t child;
-      if (Debug)
-	 std::clog << "Calling " << gpgv << " --dump-options" << std::endl;
-      const char* argv[] = {gpgv.c_str(), "--dump-options", nullptr};
-      if (not Popen(argv, dumpOptions, child, FileFd::ReadOnly) && Debug)
-	 std::clog << "Failed to call " << gpgv << " --dump-options" << std::endl;
-      for (std::string line; dumpOptions.ReadLine(line); )
-      {
-	 if (Debug)
-	    std::clog << "Read line: " << line << std::endl;
-	 if (APT::String::Strip(line) == "--assert-pubkey-algo")
-	 {
-	    Args.push_back("--assert-pubkey-algo=" + assertPubkeyAlgo);
-	    break;
-	 }
-      }
-      dumpOptions.Close();
-      waitpid(child, NULL, 0);
+      if (std::find(supportedOptions.begin(), supportedOptions.end(), "--assert-pubkey-algo") != supportedOptions.end())
+	 Args.push_back("--assert-pubkey-algo=" + assertPubkeyAlgo);
    }
 
    Configuration::Item const *Opts;
