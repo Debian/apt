@@ -11,11 +11,19 @@
 
 #include <apt-pkg/macros.h>
 
+#include <forward_list>
 #include <string>
 #include <vector>
 
 
 class FileFd;
+
+#ifdef APT_COMPILING_APT
+namespace APT::Internal
+{
+APT_PUBLIC std::pair<std::string, std::forward_list<std::string>> FindGPGV(bool Debug);
+}
+#endif
 
 /** \brief generates and run the command to verify a file with gpgv
  *
@@ -39,6 +47,8 @@ class FileFd;
  * @param fd is used as a pipe for the standard output of gpgv
  * @param key is the specific one to be used instead of using all
  */
+APT_PUBLIC void ExecGPGV(std::string const &File, std::string const &FileSig,
+			 int const &statusfd, int fd[2], std::vector<std::string> const &KeyFiles) APT_NORETURN;
 APT_PUBLIC void ExecGPGV(std::string const &File, std::string const &FileSig,
       int const &statusfd, int fd[2], std::string const &Key = "") APT_NORETURN;
 inline APT_NORETURN void ExecGPGV(std::string const &File, std::string const &FileSig,

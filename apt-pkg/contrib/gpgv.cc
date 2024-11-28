@@ -18,11 +18,13 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <forward_list>
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <apti18n.h>
@@ -112,7 +114,9 @@ static bool operator!=(LineBuffer const &buf, std::string_view const exp) noexce
    And as a cherry on the cake, we use our apt-key wrapper to do part
    of the lifting in regards to merging keyrings. Fun for the whole family.
 */
-static void APT_PRINTF(4) apt_error(std::ostream &outterm, int const statusfd, int fd[2], const char *format, ...)
+#define apt_error(...) apt_msg("ERROR", __VA_ARGS__)
+#define apt_warning(...) apt_msg("WARNING", __VA_ARGS__)
+static void APT_PRINTF(5) apt_msg(std::string const &tag, std::ostream &outterm, int const statusfd, int fd[2], const char *format, ...)
 {
    std::ostringstream outstr;
    std::ostream &out = (statusfd == -1) ? outterm : outstr;
@@ -128,53 +132,197 @@ static void APT_PRINTF(4) apt_error(std::ostream &outterm, int const statusfd, i
    }
    if (statusfd != -1)
    {
-      auto const errtag = "[APTKEY:] ERROR ";
+      auto const errtag = "[APTKEY:] " + tag + " ";
       outstr << '\n';
       auto const errtext = outstr.str();
-      if (not FileFd::Write(fd[1], errtag, strlen(errtag)) ||
+      if (not FileFd::Write(fd[1], errtag.data(), errtag.size()) ||
 	    not FileFd::Write(fd[1], errtext.data(), errtext.size()))
 	 outterm << errtext << std::flush;
    }
 }
+
+static bool CheckGPGV(std::unordered_map<std::string, std::forward_list<std::string>> &checkedCommands, std::string gpgv, bool Debug)
+{
+   if (checkedCommands.find(gpgv) == checkedCommands.end())
+   {
+      // Create entry
+      checkedCommands[gpgv];
+      FileFd dumpOptions;
+      pid_t child;
+      const char *argv[] = {gpgv.c_str(), "--dump-options", nullptr};
+      if (unlikely(Debug))
+	 std::clog << "Executing " << gpgv << " --dump-options" << std::endl;
+      if (not Popen(argv, dumpOptions, child, FileFd::ReadOnly) && Debug)
+	 return false;
+
+      for (std::string line; dumpOptions.ReadLine(line);)
+      {
+	 if (unlikely(Debug))
+	    std::clog << "Read line: " << line << std::endl;
+	 checkedCommands[gpgv].push_front(APT::String::Strip(line));
+      }
+      dumpOptions.Close();
+      waitpid(child, NULL, 0);
+   }
+   return not checkedCommands[gpgv].empty();
+}
+
+std::pair<std::string, std::forward_list<std::string>> APT::Internal::FindGPGV(bool Debug)
+{
+   static thread_local std::unordered_map<std::string, std::forward_list<std::string>> checkedCommands;
+   const std::string gpgvVariants[] = {
+      _config->Find("Apt::Key::gpgvcommand"),
+      // Prefer absolute path
+      "/usr/bin/gpgv-sq",
+      "/usr/bin/gpgv",
+      "/usr/bin/gpgv2",
+      "/usr/bin/gpgv1",
+      "gpgv-sq",
+      "gpgv",
+      "gpgv2",
+      "gpgv1",
+   };
+   for (auto gpgv : gpgvVariants)
+      if (CheckGPGV(checkedCommands, gpgv, Debug))
+	 return std::make_pair(gpgv, checkedCommands[gpgv]);
+   return {};
+}
+
 void ExecGPGV(std::string const &File, std::string const &FileGPG,
              int const &statusfd, int fd[2], std::string const &key)
 {
-   #define EINTERNAL 111
-   std::string const aptkey = _config->Find("Dir::Bin::apt-key", CMAKE_INSTALL_FULL_BINDIR "/apt-key");
+   auto const keyFiles = VectorizeString(key, ',');
+   ExecGPGV(File, FileGPG, statusfd, fd, keyFiles);
+}
 
+void ExecGPGV(std::string const &File, std::string const &FileGPG,
+	      int const &statusfd, int fd[2], std::vector<std::string> const &KeyFiles)
+{
+#define EINTERNAL 111
    bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
    struct exiter {
-      std::vector<const char *> files;
+      std::vector<std::string> files;
       void operator ()(int code) APT_NORETURN {
-	 std::for_each(files.begin(), files.end(), unlink);
+	 std::for_each(files.begin(), files.end(), [](auto f)
+		       { unlink(f.c_str()); });
 	 exit(code);
       }
    } local_exit;
 
+   auto [gpgv, supportedOptions] = APT::Internal::FindGPGV(Debug);
+   if (gpgv.empty())
+   {
+      apt_error(std::cerr, statusfd, fd, "Couldn't find a gpgv binary");
+      local_exit(EINTERNAL);
+   }
 
-   std::vector<const char *> Args;
+   std::vector<std::string> Args;
    Args.reserve(10);
 
-   Args.push_back(aptkey.c_str());
-   Args.push_back("--quiet");
-   Args.push_back("--readonly");
-   auto const keysFileFpr = VectorizeString(key, ',');
-   for (auto const &k: keysFileFpr)
+   Args.push_back(gpgv);
+   Args.push_back("--ignore-time-conflict");
+
+   auto dearmorKeyOrCheckFormat = [&](std::string const &k) -> std::string
+   {
+      FileFd keyFd(k, FileFd::ReadOnly);
+      if (not keyFd.IsOpen())
+      {
+	 apt_warning(std::cerr, statusfd, fd, "The key(s) in the keyring %s are ignored as the file is not readable by user executing apt-key.\n", k.c_str());
+	 return "";
+      }
+      if (APT::String::Endswith(k, ".gpg") || APT::String::Endswith(k, ".pub"))
+      {
+	 unsigned char c;
+	 if (not keyFd.Read(&c, sizeof(c)))
+	    goto err;
+	 // Identify the leading byte of an OpenPGP public key packet
+	 // 0x98 -- old-format OpenPGP public key packet, up to 255 octets
+	 // 0x99 -- old-format OpenPGP public key packet, 256-65535 octets
+	 // 0xc6 -- new-format OpenPGP public key packet, any length
+	 if (c == 0x98 || c == 0x99 || c == 0xc6)
+	    return k;
+      }
+      else if (APT::String::Endswith(k, ".asc"))
+      {
+	 std::string b64msg;
+	 int state = 0;
+	 for (std::string line; keyFd.ReadLine(line);)
+	 {
+	    line = APT::String::Strip(line);
+	    if (APT::String::Startswith(line, "-----BEGIN PGP PUBLIC KEY BLOCK-----"))
+	       state = 1;
+	    else if (state == 1 && line == "")
+	       state = 2;
+	    else if (state == 2 && line != "" && line[0] != '=' && line[0] != '-')
+	       b64msg += line;
+	    else if (APT::String::Startswith(line, "-----END"))
+	       state = 3;
+	 }
+	 if (state != 3)
+	    goto err;
+
+	 FileFd dearmoredFd;
+	 if (GetTempFile("apt.XXXXXX.gpg", false, &dearmoredFd) == nullptr)
+	    local_exit(EINTERNAL);
+	 if (auto decoded = Base64Decode(b64msg); not decoded.empty())
+	    dearmoredFd.Write(decoded.data(), decoded.size());
+	 local_exit.files.push_back(dearmoredFd.Name());
+	 return dearmoredFd.Name();
+      }
+   err:
+      apt_warning(std::cerr, statusfd, fd, "The key(s) in the keyring %s are ignored as the file has an unsupported filetype.", k.c_str());
+      return "";
+   };
+   auto maybeAddKeyring = [&](std::string const &k)
+   {
+      if (struct stat st; stat(k.c_str(), &st) != 0 || st.st_size == 0)
+	 return;
+      if (auto cleanKey = dearmorKeyOrCheckFormat(k); not cleanKey.empty())
+      {
+	 Args.push_back("--keyring");
+	 Args.push_back(cleanKey);
+      }
+      return;
+   };
+
+   for (auto const &k : KeyFiles)
    {
       if (unlikely(k.empty()))
 	 continue;
       if (k[0] == '/')
       {
-	 Args.push_back("--keyring");
-	 Args.push_back(k.c_str());
+	 if (Debug)
+	    std::clog << "Trying Signed-By: " << k << std::endl;
+
+	 maybeAddKeyring(k);
       }
       else
       {
 	 Args.push_back("--keyid");
-	 Args.push_back(k.c_str());
+	 Args.push_back(k);
       }
    }
-   Args.push_back("verify");
+
+   std::vector<std::string> Parts;
+   if (std::find(Args.begin(), Args.end(), "--keyring") == Args.end())
+   {
+      Parts = GetListOfFilesInDir(_config->FindDir("Dir::Etc::TrustedParts"), std::vector<std::string>{"gpg", "asc"}, true);
+      if (char *env = getenv("APT_KEY_NO_LEGACY_KEYRING"); env == nullptr || not StringToBool(env, false))
+	 Parts.insert(Parts.begin(), _config->FindFile("Dir::Etc::Trusted"));
+      for (auto &Part : Parts)
+      {
+	 if (Debug)
+	    std::clog << "Trying TrustedPart: " << Part << std::endl;
+	 maybeAddKeyring(Part);
+      }
+   }
+
+   // If we do not give it any keyring, gpgv shouts keydb errors at us
+   if (std::find(Args.begin(), Args.end(), "--keyring") == Args.end())
+   {
+      Args.push_back("--keyring");
+      Args.push_back("/dev/null");
+   }
 
    char statusfdstr[10];
    if (statusfd != -1)
@@ -182,6 +330,12 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       Args.push_back("--status-fd");
       snprintf(statusfdstr, sizeof(statusfdstr), "%i", statusfd);
       Args.push_back(statusfdstr);
+   }
+
+   if (auto assertPubkeyAlgo = _config->Find("Apt::Key::assert-pubkey-algo"); not assertPubkeyAlgo.empty())
+   {
+      if (std::find(supportedOptions.begin(), supportedOptions.end(), "--assert-pubkey-algo") != supportedOptions.end())
+	 Args.push_back("--assert-pubkey-algo=" + assertPubkeyAlgo);
    }
 
    Configuration::Item const *Opts;
@@ -193,42 +347,11 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       {
 	 if (Opts->Value.empty())
 	    continue;
-	 Args.push_back(Opts->Value.c_str());
+	 Args.push_back(Opts->Value);
       }
    }
 
    enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
-   std::unique_ptr<char, FreeDeleter> sig;
-   std::unique_ptr<char, FreeDeleter> data;
-   std::unique_ptr<char, FreeDeleter> conf;
-
-   // Dump the configuration so apt-key picks up the correct Dir values
-   {
-      {
-	 std::string tmpfile;
-	 strprintf(tmpfile, "%s/apt.conf.XXXXXX", GetTempDir().c_str());
-	 conf.reset(strdup(tmpfile.c_str()));
-      }
-      if (conf == nullptr) {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't create tempfile names for passing config to apt-key");
-	 local_exit(EINTERNAL);
-      }
-      int confFd = mkstemp(conf.get());
-      if (confFd == -1) {
-	 apt_error(std::cerr, statusfd, fd, "Couldn't create temporary file %s for passing config to apt-key", conf.get());
-	 local_exit(EINTERNAL);
-      }
-      local_exit.files.push_back(conf.get());
-
-      std::ofstream confStream(conf.get());
-      close(confFd);
-      _config->Dump(confStream);
-      confStream.close();
-      setenv("APT_CONFIG", conf.get(), 1);
-   }
-
-   // Tell apt-key not to emit warnings
-   setenv("APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE", "1", 1);
 
    if (releaseSignature == DETACHED)
    {
@@ -307,21 +430,19 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 local_exit(112);
       }
 
-      Args.push_back(FileGPG.c_str());
-      Args.push_back(File.c_str());
+      Args.push_back(FileGPG);
+      Args.push_back(File);
    }
    else // clear-signed file
    {
       FileFd signature;
       if (GetTempFile("apt.sig", false, &signature) == nullptr)
 	 local_exit(EINTERNAL);
-      sig.reset(strdup(signature.Name().c_str()));
-      local_exit.files.push_back(sig.get());
+      local_exit.files.push_back(signature.Name());
       FileFd message;
       if (GetTempFile("apt.data", false, &message) == nullptr)
 	 local_exit(EINTERNAL);
-      data.reset(strdup(message.Name().c_str()));
-      local_exit.files.push_back(data.get());
+      local_exit.files.push_back(message.Name());
 
       if (signature.Failed() || message.Failed() ||
 	  not SplitClearSignedFile(File, &message, nullptr, &signature))
@@ -329,17 +450,15 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 apt_error(std::cerr, statusfd, fd, "Splitting up %s into data and signature failed", File.c_str());
 	 local_exit(112);
       }
-      Args.push_back(sig.get());
-      Args.push_back(data.get());
+      Args.push_back(signature.Name());
+      Args.push_back(message.Name());
    }
-
-   Args.push_back(NULL);
 
    if (Debug)
    {
       std::clog << "Preparing to exec: ";
-      for (std::vector<const char *>::const_iterator a = Args.begin(); *a != NULL; ++a)
-	 std::clog << " " << *a;
+      for (auto const &a : Args)
+	 std::clog << " " << a;
       std::clog << std::endl;
    }
 
@@ -360,20 +479,27 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       putenv((char *)"LC_MESSAGES=");
    }
 
+   // Translate the argument list to a C array. This should happen before
+   // the fork so we don't allocate money between fork() and execvp().
+   std::vector<const char *> cArgs;
+   cArgs.reserve(Args.size() + 1);
+   for (auto const &arg : Args)
+      cArgs.push_back(arg.c_str());
+   cArgs.push_back(nullptr);
 
    // We have created tempfiles we have to clean up
    // and we do an additional check, so fork yet another time …
    pid_t pid = ExecFork();
    if(pid < 0) {
-      apt_error(std::cerr, statusfd, fd, "Fork failed for %s to check %s", Args[0], File.c_str());
+      apt_error(std::cerr, statusfd, fd, "Fork failed for %s to check %s", Args[0].c_str(), File.c_str());
       local_exit(EINTERNAL);
    }
    if(pid == 0)
    {
       if (statusfd != -1)
 	 dup2(fd[1], statusfd);
-      execvp(Args[0], (char **) &Args[0]);
-      apt_error(std::cerr, statusfd, fd, "Couldn't execute %s to check %s", Args[0], File.c_str());
+      execvp(cArgs[0], (char **) &cArgs[0]);
+      apt_error(std::cerr, statusfd, fd, "Couldn't execute %s to check %s", Args[0].c_str(), File.c_str());
       local_exit(EINTERNAL);
    }
 

@@ -190,6 +190,12 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    if (Debug == true)
       std::clog << "inside VerifyGetSigners" << std::endl;
 
+   // Abort early if we can't find gpgv, before forking further. This also
+   // caches the invocation of --dump-options to find the working gpgv across
+   // our fork() below.
+   if (APT::Internal::FindGPGV(Debug).first.empty())
+      return "Internal error: Cannot find gpgv";
+
    int fd[2];
 
    if (pipe(fd) < 0)
@@ -201,9 +207,8 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    else if (pid == 0)
    {
       std::ostringstream keys;
-      implodeVector(keyFiles, keys, ",");
       setenv("APT_KEY_NO_LEGACY_KEYRING", "1", true);
-      ExecGPGV(outfile, file, 3, fd, keys.str());
+      ExecGPGV(outfile, file, 3, fd, keyFiles);
    }
    close(fd[1]);
 

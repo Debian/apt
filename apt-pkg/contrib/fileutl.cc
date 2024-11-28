@@ -3232,7 +3232,7 @@ bool Popen(const char *Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode, 
       } else if(Mode == FileFd::WriteOnly)
          dup2(fd, 0);
 
-      execv(Args[0], (char**)Args);
+      execvp(Args[0], (char **)Args);
       _exit(100);
    }
    if(Mode == FileFd::ReadOnly)

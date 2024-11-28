@@ -7,7 +7,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'i386'
 
-cat > faked-apt-key <<EOF
+cat > faked-gpgv <<EOF
 #!/bin/sh
 set -e
 find_gpgv_status_fd() {
@@ -24,7 +24,7 @@ GPGSTATUSFD="\$(find_gpgv_status_fd "\$@")"
 cat >&\${GPGSTATUSFD} gpgv.output
 cat gpgv.output
 EOF
-chmod +x faked-apt-key
+chmod +x faked-gpgv
 
 testgpgv() {
 	echo "$4" > gpgv.output
@@ -114,7 +114,7 @@ EOF
 gpgvmethod() {
 	echo "601 Configuration
 Config-Item: Debug::Acquire::gpgv=1
-Config-Item: Dir::Bin::apt-key=./faked-apt-key
+Config-Item: APT::Key::GPGVCommand=$PWD/faked-gpgv
 Config-Item: APT::Hashes::SHA1::Weak=true
 Config-Item: APT::Key::Assert-Pubkey-Algo=>=rsa2048,nistp256,brainpoolP256r1
 Config-Item: APT::Key::Assert-Pubkey-Algo::Next=>=rsa2048,nistp256
@@ -130,7 +130,7 @@ testrun
 gpgvmethod() {
 	echo "601 Configuration
 Config-Item: Debug::Acquire::gpgv=1
-Config-Item: Dir::Bin::apt-key=./faked-apt-key
+Config-Item: APT::Key::GPGVCommand=$PWD/faked-gpgv
 Config-Item: APT::Hashes::SHA1::Weak=true
 Config-Item: APT::Key::Assert-Pubkey-Algo=>=rsa2048,nistp256,brainpoolP256r1
 Config-Item: APT::Key::Assert-Pubkey-Algo::Next=>=rsa2048,nistp256
@@ -147,7 +147,7 @@ testrun
 gpgvmethod() {
 	echo "601 Configuration
 Config-Item: Debug::Acquire::gpgv=1
-Config-Item: Dir::Bin::apt-key=./faked-apt-key
+Config-Item: APT::Key::GPGVCommand=$PWD/faked-gpgv
 Config-Item: APT::Hashes::SHA1::Weak=true
 Config-Item: APT::Key::Assert-Pubkey-Algo=>=rsa2048,nistp256,brainpoolP256r1
 Config-Item: APT::Key::Assert-Pubkey-Algo::Next=>=rsa2048,nistp256
@@ -173,7 +173,7 @@ testsuccess grep 'verified because the public key is not available: GOODSIG' met
 gpgvmethod() {
 	echo "601 Configuration
 Config-Item: Debug::Acquire::gpgv=1
-Config-Item: Dir::Bin::apt-key=./faked-apt-key
+Config-Item: APT::Key::GPGVCommand=$PWD/faked-gpgv
 Config-Item: APT::Hashes::SHA1::Weak=true
 Config-Item: APT::Key::Assert-Pubkey-Algo=>=rsa2048,nistp256,brainpoolP256r1
 Config-Item: APT::Key::Assert-Pubkey-Algo::Next=>=rsa2048,nistp256
@@ -204,26 +204,26 @@ setupaptarchive --no-update
 
 echo '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Sebastian Subkey <subkey@example.org>
 [GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2018-08-16 1534459673 0 4 0 1 11 00 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' > gpgv.output
-testsuccess apt update -o Dir::Bin::apt-key="./faked-apt-key" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+testsuccess apt update -o APT::Key::GPGVCommand="$PWD/faked-gpgv" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 rm -rf rootdir/var/lib/apt/lists
 
 echo '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Sebastian Subkey <subkey@example.org>' > gpgv.output
-testfailure apt update -o Dir::Bin::apt-key="./faked-apt-key" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+testfailure apt update -o APT::Key::GPGVCommand="$PWD/faked-gpgv" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 rm -rf rootdir/var/lib/apt/lists
 
 echo '[GNUPG:] VALIDSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE 2018-08-16 1534459673 0 4 0 1 11 00 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' > gpgv.output
-testfailure apt update -o Dir::Bin::apt-key="./faked-apt-key" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+testfailure apt update -o APT::Key::GPGVCommand="$PWD/faked-gpgv" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 rm -rf rootdir/var/lib/apt/lists
 
 echo '[GNUPG:] GOODSIG 5A90D141DBAC8DAE Sebastian Subkey <subkey@example.org>
 [GNUPG:] VALIDSIG 0000000000000000000000000000000000000000 2018-08-16 1534459673 0 4 0 1 11 00 4281DEDBD466EAE8C1F4157E5B6896415D44C43E' > gpgv.output
-testfailure apt update -o Dir::Bin::apt-key="./faked-apt-key" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+testfailure apt update -o APT::Key::GPGVCommand="$PWD/faked-gpgv" -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
 rm -rf rootdir/var/lib/apt/lists
 
 gpgvmethod() {
 	echo "601 Configuration
 Config-Item: Debug::Acquire::gpgv=1
-Config-Item: Dir::Bin::apt-key=./faked-apt-key
+Config-Item: APT::Key::GPGVCommand=$PWD/faked-gpgv
 Config-Item: APT::Hashes::SHA1::Weak=true
 Config-Item: APT::Key::Assert-Pubkey-Algo::Next=>=invalid
 
