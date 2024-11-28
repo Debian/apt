@@ -761,8 +761,8 @@ StringView pkgTagSection::FindRaw(Key key) const
 /* */
 signed int pkgTagSection::FindIInternal(unsigned int Pos,signed long Default) const
 {
-   const char *Start;
-   const char *Stop;
+   const char *Start = nullptr;
+   const char *Stop = nullptr;
    if (FindInternal(Pos,Start,Stop) == false)
       return Default;
 
@@ -803,8 +803,8 @@ signed int pkgTagSection::FindI(StringView Tag,signed long Default) const
 /* */
 unsigned long long pkgTagSection::FindULLInternal(unsigned int Pos, unsigned long long const &Default) const
 {
-   const char *Start;
-   const char *Stop;
+   const char *Start = nullptr;
+   const char *Stop = nullptr;
    if (FindInternal(Pos,Start,Stop) == false)
       return Default;
 
@@ -839,7 +839,7 @@ unsigned long long pkgTagSection::FindULL(StringView Tag, unsigned long long con
 /* */
 bool pkgTagSection::FindBInternal(unsigned int Pos, bool Default) const
 {
-   const char *Start, *Stop;
+   const char *Start = nullptr, *Stop = nullptr;
    if (FindInternal(Pos, Start, Stop) == false)
       return Default;
    return StringToBool(string(Start, Stop));
@@ -861,8 +861,8 @@ bool pkgTagSection::FindB(StringView Tag, bool Default) const
 bool pkgTagSection::FindFlagInternal(unsigned int Pos, uint8_t &Flags,
 			     uint8_t const Flag) const
 {
-   const char *Start;
-   const char *Stop;
+   const char *Start = nullptr;
+   const char *Stop = nullptr;
    if (FindInternal(Pos,Start,Stop) == false)
       return true;
    return FindFlag(Flags, Flag, Start, Stop);
@@ -905,8 +905,8 @@ bool pkgTagSection::FindFlag(uint8_t &Flags, uint8_t const Flag,
 bool pkgTagSection::FindFlagInternal(unsigned int Pos,unsigned long &Flags,
 			     unsigned long Flag) const
 {
-   const char *Start;
-   const char *Stop;
+   const char *Start = nullptr;
+   const char *Stop = nullptr;
    if (FindInternal(Pos,Start,Stop) == false)
       return true;
    return FindFlag(Flags, Flag, Start, Stop);
