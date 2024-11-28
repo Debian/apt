@@ -1,3 +1,28 @@
+apt (2.9.15) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * Collect unprinted Ign errors for display in Err output
+
+  [ Julian Andres Klode ]
+  * Stop using apt-key for signature verification
+    - test-apt-cdrom: Hande assert-pubkey-algo like other gpgv messages
+    - Fix accidental ABI break in debListParser::ParseDepends
+    - tagfile: Avoid uninitialized variable warnings
+    - gpgv: Generalize apt_error to apt_msg(), add apt_warning()
+    - Do not implode key file name vector for calling gpgv
+    - apt-key: Only cat supported keyrings into the merged one
+    - apt-key: Temporarily accept 'pub' as an extension for binary gpg keys
+    - gpgv: Explictly pass all the keyrings to gpgv from apt
+    - gpgv: Use std::string instead of const char *
+    - strutl: Add Base64Decode
+    - gpgv: Verify keyrings and dearmor outside apt-key
+    - Directly call gpgv instead of apt-key
+    - gpgv: Add direct support for --assert-pubkey-algo
+    - fileutl: Use execvp() in Popen() instead of execv()
+    - Detect working gpgv using gpgv --dump-options
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 28 Nov 2024 19:33:03 +0100
+
 apt (2.9.14) unstable; urgency=medium
 
   [ Julian Andres Klode ]
