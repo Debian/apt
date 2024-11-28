@@ -563,6 +563,24 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    return res;
 }
+const char *debListParser::ParseDepends(const char *Start,const char *Stop,
+					APT::StringView &Package,APT::StringView &Ver,
+					unsigned int &Op, bool ParseArchFlags,
+					bool const StripMultiArch,
+					bool const ParseRestrictionsList,
+				        string Arch)
+{
+   string_view PackageView;
+   string_view VerView;
+
+   auto res = ParseDepends(Start, Stop, PackageView, VerView, Op, (bool)ParseArchFlags,
+   (bool) StripMultiArch, (bool) ParseRestrictionsList, Arch);
+   Package = PackageView;
+   Ver = VerView;
+
+   return res;
+}
+
 
 const char *debListParser::ParseDepends(const char *Start, const char *Stop,
 					string_view &Package, string_view &Ver,

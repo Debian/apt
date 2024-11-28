@@ -82,6 +82,13 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
 					      std::string const &Arch = "");
 
    APT_PUBLIC static const char *ParseDepends(const char *Start, const char *Stop,
+					      APT::StringView &Package,
+					      APT::StringView &Ver, unsigned int &Op,
+					      bool const ParseArchFlags = false, bool StripMultiArch = true,
+					      bool const ParseRestrictionsList = false,
+					      std::string Arch = "") APT_DEPRECATED_MSG("Use std::string_view variant instead");
+
+   APT_PUBLIC static const char *ParseDepends(const char *Start, const char *Stop,
 					      std::string_view &Package,
 					      std::string_view &Ver, unsigned int &Op,
 					      bool const ParseArchFlags = false, bool StripMultiArch = true,
