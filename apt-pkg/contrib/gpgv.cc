@@ -230,18 +230,6 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 apt_warning(std::cerr, statusfd, fd, "The key(s) in the keyring %s are ignored as the file is not readable by user executing apt-key.\n", k.c_str());
 	 return "";
       }
-      if (APT::String::Endswith(k, ".gpg") || APT::String::Endswith(k, ".pub"))
-      {
-	 unsigned char c;
-	 if (not keyFd.Read(&c, sizeof(c)))
-	    goto err;
-	 // Identify the leading byte of an OpenPGP public key packet
-	 // 0x98 -- old-format OpenPGP public key packet, up to 255 octets
-	 // 0x99 -- old-format OpenPGP public key packet, 256-65535 octets
-	 // 0xc6 -- new-format OpenPGP public key packet, any length
-	 if (c == 0x98 || c == 0x99 || c == 0xc6)
-	    return k;
-      }
       else if (APT::String::Endswith(k, ".asc"))
       {
 	 std::string b64msg;
@@ -268,6 +256,18 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	    dearmoredFd.Write(decoded.data(), decoded.size());
 	 local_exit.files.push_back(dearmoredFd.Name());
 	 return dearmoredFd.Name();
+      }
+      else
+      {
+	 unsigned char c;
+	 if (not keyFd.Read(&c, sizeof(c)))
+	    goto err;
+	 // Identify the leading byte of an OpenPGP public key packet
+	 // 0x98 -- old-format OpenPGP public key packet, up to 255 octets
+	 // 0x99 -- old-format OpenPGP public key packet, 256-65535 octets
+	 // 0xc6 -- new-format OpenPGP public key packet, any length
+	 if (c == 0x98 || c == 0x99 || c == 0xc6)
+	    return k;
       }
    err:
       apt_warning(std::cerr, statusfd, fd, "The key(s) in the keyring %s are ignored as the file has an unsupported filetype.", k.c_str());
