@@ -47,18 +47,24 @@ struct APT::Solver::CompareProviders3 /*{{{*/
       {
 	 if (AV == BV)
 	    return false;
-	 // The current version should win, unless we are upgrading and the other is the
-	 // candidate.
-	 // If AV is the current version, AV only wins on upgrades if BV is not the candidate.
-	 if (A.CurrentVer() == AV)
-	    return upgrade ? Policy.GetCandidateVer(A) != BV : true;
-	 // If BV is the current version, AV only wins on upgrades if it is the candidate.
-	 if (A.CurrentVer() == BV)
-	    return upgrade ? Policy.GetCandidateVer(A) == AV : false;
-	 // If neither are the current version, order them by priority.
-	 if (Policy.GetPriority(AV) < Policy.GetPriority(BV))
-	    return false;
 
+	 // Candidate wins in upgrade scenario
+	 if (upgrade)
+	 {
+	    auto Cand = Policy.GetCandidateVer(A);
+	    if (AV == Cand || BV == Cand)
+	       return (AV == Cand);
+	 }
+
+	 // Installed version wins otherwise
+	 if (A.CurrentVer() == AV || B.CurrentVer() == BV)
+	    return (A.CurrentVer() == AV);
+
+	 // Rest is ordered list, first by priority
+	 if (auto pinA = Policy.GetPriority(AV), pinB = Policy.GetPriority(BV); pinA != pinB)
+	    return pinA > pinB;
+
+	 // Then by version
 	 return _system->VS->CmpVersion(AV.VerStr(), BV.VerStr()) > 0;
       }
       // Try obsolete choices only after exhausting non-obsolete choices such that we install

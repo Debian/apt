@@ -63,3 +63,13 @@ Conf enhanced (3 unstable [all])
 Conf enhances (3 unstable [all])
 Conf replaced (3 unstable [all])
 Conf replaces (3 unstable [all])" apt dist-upgrade -s
+
+insertpackage 'testing,now' 'test' 'all' '1'
+insertpackage 'unstable' 'test' 'all' '2'
+insertpackage 'experimental' 'test' 'all' '3'
+insertpackage 'unstable' 'depends-test' 'all' '2' 'Depends: test'
+setupaptarchive
+
+testsuccess apt upgrade depends-test -o Debug::APT::Solver=3 --solver 3.0 --no-strict-pinning -s
+cp rootdir/tmp/testsuccess.output solver.log
+testsuccess grep 'test:amd64=2 | test:amd64=1 | test:amd64=3' solver.log
