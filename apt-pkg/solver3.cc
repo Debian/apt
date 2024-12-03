@@ -291,7 +291,8 @@ bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg) const
       ver = pkg.VersionList();
    if (ver.end())
    {
-      std::cerr << "Obsolete: " << pkg.FullName() << " - not installable\n";
+      if (debug >= 3)
+	 std::cerr << "Obsolete: " << pkg.FullName() << " - not installable\n";
       pkgObsolete[pkg->ID] = 2;
       return true;
    }
