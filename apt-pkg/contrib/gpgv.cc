@@ -232,7 +232,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       FileFd keyFd(k, FileFd::ReadOnly);
       if (not keyFd.IsOpen())
       {
-	 apt_warning(std::cerr, statusfd, fd, "The key(s) in the keyring %s are ignored as the file is not readable by user executing apt-key.\n", k.c_str());
+	 apt_warning(std::cerr, statusfd, fd, "The key(s) in the keyring %s are ignored as the file is not readable by user executing gpgv.\n", k.c_str());
       }
       else if (APT::String::Endswith(k, ".asc"))
       {
@@ -512,14 +512,14 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    {
       if (errno == EINTR)
 	 continue;
-      apt_error(std::cerr, statusfd, fd, _("Waited for %s but it wasn't there"), "apt-key");
+      apt_error(std::cerr, statusfd, fd, _("Waited for %s but it wasn't there"), gpgv.c_str());
       local_exit(EINTERNAL);
    }
 
    // check if it exit'ed normally …
    if (not WIFEXITED(Status))
    {
-      apt_error(std::cerr, statusfd, fd, _("Sub-process %s exited unexpectedly"), "apt-key");
+      apt_error(std::cerr, statusfd, fd, _("Sub-process %s exited unexpectedly"), gpgv.c_str());
       local_exit(EINTERNAL);
    }
 
@@ -527,7 +527,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    if (WEXITSTATUS(Status) != 0)
    {
       // we forward the statuscode, so don't generate a message on the fd in this case
-      apt_error(std::cerr, -1, fd, _("Sub-process %s returned an error code (%u)"), "apt-key", WEXITSTATUS(Status));
+      apt_error(std::cerr, -1, fd, _("Sub-process %s returned an error code (%u)"), gpgv.c_str(), WEXITSTATUS(Status));
       local_exit(WEXITSTATUS(Status));
    }
 
