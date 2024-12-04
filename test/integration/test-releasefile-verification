@@ -231,13 +231,14 @@ runtest() {
 
 	msgmsg 'Good warm archive signed by' 'Rex Expired'
 	prepare "${PKGFILE}-new"
-	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+    # Use a colon here to test weird filenames too
+	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rex:expired.gpg
 	signreleasefiles 'Rex Expired'
 	updatewithwarnings '^W: .* EXPKEYSIG'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	installaptold
-	rm rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+	rm rootdir/etc/apt/trusted.gpg.d/rex:expired.gpg
 
 	msgmsg 'Good warm archive signed by' 'Joe Sixpack'
 	prepare "${PKGFILE}-new"

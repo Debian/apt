@@ -222,13 +222,17 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    Args.push_back(gpgv);
    Args.push_back("--ignore-time-conflict");
 
-   auto dearmorKeyOrCheckFormat = [&](std::string const &k) -> std::string
+   FileFd mergedFd;
+   if (GetTempFile("apt.XXXXXX.gpg", false, &mergedFd) == nullptr)
+      local_exit(EINTERNAL);
+   local_exit.files.push_back(mergedFd.Name());
+
+   auto dearmorKeyOrCheckFormat = [&](std::string const &k)
    {
       FileFd keyFd(k, FileFd::ReadOnly);
       if (not keyFd.IsOpen())
       {
 	 apt_warning(std::cerr, statusfd, fd, "The key(s) in the keyring %s are ignored as the file is not readable by user executing apt-key.\n", k.c_str());
-	 return "";
       }
       else if (APT::String::Endswith(k, ".asc"))
       {
@@ -249,13 +253,10 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 if (state != 3)
 	    goto err;
 
-	 FileFd dearmoredFd;
-	 if (GetTempFile("apt.XXXXXX.gpg", false, &dearmoredFd) == nullptr)
-	    local_exit(EINTERNAL);
 	 if (auto decoded = Base64Decode(b64msg); not decoded.empty())
-	    dearmoredFd.Write(decoded.data(), decoded.size());
-	 local_exit.files.push_back(dearmoredFd.Name());
-	 return dearmoredFd.Name();
+	    if (not mergedFd.Write(decoded.data(), decoded.size()))
+	       local_exit(EINTERNAL);
+	 return;
       }
       else
       {
@@ -266,25 +267,29 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 // 0x98 -- old-format OpenPGP public key packet, up to 255 octets
 	 // 0x99 -- old-format OpenPGP public key packet, 256-65535 octets
 	 // 0xc6 -- new-format OpenPGP public key packet, any length
-	 if (c == 0x98 || c == 0x99 || c == 0xc6)
-	    return k;
+	 if (c != 0x98 && c != 0x99 && c != 0xc6)
+	    goto err;
+
+	 if (not mergedFd.Write(&c, sizeof(c)))
+	    local_exit(EINTERNAL);
+
+	 if (not CopyFile(keyFd, mergedFd))
+	    local_exit(EINTERNAL);
+
+	 return;
       }
    err:
       apt_warning(std::cerr, statusfd, fd, "The key(s) in the keyring %s are ignored as the file has an unsupported filetype.", k.c_str());
-      return "";
    };
    auto maybeAddKeyring = [&](std::string const &k)
    {
       if (struct stat st; stat(k.c_str(), &st) != 0 || st.st_size == 0)
 	 return;
-      if (auto cleanKey = dearmorKeyOrCheckFormat(k); not cleanKey.empty())
-      {
-	 Args.push_back("--keyring");
-	 Args.push_back(cleanKey);
-      }
+      dearmorKeyOrCheckFormat(k);
       return;
    };
 
+   bool FoundKeyring = false;
    for (auto const &k : KeyFiles)
    {
       if (unlikely(k.empty()))
@@ -295,6 +300,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	    std::clog << "Trying Signed-By: " << k << std::endl;
 
 	 maybeAddKeyring(k);
+	 FoundKeyring = true;
       }
       else
       {
@@ -304,7 +310,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    }
 
    std::vector<std::string> Parts;
-   if (std::find(Args.begin(), Args.end(), "--keyring") == Args.end())
+   if (not FoundKeyring)
    {
       Parts = GetListOfFilesInDir(_config->FindDir("Dir::Etc::TrustedParts"), std::vector<std::string>{"gpg", "asc"}, true);
       if (char *env = getenv("APT_KEY_NO_LEGACY_KEYRING"); env == nullptr || not StringToBool(env, false))
@@ -318,11 +324,8 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    }
 
    // If we do not give it any keyring, gpgv shouts keydb errors at us
-   if (std::find(Args.begin(), Args.end(), "--keyring") == Args.end())
-   {
-      Args.push_back("--keyring");
-      Args.push_back("/dev/null");
-   }
+   Args.push_back("--keyring");
+   Args.push_back(mergedFd.Name());
 
    char statusfdstr[10];
    if (statusfd != -1)
