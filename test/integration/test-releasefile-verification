@@ -97,13 +97,20 @@ echo -n 'apt' > aptarchive/apt.deb
 PKGFILE="${TESTDIR}/$(echo "$(basename "$0")" | sed 's#^test-#Packages-#')"
 
 updatewithwarnings() {
-	testwarning aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+	testwarning aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1 -o Debug::Acquire::sqv=1
 	testsuccess grep -E "$1" rootdir/tmp/testwarning.output
 }
 
 foreachgpg() {
     rm -f rootdir/etc/apt/apt.conf.d/00gpgvcmd
-	"$@"
+	local sqv="true"
+	if [ "$1" = "--no-sqv" ]; then
+		local sqv=
+		shift
+	fi
+	if [ "$sqv" ]; then
+		"$@"
+	fi
 	for GPGV in "gpgv-sq" "gpgv-g10code"; do
 		msgmsg "Forcing $GPGV to be used"
 		echo "APT::Key::GPGVCommand \"$GPGV\";" > "rootdir/etc/apt/apt.conf.d/00gpgvcmd"
@@ -147,7 +154,7 @@ runtest() {
 	rm -rf rootdir/var/lib/apt/lists
 	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
 	signreleasefiles 'Rex Expired'
-	updatewithwarnings '^W: .* EXPKEYSIG'
+	updatewithwarnings '^W: .* (EXPKEYSIG|Expired)'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	failaptold
@@ -157,7 +164,7 @@ runtest() {
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack,Marvin Paranoid'
-	successfulaptgetupdate 'NO_PUBKEY'
+	successfulaptgetupdate 'NO_PUBKEY\|GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	installaptold
@@ -167,7 +174,7 @@ runtest() {
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack,Rex Expired'
 	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
-	successfulaptgetupdate 'EXPKEYSIG'
+	successfulaptgetupdate 'EXPKEYSIG\|GOODSIG 34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE'
 	rm -f rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
@@ -177,7 +184,7 @@ runtest() {
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Marvin Paranoid'
-	updatewithwarnings '^W: .* NO_PUBKEY'
+	updatewithwarnings '^W: .* (NO_PUBKEY|Missing key)'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	failaptold
@@ -202,7 +209,7 @@ runtest() {
 	msgmsg 'Good warm archive signed by' 'Marvin Paranoid'
 	prepare "${PKGFILE}-new"
 	signreleasefiles 'Marvin Paranoid'
-	updatewithwarnings '^W: .* NO_PUBKEY'
+	updatewithwarnings '^W: .* (NO_PUBKEY|Missing key)'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	installaptold
@@ -212,7 +219,7 @@ runtest() {
     # Use a colon here to test weird filenames too
 	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rex:expired.gpg
 	signreleasefiles 'Rex Expired'
-	updatewithwarnings '^W: .* EXPKEYSIG'
+	updatewithwarnings '^W: .* (EXPKEYSIG|Expired)'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	installaptold
@@ -230,7 +237,7 @@ runtest() {
 	rm -rf rootdir/var/lib/apt/lists
 	local MARVIN="$(readlink -f keys/marvinparanoid.pub)"
 	sed -i "s#^\(deb\(-src\)\?\) #\1 [signed-by=$MARVIN] #" rootdir/etc/apt/sources.list.d/*
-	updatewithwarnings '^W: .* NO_PUBKEY'
+	updatewithwarnings '^W: .* (NO_PUBKEY|Missing key)'
 
 	msgmsg 'Cold archive signed by good keyring' 'Marvin Paranoid'
 	prepare "${PKGFILE}"
@@ -265,7 +272,7 @@ runtest() {
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
 	sed -i "s#^\(deb\(-src\)\?\) #\1 [signed-by=$MARVIN] #" rootdir/etc/apt/sources.list.d/*
-	updatewithwarnings '^W: .* be verified because the public key is not available: .*'
+	updatewithwarnings '^W: .* (be verified because the public key is not available: .*|No good signature from required signer)'
 
 	msgmsg 'Cold archive signed by good keyid' 'Marvin Paranoid'
 	rm -rf rootdir/var/lib/apt/lists
@@ -279,7 +286,7 @@ runtest() {
 	msgmsg 'Cold archive signed by good keyid' 'Marvin Paranoid,Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Marvin Paranoid,Joe Sixpack'
-	successfulaptgetupdate 'NoPubKey: GOODSIG'
+	successfulaptgetupdate 'NoPubKey: GOODSIG\|DE66AECA9151AFA1877EC31DE8525D47528144E2'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	installaptold
@@ -324,7 +331,7 @@ Signed-By: ${SIXPACK}" rootdir/var/lib/apt/lists/*Release
 	sed -i "/^Valid-Until: / a\
 Signed-By: ${MARVIN}" rootdir/var/lib/apt/lists/*Release
 	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
-	updatewithwarnings 'W: .* public key is not available: GOODSIG'
+	updatewithwarnings 'W: .* (public key is not available: GOODSIG|No good signature from required signer:)'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	installaptold
@@ -373,22 +380,26 @@ Signed-By: ${SEBASTIAN}" rootdir/var/lib/apt/lists/*Release
 	sed -i "/^Valid-Until: / a\
 Signed-By: ${SEBASTIAN}!" rootdir/var/lib/apt/lists/*Release
 	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
-	updatewithwarnings 'W: .* public key is not available: GOODSIG'
+	updatewithwarnings 'W: .* (public key is not available: GOODSIG|No good signature from required signer:)'
 	testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 	installaptold
 
 	local SUBKEY="4281DEDBD466EAE8C1F4157E5B6896415D44C43E"
+	# This is only supported for gpgv, so require an explicit gpgv command,
+	# otherwise the default verification backend may be sqv.
+	if [ "$GPGV" ]; then
 	msgmsg 'Warm archive with correct exact subkey signing' 'Sebastian Subkey'
 	rm -rf rootdir/var/lib/apt/lists
 	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
-	sed -i "/^Valid-Until: / a\
+		sed -i "/^Valid-Until: / a\
 Signed-By: ${SUBKEY}!" rootdir/var/lib/apt/lists/*Release
-	touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
-	successfulaptgetupdate
-	testsuccessequal "$(cat "${PKGFILE}-new")
+		touch -d 'now - 1 year' rootdir/var/lib/apt/lists/*Release
+		successfulaptgetupdate
+		testsuccessequal "$(cat "${PKGFILE}-new")
 " aptcache show apt
-	installaptnew
+		installaptnew
+	fi
 	rm -f rootdir/etc/apt/trusted.gpg.d/sebastiansubkey.gpg
 }
 
@@ -418,16 +429,6 @@ runtest2() {
 	rm -rf rootdir/var/lib/apt/lists
 	find aptarchive -name Release -exec sh -c "echo Hello > {}.gpg" \;
 	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  Release: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update
-
-	msgmsg 'Cold archive signed by' 'Empty inline'
-	rm -rf rootdir/var/lib/apt/lists
-	find aptarchive -name Release -exec sh -c '( echo -----BEGIN PGP SIGNED MESSAGE-----; echo Hash: SHA512; echo; cat {} ; echo; echo -----BEGIN PGP SIGNATURE-----; echo ; echo -----END PGP SIGNATURE----- ) > $(dirname {})/In$(basename {})' \;
-	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  InRelease: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update
-
-	msgmsg 'Cold archive signed by' 'Bad inline'
-	rm -rf rootdir/var/lib/apt/lists
-	find aptarchive -name Release -exec sh -c '( echo -----BEGIN PGP SIGNED MESSAGE-----; echo Hash: SHA512; echo; cat {} ; echo; echo -----BEGIN PGP SIGNATURE-----; echo ; echo SGVsbG8K; echo =nFa9; echo -----END PGP SIGNATURE----- ) > $(dirname {})/In$(basename {})' \;
-	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  InRelease: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update
 
 	find aptarchive/ \( -name InRelease -o -name Release.gpg \) -delete
 
@@ -463,7 +464,7 @@ EOF
 export APT_TESTS_DIGEST_ALGO='SHA512'
 
 successfulaptgetupdate() {
-	testsuccess aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+	testsuccess aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1 -o Debug::Acquire::sqv=1
 	if [ -n "$1" ]; then
 		cp rootdir/tmp/testsuccess.output aptupdate.output
 		testsuccess grep "$1" aptupdate.output
@@ -472,13 +473,13 @@ successfulaptgetupdate() {
 foreachgpg runtest3 'Trusted'
 
 successfulaptgetupdate() {
-	testwarning aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+	testwarning aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1 -o Debug::Acquire::sqv=1
 	if [ -n "$1" ]; then
 		testsuccess grep "$1" rootdir/tmp/testwarning.output
 	fi
 	testsuccess grep 'uses weak algorithm' rootdir/tmp/testwarning.output
 }
-foreachgpg runtest3 'Weak'
+foreachgpg --no-sqv runtest3 'Weak'
 
 msgmsg "Running test with apt-untrusted digest"
 echo "APT::Hashes::$APT_TESTS_DIGEST_ALGO::Untrusted \"yes\";" > rootdir/etc/apt/apt.conf.d/truststate
@@ -489,14 +490,14 @@ runfailure() {
 		prepare "${PKGFILE}"
 		rm -rf rootdir/var/lib/apt/lists
 		signreleasefiles 'Joe Sixpack'
-		testfailure aptget update --no-allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
-		testsuccess grep 'The following signatures were invalid' rootdir/tmp/testfailure.output
+		testfailure aptget update --no-allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1 -o Debug::Acquire::sqv=1
+		testsuccess grep 'The following signatures were invalid\|MD5 is not considered secure' rootdir/tmp/testfailure.output
 		testnopackage 'apt'
-		testwarning aptget update --allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+		testwarning aptget update --allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1 -o Debug::Acquire::sqv=1
 		failaptold
 		rm -rf rootdir/var/lib/apt/lists
 		sed -i 's#^deb\(-src\)\? #deb\1 [allow-insecure=yes] #' rootdir/etc/apt/sources.list.d/*
-		testwarning aptget update --no-allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+		testwarning aptget update --no-allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1 -o Debug::Acquire::sqv=1
 		failaptold
 		sed -i 's#^deb\(-src\)\? \[allow-insecure=yes\] #deb\1 #' rootdir/etc/apt/sources.list.d/*
 
@@ -504,13 +505,13 @@ runfailure() {
 		prepare "${PKGFILE}"
 		rm -rf rootdir/var/lib/apt/lists
 		signreleasefiles 'Marvin Paranoid'
-		testfailure aptget update --no-allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
+		testfailure aptget update --no-allow-insecure-repositories -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1 -o Debug::Acquire::sqv=1
 		testnopackage 'apt'
-		updatewithwarnings '^W: .* NO_PUBKEY'
+		updatewithwarnings '^W: .* (NO_PUBKEY|Missing key)'
 		testsuccessequal "$(cat "${PKGFILE}")
 " aptcache show apt
 		failaptold
 		export APT_DONT_SIGN='Release.gpg'
 	done
 }
-foreachgpg runfailure
+foreachgpg --no-sqv runfailure

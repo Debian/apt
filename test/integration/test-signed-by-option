@@ -66,7 +66,7 @@ xSigned-By:
     -----END PGP PUBLIC KEY BLOCK-----
 EOF
 testfailure apt update  -o Debug::Acquire::gpgv=1
-testsuccess grep "NO_PUBKEY 5A90D141DBAC8DAE" rootdir/tmp/testfailure.output
+testsuccess grep -E "(NO_PUBKEY 5A90D141DBAC8DAE|no keyring is specified)" rootdir/tmp/testfailure.output
 sed -i s/^xSigned-By/Signed-By/ rootdir/etc/apt/sources.list.d/deb822.sources
 testsuccess apt update  -o Debug::Acquire::gpgv=1
 # make sure we did not leave leftover files (LP: #1995247)

@@ -40,7 +40,11 @@ rm -f rootdir/etc/apt/trusted.gpg.d/*
 sed -i -e 's#^deb #deb [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
 
 APTARCHIVE="$(readlink -f ./aptarchive)"
+if test -e /usr/bin/sqv; then
+GPGERROR="W: GPG error: file:$APTARCHIVE  Release: The signatures couldn't be verified because no keyring is specified"
+else
 GPGERROR="W: GPG error: file:$APTARCHIVE  Release: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 5A90D141DBAC8DAE"
+fi
 
 msgmsg 'Running update again does not change result' '0'
 testwarningmsg "$GPGERROR" apt update
