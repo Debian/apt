@@ -1,3 +1,19 @@
+apt (2.9.17) unstable; urgency=medium
+
+  * solver3:
+    - Fix intransitivity of version comparison on upgrade, this
+      means no-strict-pinning gets the correct order now.
+    - Add a missing debug level check
+    - Reject all non-candidates outright for strict pinning
+  * gpgv: Merge all keyrings into a single one again. This fixes
+    issues with arbitrary gpgv restrictions, such as strange
+    filenames or more than 40 keys
+  * Stop installing apt-key, make it a test suite helper
+    - gpgv: Drop references to apt-key
+    - Remove the apt-key manual page and add documentation to apt-secure
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 07 Dec 2024 17:12:51 +0100
+
 apt (2.9.16) unstable; urgency=medium
 
   * Avoid extension check for .gpg in Signed-By keyrings (Closes: #1088656)

@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2024-11-14 17:31+0000\n"
+"POT-Creation-Date: 2024-12-07 16:13+0000\n"
 "PO-Revision-Date: 2024-04-16 13:15-0400\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
@@ -3732,18 +3732,26 @@ msgid ""
 msgstr "内部错误：签名正确无误，但是无法确认密钥指纹？！"
 
 #: methods/gpgv.cc
-msgid "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
+#, fuzzy
+#| msgid ""
+#| "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
+msgid "Could not execute 'gpgv' to verify signature (is gnupg installed?)"
 msgstr "无法运行 apt-key 以验证签名(您安装了 gnupg 吗？)"
 
 #: methods/gpgv.cc
-msgid "Unknown error executing apt-key"
+#, fuzzy
+#| msgid "Unknown error executing apt-key"
+msgid "Unknown error executing gpgv"
 msgstr "运行 apt-key 时发生未知错误"
 
 #: methods/gpgv.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
+#| "section in apt-key(8) for details."
 msgid ""
-"Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
-"section in apt-key(8) for details."
+"Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. See "
+"the USER CONFIGURATION section in apt-secure(8) for details."
 msgstr ""
 "密钥存储在过时的 trusted.gpg 密钥环中（%s），请参见 apt-key(8) 的 "
 "DEPRECATION 一节以了解详情。"
