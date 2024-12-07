@@ -481,9 +481,9 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    else if (WEXITSTATUS(status) == 1)
       return _("At least one invalid signature was encountered.");
    else if (WEXITSTATUS(status) == 111)
-      return _("Could not execute 'apt-key' to verify signature (is gnupg installed?)");
+      return _("Could not execute 'gpgv' to verify signature (is gnupg installed?)");
    else
-      return _("Unknown error executing apt-key");
+      return _("Unknown error executing gpgv");
 }
 string GPGVMethod::VerifyGetSignersWithLegacy(const char *file, const char *outfile,
 					      vector<string> const &keyFpts,
@@ -518,7 +518,7 @@ string GPGVMethod::VerifyGetSignersWithLegacy(const char *file, const char *outf
       {
 	 std::string warning;
 	 strprintf(warning,
-		   _("Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION section in apt-key(8) for details."),
+		   _("Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details."),
 		   legacyKeyFiles[0].c_str());
 	 Warning(std::move(warning));
 	 Signers = std::move(legacySigners);

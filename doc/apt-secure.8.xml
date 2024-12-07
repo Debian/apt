@@ -60,6 +60,40 @@
    and &synaptic; support this authentication feature, so this manpage uses
    <literal>APT</literal> to refer to them all for simplicity only.
    </para>
+ </refsect1>
+
+<refsect1><title>User Configuration</title>
+  <para>
+    Keys should usually be included inside their corresponding <literal>.sources</literal>
+    by embedding the ASCII-armored key in the <literal>Signed-By</literal> option.
+    To do so, replace the empty line with a dot, and then indent all lines by two spaces.
+    See &sources-list; for more information.
+  </para>
+
+  <para>
+    Alternatively, keys may be placed in <filename>/etc/apt/keyrings</filename> for local keys,
+    or <filename>/usr/share/keyrings</filename> for keys managed by packages, and then referenced
+    by <literal>Signed-By: /etc/apt/keyrings/example-archive-keyring.asc</literal> option in a <literal>.sources</literal>
+    file or using <literal>deb [signed-by=/etc/apt/keyrings/example-archive-keyring.asc] ...</literal> in the legacy
+    <literal>.list</literal> format. This may be useful for APT versions prior to 2.4, which do not
+    support embedded keys. ASCII-armored keys must use an extension of <literal>.asc</literal>, and
+    unarmored keys an extension of <literal>.gpg</literal>.
+  </para>
+
+  <para>
+    To generate keys suitable for use in APT using GnuPG, you will need to use the 
+    <command>gpg --export-options export-minimal [--armor] --export</command> command.
+    Earlier solutions involving <command>--keyring file --import</command> no longer work
+    with recent GnuPG versions as they use a new internal format ("GPG keybox database").
+  </para>
+
+  <para>
+    Note that a default installation already contains all keys to securely
+    acquire packages from the default repositories, so managing keys
+    is only needed if third-party repositories are added.
+    The <command>extrepo</command> package can be used to manage several
+    external repositories with ease.
+  </para>
 </refsect1>
 
  <refsect1><title>Unsigned Repositories</title>
@@ -180,26 +214,6 @@
    </para>
 </refsect1>
 
-<refsect1><title>User Configuration</title>
-   <para>
-   <command>apt-key</command> is the program that manages the list of keys used
-   by APT to trust repositories. It can be used to add or remove keys as well
-   as list the trusted keys. Limiting which key(s) are able to sign which archive
-   is possible via the <option>Signed-By</option> in &sources-list;.
-   </para><para>
-   Note that a default installation already contains all keys to securely
-   acquire packages from the default repositories, so fiddling with
-   <command>apt-key</command> is only needed if third-party repositories are
-   added.
-   </para><para>
-   In order to add a new key you need to first download it
-   (you should make sure you are using a trusted communication channel
-   when retrieving it), add it with <command>apt-key</command> and
-   then run <command>apt-get update</command> so that apt can download
-   and verify the <filename>InRelease</filename> or <filename>Release.gpg</filename>
-   files from the archives you have configured.
-   </para>
-</refsect1>
 
 <refsect1><title>Repository Configuration</title>
    <para>
@@ -243,7 +257,7 @@
 
 <refsect1><title>See Also</title> 
 <para> 
-&apt-conf;, &apt-get;, &sources-list;, &apt-key;, &apt-ftparchive;,
+&apt-conf;, &apt-get;, &sources-list;, &apt-ftparchive;,
 &debsign;, &debsig-verify;, &gpg;
 </para>
 
