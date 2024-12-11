@@ -135,8 +135,8 @@ struct AptScopeWrapper {
 };
 template <class F>
 AptScopeWrapper(F) -> AptScopeWrapper<F>;
-#define PASTE2(a, b) a##b
-#define PASTE(a, b) PASTE2(a, b)
-#define DEFER(lambda) AptScopeWrapper PASTE(defer, __LINE__){lambda};
+#define APT_PASTE2(a, b) a##b
+#define APT_PASTE(a, b) APT_PASTE2(a, b)
+#define DEFER(lambda) AptScopeWrapper APT_PASTE(defer, __LINE__){lambda};
 
 #endif
