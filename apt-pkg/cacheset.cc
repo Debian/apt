@@ -60,6 +60,9 @@ bool CacheSetHelper::PackageFromTask(PackageContainerInterface * const pci, pkgC
 		pattern.erase(archfound);
 	}
 
+	if (pattern.empty())
+	   return false;
+
 	if (pattern[pattern.length() -1] != '^')
 		return false;
 	pattern.erase(pattern.length()-1);

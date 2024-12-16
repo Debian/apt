@@ -28,6 +28,10 @@ setupaptarchive
 
 APTARCHIVE=$(readlink -f ./aptarchive)
 
+testfailureequal "N: Unable to locate package :
+N: Unable to locate package :
+E: No packages found" apt show :
+
 # note that we do not display Description-md5 with the "apt" cmd
 # and also show some additional fields that are calculated
 testsuccessequal "Package: foo
