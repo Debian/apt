@@ -1,0 +1,116 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+DESCR='Some description
+ That has multiple lines'
+insertsource 'unstable' 'foo' 'all' '1.0'
+insertpackage 'unstable' 'foo' 'all' '1.0' '' '' "$DESCR"
+insertpackage 'unstable' 'multi' 'all' '1.0' '' '' "$DESCR"
+insertpackage 'unstable' 'multi' 'all' '2.0' '' '' "$DESCR"
+
+setupaptarchive
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+for show in info show; do
+msgmsg "$show supports pager"
+PAGER=cat testsuccessequal "Package: multi
+Version: 2.0
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Download-Size: 42 B
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+
+N: There is 1 additional record. Please use the '-a' switch to see it" runapt --unbuffer apt $show multi -o TestPager=cat
+
+PAGER="head -3" testsuccessequal "Package: multi
+Version: 2.0
+Priority: optional" runapt --unbuffer apt $show multi -o TestPager="head -3"
+
+# Test that we are not blocking
+PAGER=more testsuccessequal "Package: multi
+Version: 2.0
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Download-Size: 42 B
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+
+N: There is 1 additional record. Please use the '-a' switch to see it" runapt --unbuffer apt $show multi -o TestThatWeAreNotBlocking=1
+
+PAGER=not-a-valid-pager testsuccessequal "Package: multi
+Version: 2.0
+Priority: optional
+Section: other
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 43.0 kB
+Download-Size: 42 B
+APT-Sources: file:$APTARCHIVE unstable/main all Packages
+Description: Some description
+ That has multiple lines
+
+W: Could not execute pager - PagerSetup (2: No such file or directory)
+N: There is 1 additional record. Please use the '-a' switch to see it" runapt --unbuffer apt $show multi -o TestPager="not-a-valid-pager"
+PAGER="dd status=none of=/dev/null" testsuccessequal "" runapt --unbuffer apt $show multi  -o Test="everything is paged"
+done
+
+msgmsg "list supports pager"
+PAGER="head -1" testsuccessequal "foo/unstable 1.0 all
+multi/unstable 2.0 all" apt list -qq
+PAGER="head -1" testsuccessequal "foo/unstable 1.0 all" runapt --unbuffer apt list -qq -o TestPager="head -1"
+
+PAGER="dd status=none of=/dev/null" testsuccessequal "Listing..." runapt --unbuffer apt list  -o Test="progress is not paged"
+
+msgmsg "search supports pager"
+PAGER="head -1" testsuccessequal "foo/unstable 1.0 all
+  Some description
+
+multi/unstable 2.0 all
+  Some description
+" apt search -qq .
+
+PAGER="head -1" testsuccessequal "foo/unstable 1.0 all" runapt --unbuffer apt search -qq . -o TestPager="head -1"
+
+PAGER="dd status=none of=/dev/null" testsuccessequal "Sorting...
+Full Text Search..." runapt --unbuffer apt search .  -o Test="progress is not paged"
+
+msgmsg "policy supports pager"
+PAGER="head -1" testsuccessequal "foo:
+  Installed: (none)
+  Candidate: 1.0
+  Version table:
+     1.0 500
+        500 file:${APTARCHIVE} unstable/main all Packages" apt policy foo
+
+PAGER="head -1" testsuccessequal "foo:" runapt --unbuffer apt policy foo -o TestPager="head -1"
+
+PAGER="dd status=none of=/dev/null" testsuccessequal "" runapt --unbuffer apt policy foo  -o Test="everything is paged"
+
+msgmsg "showsrc supports pager"
+PAGER="head -2" testsuccessequal "Package: foo
+Binary: foo
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Files:
+ b998e085e36cf162e6a33c2801318fef 11 foo_1.0.dsc
+ d46b9a02af8487cbeb49165540c88184 14 foo_1.0.tar.gz
+Checksums-Sha256:
+ ed7c25c832596339bee13e4e7c45cf49f869b60d2bf57252f18191d75866c2a7 11 foo_1.0.dsc
+ f3da8c6ebc62c8ef2dae439a498dddcdacc1a07f45ff67ad12f44b6e2353c239 14 foo_1.0.tar.gz
+"  runapt apt showsrc foo
+
+PAGER="head -2" testsuccessequal "Package: foo
+Binary: foo"  runapt --unbuffer apt showsrc foo -o TestPager="head- 2"

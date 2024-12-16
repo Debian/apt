@@ -351,6 +351,10 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 
    int const ShowVersion = _config->FindI("APT::Cache::Show::Version", 1);
    pkgRecords Recs(CacheFile);
+
+   if (not InitOutputPager())
+      return false;
+
    for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
    {
       pkgCache::VerFileIterator Vf;
@@ -441,6 +445,9 @@ bool ShowSrcPackage(CommandLine &CmdL)					/*{{{*/
    if (_error->PendingError() == true)
       return false;
 
+   if (not InitOutputPager())
+      return false;
+
    bool found = false;
    // avoid showing identical records
    std::set<std::string> seen;
@@ -494,6 +501,9 @@ bool Policy(CommandLine &CmdL)
       return false;
    pkgPolicy * const Plcy = CacheFile.GetPolicy();
    if (unlikely(Plcy == nullptr))
+      return false;
+
+   if (not InitOutputPager())
       return false;
 
    // Print out all of the package files

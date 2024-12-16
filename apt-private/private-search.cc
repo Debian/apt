@@ -169,6 +169,9 @@ static bool FullTextSearch(CommandLine &CmdL)				/*{{{*/
    APT_FREE_PATTERNS();
    progress.Done();
 
+   if (not InitOutputPager())
+      return false;
+
    // FIXME: SORT! and make sorting flexible (alphabetic, by pkg status)
    // output the sorted map
    std::map<std::string, std::string>::const_iterator K;

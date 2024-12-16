@@ -26,6 +26,8 @@ APT_PUBLIC extern std::ofstream devnull;
 APT_PUBLIC extern unsigned int ScreenWidth;
 
 APT_PUBLIC bool InitOutput(std::basic_streambuf<char> * const out = std::cout.rdbuf());
+APT_PUBLIC bool InitOutputPager() APT_MUSTCHECK;
+APT_PUBLIC bool IsStdoutAtty();
 
 void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,
                        pkgCache::VerIterator const &V, std::ostream &out,
