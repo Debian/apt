@@ -167,6 +167,86 @@ static bool CheckGPGV(std::unordered_map<std::string, std::forward_list<std::str
    return not checkedCommands[gpgv].empty();
 }
 
+/// Verifies a file containing a detached signature has the right format
+/// @return 0 if succesful, or an exit code for ExecGPGV otherwise.
+static int VerifyDetachedSignatureFile(std::string FileGPG, int fd[2], int statusfd = -1)
+{
+   auto detached = make_unique_FILE(FileGPG, "r");
+   if (detached.get() == nullptr)
+      return _error->Error("Detached signature file '%s' could not be opened", FileGPG.c_str()), 111;
+
+   LineBuffer buf;
+   bool open_signature = false;
+   bool found_badcontent = false;
+   size_t found_signatures = 0;
+   while (buf.readFrom(detached.get(), FileGPG, true))
+   {
+      if (open_signature)
+      {
+	 if (buf == "-----END PGP SIGNATURE-----")
+	    open_signature = false;
+	 else if (buf.starts_with("-"))
+	 {
+	    // the used Radix-64 is not using dash for any value, so a valid line can't
+	    // start with one. Header keys could, but no existent one does and seems unlikely.
+	    // Instead it smells a lot like a header the parser didn't recognize.
+	    _error->Error("Detached signature file '%s' contains unexpected line starting with a dash", FileGPG.c_str());
+	    return 112;
+	 }
+      }
+      else // if (not open_signature)
+      {
+	 if (buf == "-----BEGIN PGP SIGNATURE-----")
+	 {
+	    open_signature = true;
+	    ++found_signatures;
+	    if (found_badcontent)
+	       break;
+	 }
+	 else
+	 {
+	    found_badcontent = true;
+	    if (found_signatures != 0)
+	       break;
+	 }
+      }
+   }
+   if (found_signatures == 0 && statusfd != -1)
+   {
+      auto const errtag = "[GNUPG:] NODATA\n";
+      FileFd::Write(fd[1], errtag, strlen(errtag));
+      // guess if this is a binary signature, we never officially supported them,
+      // but silently accepted them via passing them unchecked to gpgv
+      if (found_badcontent)
+      {
+	 rewind(detached.get());
+	 auto ptag = fgetc(detached.get());
+	 // §4.2 says that the first bit is always set and gpg seems to generate
+	 // only old format which is indicated by the second bit not set
+	 if (ptag != EOF && (ptag & 0x80) != 0 && (ptag & 0x40) == 0)
+	 {
+	    _error->Error("Detached signature file '%s' is in unsupported binary format", FileGPG.c_str());
+	    return 112;
+	 }
+      }
+      // This is not an attack attempt but a file even gpgv would complain about
+      // likely the result of a paywall which is covered by the gpgv method
+      return 113;
+   }
+   else if (found_badcontent)
+   {
+      _error->Error("Detached signature file '%s' contains lines not belonging to a signature", FileGPG.c_str());
+      return 112;
+   }
+   if (open_signature)
+   {
+      _error->Error("Detached signature file '%s' contains unclosed signatures", FileGPG.c_str());
+      return 112;
+   }
+
+   return 0;
+}
+
 std::pair<std::string, std::forward_list<std::string>> APT::Internal::FindGPGV(bool Debug)
 {
    static thread_local std::unordered_map<std::string, std::forward_list<std::string>> checkedCommands;
@@ -358,81 +438,18 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 
    if (releaseSignature == DETACHED)
    {
-      auto detached = make_unique_FILE(FileGPG, "r");
-      if (detached.get() == nullptr)
+      // Collect the error and return it via apt_error()
+      _error->PushToStack();
+      auto exitCode = VerifyDetachedSignatureFile(FileGPG, fd, statusfd);
+      std::string msg;
+      _error->PopMessage(msg);
+      _error->RevertToStack();
+      if (exitCode != 0)
       {
-	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' could not be opened", FileGPG.c_str());
-	 local_exit(EINTERNAL);
+	 if (not msg.empty())
+	    apt_error(std::cerr, statusfd, fd, "%s", msg.c_str());
+	 local_exit(exitCode);
       }
-      LineBuffer buf;
-      bool open_signature = false;
-      bool found_badcontent = false;
-      size_t found_signatures = 0;
-      while (buf.readFrom(detached.get(), FileGPG, true))
-      {
-	 if (open_signature)
-	 {
-	    if (buf == "-----END PGP SIGNATURE-----")
-	       open_signature = false;
-	    else if (buf.starts_with("-"))
-	    {
-	       // the used Radix-64 is not using dash for any value, so a valid line can't
-	       // start with one. Header keys could, but no existent one does and seems unlikely.
-	       // Instead it smells a lot like a header the parser didn't recognize.
-	       apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains unexpected line starting with a dash", FileGPG.c_str());
-	       local_exit(112);
-	    }
-	 }
-	 else //if (not open_signature)
-	 {
-	    if (buf == "-----BEGIN PGP SIGNATURE-----")
-	    {
-	       open_signature = true;
-	       ++found_signatures;
-	       if (found_badcontent)
-		  break;
-	    }
-	    else
-	    {
-	       found_badcontent = true;
-	       if (found_signatures != 0)
-		  break;
-	    }
-	 }
-      }
-      if (found_signatures == 0 && statusfd != -1)
-      {
-	 auto const errtag = "[GNUPG:] NODATA\n";
-	 FileFd::Write(fd[1], errtag, strlen(errtag));
-	 // guess if this is a binary signature, we never officially supported them,
-	 // but silently accepted them via passing them unchecked to gpgv
-	 if (found_badcontent)
-	 {
-	    rewind(detached.get());
-	    auto ptag = fgetc(detached.get());
-	    // §4.2 says that the first bit is always set and gpg seems to generate
-	    // only old format which is indicated by the second bit not set
-	    if (ptag != EOF && (ptag & 0x80) != 0 && (ptag & 0x40) == 0)
-	    {
-	       apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' is in unsupported binary format", FileGPG.c_str());
-	       local_exit(112);
-	    }
-	 }
-	 // This is not an attack attempt but a file even gpgv would complain about
-	 // likely the result of a paywall which is covered by the gpgv method
-	 local_exit(113);
-      }
-      else if (found_badcontent)
-      {
-	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains lines not belonging to a signature", FileGPG.c_str());
-	 local_exit(112);
-      }
-      if (open_signature)
-      {
-	 apt_error(std::cerr, statusfd, fd, "Detached signature file '%s' contains unclosed signatures", FileGPG.c_str());
-	 local_exit(112);
-      }
-
       Args.push_back(FileGPG);
       Args.push_back(File);
    }
