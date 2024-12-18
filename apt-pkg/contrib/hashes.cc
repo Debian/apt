@@ -26,10 +26,15 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <unistd.h>
 
+#ifdef HAVE_GNUTLS
+#include <gnutls/crypto.h>
+#else
 #include <gcrypt.h>
+#endif
 									/*}}}*/
 
 const char * HashString::_SupportedHashes[] =
@@ -324,6 +329,66 @@ class PrivateHashes
    unsigned long long FileSize{0};
 
    private:
+#ifdef HAVE_GNUTLS
+   std::array<std::optional<gnutls_hash_hd_t>, 4> digs{};
+
+   public:
+   struct HashAlgo
+   {
+      size_t index;
+      const char *name;
+      gnutls_digest_algorithm_t gnuTlsAlgo;
+      Hashes::SupportedHashes ourAlgo;
+   };
+
+   static constexpr std::array<HashAlgo, 4> Algorithms{
+      HashAlgo{0, "MD5Sum", GNUTLS_DIG_MD5, Hashes::MD5SUM},
+      HashAlgo{1, "SHA1", GNUTLS_DIG_SHA1, Hashes::SHA1SUM},
+      HashAlgo{2, "SHA256", GNUTLS_DIG_SHA256, Hashes::SHA256SUM},
+      HashAlgo{3, "SHA512", GNUTLS_DIG_SHA512, Hashes::SHA512SUM},
+   };
+
+   bool Write(unsigned char const *Data, size_t Size)
+   {
+      for (auto &dig : digs)
+      {
+	 if (dig)
+	    gnutls_hash(*dig, Data, Size);
+      }
+      return true;
+   }
+
+   std::string HexDigest(HashAlgo const &algo)
+   {
+      auto Size = gnutls_hash_get_len(algo.gnuTlsAlgo);
+      unsigned char Sum[Size];
+      if (auto copy = gnutls_hash_copy(*digs[algo.index]))
+	 gnutls_hash_deinit(copy, &Sum);
+      return ::HexDigest(std::basic_string_view<unsigned char>(Sum, Size));
+   }
+   bool Enable(HashAlgo const &algo)
+   {
+      digs[algo.index].emplace();
+      if (gnutls_hash_init(&*digs[algo.index], algo.gnuTlsAlgo) == 0)
+	 return true;
+      digs[algo.index] = std::nullopt;
+      return false;
+   }
+   bool IsEnabled(HashAlgo const &algo)
+   {
+      return bool{digs[algo.index]};
+   }
+
+   explicit PrivateHashes() {}
+   ~PrivateHashes()
+   {
+      for (auto &dig : digs)
+      {
+	 if (dig)
+	    gnutls_hash_deinit(*dig, nullptr);
+      }
+   }
+#else
    gcry_md_hd_t hd;
 
    void maybeInit()
@@ -395,6 +460,7 @@ class PrivateHashes
    {
       gcry_md_close(hd);
    }
+#endif
 
    explicit PrivateHashes(unsigned int const CalcHashes) : PrivateHashes()
    {

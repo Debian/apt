@@ -141,7 +141,9 @@ if (SECCOMP_FOUND)
   set(HAVE_SECCOMP 1)
 endif()
 
-find_package(GCRYPT REQUIRED)
+if (NOT HAVE_GNUTLS)
+    find_package(GCRYPT REQUIRED)
+endif()
 find_package(XXHASH REQUIRED)
 
 # Mount()ing and stat()ing and friends
