@@ -32,18 +32,6 @@
 #include <gcrypt.h>
 									/*}}}*/
 
-static const constexpr struct HashAlgo
-{
-   const char *name;
-   int gcryAlgo;
-   Hashes::SupportedHashes ourAlgo;
-} Algorithms[] = {
-   {"MD5Sum", GCRY_MD_MD5, Hashes::MD5SUM},
-   {"SHA1", GCRY_MD_SHA1, Hashes::SHA1SUM},
-   {"SHA256", GCRY_MD_SHA256, Hashes::SHA256SUM},
-   {"SHA512", GCRY_MD_SHA512, Hashes::SHA512SUM},
-};
-
 const char * HashString::_SupportedHashes[] =
 {
    "SHA512", "SHA256", "SHA1", "MD5Sum", "Checksum-FileSize", NULL
@@ -311,11 +299,31 @@ bool HashStringList::operator!=(HashStringList const &other) const
    return !(*this == other);
 }
 									/*}}}*/
+static APT_PURE std::string HexDigest(std::basic_string_view<unsigned char> const &Sum)
+{
+   char Conv[16] =
+      {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
+       'c', 'd', 'e', 'f'};
+   std::string Result(Sum.size() * 2, 0);
+
+   // Convert each char into two letters
+   size_t J = 0;
+   size_t I = 0;
+   for (; I != (Sum.size()) * 2; J++, I += 2)
+   {
+      Result[I] = Conv[Sum[J] >> 4];
+      Result[I + 1] = Conv[Sum[J] & 0xF];
+   }
+   return Result;
+};
 
 // PrivateHashes							/*{{{*/
-class PrivateHashes {
-public:
-   unsigned long long FileSize;
+class PrivateHashes
+{
+   public:
+   unsigned long long FileSize{0};
+
+   private:
    gcry_md_hd_t hd;
 
    void maybeInit()
@@ -339,29 +347,71 @@ public:
       }
    }
 
-   explicit PrivateHashes(unsigned int const CalcHashes) : FileSize(0)
+   public:
+   struct HashAlgo
+   {
+      const char *name;
+      int gcryAlgo;
+      Hashes::SupportedHashes ourAlgo;
+   };
+
+   static constexpr std::array<HashAlgo, 4> Algorithms{
+      HashAlgo{"MD5Sum", GCRY_MD_MD5, Hashes::MD5SUM},
+      HashAlgo{"SHA1", GCRY_MD_SHA1, Hashes::SHA1SUM},
+      HashAlgo{"SHA256", GCRY_MD_SHA256, Hashes::SHA256SUM},
+      HashAlgo{"SHA512", GCRY_MD_SHA512, Hashes::SHA512SUM},
+   };
+
+   bool Write(unsigned char const *Data, size_t Size)
+   {
+      gcry_md_write(hd, Data, Size);
+      return true;
+   }
+
+   std::string HexDigest(HashAlgo const &algo)
+   {
+      auto Size = gcry_md_get_algo_dlen(algo.gcryAlgo);
+      auto Sum = gcry_md_read(hd, algo.gcryAlgo);
+      return ::HexDigest(std::basic_string_view<unsigned char>(Sum, Size));
+   }
+
+   bool Enable(HashAlgo const &Algo)
+   {
+      gcry_md_enable(hd, Algo.gcryAlgo);
+      return true;
+   }
+   bool IsEnabled(HashAlgo const &algo)
+   {
+      return gcry_md_is_enabled(hd, algo.gcryAlgo);
+   }
+
+   explicit PrivateHashes()
    {
       maybeInit();
       gcry_md_open(&hd, 0, 0);
-      for (auto & Algo : Algorithms)
-      {
-	 if ((CalcHashes & Algo.ourAlgo) == Algo.ourAlgo)
-	    gcry_md_enable(hd, Algo.gcryAlgo);
-      }
    }
 
-   explicit PrivateHashes(HashStringList const &Hashes) : FileSize(0) {
-      maybeInit();
-      gcry_md_open(&hd, 0, 0);
-      for (auto & Algo : Algorithms)
-      {
-	 if (not Hashes.usable() || Hashes.find(Algo.name) != NULL)
-	    gcry_md_enable(hd, Algo.gcryAlgo);
-      }
-   }
    ~PrivateHashes()
    {
       gcry_md_close(hd);
+   }
+
+   explicit PrivateHashes(unsigned int const CalcHashes) : PrivateHashes()
+   {
+      for (auto & Algo : Algorithms)
+      {
+	 if ((CalcHashes & Algo.ourAlgo) == Algo.ourAlgo)
+	    Enable(Algo);
+      }
+   }
+
+   explicit PrivateHashes(HashStringList const &Hashes) : PrivateHashes()
+   {
+      for (auto & Algo : Algorithms)
+      {
+	 if (not Hashes.usable() || Hashes.find(Algo.name) != NULL)
+	    Enable(Algo);
+      }
    }
 };
 									/*}}}*/
@@ -370,7 +420,8 @@ bool Hashes::Add(const unsigned char * const Data, unsigned long long const Size
 {
    if (Size != 0)
    {
-      gcry_md_write(d->hd, Data, Size);
+      if (not d->Write(Data, Size))
+	 return false;
       d->FileSize += Size;
    }
    return true;
@@ -420,36 +471,12 @@ bool Hashes::AddFD(FileFd &Fd,unsigned long long Size)
 }
 									/*}}}*/
 
-static APT_PURE std::string HexDigest(gcry_md_hd_t hd, int algo)
-{
-   char Conv[16] =
-      {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
-       'c', 'd', 'e', 'f'};
-
-   auto Size = gcry_md_get_algo_dlen(algo);
-   assert(Size <= 512/8);
-   char Result[((Size)*2) + 1];
-   Result[(Size)*2] = 0;
-
-   auto Sum = gcry_md_read(hd, algo);
-
-   // Convert each char into two letters
-   size_t J = 0;
-   size_t I = 0;
-   for (; I != (Size)*2; J++, I += 2)
-   {
-      Result[I] = Conv[Sum[J] >> 4];
-      Result[I + 1] = Conv[Sum[J] & 0xF];
-   }
-   return std::string(Result);
-};
-
 HashStringList Hashes::GetHashStringList()
 {
    HashStringList hashes;
-   for (auto & Algo : Algorithms)
-      if (gcry_md_is_enabled(d->hd, Algo.gcryAlgo))
-	 hashes.push_back(HashString(Algo.name, HexDigest(d->hd, Algo.gcryAlgo)));
+   for (auto &Algo : d->Algorithms)
+      if (d->IsEnabled(Algo))
+	 hashes.push_back(HashString(Algo.name, d->HexDigest(Algo)));
    hashes.FileSize(d->FileSize);
 
    return hashes;
@@ -457,9 +484,9 @@ HashStringList Hashes::GetHashStringList()
 
 HashString Hashes::GetHashString(SupportedHashes hash)
 {
-   for (auto & Algo : Algorithms)
+   for (auto &Algo : d->Algorithms)
       if (hash == Algo.ourAlgo)
-	 return HashString(Algo.name, HexDigest(d->hd, Algo.gcryAlgo));
+	 return HashString(Algo.name, d->HexDigest(Algo));
 
    abort();
 }
