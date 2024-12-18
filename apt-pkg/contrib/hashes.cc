@@ -30,7 +30,9 @@
 #include <string>
 #include <unistd.h>
 
-#ifdef HAVE_GNUTLS
+#if defined(WITH_OPENSSL)
+#include <openssl/evp.h>
+#elif defined(HAVE_GNUTLS)
 #include <gnutls/crypto.h>
 #else
 #include <gcrypt.h>
@@ -329,7 +331,74 @@ class PrivateHashes
    unsigned long long FileSize{0};
 
    private:
-#ifdef HAVE_GNUTLS
+#if defined(WITH_OPENSSL)
+   std::array<EVP_MD_CTX *, 4> contexts{};
+
+   public:
+   struct HashAlgo
+   {
+      size_t index;
+      const char *name;
+      const EVP_MD *(*evpLink)(void);
+      Hashes::SupportedHashes ourAlgo;
+   };
+
+   static constexpr std::array<HashAlgo, 4> Algorithms{
+      HashAlgo{0, "MD5Sum", EVP_md5, Hashes::MD5SUM},
+      HashAlgo{1, "SHA1", EVP_sha1, Hashes::SHA1SUM},
+      HashAlgo{2, "SHA256", EVP_sha256, Hashes::SHA256SUM},
+      HashAlgo{3, "SHA512", EVP_sha512, Hashes::SHA512SUM},
+   };
+
+   bool Write(unsigned char const *Data, size_t Size)
+   {
+      for (auto &context : contexts)
+      {
+	 if (context)
+	    EVP_DigestUpdate(context, Data, Size);
+      }
+      return true;
+   }
+
+   std::string HexDigest(HashAlgo const &algo)
+   {
+      auto Size = EVP_MD_size(algo.evpLink());
+      unsigned char Sum[Size];
+
+      // We need to work on a copy, as we update the hash after creating a digest...
+      auto tmpContext = EVP_MD_CTX_create();
+      EVP_MD_CTX_copy(tmpContext, contexts[algo.index]);
+      EVP_DigestFinal_ex(tmpContext, Sum, nullptr);
+      EVP_MD_CTX_destroy(tmpContext);
+
+      return ::HexDigest(std::basic_string_view<unsigned char>(Sum, Size));
+   }
+
+   bool Enable(HashAlgo const &algo)
+   {
+      contexts[algo.index] = EVP_MD_CTX_new();
+      if (contexts[algo.index] == nullptr)
+	 return false;
+      if (EVP_DigestInit_ex(contexts[algo.index], algo.evpLink(), NULL))
+	 return true;
+      EVP_MD_CTX_destroy(contexts[algo.index]);
+      contexts[algo.index] = nullptr;
+      return false;
+   }
+   bool IsEnabled(HashAlgo const &algo)
+   {
+      return contexts[algo.index] != nullptr;
+   }
+
+   explicit PrivateHashes() {}
+   ~PrivateHashes()
+   {
+      for (auto ctx : contexts)
+	 if (ctx != nullptr)
+	    EVP_MD_CTX_free(ctx);
+   }
+
+#elif defined(HAVE_GNUTLS)
    std::array<std::optional<gnutls_hash_hd_t>, 4> digs{};
 
    public:
