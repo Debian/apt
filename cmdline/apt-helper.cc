@@ -201,7 +201,37 @@ static bool DoCatFile(CommandLine &CmdL)				/*{{{*/
    return true;
 }
 									/*}}}*/
+static bool DoHashFile(CommandLine &CmdL) /*{{{*/
+{
+   FileFd fd;
 
+   if (fd.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly) == false)
+      return false;
+   for (size_t i = 1; CmdL.FileList[i] != NULL; ++i)
+   {
+      std::string const name = CmdL.FileList[i];
+      Hashes hashes;
+
+      if (name != "-")
+      {
+	 if (fd.Open(name, FileFd::ReadOnly, FileFd::Extension) == false)
+	    return false;
+      }
+      else
+      {
+	 if (fd.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly) == false)
+	    return false;
+      }
+      if (hashes.AddFD(fd) == false)
+	 return false;
+
+      for (auto hs : hashes.GetHashStringList())
+	 std::cout << hs.toStr() << std::endl;
+      std::cout << std::endl;
+   }
+   return true;
+}
+									/*}}}*/
 static pid_t ExecuteProcess(const char *Args[])				/*{{{*/
 {
    pid_t pid = ExecFork();
@@ -310,16 +340,17 @@ static bool ShowHelp(CommandLine &)					/*{{{*/
 static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    return {
-       {"download-file", &DoDownloadFile, _("download the given uri to the target-path")},
-       {"srv-lookup", &DoSrvLookup, _("lookup a SRV record (e.g. _http._tcp.ftp.debian.org)")},
-       {"cat-file", &DoCatFile, _("concatenate files, with automatic decompression")},
-       {"auto-detect-proxy", &DoAutoDetectProxy, _("detect proxy using apt.conf")},
-       {"wait-online", &DoWaitOnline, _("wait for system to be online")},
-       {"drop-privs", &DropPrivsAndRun, _("drop privileges before running given command")},
-       {"analyze-pattern", &AnalyzePattern, _("analyse a pattern")},
-       {"analyse-pattern", &AnalyzePattern, nullptr},
-       {"quote-string", &DoQuoteString, nullptr},
-       {nullptr, nullptr, nullptr}};
+      {"download-file", &DoDownloadFile, _("download the given uri to the target-path")},
+      {"srv-lookup", &DoSrvLookup, _("lookup a SRV record (e.g. _http._tcp.ftp.debian.org)")},
+      {"cat-file", &DoCatFile, _("concatenate files, with automatic decompression")},
+      {"hash-file", &DoHashFile, _("hash file")},
+      {"auto-detect-proxy", &DoAutoDetectProxy, _("detect proxy using apt.conf")},
+      {"wait-online", &DoWaitOnline, _("wait for system to be online")},
+      {"drop-privs", &DropPrivsAndRun, _("drop privileges before running given command")},
+      {"analyze-pattern", &AnalyzePattern, _("analyse a pattern")},
+      {"analyse-pattern", &AnalyzePattern, nullptr},
+      {"quote-string", &DoQuoteString, nullptr},
+      {nullptr, nullptr, nullptr}};
 }
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
