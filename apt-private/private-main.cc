@@ -6,6 +6,7 @@
 #include <apt-pkg/strutl.h>
 
 #include <apt-private/private-main.h>
+#include <apt-private/private-output.h>
 
 #include <iostream>
 #include <locale>
@@ -78,8 +79,8 @@ void CheckIfCalledByScript(int argc, const char *argv[])		/*{{{*/
 {
    if (unlikely(argc < 1)) return;
 
-   if(!isatty(STDOUT_FILENO) &&
-      _config->FindB("Apt::Cmd::Disable-Script-Warning", false) == false)
+   if (not IsStdoutAtty() &&
+       _config->FindB("Apt::Cmd::Disable-Script-Warning", false) == false)
    {
       // NOTE: CLI interface is redundant on the I/interface, this is
       // intentional to make it easier to read.
