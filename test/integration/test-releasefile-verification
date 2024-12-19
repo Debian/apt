@@ -153,28 +153,6 @@ runtest() {
 	failaptold
 	rm -f rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
 
-	msgmsg 'Cold archive expired signed by' 'Joe Sixpack'
-	if dpkg --compare-versions "$(aptkey adv --version | head -n 2 | tail -n 1 | cut -d' ' -f 3)" '>=' '2.1' >/dev/null 2>&1; then
-		touch rootdir/etc/apt/apt.conf.d/99gnupg2
-	elif gpg2 --version >/dev/null 2>&1; then
-		echo 'Apt::Key::gpgcommand "gpg2";' > rootdir/etc/apt/apt.conf.d/99gnupg2
-		if ! dpkg --compare-versions "$(aptkey adv --version | head -n 2 | tail -n 1 | cut -d' ' -f 3)" '>=' '2.1' >/dev/null 2>&1; then
-			rm rootdir/etc/apt/apt.conf.d/99gnupg2
-		fi
-	fi
-	if [ -e rootdir/etc/apt/apt.conf.d/99gnupg2 ]; then
-		prepare "${PKGFILE}"
-		rm -rf rootdir/var/lib/apt/lists
-		signreleasefiles 'Joe Sixpack' 'aptarchive' --faked-system-time "20160924T154812" --default-sig-expire 2017-04-01
-		updatewithwarnings '^W: .* (BADSIG|EXPSIG)'
-		testsuccessequal "$(cat "${PKGFILE}")
-" aptcache show apt
-		failaptold
-		rm -f rootdir/etc/apt/apt.conf.d/99gnupg2
-	else
-		msgskip 'Not a new enough gpg available providing --fake-system-time'
-	fi
-
 	msgmsg 'Cold archive signed by' 'Joe Sixpack,Marvin Paranoid'
 	prepare "${PKGFILE}"
 	rm -rf rootdir/var/lib/apt/lists
@@ -282,7 +260,7 @@ runtest() {
 	installaptold
 	sed -i "s# \[signed-by=[^]]\+\] # #" rootdir/etc/apt/sources.list.d/*
 
-	local MARVIN="$(aptkey --keyring $MARVIN finger --with-colons | grep '^fpr' | cut -d':' -f 10)"
+	local MARVIN="DE66AECA9151AFA1877EC31DE8525D47528144E2"
 	msgmsg 'Cold archive signed by bad keyid' 'Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
@@ -306,7 +284,7 @@ runtest() {
 " aptcache show apt
 	installaptold
 
-	local SIXPACK="$(aptkey --keyring keys/joesixpack.pub finger --with-colons | grep '^fpr' | cut -d':' -f 10)"
+	local SIXPACK="34A8E9D18DB320F367E8EAA05A90D141DBAC8DAE"
 	msgmsg 'Cold archive signed by good keyids' 'Joe Sixpack'
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
@@ -376,7 +354,7 @@ Signed-By: ${MARVIN} ${MARVIN}, \\
 	installaptnew
 
 	cp -a keys/sebastiansubkey.pub rootdir/etc/apt/trusted.gpg.d/sebastiansubkey.gpg
-	local SEBASTIAN="$(aptkey --keyring keys/sebastiansubkey.pub finger --with-colons | grep -m 1 '^fpr' | cut -d':' -f 10)"
+	local SEBASTIAN="648E6A33FDE5CB5BA2D896A3CA3E1DFF1E6BE149"
 	msgmsg 'Warm archive with subkey signing' 'Sebastian Subkey'
 	rm -rf rootdir/var/lib/apt/lists
 	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
@@ -400,7 +378,7 @@ Signed-By: ${SEBASTIAN}!" rootdir/var/lib/apt/lists/*Release
 " aptcache show apt
 	installaptold
 
-	local SUBKEY="$(aptkey --keyring keys/sebastiansubkey.pub finger --with-colons | grep -m 2 '^fpr' | tail -n -1 | cut -d':' -f 10)"
+	local SUBKEY="4281DEDBD466EAE8C1F4157E5B6896415D44C43E"
 	msgmsg 'Warm archive with correct exact subkey signing' 'Sebastian Subkey'
 	rm -rf rootdir/var/lib/apt/lists
 	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
@@ -482,7 +460,7 @@ Acquire::AllowInsecureRepositories "1";
 Acquire::AllowDowngradeToInsecureRepositories "1";
 EOF
 # the hash marked as configurable in our gpgv method
-export APT_TESTS_DIGEST_ALGO='SHA224'
+export APT_TESTS_DIGEST_ALGO='SHA512'
 
 successfulaptgetupdate() {
 	testsuccess aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::gpgv=1
@@ -535,8 +513,4 @@ runfailure() {
 		export APT_DONT_SIGN='Release.gpg'
 	done
 }
-foreachgpg runfailure
-
-msgmsg "Running test with gpgv-untrusted digest"
-export APT_TESTS_DIGEST_ALGO='MD5'
 foreachgpg runfailure

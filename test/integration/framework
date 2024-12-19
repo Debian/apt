@@ -199,7 +199,6 @@ aptcache() { runapt apt-cache "$@"; }
 aptcdrom() { runapt apt-cdrom "$@"; }
 aptget() { runapt apt-get "$@"; }
 aptftparchive() { runapt "${APTFTPARCHIVEBINDIR}/apt-ftparchive" "$@"; }
-aptkey() { runapt "${APTTESTHELPERSBINDIR}/apt-key" "$@"; }
 aptmark() { runapt apt-mark "$@"; }
 aptsortpkgs() { runapt apt-sortpkgs "$@"; }
 apt() { runapt apt "$@"; }
@@ -210,6 +209,7 @@ aptextracttemplates() { runapt apt-extracttemplates "$@"; }
 aptinternalsolver() { runapt "${APTINTERNALSOLVER}" "$@"; }
 aptdumpsolver() { runapt "${APTDUMPSOLVER}" "$@"; }
 aptinternalplanner() { runapt "${APTINTERNALPLANNER}" "$@"; }
+sq() { command sq --key-store=none --cert-store=none "$@"; }
 
 dpkg() {
 	"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "$@"
@@ -587,11 +587,6 @@ EOF
 	echo 'DPkg::Path "";' >> aptconfig.conf
 	echo 'Dir::Bin::ischroot "/bin/false";' >> aptconfig.conf
 
-	# If gpgv supports --weak-digest, pass it to make sure we can disable SHA1
-	if aptkey verify --weak-digest SHA1 --help 2>/dev/null >/dev/null; then
-		echo 'Acquire::gpgv::Options { "--weak-digest"; "sha1"; };' > rootdir/etc/apt/apt.conf.d/no-sha1
-	fi
-
 	# most tests just need one signed Release file, not both
 	export APT_DONT_SIGN='Release.gpg'
 
@@ -881,9 +876,8 @@ buildsimplenativepackage() {
 		| while read SRC; do
 		echo "pool/${SRC}" >> "${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist"
 #		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
-#			aptkey --keyring ./keys/joesixpack.pub --secret-keyring ./keys/joesixpack.sec --quiet --readonly \
-#				adv --yes --default-key 'Joe Sixpack' \
-#				--clearsign -o "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
+#			sq sign --signer-file ./keys/joesixpack.sec
+#				-o "${BUILDDIR}/../${SRC}.sign" --cleartext "${BUILDDIR}/../$SRC"
 #			mv "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
 #		fi
 	done
@@ -1301,22 +1295,7 @@ killgpgagent() {
 	GNUPGHOME="${GPGHOME}" gpgconf --kill gpg-agent >/dev/null 2>&1 || true
 	rm -rf "$GPGHOME"
 }
-dosigning() {
-	local KEY="$1"
-	shift
-	local GPGHOME="${TMPWORKINGDIRECTORY}/signinghome"
-	if [ -n "$APT_TEST_SIGNINGHOME" ]; then
-		GPGHOME="$APT_TEST_SIGNINGHOME"
-	else
-		if [ ! -e "$GPGHOME" ]; then
-			mkdir -p --mode=700 "${GPGHOME}"
-			addtrap 'prefix' 'killgpgagent;'
-		fi
-	fi
-	testsuccess aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly \
-		--homedir "${GPGHOME}" adv --batch --yes --digest-algo "${APT_TESTS_DIGEST_ALGO:-SHA512}" \
-		"$@"
-}
+
 signreleasefiles() {
 	local SIGNERS="${1:-Joe Sixpack}"
 	local REPODIR="${2:-aptarchive}"
@@ -1348,20 +1327,22 @@ signreleasefiles() {
 				cp "$SECUNEXPIRED" "${REXKEY}.sec"
 				cp "$PUBUNEXPIRED" "${REXKEY}.pub"
 			else
-				if ! printf "expire\n1w\nsave\n" | aptkey --quiet --keyring "${REXKEY}.pub" --secret-keyring "${REXKEY}.sec" \
-					--readonly adv --batch --yes --digest-algo "${APT_TESTS_DIGEST_ALGO:-SHA512}" \
-					--default-key "$SIGNER" --command-fd 0 --edit-key "${SIGNER}" >setexpire.gpg 2>&1; then
-					cat setexpire.gpg
-					exit 1
-				fi
-				cp "${REXKEY}.sec" "$SECUNEXPIRED"
-				cp "${REXKEY}.pub" "$PUBUNEXPIRED"
+				chronic sq key expire --expiration 1w --cert-file "${REXKEY}.sec" --output "$SECUNEXPIRED"
+				chronic sq key subkey expire --expiration 1w --policy-as-of 2020-01-01 --cert-file "$SECUNEXPIRED" --output "$SECUNEXPIRED" --overwrite --key  B3C9747B5FFD84E5585C3055DB4B332DD8DA0F4F
+				chronic sq key delete --cert-file "${SECUNEXPIRED}" --output "$PUBUNEXPIRED"
+				cp "${SECUNEXPIRED}" "${REXKEY}.sec"
+				cp "${PUBUNEXPIRED}" "${REXKEY}.pub"
 			fi
 		fi
 		if [ ! -e "${KEY}.pub" ]; then
 			local K="keys/$(echo "$SIGNER" | tr 'A-Z' 'a-z' | tr -d ' ,')"
-			cat "${K}.pub" >> "${KEY}.new.pub"
-			cat "${K}.sec" >> "${KEY}.new.sec"
+			if [ ! -e "${KEY}.new.pub" ]; then
+				cp "${K}.pub" "${KEY}.new.pub"
+				cp "${K}.sec" "${KEY}.new.sec"
+			else
+				chronic sq keyring merge "${KEY}.new.pub" "${K}.pub" --output "${KEY}.new.pub" --overwrite
+				chronic sq keyring merge "${KEY}.new.sec" "${K}.sec" --output "${KEY}.new.sec" --overwrite
+			fi
 		fi
 	done
 	if [ ! -e "${KEY}.pub" ]; then
@@ -1374,14 +1355,18 @@ signreleasefiles() {
 		if [ "$APT_DONT_SIGN" = 'Release.gpg' ]; then
 			rm -f "${RELEASE}.gpg"
 		else
-			dosigning "$KEY" "$@" $SIGUSERS --armor --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
+			if command sq --cli-version 0.40 version 2>/dev/null; then
+				sq sign $time --signer-file "$KEY.sec" "$@" --overwrite --output "${RELEASE}.gpg" --signature-file "${RELEASE}"
+			else
+				sq sign $time --signer-file "$KEY.sec" "$@" --overwrite --signature-file "${RELEASE}.gpg" "${RELEASE}"
+			fi
 			touch -d "$DATE" "${RELEASE}.gpg"
 		fi
 		local INRELEASE="${RELEASE%/*}/InRelease"
 		if [ "$APT_DONT_SIGN" = 'InRelease' ]; then
 			rm -f "$INRELEASE"
 		else
-			dosigning "$KEY" "$@" $SIGUSERS --clearsign --output "$INRELEASE" "$RELEASE"
+			sq sign $time --signer-file "$KEY.sec" "$@" --overwrite --output "${INRELEASE}" --cleartext "${RELEASE}"
 			touch -d "$DATE" "${INRELEASE}"
 		fi
 	done
@@ -2024,27 +2009,14 @@ testfailure() {
 	else
 		local EXITCODE=$?
 		if expr match "$1" '^apt.*' >/dev/null; then
-			if [ "$1" = 'aptkey' ]; then
-				if grep -q " Can't check signature: 
- BAD signature from 
- signature could not be verified" "$OUTPUT"; then
-					msgpass
-				elif [ -e "$OUTPUT" -a ! -s "$OUTPUT" ]; then
-					msgwarn "apt-key failed without output, this is normal for gpgv-sq (see sequoia-chameleon-gnupg#88)"
-					msgpass
-				else
-					msgfailoutput "run failed with exitcode ${EXITCODE}, but no signature error" "$OUTPUT" "$@"
-				fi
+			if grep -q -E ' runtime error: ' "$OUTPUT"; then
+				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
+			elif grep -q -E '==ERROR' "$OUTPUT"; then
+				msgfailoutput 'compiler sanitizers reported errors' "$OUTPUT" "$@"
+			elif ! grep -q -E '^E: ' "$OUTPUT"; then
+				msgfailoutput "run failed with exitcode ${EXITCODE}, but with no errors" "$OUTPUT" "$@"
 			else
-				if grep -q -E ' runtime error: ' "$OUTPUT"; then
-					msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
-				elif grep -q -E '==ERROR' "$OUTPUT"; then
-					msgfailoutput 'compiler sanitizers reported errors' "$OUTPUT" "$@"
-				elif ! grep -q -E '^E: ' "$OUTPUT"; then
-					msgfailoutput "run failed with exitcode ${EXITCODE}, but with no errors" "$OUTPUT" "$@"
-				else
-					msgpass
-				fi
+				msgpass
 			fi
 		else
 			msgpass
@@ -2182,14 +2154,6 @@ mapkeynametokeyid() {
 		shift
 	done
 }
-testaptkeys() {
-	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/aptkeylist.output"
-	if ! aptkey list --with-colon 2>/dev/null | grep '^pub' | cut -d':' -f 5 > "$OUTPUT"; then
-		echo -n > "$OUTPUT"
-	fi
-	testfileequal "$OUTPUT" "$(mapkeynametokeyid "$@")"
-}
-
 pause() {
 	echo "STOPPED execution. Press enter to continue"
 	local IGNORE
