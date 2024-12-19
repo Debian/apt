@@ -13,7 +13,6 @@ setupaptarchive --no-update
 for i in $(seq 1 50); do
 	touch rootdir/etc/apt/trusted.gpg.d/emptykey-${i}.gpg
 done
-testaptkeys 'Joe Sixpack'
 
 testsuccess aptget update
 msgtest 'Test for no gpg errors/warnings in' 'apt-get update'

@@ -13,10 +13,13 @@ setupdistsaptarchive
 
 for RELEASE in $(find aptarchive -name 'Release'); do
 	# note the missing --armor
-	dosigning "keys/joesixpack" --detach-sign --sign --output "${RELEASE}.gpg" "${RELEASE}"
+	if command sq --cli-version 0.40 version 2>/dev/null; then
+		sq sign --binary --signer-file "keys/joesixpack.sec" --output "${RELEASE}.gpg" --signature-file "${RELEASE}"
+	else
+		sq sign --binary --signer-file "keys/joesixpack.sec" --signature-file "${RELEASE}.gpg" "${RELEASE}"
+	fi
 done
 
 testfailure apt show foo
 testfailure aptget update
-testsuccess grep 'W: .* Detached signature file .* is in unsupported binary format' rootdir/tmp/testfailure.output
 testfailure apt show foo

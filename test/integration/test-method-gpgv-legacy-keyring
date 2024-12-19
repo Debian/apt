@@ -12,8 +12,10 @@ insertpackage 'unstable' 'foo' 'all' '1'
 buildaptarchive
 setupaptarchive --no-update
 
-testsuccessequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [1420 B]
-Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [1420 B]
+alias inrelease_size="stat -c %s aptarchive/dists/unstable/InRelease"
+
+testsuccessequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
+Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
 Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages [246 B]
 Get:3 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main Translation-en [224 B]
 Reading package lists..." aptget update -q
@@ -21,15 +23,15 @@ Reading package lists..." aptget update -q
 cat rootdir/etc/apt/trusted.gpg.d/*.gpg > rootdir/etc/apt/trusted.gpg
 rm rootdir/etc/apt/trusted.gpg.d/*.gpg
 
-testwarningequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [1420 B]
-Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [1420 B]
+testwarningequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
+Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
 Reading package lists...
 W: file:${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q
 
 # 2.4.0 regression: If the InRelease file was signed with two keys, fallback to trusted.gpg did not
 # work: It ran the fallback, but then ignored the result, as keys were still missing.
 signreleasefiles 'Joe Sixpack,Marvin Paranoid'
-testwarningequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [1867 B]
-Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [1867 B]
+testwarningequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
+Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
 Reading package lists...
 W: file:${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q -omsg=with-two-signatures

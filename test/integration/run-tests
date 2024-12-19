@@ -156,16 +156,6 @@ if [ -n "$APT_TEST_JOBS" ]; then
 	exit $((FAIL <= 255 ? FAIL : 255))
 fi
 
-APT_TEST_SIGNINGHOME="$(mktemp --directory --tmpdir 'apt-key-signinghome.XXXXXXXXXX')"
-removesigninghome() {
-	if [ -z "$APT_TEST_SIGNINGHOME" ]; then return; fi
-	GNUPGHOME="${APT_TEST_SIGNINGHOME}" gpgconf --kill gpg-agent >/dev/null 2>&1 || true
-	rm -rf -- "$APT_TEST_SIGNINGHOME"
-}
-trap "exit 1" 0 HUP INT ILL ABRT FPE SEGV PIPE TERM
-trap "removesigninghome" 0 QUIT
-export APT_TEST_SIGNINGHOME
-
 TOTAL="$(echo "$TESTLIST" | wc -l)"
 if [ "$MSGLEVEL" -le 1 ]; then
 	printf "${CTEST}Running testcases${CRESET}: "

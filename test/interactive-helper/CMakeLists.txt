@@ -31,11 +31,3 @@ target_include_directories(longest-dependency-chain PRIVATE ${APTPRIVATE_INCLUDE
 
 add_library(noprofile SHARED libnoprofile.c)
 target_link_libraries(noprofile ${CMAKE_DL_LIBS})
-
-add_vendor_file(OUTPUT apt-key
-                INPUT apt-key.in
-                MODE 755
-                VARIABLES keyring-filename
-                          keyring-removed-filename
-                          keyring-master-filename
-                          keyring-uri keyring-package)
