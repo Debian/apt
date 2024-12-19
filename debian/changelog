@@ -1,3 +1,17 @@
+apt (2.9.18) unstable; urgency=medium
+
+  * Fix out-of-bounds read in `apt show :` (Closes: #1090068)
+  * Introduce git-like automatic pager for apt(8), emulating git behavior.
+    It is enabled for the show, list, search, policy, showsrc commands.
+    The pager can be set using APT_PAGER or PAGER and defaults to `pager`
+  * Add initial pinning information to apt show --full.
+    The fields `APT-Pin`, `APT-Candidate`, and `APT-Release` provide
+    pinning information. It is not yet possible to see multiple sources,
+    and the per-source pinning is not shown.
+  * gpgv: Extract VerifyDetachedSignatureFile()
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 19 Dec 2024 18:38:04 +0100
+
 apt (2.9.17) unstable; urgency=medium
 
   * solver3:
