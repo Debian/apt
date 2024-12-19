@@ -165,7 +165,9 @@ bool InitOutputPager()
       {
 	 // If our pager name contains a space we need to invoke it in a shell. Boooo!
 	 char *cmd[] = {(char*)"/bin/sh", (char*)"-c", pager.data(), nullptr};
-	 if (std::none_of(pager.begin(), pager.end(), isspace_ascii))
+	 constexpr std::string_view allowed_chars{"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" "+-._=/"};
+	 static_assert(allowed_chars.size() == 26 + 26 + 10 + 6);
+	 if (pager.find_first_not_of(allowed_chars) == pager.npos)
 	 {
 	    cmd[0] = pager.data();
 	    cmd[1] = nullptr;
