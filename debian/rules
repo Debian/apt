@@ -31,7 +31,7 @@ override_dh_install-arch:
 	install -m 644 debian/apt.conf.autoremove debian/apt/etc/apt/apt.conf.d/01autoremove
 
 override_dh_gencontrol:
-	dh_gencontrol -- -Vapt:keyring="$(shell ./vendor/getinfo keyring-package)"
+	dh_gencontrol -- -Vapt:keyring="$(shell ./vendor/getinfo keyring-package)" -Vopenpgp:Depends=$(shell test -e /usr/bin/sqv && echo sqv || echo gpgv)
 
 override_dh_installcron:
 	dh_installcron --name=apt-compat
