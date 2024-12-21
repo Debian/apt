@@ -30,13 +30,7 @@
 #include <string>
 #include <unistd.h>
 
-#if defined(WITH_OPENSSL)
 #include <openssl/evp.h>
-#elif defined(HAVE_GNUTLS)
-#include <gnutls/crypto.h>
-#else
-#include <gcrypt.h>
-#endif
 									/*}}}*/
 
 const char * HashString::_SupportedHashes[] =
@@ -331,7 +325,6 @@ class PrivateHashes
    unsigned long long FileSize{0};
 
    private:
-#if defined(WITH_OPENSSL)
    std::array<EVP_MD_CTX *, 4> contexts{};
 
    public:
@@ -397,139 +390,6 @@ class PrivateHashes
 	 if (ctx != nullptr)
 	    EVP_MD_CTX_free(ctx);
    }
-
-#elif defined(HAVE_GNUTLS)
-   std::array<std::optional<gnutls_hash_hd_t>, 4> digs{};
-
-   public:
-   struct HashAlgo
-   {
-      size_t index;
-      const char *name;
-      gnutls_digest_algorithm_t gnuTlsAlgo;
-      Hashes::SupportedHashes ourAlgo;
-   };
-
-   static constexpr std::array<HashAlgo, 4> Algorithms{
-      HashAlgo{0, "MD5Sum", GNUTLS_DIG_MD5, Hashes::MD5SUM},
-      HashAlgo{1, "SHA1", GNUTLS_DIG_SHA1, Hashes::SHA1SUM},
-      HashAlgo{2, "SHA256", GNUTLS_DIG_SHA256, Hashes::SHA256SUM},
-      HashAlgo{3, "SHA512", GNUTLS_DIG_SHA512, Hashes::SHA512SUM},
-   };
-
-   bool Write(unsigned char const *Data, size_t Size)
-   {
-      for (auto &dig : digs)
-      {
-	 if (dig)
-	    gnutls_hash(*dig, Data, Size);
-      }
-      return true;
-   }
-
-   std::string HexDigest(HashAlgo const &algo)
-   {
-      auto Size = gnutls_hash_get_len(algo.gnuTlsAlgo);
-      unsigned char Sum[Size];
-      if (auto copy = gnutls_hash_copy(*digs[algo.index]))
-	 gnutls_hash_deinit(copy, &Sum);
-      return ::HexDigest(std::basic_string_view<unsigned char>(Sum, Size));
-   }
-   bool Enable(HashAlgo const &algo)
-   {
-      digs[algo.index].emplace();
-      if (gnutls_hash_init(&*digs[algo.index], algo.gnuTlsAlgo) == 0)
-	 return true;
-      digs[algo.index] = std::nullopt;
-      return false;
-   }
-   bool IsEnabled(HashAlgo const &algo)
-   {
-      return bool{digs[algo.index]};
-   }
-
-   explicit PrivateHashes() {}
-   ~PrivateHashes()
-   {
-      for (auto &dig : digs)
-      {
-	 if (dig)
-	    gnutls_hash_deinit(*dig, nullptr);
-      }
-   }
-#else
-   gcry_md_hd_t hd;
-
-   void maybeInit()
-   {
-
-      // Yikes, we got to initialize libgcrypt, or we get warnings. But we
-      // abstract away libgcrypt in Hashes from our users - they are not
-      // supposed to know what the hashing backend is, so we can't force
-      // them to init themselves as libgcrypt folks want us to. So this
-      // only leaves us with this option...
-      if (!gcry_control(GCRYCTL_INITIALIZATION_FINISHED_P))
-      {
-	 if (!gcry_check_version(nullptr))
-	 {
-	    fprintf(stderr, "libgcrypt is too old (need %s, have %s)\n",
-		    "nullptr", gcry_check_version(NULL));
-	    exit(2);
-	 }
-
-	 gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);
-      }
-   }
-
-   public:
-   struct HashAlgo
-   {
-      const char *name;
-      int gcryAlgo;
-      Hashes::SupportedHashes ourAlgo;
-   };
-
-   static constexpr std::array<HashAlgo, 4> Algorithms{
-      HashAlgo{"MD5Sum", GCRY_MD_MD5, Hashes::MD5SUM},
-      HashAlgo{"SHA1", GCRY_MD_SHA1, Hashes::SHA1SUM},
-      HashAlgo{"SHA256", GCRY_MD_SHA256, Hashes::SHA256SUM},
-      HashAlgo{"SHA512", GCRY_MD_SHA512, Hashes::SHA512SUM},
-   };
-
-   bool Write(unsigned char const *Data, size_t Size)
-   {
-      gcry_md_write(hd, Data, Size);
-      return true;
-   }
-
-   std::string HexDigest(HashAlgo const &algo)
-   {
-      auto Size = gcry_md_get_algo_dlen(algo.gcryAlgo);
-      auto Sum = gcry_md_read(hd, algo.gcryAlgo);
-      return ::HexDigest(std::basic_string_view<unsigned char>(Sum, Size));
-   }
-
-   bool Enable(HashAlgo const &Algo)
-   {
-      gcry_md_enable(hd, Algo.gcryAlgo);
-      return true;
-   }
-   bool IsEnabled(HashAlgo const &algo)
-   {
-      return gcry_md_is_enabled(hd, algo.gcryAlgo);
-   }
-
-   explicit PrivateHashes()
-   {
-      maybeInit();
-      gcry_md_open(&hd, 0, 0);
-   }
-
-   ~PrivateHashes()
-   {
-      gcry_md_close(hd);
-   }
-#endif
 
    explicit PrivateHashes(unsigned int const CalcHashes) : PrivateHashes()
    {

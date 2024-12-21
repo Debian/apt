@@ -13,17 +13,12 @@ add_executable(http http.cc basehttp.cc $<TARGET_OBJECTS:connectlib>)
 add_executable(mirror mirror.cc)
 add_executable(rred rred.cc)
 
-if (WITH_OPENSSL)
-    target_compile_definitions(connectlib PRIVATE ${OPENSSL_DEFINITIONS})
-    target_include_directories(connectlib PRIVATE ${OPENSSL_INCLUDE_DIR})
-elseif (HAVE_GNUTLS)
-  target_compile_definitions(connectlib PRIVATE ${GNUTLS_DEFINITIONS})
-  target_include_directories(connectlib PRIVATE ${GNUTLS_INCLUDE_DIR})
-endif()
+target_compile_definitions(connectlib PRIVATE ${OPENSSL_DEFINITIONS})
+target_include_directories(connectlib PRIVATE ${OPENSSL_INCLUDE_DIR})
 target_include_directories(http PRIVATE $<$<BOOL:${SYSTEMD_FOUND}>:${SYSTEMD_INCLUDE_DIRS}>)
 
 # Additional libraries to link against for networked stuff
-target_link_libraries(http $<$<BOOL:${WITH_OPENSSL}>:OpenSSL::SSL> $<$<BOOL:${GNUTLS_FOUND}>:${GNUTLS_LIBRARIES}> $<$<BOOL:${SYSTEMD_FOUND}>:${SYSTEMD_LIBRARIES}>)
+target_link_libraries(http OpenSSL::SSL $<$<BOOL:${SYSTEMD_FOUND}>:${SYSTEMD_LIBRARIES}>)
 
 target_link_libraries(rred apt-private)
 

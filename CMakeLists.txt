@@ -12,7 +12,6 @@ enable_testing()
 
 option(REQUIRE_MERGED_USR "Require merged-usr." ON)
 option(WITH_DOC "Build all documentation." ON)
-option(WITH_OPENSSL "Build all documentation." ON)
 include(CMakeDependentOption)
 cmake_dependent_option(WITH_DOC_MANPAGES "Force building manpages." OFF "NOT WITH_DOC" OFF)
 cmake_dependent_option(WITH_DOC_GUIDES "Force building guides." OFF "NOT WITH_DOC" OFF)
@@ -93,14 +92,7 @@ if (BERKELEY_FOUND)
   set(HAVE_BDB 1)
 endif()
 
-if (WITH_OPENSSL)
-    find_package(OpenSSL REQUIRED)
-else()
-    find_package(GnuTLS)
-    if (GNUTLS_FOUND)
-      set(HAVE_GNUTLS 1)
-  endif()
-endif()
+find_package(OpenSSL REQUIRED)
 
 # (De)Compressor libraries
 find_package(ZLIB REQUIRED)
@@ -146,9 +138,6 @@ if (SECCOMP_FOUND)
   set(HAVE_SECCOMP 1)
 endif()
 
-if (NOT HAVE_GNUTLS AND NOT WITH_OPENSSL)
-    find_package(GCRYPT REQUIRED)
-endif()
 find_package(XXHASH REQUIRED)
 
 # Mount()ing and stat()ing and friends
