@@ -1,12 +1,14 @@
 // -*- mode: cpp; mode: fold -*-
+// SPDX-License-Identifier: GPL-2.0+ and curl
 // Description								/*{{{*/
 /* ######################################################################
 
    Connect - Replacement connect call
 
    This was originally authored by Jason Gunthorpe <jgg@debian.org>
-   and is placed in the Public Domain, do with it what you will.
-      
+   and is placed in the Public Domain, do with it what you will. It
+   is now GPL-2.0+. See COPYING for details.
+
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
@@ -19,11 +21,10 @@
 #include <apt-pkg/srvrec.h>
 #include <apt-pkg/strutl.h>
 
-#ifdef HAVE_GNUTLS
-#include <gnutls/gnutls.h>
-#include <gnutls/x509.h>
-#endif
+#include <openssl/err.h>
+#include <openssl/ssl.h>
 
+#include <cassert>
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
@@ -801,104 +802,196 @@ ResultState UnwrapSocks(std::string Host, int Port, URI Proxy, std::unique_ptr<M
    return ResultState::SUCCESSFUL;
 }
 
-#ifdef HAVE_GNUTLS									/*}}}*/
 // UnwrapTLS - Handle TLS connections 					/*{{{*/
 // ---------------------------------------------------------------------
 /* Performs a TLS handshake on the socket */
+#define null_error(...) (_error->Error(__VA_ARGS__), nullptr)
+#define ssl_strerr() ERR_error_string(ERR_get_error(), nullptr)
 struct TlsFd final : public MethodFd
 {
-   std::unique_ptr<MethodFd> UnderlyingFd;
-   gnutls_session_t session;
-   gnutls_certificate_credentials_t credentials;
-   std::string hostname;
-   unsigned long Timeout;
+   std::unique_ptr<MethodFd> UnderlyingFd{};
 
-   int Fd() APT_OVERRIDE { return UnderlyingFd->Fd(); }
+   SSL *ssl{};
 
-   ssize_t Read(void *buf, size_t count) APT_OVERRIDE
+   std::string hostname{};
+   unsigned long Timeout{};
+   bool broken{false};
+
+   int Fd() override { return UnderlyingFd ? UnderlyingFd->Fd() : -1; }
+
+   ssize_t Read(void *buf, size_t count) override
    {
-      return HandleError(gnutls_record_recv(session, buf, count));
+      assert(ssl);
+      return HandleError(SSL_read(ssl, buf, count));
    }
-   ssize_t Write(void *buf, size_t count) APT_OVERRIDE
+   ssize_t Write(void *buf, size_t count) override
    {
-      return HandleError(gnutls_record_send(session, buf, count));
-   }
-
-   ssize_t DoTLSHandshake()
-   {
-      int err;
-      // Do the handshake. Our socket is non-blocking, so we need to call WaitFd()
-      // accordingly.
-      do
-      {
-         err = gnutls_handshake(session);
-         if ((err == GNUTLS_E_INTERRUPTED || err == GNUTLS_E_AGAIN) &&
-             WaitFd(this->Fd(), gnutls_record_get_direction(session) == 1, Timeout) == false)
-         {
-            _error->Errno("select", "Could not wait for server fd");
-            return err;
-         }
-      } while (err < 0 && gnutls_error_is_fatal(err) == 0);
-
-      if (err < 0)
-      {
-         // Print reason why validation failed.
-         if (err == GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR)
-         {
-            gnutls_datum_t txt;
-            auto type = gnutls_certificate_type_get(session);
-            auto status = gnutls_session_get_verify_cert_status(session);
-            if (gnutls_certificate_verification_status_print(status, type, &txt, 0) == 0)
-            {
-               _error->Error("Certificate verification failed: %s", txt.data);
-            }
-            gnutls_free(txt.data);
-         }
-         _error->Error("Could not handshake: %s", gnutls_strerror(err));
-      }
-      return err;
+      assert(ssl);
+      return HandleError(SSL_write(ssl, buf, count));
    }
 
-   template <typename T>
-   T HandleError(T err)
+   ssize_t HandleError(ssize_t r)
    {
-      // Server may request re-handshake if client certificates need to be provided
-      // based on resource requested
-      if (err == GNUTLS_E_REHANDSHAKE)
-      {
-        int rc = DoTLSHandshake();
-	// Only reset err if DoTLSHandshake() fails.
-        // Otherwise, we want to follow the original error path and set errno to EAGAIN
-        // so that the request is retried.
-        if (rc < 0)
-          err = rc;
-      }
+      assert(ssl);
+      if (r > 0)
+	 return r;
 
-      if (err < 0 && gnutls_error_is_fatal(err))
-	 errno = EIO;
-      else if (err < 0)
+      auto err = SSL_get_error(ssl, r);
+      switch (err)
+      {
+      case SSL_ERROR_WANT_READ:
+      case SSL_ERROR_WANT_WRITE:
 	 errno = EAGAIN;
-      else
+	 break;
+      case SSL_ERROR_ZERO_RETURN:
+	 // Remote host has closed connection
 	 errno = 0;
-      return err;
+	 break;
+      case SSL_ERROR_SYSCALL:
+	 broken = true;
+	 break;
+      case SSL_ERROR_SSL:
+	 broken = true;
+	 errno = EIO;
+	 _error->Error("OpenSSL error: %s\n", ssl_strerr());
+	 break;
+      }
+      return r;
    }
 
-   int Close() APT_OVERRIDE
+   int Close() override
    {
-      auto err = HandleError(gnutls_bye(session, GNUTLS_SHUT_RDWR));
-      auto lower = UnderlyingFd->Close();
-      return err < 0 ? HandleError(err) : lower;
+      int res = 0;   // 0 or 1 are success
+      int lower = 0; // 0 is success
+
+      if (ssl)
+      {
+	 if (not broken && res)
+	    res = SSL_shutdown(ssl);
+	 if (res < 0)
+	    HandleError(res);
+	 SSL_free(ssl);
+      }
+      ssl = nullptr;
+
+      if (UnderlyingFd)
+	 lower = UnderlyingFd->Close();
+      UnderlyingFd = nullptr;
+
+      // Return -1 on failure, 0 on success
+      return res < 0 || lower < 0 ? -1 : 0;
    }
 
-   bool HasPending() APT_OVERRIDE
+   bool HasPending() override
    {
-      return gnutls_record_check_pending(session) > 0;
+      assert(ssl);
+      // SSL_has_pending() can return 1 even if there are no actual bytes to read
+      // post decoding, so we need to SSL_peek() too to see if there are actual
+      // bytes as otherwise we end up busy looping (tested by DE -> AU https connection)
+      char buf;
+      return SSL_has_pending(ssl) && SSL_peek(ssl, &buf, 1) > 0;
    }
 };
 
+static BIO_METHOD *NewBioMethod()
+{
+   BIO_METHOD *m = BIO_meth_new(BIO_TYPE_MEM, "OpenSSL APT BIO method");
+   if (not m)
+   {
+      _error->Error("SSL connection failed: %s - %s", ssl_strerr(), strerror(errno));
+      return nullptr;
+   }
+
+   BIO_meth_set_ctrl(m, [](BIO *, int, long, void *) -> long
+		     { return 1; });
+   BIO_meth_set_write(m, [](BIO *bio, const char *buf, int size) -> int
+		      {
+      auto p = BIO_get_data(bio);
+      auto res = reinterpret_cast<MethodFd *>(p)->Write((void*)buf, size);
+      if (errno == EAGAIN)
+	 BIO_set_retry_write(bio);
+      return res; });
+   BIO_meth_set_read(m, [](BIO *bio, char *buf, int size) -> int
+		     {
+      auto p = BIO_get_data(bio);
+      auto res = reinterpret_cast<MethodFd *>(p)->Read(buf, size);
+      if (errno == EAGAIN)
+	 BIO_set_retry_read(bio);
+      return res; });
+
+   return m;
+}
+
+static SSL_CTX *GetContextForHost(std::string const &host, aptConfigWrapperForMethods const *const OwnerConf)
+{
+   static std::string lastHost;
+   static SSL_CTX *ctx;
+   auto Debug = OwnerConf->DebugEnabled();
+
+   if (lastHost == host)
+   {
+      if (Debug)
+	 std::clog << "Reusing context for " << host << std::endl;
+      return ctx;
+   }
+   if (Debug)
+      std::clog << "Creating context for " << host << std::endl;
+
+   // Check unsupported options first, maybe we reuse the host context later, who knows
+   if (not OwnerConf->ConfigFind("IssuerCert", "").empty())
+      return null_error("The option '%s' is not supported anymore", "IssuerCert");
+   if (not OwnerConf->ConfigFind("SslForceVersion", "").empty())
+      return null_error("The option '%s' is not supported anymore", "SslForceVersion");
+
+   // Delete the existing context and render it unusable
+   lastHost = "";
+   SSL_CTX_free(ctx);
+
+   // We set the context here, but lastHost at the end to only allow reuse of fully initialized contexts
+   ctx = SSL_CTX_new(TLS_client_method());
+   if (ctx == nullptr)
+      return null_error("Could not create new SSL context: %s", ssl_strerr());
+
+   // Load the certificate authorities, either custom or default ones
+   if (auto const fileinfo = OwnerConf->ConfigFind("CaInfo", ""); not fileinfo.empty())
+   {
+      if (auto res = SSL_CTX_load_verify_file(ctx, fileinfo.c_str()); res != 1)
+	 return null_error("Could not load certificates from %s (CaInfo option): %s", fileinfo.c_str(), ssl_strerr());
+   }
+   else if (auto err = SSL_CTX_set_default_verify_paths(ctx); err != 1)
+      return null_error("Could not load certificates: %s", ssl_strerr());
+
+   // Client certificate setup, such that clients can authenticate to the server
+   if (auto const cert = OwnerConf->ConfigFind("SslCert", ""); not cert.empty())
+      if (auto res = SSL_CTX_use_certificate_file(ctx, cert.c_str(), SSL_FILETYPE_PEM); res != 1)
+	 return null_error("Could not load client certificate (%s, SslCert option): %s", cert.c_str(), ssl_strerr());
+   if (auto const key = OwnerConf->ConfigFind("SslKey", ""); not key.empty())
+      if (auto res = SSL_CTX_use_PrivateKey_file(ctx, key.c_str(), SSL_FILETYPE_PEM); res != 1)
+	 return null_error("Could not load client or key (%s, SslKey option): %s", key.c_str(), ssl_strerr()), nullptr;
+
+   // Custom certificate revocation lists. We surely support all the niche cases.
+   if (auto const crlfile = OwnerConf->ConfigFind("CrlFile", ""); not crlfile.empty())
+   {
+      // tell OpenSSL where to find CRL file that is used to check certificate  revocation.
+      // lifted from curl:
+      // Copyright (c) 1996 - 2023, Daniel Stenberg, <daniel@haxx.se>, and many
+      // contributors, see the THANKS file.
+      auto lookup = X509_STORE_add_lookup(SSL_CTX_get_cert_store(ctx),
+					  X509_LOOKUP_file());
+      if (not lookup || not X509_load_crl_file(lookup, crlfile.c_str(), X509_FILETYPE_PEM))
+	 return null_error("Could not load custom certificate revocation list %s (CrlFile option): %s", crlfile.c_str(), ssl_strerr());
+      /* Everything is fine. */
+      X509_STORE_set_flags(SSL_CTX_get_cert_store(ctx),
+			   X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
+   }
+
+   lastHost = host;
+   return ctx;
+}
+
 ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
-		      unsigned long const Timeout, aptMethod * const Owner,
-		      aptConfigWrapperForMethods const * const OwnerConf)
+		      unsigned long const Timeout, aptMethod *const Owner,
+		      aptConfigWrapperForMethods const *const OwnerConf)
 {
    if (_config->FindB("Acquire::AllowTLS", true) == false)
    {
@@ -906,124 +999,45 @@ ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
       return ResultState::FATAL_ERROR;
    }
 
-   int err;
    TlsFd *tlsFd = new TlsFd();
 
    tlsFd->hostname = Host;
-   tlsFd->UnderlyingFd = MethodFd::FromFd(-1); // For now
    tlsFd->Timeout = Timeout;
 
-   if ((err = gnutls_init(&tlsFd->session, GNUTLS_CLIENT | GNUTLS_NONBLOCK)) < 0)
-   {
-      _error->Error("Internal error: could not allocate credentials: %s", gnutls_strerror(err));
+   if (auto ctx = GetContextForHost(Host, OwnerConf))
+      tlsFd->ssl = SSL_new(ctx);
+   else
       return ResultState::FATAL_ERROR;
-   }
 
    FdFd *fdfd = dynamic_cast<FdFd *>(Fd.get());
    if (fdfd != nullptr)
    {
-      gnutls_transport_set_int(tlsFd->session, fdfd->fd);
+      SSL_set_fd(tlsFd->ssl, fdfd->fd);
    }
    else
    {
-      gnutls_transport_set_ptr(tlsFd->session, Fd.get());
-      gnutls_transport_set_pull_function(tlsFd->session,
-					 [](gnutls_transport_ptr_t p, void *buf, size_t size) -> ssize_t {
-					    return reinterpret_cast<MethodFd *>(p)->Read(buf, size);
-					 });
-      gnutls_transport_set_push_function(tlsFd->session,
-					 [](gnutls_transport_ptr_t p, const void *buf, size_t size) -> ssize_t {
-					    return reinterpret_cast<MethodFd *>(p)->Write((void *)buf, size);
-					 });
-   }
-
-   if ((err = gnutls_certificate_allocate_credentials(&tlsFd->credentials)) < 0)
-   {
-      _error->Error("Internal error: could not allocate credentials: %s", gnutls_strerror(err));
-      return ResultState::FATAL_ERROR;
-   }
-
-   // Credential setup
-   std::string fileinfo = OwnerConf->ConfigFind("CaInfo", "");
-   if (fileinfo.empty())
-   {
-      // No CaInfo specified, use system trust store.
-      err = gnutls_certificate_set_x509_system_trust(tlsFd->credentials);
-      if (err == 0)
-	 Owner->Warning("No system certificates available. Try installing ca-certificates.");
-      else if (err < 0)
-      {
-	 _error->Error("Could not load system TLS certificates: %s", gnutls_strerror(err));
+      static auto m = NewBioMethod();
+      if (m == nullptr)
 	 return ResultState::FATAL_ERROR;
-      }
-   }
-   else
-   {
-      // CA location has been set, use the specified one instead
-      gnutls_certificate_set_verify_flags(tlsFd->credentials, GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT);
-      err = gnutls_certificate_set_x509_trust_file(tlsFd->credentials, fileinfo.c_str(), GNUTLS_X509_FMT_PEM);
-      if (err < 0)
-      {
-	 _error->Error("Could not load certificates from %s (CaInfo option): %s", fileinfo.c_str(), gnutls_strerror(err));
+
+      auto bio = BIO_new(m);
+      if (bio == nullptr)
 	 return ResultState::FATAL_ERROR;
-      }
-   }
 
-   if (not OwnerConf->ConfigFind("IssuerCert", "").empty())
-   {
-      _error->Error("The option '%s' is not supported anymore", "IssuerCert");
-      return ResultState::FATAL_ERROR;
-   }
-   if (not OwnerConf->ConfigFind("SslForceVersion", "").empty())
-   {
-      _error->Error("The option '%s' is not supported anymore", "SslForceVersion");
-      return ResultState::FATAL_ERROR;
-   }
-
-   // For client authentication, certificate file ...
-   std::string const cert = OwnerConf->ConfigFind("SslCert", "");
-   std::string const key = OwnerConf->ConfigFind("SslKey", "");
-   if (cert.empty() == false)
-   {
-      if ((err = gnutls_certificate_set_x509_key_file(
-	       tlsFd->credentials,
-	       cert.c_str(),
-	       key.empty() ? cert.c_str() : key.c_str(),
-	       GNUTLS_X509_FMT_PEM)) < 0)
-      {
-	 _error->Error("Could not load client certificate (%s, SslCert option) or key (%s, SslKey option): %s", cert.c_str(), key.c_str(), gnutls_strerror(err));
-	 return ResultState::FATAL_ERROR;
-      }
-   }
-
-   // CRL file
-   std::string const crlfile = OwnerConf->ConfigFind("CrlFile", "");
-   if (crlfile.empty() == false)
-   {
-      if ((err = gnutls_certificate_set_x509_crl_file(tlsFd->credentials,
-						      crlfile.c_str(),
-						      GNUTLS_X509_FMT_PEM)) < 0)
-      {
-	 _error->Error("Could not load custom certificate revocation list %s (CrlFile option): %s", crlfile.c_str(), gnutls_strerror(err));
-	 return ResultState::FATAL_ERROR;
-      }
-   }
-
-   if ((err = gnutls_credentials_set(tlsFd->session, GNUTLS_CRD_CERTIFICATE, tlsFd->credentials)) < 0)
-   {
-      _error->Error("Internal error: Could not add certificates to session: %s", gnutls_strerror(err));
-      return ResultState::FATAL_ERROR;
-   }
-
-   if ((err = gnutls_set_default_priority(tlsFd->session)) < 0)
-   {
-      _error->Error("Internal error: Could not set algorithm preferences: %s", gnutls_strerror(err));
-      return ResultState::FATAL_ERROR;
+      BIO_set_data(bio, Fd.get());
+      BIO_up_ref(bio); // the following take one reference each
+      SSL_set0_rbio(tlsFd->ssl, bio);
+      SSL_set0_wbio(tlsFd->ssl, bio);
    }
 
    if (OwnerConf->ConfigFindB("Verify-Peer", true))
    {
-      gnutls_session_set_verify_cert(tlsFd->session, OwnerConf->ConfigFindB("Verify-Host", true) ? tlsFd->hostname.c_str() : nullptr, 0);
+      SSL_set_verify(tlsFd->ssl, SSL_VERIFY_PEER, nullptr);
+      if (auto res = SSL_set1_host(tlsFd->ssl, OwnerConf->ConfigFindB("Verify-Host", true) ? tlsFd->hostname.c_str() : nullptr); res != 1)
+      {
+	 _error->Error("Could not set hostname: %s", ssl_strerr());
+	 return ResultState::FATAL_ERROR;
+      }
    }
 
    // set SNI only if the hostname is really a name and not an address
@@ -1034,10 +1048,31 @@ ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
       if (inet_pton(AF_INET, tlsFd->hostname.c_str(), &addr4) == 1 ||
 	  inet_pton(AF_INET6, tlsFd->hostname.c_str(), &addr6) == 1)
 	 /* not a host name */;
-      else if ((err = gnutls_server_name_set(tlsFd->session, GNUTLS_NAME_DNS, tlsFd->hostname.c_str(), tlsFd->hostname.length())) < 0)
+      else if (auto res = SSL_set_tlsext_host_name(tlsFd->ssl, tlsFd->hostname.c_str()); res != 1)
       {
-	 _error->Error("Could not set host name %s to indicate to server: %s", tlsFd->hostname.c_str(), gnutls_strerror(err));
+	 _error->Error("Could not set host name %s to indicate to server: %s", tlsFd->hostname.c_str(), ssl_strerr());
 	 return ResultState::FATAL_ERROR;
+      }
+   }
+
+   while (true)
+   {
+      auto res = SSL_connect(tlsFd->ssl);
+      if (res == 1)
+	 break;
+      switch (auto error = SSL_get_error(tlsFd->ssl, res))
+      {
+      case SSL_ERROR_WANT_READ:
+      case SSL_ERROR_WANT_WRITE:
+	 if (not WaitFd(Fd->Fd(), error == SSL_ERROR_WANT_WRITE, Timeout))
+	 {
+	    _error->Errno("select", "Could not wait for server fd");
+	    return ResultState::TRANSIENT_ERROR;
+	 }
+	 break;
+      default:
+	 _error->Error("SSL connection failed: %s / %s", ssl_strerr(), strerror(errno));
+	 return ResultState::TRANSIENT_ERROR;
       }
    }
 
@@ -1045,12 +1080,5 @@ ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
    tlsFd->UnderlyingFd = std::move(Fd);
    Fd.reset(tlsFd);
 
-   // Do the handshake.
-   err = tlsFd->DoTLSHandshake();
-
-   if (err < 0)
-      return ResultState::TRANSIENT_ERROR;
-
    return ResultState::SUCCESSFUL;
 }
-#endif									/*}}}*/

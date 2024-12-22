@@ -26,23 +26,12 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <unistd.h>
 
-#include <gcrypt.h>
+#include <openssl/evp.h>
 									/*}}}*/
-
-static const constexpr struct HashAlgo
-{
-   const char *name;
-   int gcryAlgo;
-   Hashes::SupportedHashes ourAlgo;
-} Algorithms[] = {
-   {"MD5Sum", GCRY_MD_MD5, Hashes::MD5SUM},
-   {"SHA1", GCRY_MD_SHA1, Hashes::SHA1SUM},
-   {"SHA256", GCRY_MD_SHA256, Hashes::SHA256SUM},
-   {"SHA512", GCRY_MD_SHA512, Hashes::SHA512SUM},
-};
 
 const char * HashString::_SupportedHashes[] =
 {
@@ -311,57 +300,113 @@ bool HashStringList::operator!=(HashStringList const &other) const
    return !(*this == other);
 }
 									/*}}}*/
+static APT_PURE std::string HexDigest(std::basic_string_view<unsigned char> const &Sum)
+{
+   char Conv[16] =
+      {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
+       'c', 'd', 'e', 'f'};
+   std::string Result(Sum.size() * 2, 0);
+
+   // Convert each char into two letters
+   size_t J = 0;
+   size_t I = 0;
+   for (; I != (Sum.size()) * 2; J++, I += 2)
+   {
+      Result[I] = Conv[Sum[J] >> 4];
+      Result[I + 1] = Conv[Sum[J] & 0xF];
+   }
+   return Result;
+};
 
 // PrivateHashes							/*{{{*/
-class PrivateHashes {
-public:
-   unsigned long long FileSize;
-   gcry_md_hd_t hd;
+class PrivateHashes
+{
+   public:
+   unsigned long long FileSize{0};
 
-   void maybeInit()
+   private:
+   std::array<EVP_MD_CTX *, 4> contexts{};
+
+   public:
+   struct HashAlgo
    {
+      size_t index;
+      const char *name;
+      const EVP_MD *(*evpLink)(void);
+      Hashes::SupportedHashes ourAlgo;
+   };
 
-      // Yikes, we got to initialize libgcrypt, or we get warnings. But we
-      // abstract away libgcrypt in Hashes from our users - they are not
-      // supposed to know what the hashing backend is, so we can't force
-      // them to init themselves as libgcrypt folks want us to. So this
-      // only leaves us with this option...
-      if (!gcry_control(GCRYCTL_INITIALIZATION_FINISHED_P))
+   static constexpr std::array<HashAlgo, 4> Algorithms{
+      HashAlgo{0, "MD5Sum", EVP_md5, Hashes::MD5SUM},
+      HashAlgo{1, "SHA1", EVP_sha1, Hashes::SHA1SUM},
+      HashAlgo{2, "SHA256", EVP_sha256, Hashes::SHA256SUM},
+      HashAlgo{3, "SHA512", EVP_sha512, Hashes::SHA512SUM},
+   };
+
+   bool Write(unsigned char const *Data, size_t Size)
+   {
+      for (auto &context : contexts)
       {
-	 if (!gcry_check_version(nullptr))
-	 {
-	    fprintf(stderr, "libgcrypt is too old (need %s, have %s)\n",
-		    "nullptr", gcry_check_version(NULL));
-	    exit(2);
-	 }
-
-	 gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);
+	 if (context)
+	    EVP_DigestUpdate(context, Data, Size);
       }
+      return true;
    }
 
-   explicit PrivateHashes(unsigned int const CalcHashes) : FileSize(0)
+   std::string HexDigest(HashAlgo const &algo)
    {
-      maybeInit();
-      gcry_md_open(&hd, 0, 0);
+      auto Size = EVP_MD_size(algo.evpLink());
+      unsigned char Sum[Size];
+
+      // We need to work on a copy, as we update the hash after creating a digest...
+      auto tmpContext = EVP_MD_CTX_create();
+      EVP_MD_CTX_copy(tmpContext, contexts[algo.index]);
+      EVP_DigestFinal_ex(tmpContext, Sum, nullptr);
+      EVP_MD_CTX_destroy(tmpContext);
+
+      return ::HexDigest(std::basic_string_view<unsigned char>(Sum, Size));
+   }
+
+   bool Enable(HashAlgo const &algo)
+   {
+      contexts[algo.index] = EVP_MD_CTX_new();
+      if (contexts[algo.index] == nullptr)
+	 return false;
+      if (EVP_DigestInit_ex(contexts[algo.index], algo.evpLink(), NULL))
+	 return true;
+      EVP_MD_CTX_destroy(contexts[algo.index]);
+      contexts[algo.index] = nullptr;
+      return false;
+   }
+   bool IsEnabled(HashAlgo const &algo)
+   {
+      return contexts[algo.index] != nullptr;
+   }
+
+   explicit PrivateHashes() {}
+   ~PrivateHashes()
+   {
+      for (auto ctx : contexts)
+	 if (ctx != nullptr)
+	    EVP_MD_CTX_free(ctx);
+   }
+
+   explicit PrivateHashes(unsigned int const CalcHashes) : PrivateHashes()
+   {
       for (auto & Algo : Algorithms)
       {
 	 if ((CalcHashes & Algo.ourAlgo) == Algo.ourAlgo)
-	    gcry_md_enable(hd, Algo.gcryAlgo);
+	    Enable(Algo);
       }
    }
 
-   explicit PrivateHashes(HashStringList const &Hashes) : FileSize(0) {
-      maybeInit();
-      gcry_md_open(&hd, 0, 0);
+   explicit PrivateHashes(HashStringList const &Hashes) : PrivateHashes()
+   {
       for (auto & Algo : Algorithms)
       {
 	 if (not Hashes.usable() || Hashes.find(Algo.name) != NULL)
-	    gcry_md_enable(hd, Algo.gcryAlgo);
+	    Enable(Algo);
       }
-   }
-   ~PrivateHashes()
-   {
-      gcry_md_close(hd);
    }
 };
 									/*}}}*/
@@ -370,7 +415,8 @@ bool Hashes::Add(const unsigned char * const Data, unsigned long long const Size
 {
    if (Size != 0)
    {
-      gcry_md_write(d->hd, Data, Size);
+      if (not d->Write(Data, Size))
+	 return false;
       d->FileSize += Size;
    }
    return true;
@@ -420,36 +466,12 @@ bool Hashes::AddFD(FileFd &Fd,unsigned long long Size)
 }
 									/*}}}*/
 
-static APT_PURE std::string HexDigest(gcry_md_hd_t hd, int algo)
-{
-   char Conv[16] =
-      {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
-       'c', 'd', 'e', 'f'};
-
-   auto Size = gcry_md_get_algo_dlen(algo);
-   assert(Size <= 512/8);
-   char Result[((Size)*2) + 1];
-   Result[(Size)*2] = 0;
-
-   auto Sum = gcry_md_read(hd, algo);
-
-   // Convert each char into two letters
-   size_t J = 0;
-   size_t I = 0;
-   for (; I != (Size)*2; J++, I += 2)
-   {
-      Result[I] = Conv[Sum[J] >> 4];
-      Result[I + 1] = Conv[Sum[J] & 0xF];
-   }
-   return std::string(Result);
-};
-
 HashStringList Hashes::GetHashStringList()
 {
    HashStringList hashes;
-   for (auto & Algo : Algorithms)
-      if (gcry_md_is_enabled(d->hd, Algo.gcryAlgo))
-	 hashes.push_back(HashString(Algo.name, HexDigest(d->hd, Algo.gcryAlgo)));
+   for (auto &Algo : d->Algorithms)
+      if (d->IsEnabled(Algo))
+	 hashes.push_back(HashString(Algo.name, d->HexDigest(Algo)));
    hashes.FileSize(d->FileSize);
 
    return hashes;
@@ -457,9 +479,9 @@ HashStringList Hashes::GetHashStringList()
 
 HashString Hashes::GetHashString(SupportedHashes hash)
 {
-   for (auto & Algo : Algorithms)
+   for (auto &Algo : d->Algorithms)
       if (hash == Algo.ourAlgo)
-	 return HashString(Algo.name, HexDigest(d->hd, Algo.gcryAlgo));
+	 return HashString(Algo.name, d->HexDigest(Algo));
 
    abort();
 }

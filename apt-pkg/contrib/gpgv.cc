@@ -255,12 +255,8 @@ std::pair<std::string, std::forward_list<std::string>> APT::Internal::FindGPGV(b
       // Prefer absolute path
       "/usr/bin/gpgv-sq",
       "/usr/bin/gpgv",
-      "/usr/bin/gpgv2",
-      "/usr/bin/gpgv1",
       "gpgv-sq",
       "gpgv",
-      "gpgv2",
-      "gpgv1",
    };
    for (auto gpgv : gpgvVariants)
       if (CheckGPGV(checkedCommands, gpgv, Debug))
