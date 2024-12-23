@@ -96,5 +96,14 @@ APT_PUBLIC bool SplitClearSignedFile(std::string const &InFile, FileFd * const C
  */
 APT_PUBLIC bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &MessageFile);
 
+/** \brief verifiy a detached signature file for correctness.
+ *
+ * We want to expect unavoided content. This may set an error when returning false
+ * but it might not necessarily do so (in case of empty signature file).
+ *
+ * @return true if the detached signature files contains ASCII-armored signatures, otherwise false
+ */
+APT_PUBLIC bool VerifyDetachedSignatureFile(std::string const &DetachedSignatureFileName);
+
 APT_PUBLIC bool IsAssertedPubKeyAlgo(std::string const &pkstr, std::string const &option);
 #endif

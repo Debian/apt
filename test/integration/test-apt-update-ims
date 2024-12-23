@@ -48,7 +48,7 @@ runtest() {
 
     # ensure that we still do a hash check for other files on ims hit of Release
     if grep -q '^Hit:[0-9]\+ .* InRelease$' expected.output || ! grep -q '^Ign:[0-9]\+ .* Release\(\.gpg\)\?$' expected.output; then
-	    $TEST aptget update -o Debug::Acquire::gpgv=1 $APTOPT
+	    $TEST aptget update -o Debug::Acquire::gpgv=1 -o Debug::Acquire::sqv=1 $APTOPT
 	    cp rootdir/tmp/${TEST}.output goodsign.output
 	    testfileequal 'listsdir.lst' "$(listcurrentlistsdirectory)"
 	    testsuccess grep '^Got GOODSIG ' goodsign.output

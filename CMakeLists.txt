@@ -46,6 +46,7 @@ find_package(Iconv REQUIRED)
 find_package(Perl REQUIRED)
 
 find_program(TRIEHASH_EXECUTABLE NAMES triehash)
+find_program(SQV_EXECUTABLE NAMES sqv)
 
 if (NOT TRIEHASH_EXECUTABLE)
   message(FATAL_ERROR "Could not find triehash executable")
