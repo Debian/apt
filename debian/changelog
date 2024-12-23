@@ -1,3 +1,18 @@
+apt (2.9.19) unstable; urgency=medium
+
+  * Replace GnuTLS and gcrypt with OpenSSL
+  * Replace GnuPG with Sequoia on supported Debian platforms
+    - methods: Add new sqv method
+    - debian: Add default policy to allow SHA-1 self-signatures until 2026
+    - debian: Plug sqv into the package build
+  * Smaller bits:
+    - apt-helper: Add a hash-file helper to debug file hashing
+    - Use sq in the test suite, remove apt-key
+    - abicheck: Add symbol-merge.py helper
+    - Symbols: Merge stable, noble, testing, unstable
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 23 Dec 2024 12:16:19 +0100
+
 apt (2.9.18) unstable; urgency=medium
 
   * Fix out-of-bounds read in `apt show :` (Closes: #1090068)

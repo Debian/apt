@@ -1,3 +1,22 @@
+apt (2.9.19) unstable; urgency=medium
+
+  This release switches to OpenSSL for hashing and TLS, replacing the
+  GnuTLS and gcrypt libraries.
+
+  This release switches to Sequoia for OpenPGP verification on supported
+  Debian platforms. A Sequoia policy override enabling SHA1 self-signatures
+  until 2026 is included. To override the policy, the following environment
+  variables and files are considered:
+
+  * The APT_SEQUOIA_CRYPTO_POLICY environment variable, and failing that:
+    - /etc/crypto-policies/back-ends/apt-sequoia.config,
+    - /var/lib/crypto-config/profiles/current/apt-sequoia.config
+  * The SEQUOIA_CRYPTO_POLICY environment variable, and failing that:
+    - /etc/crypto-policies/back-ends/sequoia.config
+    - /var/lib/crypto-config/profiles/current/sequoia.config
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 23 Dec 2024 12:16:22 +0100
+
 apt (2.9.15) unstable; urgency=medium
 
   This release stops using apt-key to verify the signatures.
