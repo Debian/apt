@@ -1,5 +1,6 @@
 libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
 * Build-Depends-Package: libapt-pkg-dev
+ (c++|regex)"^typeinfo for std::|^vtable for std::|^typeinfo name for std::|^guard variable for std::|^std::|^[a-z]* std::|^typeinfo for __gnu_cxx::|^vtable for __gnu_cxx::|^typeinfo name for __gnu_cxx::|^guard variable for __gnu_cxx::|^__gnu_cxx::|^[a-z]* __gnu_cxx::" 999:0misbuilt
  TFRewritePackageOrder@APTPKG_6.0 0.8.0
  TFRewriteSourceOrder@APTPKG_6.0 0.8.0
  (c++)"FileExists(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 0.8.0
@@ -555,47 +556,7 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"typeinfo for pkgArchiveCleaner@APTPKG_6.0" 0.8.0
  (c++)"typeinfo name for pkgArchiveCleaner@APTPKG_6.0" 0.8.0
  (c++)"vtable for pkgArchiveCleaner@APTPKG_6.0" 0.8.0
-### architecture specific: va_list
- (arch=armel armhf arm64|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, std::__va_list&) const@APTPKG_6.0" 0.8.15~exp1
- (arch=i386 hurd-i386 kfreebsd-i386 ppc64 ppc64el|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, char*&) const@APTPKG_6.0" 0.8.15~exp1
- (arch=hppa ia64 mips mipsel mips64el sparc sparc64|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, void*&) const@APTPKG_6.0" 0.8.15~exp1
- (arch=amd64 kfreebsd-amd64 powerpc powerpcspe s390 s390x x32|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag (&) [1]) const@APTPKG_6.0" 0.8.15~exp1
- (arch=sh4|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __builtin_va_list&) const@APTPKG_6.0" 0.8.15~exp1
- (arch=alpha|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag&) const@APTPKG_6.0" 0.8.15~exp1
-### architecture specific: va_list & size_t
- (arch=i386 hurd-i386 kfreebsd-i386|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned int&)@APTPKG_6.0" 0.8.11.4
- (arch=armel armhf|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, std::__va_list&, unsigned int&)@APTPKG_6.0" 0.8.11.4
- (arch=arm64|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, std::__va_list&, unsigned long&)@APTPKG_6.0" 0.8.11.4
- (arch=alpha|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag&, unsigned long&)@APTPKG_6.0" 0.8.11.4
- (arch=powerpc powerpcspe x32|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned int&)@APTPKG_6.0" 0.8.11.4
- (arch=amd64 kfreebsd-amd64 s390 s390x|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned long&)@APTPKG_6.0" 0.8.11.4
- (arch=hppa mips mipsel sparc|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned int&)@APTPKG_6.0" 0.8.11.4
- (arch=ia64 sparc64 mips64el|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned long&)@APTPKG_6.0" 0.8.11.4
- (arch=sh4|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __builtin_va_list&, unsigned int&)@APTPKG_6.0" 0.8.11.4
- (arch=ppc64 ppc64el|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned long&)@APTPKG_6.0" 0.8.11.4
- (arch=i386 hurd-i386 kfreebsd-i386|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned int&)@APTPKG_6.0" 0.8.11.4
- (arch=armel armhf|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, std::__va_list&, int, unsigned int&)@APTPKG_6.0" 0.8.11.4
- (arch=arm64|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, std::__va_list&, int, unsigned long&)@APTPKG_6.0" 0.8.11.4
- (arch=alpha|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag&, int, unsigned long&)@APTPKG_6.0" 0.8.11.4
- (arch=powerpc powerpcspe x32|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned int&)@APTPKG_6.0" 0.8.11.4
- (arch=amd64 kfreebsd-amd64 s390 s390x|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned long&)@APTPKG_6.0" 0.8.11.4
- (arch=hppa mips mipsel sparc|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned int&)@APTPKG_6.0" 0.8.11.4
- (arch=ia64 sparc64 mips64el|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned long&)@APTPKG_6.0" 0.8.11.4 1
- (arch=sh4|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __builtin_va_list&, int, unsigned int&)@APTPKG_6.0" 0.8.11.4
- (arch=ppc64 ppc64el|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned long&)@APTPKG_6.0" 0.8.11.4
-### architecture specific: size_t
- (arch=i386 armel armhf hppa hurd-i386 kfreebsd-i386 mips mipsel powerpc powerpcspe sh4 sparc x32|c++)"_strtabexpand(char*, unsigned int)@APTPKG_6.0" 0.8.0
- (arch=alpha amd64 arm64 ia64 kfreebsd-amd64 mips64el s390 s390x sparc64 ppc64 ppc64el|c++)"_strtabexpand(char*, unsigned long)@APTPKG_6.0" 0.8.0
-### architecture specific: time_t
- (arch=!x32|c++)"FTPMDTMStrToTime(char const*, long&)@APTPKG_6.0" 0.8.0
- (arch=x32|c++)"FTPMDTMStrToTime(char const*, long long&)@APTPKG_6.0" 0.8.0
- (arch=x32|c++)"RFC1123StrToTime(char const*, long long&)@APTPKG_6.0" 0.8.0
- (arch=!x32|c++)"RFC1123StrToTime(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long&)@APTPKG_6.0" 1.9.0
- (arch=x32|c++)"RFC1123StrToTime(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long long&)@APTPKG_6.0" 1.9.0
-### architecture specific: mode_t
- (arch=!kfreebsd-i386 !kfreebsd-amd64|c++)"ChangeOwnerAndPermissionOfFile(char const*, char const*, char const*, char const*, unsigned int)@APTPKG_6.0" 1.1~exp9
- (arch=kfreebsd-i386 kfreebsd-amd64|c++)"ChangeOwnerAndPermissionOfFile(char const*, char const*, char const*, char const*, unsigned short)@APTPKG_6.0" 1.1~exp9
-###
+ (c++)"ChangeOwnerAndPermissionOfFile(char const*, char const*, char const*, char const*, unsigned int)@APTPKG_6.0" 1.1~exp9
  (c++)"CreateAPTDirectoryIfNeeded(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 0.8.2
  (c++)"FileFd::FileSize()@APTPKG_6.0" 0.8.8
  (c++)"Base256ToNum(char const*, unsigned long&, unsigned int)@APTPKG_6.0" 0.8.11
@@ -617,13 +578,10 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"pkgSourceList::GetLastModifiedTime()@APTPKG_6.0" 0.8.15.6
  (c++)"pkgCacheFile::RemoveCaches()@APTPKG_6.0" 0.8.15.7
  (c++)"pkgOrderList::VisitNode(pkgCache::PkgIterator, char const*)@APTPKG_6.0" 0.8.15.7
-### external dependency resolver ###
  (c++)"EDSP::ApplyRequest(std::__cxx11::list<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, std::__cxx11::list<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, pkgDepCache&)@APTPKG_6.0" 0.8.16~exp2
  (c++)"EDSP::ReadResponse(int, pkgDepCache&, OpProgress*)@APTPKG_6.0" 0.8.16~exp2
  (c++)"pkgDepCache::Policy::GetPriority(pkgCache::PkgIterator const&)@APTPKG_6.0" 0.8.16~exp6
  (c++)"pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator const&)@APTPKG_6.0" 0.8.16~exp6
-### generalisation of checksums (with lfs) -- mostly api-compatible available (without sha512 in previous versions)
-### large file support - available in older api-compatible versions without lfs ###
  (c++)"StrToNum(char const*, unsigned long long&, unsigned int, unsigned int)@APTPKG_6.0" 0.8.16~exp6
  (c++)"OpProgress::SubProgress(unsigned long long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, float)@APTPKG_6.0" 0.8.16~exp6
  (c++)"OpProgress::OverallProgress(unsigned long long, unsigned long long, unsigned long long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 0.8.16~exp6
@@ -661,23 +619,18 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"vtable for pkgAcquire::MethodConfig@APTPKG_6.0" 0.8.16~exp6
  (c++)"vtable for pkgAcquire::Queue@APTPKG_6.0" 0.8.16~exp6
  (c++)"vtable for pkgAcquire::Worker@APTPKG_6.0" 0.8.16~exp6
-### remove deprecated parameter
  (c++)"pkgDepCache::SetCandidateVersion(pkgCache::VerIterator)@APTPKG_6.0" 0.8.16~exp6
  (c++)"pkgDepCache::AddSizes(pkgCache::PkgIterator const&, bool)@APTPKG_6.0" 0.8.16~exp6
  (c++)"pkgDepCache::AddStates(pkgCache::PkgIterator const&, bool)@APTPKG_6.0" 0.8.16~exp6
-### used internally by public interfaces - if you use them directly, you can keep the pieces
-### orderlist rework: the touched methods are protected
  (c++)"pkgPackageManager::SigINTStop@APTPKG_6.0" 0.8.16~exp14
  (c++)"pkgPackageManager::SmartUnPack(pkgCache::PkgIterator, bool, int)@APTPKG_6.0" 0.8.16~exp14
  (c++)"pkgPackageManager::SmartConfigure(pkgCache::PkgIterator, int)@APTPKG_6.0" 0.8.16~exp14
-### FileFd rework: supporting different on-the-fly (de)compressing needs more parameter (abi), but the api is stable
  (c++)"FileFd::OpenDescriptor(int, unsigned int, FileFd::CompressMode, bool)@APTPKG_6.0" 0.8.16~exp9
  (c++)"FileFd::OpenDescriptor(int, unsigned int, APT::Configuration::Compressor const&, bool)@APTPKG_6.0" 0.8.16~exp9
  (c++)"FileFd::ModificationTime()@APTPKG_6.0" 0.8.16~exp9
  (c++)"FileFd::Open(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, FileFd::CompressMode, unsigned long)@APTPKG_6.0" 0.8.16~exp9
  (c++)"FileFd::Open(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, APT::Configuration::Compressor const&, unsigned long)@APTPKG_6.0" 0.8.16~exp9
  (c++)"FileFd::ReadLine(char*, unsigned long long)@APTPKG_6.0" 0.8.16~exp9
-### CacheSet rework: making them real containers breaks bigtime the API (for the CacheSetHelper)
  (c++)"APT::CacheSetHelper::canNotFindTask(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 0.8.16~exp9
  (c++)"APT::CacheSetHelper::canNotFindRegEx(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 0.8.16~exp9
  (c++)"APT::CacheSetHelper::canNotFindAllVer(APT::VersionContainerInterface*, pkgCacheFile&, pkgCache::PkgIterator const&)@APTPKG_6.0" 0.8.16~exp9
@@ -696,7 +649,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"typeinfo name for APT::VersionContainerInterface@APTPKG_6.0" 0.8.16~exp9
  (c++)"vtable for APT::PackageContainerInterface@APTPKG_6.0" 0.8.16~exp9
  (c++)"vtable for APT::VersionContainerInterface@APTPKG_6.0" 0.8.16~exp9
-### rework of the packagemanager rework
  (c++)"APT::Progress::PackageManagerFancy::HandleSIGWINCH(int)@APTPKG_6.0" 0.9.13~exp1
  (c++)"APT::Progress::PackageManagerFancy::~PackageManagerFancy()@APTPKG_6.0" 0.9.13~exp1
  (c++)"APT::Progress::PackageManagerFancy::PackageManagerFancy()@APTPKG_6.0" 0.9.13~exp1
@@ -747,10 +699,8 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"vtable for APT::Progress::PackageManagerText@APTPKG_6.0" 0.9.13~exp1
  (c++)"APT::Progress::PackageManagerFancy::instances@APTPKG_6.0" 0.9.14.2
  (c++)"APT::Progress::PackageManagerFancy::Start(int)@APTPKG_6.0" 0.9.14.2
-### install foo.deb support
  (c++)"flAbsPath(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 1.1~exp1
  (c++)"metaIndex::~metaIndex()@APTPKG_6.0" 1.1~exp1
-### CacheFilter functors
  (c++)"APT::CacheFilter::ANDMatcher::AND(APT::CacheFilter::Matcher*)@APTPKG_6.0" 1.1~exp4
  (c++)"APT::CacheFilter::ANDMatcher::ANDMatcher(APT::CacheFilter::Matcher*, APT::CacheFilter::Matcher*, APT::CacheFilter::Matcher*, APT::CacheFilter::Matcher*, APT::CacheFilter::Matcher*)@APTPKG_6.0" 1.1~exp4
  (c++)"APT::CacheFilter::ANDMatcher::ANDMatcher(APT::CacheFilter::Matcher*, APT::CacheFilter::Matcher*, APT::CacheFilter::Matcher*, APT::CacheFilter::Matcher*)@APTPKG_6.0" 1.1~exp4
@@ -823,18 +773,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"vtable for APT::CacheFilter::PackageNameMatchesFnmatch@APTPKG_6.0" 1.1~exp4
  (c++)"vtable for APT::CacheFilter::PackageNameMatchesRegEx@APTPKG_6.0" 1.1~exp4
  (c++)"vtable for APT::CacheFilter::TrueMatcher@APTPKG_6.0" 1.1~exp4
-### cacheset redesign (API, but not ABI compatible)
-# (c++|optional=inline)"APT::PackageContainerInterface::FromCommandLine(APT::PackageContainerInterface*, pkgCacheFile&, char const**, APT::CacheSetHelper&)@APTPKG_6.0" 0.8.16~exp9
-# (c++|optional=inline)"APT::PackageContainerInterface::FromModifierCommandLine(unsigned short&, APT::PackageContainerInterface*, pkgCacheFile&, char const*, std::__cxx11::list<APT::PackageContainerInterface::Modifier, std::allocator<APT::PackageContainerInterface::Modifier> > const&, APT::CacheSetHelper&)@APTPKG_6.0" 0.8.16~exp9
-# (c++|optional=inline)"APT::PackageContainerInterface::FromName(pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, APT::CacheSetHelper&)@APTPKG_6.0" 0.8.16~exp9
-# (c++|optional=inline)"APT::PackageContainerInterface::FromTask(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, APT::CacheSetHelper&)@APTPKG_6.0" 0.8.16~exp9
-# (c++|optional=inline)"APT::PackageContainerInterface::FromRegEx(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, APT::CacheSetHelper&)@APTPKG_6.0" 0.8.16~exp9
-# (c++|optional=inline)"APT::VersionContainerInterface::FromString(APT::VersionContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, APT::VersionContainerInterface::Version const&, APT::CacheSetHelper&, bool)@APTPKG_6.0" 0.8.16~exp9
-# (c++|optional=inline)"APT::VersionContainerInterface::FromPackage(APT::VersionContainerInterface*, pkgCacheFile&, pkgCache::PkgIterator const&, APT::VersionContainerInterface::Version const&, APT::CacheSetHelper&)@APTPKG_6.0" 0.8.16~exp9
-# (c++|optional=inline)"APT::VersionContainerInterface::FromCommandLine(APT::VersionContainerInterface*, pkgCacheFile&, char const**, APT::VersionContainerInterface::Version const&, APT::CacheSetHelper&)@APTPKG_6.0" 0.8.16~exp9
-# (c++)"APT::PackageContainerInterface::FromString(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, APT::CacheSetHelper&)@APTPKG_6.0" 0.8.16~exp9
-# (c++)"APT::PackageContainerInterface::FromGroup(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, APT::CacheSetHelper&)@APTPKG_6.0" 0.9.7
-# (c++)"APT::PackageContainerInterface::FromFnmatch(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, APT::CacheSetHelper&)@APTPKG_6.0" 0.9.11
  (c++)"APT::CacheSetHelper::canNotFindFnmatch(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 1.1~exp4
  (c++)"APT::CacheSetHelper::canNotFindPackage(APT::CacheSetHelper::PkgSelector, APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.1~exp4
  (c++)"APT::CacheSetHelper::canNotFindVersion(APT::CacheSetHelper::VerSelector, APT::VersionContainerInterface*, pkgCacheFile&, pkgCache::PkgIterator const&)@APTPKG_6.0" 1.1~exp4
@@ -867,19 +805,18 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"typeinfo for APT::VersionContainer<std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_6.0" 1.1~exp15
  (c++)"typeinfo name for APT::VersionContainer<std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_6.0" 1.1~exp15
  (c++)"vtable for APT::VersionContainer<std::vector<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >@APTPKG_6.0" 1.1~exp15
-### all the hashes are belong to us
  (c++)"Hashes::GetHashStringList()@APTPKG_6.0" 1.1~exp1
  (c++)"Hashes::Hashes()@APTPKG_6.0" 1.1~exp1
  (c++)"Hashes::~Hashes()@APTPKG_6.0" 1.1~exp1
- (c++)"HashStringList::find(char const*) const@APTPKG_6.0" 1.1~exp1
- (c++)"HashStringList::operator==(HashStringList const&) const@APTPKG_6.0" 1.1~exp1
- (c++)"HashStringList::operator!=(HashStringList const&) const@APTPKG_6.0" 1.1~exp1
- (c++)"HashStringList::push_back(HashString const&)@APTPKG_6.0" 1.1~exp1
- (c++)"HashStringList::supported(char const*)@APTPKG_6.0" 1.1~exp1
+ (c++)"HashStringList::find(char const*) const@APTPKG_6.0" 1.0.9.4
+ (c++)"HashStringList::operator==(HashStringList const&) const@APTPKG_6.0" 1.0.9.4
+ (c++)"HashStringList::operator!=(HashStringList const&) const@APTPKG_6.0" 1.0.9.4
+ (c++)"HashStringList::push_back(HashString const&)@APTPKG_6.0" 1.0.9.4
+ (c++)"HashStringList::supported(char const*)@APTPKG_6.0" 1.0.9.4
  (c++)"HashStringList::usable() const@APTPKG_6.0" 1.1~exp1
- (c++)"HashStringList::VerifyFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) const@APTPKG_6.0" 1.1~exp1
- (c++)"HashString::operator==(HashString const&) const@APTPKG_6.0" 1.1~exp1
- (c++)"HashString::operator!=(HashString const&) const@APTPKG_6.0" 1.1~exp1
+ (c++)"HashStringList::VerifyFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) const@APTPKG_6.0" 1.0.9.4
+ (c++)"HashString::operator==(HashString const&) const@APTPKG_6.0" 1.0.9.4
+ (c++)"HashString::operator!=(HashString const&) const@APTPKG_6.0" 1.0.9.4
  (c++)"pkgAcqArchive::IsTrusted() const@APTPKG_6.0" 1.1~exp1
  (c++)"pkgAcqFile::Custom600Headers[abi:cxx11]() const@APTPKG_6.0" 1.1~exp1
  (c++)"pkgAcqMethod::DropPrivsOrDie()@APTPKG_6.0" 1.1~exp1
@@ -888,14 +825,12 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"typeinfo for Hashes@APTPKG_6.0" 1.1~exp1
  (c++)"typeinfo name for Hashes@APTPKG_6.0" 1.1~exp1
  (c++)"vtable for Hashes@APTPKG_6.0" 1.1~exp1
-### more transactional update
  (c++)"pkgAcquire::GetLock(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.1~exp4
  (c++)"pkgAcquire::Item::Dequeue()@APTPKG_6.0" 1.1~exp4
  (c++)"pkgAcquire::Item::QueueURI(pkgAcquire::ItemDesc&)@APTPKG_6.0" 1.1~exp4
  (c++)"pkgAcquire::Item::SetActiveSubprocess(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.1~exp4
  (c++)"pkgDepCache::MarkAndSweep()@APTPKG_6.0" 1.1~exp4
  (c++)"pkgDepCache::MarkAndSweep(pkgDepCache::InRootSetFunc&)@APTPKG_6.0" 1.1~exp4
-### mixed stuff
  (c++)"GetListOfFilesInDir(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool)@APTPKG_6.0" 0.8.16~exp13
  (c++)"pkgCache::DepIterator::IsIgnorable(pkgCache::PkgIterator const&) const@APTPKG_6.0" 0.8.16~exp10
  (c++)"pkgCache::DepIterator::IsIgnorable(pkgCache::PrvIterator const&) const@APTPKG_6.0" 0.8.16~exp10
@@ -944,14 +879,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"pkgPackageManager::EarlyRemove(pkgCache::PkgIterator, pkgCache::DepIterator const*)@APTPKG_6.0" 1.0.4
  (c++)"pkgSrcRecords::Step()@APTPKG_6.0" 1.0.4
  (c++)"pkgDPkgPM::SetupSlavePtyMagic()@APTPKG_6.0" 1.0.8
- (c++)"HashStringList::find(char const*) const@APTPKG_6.0" 1.0.9.4
- (c++)"HashStringList::operator==(HashStringList const&) const@APTPKG_6.0" 1.0.9.4
- (c++)"HashStringList::operator!=(HashStringList const&) const@APTPKG_6.0" 1.0.9.4
- (c++)"HashStringList::push_back(HashString const&)@APTPKG_6.0" 1.0.9.4
- (c++)"HashStringList::supported(char const*)@APTPKG_6.0" 1.0.9.4
- (c++)"HashStringList::VerifyFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) const@APTPKG_6.0" 1.0.9.4
- (c++)"HashString::operator==(HashString const&) const@APTPKG_6.0" 1.0.9.4
- (c++)"HashString::operator!=(HashString const&) const@APTPKG_6.0" 1.0.9.4
  (c++)"APT::Progress::PackageManager::PackageManager()@APTPKG_6.0" 1.1~exp1
  (c++)"pkgDPkgPM::Go(APT::Progress::PackageManager*)@APTPKG_6.0" 1.1~exp1
  (c++)"pkgPackageManager::DoInstall(APT::Progress::PackageManager*)@APTPKG_6.0" 1.1~exp1
@@ -971,7 +898,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"FileFd::FileFd(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, unsigned long)@APTPKG_6.0" 1.1~exp4
  (c++)"metaIndex::metaIndex(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*)@APTPKG_6.0" 1.1~exp9
  (c++)"pkgTagSection::Get(char const*&, char const*&, unsigned int) const@APTPKG_6.0" 1.1~exp9
-### ABI 5 changed so much (+ abicxx11 transition)
  (c++)"APT::CacheSetHelper::CacheSetHelper(bool, GlobalError::MsgType)@APTPKG_6.0" 1.1~exp9
  (c++)"APT::Configuration::getArchitectures[abi:cxx11](bool const&)@APTPKG_6.0" 1.1~exp9
  (c++)"APT::Configuration::getCompressionTypes[abi:cxx11](bool const&)@APTPKG_6.0" 1.1~exp9
@@ -1194,7 +1120,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"vtable for pkgSourceList@APTPKG_6.0" 1.1~exp9
  (c++)"vtable for SigVerify@APTPKG_6.0" 1.1~exp9
  (c++)"vtable for TranslationsCopy@APTPKG_6.0" 1.1~exp9
-### ABI 6
  (c++)"APT::CacheFilter::ParsePattern(APT::StringView, pkgCacheFile*)@APTPKG_6.0" 1.9.11~
  (c++)"APT::CacheSetHelper::PackageFromPattern(APT::PackageContainerInterface*, pkgCacheFile&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.9.11~
  (c++)"APT::CacheSetHelper::showPatternSelection(pkgCache::PkgIterator const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.9.11~
@@ -1209,7 +1134,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"typeinfo name for APT::PackageContainer<std::vector<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >@APTPKG_6.0" 1.9.11~
  (c++)"vtable for APT::PackageContainer<std::vector<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >@APTPKG_6.0" 1.9.11~
  (c++)"pkgDepCache::CheckConsistency(char const*)@APTPKG_6.0" 2.1.5~
-### dpkg selection state changer & general dpkg interfacing
  (c++)"APT::StateChanges::clear()@APTPKG_6.0" 1.1~exp15
  (c++)"APT::StateChanges::empty() const@APTPKG_6.0" 1.1~exp15
  (c++)"APT::StateChanges::Error()@APTPKG_6.0" 1.1~exp15
@@ -1229,7 +1153,6 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"APT::StateChanges::Unhold()@APTPKG_6.0" 1.1~exp15
  (c++)"APT::StateChanges::Unhold(pkgCache::VerIterator const&)@APTPKG_6.0" 1.1~exp15
  (c++)"metaIndex::IsArchitectureSupported(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@APTPKG_6.0" 1.1~exp15
-### misc stuff
  (c++)"RemoveFile(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.1~exp15
  (c++)"pkgOrderList::OrderCompareA(pkgCache::Package*, pkgCache::Package*)@APTPKG_6.0" 1.1~exp15
  (c++)"pkgOrderList::OrderCompareB(pkgCache::Package*, pkgCache::Package*)@APTPKG_6.0" 1.1~exp15
@@ -1255,21 +1178,7 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"metaIndex::IsArchitectureAllSupportedFor(IndexTarget const&) const@APTPKG_6.0" 1.1.9
  (c++)"pkgTagFile::Init(FileFd*, pkgTagFile::Flags, unsigned long long)@APTPKG_6.0" 1.2~exp1
  (c++)"pkgTagFile::pkgTagFile(FileFd*, pkgTagFile::Flags, unsigned long long)@APTPKG_6.0" 1.2~exp1
-### symbol versioning:
  APTPKG_6.0@APTPKG_6.0 1.1~exp9
-### gcc artifacts
- (c++|optional=std)"void std::vector<char const*, std::allocator<char const*> >::emplace_back<char const*>(char const*&&)@APTPKG_6.0" 1.1~exp9
-# (c++|optional=std)"void std::vector<pkgCache::RlsFileIterator*, std::allocator<pkgCache::RlsFileIterator*> >::emplace_back<pkgCache::RlsFileIterator*>(pkgCache::RlsFileIterator*&&)@APTPKG_6.0" 1.1~exp9
- (c++|optional=std)"void std::vector<pkgDPkgPM::Item, std::allocator<pkgDPkgPM::Item> >::emplace_back<pkgDPkgPM::Item>(pkgDPkgPM::Item&&)@APTPKG_6.0" 1.1~exp9
- (c++|optional=std)"void std::vector<pkgTagSection::Tag, std::allocator<pkgTagSection::Tag> >::emplace_back<pkgTagSection::Tag>(pkgTagSection::Tag&&)@APTPKG_6.0" 1.1~exp9
- (c++|optional=std)"void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::emplace_back<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&)@APTPKG_6.0" 1.1~exp9
-### try to ignore std:: template instances
- (c++|regex|optional=std)"^std::vector<.+ >::(vector|push_back|erase|_[^ ]+)\(.+\)( const|)@APTPKG_6.0$" 0.8.0
- (c++|regex|optional=std)"^(void |)std::[^ ]+<.+ >::(_|~).+\(.*\)@APTPKG_6.0$" 0.8.0
- (c++|regex|optional=std)"^std::[^ ]+<.+ >::(append|insert|reserve|operator[^ ]+)\(.*\)@APTPKG_6.0$" 0.8.0
- (c++|regex|optional=std)"^(void |DiffInfo\* |)std::_.*@APTPKG_6.0$" 0.8.0
- (c++|regex|optional=std)"^__gnu_cxx::__[^ ]+<.*@APTPKG_6.0$" 0.8.0
-###
  (c++)"debStringPackageIndex::~debStringPackageIndex()@APTPKG_6.0" 1.2.2
  (c++)"debStringPackageIndex::debStringPackageIndex(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.2.2
  (c++)"debStringPackageIndex::GetArchitecture[abi:cxx11]() const@APTPKG_6.0" 1.2.2
@@ -1290,21 +1199,14 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"EDSP::WriteRequest(pkgDepCache&, FileFd&, unsigned int, OpProgress*)@APTPKG_6.0" 1.3~exp2
  (c++)"EDSP::WriteScenario(pkgDepCache&, FileFd&, OpProgress*)@APTPKG_6.0" 1.3~exp2
  (c++)"EDSP::WriteSolutionStanza(FileFd&, char const*, pkgCache::VerIterator const&)@APTPKG_6.0" 1.3~exp2
- (c++)"int __gnu_cxx::__stoa<long, int, char, int>(long (*)(char const*, char**, int), char const*, char const*, unsigned long*, int)@APTPKG_6.0" 1.3~exp2
  (c++)"EIPP::ApplyRequest(std::__cxx11::list<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, EIPP::PKG_ACTION>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, EIPP::PKG_ACTION> > >&, pkgDepCache&)@APTPKG_6.0" 1.3~rc2
  (c++)"EIPP::ReadRequest(int, std::__cxx11::list<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, EIPP::PKG_ACTION>, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, EIPP::PKG_ACTION> > >&, unsigned int&)@APTPKG_6.0" 1.3~rc2
  (c++)"FileFd::Read(int, void*, unsigned long long, unsigned long long*)@APTPKG_6.0" 1.3~rc2
  (c++)"pkgSourceList::AddVolatileFiles(CommandLine&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >*)@APTPKG_6.0" 1.3~rc2
  (c++)"pkgSourceList::AddVolatileFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >*)@APTPKG_6.0" 1.3~rc2
- (c++)"TimeRFC1123[abi:cxx11](long, bool)@APTPKG_6.0" 1.3~rc2
- (c++)"void std::shuffle<__gnu_cxx::__normal_iterator<IndexTarget*, std::vector<IndexTarget, std::allocator<IndexTarget> > >, std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>&>(__gnu_cxx::__normal_iterator<IndexTarget*, std::vector<IndexTarget, std::allocator<IndexTarget> > >, __gnu_cxx::__normal_iterator<IndexTarget*, std::vector<IndexTarget, std::allocator<IndexTarget> > >, std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>&)@APTPKG_6.0" 1.3~rc2
- (c++)"void std::vector<pkgDPkgPM::Item, std::allocator<pkgDPkgPM::Item> >::emplace_back<pkgDPkgPM::Item::Ops, pkgCache::PkgIterator>(pkgDPkgPM::Item::Ops&&, pkgCache::PkgIterator&&)@APTPKG_6.0" 1.3~rc2
- (c++)"void std::vector<pkgDPkgPM::Item, std::allocator<pkgDPkgPM::Item> >::emplace_back<pkgDPkgPM::Item::Ops, pkgCache::PkgIterator&>(pkgDPkgPM::Item::Ops&&, pkgCache::PkgIterator&)@APTPKG_6.0" 1.3~rc2
- (c++)"void std::vector<std::pair<pkgDPkgPM::Item*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<pkgDPkgPM::Item*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::emplace_back<pkgDPkgPM::Item*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >(pkgDPkgPM::Item*&&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&)@APTPKG_6.0" 1.3~rc2
  (c++)"APT::String::Join(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.4~beta4
  (c++)"debListParser::ParseDepends(char const*, char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, unsigned int&, bool const&, bool const&, bool const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.4~beta3
  (c++)"debListParser::ParseDepends(char const*, char const*, APT::StringView&, APT::StringView&, unsigned int&, bool, bool, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 1.9.0~
- (c++|optional=std)"void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::emplace_back<char const (&) [4]>(char const (&) [4])@APTPKG_6.0" 1.4~beta4
  (c++)"FileFd::ReadLine(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&)@APTPKG_6.0" 1.5~beta2~
  (c++)"MaybeAddAuth(FileFd&, URI&)@APTPKG_6.0" 1.5~beta2~
  (c++)"metaIndex::GetDefaultPin() const@APTPKG_6.0" 1.5~beta2~
@@ -1315,10 +1217,8 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"metaIndex::HasSupportForComponent(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@APTPKG_6.0" 1.5~beta2~
  (c++)"pkgAcquireStatus::ReleaseInfoChanges(metaIndex const*, metaIndex const*, std::vector<pkgAcquireStatus::ReleaseInfoChange, std::allocator<pkgAcquireStatus::ReleaseInfoChange> >&&)@APTPKG_6.0" 1.5~beta2~
  (c++)"RemoveFileAt(char const*, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 1.5~beta2~
- (c++|optional=std)"void std::vector<pkgAcquireStatus::ReleaseInfoChange, std::allocator<pkgAcquireStatus::ReleaseInfoChange> >::emplace_back<pkgAcquireStatus::ReleaseInfoChange>(pkgAcquireStatus::ReleaseInfoChange&&)@APTPKG_6.0" 1.5~beta2~
  (c++)"pkgAcqMethod::FetchItem::Proxy[abi:cxx11]()@APTPKG_6.0" 1.6~alpha1~
-# gcc-8 artifacts
- (c++|optional=std)"pkgAcqMethod::SendMessage(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::unordered_map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >&&)@APTPKG_6.0" 1.7.0~alpha3~
+ (c++)"pkgAcqMethod::SendMessage(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::unordered_map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >&&)@APTPKG_6.0" 1.7.0~alpha3~
  (c++)"APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(pkgCache*, bool)@APTPKG_6.0" 2.1.16
  (c++)"ExtractTar::Done()@APTPKG_6.0" 1.1~exp12
  (c++)"ExtractTar::Go(pkgDirStream&)@APTPKG_6.0" 0.8.0
@@ -1354,17 +1254,9 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"vtable for pkgDirStream@APTPKG_6.0" 0.8.0
  (c++)"vtable for debDebFile::ControlExtract@APTPKG_6.0" 0.8.0
  (c++)"vtable for debDebFile::MemControlExtract@APTPKG_6.0" 0.8.0
-### phased update API
  (c++)"pkgCache::VerIterator::IsSecurityUpdate() const@APTPKG_6.0" 2.7.11
  (c++)"pkgDepCache::PhasingApplied(pkgCache::PkgIterator) const@APTPKG_6.0" 2.7.11
  (c++)"pkgProblemResolver::KeepPhasedUpdates()@APTPKG_6.0" 2.7.11
-### gcc artifacts
- (c++|optional=std)"void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char const*>(char const*, char const*, std::forward_iterator_tag)@APTPKG_6.0" 1.7.0~alpha3~
- (c++|optional=std)"typeinfo for std::_Mutex_base<(__gnu_cxx::_Lock_policy)2>@APTPKG_6.0" 1.9.11~
- (c++|optional=std)"typeinfo for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@APTPKG_6.0" 1.9.11~
- (c++|optional=std)"typeinfo name for std::_Mutex_base<(__gnu_cxx::_Lock_policy)2>@APTPKG_6.0" 1.9.11~
- (c++|optional=std)"typeinfo name for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@APTPKG_6.0" 1.9.11~
-### Internal functions needed for testing purposes
  (c++)"APT::Internal::PatternTreeParser::Node::error(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 1.9.11~
  (c++)"APT::Internal::PatternTreeParser::parse()@APTPKG_6.0" 1.9.11~
  (c++)"APT::Internal::PatternTreeParser::parseTop()@APTPKG_6.0" 1.9.11~
@@ -1380,3 +1272,66 @@ libapt-pkg.so.6.0 libapt-pkg6.0t64 #MINVER#
  (c++)"vtable for APT::Internal::PatternTreeParser::Node@APTPKG_6.0" 1.9.11~
  (c++)"vtable for APT::Internal::PatternTreeParser::PatternNode@APTPKG_6.0" 1.9.11~
  (c++)"vtable for APT::Internal::PatternTreeParser::WordNode@APTPKG_6.0" 1.9.11~
+ (c++)"pkgDepCache::DecreaseActionGroupLevel()@APTPKG_6.0" 2.6.1
+ (c++)"pkgDepCache::IncreaseActionGroupLevel()@APTPKG_6.0" 2.6.1
+ (c++)"pkgCacheFile::InhibitActionGroups(bool)@APTPKG_6.0" 2.6.1
+ (c++)"pkgVersionMatch::FileMatch(pkgCache::RlsFileIterator const&)@APTPKG_6.0" 2.6.1
+ (c++)"APT::CacheSetHelper::setLastVersionMatcher(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 2.6.1
+ (c++)"APT::CacheSetHelper::canNotGetVerFromRelease(pkgCacheFile&, pkgCache::PkgIterator const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 2.6.1
+ (c++)"APT::CacheSetHelper::canNotGetVerFromVersionNumber(pkgCacheFile&, pkgCache::PkgIterator const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 2.6.1
+ (c++)"APT::Progress::PackageManagerFancy::SIGWINCH_flag@APTPKG_6.0" 2.6.1
+ (c++)"APT::Progress::PackageManagerFancy::SIGWINCH_orig@APTPKG_6.0" 2.6.1
+ (c++)"APT::Progress::PackageManagerFancy::Pulse()@APTPKG_6.0" 2.6.1
+ (c++)"pkgTagSection::Find(pkgTagSection::Key) const@APTPKG_6.0" 2.6.1
+ (c++)"pkgTagSection::Find(pkgTagSection::Key, char const*&, char const*&) const@APTPKG_6.0" 2.6.1
+ (c++)"pkgTagSection::Find(pkgTagSection::Key, unsigned int&) const@APTPKG_6.0" 2.6.1
+ (c++)"pkgTagSection::FindB(pkgTagSection::Key, bool) const@APTPKG_6.0" 2.6.1
+ (c++)"pkgTagSection::FindI(pkgTagSection::Key, long) const@APTPKG_6.0" 2.6.1
+ (c++)"pkgTagSection::Exists(pkgTagSection::Key) const@APTPKG_6.0" 2.6.1
+ (c++)"pkgTagSection::FindRaw(pkgTagSection::Key) const@APTPKG_6.0" 2.6.1
+ (c++)"pkgTagSection::FindULL(pkgTagSection::Key, unsigned long long const&) const@APTPKG_6.0" 2.6.1
+ (c++)"pkgTagSection::FindFlag(pkgTagSection::Key, unsigned char&, unsigned char) const@APTPKG_6.0" 2.6.1
+ (c++)"pkgTagSection::FindFlag(pkgTagSection::Key, unsigned long&, unsigned long) const@APTPKG_6.0" 2.6.1
+ (c++)"APT::CacheSetHelper::getLastVersionMatcher[abi:cxx11]() const@APTPKG_6.0" 2.6.1
+ (c++)"HashString* std::__do_uninit_copy<__gnu_cxx::__normal_iterator<HashString const*, std::vector<HashString, std::allocator<HashString> > >, HashString*>(__gnu_cxx::__normal_iterator<HashString const*, std::vector<HashString, std::allocator<HashString> > >, __gnu_cxx::__normal_iterator<HashString const*, std::vector<HashString, std::allocator<HashString> > >, HashString*)@APTPKG_6.0" 2.6.1
+ (c++)"APT::Configuration::Compressor* std::__do_uninit_copy<__gnu_cxx::__normal_iterator<APT::Configuration::Compressor const*, std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> > >, APT::Configuration::Compressor*>(__gnu_cxx::__normal_iterator<APT::Configuration::Compressor const*, std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> > >, __gnu_cxx::__normal_iterator<APT::Configuration::Compressor const*, std::vector<APT::Configuration::Compressor, std::allocator<APT::Configuration::Compressor> > >, APT::Configuration::Compressor*)@APTPKG_6.0" 2.6.1
+ (c++)"pkgAcquire::CleanLists(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 2.7.14
+ (c++)"APT::Configuration::checkUsrMerged()@APTPKG_6.0" 2.7.14
+ (c++)"APT::Configuration::isChroot()@APTPKG_6.0" 2.7.14
+ (c++)"metaIndex::HasFlag(metaIndex::Flag) const@APTPKG_6.0" 2.7.14
+ (c++)"Base64Decode[abi:cxx11](std::basic_string_view<char, std::char_traits<char> >)@APTPKG_6.0" 2.9.17
+ (c++)"IsAssertedPubKeyAlgo(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 2.9.17
+ (c++)"ExecGPGV(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int const&, int*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&)@APTPKG_6.0" 2.9.17
+ (c++)"GlobalError::Audit(char const*, ...)@APTPKG_6.0" 2.9.17
+ (c++)"GlobalError::AuditE(char const*, char const*, ...)@APTPKG_6.0" 2.9.17
+ (c++)"pkgDepCache::BootSize(bool)@APTPKG_6.0" 2.9.17
+ (c++)"pkgAcqMethod::FailWithContext(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, std::unordered_map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >&)@APTPKG_6.0" 2.9.17
+ (c++)"debListParser::ParseDepends(char const*, char const*, std::basic_string_view<char, std::char_traits<char> >&, std::basic_string_view<char, std::char_traits<char> >&, unsigned int&, bool, bool, bool, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)@APTPKG_6.0" 2.9.17
+ (c++)"APT::Configuration::color(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@APTPKG_6.0" 2.9.17
+ (c++)"APT::Internal::FindGPGV[abi:cxx11](bool)@APTPKG_6.0" 2.9.17
+ (c++)"pkgTagSection::Write(FileFd&, pkgTagSection::WriteFlags, char const* const*, std::vector<pkgTagSection::Tag, std::allocator<pkgTagSection::Tag> > const&) const@APTPKG_6.0" 2.9.17
+ (arch=!armel !armhf|c++)"FTPMDTMStrToTime(char const*, long&)@APTPKG_6.0" 0.8.0
+ (arch=!armel !armhf|c++)"RFC1123StrToTime(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long&)@APTPKG_6.0" 1.9.0
+ (arch=!armel !armhf|c++)"TimeRFC1123[abi:cxx11](long, bool)@APTPKG_6.0" 1.3~rc2
+ (arch=arm64 armel armhf|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, std::__va_list&) const@APTPKG_6.0" 0.8.15~exp1
+ (arch=i386 ppc64el|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, char*&) const@APTPKG_6.0" 0.8.15~exp1
+ (arch=mips64el riscv64|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, void*&) const@APTPKG_6.0" 0.8.15~exp1
+ (arch=amd64 s390x|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag (&) [1]) const@APTPKG_6.0" 0.8.15~exp1
+ (arch=i386|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned int&)@APTPKG_6.0" 0.8.11.4
+ (arch=armel armhf|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, std::__va_list&, unsigned int&)@APTPKG_6.0" 0.8.11.4
+ (arch=arm64|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, std::__va_list&, unsigned long&)@APTPKG_6.0" 0.8.11.4
+ (arch=amd64 s390x|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned long&)@APTPKG_6.0" 0.8.11.4
+ (arch=mips64el riscv64|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned long&)@APTPKG_6.0" 0.8.11.4
+ (arch=ppc64el|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned long&)@APTPKG_6.0" 0.8.11.4
+ (arch=i386|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned int&)@APTPKG_6.0" 0.8.11.4
+ (arch=armel armhf|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, std::__va_list&, int, unsigned int&)@APTPKG_6.0" 0.8.11.4
+ (arch=arm64|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, std::__va_list&, int, unsigned long&)@APTPKG_6.0" 0.8.11.4
+ (arch=amd64 s390x|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned long&)@APTPKG_6.0" 0.8.11.4
+ (arch=riscv64|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned long&)@APTPKG_6.0" 1
+ (arch=ppc64el|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned long&)@APTPKG_6.0" 0.8.11.4
+ (arch=armel armhf i386|c++)"_strtabexpand(char*, unsigned int)@APTPKG_6.0" 0.8.0
+ (arch=!armel !armhf !i386|c++)"_strtabexpand(char*, unsigned long)@APTPKG_6.0" 0.8.0
+ (arch=armel armhf|c++)"FTPMDTMStrToTime(char const*, long long&)@APTPKG_6.0" 0.8.0
+ (arch=armel armhf|c++)"RFC1123StrToTime(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long long&)@APTPKG_6.0" 1.9.0
+ (arch=mips64el|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned long&)@APTPKG_6.0 0.8.11.4" 1
+ (arch=armel armhf|c++)"TimeRFC1123[abi:cxx11](long long, bool)@APTPKG_6.0" 2.7.14
