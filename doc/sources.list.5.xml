@@ -54,6 +54,16 @@
        Otherwise APT will print a notice that it has ignored a file, unless that
        file matches a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
        configuration list - in which case it will be silently ignored.</para>
+     <para>
+       The suggested filename for new systems is
+       <filename>/etc/apt/sources.list.d/<replaceable>vendor</replaceable>.sources</filename>,
+       where <replaceable>vendor</replaceable> is the result of
+       <command>dpkg-vendor --query Vendor | tr A-Z a-z</command>,
+       in deb822-style format.
+       For example,
+       Ubuntu uses
+       <filename>/etc/apt/sources.list.d/ubuntu.sources</filename>.
+     </para>
  </refsect1>
 
  <refsect1><title>One-Line-Style Format</title>
