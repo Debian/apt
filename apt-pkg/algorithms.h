@@ -54,7 +54,7 @@ class APT_PUBLIC pkgSimulate : public pkgPackageManager				/*{{{*/
       pkgDepCache *Cache;
       public:
       
-      virtual VerIterator GetCandidateVer(PkgIterator const &Pkg) APT_OVERRIDE
+      VerIterator GetCandidateVer(PkgIterator const &Pkg) override
       {
 	 return (*Cache)[Pkg].CandidateVerIter(*Cache);
       }
@@ -69,11 +69,11 @@ class APT_PUBLIC pkgSimulate : public pkgPackageManager				/*{{{*/
    pkgDepCache::ActionGroup group;
 
    // The Actual installation implementation
-   virtual bool Install(PkgIterator Pkg,std::string File) APT_OVERRIDE;
-   virtual bool Configure(PkgIterator Pkg) APT_OVERRIDE;
-   virtual bool Remove(PkgIterator Pkg,bool Purge) APT_OVERRIDE;
+   bool Install(PkgIterator Pkg, std::string File) override;
+   bool Configure(PkgIterator Pkg) override;
+   bool Remove(PkgIterator Pkg, bool Purge) override;
 
-public:
+   public:
    bool Go(APT::Progress::PackageManager * progress) override;
 
 private:

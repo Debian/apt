@@ -33,7 +33,7 @@
 
 class StoreMethod final : public aptMethod
 {
-   virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
+   bool Fetch(FetchItem *Itm) override;
 
    public:
 

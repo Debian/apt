@@ -59,21 +59,21 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    APT_PUBLIC static unsigned char GetPrio(std::string Str);
 
    // These all operate against the current section
-   virtual std::string Package() APT_OVERRIDE;
-   virtual bool ArchitectureAll() APT_OVERRIDE;
-   virtual std::string_view Architecture() APT_OVERRIDE;
-   virtual std::string_view Version() APT_OVERRIDE;
-   virtual bool NewVersion(pkgCache::VerIterator &Ver) APT_OVERRIDE;
-   virtual std::vector<std::string> AvailableDescriptionLanguages() APT_OVERRIDE;
-   virtual std::string_view Description_md5() APT_OVERRIDE;
-   virtual uint32_t VersionHash() APT_OVERRIDE;
-   virtual bool SameVersion(uint32_t Hash, pkgCache::VerIterator const &Ver) APT_OVERRIDE;
-   virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
-			   pkgCache::VerIterator &Ver) APT_OVERRIDE;
-   virtual map_filesize_t Offset() APT_OVERRIDE {return iOffset;};
-   virtual map_filesize_t Size() APT_OVERRIDE {return Section.size();};
+   std::string Package() override;
+   bool ArchitectureAll() override;
+   std::string_view Architecture() override;
+   std::string_view Version() override;
+   bool NewVersion(pkgCache::VerIterator &Ver) override;
+   std::vector<std::string> AvailableDescriptionLanguages() override;
+   std::string_view Description_md5() override;
+   uint32_t VersionHash() override;
+   bool SameVersion(uint32_t Hash, pkgCache::VerIterator const &Ver) override;
+   bool UsePackage(pkgCache::PkgIterator &Pkg,
+		   pkgCache::VerIterator &Ver) override;
+   map_filesize_t Offset() override { return iOffset; };
+   map_filesize_t Size() override { return Section.size(); };
 
-   virtual bool Step() APT_OVERRIDE;
+   bool Step() override;
 
    APT_PUBLIC static const char *ParseDepends(const char *Start, const char *Stop,
 					      std::string &Package, std::string &Ver, unsigned int &Op,
@@ -99,7 +99,7 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    APT_PUBLIC static const char *ConvertRelation(const char *I,unsigned int &Op);
 
    explicit debListParser(FileFd *File);
-   virtual ~debListParser();
+   ~debListParser() override;
 
 #ifdef APT_COMPILING_APT
    std::string_view SHA256() const
@@ -116,25 +116,25 @@ class APT_HIDDEN debDebFileParser : public debListParser
 
  public:
    debDebFileParser(FileFd *File, std::string const &DebFile);
-   virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
-			   pkgCache::VerIterator &Ver) APT_OVERRIDE;
+   bool UsePackage(pkgCache::PkgIterator &Pkg,
+		   pkgCache::VerIterator &Ver) override;
 };
 
 class APT_HIDDEN debTranslationsParser : public debListParser
 {
  public:
    // a translation can never be a real package
-   virtual std::string_view Architecture() APT_OVERRIDE { return ""; }
-   virtual std::string_view Version() APT_OVERRIDE { return ""; }
+ std::string_view Architecture() override { return {}; }
+ std::string_view Version() override { return {}; }
 
-   explicit debTranslationsParser(FileFd *File)
-      : debListParser(File) {};
+ explicit debTranslationsParser(FileFd *File)
+     : debListParser(File) {};
 };
 
 class APT_HIDDEN debStatusListParser : public debListParser
 {
  public:
-   virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver) APT_OVERRIDE;
+   bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver) override;
    explicit debStatusListParser(FileFd *File)
       : debListParser(File) {};
 };

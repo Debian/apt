@@ -71,12 +71,12 @@ class APT_PUBLIC OpTextProgress : public OpProgress
    bool NoUpdate;
    bool NoDisplay;
    unsigned long LastLen;
-   virtual void Update() APT_OVERRIDE;
+   void Update() override;
    void Write(const char *S);
    
    public:
 
-   virtual void Done() APT_OVERRIDE;
+   void Done() override;
    
    explicit OpTextProgress(bool NoUpdate = false) : NoUpdate(NoUpdate),
                 NoDisplay(false), LastLen(0) {};

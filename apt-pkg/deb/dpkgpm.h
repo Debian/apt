@@ -113,18 +113,18 @@ class APT_PUBLIC pkgDPkgPM : public pkgPackageManager
    void ProcessDpkgStatusLine(char *line);
 
    // The Actual installation implementation
-   virtual bool Install(PkgIterator Pkg,std::string File) APT_OVERRIDE;
-   virtual bool Configure(PkgIterator Pkg) APT_OVERRIDE;
-   virtual bool Remove(PkgIterator Pkg,bool Purge = false) APT_OVERRIDE;
+   bool Install(PkgIterator Pkg,std::string File) override;
+   bool Configure(PkgIterator Pkg) override;
+   bool Remove(PkgIterator Pkg, bool Purge = false) override;
 
-   virtual bool Go(APT::Progress::PackageManager *progress) APT_OVERRIDE;
+   bool Go(APT::Progress::PackageManager *progress) override;
 
-   virtual void Reset() APT_OVERRIDE;
-   
+   void Reset() override;
+
    public:
 
    explicit pkgDPkgPM(pkgDepCache *Cache);
-   virtual ~pkgDPkgPM();
+   ~pkgDPkgPM() override;
 
    APT_HIDDEN static bool ExpandPendingCalls(std::vector<Item> &List, pkgDepCache &Cache);
 };

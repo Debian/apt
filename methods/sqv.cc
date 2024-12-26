@@ -21,7 +21,7 @@ class SQVMethod : public aptMethod
 			 vector<string> &signers);
 
    protected:
-   virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
+   bool URIAcquire(std::string const &Message, FetchItem *Itm) override;
 
    public:
    SQVMethod();

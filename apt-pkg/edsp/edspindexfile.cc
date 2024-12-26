@@ -28,7 +28,7 @@ edspLikeIndex::edspLikeIndex(std::string const &File) : pkgDebianIndexRealFile(F
 }
 std::string edspLikeIndex::GetArchitecture() const
 {
-   return std::string();
+   return {};
 }
 bool edspLikeIndex::HasPackages() const
 {
@@ -94,10 +94,10 @@ pkgCacheListParser * eippIndex::CreateListParser(FileFd &Pkg)
 class APT_HIDDEN edspIFType: public pkgIndexFile::Type
 {
    public:
-   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator const &) const APT_OVERRIDE
+   [[nodiscard]] pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator const &/*PkgFile*/) const override
    {
       // we don't have a record parser for this type as the file is not persistent
-      return NULL;
+      return nullptr;
    };
    edspIFType() {Label = "EDSP scenario file";};
 };
@@ -110,10 +110,10 @@ const pkgIndexFile::Type *edspIndex::GetType() const
 class APT_HIDDEN eippIFType: public pkgIndexFile::Type
 {
    public:
-   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator const &) const APT_OVERRIDE
+   [[nodiscard]] pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator const &/*PkgFile*/) const override
    {
       // we don't have a record parser for this type as the file is not persistent
-      return NULL;
+      return nullptr;
    };
    eippIFType() {Label = "EIPP scenario file";};
 };
@@ -124,6 +124,6 @@ const pkgIndexFile::Type *eippIndex::GetType() const
 }
 									/*}}}*/
 
-edspLikeIndex::~edspLikeIndex() {}
-edspIndex::~edspIndex() {}
-eippIndex::~eippIndex() {}
+edspLikeIndex::~edspLikeIndex() = default;
+edspIndex::~edspIndex() = default;
+eippIndex::~eippIndex() = default;

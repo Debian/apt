@@ -357,7 +357,7 @@ bool DoDistClean(CommandLine &)
  class LogCleaner : public pkgArchiveCleaner
 {
    protected:
-      virtual void Erase(int const dirfd, char const * const File, std::string const &Pkg, std::string const &Ver,struct stat const &St) APT_OVERRIDE
+      void Erase(int const dirfd, char const * const File, std::string const &Pkg, std::string const &Ver,struct stat const &St) override
       {
 	 c1out << "Del " << Pkg << " " << Ver << " [" << SizeToStr(St.st_size) << "B]" << std::endl;
 

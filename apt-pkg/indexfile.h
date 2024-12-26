@@ -163,11 +163,11 @@ protected:
    APT_HIDDEN virtual pkgCacheListParser * CreateListParser(FileFd &Pkg);
 
 public:
-   virtual bool Merge(pkgCacheGenerator &Gen, OpProgress* const Prog) APT_OVERRIDE;
-   virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const APT_OVERRIDE;
+   bool Merge(pkgCacheGenerator &Gen, OpProgress *Prog) override;
+   pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const override;
 
    explicit pkgDebianIndexFile(bool const Trusted);
-   virtual ~pkgDebianIndexFile();
+   ~pkgDebianIndexFile() override;
 };
 
 class APT_PUBLIC pkgDebianIndexTargetFile : public pkgDebianIndexFile
@@ -176,21 +176,21 @@ class APT_PUBLIC pkgDebianIndexTargetFile : public pkgDebianIndexFile
 protected:
    IndexTarget const Target;
 
-   virtual std::string IndexFileName() const APT_OVERRIDE;
-   virtual std::string GetComponent() const APT_OVERRIDE;
-   virtual std::string GetArchitecture() const APT_OVERRIDE;
-   virtual std::string GetProgressDescription() const APT_OVERRIDE;
-   virtual bool OpenListFile(FileFd &Pkg, std::string const &FileName) APT_OVERRIDE;
+   std::string IndexFileName() const override;
+   [[nodiscard]] std::string GetComponent() const override;
+   [[nodiscard]] std::string GetArchitecture() const override;
+   [[nodiscard]] std::string GetProgressDescription() const override;
+   bool OpenListFile(FileFd &Pkg, std::string const &FileName) override;
 
-public:
-   virtual std::string ArchiveURI(std::string const &File) const APT_OVERRIDE;
-   virtual std::string Describe(bool const Short = false) const APT_OVERRIDE;
-   virtual bool Exists() const APT_OVERRIDE;
-   virtual unsigned long Size() const APT_OVERRIDE;
+   public:
+   [[nodiscard]] std::string ArchiveURI(std::string const &File) const override;
+   [[nodiscard]] std::string Describe(bool Short = false) const override;
+   [[nodiscard]] bool Exists() const override;
+   [[nodiscard]] unsigned long Size() const override;
    IndexTarget GetIndexTarget() const APT_HIDDEN;
 
    pkgDebianIndexTargetFile(IndexTarget const &Target, bool const Trusted);
-   virtual ~pkgDebianIndexTargetFile();
+   ~pkgDebianIndexTargetFile() override;
 };
 
 class APT_PUBLIC pkgDebianIndexRealFile : public pkgDebianIndexFile
@@ -199,17 +199,18 @@ class APT_PUBLIC pkgDebianIndexRealFile : public pkgDebianIndexFile
 protected:
    std::string File;
 
-   virtual std::string IndexFileName() const APT_OVERRIDE;
-   virtual std::string GetProgressDescription() const APT_OVERRIDE;
-   virtual bool OpenListFile(FileFd &Pkg, std::string const &FileName) APT_OVERRIDE;
-public:
-   virtual std::string Describe(bool const /*Short*/ = false) const APT_OVERRIDE;
-   virtual bool Exists() const APT_OVERRIDE;
-   virtual unsigned long Size() const APT_OVERRIDE;
-   virtual std::string ArchiveURI(std::string const &/*File*/) const APT_OVERRIDE;
+   [[nodiscard]] std::string IndexFileName() const override;
+   [[nodiscard]] std::string GetProgressDescription() const override;
+   bool OpenListFile(FileFd &Pkg, std::string const &FileName) override;
+
+   public:
+   [[nodiscard]] std::string Describe(bool /*Short*/ = false) const override;
+   [[nodiscard]] bool Exists() const override;
+   [[nodiscard]] unsigned long Size() const override;
+   [[nodiscard]] std::string ArchiveURI(std::string const & /*File*/) const override;
 
    pkgDebianIndexRealFile(std::string const &File, bool const Trusted);
-   virtual ~pkgDebianIndexRealFile();
+   ~pkgDebianIndexRealFile() override;
 };
 
 #endif

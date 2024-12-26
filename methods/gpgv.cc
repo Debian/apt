@@ -130,7 +130,7 @@ class GPGVMethod : public aptMethod
 				     SignersStorage &Signers);
 
    protected:
-   virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
+   bool URIAcquire(std::string const &Message, FetchItem *Itm) override;
    public:
    GPGVMethod() : aptMethod("gpgv", "1.1", SingleInstance | SendConfig | SendURIEncoded){};
 };

@@ -56,8 +56,7 @@ class APT_PUBLIC debDebFile
 class APT_PUBLIC debDebFile::ControlExtract : public pkgDirStream
 {
    public:
-   
-   virtual bool DoItem(Item &Itm,int &Fd) APT_OVERRIDE;
+   bool DoItem(Item &Itm, int &Fd) override;
 };
 
 class APT_PUBLIC debDebFile::MemControlExtract : public pkgDirStream
@@ -72,9 +71,9 @@ class APT_PUBLIC debDebFile::MemControlExtract : public pkgDirStream
    std::string Member;
    
    // Members from DirStream
-   virtual bool DoItem(Item &Itm,int &Fd) APT_OVERRIDE;
-   virtual bool Process(Item &Itm,const unsigned char *Data,
-			unsigned long long Size,unsigned long long Pos) APT_OVERRIDE;
+   bool DoItem(Item &Itm, int &Fd) override;
+   bool Process(Item &Itm, const unsigned char *Data,
+		unsigned long long Size, unsigned long long Pos) override;
 
    // Helpers
    bool Read(debDebFile &Deb);
@@ -82,7 +81,7 @@ class APT_PUBLIC debDebFile::MemControlExtract : public pkgDirStream
 
    MemControlExtract() : IsControl(false), Control(0), Length(0), Member("control") {};
    explicit MemControlExtract(std::string Member) : IsControl(false), Control(0), Length(0), Member(Member) {};
-   ~MemControlExtract() {delete [] Control;};   
+   ~MemControlExtract() override { delete[] Control; };
 };
 									/*}}}*/
 

@@ -27,18 +27,18 @@ class debSystem : public pkgSystem
    APT_HIDDEN bool CheckUpdates();
 
    public:
-   virtual bool Lock(OpProgress *const Progress) APT_OVERRIDE;
-   virtual bool UnLock(bool NoErrors = false) APT_OVERRIDE;
-   virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const APT_OVERRIDE;
-   virtual bool Initialize(Configuration &Cnf) APT_OVERRIDE;
-   virtual bool ArchiveSupported(const char *Type) APT_OVERRIDE;
-   virtual signed Score(Configuration const &Cnf) APT_OVERRIDE;
-   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) APT_OVERRIDE;
-   virtual bool FindIndex(pkgCache::PkgFileIterator File,
-			  pkgIndexFile *&Found) const APT_OVERRIDE;
+   bool Lock(OpProgress *Progress) override;
+   bool UnLock(bool NoErrors = false) override;
+   pkgPackageManager *CreatePM(pkgDepCache *Cache) const override;
+   bool Initialize(Configuration &Cnf) override;
+   bool ArchiveSupported(const char *Type) override;
+   signed Score(Configuration const &Cnf) override;
+   bool AddStatusFiles(std::vector<pkgIndexFile *> &List) override;
+   bool FindIndex(pkgCache::PkgFileIterator File,
+		  pkgIndexFile *&Found) const override;
 
    debSystem();
-   virtual ~debSystem();
+   ~debSystem() override;
 
    APT_HIDDEN static std::string GetDpkgExecutable();
    APT_HIDDEN static std::vector<std::string> GetDpkgBaseCommand();

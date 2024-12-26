@@ -624,7 +624,7 @@ class RredMethod final : public aptMethod {
       }
 
    protected:
-      virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE {
+      bool URIAcquire(std::string const &Message, FetchItem *Itm) override {
 	 Debug = DebugEnabled();
 	 URI Get(Itm->Uri);
 	 std::string Path = DecodeSendURI(Get.Host + Get.Path); // rred:/path - no host

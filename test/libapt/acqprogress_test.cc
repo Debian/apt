@@ -13,8 +13,8 @@ class TestItem: public pkgAcquire::Item
 public:
    explicit TestItem(pkgAcquire * const Acq) : pkgAcquire::Item(Acq) {}
 
-   virtual std::string DescURI() const APT_OVERRIDE { return ""; }
-   virtual HashStringList GetExpectedHashes() const APT_OVERRIDE { return HashStringList(); }
+   [[nodiscard]] std::string DescURI() const override { return ""; }
+   [[nodiscard]] HashStringList GetExpectedHashes() const override { return {}; }
 
 };
 

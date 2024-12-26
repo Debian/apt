@@ -29,24 +29,24 @@ protected:
    std::unique_ptr<pkgIndexFile> StatusFile;
 
 public:
-   virtual bool Lock(OpProgress * const Progress) APT_OVERRIDE APT_PURE;
-   virtual bool UnLock(bool NoErrors = false) APT_OVERRIDE APT_PURE;
-   virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const APT_OVERRIDE APT_PURE;
-   virtual bool Initialize(Configuration &Cnf) APT_OVERRIDE;
-   virtual bool ArchiveSupported(const char *Type) APT_OVERRIDE APT_PURE;
-   virtual signed Score(Configuration const &Cnf) APT_OVERRIDE;
-   virtual bool FindIndex(pkgCache::PkgFileIterator File,
-			  pkgIndexFile *&Found) const APT_OVERRIDE;
+   bool Lock(OpProgress *Progress) override APT_PURE;
+   bool UnLock(bool NoErrors = false) override APT_PURE;
+   pkgPackageManager *CreatePM(pkgDepCache *Cache) const override APT_PURE;
+   bool Initialize(Configuration &Cnf) override;
+   bool ArchiveSupported(const char *Type) override APT_PURE;
+   signed Score(Configuration const &Cnf) override;
+   bool FindIndex(pkgCache::PkgFileIterator File,
+		  pkgIndexFile *&Found) const override;
 
-   bool MultiArchSupported() const override { return true; }
-   std::vector<std::string> ArchitecturesSupported() const override { return {}; };
+   [[nodiscard]] bool MultiArchSupported() const override { return true; }
+   [[nodiscard]] std::vector<std::string> ArchitecturesSupported() const override { return {}; };
 
-   bool LockInner(OpProgress * const, int) override { return _error->Error("LockInner is not implemented"); };
-   bool UnLockInner(bool) override { return _error->Error("UnLockInner is not implemented"); };
+   bool LockInner(OpProgress * const /*Progress*/, int /*timeOutSec*/) override { return _error->Error("LockInner is not implemented"); };
+   bool UnLockInner(bool /*NoErrors*/) override { return _error->Error("UnLockInner is not implemented"); };
    bool IsLocked() override { return true; };
 
    explicit edspLikeSystem(char const * const Label);
-   virtual ~edspLikeSystem();
+   ~edspLikeSystem() override;
 };
 
 class APT_HIDDEN edspSystem : public edspLikeSystem
@@ -56,20 +56,20 @@ class APT_HIDDEN edspSystem : public edspLikeSystem
    std::string tempPrefsFile;
 
 public:
-   virtual bool Initialize(Configuration &Cnf) APT_OVERRIDE;
-   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) APT_OVERRIDE;
+   bool Initialize(Configuration &Cnf) override;
+   bool AddStatusFiles(std::vector<pkgIndexFile *> &List) override;
 
    edspSystem();
-   virtual ~edspSystem();
+   ~edspSystem() override;
 };
 
 class APT_HIDDEN eippSystem : public edspLikeSystem
 {
    public:
-   virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) APT_OVERRIDE;
+   bool AddStatusFiles(std::vector<pkgIndexFile *> &List) override;
 
    eippSystem();
-   virtual ~eippSystem();
+   ~eippSystem() override;
 };
 
 #endif
