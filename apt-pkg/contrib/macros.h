@@ -17,12 +17,6 @@
 #ifndef MACROS_H
 #define MACROS_H
 
-// Flag Macros
-#define	FLAG(f)			(1L << (f))
-#define	SETFLAG(v,f)	((v) |= FLAG(f))
-#define CLRFLAG(v,f)	((v) &=~FLAG(f))
-#define	CHKFLAG(v,f)	((v) &  FLAG(f) ? true : false)
-
 #ifdef __GNUC__
 #define APT_GCC_VERSION (__GNUC__ << 8 | __GNUC_MINOR__)
 #else
@@ -138,6 +132,10 @@ AptScopeWrapper(F) -> AptScopeWrapper<F>;
 	#define APT_OVERRIDE /* no c++11 standard */
 #endif
 #define APT_ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+#define	FLAG(f)			(1L << (f))
+#define	SETFLAG(v,f)	((v) |= FLAG(f))
+#define CLRFLAG(v,f)	((v) &=~FLAG(f))
+#define	CHKFLAG(v,f)	((v) &  FLAG(f) ? true : false)
 #endif
 #endif
 #endif
