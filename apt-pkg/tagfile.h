@@ -120,7 +120,7 @@ class APT_PUBLIC pkgTagSection
     * @return \b true if section end was found, \b false otherwise.
     *  Beware that internal state will be inconsistent if \b false is returned!
     */
-   APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength, bool const Restart = true);
+   [[nodiscard]] bool Scan(const char *Start, unsigned long MaxLength, bool const Restart = true);
 
    inline unsigned long size() const {return Stop - Section;};
    void Trim();

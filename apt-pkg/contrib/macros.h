@@ -48,10 +48,8 @@
 
 #if APT_GCC_VERSION > 0x0302
 	#define APT_NONNULL(...)	__attribute__((nonnull(__VA_ARGS__)))
-	#define APT_MUSTCHECK		__attribute__((warn_unused_result))
 #else
 	#define APT_NONNULL(...)
-	#define APT_MUSTCHECK
 #endif
 
 #if APT_GCC_VERSION >= 0x0400
@@ -133,11 +131,13 @@ AptScopeWrapper(F) -> AptScopeWrapper<F>;
 	#define APT_DEPRECATED_MSG(X)	__attribute__ ((deprecated(X)))
 	#define APT_NORETURN	__attribute__((noreturn))
 	#define APT_UNUSED	__attribute__((unused))
+	#define APT_MUSTCHECK		__attribute__((warn_unused_result))
 #else
 	#define APT_DEPRECATED
 	#define APT_DEPRECATED_MSG(X)
 	#define APT_NORETURN
 	#define APT_UNUSED
+	#define APT_MUSTCHECK
 #endif
 #endif
 #endif

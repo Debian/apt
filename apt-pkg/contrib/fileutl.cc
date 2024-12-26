@@ -1070,7 +1070,7 @@ struct APT_HIDDEN simple_buffer {							/*{{{*/
       reset();
    }
    void reset() { bufferend = bufferstart = 0; }
-   ssize_t read(void *to, unsigned long long requested_size) APT_MUSTCHECK
+   [[nodiscard]] ssize_t read(void *to, unsigned long long requested_size)
    {
       if (size() < requested_size)
 	 requested_size = size();
@@ -1080,7 +1080,7 @@ struct APT_HIDDEN simple_buffer {							/*{{{*/
 	 bufferstart = bufferend = 0;
       return requested_size;
    }
-   ssize_t write(const void *from, unsigned long long requested_size) APT_MUSTCHECK
+   [[nodiscard]] ssize_t write(const void *from, unsigned long long requested_size)
    {
       if (free() < requested_size)
 	 requested_size = free();

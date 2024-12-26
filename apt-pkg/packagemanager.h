@@ -78,10 +78,10 @@ class APT_PUBLIC pkgPackageManager : protected pkgCache::Namespace
    
    // Install helpers
    bool ConfigureAll();
-   bool SmartConfigure(PkgIterator Pkg, int const Depth) APT_MUSTCHECK;
-   bool SmartUnPack(PkgIterator Pkg, bool const Immediate = true, int const Depth = 0) APT_MUSTCHECK;
-   bool SmartRemove(PkgIterator Pkg) APT_MUSTCHECK;
-   bool EarlyRemove(PkgIterator Pkg, DepIterator const * const Dep) APT_MUSTCHECK;
+   [[nodiscard]] bool SmartConfigure(PkgIterator Pkg, int Depth);
+   [[nodiscard]] bool SmartUnPack(PkgIterator Pkg, bool Immediate = true, int Depth = 0);
+   [[nodiscard]] bool SmartRemove(PkgIterator Pkg);
+   [[nodiscard]] bool EarlyRemove(PkgIterator Pkg, DepIterator const *Dep);
 
    // The Actual installation implementation
    virtual bool Install(PkgIterator /*Pkg*/,std::string /*File*/) {return false;};
@@ -130,9 +130,9 @@ class APT_PUBLIC pkgPackageManager : protected pkgCache::Namespace
    private:
    void * const d;
    enum APT_HIDDEN SmartAction { UNPACK_IMMEDIATE, UNPACK, CONFIGURE };
-   APT_HIDDEN bool NonLoopingSmart(SmartAction const action, pkgCache::PkgIterator &Pkg,
-      pkgCache::PkgIterator DepPkg, int const Depth, bool const PkgLoop,
-      bool * const Bad, bool * const Changed) APT_MUSTCHECK;
+   [[nodiscard]] APT_HIDDEN bool NonLoopingSmart(SmartAction action, pkgCache::PkgIterator &Pkg,
+						 pkgCache::PkgIterator DepPkg, int Depth, bool PkgLoop,
+						 bool *Bad, bool *Changed);
 };
 
 #endif
