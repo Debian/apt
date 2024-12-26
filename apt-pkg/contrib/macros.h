@@ -40,12 +40,10 @@
 	#define APT_PURE	__attribute__((pure))
 	#define APT_PRINTF(n)	__attribute__((format(printf, n, n + 1)))
 	#define APT_WEAK        __attribute__((weak));
-	#define APT_UNUSED      __attribute__((unused))
 #else
 	#define APT_PURE
 	#define APT_PRINTF(n)
 	#define APT_WEAK
-	#define APT_UNUSED
 #endif
 
 #if APT_GCC_VERSION > 0x0302
@@ -134,10 +132,12 @@ AptScopeWrapper(F) -> AptScopeWrapper<F>;
 	#define APT_DEPRECATED	__attribute__ ((deprecated))
 	#define APT_DEPRECATED_MSG(X)	__attribute__ ((deprecated(X)))
 	#define APT_NORETURN	__attribute__((noreturn))
+	#define APT_UNUSED	__attribute__((unused))
 #else
 	#define APT_DEPRECATED
 	#define APT_DEPRECATED_MSG(X)
 	#define APT_NORETURN
+	#define APT_UNUSED
 #endif
 #endif
 #endif
