@@ -78,15 +78,9 @@
 		_Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
 	#define APT_IGNORE_DEPRECATED_POP \
 		_Pragma("GCC diagnostic pop")
-	/* gcc has various problems with this shortcut, so prefer the long form */
-	#define APT_IGNORE_DEPRECATED(XXX) \
-		APT_IGNORE_DEPRECATED_PUSH \
-		XXX \
-		APT_IGNORE_DEPRECATED_POP
 #else
 	#define APT_IGNORE_DEPRECATED_PUSH
 	#define APT_IGNORE_DEPRECATED_POP
-	#define APT_IGNORE_DEPRECATED(XXX) XXX
 #endif
 
 // These lines are extracted by the makefiles and the buildsystem
@@ -139,6 +133,7 @@ AptScopeWrapper(F) -> AptScopeWrapper<F>;
 	#define APT_UNUSED
 	#define APT_MUSTCHECK
 #endif
+#define APT_IGNORE_DEPRECATED(XXX) XXX
 #endif
 #endif
 #endif
