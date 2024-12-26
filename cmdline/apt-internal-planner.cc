@@ -51,7 +51,7 @@ static bool ShowHelp(CommandLine &)					/*{{{*/
 	return true;
 }
 									/*}}}*/
-APT_NORETURN static void DIE(std::string const &message) {		/*{{{*/
+[[noreturn]] static void DIE(std::string const &message) {		/*{{{*/
 	std::cerr << "ERROR: " << message << std::endl;
 	_error->DumpErrors(std::cerr);
 	exit(EXIT_FAILURE);

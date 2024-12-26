@@ -1488,7 +1488,7 @@ public:
    auto begin() const { return args.cbegin(); }
    auto end() const { return args.cend(); }
    auto& front() const { return args.front(); }
-   APT_NORETURN void execute(char const *const errmsg) {
+   [[noreturn]] void execute(char const *const errmsg) {
       args.push_back(nullptr);
       execvp(args.front(), &args.front());
       std::cerr << errmsg << std::endl;

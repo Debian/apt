@@ -163,7 +163,7 @@ class BaseHttpMethod : public aptAuthConfMethod
    static std::string FailFile;
    static int FailFd;
    static time_t FailTime;
-   static APT_NORETURN void SigTerm(int);
+   [[noreturn]] static void SigTerm(int);
 
    int Loop();
 

@@ -290,7 +290,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
    struct exiter {
       std::vector<std::string> files;
-      void operator ()(int code) APT_NORETURN {
+      [[noreturn]] void operator ()(int code) {
 	 std::for_each(files.begin(), files.end(), [](auto f)
 		       { unlink(f.c_str()); });
 	 exit(code);
