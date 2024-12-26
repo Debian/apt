@@ -41,17 +41,6 @@
 
 using std::string;
 
-// we could use pkgCache::DepType and ::Priority, but these would be localized strings…
-constexpr char const * const PrioMap[] = {
-   nullptr, "important", "required", "standard",
-   "optional", "extra"
-};
-constexpr char const * const DepMap[] = {
-   nullptr, "Depends", "Pre-Depends", "Suggests",
-   "Recommends" , "Conflicts", "Replaces",
-   "Obsoletes", "Breaks", "Enhances"
-};
-
 // WriteOkay - varaidic helper to easily Write to a FileFd		/*{{{*/
 static bool WriteOkay_fn(FileFd &) { return true; }
 template<typename... Tail> static bool WriteOkay_fn(FileFd &output, std::string_view data, Tail... more_data)
@@ -99,7 +88,7 @@ static bool WriteScenarioVersion(FileFd &output, pkgCache::PkgIterator const &Pk
 // WriteScenarioDependency						/*{{{*/
 static bool WriteScenarioDependency(FileFd &output, pkgCache::VerIterator const &Ver, bool const OnlyCritical)
 {
-   std::array<std::string, APT_ARRAY_SIZE(DepMap)> dependencies;
+   std::array<std::string, 10> dependencies;
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {
@@ -123,7 +112,7 @@ static bool WriteScenarioDependency(FileFd &output, pkgCache::VerIterator const 
    bool Okay = output.Failed() == false;
    for (size_t i = 1; i < dependencies.size(); ++i)
       if (dependencies[i].empty() == false)
-	 WriteOkay(Okay, output, "\n", DepMap[i], ": ", dependencies[i]);
+	 WriteOkay(Okay, output, "\n", pkgCache::DepType_NoL10n(i), ": ", dependencies[i]);
    std::vector<std::string> provides;
    for (auto Prv = Ver.ProvidesList(); not Prv.end(); ++Prv)
    {
@@ -152,7 +141,7 @@ static bool WriteScenarioLimitedDependency(FileFd &output,
 					  std::vector<bool> const &pkgset,
 					  bool const OnlyCritical)
 {
-   std::array<std::string, APT_ARRAY_SIZE(DepMap)> dependencies;
+   std::array<std::string, 10> dependencies;
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {
@@ -189,7 +178,7 @@ static bool WriteScenarioLimitedDependency(FileFd &output,
    bool Okay = output.Failed() == false;
    for (size_t i = 1; i < dependencies.size(); ++i)
       if (dependencies[i].empty() == false)
-	 WriteOkay(Okay, output, "\n", DepMap[i], ": ", dependencies[i]);
+	 WriteOkay(Okay, output, "\n", pkgCache::DepType_NoL10n(i), ": ", dependencies[i]);
    string provides;
    for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
    {
@@ -250,8 +239,8 @@ static bool WriteScenarioEDSPVersion(pkgDepCache &Cache, FileFd &output, pkgCach
 {
    bool Okay = WriteOkay(output, "\nSource: ", Ver.SourcePkgName(),
 	 "\nSource-Version: ", Ver.SourceVerStr());
-   if (PrioMap[Ver->Priority] != nullptr)
-      WriteOkay(Okay, output, "\nPriority: ", PrioMap[Ver->Priority]);
+   if (auto const Prio = pkgCache::Priority_NoL10n(Ver->Priority); not Prio.empty())
+      WriteOkay(Okay, output, "\nPriority: ", Prio);
    if (Ver->Section != 0)
       WriteOkay(Okay, output, "\nSection: ", Ver.Section());
    if (Pkg.CurrentVer() == Ver)

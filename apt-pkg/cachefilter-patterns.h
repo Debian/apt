@@ -475,12 +475,7 @@ struct APT_HIDDEN VersionIsPriority : public VersionAnyMatcher
    explicit VersionIsPriority(std::string name) : name(name) {}
    bool operator()(pkgCache::VerIterator const &Ver) override
    {
-      std::string Mapping[] = {"", "required","important","standard",
-                            "optional","extra"};
-      if (Ver->Priority > 0 && Ver->Priority < APT_ARRAY_SIZE(Mapping)) {
-         return name == Mapping[Ver->Priority];
-      }
-      return false;
+      return Ver->Priority > 0 && name == pkgCache::Priority_NoL10n(Ver->Priority);
    }
 };
 

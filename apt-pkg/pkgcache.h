@@ -245,7 +245,8 @@ class APT_PUBLIC pkgCache								/*{{{*/
 
    // Useful transformation things
    static const char *Priority(unsigned char Priority);
-   
+   static std::string_view Priority_NoL10n(unsigned char Prio);
+
    // Accessors
    GrpIterator FindGrp(APT::StringView Name);
    PkgIterator FindPkg(APT::StringView Name);
@@ -278,6 +279,7 @@ class APT_PUBLIC pkgCache								/*{{{*/
    static const char *CompTypeDeb(unsigned char Comp) APT_PURE;
    static const char *CompType(unsigned char Comp) APT_PURE;
    static const char *DepType(unsigned char Dep);
+   static std::string_view DepType_NoL10n(unsigned char Dep);
 
    pkgCache(MMap *Map,bool DoMap = true);
    virtual ~pkgCache();
