@@ -68,7 +68,7 @@ struct Digest {
    }
 };
 
-static constexpr Digest Digests[] = {
+static constexpr std::array<Digest,12> Digests = {{
    {Digest::State::Untrusted, "Invalid digest"},
    {Digest::State::Untrusted, "MD5"},
    {Digest::State::Untrusted, "SHA1"},
@@ -81,17 +81,14 @@ static constexpr Digest Digests[] = {
    {Digest::State::Trusted, "SHA384"},
    {Digest::State::Trusted, "SHA512"},
    {Digest::State::Trusted, "SHA224"},
-};
+}};
 
-static Digest FindDigest(std::string const & Digest)
+static Digest FindDigest(std::string const &Digest)
 {
    int id = atoi(Digest.c_str());
-   if (id >= 0 && static_cast<unsigned>(id) < APT_ARRAY_SIZE(Digests))
-   {
+   if (id >= 0 && static_cast<unsigned>(id) < Digests.size())
       return Digests[id];
-   } else {
-      return Digests[0];
-   }
+   return Digests[0];
 }
 
 struct Signer {

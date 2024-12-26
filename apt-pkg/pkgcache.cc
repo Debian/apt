@@ -245,7 +245,7 @@ uint32_t pkgCache::CacheHash()
 
    XXH3_64bits_update(state,
 		      reinterpret_cast<const unsigned char *>(PACKAGE_VERSION),
-		      APT_ARRAY_SIZE(PACKAGE_VERSION));
+		      strlen(PACKAGE_VERSION));
 
    XXH3_64bits_update(state,
 		      reinterpret_cast<const unsigned char *>(&header),

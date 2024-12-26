@@ -17,10 +17,6 @@
 #ifndef MACROS_H
 #define MACROS_H
 
-/* Useful count macro, use on an array of things and it will return the
-   number of items in the array */
-#define APT_ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-
 // Flag Macros
 #define	FLAG(f)			(1L << (f))
 #define	SETFLAG(v,f)	((v) |= FLAG(f))
@@ -141,6 +137,7 @@ AptScopeWrapper(F) -> AptScopeWrapper<F>;
 #else
 	#define APT_OVERRIDE /* no c++11 standard */
 #endif
+#define APT_ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #endif
 #endif
 #endif
