@@ -56,7 +56,7 @@ namespace APT {
 APT_PUBLIC bool UTF8ToCodeset(const char *codeset, const std::string &orig, std::string *dest);
 APT_PUBLIC char *_strstrip(char *String);
 APT_PUBLIC char *_strrstrip(char *String); // right strip only
-APT_DEPRECATED_MSG("Use SubstVar to avoid memory headaches") APT_PUBLIC char *_strtabexpand(char *String,size_t Len);
+[[deprecated("Use SubstVar to avoid memory headaches")]] APT_PUBLIC char *_strtabexpand(char *String,size_t Len);
 APT_PUBLIC bool ParseQuoteWord(const char *&String,std::string &Res);
 APT_PUBLIC bool ParseCWord(const char *&String,std::string &Res);
 APT_PUBLIC std::string QuoteString(const std::string &Str,const char *Bad);
