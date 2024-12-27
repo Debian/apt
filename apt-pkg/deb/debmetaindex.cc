@@ -75,7 +75,7 @@ static std::string NormalizeSignedBy(std::string SignedBy, bool const Introducer
       return os.str();
    }
 
-   // we could go all fancy and allow short/long/string matches as gpgv/apt-key does,
+   // we could go all fancy and allow short/long/string matches as gpgv does,
    // but fingerprints are harder to fake than the others and this option is set once,
    // not interactively all the time so easy to type is not really a concern.
    std::transform(SignedBy.begin(), SignedBy.end(), SignedBy.begin(), [](char const c) {

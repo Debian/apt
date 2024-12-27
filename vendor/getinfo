@@ -64,7 +64,7 @@ case "$1" in
 debian-stable-codename|debian-oldstable-codename|debian-testing-codename|ubuntu-codename)
 	getrawfield "$1" "$VERBATIM"
 	;;
-sourceslist-list-format|keyring-package|keyring-filename|keyring-master-filename|keyring-removed-filename|keyring-uri|current-codename)
+sourceslist-list-format|keyring-package|current-codename)
 	exec $0 --vendor $CURRENT_VENDOR 'vendor' "$@"
 	;;
 vendor)

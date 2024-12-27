@@ -211,7 +211,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 
    FILE *pipein = fdopen(fd[0], "r");
 
-   // Loop over the output of apt-key (which really is gnupg), and check the signatures.
+   // Loop over the output of gpgv, and check the signatures.
    std::vector<std::string> ErrSigners;
    std::map<std::string, std::vector<std::string>> SubKeyMapping;
    size_t buffersize = 0;
@@ -337,7 +337,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    for (auto errSigner : ErrSigners)
       Signers.Worthless.push_back({errSigner, ""});
 
-   // apt-key has a --keyid parameter, but this requires gpg, so we call it without it
+   // gpgv has no --keyid parameter, so we call it without it
    // and instead check after the fact which keyids where used for verification
    if (keyFpts.empty() == false)
    {
@@ -562,7 +562,7 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 	    keyFpts.emplace_back(std::move(key));
    }
 
-   // Run apt-key on file, extract contents and get the key ID of the signer
+   // Run gpgv on file, extract contents and get the key ID of the signer
    string const msg = VerifyGetSignersWithLegacy(Path.c_str(), Itm->DestFile.c_str(), keyFpts, keyFiles, Signers);
    if (_error->PendingError())
       return false;
@@ -657,7 +657,7 @@ bool GPGVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    Dequeue();
 
    if (DebugEnabled())
-      std::clog << "apt-key succeeded\n";
+      std::clog << "gpgv succeeded\n";
 
    return true;
 }

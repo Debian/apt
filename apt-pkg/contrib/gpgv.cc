@@ -111,8 +111,6 @@ static bool operator!=(LineBuffer const &buf, std::string_view const exp) noexce
    clear-signed files (=the complete content of the file is signed and
    the content isn't encoded) we do a divide and conquer approach here
    and split up the clear-signed file in message and signature for gpg.
-   And as a cherry on the cake, we use our apt-key wrapper to do part
-   of the lifting in regards to merging keyrings. Fun for the whole family.
 */
 #define apt_error(...) apt_msg("ERROR", __VA_ARGS__)
 #define apt_warning(...) apt_msg("WARNING", __VA_ARGS__)

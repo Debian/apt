@@ -2,10 +2,10 @@ The vendor system in APT is an experiment to help distributions ship a stock
 apt release instead of applying documentation patches to it, increasing
 maintenance burden for everyone and hiding 'interesting' patches in the mix.
 
-The provided information is used in the apt-key script and in documentation
-like manpages and example configuration files. If you have patches modifying
-additional bits and pieces currently not covered by this system please
-contact us so we can change this!
+The provided information is used in documentation like man pages and
+example configuration files. If you have patches modifying additional
+bits and pieces currently not covered by this system please contact us
+so we can change this!
 
 
 == Adding a new vendor
@@ -39,8 +39,7 @@ by opening a bug in the Debian BTS against apt with a patch attached.
 The format used is the one DocBook XML uses. The file is included as an
 entity file in the manpages xml source, so the syntax has to be valid!
 
-The keyring-* settings are additionally used also in the creation of the
-apt-key script and the keyring-package in particular as a dependency for apt.
+The keyring-package setting is used as a dependency for apt.
 
 The field current-codename is optional and can be used in sources.list.in.
 

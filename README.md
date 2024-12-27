@@ -16,7 +16,6 @@ Included tools are:
   as well as available packages
 * **apt-cdrom** to use removable media as a source for packages
 * **apt-config** as an interface to the configuration settings
-* **apt-key** as an interface to manage authentication keys
 * **apt-extracttemplates** to be used by debconf to prompt for configuration
   questions before installation
 * **apt-ftparchive** creates Packages and other index files
