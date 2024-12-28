@@ -17,7 +17,7 @@ import apt_inst
 
 import apt.progress.text
 
-IGNORE = (
+STDLIB = (
     "^typeinfo for std::"
     "|^vtable for std::"
     "|^typeinfo name for std::"
@@ -31,7 +31,7 @@ IGNORE = (
     "|^__gnu_cxx::"
     "|^[a-z]* __gnu_cxx::"
 )
-IGNORE_RE = re.compile(IGNORE)
+STDLIB_RE = re.compile(STDLIB)
 
 
 def get_archs(dist: str) -> set[str]:
@@ -109,13 +109,15 @@ def read_main_symbols() -> dict[str, str]:
     with open(glob.glob("debian/libapt-pkg*.symbols")[0]) as sf:
         for line in sf:
             if not line.startswith(" "):
-                prelude.append(line.strip())
+                if not symbols:
+                    prelude.append(line.strip())
                 continue
             if line.startswith(" "):
                 symbol, version = line.strip().rsplit(None, 1)
                 if '"' in symbol:
                     print(symbol.strip().split('"'))
-                    symbol = '(c++)"{}"'.format(symbol.strip().split('"')[1])
+                    prefix="(c++|optional=std)" if "optional=std" in symbol else "(c++)"
+                    symbol = '{}"{}"'.format(prefix, symbol.strip().split('"')[1])
                 symbols[symbol] = version
                 # Register the symbol so we keep the ordering later.
                 print("SYMBOL", symbol)
@@ -136,10 +138,11 @@ def read_symbol_file(debname: str) -> None:
         symbol, version = decoded_line.strip().rsplit(None, 1)
         symbol = symbol.strip()
         # Our version is higher than the registered one, so lower it again
-        if IGNORE_RE.search(symbol):
-            continue
         if line != decoded_line:
-            symbol = '(c++)"{}"'.format(symbol)
+            if STDLIB_RE.search(symbol):
+                symbol = '(c++|optional=std)"{}"'.format(symbol)
+            else:
+                symbol = '(c++)"{}"'.format(symbol)
         if (
             symbol not in smallest_symbol_version
             or apt_pkg.version_compare(version, smallest_symbol_version[symbol]) < 0
@@ -160,28 +163,36 @@ def print_merged() -> None:
     for line in prelude:
         print(line)
 
-    print(f' (c++|regex)"{IGNORE}" 999:0misbuilt')
+    for optional in False, True:
+        if optional:
+            print("# Optional C++ standard library symbols")
+            print("# These are inlined libstdc++ symbols and not supposed to be part of our ABI")
+            print("# but we cannot stop stuff from linking against it, sigh.")
 
-    for symbol, line_archs in symbol_archs.items():
-        if archs == line_archs:
-            print("", symbol, smallest_symbol_version[symbol])
+        for symbol, line_archs in symbol_archs.items():
+            if optional != ("optional=std" in symbol):
+                continue
+            if archs == line_archs:
+                print("", symbol, smallest_symbol_version[symbol])
 
-    for symbol, line_archs in symbol_archs.items():
-        if archs != line_archs and line_archs:
-            print_archs = " ".join(sorted(line_archs))
-            if len(line_archs) > len(archs - line_archs):
-                print_archs = " ".join("!" + a for a in sorted(archs - line_archs))
+        for symbol, line_archs in symbol_archs.items():
+            if optional != ("optional=std" in symbol):
+                continue
+            if archs != line_archs and line_archs:
+                print_archs = " ".join(sorted(line_archs))
+                if len(line_archs) > len(archs - line_archs):
+                    print_archs = " ".join("!" + a for a in sorted(archs - line_archs))
 
-            if "(c++)" in symbol:
-                print(
-                    "",
-                    symbol.replace("(c++)", f"(arch={print_archs}|c++)"),
-                    smallest_symbol_version[symbol],
-                )
-            else:
-                print(
-                    f" (arch={print_archs}){symbol} {smallest_symbol_version[symbol]}"
-                )
+                if "(c++" in symbol:
+                    print(
+                        "",
+                        symbol.replace("(c++", f"(arch={print_archs}|c++"),
+                        smallest_symbol_version[symbol],
+                    )
+                else:
+                    print(
+                        f" (arch={print_archs}){symbol} {smallest_symbol_version[symbol]}"
+                    )
 
 
 if __name__ == "__main__":
