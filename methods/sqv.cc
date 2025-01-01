@@ -262,6 +262,10 @@ static std::string GenerateKeyFile(std::string const key)
 
 bool SQVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 {
+   // Quick safety check: do we have left-over errors from a previous URL?
+   if (unlikely(_error->PendingError()))
+      return _error->Error("Internal error: Error set at start of verification");
+
    URI const Get(Itm->Uri);
    std::string const Path = DecodeSendURI(Get.Host + Get.Path); // To account for relative paths
 
@@ -288,6 +292,10 @@ bool SQVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 	    keyFpts.emplace_back(std::move(key));
    }
 
+   // Nothing should have failed here in the setup, if it did, don't bother verifying
+   if (_error->PendingError())
+      return false;
+
    // Run apt-key on file, extract contents and get the key ID of the signer
    VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), keyFiles, Signers);
    if (_error->PendingError())
@@ -300,6 +308,8 @@ bool SQVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
       _error->RevertToStack();
       if (error)
 	 return false;
+
+      _error->Discard();
       std::string warning;
       strprintf(warning,
 		_("Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details."),
@@ -337,7 +347,8 @@ bool SQVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    if (DebugEnabled())
       std::clog << "sqv succeeded\n";
 
-   return true;
+   // If we have a pending error somehow, we should still fail here...
+   return not _error->PendingError();
 }
 
 int main()
