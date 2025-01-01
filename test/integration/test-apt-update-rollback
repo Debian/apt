@@ -156,7 +156,7 @@ test_inrelease_to_unauth_inrelease() {
 
     signreleasefiles 'Marvin Paranoid'
 
-    if test -e /usr/bin/sqv; then
+    if test -e "${METHODSDIR}/sqv"; then
         # FIXME: Do not assert sqv output
         testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file:${APTARCHIVE} unstable InRelease: Sub-process /usr/bin/sqv returned an error code (1), error message is: Missing key DE66AECA9151AFA1877EC31DE8525D47528144E2, which is needed to verify signature.
 W: Failed to fetch file:$APTARCHIVE/dists/unstable/InRelease  Sub-process /usr/bin/sqv returned an error code (1), error message is: Missing key DE66AECA9151AFA1877EC31DE8525D47528144E2, which is needed to verify signature.

@@ -5,6 +5,7 @@ variables:
   CCACHE_BASEDIR: $CI_PROJECT_DIR
   APT_CMAKE_BUILD_OPTIONS: ''
   DEB_BUILD_PROFILES: ''
+  BUILD_PRE: ':'
 cache:
   paths:
     - .ccache
@@ -17,6 +18,7 @@ before_script:
     - chmod -R o+rwX $PWD
     - ./prepare-release travis-ci
     - sudo -u travis mkdir -p build .ccache
+    - $BUILD_PRE
     - sudo -u travis env -C build cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache ${APT_CMAKE_BUILD_OPTIONS} -G Ninja ..
     - sudo -u travis --preserve-env=CCACHE_DIR,CCACHE_BASEDIR ninja -C build
 
@@ -34,8 +36,8 @@ test solver3 and gpgv:
   variables:
     APT_CMAKE_BUILD_OPTIONS: '-DWITH_DOC=OFF -DUSE_NLS=OFF'
     DEB_BUILD_PROFILES: 'nodoc'
+    BUILD_PRE: 'rm /usr/bin/sqv'
   script:
-    - rm -f /usr/bin/sqv
     - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
     - unbuffer ./test/integration/run-tests -q -j 4 --solver 3.0 --skip solver3.broken
 
