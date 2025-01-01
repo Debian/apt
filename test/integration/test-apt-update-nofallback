@@ -198,7 +198,7 @@ test_inrelease_to_invalid_inrelease()
     sed -i 's/^Codename:.*/Codename: evil!/' "$APTARCHIVE/dists/unstable/InRelease"
     inject_evil_package
 
-    if test -e /usr/bin/sqv; then
+    if test -e "${METHODSDIR}/sqv"; then
         # FIXME: Do not assert sqv output
         testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file:${APTARCHIVE} unstable InRelease: Sub-process /usr/bin/sqv returned an error code (1), error message is: Verifying signature:            Message has been manipulated
 W: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  Sub-process /usr/bin/sqv returned an error code (1), error message is: Verifying signature:            Message has been manipulated
@@ -225,7 +225,7 @@ test_release_gpg_to_invalid_release_release_gpg()
     # now subvert Release do no longer verify
     echo "Some evil data" >> "$APTARCHIVE/dists/unstable/Release"
     inject_evil_package
-    if test -e /usr/bin/sqv; then
+    if test -e "${METHODSDIR}/sqv"; then
         # FIXME: Do not assert sqv output
         testwarningequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file:${APTARCHIVE} unstable Release: Sub-process /usr/bin/sqv returned an error code (1), error message is: Verifying signature:            Message has been manipulated
 W: Failed to fetch file:${APTARCHIVE}/dists/unstable/Release.gpg  Sub-process /usr/bin/sqv returned an error code (1), error message is: Verifying signature:            Message has been manipulated
