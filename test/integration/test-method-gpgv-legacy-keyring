@@ -14,24 +14,39 @@ setupaptarchive --no-update
 
 alias inrelease_size="stat -c %s aptarchive/dists/unstable/InRelease"
 
+cp  -a ${TMPWORKINGDIRECTORY}/aptarchive ${TMPWORKINGDIRECTORY}/aptarchive2
+
+sed s#aptarchive#aptarchive2# rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.list >> rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.list
+
 testsuccessequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
+Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [$(inrelease_size) B]
 Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
-Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages [246 B]
-Get:3 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main Translation-en [224 B]
+Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [$(inrelease_size) B]
+Get:3 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages [246 B]
+Get:4 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main Translation-en [224 B]
+Get:5 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable/main all Packages [246 B]
+Get:6 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable/main Translation-en [224 B]
 Reading package lists..." aptget update -q
 
 cat rootdir/etc/apt/trusted.gpg.d/*.gpg > rootdir/etc/apt/trusted.gpg
 rm rootdir/etc/apt/trusted.gpg.d/*.gpg
 
 testwarningequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
+Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [$(inrelease_size) B]
 Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
+Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [$(inrelease_size) B]
 Reading package lists...
-W: file:${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q
+W: file:${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details.
+W: file:${TMPWORKINGDIRECTORY}/aptarchive2/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q
 
 # 2.4.0 regression: If the InRelease file was signed with two keys, fallback to trusted.gpg did not
 # work: It ran the fallback, but then ignored the result, as keys were still missing.
+original_inrelease_size=$(inrelease_size)
 signreleasefiles 'Joe Sixpack,Marvin Paranoid'
 testwarningequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
+Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [${original_inrelease_size} B]
 Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
+Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [${original_inrelease_size} B]
 Reading package lists...
-W: file:${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q -omsg=with-two-signatures
+W: file:${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details.
+W: file:${TMPWORKINGDIRECTORY}/aptarchive2/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q -omsg=with-two-signatures
