@@ -335,7 +335,7 @@ bool IndexCopy::ReconstructChop(unsigned long &Chop,string Dir,string File)
      |------------------- Path
 
    It was deciced to use only a single word for dist (rather than say
-   unstable/non-us) to increase the chance that each CD gets a single
+   unstable/some-component) to increase the chance that each CD gets a single
    line in sources.list.
  */
 void IndexCopy::ConvertToSourceList(string CD,string &Path)

@@ -13,7 +13,7 @@
      Release: a=testing
      Release: n=squeeze
      Release: *
-     Origin: ftp.debian.org
+     Origin: deb.debian.org
 
    Release may be a complex type that can specify matches for any of:
       Version (v= with prefix)
