@@ -1024,7 +1024,7 @@ BaseHttpMethod::DealWithHeadersResult HttpMethod::DealWithHeaders(FetchResult &R
 									/*}}}*/
 HttpMethod::HttpMethod(std::string &&pProg) : BaseHttpMethod(std::move(pProg), "1.2", Pipeline | SendConfig | SendURIEncoded) /*{{{*/
 {
-   SeccompFlags = aptMethod::BASE | aptMethod::NETWORK;
+   SeccompFlags = aptMethod::BASE | aptMethod::NETWORK | aptMethod::DIRECTORY;
 
    auto addName = std::inserter(methodNames, methodNames.begin());
    if (Binary != "http")
