@@ -11,7 +11,7 @@ VERSION=$(dpkg-parsechangelog -S 'Version')
 DISTRIBUTION=$(dpkg-parsechangelog -S 'Distribution')
 
 LIBAPTPKGVERSION="$(awk -v ORS='.' '/^#define APT_PKG_M/ {print $3}' apt-pkg/contrib/macros.h | sed 's/\.$//')"
-LIBSUFFIX="t64"
+LIBSUFFIX=""
 
 librarysymbolsfromfile() {
 	local MISSING="$(grep '^+#MISSING' "$1")"
