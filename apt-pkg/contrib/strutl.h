@@ -98,7 +98,7 @@ APT_PUBLIC std::string TimeRFC1123(time_t Date, bool const NumericTimezone);
  * @return \b true if parsing was successful, otherwise \b false.
  */
 [[nodiscard]] APT_PUBLIC bool RFC1123StrToTime(const std::string &str,time_t &time);
-[[nodiscard]] APT_PUBLIC bool FTPMDTMStrToTime(const char* const str,time_t &time);
+[[nodiscard, deprecated("Unused and untested in src:apt")]] APT_PUBLIC bool FTPMDTMStrToTime(const char *str, time_t &time);
 APT_PUBLIC std::string LookupTag(const std::string &Message,const char *Tag,const char *Default = 0);
 APT_PUBLIC int StringToBool(const std::string &Text,int Default = -1);
 APT_PUBLIC bool ReadMessages(int Fd, std::vector<std::string> &List);

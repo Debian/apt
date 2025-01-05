@@ -487,35 +487,11 @@ Signed-By:
     source list.</para></listitem>
     </varlistentry>
 
-    <varlistentry><term><command>ftp</command></term>
-    <listitem><para>
-    The ftp scheme specifies an FTP server for an archive. Use of FTP is on the
-    decline in favour of <literal>http</literal> and <literal>https</literal>
-    and many archives either never offered or are retiring FTP access. If you
-    still need this method many configuration options for it are available in
-    the <literal>Acquire::ftp</literal> scope and detailed in &apt-conf;.</para>
-    <para>Please note that an FTP proxy can be specified
-    by using the <envar>ftp_proxy</envar> environment variable. It is possible
-    to specify an HTTP proxy (HTTP proxy servers often understand FTP URLs)
-    using this environment variable and <emphasis>only</emphasis> this
-    environment variable. Proxies using HTTP specified in
-    the configuration file will be ignored.</para></listitem>
-    </varlistentry>
-
     <varlistentry><term><command>copy</command></term>
     <listitem><para>
     The copy scheme is identical to the file scheme except that packages are
     copied into the cache directory instead of used directly at their location.
     This is useful for people using removable media to copy files around with APT.</para></listitem>
-    </varlistentry>
-    
-    <varlistentry><term><command>rsh</command></term><term><command>ssh</command></term>
-    <listitem><para>
-    The rsh/ssh method invokes RSH/SSH to connect to a remote host and
-    access the files as a given user. Prior configuration of rhosts or RSA keys
-    is recommended. The standard <command>find</command> and <command>dd</command>
-    commands are used to perform the file transfers from the remote host.
-    </para></listitem>
     </varlistentry>
 
     <varlistentry><term>adding more recognizable URI types</term>

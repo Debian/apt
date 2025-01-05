@@ -3422,61 +3422,6 @@ msgid ""
 "&apt-transport-https; manpages respectively."
 msgstr ""
 
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml
-msgid ""
-"<literal>ftp::Proxy</literal> sets the default proxy to use for FTP URIs.  "
-"It is in the standard form of <literal>ftp://[[user][:pass]@]host[:port]/</"
-"literal>.  Per host proxies can also be specified by using the form "
-"<literal>ftp::Proxy::&lt;host&gt;</literal> with the special keyword "
-"<literal>DIRECT</literal> meaning to use no proxies. If no one of the above "
-"settings is specified, <envar>ftp_proxy</envar> environment variable will be "
-"used. To use an FTP proxy you will have to set the <literal>ftp::ProxyLogin</"
-"literal> script in the configuration file. This entry specifies the commands "
-"to send to tell the proxy server what to connect to. Please see "
-"&configureindex; for an example of how to do this. The substitution "
-"variables representing the corresponding URI component are "
-"<literal>$(PROXY_USER)</literal>, <literal>$(PROXY_PASS)</literal>, "
-"<literal>$(SITE_USER)</literal>, <literal>$(SITE_PASS)</literal>, "
-"<literal>$(SITE)</literal> and <literal>$(SITE_PORT)</literal>."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml
-msgid ""
-"The option <literal>timeout</literal> sets the timeout timer used by the "
-"method; this value applies to the connection as well as the data timeout."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml
-msgid ""
-"Several settings are provided to control passive mode. Generally it is safe "
-"to leave passive mode on; it works in nearly every environment.  However, "
-"some situations require that passive mode be disabled and port mode FTP used "
-"instead. This can be done globally or for connections that go through a "
-"proxy or for a specific host (see the sample config file for examples)."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml
-msgid ""
-"It is possible to proxy FTP over HTTP by setting the <envar>ftp_proxy</"
-"envar> environment variable to an HTTP URL - see the discussion of the http "
-"method above for syntax. You cannot set this in the configuration file and "
-"it is not recommended to use FTP over HTTP due to its low efficiency."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml
-msgid ""
-"The setting <literal>ForceExtended</literal> controls the use of RFC2428 "
-"<literal>EPSV</literal> and <literal>EPRT</literal> commands. The default is "
-"false, which means these commands are only used if the control connection is "
-"IPv6. Setting this to true forces their use even on IPv4 connections. Note "
-"that most FTP servers do not support RFC2428."
-msgstr ""
-
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><literallayout>
 #: apt.conf.5.xml
 #, no-wrap
@@ -4120,11 +4065,6 @@ msgstr ""
 #: apt.conf.5.xml
 msgid ""
 "Print information related to accessing <literal>cdrom://</literal> sources."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt.conf.5.xml
-msgid "Print information related to downloading packages using FTP."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -6459,40 +6399,10 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml
 msgid ""
-"The ftp scheme specifies an FTP server for an archive. Use of FTP is on the "
-"decline in favour of <literal>http</literal> and <literal>https</literal> "
-"and many archives either never offered or are retiring FTP access. If you "
-"still need this method many configuration options for it are available in "
-"the <literal>Acquire::ftp</literal> scope and detailed in &apt-conf;."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml
-msgid ""
-"Please note that an FTP proxy can be specified by using the "
-"<envar>ftp_proxy</envar> environment variable. It is possible to specify an "
-"HTTP proxy (HTTP proxy servers often understand FTP URLs)  using this "
-"environment variable and <emphasis>only</emphasis> this environment "
-"variable. Proxies using HTTP specified in the configuration file will be "
-"ignored."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml
-msgid ""
 "The copy scheme is identical to the file scheme except that packages are "
 "copied into the cache directory instead of used directly at their location.  "
 "This is useful for people using removable media to copy files around with "
 "APT."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml
-msgid ""
-"The rsh/ssh method invokes RSH/SSH to connect to a remote host and access "
-"the files as a given user. Prior configuration of rhosts or RSA keys is "
-"recommended. The standard <command>find</command> and <command>dd</command> "
-"commands are used to perform the file transfers from the remote host."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
@@ -9448,7 +9358,6 @@ msgid ""
 "\n"
 " For example:\n"
 "      file:/mnt/debian,\n"
-"      ftp://ftp.example.org/debian,\n"
 "      http://deb.debian.org/debian,\n"
 "\n"
 "\n"
