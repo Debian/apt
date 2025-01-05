@@ -36,6 +36,7 @@ message(STATUS "Building libapt-pkg ${MAJOR} (release ${MINOR})")
 set(APT_PKG_MAJOR ${MAJOR} PARENT_SCOPE) # exporting for methods/CMakeLists.txt
 
 configure_file(apt-pkg.pc.in ${CMAKE_CURRENT_BINARY_DIR}/apt-pkg.pc @ONLY)
+configure_file(versionscript.in ${CMAKE_CURRENT_BINARY_DIR}/versionscript @ONLY)
 
 # Definition of the C++ files used to build the library - note that this
 # is expanded at CMake time, so you have to rerun cmake if you add or remove
@@ -45,7 +46,6 @@ file(GLOB_RECURSE headers "*.h")
 
 # Create a library using the C++ files
 add_library(apt-pkg SHARED ${library})
-add_dependencies(apt-pkg apt-pkg-versionscript)
 # Link the library and set the SONAME
 target_include_directories(apt-pkg
                            PRIVATE ${ZLIB_INCLUDE_DIRS}
@@ -77,7 +77,7 @@ target_link_libraries(apt-pkg
 set_target_properties(apt-pkg PROPERTIES VERSION ${MAJOR}.${MINOR})
 set_target_properties(apt-pkg PROPERTIES SOVERSION ${MAJOR})
 set_target_properties(apt-pkg PROPERTIES CXX_VISIBILITY_PRESET hidden)
-add_version_script(apt-pkg)
+target_link_libraries(apt-pkg PRIVATE -Wl,-version-script="${CMAKE_CURRENT_BINARY_DIR}/versionscript")
 
 # Install the library and the header files
 install(TARGETS apt-pkg LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
