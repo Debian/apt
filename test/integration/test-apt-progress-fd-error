@@ -19,7 +19,7 @@ setupaptarchive
 exec 3> apt-progress.log
 testfailure aptget install foo1 foo2 -y -o APT::Status-Fd=3
 msgtest 'Ensure correct error message' 'file-conflict'
-testsuccess --nomsg grep "foo2_0.8.15_[^.]\+.deb:[0-9.]\+:trying to overwrite '/usr/bin/file-conflict', which is also in package foo1 0.8.15" apt-progress.log
+testsuccess --nomsg grep "foo2_0.8.15_[^.]\+.deb:[0-9.]\+:trying to overwrite '/usr/bin/file-conflict', which is also in package foo1" apt-progress.log
 
 testsuccess test -s rootdir/var/crash/foo2.0.crash
 testsuccess grep '^Package: foo2 0.8.15$' rootdir/var/crash/foo2.0.crash

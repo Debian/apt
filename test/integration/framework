@@ -1112,9 +1112,11 @@ insertinstalledpackage() {
 	for arch in $(getarchitecturesfromcommalist "$ARCH"); do
 		echo "Package: $NAME
 Status: $STATUS
-Priority: $PRIORITY
-Section: $SECTION
-Installed-Size: 42
+Priority: $PRIORITY" >> "$FILE"
+		if [ "$SECTION" != '<none>' ]; then
+			echo "Section: $SECTION" >> "$FILE"
+		fi
+		echo "Installed-Size: 42
 Maintainer: Joe Sixpack <joe@example.org>
 Version: $VERSION" >> "$FILE"
 		test "$arch" = 'none' || echo "Architecture: $arch" >> "$FILE"

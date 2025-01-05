@@ -20,15 +20,17 @@ buildsimplenativepackage 'browser' 'amd64' '42' 'unstable'
 buildsimplenativepackage 'texteditor' 'amd64' '1' 'stable'
 buildsimplenativepackage 'bad-texteditor' 'amd64' '1' 'stable' 'Depends: texteditor
 Conflicts: mydesktop-core'
-buildsimplenativepackage 'nosection' 'amd64' '1' 'stable' '' '' '<none>'
 buildsimplenativepackage 'foreignpkg' 'i386' '1' 'stable' 'Multi-Arch: foreign'
 setupaptarchive
 
+insertinstalledpackage 'nosection' 'amd64' '1' '' '' '' '' '<none>'
+
+testsuccess aptmark auto nosection
+testempty aptmark showmanual
+testsuccess aptget install mydesktop -y -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
+
 testsuccess aptcache show nosection
 testfailure grep 'Section' rootdir/tmp/testsuccess.output
-testempty aptmark showmanual
-
-testsuccess aptget install mydesktop -y -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 -o Debug::pkgDepCache::AutoInstall=1
 
 testmarkedmanual 'mydesktop'
 testmarkedauto 'mydesktop-core' 'foreignpkg:i386' 'texteditor' 'browser' 'nosection'
