@@ -357,7 +357,7 @@ bool APT::Solver::PropagateInstall(Var var)
    if (auto Pkg = var.Pkg(cache); not Pkg.end())
    {
       bool anyInstallable = false;
-
+      bool anyMust = false;
       // Insert the work item.
       Work workItem{Var(Pkg), depth(), Group::SelectVersion};
       for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
@@ -365,6 +365,8 @@ bool APT::Solver::PropagateInstall(Var var)
 	 workItem.solutions.push_back(ver);
 	 if ((*this)[ver].decision != Decision::MUSTNOT)
 	    anyInstallable = true;
+	 if ((*this)[ver].decision == Decision::MUST)
+	    anyMust = true;
       }
 
       if (not anyInstallable)
@@ -384,7 +386,9 @@ bool APT::Solver::PropagateInstall(Var var)
       else if (not Enqueue(Var(pkgCache::VerIterator(cache, workItem.solutions[0])), true, workItem.reason))
 	 return false;
 
-      if (not EnqueueCommonDependencies(Pkg))
+      // FIXME: We skip enqueuing duplicate common dependencies if we already selected a version, but
+      // we should not have common dependencies duplicated in the version objects anyway.
+      if (not anyMust && not EnqueueCommonDependencies(Pkg))
 	 return false;
    }
    else if (auto Ver = var.Ver(cache); not Ver.end())
