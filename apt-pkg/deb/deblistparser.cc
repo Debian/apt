@@ -563,6 +563,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    return res;
 }
+#if APT_PKG_ABI <= 600
 const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 					APT::StringView &Package,APT::StringView &Ver,
 					unsigned int &Op, bool ParseArchFlags,
@@ -580,7 +581,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    return res;
 }
-
+#endif
 
 const char *debListParser::ParseDepends(const char *Start, const char *Stop,
 					string_view &Package, string_view &Ver,

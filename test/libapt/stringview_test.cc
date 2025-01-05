@@ -1,11 +1,13 @@
-
 #include <config.h>
+#include <apt-pkg/macros.h>
 #include <apt-pkg/string_view.h>
 #include <string>
 
 #include <type_traits>
 
 #include "common.h"
+
+#if APT_PKG_ABI <= 600
 
 TEST(StringViewTest,EmptyString)
 {
@@ -94,3 +96,4 @@ TEST(StringViewTest,RFind)
    EXPECT_EQ(defString.to_string().rfind('l',6), defString.rfind('l',6));
    EXPECT_EQ(defString.to_string().rfind('l',11), defString.rfind('l',11));
 }
+#endif
