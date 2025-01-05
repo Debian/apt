@@ -74,8 +74,6 @@ function(add_version_script target)
                        COMMAND echo "${name} {global: *; };" > "${script}"
                        VERBATIM )
     add_custom_target(${target}-versionscript DEPENDS "${script}")
-    target_link_libraries(${target} PRIVATE -Wl,-version-script="${script}")
-    add_dependencies(${target} ${target}-versionscript)
 endfunction()
 
 function(path_join out path1 path2)
