@@ -337,23 +337,16 @@ bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
       std::cerr << "[" << depth() << "] " << (decision ? "Install" : "Reject") << ":" << var.toString(cache) << " (" << WhyStr(state.reason) << ")\n";
 
    solved.push_back(Solved{var, std::nullopt});
-   propQ.push(var);
 
    if (not decision)
-      needsRescore = true;
-
-   return true;
-}
-
-bool APT::Solver::Propagate()
-{
-   while (!propQ.empty())
    {
-      Var var = propQ.front();
-      propQ.pop();
-      if ((*this)[var].decision == Decision::MUST && not PropagateInstall(var))
+      if (not PropagateReject(var))
 	 return false;
-      else if ((*this)[var].decision == Decision::MUSTNOT && not PropagateReject(var))
+      needsRescore = true;
+   }
+   else
+   {
+      if (not PropagateInstall(var))
 	 return false;
    }
    return true;
@@ -822,14 +815,8 @@ void APT::Solver::RescoreWorkIfNeeded()
 
 bool APT::Solver::Solve()
 {
-   while (true)
+   while (not work.empty())
    {
-      if (not Propagate() && not Pop())
-	 return false;
-
-      if (work.empty())
-	 break;
-
       // Rescore the work if we need to
       RescoreWorkIfNeeded();
       // *NOW* we can pop the item.
@@ -999,7 +986,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
       }
    }
 
-   return Propagate();
+   return true;
 }
 
 bool APT::Solver::ToDepCache(pkgDepCache &depcache)
