@@ -281,6 +281,16 @@ class APT_PUBLIC pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	{
 	   return (static_cast<Version::Extra *>(Owner->Map.Data()) + S->d)->PhasedUpdatePercentage;
 	}
+	inline void ArchVariant(map_stringitem_t variant) const
+	{
+	   (static_cast<Version::Extra *>(Owner->Map.Data()) + S->d)->ArchVariant = variant;
+	}
+	inline std::string_view ArchVariant() const
+	{
+	   if (auto I = (static_cast<Version::Extra *>(Owner->Map.Data()) + S->d)->ArchVariant)
+	      return Owner->ViewString(I);
+	   return {};
+	}
 	inline bool PhasedUpdatePercentage(unsigned int percentage)
 	{
 	   if (percentage > 100)

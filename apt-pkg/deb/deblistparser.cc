@@ -215,6 +215,9 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    Ver->NextInSource = G->VersionsInSource;
    G->VersionsInSource = Ver.MapPointer();
 
+   if (auto ArchVar = Section.Find(pkgTagSection::Key::Architecture_Variant); not ArchVar.empty())
+      Ver.ArchVariant(StoreString(pkgCacheGenerator::MIXED, ArchVar));
+
    Ver->MultiArch = ParseMultiArch(true);
    // Archive Size
    Ver->Size = Section.FindULL(pkgTagSection::Key::Size);
@@ -1016,6 +1019,9 @@ bool debListParser::SameVersion(uint32_t Hash,		/*{{{*/
    // available everywhere, but easier to check here than to include in VersionHash
    unsigned char MultiArch = ParseMultiArch(false);
    if (MultiArch != Ver->MultiArch)
+      return false;
+
+   if (ArchVariant() != Ver.ArchVariant())
       return false;
    // for all practical proposes (we can check): same version
    return true;

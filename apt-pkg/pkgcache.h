@@ -724,6 +724,7 @@ struct pkgCache::Version
 struct pkgCache::Version::Extra
 {
    uint8_t PhasedUpdatePercentage;
+   map_stringitem_t ArchVariant;
 };
 #endif
 									/*}}}*/
