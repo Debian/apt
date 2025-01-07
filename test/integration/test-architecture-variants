@@ -1,0 +1,244 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+msgmsg "Test basic ordering scenarios"
+
+echo 'APT::Architecture-Variants { "amd64v3"; "amd64v2" }' > 'rootdir/etc/apt/apt.conf.d/variants'
+insertpackage 'unstable' 'foo' 'amd64:amd64v2' '1'
+insertpackage 'unstable' 'foo' 'amd64' '1'
+insertpackage 'unstable' 'foo' 'amd64:amd64v3' '1'
+setupaptarchive  --no-update
+
+testsuccessequal "" aptget update -qq
+
+testsuccessequal "foo:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages" aptcache policy foo
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v3.deb' foo_1_amd64v3.deb 42 " apt install --print-uris -qqq foo
+
+echo 'APT::Architecture-Variants { "amd64v2"; "amd64v3" }' > 'rootdir/etc/apt/apt.conf.d/variants'
+testsuccessequal "foo:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages" aptcache policy foo
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v2.deb' foo_1_amd64v2.deb 42 " apt install --print-uris -qqq foo
+echo 'APT::Architecture-Variants { "amd64v3" }' > 'rootdir/etc/apt/apt.conf.d/variants'
+testsuccessequal "foo:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages" aptcache policy foo
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v3.deb' foo_1_amd64v3.deb 42 " apt install --print-uris -qqq foo
+
+
+echo 'APT::Architecture-Variants { "amd64v3"; "amd64v2" }' > 'rootdir/etc/apt/apt.conf.d/variants'
+
+msgmsg "Test upgrade calculation: amd64v3 updates to amd64"
+
+insertpackage 'unstable' 'foo' 'amd64' '2'
+insertinstalledpackage 'foo' 'amd64:amd64v3' '1'
+setupaptarchive  --no-update
+
+testsuccessequal "" aptget update -qq
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages
+ *** 1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages" aptcache policy foo
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_amd64.deb' foo_2_amd64.deb 42 " apt dist-upgrade --print-uris -qqq
+
+msgmsg "Test upgrade calculation: amd64v3 updates to amd64v3 now"
+insertpackage 'unstable' 'foo' 'amd64:amd64v3' '2'
+setupaptarchive  --no-update
+
+testsuccessequal "" aptget update -qq
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages
+ *** 1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages" aptcache policy foo
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_amd64v3.deb' foo_2_amd64v3.deb 42 " apt dist-upgrade --print-uris -qqq
+
+msgmsg "Test standalone architecture variants"
+sed -i 's/^Architectures:.*/Architectures: all amd64 amd64v3/' aptarchive/dists/unstable/Release
+signreleasefiles
+testsuccessequal "" aptget update -qq
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+ *** 1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy foo -o standalone=v3
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_amd64v3.deb' foo_2_amd64v3.deb 42 " apt dist-upgrade --print-uris -qqq -o standalone=v3
+
+sed -i 's/^Architectures:.*/Architectures: all amd64 amd64v3 amd64v2/' aptarchive/dists/unstable/Release
+signreleasefiles
+testsuccessequal "" aptget update -qq
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+ *** 1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy foo -o standalone=v3,v2
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_amd64v3.deb' foo_2_amd64v3.deb 42 " apt dist-upgrade --print-uris -qqq -o standalone=v3,v2
+
+sed -i 's/^Architectures:.*/Architectures: all amd64 amd64v2/' aptarchive/dists/unstable/Release
+signreleasefiles
+testsuccessequal "" aptget update -qq
+# Notably v2 is now the standalone architecture so we need to fetch v3 and v2.
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+ *** 1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages" aptcache policy foo -o standalone=v2
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_amd64v3.deb' foo_2_amd64v3.deb 42 " apt dist-upgrade --print-uris -qqq -o standalone=v2
+
+# amd64v2 is preferred now
+sed -i 's/^Architectures:.*/Architectures: all amd64 amd64v3 amd64v2/' aptarchive/dists/unstable/Release
+echo 'APT::Architecture-Variants { "amd64v2"; "amd64v3" }' > 'rootdir/etc/apt/apt.conf.d/variants'
+signreleasefiles
+testsuccessequal "" aptget update -qq
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages
+ *** 1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy foo -o standalone=v3,v2 -o pref=v2
+msgtest 'Test that amd64v2 is the candidate of the version 1'
+testsuccessequal --nomsg "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v2.deb' foo_1_amd64v2.deb 42 " apt dist-upgrade --print-uris -qqq -o standalone=v3,v2 -o pref=v2 foo=1
+
+msgmsg "Test automatic detection"
+echo "flags	 : lm" > rootdir/cpuinfo
+echo "flags	 : lm cmov cx8 fpu fxsr mmx syscall sse2 cx16 lahf_lm popcnt sse4_1 sse4_2 ssse3" >> rootdir/cpuinfo
+echo 'APT::Architecture-Variants "auto";' > 'rootdir/etc/apt/apt.conf.d/variants'
+echo 'Dir::Proc::CpuInfo "cpuinfo";'>> 'rootdir/etc/apt/apt.conf.d/variants'
+testsuccessequal "" aptget update -qq
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy foo -o auto=intersection
+
+echo "flags	 : lm cmov cx8 fpu fxsr mmx syscall sse2 cx16 lahf_lm popcnt sse4_1 sse4_2 ssse3" > rootdir/cpuinfo
+echo 'APT::Architecture-Variants "auto";' > 'rootdir/etc/apt/apt.conf.d/variants'
+echo 'Dir::Proc::CpuInfo "cpuinfo";'>> 'rootdir/etc/apt/apt.conf.d/variants'
+testsuccessequal "" aptget update -qq
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy foo -o auto=v2
+
+# Not a valid value for the auto field.
+echo 'APT::Architecture-Variants "invalid";' > 'rootdir/etc/apt/apt.conf.d/variants'
+echo 'Dir::Proc::CpuInfo "cpuinfo";'>> 'rootdir/etc/apt/apt.conf.d/variants'
+testwarningequal "W: Invalid value for APT::Architecture-Variants: invalid" aptget update -qq
+testwarningequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+W: Invalid value for APT::Architecture-Variants: invalid" aptcache policy foo -o auto=invalid
+
+# The unqualified one takes precedent
+echo 'APT::Architecture-Variants "invalid";' > 'rootdir/etc/apt/apt.conf.d/variants'
+echo 'APT::Architecture-Variants:: "amd64v2";' >> 'rootdir/etc/apt/apt.conf.d/variants'
+echo 'Dir::Proc::CpuInfo "cpuinfo";'>> 'rootdir/etc/apt/apt.conf.d/variants'
+testwarningequal "Variants enabled:
+W: Invalid value for APT::Architecture-Variants: invalid" aptget update -qq -o debug::acquire::variants=1
+testwarningequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+W: Invalid value for APT::Architecture-Variants: invalid" aptcache policy foo -o auto=invalid+v2
+
+
+echo 'APT::Architecture-Variants "auto,amd64v2";' > 'rootdir/etc/apt/apt.conf.d/variants'
+echo 'Dir::Proc::CpuInfo "cpuinfo";'>> 'rootdir/etc/apt/apt.conf.d/variants'
+testwarningequal "Variants enabled: amd64v2
+Variant target file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages supplants target file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages
+W: Invalid value for APT::Architecture-Variants: auto cannot be combined with explicit variants" aptget update -qq -o debug::acquire::variants=1
+testwarningequal "foo:
+  Installed: 1
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+W: Invalid value for APT::Architecture-Variants: auto cannot be combined with explicit variants" aptcache policy foo -o auto=auto,v2

@@ -51,6 +51,7 @@ APT
   Audit "<BOOL>"; // display audit messages
   Architecture "<STRING>"; // debian architecture like amd64, i386, powerpc, armhf, mips, …
   Architectures "<LIST>"; // a list of (foreign) debian architectures, defaults to: dpkg --print-foreign-architectures
+  Architecture-Variants "<STRING_OR_LIST>"; // a list of variants or the string auto
   BarbarianArchitectures "<LIST>"; // a list of architectures considered too foreign to satisfy M-A:foreign
 
   Build-Essential "<LIST>"; // list of package names
@@ -468,6 +469,9 @@ Dir "<DIR>"
   Boot "<DIR>";
   Usr "<DIR>";
   Apport "<DIR>";
+  Proc "<DIR"> {
+    CpuInfo "<FILE>";
+  };
 };
 
 // Things that effect the APT dselect method
@@ -567,6 +571,7 @@ Debug
   Acquire::Transaction "<BOOL>";
   Acquire::Progress "<BOOL>";
   Acquire::Retries "<BOOL>";    // Debugging for retries, especially delays
+  Acquire::Variants "<BOOL>";    // Debugging for architecture variants
   aptcdrom "<BOOL>";        // Show found package files
   IdentCdrom "<BOOL>";
   acquire::netrc "<BOOL>";  // netrc parser
@@ -900,6 +905,7 @@ dir::filelistdir "<STRING>";
 dir::dpkg::tupletable "<FILE>";
 dir::dpkg::triplettable "<FILE>";
 dir::dpkg::cputable "<FILE>";
+dir::dpkg::varianttable "<FILE>";
 Rred::t "<BOOL>";
 Rred::f "<BOOL>";
 Rred::Compress "<STRING>";

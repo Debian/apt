@@ -131,6 +131,15 @@ namespace Configuration {							/*{{{*/
 	/** \return Check usr is merged or produce error. */
 	APT_PUBLIC bool checkUsrMerged();
 	APT_PUBLIC std::string color(std::string const &colorName, std::string const &content = "");
+
+	struct ArchitectureVariant
+	{
+	   std::string name;
+	   std::string base;
+	   std::vector<std::string> cpuflags;
+	   std::vector<std::string> supplants{};
+	};
+	APT_HIDDEN std::vector<ArchitectureVariant> getArchitectureVariants(bool cached);
 #endif
 
 	/*}}}*/

@@ -34,13 +34,13 @@
 #include <algorithm>
 #include <array>
 #include <cerrno>
-#include <ctime>
 #include <chrono>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <numeric>
@@ -1598,6 +1598,48 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	       componentsSeen.emplace(std::move(component));
 	 }
 
+   auto variants = APT::Configuration::getArchitectureVariants(true);
+   std::set<IndexTarget *> supplantedTargets;
+   std::set<std::string> seenVariants;
+   if (hasReleaseFile)
+   {
+      // Figure out the variants that are standalone and supplant 'lesser' variants
+      for (auto &variant : variants)
+      {
+	 // Check if the variant is standalone, that is, in the Architectures: field.
+	 // FIXME: We should support Standalone-Architecture-Variants field here
+	 if (not TransactionManager->MetaIndexParser->IsArchitectureSupported(variant.name))
+	    continue;
+
+	 seenVariants.insert(variant.name);
+
+	 // Iterate over all targets belonging to the architecture variant and then see if they
+	 // supplant any other target. For example main/binary-amd64v3/Packages supplants main/binary-amd64/Packages
+	 // but it won't supplant the contrib entry, or a Contents file.
+	 for (auto &Target : IndexTargets)
+	 {
+	    if (Target.Option(IndexTarget::ARCHITECTURE) != variant.name)
+	       continue;
+
+	    for (auto &BaseTarget : IndexTargets)
+	    {
+	       if (BaseTarget.Option(IndexTarget::IDENTIFIER) == Target.Option(IndexTarget::IDENTIFIER) &&
+		   BaseTarget.Option(IndexTarget::COMPONENT) == Target.Option(IndexTarget::COMPONENT) &&
+		   // Variants we already saw can never be supplanted here, because they are ordered by preference
+		   seenVariants.find(BaseTarget.Option(IndexTarget::ARCHITECTURE)) == seenVariants.end() &&
+		   // BaseTarget is supplanted by Target on the architecture CPU
+		   std::find(variant.supplants.begin(), variant.supplants.end(), BaseTarget.Option(IndexTarget::ARCHITECTURE)) != variant.supplants.end())
+	       {
+		  if (_config->FindB("Debug::Acquire::Variants", false))
+		     std::clog << "Variant target " << Target.Description << " supplants target " << BaseTarget.Description << std::endl;
+		  supplantedTargets.insert(&BaseTarget);
+	       }
+	    }
+	 }
+	 //
+      }
+   }
+
    for (auto&& Target: IndexTargets)
    {
       // if we have seen a target which is created-by a target this one here is declared a
@@ -1608,6 +1650,14 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	 new CleanupItem(Owner, TransactionManager, Target);
 	 continue;
       }
+
+      // If the target has been supplanted by a variant target, skip it.
+      if (supplantedTargets.find(&Target) != supplantedTargets.end())
+      {
+	 new CleanupItem(Owner, TransactionManager, Target);
+	 continue;
+      }
+
       // all is an implementation detail. Users shouldn't use this as arch
       // We need this support trickery here as e.g. Debian has binary-all files already,
       // but arch:all packages are still in the arch:any files, so we would waste precious
@@ -3497,7 +3547,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
 	    all repositories containing this file */
 	 StoreFilename = QuoteString(Version.ParentPkg().Name(), "_:") + '_' +
 			 QuoteString(Version.VerStr(), "_:") + '_' +
-			 QuoteString(Version.Arch(), "_:.") +
+			 QuoteString(Version.ArchVariant().empty() ? Version.Arch() : Version.ArchVariant().data(), "_:.") +
 			 '.' += flExtension(poolfilename);
 
 	 Desc.URI = Index->ArchiveURI(poolfilename);
