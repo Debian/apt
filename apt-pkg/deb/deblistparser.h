@@ -99,6 +99,10 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
    {
       return Section.Find(pkgTagSection::Key::SHA256);
    }
+   std::string_view ArchVariant() const
+   {
+      return Section.Find(pkgTagSection::Key::Architecture_Variant);
+   }
 #endif
 };
 
