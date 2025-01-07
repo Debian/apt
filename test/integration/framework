@@ -1033,10 +1033,12 @@ insertpackage() {
 			continue
 		fi
 		for arch in $(getarchitecturesfromcommalist "$ARCH"); do
+			local variant="${arch#*:}"
+			arch="${arch%:*}"
 			if [ "$arch" = 'none' ]; then
 				ARCHS="$(getarchitectures)"
 			else
-				ARCHS="$arch"
+				ARCHS="$variant"
 			fi
 			for BUILDARCH in $ARCHS; do
 				local PPATH="aptarchive/dists/${RELEASE}/${DISTSECTION}/binary-${BUILDARCH}"
@@ -1054,8 +1056,9 @@ Size: 42"
                     fi
                     echo "Maintainer: Joe Sixpack <joe@example.org>"
 					test "$arch" = 'none' || echo "Architecture: $arch"
+					test "$arch" = "$variant" || echo "Architecture-Variant: $variant"
 					echo "Version: $VERSION
-Filename: pool/${DISTSECTION}/${NAME}/${NAME}_${VERSION}_${arch}.deb"
+Filename: pool/${DISTSECTION}/${NAME}/${NAME}_${VERSION}_${variant}.deb"
 					test -z "$DEPENDENCIES" || printf "%b\n" "$DEPENDENCIES"
 					echo "Description: $(printf '%s' "$DESCRIPTION" | head -n 1)"
 					echo "Description-md5: $(printf '%s' "$DESCRIPTION" | md5sum | cut -d' ' -f 1)"
@@ -1118,6 +1121,8 @@ insertinstalledpackage() {
 	local FILE='rootdir/var/lib/dpkg/status'
 	local INFO='rootdir/var/lib/dpkg/info'
 	for arch in $(getarchitecturesfromcommalist "$ARCH"); do
+		local variant="${arch#*:}"
+		arch="${arch%:*}"
 		echo "Package: $NAME
 Status: $STATUS
 Priority: $PRIORITY" >> "$FILE"
@@ -1128,6 +1133,7 @@ Priority: $PRIORITY" >> "$FILE"
 Maintainer: Joe Sixpack <joe@example.org>
 Version: $VERSION" >> "$FILE"
 		test "$arch" = 'none' || echo "Architecture: $arch" >> "$FILE"
+		test "$arch" = "$variant" || echo "Architecture-Variant: $variant" >> "$FILE"
 		test -z "$DEPENDENCIES" || printf "%b\n" "$DEPENDENCIES" >> "$FILE"
 		printf "%b\n" "Description: $DESCRIPTION" >> "$FILE"
 		echo >> "$FILE"

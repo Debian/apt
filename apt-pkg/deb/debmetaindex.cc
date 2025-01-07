@@ -1068,6 +1068,10 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
 	auto veryforeign = _config->FindVector("APT::BarbarianArchitectures");
 	Values.reserve(Values.size() + veryforeign.size());
 	std::move(veryforeign.begin(), veryforeign.end(), std::back_inserter(Values));
+	// Let's treat architecture variants as architectures for sources.list parsing
+	auto variants = _config->FindVector("APT::Architecture-Variants");
+	Values.reserve(Values.size() + variants.size());
+	std::move(variants.begin(), variants.end(), std::back_inserter(Values));
      }
       // all is a very special architecture users shouldn't be concerned with explicitly
       // but if the user does, do not override the choice
