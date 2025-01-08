@@ -842,22 +842,26 @@ struct TlsFd final : public MethodFd
       case SSL_ERROR_WANT_READ:
       case SSL_ERROR_WANT_WRITE:
 	 errno = EAGAIN;
-	 break;
+	 return -1;
       case SSL_ERROR_ZERO_RETURN:
 	 // Remote host has closed connection
 	 errno = 0;
-	 break;
+	 return 0;
       case SSL_ERROR_SYSCALL:
 	 broken = true;
 	 _error->Errno("openssl", "OpenSSL system call error: %s\n", ssl_strerr());
-	 break;
+	 return -1;
       case SSL_ERROR_SSL:
 	 broken = true;
 	 errno = EIO;
 	 _error->Error("OpenSSL error: %s\n", ssl_strerr());
-	 break;
+	 return -1;
+      default:
+	 broken = true;
+	 errno = EIO;
+	 _error->Error("Unexpected OpenSSL error: %s\n", ssl_strerr());
+	 return -1;
       }
-      return r;
    }
 
    int Close() override
