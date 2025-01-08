@@ -849,6 +849,7 @@ struct TlsFd final : public MethodFd
 	 break;
       case SSL_ERROR_SYSCALL:
 	 broken = true;
+	 _error->Errno("openssl", "OpenSSL system call error: %s\n", ssl_strerr());
 	 break;
       case SSL_ERROR_SSL:
 	 broken = true;
