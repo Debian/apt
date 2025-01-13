@@ -44,9 +44,9 @@ bool pkgPackageManager::SigINTStop = false;
 // ---------------------------------------------------------------------
 /* */
 pkgPackageManager::pkgPackageManager(pkgDepCache *pCache) : Cache(*pCache),
-							    List(NULL), Res(Incomplete), d(NULL)
+							    List(nullptr), Res(Incomplete), d(nullptr)
 {
-   FileNames = new string[Cache.Head().PackageCount];
+   FileNames = std::make_unique<string[]>(Cache.Head().PackageCount);
    Debug = _config->FindB("Debug::pkgPackageManager",false);
    NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
    ImmConfigureAll = _config->FindB("APT::Immediate-Configure-All",false);
@@ -55,11 +55,7 @@ pkgPackageManager::pkgPackageManager(pkgDepCache *pCache) : Cache(*pCache),
 // PM::PackageManager - Destructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgPackageManager::~pkgPackageManager()
-{
-   delete List;
-   delete [] FileNames;
-}
+pkgPackageManager::~pkgPackageManager() = default;
 									/*}}}*/
 // PM::GetArchives - Queue the archives for download			/*{{{*/
 // ---------------------------------------------------------------------
@@ -109,7 +105,7 @@ bool pkgPackageManager::FixMissing()
 {   
    pkgDepCache::ActionGroup group(Cache);
    pkgProblemResolver Resolve(&Cache);
-   List->SetFileList(FileNames);
+   List->SetFileList(FileNames.get());
 
    bool Bad = false;
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
@@ -123,8 +119,7 @@ bool pkgPackageManager::FixMissing()
    }
  
    // We have to empty the list otherwise it will not have the new changes
-   delete List;
-   List = 0;
+   List.reset();
    
    if (Bad == false)
       return true;
@@ -176,8 +171,7 @@ bool pkgPackageManager::CreateOrderList()
    if (List != 0)
       return true;
    
-   delete List;
-   List = new pkgOrderList(&Cache);
+   List = std::make_unique<pkgOrderList>(&Cache);
 
    if (Debug && ImmConfigureAll) 
       clog << "CreateOrderList(): Adding Immediate flag for all packages because of APT::Immediate-Configure-All" << endl;
@@ -1065,7 +1059,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 
    bool const ordering =
 	_config->FindB("PackageManager::UnpackAll",true) ?
-		List->OrderUnpack(FileNames) : List->OrderCritical();
+		List->OrderUnpack(FileNames.get()) : List->OrderCritical();
    if (ordering == false)
    {
       _error->Error("Internal ordering error");
