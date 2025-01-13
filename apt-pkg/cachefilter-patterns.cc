@@ -559,30 +559,29 @@ namespace Patterns
 
 BaseRegexMatcher::BaseRegexMatcher(std::string const &Pattern)
 {
-   pattern = new regex_t;
-   int const Res = regcomp(pattern, Pattern.c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB);
+   pattern.emplace();
+   int const Res = regcomp(&*pattern, Pattern.c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB);
    if (Res == 0)
       return;
 
-   delete pattern;
-   pattern = NULL;
    char Error[300];
-   regerror(Res, pattern, Error, sizeof(Error));
+   regerror(Res, &*pattern, Error, sizeof(Error));
    _error->Error(_("Regex compilation error - %s"), Error);
+
+   pattern.reset();
 }
 bool BaseRegexMatcher::operator()(const char *string)
 {
-   if (unlikely(pattern == nullptr) || string == nullptr)
+   if (unlikely(pattern == std::nullopt) || string == nullptr)
       return false;
    else
-      return regexec(pattern, string, 0, 0, 0) == 0;
+      return regexec(&*pattern, string, 0, 0, 0) == 0;
 }
 BaseRegexMatcher::~BaseRegexMatcher()
 {
-   if (pattern == NULL)
+   if (pattern == std::nullopt)
       return;
-   regfree(pattern);
-   delete pattern;
+   regfree(&*pattern);
 }
 } // namespace Patterns
 
