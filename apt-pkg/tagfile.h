@@ -25,6 +25,7 @@
 #include <cstdio>
 
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 #include <apt-pkg/string_view.h>
@@ -47,7 +48,7 @@ class APT_PUBLIC pkgTagSection
    unsigned int AlphaIndexes[128];
    unsigned int BetaIndexes[128];
 
-   pkgTagSectionPrivate * const d;
+   std::unique_ptr<pkgTagSectionPrivate> const d;
 
    APT_HIDDEN bool FindInternal(unsigned int Pos,const char *&Start, const char *&End) const;
    APT_HIDDEN APT::StringView FindInternal(unsigned int Pos) const;
@@ -189,7 +190,7 @@ class APT_PUBLIC pkgTagSection
  * for comments e.g. needs to be enabled explicitly. */
 class APT_PUBLIC pkgTagFile
 {
-   pkgTagFilePrivate * const d;
+   std::unique_ptr<pkgTagFilePrivate> const d;
 
    APT_HIDDEN bool Fill();
    APT_HIDDEN bool Resize();
