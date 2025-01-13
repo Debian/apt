@@ -57,8 +57,8 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : VerPins(nullptr),
 {
    if (Owner == 0)
       return;
-   PFPriority = new signed short[Owner->Head().PackageFileCount];
-   VerPins = new Pin[Owner->Head().VersionCount];
+   PFPriority = std::make_unique<signed short[]>(Owner->Head().PackageFileCount);
+   VerPins = std::make_unique<Pin[]>(Owner->Head().VersionCount);
 
    auto VersionCount = Owner->Head().VersionCount;
    for (decltype(VersionCount) I = 0; I != VersionCount; ++I)
@@ -237,7 +237,7 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 	    // Find matching version(s) and copy the pin into it
 	    pkgVersionMatch Match(P.Data,P.Type);
 	    if (Match.VersionMatches(Ver)) {
-	       Pin *VP = VerPins + Ver->ID;
+	       Pin *VP = &VerPins[Ver->ID];
 	       if (VP->Type == pkgVersionMatch::None) {
 		  *VP = P;
 		   matched = true;
@@ -260,7 +260,7 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 	    for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() != true; ++Ver)
 	    {
 	       if (Match.VersionMatches(Ver)) {
-		  Pin *VP = VerPins + Ver->ID;
+		  Pin *VP = &VerPins[Ver->ID];
 		  if (VP->Type == pkgVersionMatch::None) {
 		     *VP = P;
 		      matched = true;
@@ -503,9 +503,4 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
 }
 									/*}}}*/
 
-pkgPolicy::~pkgPolicy()
-{
-   delete[] PFPriority;
-   delete[] VerPins;
-   delete d;
-}
+pkgPolicy::~pkgPolicy() = default;
