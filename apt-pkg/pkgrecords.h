@@ -33,7 +33,7 @@ class APT_PUBLIC pkgRecords							/*{{{*/
    void * const d;
    
    pkgCache &Cache;
-   std::vector<Parser *>Files;
+   std::vector<std::unique_ptr<Parser>>Files;
 
     public:
    // Lookup function
