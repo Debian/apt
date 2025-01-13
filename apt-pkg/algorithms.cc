@@ -1291,18 +1291,18 @@ bool pkgProblemResolver::ResolveByKeepInternal()
       high score packages cause the removal of lower score packages that
       would cause the removal of even lower score packages. */
    auto Size = Cache.Head().PackageCount;
-   pkgCache::Package **PList = new pkgCache::Package *[Size];
-   pkgCache::Package **PEnd = PList;
+   std::unique_ptr<pkgCache::Package *[]> PList{new pkgCache::Package *[Size]};
+   pkgCache::Package **PEnd = &PList[0];
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
       *PEnd++ = I;
 
-   std::sort(PList,PEnd,[this](Package *a, Package *b) { return ScoreSort(a, b) < 0; });
+   std::sort(&PList[0],PEnd,[this](Package *a, Package *b) { return ScoreSort(a, b) < 0; });
 
 
    if (_config->FindB("Debug::pkgProblemResolver::ShowScores",false) == true)
    {
       clog << "Show Scores" << endl;
-      for (pkgCache::Package **K = PList; K != PEnd; K++)
+      for (pkgCache::Package **K = &PList[0]; K != PEnd; K++)
          if (Scores[(*K)->ID] != 0)
          {
            pkgCache::PkgIterator Pkg(Cache,*K);
@@ -1315,7 +1315,8 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 
    // Consider each broken package 
    pkgCache::Package **LastStop = 0;
-   for (pkgCache::Package **K = PList; K != PEnd; K++)
+restart:
+   for (pkgCache::Package **K = &PList[0]; K != PEnd; K++)
    {
       pkgCache::PkgIterator I(Cache,*K);
 
@@ -1333,10 +1334,7 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 	    clog << "Keeping package " << I.FullName(false) << endl;
 	 Cache.MarkKeep(I, false, false);
 	 if (InstOrNewPolicyBroken(I) == false)
-	 {
-	    K = PList - 1;
-	    continue;
-	 }
+	    goto restart;
       }
       
       // Isolate the problem dependencies
@@ -1405,14 +1403,11 @@ bool pkgProblemResolver::ResolveByKeepInternal()
           // I is an iterator based off our temporary package list,
           // so copy the name we need before deleting the temporary list
           std::string const LoopingPackage = I.FullName(false);
-          delete[] PList;
           return _error->Error("Internal Error, pkgProblemResolver::ResolveByKeep is looping on package %s.", LoopingPackage.c_str());
       }
       LastStop = K;
-      K = PList - 1;
+      goto restart;
    }
-
-   delete[] PList;
 
    if (Cache.BrokenCount() != 0)
       return _error->Error(_("Unable to correct problems, you have held broken packages."));
