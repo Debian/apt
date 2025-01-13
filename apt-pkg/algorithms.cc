@@ -798,16 +798,16 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
       high score packages cause the removal of lower score packages that
       would cause the removal of even lower score packages. */
    std::unique_ptr<pkgCache::Package *[]> PList(new pkgCache::Package *[Size]);
-   pkgCache::Package **PEnd = PList.get();
+   pkgCache::Package **PEnd = &PList[0];
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
       *PEnd++ = I;
 
-   std::sort(PList.get(), PEnd, [this](Package *a, Package *b) { return ScoreSort(a, b) < 0; });
+   std::sort(&PList[0], PEnd, [this](Package *a, Package *b) { return ScoreSort(a, b) < 0; });
 
    if (_config->FindB("Debug::pkgProblemResolver::ShowScores",false) == true)
    {
       clog << "Show Scores" << endl;
-      for (pkgCache::Package **K = PList.get(); K != PEnd; K++)
+      for (pkgCache::Package **K = &PList[0]; K != PEnd; K++)
          if (Scores[(*K)->ID] != 0)
          {
            pkgCache::PkgIterator Pkg(Cache,*K);
@@ -831,7 +831,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
    for (int Counter = 0; Counter < MaxCounter && Change; ++Counter)
    {
       Change = false;
-      for (pkgCache::Package **K = PList.get(); K != PEnd; K++)
+      for (pkgCache::Package **K = &PList[0]; K != PEnd; K++)
       {
 	 pkgCache::PkgIterator I(Cache,*K);
 
@@ -960,7 +960,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 	    }
 	    
 	    bool Done = false;
-	    for (pkgCache::Version **V = VList.get(); *V != 0; V++)
+	    for (pkgCache::Version **V = &VList[0]; *V != 0; V++)
 	    {
 	       pkgCache::VerIterator Ver(Cache,*V);
 	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
@@ -1365,7 +1365,7 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 
 	    // Look at all the possible provides on this package
 	    std::unique_ptr<pkgCache::Version *[]> VList(Start.AllTargets());
-	    for (pkgCache::Version **V = VList.get(); *V != 0; V++)
+	    for (pkgCache::Version **V = &VList[0]; *V != 0; V++)
 	    {
 	       pkgCache::VerIterator Ver(Cache,*V);
 	       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
