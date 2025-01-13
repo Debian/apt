@@ -75,6 +75,9 @@ public:
    };
    std::list<FileChunk> chunks;
 
+   bool FillBuffer();
+   void RemoveCommentsFromBuffer();
+
    ~pkgTagFilePrivate()
    {
       if (Buffer != NULL)
@@ -156,10 +159,7 @@ void pkgTagFile::Init(FileFd * const pFd,unsigned long long Size)
 }
 									/*}}}*/
 // TagFile::~pkgTagFile - Destructor					/*{{{*/
-pkgTagFile::~pkgTagFile()
-{
-   delete d;
-}
+pkgTagFile::~pkgTagFile() = default;
 									/*}}}*/
 // TagFile::Offset - Return the current offset in the buffer		/*{{{*/
 APT_PURE unsigned long pkgTagFile::Offset()
@@ -264,57 +264,57 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
 // ---------------------------------------------------------------------
 /* This takes the bit at the end of the buffer and puts it at the start
    then fills the rest from the file */
-static bool FillBuffer(pkgTagFilePrivate * const d)
+bool pkgTagFilePrivate::FillBuffer()
 {
    unsigned long long Actual = 0;
    // See if only a bit of the file is left
-   unsigned long long const dataSize = d->Size - ((d->End - d->Buffer) + 1);
-   if (d->Fd->Read(d->End, dataSize, &Actual) == false)
+   unsigned long long const dataSize = Size - ((End - Buffer) + 1);
+   if (Fd->Read(End, dataSize, &Actual) == false)
       return false;
    if (Actual != dataSize)
-      d->Done = true;
-   d->End += Actual;
+      Done = true;
+   End += Actual;
    return true;
 }
-static void RemoveCommentsFromBuffer(pkgTagFilePrivate * const d)
+void pkgTagFilePrivate::RemoveCommentsFromBuffer()
 {
    // look for valid comments in the buffer
    char * good_start = nullptr, * bad_start = nullptr;
-   char * current = d->Start;
-   if (d->isCommentedLine == false)
+   char * current = Start;
+   if (isCommentedLine == false)
    {
-      if (d->Start == d->Buffer)
+      if (Start == Buffer)
       {
 	 // the start of the buffer is a newline as a record can't start
 	 // in the middle of a line by definition.
-	 if (*d->Start == '#')
+	 if (*Start == '#')
 	 {
-	    d->isCommentedLine = true;
+	    isCommentedLine = true;
 	    ++current;
-	    if (current > d->End)
-	       d->chunks.emplace_back(false, 1);
+	    if (current > End)
+	       chunks.emplace_back(false, 1);
 	 }
       }
-      if (d->isCommentedLine == false)
-	 good_start = d->Start;
+      if (isCommentedLine == false)
+	 good_start = Start;
       else
-	 bad_start = d->Start;
+	 bad_start = Start;
    }
    else
-      bad_start = d->Start;
+      bad_start = Start;
 
    std::vector<std::pair<char*, size_t>> good_parts;
-   while (current <= d->End)
+   while (current <= End)
    {
-      size_t const restLength = (d->End - current);
-      if (d->isCommentedLine == false)
+      size_t const restLength = (End - current);
+      if (isCommentedLine == false)
       {
 	 current = static_cast<char*>(memchr(current, '#', restLength));
 	 if (current == nullptr)
 	 {
-	    size_t const goodLength = d->End - good_start;
-	    d->chunks.emplace_back(true, goodLength);
-	    if (good_start != d->Start)
+	    size_t const goodLength = End - good_start;
+	    chunks.emplace_back(true, goodLength);
+	    if (good_start != Start)
 	       good_parts.push_back(std::make_pair(good_start, goodLength));
 	    break;
 	 }
@@ -324,10 +324,10 @@ static void RemoveCommentsFromBuffer(pkgTagFilePrivate * const d)
 	 if (*current == '\n')
 	 {
 	    size_t const goodLength = (current - good_start) + 1;
-	    d->chunks.emplace_back(true, goodLength);
+	    chunks.emplace_back(true, goodLength);
 	    good_parts.push_back(std::make_pair(good_start, goodLength));
 	    good_start = nullptr;
-	    d->isCommentedLine = true;
+	    isCommentedLine = true;
 	 }
 	 current += 2;
       }
@@ -336,17 +336,17 @@ static void RemoveCommentsFromBuffer(pkgTagFilePrivate * const d)
 	 current = static_cast<char*>(memchr(current, '\n', restLength));
 	 if (current == nullptr)
 	 {
-	    d->chunks.emplace_back(false, (d->End - bad_start));
+	    chunks.emplace_back(false, (End - bad_start));
 	    break;
 	 }
 	 ++current;
 	 // is the next line a comment, too?
-	 if (current >= d->End || *current != '#')
+	 if (current >= End || *current != '#')
 	 {
-	    d->chunks.emplace_back(false, (current - bad_start));
+	    chunks.emplace_back(false, (current - bad_start));
 	    good_start = current;
 	    bad_start = nullptr;
-	    d->isCommentedLine = false;
+	    isCommentedLine = false;
 	 }
 	 ++current;
       }
@@ -355,31 +355,31 @@ static void RemoveCommentsFromBuffer(pkgTagFilePrivate * const d)
    if (good_parts.empty() == false)
    {
       // we found comments, so move later parts over them
-      current = d->Start;
+      current = Start;
       for (auto const &good: good_parts)
       {
 	 memmove(current, good.first, good.second);
 	 current += good.second;
       }
-      d->End = current;
+      End = current;
    }
 
-   if (d->isCommentedLine == true)
+   if (isCommentedLine == true)
    {
       // deal with a buffer containing only comments
       // or an (unfinished) comment at the end
       if (good_parts.empty() == true)
-	 d->End = d->Start;
+	 End = Start;
       else
-	 d->Start = d->End;
+	 Start = End;
    }
    else
    {
       // the buffer was all comment, but ended with the buffer
-      if (good_parts.empty() == true && good_start >= d->End)
-	 d->End = d->Start;
+      if (good_parts.empty() == true && good_start >= End)
+	 End = Start;
       else
-	 d->Start = d->End;
+	 Start = End;
    }
 }
 bool pkgTagFile::Fill()
@@ -396,10 +396,10 @@ bool pkgTagFile::Fill()
    unsigned long long Actual = 0;
    while (d->Done == false && d->Size > (Actual + 1))
    {
-      if (FillBuffer(d) == false)
+      if (d->FillBuffer() == false)
 	 return false;
       if ((d->Flags & pkgTagFile::SUPPORT_COMMENTS) != 0)
-	 RemoveCommentsFromBuffer(d);
+	 d->RemoveCommentsFromBuffer();
       Actual = d->End - d->Buffer;
    }
    d->Start = d->Buffer;
@@ -1107,4 +1107,4 @@ bool pkgTagSection::Write(FileFd &File, pkgTagSection::WriteFlags flags, char co
 
 #include "tagfile-order.c"
 
-pkgTagSection::~pkgTagSection() { delete d; }
+pkgTagSection::~pkgTagSection() = default;
