@@ -37,7 +37,8 @@ pkgRecords::pkgRecords(pkgCache &aCache) : d(NULL), Cache(aCache),
          return;
       }
 
-      Files[I->ID] = Type->CreatePkgParser(I);
+      // FIXME: CreatePkgParser shall return unique_ptr
+      Files[I->ID] = std::unique_ptr<Parser>{Type->CreatePkgParser(I)};
       if (Files[I->ID] == 0)
          return;
    }
@@ -46,15 +47,7 @@ pkgRecords::pkgRecords(pkgCache &aCache) : d(NULL), Cache(aCache),
 // Records::~pkgRecords - Destructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgRecords::~pkgRecords()
-{
-   for ( std::vector<Parser*>::iterator it = Files.begin();
-     it != Files.end();
-     ++it)
-   {
-      delete *it;
-   }
-}
+pkgRecords::~pkgRecords() = default;
 									/*}}}*/
 // Records::Lookup - Get a parser for the package version file		/*{{{*/
 // ---------------------------------------------------------------------
