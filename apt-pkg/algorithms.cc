@@ -61,8 +61,8 @@ pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
 {
    Sim.Init(0);
    auto PackageCount = Cache->Head().PackageCount;
-   Flags = new unsigned char[PackageCount];
-   memset(Flags,0,sizeof(*Flags)*PackageCount);
+   Flags = std::make_unique<unsigned char[]>(PackageCount);
+   memset(&Flags[0],0,sizeof(Flags[0])*PackageCount);
 
    // Fake a filename so as not to activate the media swapping
    string Jnk = "SIMULATE";
@@ -73,11 +73,7 @@ pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
 }
 									/*}}}*/
 // Simulate::~Simulate - Destructor					/*{{{*/
-pkgSimulate::~pkgSimulate()
-{
-   delete[] Flags;
-   delete d;
-}
+pkgSimulate::~pkgSimulate() = default;
 									/*}}}*/
 // Simulate::Describe - Describe a package				/*{{{*/
 // ---------------------------------------------------------------------
@@ -411,9 +407,9 @@ pkgProblemResolver::pkgProblemResolver(pkgDepCache *pCache) : d(NULL), Cache(*pC
 {
    // Allocate memory
    auto const Size = Cache.Head().PackageCount;
-   Scores = new int[Size];
-   Flags = new unsigned char[Size];
-   memset(Flags,0,sizeof(*Flags)*Size);
+   Scores = std::make_unique<int[]>(Size);
+   Flags = std::make_unique<unsigned char[]>(Size);
+   memset(&Flags[0],0,sizeof(Flags[0])*Size);
    
    // Set debug to true to see its decision logic
    Debug = _config->FindB("Debug::pkgProblemResolver",false);
@@ -422,11 +418,7 @@ pkgProblemResolver::pkgProblemResolver(pkgDepCache *pCache) : d(NULL), Cache(*pC
 // ProblemResolver::~pkgProblemResolver - Destructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgProblemResolver::~pkgProblemResolver()
-{
-   delete [] Scores;
-   delete [] Flags;
-}
+pkgProblemResolver::~pkgProblemResolver() = default;
 									/*}}}*/
 // ProblemResolver::ScoreSort - Sort the list by score			/*{{{*/
 // ---------------------------------------------------------------------
@@ -446,7 +438,7 @@ int pkgProblemResolver::ScoreSort(Package const *A,Package const *B)
 void pkgProblemResolver::MakeScores()
 {
    auto const Size = Cache.Head().PackageCount;
-   memset(Scores,0,sizeof(*Scores)*Size);
+   memset(&Scores[0],0,sizeof(Scores[0])*Size);
 
    // maps to pkgCache::State::VerPriority: 
    //    Required Important Standard Optional Extra
@@ -563,7 +555,7 @@ void pkgProblemResolver::MakeScores()
 
    // Copy the scores to advoid additive looping
    std::unique_ptr<int[]> OldScores(new int[Size]);
-   memcpy(OldScores.get(),Scores,sizeof(*Scores)*Size);
+   memcpy(&OldScores[0],&Scores[0],sizeof(Scores[0])*Size);
       
    /* Now we cause 1 level of dependency inheritance, that is we add the 
       score of the packages that depend on the target Package. This 

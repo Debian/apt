@@ -46,7 +46,7 @@
 class pkgSimulatePrivate;
 class APT_PUBLIC pkgSimulate : public pkgPackageManager				/*{{{*/
 {
-   pkgSimulatePrivate * const d;
+   std::unique_ptr<pkgSimulatePrivate> const d;
    protected:
 
    class APT_PUBLIC Policy : public pkgDepCache::Policy
@@ -62,7 +62,7 @@ class APT_PUBLIC pkgSimulate : public pkgPackageManager				/*{{{*/
       explicit Policy(pkgDepCache *Cache) : Cache(Cache) {};
    };
    
-   unsigned char *Flags;
+   std::unique_ptr<unsigned char[]> Flags;
    
    Policy iPolicy;
    pkgDepCache Sim;
@@ -112,8 +112,8 @@ class APT_PUBLIC pkgProblemResolver						/*{{{*/
       ToRemove = (1 << 4),
       BrokenPolicyAllowed = (1 << 5)
    };
-   int *Scores;
-   unsigned char *Flags;
+   std::unique_ptr<int[]> Scores;
+   std::unique_ptr<unsigned char[]> Flags;
    bool Debug;
    
    // Sort stuff
