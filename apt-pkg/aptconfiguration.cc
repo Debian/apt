@@ -24,6 +24,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <dirent.h>
@@ -311,6 +312,33 @@ bool Configuration::checkLanguage(std::string Lang, bool const All) {
 	Lang = SubstVar(Lang, "%5f", "_");
 	std::vector<std::string> const langs = getLanguages(All, true);
 	return (std::find(langs.begin(), langs.end(), Lang) != langs.end());
+}
+									/*}}}*/
+
+// getArchitectures - Return Vector of preferred Architectures		/*{{{*/
+std::vector<Configuration::ArchitectureVariant> Configuration::getArchitectureVariantTable(bool cached)
+{
+   std::vector<ArchitectureVariant> static variants;
+   if (likely(cached) && not variants.empty())
+      return variants;
+
+   std::ifstream table("/usr/share/dpkg/varianttable");
+   for (std::string line; std::getline(table, line);)
+   {
+      if (line[0] == '#' || line[0] == '\0')
+	 continue;
+      auto cols = APT::String::Split(line);
+
+      variants.push_back(ArchitectureVariant{cols[0], cols[1], VectorizeString(cols[2], ',')});
+   }
+   if (!table.eof())
+   {
+      variants.clear();
+      _error->Error("Error reading the CPU table");
+      return variants;
+   }
+
+   return variants;
 }
 									/*}}}*/
 // getArchitectures - Return Vector of preferred Architectures		/*{{{*/
