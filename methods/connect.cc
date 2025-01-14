@@ -995,7 +995,7 @@ static SSL_CTX *GetContextForHost(std::string const &host, aptConfigWrapperForMe
 }
 
 ResultState UnwrapTLS(std::string const &Host, std::unique_ptr<MethodFd> &Fd,
-		      unsigned long const Timeout, aptMethod *const Owner,
+		      unsigned long const Timeout, aptMethod *const /*Owner*/,
 		      aptConfigWrapperForMethods const *const OwnerConf)
 {
    if (_config->FindB("Acquire::AllowTLS", true) == false)
