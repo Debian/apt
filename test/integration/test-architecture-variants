@@ -58,7 +58,9 @@ msgmsg "Test upgrade calculation: amd64v3 updates to amd64"
 
 insertpackage 'unstable' 'foo' 'amd64' '2'
 insertinstalledpackage 'foo' 'amd64:amd64v3' '1'
-setupaptarchive
+setupaptarchive  --no-update
+
+testsuccessequal "" aptget update -qq
 testsuccessequal "foo:
   Installed: 1
   Candidate: 2
@@ -76,7 +78,9 @@ testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_am
 
 msgmsg "Test upgrade calculation: amd64v3 updates to amd64v3 now"
 insertpackage 'unstable' 'foo' 'amd64:amd64v3' '2'
-setupaptarchive
+setupaptarchive  --no-update
+
+testsuccessequal "" aptget update -qq
 testsuccessequal "foo:
   Installed: 1
   Candidate: 2
