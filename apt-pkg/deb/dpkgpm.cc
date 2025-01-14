@@ -1773,7 +1773,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 
    // this loop is runs once per dpkg operation
    vector<Item>::const_iterator I = List.cbegin();
-   BuildDpkgCall Args;
    while (I != List.end())
    {
       // Do all actions with the same Op in one run
@@ -1795,7 +1794,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       else
 	 J = std::find_if(J, List.cend(), [&J](Item const &I) { return I.Op != J->Op; });
 
-      Args.clearCallArguments();
+      BuildDpkgCall Args;
       Args.reserve((J - I) + 10);
 
       int fd[2];

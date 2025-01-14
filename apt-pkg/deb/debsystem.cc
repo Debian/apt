@@ -392,7 +392,16 @@ std::string debSystem::StripDpkgChrootDirectory(std::string const &File)/*{{{*/
 									/*}}}*/
 std::string debSystem::GetDpkgExecutable()				/*{{{*/
 {
-   return StripDpkgChrootDirectory(_config->Find("Dir::Bin::dpkg","dpkg"));
+   std::string dpkg_executable = _config->Find("Dir::Bin::dpkg","dpkg");
+   if (APT::String::Startswith(dpkg_executable, "/")) {
+      struct stat buf;
+      if (stat(dpkg_executable.c_str(), &buf) != 0) {
+         _error->Warning(_("The dpkg executable set in Dir::Bin::dpkg is "
+                          "missing, falling back to using default dpkg."));
+        dpkg_executable = "dpkg";
+      }
+   }
+   return StripDpkgChrootDirectory(dpkg_executable);
 }
 									/*}}}*/
 std::vector<std::string> debSystem::GetDpkgBaseCommand()		/*{{{*/
