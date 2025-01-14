@@ -1,3 +1,35 @@
+apt (2.9.22) unstable; urgency=medium
+
+  [ Balint Reczey ]
+  * apt-pkg/deb/debsystem.cc: Fall back to "dpkg" when Dir::Bin::dpkg is not found
+
+  [ Julian Andres Klode ]
+  * debian/changelog: v3 signature packet, not v3 subkey
+  * Ensure we can build with APT_PKG_ABI > 601
+  * ssl: Set an error when we receive SSL_ERROR_SYSCALL
+  * ssl: Explictly return -1 (error) or 0 (server closed connection)
+  * abicheck: Add some workarounds to avoid errors
+  * t/i/test-method-gpgv-legacy-keyring: Switch to http, extend
+  * proxy: Avoids triggering bounds check in std::string_view
+  * methods/connect: Avoid unused argument warning
+
+  [ David Kalnischkies ]
+  * Resolve autopkgtest failures caused by dpkg >= 1.22.12 (Closes: #1092090)
+  * Try stomping a little less on global macro namespace
+  * Add pkgCache::{Priority,DepType}_NoL10n to avoid duplication
+  * Replaces macros with C++ attributes: APT_OVERRIDE, APT_ARRAY_SIZE, APT_NORETURN,
+    APT_DEPRECATED, APT_UNUSED, APT_MUSTCHECK, APT_IGNORE_DEPRECATED
+  * Drop SourceListWarnings::NonFreeFirmware messages
+  * Remove leftovers of the apt-key removal
+  * Move apt-extractexamples desc line from apt-utils to apt (Closes: #1091344)
+  * Remove leftovers from ftp and rsh/ssh methods removal
+  * Change multi sources.list entry example from FTP to HTTPS
+
+  [ Sergio Durigan Junior ]
+  * d/t/control: Don't depend on gdb-minimal.
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 14 Jan 2025 18:33:08 +0100
+
 apt (2.9.21) unstable; urgency=medium
 
   [ Simon McVittie ]
