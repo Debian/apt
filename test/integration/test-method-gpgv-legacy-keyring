@@ -7,46 +7,59 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture "amd64"
 
+insertpackage 'testing' 'foo' 'all' '1'
 insertpackage 'unstable' 'foo' 'all' '1'
 
 buildaptarchive
 setupaptarchive --no-update
+changetowebserver
 
-alias inrelease_size="stat -c %s aptarchive/dists/unstable/InRelease"
+alias inrelease_size="stat -c %s aptarchive/dists/testing/InRelease"
+alias uinrelease_size="stat -c %s aptarchive/dists/unstable/InRelease"
 
-cp  -a ${TMPWORKINGDIRECTORY}/aptarchive ${TMPWORKINGDIRECTORY}/aptarchive2
-
-sed s#aptarchive#aptarchive2# rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.list >> rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.list
-
-testsuccessequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
-Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [$(inrelease_size) B]
-Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
-Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [$(inrelease_size) B]
-Get:3 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main all Packages [246 B]
-Get:4 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main Translation-en [224 B]
-Get:5 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable/main all Packages [246 B]
-Get:6 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable/main Translation-en [224 B]
+testsuccessequal "Get:1 http://localhost:${APTHTTPPORT} testing InRelease [$(inrelease_size) B]
+Get:2 http://localhost:${APTHTTPPORT} unstable InRelease [$(uinrelease_size) B]
+Get:3 http://localhost:${APTHTTPPORT} testing/main all Packages [248 B]
+Get:4 http://localhost:${APTHTTPPORT} testing/main Translation-en [225 B]
+Get:5 http://localhost:${APTHTTPPORT} unstable/main all Packages [246 B]
+Get:6 http://localhost:${APTHTTPPORT} unstable/main Translation-en [224 B]
 Reading package lists..." aptget update -q
 
-cat rootdir/etc/apt/trusted.gpg.d/*.gpg > rootdir/etc/apt/trusted.gpg
-rm rootdir/etc/apt/trusted.gpg.d/*.gpg
+mv rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg rootdir/etc/apt/trusted.gpg
 
-testwarningequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
-Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [$(inrelease_size) B]
-Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
-Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [$(inrelease_size) B]
+testwarningequal "Hit:1 http://localhost:${APTHTTPPORT} testing InRelease
+Hit:2 http://localhost:${APTHTTPPORT} unstable InRelease
 Reading package lists...
-W: file:${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details.
-W: file:${TMPWORKINGDIRECTORY}/aptarchive2/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q
+W: http://localhost:${APTHTTPPORT}/dists/testing/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details.
+W: http://localhost:${APTHTTPPORT}/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q
 
 # 2.4.0 regression: If the InRelease file was signed with two keys, fallback to trusted.gpg did not
 # work: It ran the fallback, but then ignored the result, as keys were still missing.
 original_inrelease_size=$(inrelease_size)
-signreleasefiles 'Joe Sixpack,Marvin Paranoid'
-testwarningequal "Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
-Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [${original_inrelease_size} B]
-Get:1 file:${TMPWORKINGDIRECTORY}/aptarchive unstable InRelease [$(inrelease_size) B]
-Get:2 file:${TMPWORKINGDIRECTORY}/aptarchive2 unstable InRelease [${original_inrelease_size} B]
+cp -a aptarchive/dists/unstable/InRelease aptarchive/dists/unstable/InRelease.bak
+redatereleasefiles '+1 hour' 'Joe Sixpack,Marvin Paranoid'
+cp -a aptarchive/dists/unstable/InRelease.bak aptarchive/dists/unstable/InRelease
+testwarningequal "Get:1 http://localhost:${APTHTTPPORT} testing InRelease [$(inrelease_size) B]
+Hit:2 http://localhost:${APTHTTPPORT} unstable InRelease
 Reading package lists...
-W: file:${TMPWORKINGDIRECTORY}/aptarchive/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details.
-W: file:${TMPWORKINGDIRECTORY}/aptarchive2/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q -omsg=with-two-signatures
+W: http://localhost:${APTHTTPPORT}/dists/testing/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details.
+W: http://localhost:${APTHTTPPORT}/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q -omsg=with-two-signatures
+
+# Now the first one is good, hooray
+cp keys/marvinparanoid.pub rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
+testwarningequal "Hit:1 http://localhost:${APTHTTPPORT} testing InRelease
+Hit:2 http://localhost:${APTHTTPPORT} unstable InRelease
+Reading package lists...
+W: http://localhost:${APTHTTPPORT}/dists/unstable/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q -omsg=with-two-signatures
+
+# Now the 2nd one is good
+cp keys/marvinparanoid.pub rootdir/etc/apt/trusted.gpg.d/marvinparanoid.gpg
+redatereleasefiles '+2 hour' 'Joe Sixpack'
+cp -a aptarchive/dists/testing/InRelease aptarchive/dists/testing/InRelease.bak
+redatereleasefiles '+2 hour' 'Joe Sixpack,Marvin Paranoid'
+cp -a aptarchive/dists/testing/InRelease.bak aptarchive/dists/testing/InRelease
+testwarningequal "Get:1 http://localhost:${APTHTTPPORT} testing InRelease [$(inrelease_size) B]
+Get:2 http://localhost:${APTHTTPPORT} unstable InRelease [$(uinrelease_size) B]
+Reading package lists...
+W: http://localhost:${APTHTTPPORT}/dists/testing/InRelease: Key is stored in legacy trusted.gpg keyring (${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details." aptget update -q -omsg=with-two-signatures
+
