@@ -91,7 +91,7 @@ bool AutoDetectProxy(URI &URL)
       return true;
    APT::StringView const cleanedbuf = _strstrip(buf);
    // We warn about this as the implementor probably meant to use DIRECT instead
-   if (cleanedbuf[0] == '\0')
+   if (cleanedbuf.empty())
    {
       _error->Warning("ProxyAutoDetect command returned an empty line");
       return true;
