@@ -162,9 +162,9 @@ class DefaultRootSetFunc2 : public pkgDepCache::DefaultRootSetFunc
 
    public:
    DefaultRootSetFunc2(pkgCache *cache) : Kernels(APT::KernelAutoRemoveHelper::GetProtectedKernelsFilter(cache)) {};
-   virtual ~DefaultRootSetFunc2() {};
+   ~DefaultRootSetFunc2() override = default;
 
-   bool InRootSet(const pkgCache::PkgIterator &pkg) APT_OVERRIDE { return pkg.end() == false && ((*Kernels)(pkg) || DefaultRootSetFunc::InRootSet(pkg)); };
+   bool InRootSet(const pkgCache::PkgIterator &pkg) override { return pkg.end() == false && ((*Kernels)(pkg) || DefaultRootSetFunc::InRootSet(pkg)); };
 }; // FIXME: DEDUP with pkgDepCache.
 /*}}}*/
 

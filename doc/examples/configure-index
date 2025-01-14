@@ -132,7 +132,6 @@ APT
         SourceListWarnings "<BOOL>"
         {
            APTAuth "<BOOL>";
-           NonFreeFirmware "<BOOL>";
            SignedBy "<BOOL>";
         };
      };
@@ -334,31 +333,6 @@ Acquire
 	User-Agent "Debian APT-CURL/1.0";
   };
 
-  ftp
-  {
-    Proxy "ftp://127.0.0.1/";
-    Proxy::http.us.debian.org "DIRECT"; // Specific per-host setting
-
-    /* Required script to perform proxy login. This example should work
-       for tisfwtk */
-    ProxyLogin
-    {
-       "USER $(PROXY_USER)";
-       "PASS $(PROXY_PASS)";
-       "USER $(SITE_USER)@$(SITE):$(SITE_PORT)";
-       "PASS $(SITE_PASS)";
-    };
-    
-    Timeout "30";
-    ConnectionAttemptDelayMsec "250";
-    
-    /* Passive mode control, proxy, non-proxy and per-host. Pasv mode
-       is preferred if possible */
-    Passive "true";
-    Proxy::Passive "true";
-    Passive::http.us.debian.org "true"; // Specific per-host setting
-  };
-  
   cdrom
   {
     AutoDetect "<BOOL>"; // do auto detection of the cdrom mountpoint
@@ -579,7 +553,6 @@ Debug
   BuildDeps "<BOOL>";
   pkgInitialize "<BOOL>";   // This one will dump the configuration space
   NoLocking "<BOOL>";
-  Acquire::Ftp "<BOOL>";    // Show ftp command traffic
   Acquire::Http "<BOOL>";   // Show http command traffic
   Acquire::Https "<BOOL>";   // Show https debug
   Acquire::tor "<BOOL>";

@@ -89,12 +89,12 @@ class MirrorMethod : public aptMethod /*{{{*/
    };
    std::unordered_map<std::string, MirrorListInfo> mirrorfilestate;
 
-   virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
+   bool URIAcquire(std::string const &Message, FetchItem *Itm) override;
 
-   void RedirectItem(MirrorListInfo const &info, FetchItem *const Itm, std::string const &Message);
-   bool MirrorListFileReceived(MirrorListInfo &info, FetchItem *const Itm);
-   std::string GetMirrorFileURI(std::string const &Message, FetchItem *const Itm);
-   void DealWithPendingItems(std::vector<std::string> const &baseuris, MirrorListInfo const &info, FetchItem *const Itm, std::function<void()> handler);
+   void RedirectItem(MirrorListInfo const &info, FetchItem *Itm, std::string const &Message);
+   bool MirrorListFileReceived(MirrorListInfo &info, FetchItem *Itm);
+   std::string GetMirrorFileURI(std::string const &Message, FetchItem *Itm);
+   void DealWithPendingItems(std::vector<std::string> const &baseuris, MirrorListInfo const &info, FetchItem *Itm, std::function<void()> handler);
 
    public:
    explicit MirrorMethod(std::string &&pProg) : aptMethod(std::move(pProg), "2.0", SingleInstance | Pipeline | SendConfig | AuxRequests | SendURIEncoded), genrng(clock())

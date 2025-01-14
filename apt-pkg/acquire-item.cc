@@ -727,8 +727,8 @@ class APT_HIDDEN NoActionItem final : public pkgAcquire::Item		/*{{{*/
 {
    IndexTarget const Target;
    public:
-   virtual std::string DescURI() const APT_OVERRIDE {return Target.URI;};
-   virtual HashStringList GetExpectedHashes()  const APT_OVERRIDE {return HashStringList();};
+   [[nodiscard]] std::string DescURI() const override {return Target.URI;};
+   [[nodiscard]] HashStringList GetExpectedHashes() const override {return {};};
 
    NoActionItem(pkgAcquire * const Owner, IndexTarget const &Target) :
       pkgAcquire::Item(Owner), Target(Target)
@@ -751,8 +751,8 @@ class APT_HIDDEN CleanupItem final : public pkgAcqTransactionItem	/*{{{*/
    even if the lists-cleanup is deactivated. */
 {
    public:
-   virtual std::string DescURI() const APT_OVERRIDE {return Target.URI;};
-   virtual HashStringList GetExpectedHashes()  const APT_OVERRIDE {return HashStringList();};
+   [[nodiscard]] std::string DescURI() const override {return Target.URI;};
+   [[nodiscard]] HashStringList GetExpectedHashes() const override {return {};};
 
    CleanupItem(pkgAcquire * const Owner, pkgAcqMetaClearSig * const TransactionManager, IndexTarget const &Target) :
       pkgAcqTransactionItem(Owner, TransactionManager, Target)
@@ -760,7 +760,7 @@ class APT_HIDDEN CleanupItem final : public pkgAcqTransactionItem	/*{{{*/
       Status = StatDone;
       DestFile = GetFinalFileNameFromURI(Target.URI);
    }
-   bool TransactionState(TransactionStates const state) APT_OVERRIDE
+   bool TransactionState(TransactionStates const state) override
    {
       switch (state)
       {

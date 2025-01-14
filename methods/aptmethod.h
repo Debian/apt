@@ -120,7 +120,7 @@ protected:
    };
 
    public:
-   virtual bool Configuration(std::string Message) APT_OVERRIDE
+   bool Configuration(std::string Message) override
    {
       if (pkgAcqMethod::Configuration(Message) == false)
 	 return false;
@@ -540,7 +540,7 @@ class aptAuthConfMethod : public aptMethod
    std::vector<std::unique_ptr<FileFd>> authconfs;
 
    public:
-   virtual bool Configuration(std::string Message) APT_OVERRIDE
+   bool Configuration(std::string Message) override
    {
       if (pkgAcqMethod::Configuration(Message) == false)
 	 return false;

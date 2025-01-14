@@ -16,11 +16,8 @@ Comment:
  for the project has always been GPL-2+, so we cannot be sure that contributors
  meant to grant additional permissions.
  .
- Translation files are considered to generally be GPL-2+,
- but they also include strings used by methods/rsh.cc which appears to be GPL-2.
- As the translations are split into separate domains later on,
- these strings are not loaded by library users outside of apt
- (they are in the 'apt' translation domain).
+ Translation files are also considered to generally be GPL-2+,
+ but they might include strings used in code with other licenses.
  .
  The apt-pkg/contrib/fileutl.cc file states "RunScripts()" is "GPLv2".
  We believe that this was not meant to exclude later versions of the GPL,
@@ -55,23 +52,6 @@ License: GPL-2+
 Files: methods/connect.c
 Copyright: Copyright (c) 1996 - 2023, Daniel Stenberg, <daniel@haxx.se>, and many contributors
 License: GPL-2+ and curl
-
-Files: methods/rsh.cc
-Copyright: 2000 Ben Collins <bcollins@debian.org>
-License: GPL-2
-Comment:
- This file stated:
- Licensed under the GNU General Public License v2 [no exception clauses]
- .
- We believe that this was intended to be not a statement against future
- versions of the GPL, but meant to exclude the Qt license exception in
- place in APT until that time.
- .
- We received permission from Ben in 2021 to relicense under GPL-2+,
- contributions from Adam Heath and Daniel Hartwig may still have to
- be considered GPL-2 for the time being.
- .
- Other contributions are GPL-2+
 
 Files: CMake/FindBerkeley.cmake
 Copyright: 2006, Alexander Dymo, <adymo@kdevelop.org>

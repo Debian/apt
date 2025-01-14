@@ -29,7 +29,7 @@
 
 class FileMethod final : public aptMethod
 {
-   bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
+   bool URIAcquire(std::string const &Message, FetchItem *Itm) override;
 
    public:
    FileMethod() : aptMethod("file", "1.0", SingleInstance | SendConfig | LocalOnly | SendURIEncoded)

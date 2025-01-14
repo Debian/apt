@@ -56,7 +56,7 @@ namespace APT {
 APT_PUBLIC bool UTF8ToCodeset(const char *codeset, const std::string &orig, std::string *dest);
 APT_PUBLIC char *_strstrip(char *String);
 APT_PUBLIC char *_strrstrip(char *String); // right strip only
-APT_DEPRECATED_MSG("Use SubstVar to avoid memory headaches") APT_PUBLIC char *_strtabexpand(char *String,size_t Len);
+[[deprecated("Use SubstVar to avoid memory headaches")]] APT_PUBLIC char *_strtabexpand(char *String,size_t Len);
 APT_PUBLIC bool ParseQuoteWord(const char *&String,std::string &Res);
 APT_PUBLIC bool ParseCWord(const char *&String,std::string &Res);
 APT_PUBLIC std::string QuoteString(const std::string &Str,const char *Bad);
@@ -97,8 +97,8 @@ APT_PUBLIC std::string TimeRFC1123(time_t Date, bool const NumericTimezone);
  *    parsing is successful, undefined otherwise.
  * @return \b true if parsing was successful, otherwise \b false.
  */
-APT_PUBLIC bool RFC1123StrToTime(const std::string &str,time_t &time) APT_MUSTCHECK;
-APT_PUBLIC bool FTPMDTMStrToTime(const char* const str,time_t &time) APT_MUSTCHECK;
+[[nodiscard]] APT_PUBLIC bool RFC1123StrToTime(const std::string &str,time_t &time);
+[[nodiscard, deprecated("Unused and untested in src:apt")]] APT_PUBLIC bool FTPMDTMStrToTime(const char *str, time_t &time);
 APT_PUBLIC std::string LookupTag(const std::string &Message,const char *Tag,const char *Default = 0);
 APT_PUBLIC int StringToBool(const std::string &Text,int Default = -1);
 APT_PUBLIC bool ReadMessages(int Fd, std::vector<std::string> &List);

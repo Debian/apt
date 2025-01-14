@@ -21,32 +21,11 @@
 
 #include <ostream>
 #include <string>
-#include <tuple>
 
 #include <apti18n.h>
 									/*}}}*/
 
 // DoUpdate - Update the package lists					/*{{{*/
-static bool isDebianBookwormRelease(pkgCache::RlsFileIterator const &RlsFile)
-{
-   std::tuple<std::string_view, std::string_view, std::string_view> const affected[] = {
-      {"Debian", "Debian", "bookworm"},
-      {"Debian", "Debian", "sid"},
-   };
-   if (RlsFile.end() || RlsFile->Origin == nullptr || RlsFile->Label == nullptr || RlsFile->Codename == nullptr)
-      return false;
-   std::tuple<std::string_view, std::string_view, std::string_view> const release{RlsFile.Origin(), RlsFile.Label(), RlsFile.Codename()};
-   return std::find(std::begin(affected), std::end(affected), release) != std::end(affected);
-}
-static void suggestDebianNonFreeFirmware(char const *const repo, char const *const val,
-					 char const *const from, char const *const to)
-{
-   // Both messages are reused from the ReleaseInfoChange feature in acquire-item.cc
-   _error->Notice(_("Repository '%s' changed its '%s' value from '%s' to '%s'"), repo, val, from, to);
-   std::string notes;
-   strprintf(notes, "https://www.debian.org/releases/bookworm/%s/release-notes/ch-information.html#non-free-split", _config->Find("APT::Architecture").c_str());
-   _error->Notice(_("More information about this can be found online in the Release notes at: %s"), notes.c_str());
-}
 bool DoUpdate(CommandLine &CmdL)
 {
    if (CmdL.FileSize() != 1)
@@ -122,114 +101,6 @@ bool DoUpdate()
 	    // TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
 	    _error->Notice(_("Usage of %s should be preferred over embedding login information directly in the %s entry for '%s'"),
 			   "apt_auth.conf(5)", "sources.list(5)", URI::ArchiveOnly(uri).c_str());
-      }
-   }
-
-   if (_config->FindB("APT::Get::Update::SourceListWarnings::NonFreeFirmware", SLWarnings))
-   {
-      // If a Debian source has a non-free component, suggest adding non-free-firmware
-      bool found_affected_release = false;
-      bool found_non_free = false;
-      bool found_non_free_firmware = false;
-      for (auto *S : *List)
-      {
-	 if (not isDebianBookwormRelease(S->FindInCache(Cache, false)))
-	    continue;
-
-	 for (auto PkgFile = Cache.GetPkgCache()->FileBegin(); not PkgFile.end(); ++PkgFile)
-	 {
-	    if (PkgFile.Flagged(pkgCache::Flag::NoPackages))
-	       continue;
-	    found_affected_release = true;
-	    const auto * const comp = PkgFile.Component();
-	    if (comp == nullptr)
-	      continue;
-	    if (strcmp(comp, "non-free") == 0)
-	       found_non_free = true;
-	    else if (strcmp(comp, "non-free-firmware") == 0)
-	    {
-	       found_non_free_firmware = true;
-	       break;
-	    }
-	 }
-	 if (found_non_free_firmware)
-	    break;
-      }
-      if (not found_non_free_firmware && found_non_free && found_affected_release)
-      {
-	 /* See if a well-known firmware package is installable from this codename
-	    if so, we likely operate with new apt on an old snapshot not supporting non-free-firmware */
-	 bool suggest_non_free_firmware = true;
-	 if (auto const Grp = Cache.GetPkgCache()->FindGrp("firmware-linux-nonfree"); not Grp.end())
-	 {
-	    for (auto Pkg = Grp.PackageList(); not Pkg.end() && suggest_non_free_firmware; Pkg = Grp.NextPkg(Pkg))
-	    {
-	       for (auto Ver = Pkg.VersionList(); not Ver.end(); ++Ver)
-	       {
-		  if (not Ver.Downloadable())
-		     continue;
-		  for (auto VerFile = Ver.FileList(); not VerFile.end(); ++VerFile)
-		  {
-		     auto const PkgFile = VerFile.File();
-		     if (PkgFile.end())
-			continue;
-		     if (not isDebianBookwormRelease(PkgFile.ReleaseFile()))
-			continue;
-		     suggest_non_free_firmware = false;
-		     break;
-		  }
-		  if (not suggest_non_free_firmware)
-		     break;
-	       }
-	    }
-	 }
-	 if (suggest_non_free_firmware)
-	    suggestDebianNonFreeFirmware("Debian bookworm", "non-free component", "non-free", "non-free non-free-firmware");
-      }
-
-      if (not found_non_free_firmware && not found_non_free && found_affected_release)
-      {
-	 /* Try to notify users who have installed firmware packages at some point, but
-	    have not enabled non-free currently – they might want to opt into updates now */
-	 std::string_view const affected_pkgs[] = {
-	    "amd64-microcode", "atmel-firmware", "bluez-firmware", "dahdi-firmware-nonfree",
-	    "firmware-amd-graphics", "firmware-ast", "firmware-atheros", "firmware-bnx2",
-	    "firmware-bnx2x", "firmware-brcm80211", "firmware-cavium", "firmware-intel-sound",
-	    "firmware-intelwimax", "firmware-ipw2x00", "firmware-ivtv", "firmware-iwlwifi",
-	    "firmware-libertas", "firmware-linux", "firmware-linux-nonfree", "firmware-misc-nonfree",
-	    "firmware-myricom", "firmware-netronome", "firmware-netxen", "firmware-qcom-media",
-	    "firmware-qcom-soc", "firmware-qlogic", "firmware-realtek", "firmware-realtek-rtl8723cs-bt",
-	    "firmware-samsung", "firmware-siano", "firmware-sof-signed", "firmware-ti-connectivity",
-	    "firmware-zd1211", "intel-microcode", "midisport-firmware", "raspi-firmware",
-	 };
-	 bool suggest_non_free_firmware = false;
-	 for (auto pkgname : affected_pkgs)
-	 {
-	    auto const Grp = Cache.GetPkgCache()->FindGrp(pkgname);
-	    if (Grp.end())
-	       continue;
-	    for (auto Pkg = Grp.PackageList(); not Pkg.end(); Pkg = Grp.NextPkg(Pkg))
-	    {
-	       auto const Ver = Pkg.CurrentVer();
-	       if (Ver.end() || Ver.Downloadable())
-		  continue;
-	       bool another = false;
-	       for (auto V = Pkg.VersionList(); not V.end(); ++V)
-		  if (V.Downloadable())
-		  {
-		     another = true;
-		     break;
-		  }
-	       if (another)
-		  continue;
-	       suggest_non_free_firmware = true;
-	       break;
-	    }
-	    if (suggest_non_free_firmware)
-	       break;
-	 }
-	 if (suggest_non_free_firmware)
-	    suggestDebianNonFreeFirmware("Debian bookworm", "firmware component", "non-free", "non-free-firmware");
       }
    }
 

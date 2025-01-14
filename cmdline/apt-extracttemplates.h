@@ -24,10 +24,10 @@ class DebFile : public pkgDirStream
 	
 public:
 	explicit DebFile(const char *FileName);
-	~DebFile();
-	bool DoItem(Item &I, int &fd) APT_OVERRIDE;
-	bool Process(pkgDirStream::Item &I, const unsigned char *data, 
-		unsigned long long size, unsigned long long pos) APT_OVERRIDE;
+	~DebFile() override;
+	bool DoItem(Item &I, int &fd) override;
+	bool Process(pkgDirStream::Item &I, const unsigned char *data,
+		unsigned long long size, unsigned long long pos) override;
 
 	bool Go();
 	bool ParseInfo();

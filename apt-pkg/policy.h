@@ -72,9 +72,9 @@ class APT_PUBLIC pkgPolicy : public pkgDepCache::Policy
 		  std::string Data,signed short Priority);
 
    // Things for the cache interface.
-   virtual pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-   virtual signed short GetPriority(pkgCache::VerIterator const &Ver, bool ConsiderFiles = true) APT_OVERRIDE;
-   virtual signed short GetPriority(pkgCache::PkgFileIterator const &File) APT_OVERRIDE;
+   pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator const &Pkg) override;
+   signed short GetPriority(pkgCache::VerIterator const &Ver, bool ConsiderFiles = true) override;
+   signed short GetPriority(pkgCache::PkgFileIterator const &File) override;
 
    void SetPriority(pkgCache::VerIterator const &Ver, signed short Priority);
    void SetPriority(pkgCache::PkgFileIterator const &File, signed short Priority);

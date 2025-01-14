@@ -32,6 +32,7 @@
 #include <apt-pkg/version.h>
 
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <cstring>
 #include <sstream>
@@ -244,7 +245,7 @@ uint32_t pkgCache::CacheHash()
 
    XXH3_64bits_update(state,
 		      reinterpret_cast<const unsigned char *>(PACKAGE_VERSION),
-		      APT_ARRAY_SIZE(PACKAGE_VERSION));
+		      strlen(PACKAGE_VERSION));
 
    XXH3_64bits_update(state,
 		      reinterpret_cast<const unsigned char *>(&header),
@@ -340,24 +341,40 @@ const char *pkgCache::CompType(unsigned char Comp)
 /* */
 const char *pkgCache::DepType(unsigned char Type)
 {
-   const char *Types[] = {"",_("Depends"),_("PreDepends"),_("Suggests"),
-                          _("Recommends"),_("Conflicts"),_("Replaces"),
-                          _("Obsoletes"),_("Breaks"), _("Enhances")};
-   if (Type < sizeof(Types)/sizeof(*Types))
+   std::array<char const *, 12> Types{nullptr, _("Depends"), _("PreDepends"), _("Suggests"),
+				      _("Recommends"), _("Conflicts"), _("Replaces"),
+				      _("Obsoletes"), _("Breaks"), _("Enhances")};
+   if (Type < Types.size())
       return Types[Type];
    return "";
 }
+std::string_view pkgCache::DepType_NoL10n(unsigned char Type)
+{
+   std::array<std::string_view, 12> Types{"", "Depends", "PreDepends", "Suggests",
+					  "Recommends", "Conflicts", "Replaces",
+					  "Obsoletes", "Breaks", "Enhances"};
+   if (Type < Types.size())
+      return Types[Type];
+   return {};
+}
 									/*}}}*/
 // Cache::Priority - Convert a priority value to a string		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 const char *pkgCache::Priority(unsigned char Prio)
 {
-   const char *Mapping[] = {0,_("required"),_("important"),_("standard"),
-                            _("optional"),_("extra")};
-   if (Prio < APT_ARRAY_SIZE(Mapping))
+   std::array<char const *, 6> Mapping{nullptr, _("required"), _("important"), _("standard"),
+				       _("optional"), _("extra")};
+   if (Prio < Mapping.size())
       return Mapping[Prio];
-   return 0;
+   return nullptr;
+}
+std::string_view pkgCache::Priority_NoL10n(unsigned char Prio)
+{
+   constexpr std::array<std::string_view, 6> const Mapping{
+      "", "required", "important", "standard", "optional", "extra"
+   };
+   if (Prio < Mapping.size())
+      return Mapping[Prio];
+   return {};
 }
 									/*}}}*/
 // GrpIterator::FindPkg - Locate a package by arch			/*{{{*/

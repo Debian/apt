@@ -142,7 +142,7 @@ still satisfied.
 <para>
 Handle source lists for updates from multiple sources. APT should also be able
 to handle diverse methods of acquiring new packages; local filesystem,
-mountable CD-ROM drives, FTP accessible repositories are some of the methods
+mountable CD-ROM drives, HTTP accessible repositories are some of the methods
 that come to mind. Also, the source lists can be separated into categories,
 such as main, contrib, non-local, non-free, my-very-own, etc. APT
 should be set up to retrieve the Packages files from these multiple source
@@ -203,7 +203,7 @@ midst of installation, which may cause havoc on the machine)
 <para>
 This process handles setting of user or site options, and configuration of all
 aspects of APT. It allows the user to set the location and order of package
-sources, allowing them to set up source list details, like ftp site locations,
+sources, allowing them to set up source list details, like http site locations,
 passwords, etc. Display options may also be set.
 </para>
 </listitem>
@@ -216,7 +216,7 @@ Build a list of available packages, using source lists or a base location and
 trawling for Packages files (needs to be aware of architecture). This may
 involve finding and retrieving Packages files, storing them locally for
 efficiency, and parsing the data for later use. This would entail contacting
-various underlying access modules (ftp, cdrom mounts, etc) Use a backing store
+various underlying access modules (http, cdrom mounts, etc) Use a backing store
 for speed. This may also require downloading the actual package files locally
 for speed.
 </para>
@@ -308,7 +308,7 @@ set here?
 Distinct versions of the same package are recorded separately, but if multiple
 Packages files contain the same version of a package, then only the first one
 is recorded. For this reason, the least expensive update source should be
-listed first (local file system is better than a remote ftp site)
+listed first (local file system is better than a remote http site)
 </para>
 <para>
 This module should interact with the user interface module to set and change
@@ -318,7 +318,7 @@ information in an on disk data file, to be read on future invocations.
 <orderedlist numeration="arabic">
 <listitem>
 <para>
-FTP methods
+HTTP methods
 </para>
 </listitem>
 <listitem>
@@ -394,9 +394,9 @@ module to interact with dpkg
 
 <chapter id="ch5"><title>Data flow and conversions analysis.</title>
 <screen>
-                                                          ____________
-                                                       __\|ftp modules|
-                                                      /  /|___________|
+                                                          _____________
+                                                       __\|http modules|
+                                                      /  /|____________|
                                     _ ____________   /     ________________
                                     |    update   | /     |mount/local file|
         |==========================&gt;|   module    |/_____\|  traversals    |

@@ -19,13 +19,13 @@ public:
 	 std::basic_streambuf<CharT, Traits> * const sb2)
       : s1(sb1), s2(sb2) {}
 protected:
-   virtual std::streamsize xsputn(const CharT* s, std::streamsize c) APT_OVERRIDE
+   virtual std::streamsize xsputn(const CharT* s, std::streamsize c) override
    {
       return s2->sputn(s, s1->sputn(s, c));
    }
    // overflow is the fallback of sputc which is non-virtual
    typedef typename Traits::int_type int_type;
-   virtual int_type overflow(int_type ch = Traits::eof()) APT_OVERRIDE
+   int_type overflow(int_type ch = Traits::eof()) override
    {
       auto const eof = Traits::eof();
       if (Traits::eq_int_type(ch, Traits::eof()) == true)
@@ -35,12 +35,12 @@ protected:
       auto const r2 = s2->sputc(Traits::to_char_type(ch));
       return Traits::eq_int_type(r1, eof) ? r1: r2;
    }
-   virtual void imbue(const std::locale& loc) APT_OVERRIDE
+   void imbue(const std::locale& loc) override
    {
       s1->pubimbue(loc);
       s2->pubimbue(loc);
    }
-   virtual int sync() APT_OVERRIDE
+   int sync() override
    {
       auto const r1 = s1->pubsync();
       auto const r2 = s2->pubsync();

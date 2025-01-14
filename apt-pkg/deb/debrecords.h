@@ -29,26 +29,26 @@ class APT_HIDDEN debRecordParserBase : public pkgRecords::Parser
 
  public:
    // These refer to the archive file for the Version
-   virtual std::string FileName() APT_OVERRIDE;
-   virtual std::string SourcePkg() APT_OVERRIDE;
-   virtual std::string SourceVer() APT_OVERRIDE;
+   std::string FileName() override;
+   std::string SourcePkg() override;
+   std::string SourceVer() override;
 
-   virtual HashStringList Hashes() const APT_OVERRIDE;
+   [[nodiscard]] HashStringList Hashes() const override;
 
    // These are some general stats about the package
-   virtual std::string Maintainer() APT_OVERRIDE;
-   virtual std::string ShortDesc(std::string const &lang) APT_OVERRIDE;
-   virtual std::string LongDesc(std::string const &lang) APT_OVERRIDE;
-   virtual std::string Name() APT_OVERRIDE;
-   virtual std::string Homepage() APT_OVERRIDE;
+   std::string Maintainer() override;
+   std::string ShortDesc(std::string const &lang) override;
+   std::string LongDesc(std::string const &lang) override;
+   std::string Name() override;
+   std::string Homepage() override;
 
    // An arbitrary custom field
-   virtual std::string RecordField(const char *fieldName) APT_OVERRIDE;
+   std::string RecordField(const char *fieldName) override;
 
-   virtual void GetRec(const char *&Start,const char *&Stop) APT_OVERRIDE;
+   void GetRec(const char *&Start, const char *&Stop) override;
 
    debRecordParserBase();
-   virtual ~debRecordParserBase();
+   ~debRecordParserBase() override;
 };
 
 class APT_HIDDEN debRecordParser : public debRecordParserBase
@@ -58,12 +58,12 @@ class APT_HIDDEN debRecordParser : public debRecordParserBase
    FileFd File;
    pkgTagFile Tags;
 
-   virtual bool Jump(pkgCache::VerFileIterator const &Ver) APT_OVERRIDE;
-   virtual bool Jump(pkgCache::DescFileIterator const &Desc) APT_OVERRIDE;
+   bool Jump(pkgCache::VerFileIterator const &Ver) override;
+   bool Jump(pkgCache::DescFileIterator const &Desc) override;
 
  public:
    debRecordParser(std::string FileName,pkgCache &Cache);
-   virtual ~debRecordParser();
+   ~debRecordParser() override;
 };
 
 // custom record parser that reads deb files directly
@@ -76,14 +76,14 @@ class APT_HIDDEN debDebFileRecordParser : public debRecordParserBase
    APT_HIDDEN bool LoadContent();
  protected:
    // single file files, so no jumping whatsoever
-   bool Jump(pkgCache::VerFileIterator const &) APT_OVERRIDE;
-   bool Jump(pkgCache::DescFileIterator const &) APT_OVERRIDE;
+ bool Jump(pkgCache::VerFileIterator const &/*Ver*/) override;
+ bool Jump(pkgCache::DescFileIterator const & /*Desc*/) override;
 
  public:
-   virtual std::string FileName() APT_OVERRIDE;
+ std::string FileName() override;
 
-   explicit debDebFileRecordParser(std::string FileName);
-   virtual ~debDebFileRecordParser();
+ explicit debDebFileRecordParser(std::string FileName);
+ ~debDebFileRecordParser() override;
 };
 
 #endif

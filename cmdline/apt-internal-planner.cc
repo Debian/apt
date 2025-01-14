@@ -51,7 +51,7 @@ static bool ShowHelp(CommandLine &)					/*{{{*/
 	return true;
 }
 									/*}}}*/
-APT_NORETURN static void DIE(std::string const &message) {		/*{{{*/
+[[noreturn]] static void DIE(std::string const &message) {		/*{{{*/
 	std::cerr << "ERROR: " << message << std::endl;
 	_error->DumpErrors(std::cerr);
 	exit(EXIT_FAILURE);
@@ -68,17 +68,17 @@ class PMOutput: public pkgPackageManager				/*{{{*/
    bool const Debug;
 
 protected:
-   virtual bool Install(PkgIterator Pkg,std::string) APT_OVERRIDE
+   bool Install(PkgIterator Pkg,std::string /*filename*/) override
    {
       //std::cerr << "INSTALL: " << APT::PrettyPkg(&Cache, Pkg) << std::endl;
       return EDSP::WriteSolutionStanza(output, "Unpack", Cache[Pkg].InstVerIter(Cache));
    }
-   virtual bool Configure(PkgIterator Pkg) APT_OVERRIDE
+   bool Configure(PkgIterator Pkg) override
    {
       //std::cerr << "CONFIGURE: " << APT::PrettyPkg(&Cache, Pkg) << " " << std::endl;
       return EDSP::WriteSolutionStanza(output, "Configure", Cache[Pkg].InstVerIter(Cache));
    }
-   virtual bool Remove(PkgIterator Pkg,bool) APT_OVERRIDE
+   bool Remove(PkgIterator Pkg, bool /*Purge*/) override
    {
       //std::cerr << "REMOVE: " << APT::PrettyPkg(&Cache, Pkg) << " " << std::endl;
       return EDSP::WriteSolutionStanza(output, "Remove", Pkg.CurrentVer());

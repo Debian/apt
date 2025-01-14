@@ -18,42 +18,42 @@ class pkgCacheGenerator;
 class APT_HIDDEN edspLikeIndex : public pkgDebianIndexRealFile
 {
 protected:
-   virtual bool OpenListFile(FileFd &Pkg, std::string const &File) APT_OVERRIDE;
-   virtual uint8_t GetIndexFlags() const APT_OVERRIDE;
-   virtual std::string GetArchitecture() const APT_OVERRIDE;
+   bool OpenListFile(FileFd &Pkg, std::string const &File) override;
+   [[nodiscard]] uint8_t GetIndexFlags() const override;
+   [[nodiscard]] std::string GetArchitecture() const override;
 
-public:
-   virtual bool Exists() const APT_OVERRIDE;
-   virtual bool HasPackages() const APT_OVERRIDE;
+   public:
+   [[nodiscard]] bool Exists() const override;
+   [[nodiscard]] bool HasPackages() const override;
 
    explicit edspLikeIndex(std::string const &File);
-   virtual ~edspLikeIndex();
+   ~edspLikeIndex() override;
 };
 
 class APT_HIDDEN edspIndex : public edspLikeIndex
 {
 protected:
-   APT_HIDDEN virtual pkgCacheListParser * CreateListParser(FileFd &Pkg) APT_OVERRIDE;
-   virtual std::string GetComponent() const APT_OVERRIDE;
+   APT_HIDDEN pkgCacheListParser *CreateListParser(FileFd &Pkg) override;
+   [[nodiscard]] std::string GetComponent() const override;
 
 public:
-   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
+   [[nodiscard]] const Type *GetType() const override APT_PURE;
 
    explicit edspIndex(std::string const &File);
-   virtual ~edspIndex();
+   ~edspIndex() override;
 };
 
 class APT_HIDDEN eippIndex : public edspLikeIndex
 {
 protected:
-   APT_HIDDEN virtual pkgCacheListParser * CreateListParser(FileFd &Pkg) APT_OVERRIDE;
-   virtual std::string GetComponent() const APT_OVERRIDE;
+   APT_HIDDEN pkgCacheListParser *CreateListParser(FileFd &Pkg) override;
+   [[nodiscard]] std::string GetComponent() const override;
 
-public:
-   virtual const Type *GetType() const APT_OVERRIDE APT_PURE;
+   public:
+   [[nodiscard]] const Type *GetType() const override APT_PURE;
 
    explicit eippIndex(std::string const &File);
-   virtual ~eippIndex();
+   ~eippIndex() override;
 };
 
 #endif

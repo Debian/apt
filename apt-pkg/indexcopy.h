@@ -55,30 +55,28 @@ class APT_PUBLIC PackageCopy : public IndexCopy					/*{{{*/
 {
    void * const d;
    protected:
-
-   virtual bool GetFile(std::string &Filename,unsigned long long &Size) APT_OVERRIDE;
-   virtual bool RewriteEntry(FileFd &Target, std::string const &File) APT_OVERRIDE;
-   virtual const char *GetFileName() APT_OVERRIDE {return "Packages";};
-   virtual const char *Type() APT_OVERRIDE {return "Package";};
+   bool GetFile(std::string &Filename, unsigned long long &Size) override;
+   bool RewriteEntry(FileFd &Target, std::string const &File) override;
+   const char *GetFileName() override { return "Packages"; }
+   const char *Type() override { return "Package"; }
 
    public:
    PackageCopy();
-   virtual ~PackageCopy();
+   ~PackageCopy() override;
 };
 									/*}}}*/
 class APT_PUBLIC SourceCopy : public IndexCopy					/*{{{*/
 {
    void * const d;
    protected:
-   
-   virtual bool GetFile(std::string &Filename,unsigned long long &Size) APT_OVERRIDE;
-   virtual bool RewriteEntry(FileFd &Target, std::string const &File) APT_OVERRIDE;
-   virtual const char *GetFileName() APT_OVERRIDE {return "Sources";};
-   virtual const char *Type() APT_OVERRIDE {return "Source";};
+   bool GetFile(std::string &Filename, unsigned long long &Size) override;
+   bool RewriteEntry(FileFd &Target, std::string const &File) override;
+   const char *GetFileName() override { return "Sources"; }
+   const char *Type() override { return "Source"; };
 
    public:
    SourceCopy();
-   virtual ~SourceCopy();
+   ~SourceCopy() override;
 };
 									/*}}}*/
 class APT_PUBLIC  TranslationsCopy							/*{{{*/

@@ -177,8 +177,8 @@ class APT_PUBLIC pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 	OkState State() const APT_PURE;
 	const char *CurVersion() const APT_PURE;
 
-	//Nice printable representation
-	APT_DEPRECATED_MSG("Use APT::PrettyPkg instead") friend std::ostream& operator <<(std::ostream& out, PkgIterator i);
+	// for a nice printable representation you likely want APT::PrettyPkg instead
+	friend std::ostream& operator<<(std::ostream& out, PkgIterator i);
 	std::string FullName(bool const &Pretty = false) const;
 
 	// Constructors
@@ -364,8 +364,8 @@ class APT_PUBLIC pkgCache::DepIterator : public Iterator<Dependency, DepIterator
 		S2 = static_cast<DependencyData *>(newMap) + (S2 - static_cast<DependencyData const *>(oldMap));
 	}
 
-	//Nice printable representation
-	APT_DEPRECATED_MSG("Use APT::PrettyDep instead") friend std::ostream& operator <<(std::ostream& out, DepIterator D);
+	// for a nice printable representation you likely want APT::PrettyDep instead
+	friend std::ostream& operator<<(std::ostream& out, DepIterator D);
 
 	inline DepIterator(pkgCache &Owner, Dependency *Trg, Version* = 0) :
 		Iterator<Dependency, DepIterator>(Owner, Trg), Type(DepVer), S2(Trg == 0 ? Owner.DepDataP : (Owner.DepDataP + Trg->DependencyData)) {

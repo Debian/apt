@@ -35,28 +35,27 @@ class APT_HIDDEN debSrcRecordParser : public pkgSrcRecords::Parser
    char *Buffer;
 
    public:
+   bool Restart() override { return Jump(0); }
+   bool Step() override {iOffset = Tags.Offset(); return Tags.Step(Sect);}
+   bool Jump(unsigned long const &Off) override {iOffset = Off; return Tags.Jump(Sect,Off);}
 
-   virtual bool Restart() APT_OVERRIDE {return Jump(0);};
-   virtual bool Step() APT_OVERRIDE {iOffset = Tags.Offset(); return Tags.Step(Sect);};
-   virtual bool Jump(unsigned long const &Off) APT_OVERRIDE {iOffset = Off; return Tags.Jump(Sect,Off);};
-
-   virtual std::string Package() const APT_OVERRIDE;
-   virtual std::string Version() const APT_OVERRIDE {return std::string{Sect.Find(pkgTagSection::Key::Version)};};
-   virtual std::string Maintainer() const APT_OVERRIDE {return std::string{Sect.Find(pkgTagSection::Key::Maintainer)};};
-   virtual std::string Section() const APT_OVERRIDE {return std::string{Sect.Find(pkgTagSection::Key::Section)};};
-   virtual const char **Binaries() APT_OVERRIDE;
-   virtual bool BuildDepends(std::vector<BuildDepRec> &BuildDeps, bool const &ArchOnly, bool const &StripMultiArch = true) APT_OVERRIDE;
-   virtual unsigned long Offset() APT_OVERRIDE {return iOffset;};
-   virtual std::string AsStr() APT_OVERRIDE
+   [[nodiscard]] std::string Package() const override;
+   [[nodiscard]] std::string Version() const override { return std::string{Sect.Find(pkgTagSection::Key::Version)}; }
+   [[nodiscard]] std::string Maintainer() const override { return std::string{Sect.Find(pkgTagSection::Key::Maintainer)}; }
+   [[nodiscard]] std::string Section() const override { return std::string{Sect.Find(pkgTagSection::Key::Section)}; }
+   const char **Binaries() override;
+   bool BuildDepends(std::vector<BuildDepRec> &BuildDeps, bool const &ArchOnly, bool const &StripMultiArch = true) override;
+   unsigned long Offset() override { return iOffset; }
+   std::string AsStr() override
    {
       const char *Start=0,*Stop=0;
       Sect.GetSection(Start,Stop);
       return std::string(Start,Stop);
    };
-   virtual bool Files(std::vector<pkgSrcRecords::File> &F) APT_OVERRIDE;
+   bool Files(std::vector<pkgSrcRecords::File> &F) override;
 
    debSrcRecordParser(std::string const &File,pkgIndexFile const *Index);
-   virtual ~debSrcRecordParser();
+   ~debSrcRecordParser() override;
 };
 
 class APT_HIDDEN debDscRecordParser : public debSrcRecordParser

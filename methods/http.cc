@@ -284,9 +284,9 @@ struct HttpConnectFd final : public MethodFd
    std::unique_ptr<MethodFd> UnderlyingFd;
    std::string Buffer;
 
-   int Fd() APT_OVERRIDE { return UnderlyingFd->Fd(); }
+   int Fd() override { return UnderlyingFd->Fd(); }
 
-   ssize_t Read(void *buf, size_t count) APT_OVERRIDE
+   ssize_t Read(void *buf, size_t count) override
    {
       if (!Buffer.empty())
       {
@@ -299,17 +299,17 @@ struct HttpConnectFd final : public MethodFd
 
       return UnderlyingFd->Read(buf, count);
    }
-   ssize_t Write(void *buf, size_t count) APT_OVERRIDE
+   ssize_t Write(void *buf, size_t count) override
    {
       return UnderlyingFd->Write(buf, count);
    }
 
-   int Close() APT_OVERRIDE
+   int Close() override
    {
       return UnderlyingFd->Close();
    }
 
-   bool HasPending() APT_OVERRIDE
+   bool HasPending() override
    {
       return !Buffer.empty();
    }

@@ -47,11 +47,11 @@ APT_PUBLIC std::pair<std::string, std::forward_list<std::string>> FindGPGV(bool 
  * @param fd is used as a pipe for the standard output of gpgv
  * @param key is the specific one to be used instead of using all
  */
-APT_PUBLIC void ExecGPGV(std::string const &File, std::string const &FileSig,
-			 int const &statusfd, int fd[2], std::vector<std::string> const &KeyFiles) APT_NORETURN;
-APT_PUBLIC void ExecGPGV(std::string const &File, std::string const &FileSig,
-      int const &statusfd, int fd[2], std::string const &Key = "") APT_NORETURN;
-inline APT_NORETURN void ExecGPGV(std::string const &File, std::string const &FileSig,
+[[noreturn]] APT_PUBLIC void ExecGPGV(std::string const &File, std::string const &FileSig,
+				      int const &statusfd, int fd[2], std::vector<std::string> const &KeyFiles);
+[[noreturn]] APT_PUBLIC void ExecGPGV(std::string const &File, std::string const &FileSig,
+				      int const &statusfd, int fd[2], std::string const &Key = "");
+[[noreturn]] inline void ExecGPGV(std::string const &File, std::string const &FileSig,
       int const &statusfd = -1) {
    int fd[2];
    ExecGPGV(File, FileSig, statusfd, fd);

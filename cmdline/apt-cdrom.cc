@@ -44,12 +44,12 @@ protected:
    OpTextProgress Progress;
    void Prompt(const char *Text);
    string PromptLine(const char *Text);
-   bool AskCdromName(string &name) APT_OVERRIDE;
+   bool AskCdromName(string &name) override;
 
 public:
-   virtual void Update(string text, int current) APT_OVERRIDE;
-   virtual bool ChangeCdrom() APT_OVERRIDE;
-   virtual OpProgress* GetOpProgress() APT_OVERRIDE;
+   void Update(string text, int current) override;
+   bool ChangeCdrom() override;
+   OpProgress* GetOpProgress() override;
 };
 
 void pkgCdromTextStatus::Prompt(const char *Text)

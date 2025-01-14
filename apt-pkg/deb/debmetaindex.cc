@@ -75,7 +75,7 @@ static std::string NormalizeSignedBy(std::string SignedBy, bool const Introducer
       return os.str();
    }
 
-   // we could go all fancy and allow short/long/string matches as gpgv/apt-key does,
+   // we could go all fancy and allow short/long/string matches as gpgv does,
    // but fingerprints are harder to fake than the others and this option is set once,
    // not interactively all the time so easy to type is not really a concern.
    std::transform(SignedBy.begin(), SignedBy.end(), SignedBy.begin(), [](char const c) {
@@ -1475,7 +1475,7 @@ class APT_HIDDEN debSLTypeDeb : public debSLTypeDebian			/*{{{*/
 
    bool CreateItem(std::vector<metaIndex *> &List, std::string const &URI,
 		   std::string const &Dist, std::string const &Section,
-		   std::map<std::string, std::string> const &Options) const APT_OVERRIDE
+		   std::map<std::string, std::string> const &Options) const override
    {
       return CreateItemInternal(List, URI, Dist, Section, false, Options);
    }
@@ -1491,7 +1491,7 @@ class APT_HIDDEN debSLTypeDebSrc : public debSLTypeDebian		/*{{{*/
 
    bool CreateItem(std::vector<metaIndex *> &List, std::string const &URI,
 		   std::string const &Dist, std::string const &Section,
-		   std::map<std::string, std::string> const &Options) const APT_OVERRIDE
+		   std::map<std::string, std::string> const &Options) const override
    {
       return CreateItemInternal(List, URI, Dist, Section, true, Options);
    }

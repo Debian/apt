@@ -23,15 +23,15 @@ class APT_PUBLIC debVersioningSystem : public pkgVersioningSystem
 			  const char *BEnd) APT_PURE;
 
    // Compare versions..
-   virtual int DoCmpVersion(const char *A,const char *Aend,
-			  const char *B,const char *Bend) APT_OVERRIDE APT_PURE;
-   virtual bool CheckDep(const char *PkgVer,int Op,const char *DepVer) APT_OVERRIDE APT_PURE;
-   virtual APT_PURE int DoCmpReleaseVer(const char *A,const char *Aend,
-			     const char *B,const char *Bend) APT_OVERRIDE
+   int DoCmpVersion(const char *A, const char *Aend,
+		    const char *B, const char *Bend) override APT_PURE;
+   bool CheckDep(const char *PkgVer, int Op, const char *DepVer) override APT_PURE;
+   int DoCmpReleaseVer(const char *A, const char *Aend,
+		       const char *B, const char *Bend) override APT_PURE
    {
       return DoCmpVersion(A,Aend,B,Bend);
    }
-   virtual std::string UpstreamVersion(const char *A) APT_OVERRIDE;
+   std::string UpstreamVersion(const char *A) override;
 
    debVersioningSystem();
 };

@@ -69,7 +69,8 @@ Description: commandline package manager
     as well as installable packages
   * apt-cdrom to use removable media as a source for packages
   * apt-config as an interface to the configuration settings
-  * apt-key as an interface to manage authentication keys
+  * apt-extracttemplates is used by debconf to prompt for configuration
+    questions before installation.
 
 Package: libapt-pkg6.0t64
 Replaces: libapt-pkg6.0
@@ -95,8 +96,8 @@ Description: package management runtime library
     solver or by interfacing with an external one
   * authenticating the sources and validating the retrieved data
   * installation and removal of packages in the system
-  * providing different transports to retrieve data over cdrom, ftp,
-    http(s), rsh as well as an interface to add more transports like
+  * providing different transports to retrieve data over cdrom and
+    http(s) as well as an interface to add more transports like
     tor+http(s) (apt-transport-tor).
 
 Package: apt-doc
@@ -146,8 +147,6 @@ Description: package management related utility programs
  This package contains some less used commandline utilities related
  to package management with APT.
  .
-  * apt-extracttemplates is used by debconf to prompt for configuration
-    questions before installation.
   * apt-ftparchive is used to create Packages and other index files
     needed to publish an archive of Debian packages
   * apt-sortpkgs is a Packages/Sources file normalizer.

@@ -98,37 +98,37 @@ struct HttpServerState final : public ServerState
    std::unique_ptr<MethodFd> ServerFd;
 
    protected:
-   virtual bool ReadHeaderLines(std::string &Data) APT_OVERRIDE;
-   virtual ResultState LoadNextResponse(bool const ToFile, RequestState &Req) APT_OVERRIDE;
-   virtual bool WriteResponse(std::string const &Data) APT_OVERRIDE;
+   bool ReadHeaderLines(std::string &Data) override;
+   ResultState LoadNextResponse(bool ToFile, RequestState &Req) override;
+   bool WriteResponse(std::string const &Data) override;
 
    public:
-   virtual void Reset() APT_OVERRIDE;
+   void Reset() override;
 
-   virtual ResultState RunData(RequestState &Req) APT_OVERRIDE;
-   virtual ResultState RunDataToDevNull(RequestState &Req) APT_OVERRIDE;
+   ResultState RunData(RequestState &Req) override;
+   ResultState RunDataToDevNull(RequestState &Req) override;
 
-   virtual ResultState Open() APT_OVERRIDE;
-   virtual bool IsOpen() APT_OVERRIDE;
-   virtual bool Close() APT_OVERRIDE;
-   virtual bool InitHashes(HashStringList const &ExpectedHashes) APT_OVERRIDE;
-   virtual Hashes * GetHashes() APT_OVERRIDE;
-   virtual ResultState Die(RequestState &Req) APT_OVERRIDE;
-   virtual bool Flush(FileFd *const File, bool MustComplete = true) APT_OVERRIDE;
-   virtual ResultState Go(bool ToFile, RequestState &Req) APT_OVERRIDE;
+   ResultState Open() override;
+   bool IsOpen() override;
+   bool Close() override;
+   bool InitHashes(HashStringList const &ExpectedHashes) override;
+   Hashes * GetHashes() override;
+   ResultState Die(RequestState &Req) override;
+   bool Flush(FileFd *File, bool MustComplete = true) override;
+   ResultState Go(bool ToFile, RequestState &Req) override;
 
    HttpServerState(URI Srv, HttpMethod *Owner);
-   virtual ~HttpServerState() {Close();};
+   ~HttpServerState() override {Close();};
 };
 
 class HttpMethod final : public BaseHttpMethod
 {
    public:
-   virtual void SendReq(FetchItem *Itm) APT_OVERRIDE;
+   void SendReq(FetchItem *Itm) override;
 
-   virtual std::unique_ptr<ServerState> CreateServerState(URI const &uri) APT_OVERRIDE;
-   virtual void RotateDNS() APT_OVERRIDE;
-   virtual DealWithHeadersResult DealWithHeaders(FetchResult &Res, RequestState &Req) APT_OVERRIDE;
+   std::unique_ptr<ServerState> CreateServerState(URI const &uri) override;
+   void RotateDNS() override;
+   DealWithHeadersResult DealWithHeaders(FetchResult &Res, RequestState &Req) override;
 
    protected:
    std::string AutoDetectProxyCmd;

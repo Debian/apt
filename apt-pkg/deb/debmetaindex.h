@@ -30,20 +30,20 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
 
    debReleaseIndex(std::string const &URI, std::string const &Dist, std::map<std::string,std::string> const &Options);
    debReleaseIndex(std::string const &URI, std::string const &Dist, bool const Trusted, std::map<std::string,std::string> const &Options);
-   virtual ~debReleaseIndex();
+   ~debReleaseIndex() override;
 
-   virtual std::string ArchiveURI(std::string const &File) const APT_OVERRIDE;
-   virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) APT_OVERRIDE;
-   virtual std::vector<IndexTarget> GetIndexTargets() const APT_OVERRIDE;
+   [[nodiscard]] std::string ArchiveURI(std::string const &File) const override;
+   bool GetIndexes(pkgAcquire *Owner, bool const &GetAll = false) override;
+   [[nodiscard]] std::vector<IndexTarget> GetIndexTargets() const override;
 
-   virtual std::string Describe() const APT_OVERRIDE;
-   virtual pkgCache::RlsFileIterator FindInCache(pkgCache &Cache, bool const ModifyCheck) const APT_OVERRIDE;
-   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const APT_OVERRIDE;
+   [[nodiscard]] std::string Describe() const override;
+   pkgCache::RlsFileIterator FindInCache(pkgCache &Cache, bool ModifyCheck) const override;
+   bool Merge(pkgCacheGenerator &Gen, OpProgress *Prog) const override;
 
-   virtual bool Load(std::string const &Filename, std::string * const ErrorText) APT_OVERRIDE;
-   virtual metaIndex * UnloadedClone() const APT_OVERRIDE;
+   bool Load(std::string const &Filename, std::string *ErrorText) override;
+   [[nodiscard]] metaIndex *UnloadedClone() const override;
 
-   virtual std::vector <pkgIndexFile *> *GetIndexFiles() APT_OVERRIDE;
+   std::vector<pkgIndexFile *> *GetIndexFiles() override;
 
    bool SetTrusted(TriState const Trusted);
    bool SetCheckValidUntil(TriState const Trusted);
@@ -56,12 +56,12 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
    bool SetSignedBy(std::string const &SignedBy);
    std::map<std::string, std::string> GetReleaseOptions();
 
-   virtual bool IsTrusted() const APT_OVERRIDE;
-   bool IsArchitectureSupported(std::string const &arch) const override;
-   bool IsArchitectureAllSupportedFor(IndexTarget const &target) const override;
-   bool HasSupportForComponent(std::string const &component) const override;
+   [[nodiscard]] bool IsTrusted() const override;
+   [[nodiscard]] bool IsArchitectureSupported(std::string const &arch) const override;
+   [[nodiscard]] bool IsArchitectureAllSupportedFor(IndexTarget const &target) const override;
+   [[nodiscard]] bool HasSupportForComponent(std::string const &component) const override;
 
-   APT_PURE time_t GetNotBefore() const override;
+   [[nodiscard]] time_t GetNotBefore() const override APT_PURE;
 
    void AddComponent(std::string const &sourcesEntry,
 	 bool const isSrc, std::string const &Name,

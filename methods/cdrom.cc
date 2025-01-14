@@ -42,10 +42,10 @@ class CDROMMethod : public aptMethod
  
    bool IsCorrectCD(URI want, string MountPath, string& NewID);
    bool AutoDetectAndMount(const URI, string &NewID);
-   virtual bool Fetch(FetchItem *Itm) APT_OVERRIDE;
+   bool Fetch(FetchItem *Itm) override;
    std::string GetID(std::string const &Name);
-   virtual void Exit() APT_OVERRIDE;
-   virtual bool Configuration(std::string Message) APT_OVERRIDE;
+   void Exit() override;
+   bool Configuration(std::string Message) override;
 
    public:
    

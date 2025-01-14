@@ -86,9 +86,9 @@ class CacheSetHelperVirtuals: public APT::CacheSetHelper {
 public:
    APT::PackageSet virtualPkgs;
 
-   virtual pkgCache::VerIterator canNotGetVersion(enum CacheSetHelper::VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-   virtual void canNotFindVersion(enum CacheSetHelper::VerSelector const select, APT::VersionContainerInterface * vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-   virtual pkgCache::PkgIterator canNotFindPkgName(pkgCacheFile &Cache, std::string const &str) APT_OVERRIDE;
+   pkgCache::VerIterator canNotGetVersion(enum CacheSetHelper::VerSelector select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) override;
+   void canNotFindVersion(enum CacheSetHelper::VerSelector select, APT::VersionContainerInterface *vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) override;
+   pkgCache::PkgIterator canNotFindPkgName(pkgCacheFile &Cache, std::string const &str) override;
 
    CacheSetHelperVirtuals(bool const ShowErrors = true, GlobalError::MsgType const &ErrorType = GlobalError::NOTICE);
 };
@@ -108,20 +108,20 @@ public:
 
 	explicit CacheSetHelperAPTGet(std::ostream &out);
 
-	virtual void showPackageSelection(pkgCache::PkgIterator const &Pkg, enum PkgSelector const select, std::string const &pattern) APT_OVERRIDE;
+	void showPackageSelection(pkgCache::PkgIterator const &Pkg, enum PkgSelector select, std::string const &pattern) override;
 	void showTaskSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern);
 	void showFnmatchSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern);
 	void showRegExSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern);
-	void showVersionSelection(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const &Ver, enum VerSelector const select, std::string const &pattern) APT_OVERRIDE;
+	void showVersionSelection(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const &Ver, enum VerSelector select, std::string const &pattern) override;
 	bool showVirtualPackageErrors(pkgCacheFile &Cache);
 
-	pkgCache::VerIterator canNotGetVersion(enum VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
-	void canNotFindVersion(enum VerSelector const select, APT::VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) APT_OVERRIDE;
+	pkgCache::VerIterator canNotGetVersion(enum VerSelector select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) override;
+	void canNotFindVersion(enum VerSelector select, APT::VersionContainerInterface *vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) override;
 	pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
 	pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
 	pkgCache::VerIterator canNotFindVersionNumber(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg, std::string const &verstr);
 	pkgCache::VerIterator canNotFindVersionRelease(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg, std::string const &verstr);
-	virtual pkgCache::PkgIterator canNotFindPkgName(pkgCacheFile &Cache, std::string const &str) APT_OVERRIDE;
+	pkgCache::PkgIterator canNotFindPkgName(pkgCacheFile &Cache, std::string const &str) override;
 
 	APT::VersionSet tryVirtualPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg,
 						CacheSetHelper::VerSelector const select);

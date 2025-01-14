@@ -178,9 +178,9 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
    {
    public:
      DefaultRootSetFunc() : Configuration::MatchAgainstConfig("APT::NeverAutoRemove") {};
-     virtual ~DefaultRootSetFunc() {};
+     ~DefaultRootSetFunc() override = default;
 
-     bool InRootSet(const pkgCache::PkgIterator &pkg) APT_OVERRIDE { return pkg.end() == false && Match(pkg.Name()); };
+     bool InRootSet(const pkgCache::PkgIterator &pkg) override { return pkg.end() == false && Match(pkg.Name()); };
    };
 
    struct APT_PUBLIC StateCache

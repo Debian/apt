@@ -21,7 +21,7 @@ class SQVMethod : public aptMethod
 			 vector<string> &signers);
 
    protected:
-   virtual bool URIAcquire(std::string const &Message, FetchItem *Itm) APT_OVERRIDE;
+   bool URIAcquire(std::string const &Message, FetchItem *Itm) override;
 
    public:
    SQVMethod();
@@ -296,7 +296,7 @@ bool SQVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    if (_error->PendingError())
       return false;
 
-   // Run apt-key on file, extract contents and get the key ID of the signer
+   // Run sqv on file, extract contents and get the key ID of the signer
    VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), keyFiles, Signers);
    if (_error->PendingError())
    {
