@@ -34,13 +34,13 @@
 #include <algorithm>
 #include <array>
 #include <cerrno>
-#include <ctime>
 #include <chrono>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <numeric>
@@ -1598,6 +1598,68 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	       componentsSeen.emplace(std::move(component));
 	 }
 
+   auto const variants = _config->FindVector("APT::Architecture-Variants");
+   auto variantTable = APT::Configuration::getArchitectureVariantTable(true);
+   std::set<IndexTarget *> supplantedTargets;
+   if (hasReleaseFile)
+   {
+      // Figure out the variants that are standalone and supplant 'lesser' variants
+      for (auto &variant : variantTable)
+      {
+	 // Check if this variant is enabled.
+	 if (std::find(variants.begin(), variants.end(), variant.name) == variants.end())
+	    continue;
+	 // Check if the variant is standalone, that is, in the Architectures: field.
+	 // FIXME: We should support Standalone-Architecture-Variants field here
+	 if (not TransactionManager->MetaIndexParser->IsArchitectureSupported(variant.name))
+	    continue;
+
+	 // Build a set of supplanted architectures. We need to store the base for out variant here
+	 std::string base;
+	 std::set<std::string> supplants;
+	 for (auto &v : variantTable)
+	 {
+	    if (v.name == variant.name)
+	    {
+	       if (_config->FindB("Debug::Acquire::Variants", false))
+		  std::clog << "Variant " << variant.name << " supplants architecture " << v.base << std::endl;
+	       base = v.base;
+	       supplants.insert(v.base);
+	    }
+	    else if (not base.empty() && v.base == base
+		     // The variant `v` is only supplanted by `variant` if it is less preferable.
+		     && std::find(variants.begin(), variants.end(), v.name) >= std::find(variants.begin(), variants.end(), variant.name))
+	    {
+	       if (_config->FindB("Debug::Acquire::Variants", false))
+		  std::clog << "Variant " << variant.name << " supplants variant " << v.name << std::endl;
+	       supplants.insert(v.name);
+	    }
+	 }
+
+	 // Iterate over all targets belonging to the architecture variant and then see if they
+	 // supplant any other target. For example main/binary-amd64v3/Packages supplants main/binary-amd64/Packages
+	 // but it won't supplant the contrib entry, or a Contents file.
+	 for (auto &Target : IndexTargets)
+	 {
+	    if (Target.Option(IndexTarget::ARCHITECTURE) != variant.name)
+	       continue;
+
+	    for (auto &BaseTarget : IndexTargets)
+	    {
+	       if (BaseTarget.ShortDesc == Target.ShortDesc &&
+		   supplants.find(BaseTarget.Option(IndexTarget::ARCHITECTURE)) != supplants.end() &&
+		   BaseTarget.Option(IndexTarget::COMPONENT) == Target.Option(IndexTarget::COMPONENT))
+	       {
+		  if (_config->FindB("Debug::Acquire::Variants", false))
+		     std::clog << "Variant target " << Target.Description << " supplants target " << BaseTarget.Description << std::endl;
+		  supplantedTargets.insert(&BaseTarget);
+	       }
+	    }
+	 }
+	 //
+      }
+   }
+
    for (auto&& Target: IndexTargets)
    {
       // if we have seen a target which is created-by a target this one here is declared a
@@ -1608,6 +1670,14 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 	 new CleanupItem(Owner, TransactionManager, Target);
 	 continue;
       }
+
+      // If the target has been supplanted by a variant target, skip it.
+      if (supplantedTargets.find(&Target) != supplantedTargets.end())
+      {
+	 new CleanupItem(Owner, TransactionManager, Target);
+	 continue;
+      }
+
       // all is an implementation detail. Users shouldn't use this as arch
       // We need this support trickery here as e.g. Debian has binary-all files already,
       // but arch:all packages are still in the arch:any files, so we would waste precious
