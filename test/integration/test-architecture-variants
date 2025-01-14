@@ -97,3 +97,68 @@ testsuccessequal "foo:
      1 500
         500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages" aptcache policy foo
 testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_amd64v3.deb' foo_2_amd64v3.deb 42 " apt dist-upgrade --print-uris -qqq
+
+msgmsg "Test standalone architecture variants"
+sed -i 's/^Architectures:.*/Architectures: all amd64 amd64v3/' aptarchive/dists/unstable/Release
+signreleasefiles
+testsuccessequal "" aptget update -qq
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+ *** 1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy foo -o standalone=v3
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_amd64v3.deb' foo_2_amd64v3.deb 42 " apt dist-upgrade --print-uris -qqq -o standalone=v3
+
+sed -i 's/^Architectures:.*/Architectures: all amd64 amd64v3 amd64v2/' aptarchive/dists/unstable/Release
+signreleasefiles
+testsuccessequal "" aptget update -qq
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+ *** 1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy foo -o standalone=v3,v2
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_amd64v3.deb' foo_2_amd64v3.deb 42 " apt dist-upgrade --print-uris -qqq -o standalone=v3,v2
+
+sed -i 's/^Architectures:.*/Architectures: all amd64 amd64v2/' aptarchive/dists/unstable/Release
+signreleasefiles
+testsuccessequal "" aptget update -qq
+# Notably v2 is now the standalone architecture so we need to fetch v3 and v2.
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+ *** 1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages" aptcache policy foo -o standalone=v2
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_amd64v3.deb' foo_2_amd64v3.deb 42 " apt dist-upgrade --print-uris -qqq -o standalone=v2
+
+# amd64v2 is preferred now
+sed -i 's/^Architectures:.*/Architectures: all amd64 amd64v3 amd64v2/' aptarchive/dists/unstable/Release
+echo 'APT::Architecture-Variants { "amd64v2"; "amd64v3" }' > 'rootdir/etc/apt/apt.conf.d/variants'
+signreleasefiles
+testsuccessequal "" aptget update -qq
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages
+ *** 1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy foo -o standalone=v3,v2 -o pref=v2
+msgtest 'Test that amd64v2 is the candidate of the version 1'
+testsuccessequal --nomsg "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v2.deb' foo_1_amd64v2.deb 42 " apt dist-upgrade --print-uris -qqq -o standalone=v3,v2 -o pref=v2 foo=1
