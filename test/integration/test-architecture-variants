@@ -165,6 +165,22 @@ msgtest 'Test that amd64v2 is the candidate of the version 1'
 testsuccessequal --nomsg "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v2.deb' foo_1_amd64v2.deb 42 " apt dist-upgrade --print-uris -qqq -o standalone=v3,v2 -o pref=v2 foo=1
 
 msgmsg "Test automatic detection"
+echo "flags	 : lm" > rootdir/cpuinfo
+echo "flags	 : lm cmov cx8 fpu fxsr mmx syscall sse2 cx16 lahf_lm popcnt sse4_1 sse4_2 ssse3" >> rootdir/cpuinfo
+echo 'APT::Architecture-Variants "auto";' > 'rootdir/etc/apt/apt.conf.d/variants'
+echo 'Dir::Proc::CpuInfo "cpuinfo";'>> 'rootdir/etc/apt/apt.conf.d/variants'
+testsuccessequal "" aptget update -qq
+testsuccessequal "foo:
+  Installed: 1
+  Candidate: 2
+  Version table:
+     2 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages
+     1 500
+        500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages
+ *** 1 100
+        100 ${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status" aptcache policy foo -o auto=intersection
+
 echo "flags	 : lm cmov cx8 fpu fxsr mmx syscall sse2 cx16 lahf_lm popcnt sse4_1 sse4_2 ssse3" > rootdir/cpuinfo
 echo 'APT::Architecture-Variants "auto";' > 'rootdir/etc/apt/apt.conf.d/variants'
 echo 'Dir::Proc::CpuInfo "cpuinfo";'>> 'rootdir/etc/apt/apt.conf.d/variants'
