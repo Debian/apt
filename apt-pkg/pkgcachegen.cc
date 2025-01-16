@@ -104,7 +104,7 @@ bool pkgCacheGenerator::Start()
       map_stringitem_t idxArchitectures;
 
       std::vector<std::string> archs = APT::Configuration::getArchitectures();
-      std::vector<std::string> variants = _config->FindVector("APT::Architecture-Variants");
+      auto const &variants = APT::Configuration::getArchitectureVariants(true);
       if (archs.size() > 1 || not variants.empty())
       {
 	 std::vector<std::string>::const_iterator a = archs.begin();
@@ -118,7 +118,7 @@ bool pkgCacheGenerator::Start()
 	    {
 	       if (list.back() != ';')
 		  list.append(",");
-	       list.append(variant);
+	       list.append(variant.name);
 	    }
 	 }
 	 idxArchitectures = WriteStringInMap(list);

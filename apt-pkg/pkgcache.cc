@@ -193,7 +193,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
          list.append(",");
       list.append(arch);
    }
-   std::vector<std::string> variants = _config->FindVector("APT::Architecture-Variants");
+   auto const variants = APT::Configuration::getArchitectureVariants(true);
    if (not variants.empty())
    {
       list.append(";");
@@ -201,7 +201,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
       {
 	 if (list.back() != ';')
 	    list.append(",");
-	 list.append(variant);
+	 list.append(variant.name);
       }
    }
    if (_config->Find("APT::Architecture") != StrP + HeaderP->Architecture ||
