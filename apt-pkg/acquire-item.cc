@@ -1623,7 +1623,7 @@ void pkgAcqMetaClearSig::QueueIndexes(bool const verify)			/*{{{*/
 
 	    for (auto &BaseTarget : IndexTargets)
 	    {
-	       if (BaseTarget.ShortDesc == Target.ShortDesc &&
+	       if (BaseTarget.Option(IndexTarget::IDENTIFIER) == Target.Option(IndexTarget::IDENTIFIER) &&
 		   BaseTarget.Option(IndexTarget::COMPONENT) == Target.Option(IndexTarget::COMPONENT) &&
 		   // Variants we already saw can never be supplanted here, because they are ordered by preference
 		   seenVariants.find(BaseTarget.Option(IndexTarget::ARCHITECTURE)) == seenVariants.end() &&
