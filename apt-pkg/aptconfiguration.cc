@@ -332,8 +332,20 @@ static std::set<std::string> const &getCpuFlags()
 
       line = line.substr(line.find(':'));
       line = line.substr(line.find_first_not_of(": "));
-      for (auto &&flag : APT::String::Split(line))
-	 flags.insert(std::move(flag));
+      if (flags.empty())
+	 for (auto &&flag : APT::String::Split(line))
+	    flags.insert(std::move(flag));
+      else
+      {
+	 // Remove flags not present in this CPU
+	 auto split = APT::String::Split(line);
+	 std::set<std::string> newSet{split.begin(), split.end()};
+	 for (auto it = flags.begin(); it != flags.end();)
+	    if (newSet.find(*it) == newSet.end())
+	       it = flags.erase(it);
+	    else
+	       ++it;
+      }
    }
    return flags;
 }
