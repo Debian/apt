@@ -137,8 +137,9 @@ namespace Configuration {							/*{{{*/
 	   std::string name;
 	   std::string base;
 	   std::vector<std::string> cpuflags;
+	   std::vector<std::string> supplants{};
 	};
-	APT_HIDDEN std::vector<ArchitectureVariant> getArchitectureVariantTable(bool cached);
+	APT_HIDDEN std::vector<ArchitectureVariant> getArchitectureVariants(bool cached);
 #endif
 
 	/*}}}*/
