@@ -54,7 +54,7 @@ struct RequestState
    time_t Date;
    HaveContent haveContent = HaveContent::TRI_UNKNOWN;
 
-   enum {Chunked,Stream,Closes} Encoding = Closes;
+   enum {Closes,Chunked,Stream} Encoding = Closes;
    enum {Header, Data} State = Header;
    std::string Location;
    time_t RetryAfter = 0;
