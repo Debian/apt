@@ -289,18 +289,32 @@ Message: This solver exits instantly'
 exit 1" 'E: External solver failed with: This solver exits instantly
 E: Sub-process exit1withmsg returned an error code (1)'
 
+cat > Packages <<EOF
+Package: depparse
+Version: 42-1
+Architecture: all
+Pre-Depends: aaa, bbb (>= 2), ccc
+Depends: ddd, eee (>= 42), fff
+Recommends: ggg, hhh (>> 42), iii
+Suggests: jjj, kkk (= 42), lll
+Enhances: mmm, nnn (>> 42), ooo
+Replaces: ppp, qqq (<< 42), rrr
+Conflicts: sss, ttt (= 42), uuu
+Breaks: vvv, www (<= 42), xxx
+EOF
+
 configarchitecture 'amd64' 'i386'
 for arch in 'amd64' 'i386' 'armel' 'armhf'; do
 	insertinstalledpackage "dummy-httpd-$arch" "$arch" '1' 'Provides: httpd'
 done
 buildsimplenativepackage 'dummy-webserver' 'all' '1' 'unstable' 'Provides: httpd
 Multi-Arch: foreign'
-testfailure apt install -s dummy-webserver
-testsuccess apt install -s ./incoming/dummy-webserver_1_all.deb
-testsuccess apt install -s ./incoming/dummy-webserver_1_all.deb --solver apt
-testfailure apt install -s ./incoming/dummy-webserver_1_all.deb --solver dump
+testfailure apt install -s dummy-webserver --with-source Packages
+testsuccess apt install -s ./incoming/dummy-webserver_1_all.deb --with-source Packages
+testsuccess apt install -s ./incoming/dummy-webserver_1_all.deb --solver apt --with-source Packages
+testfailure apt install -s ./incoming/dummy-webserver_1_all.deb --solver dump --with-source Packages
 
-testsuccess aptcache showpkg dummy-webserver --with-source ./incoming/dummy-webserver_1_all.deb
+testsuccess aptcache showpkg dummy-webserver --with-source ./incoming/dummy-webserver_1_all.deb --with-source Packages
 cp -a rootdir/tmp/testsuccess.output showpkg.output
 testequal 'Reverse Depends: 
 Dependencies: 
@@ -313,3 +327,8 @@ Provides: httpd
 Provides: httpd
 Provides: httpd
 Provides: httpd' grep 'Provides:' "$APT_EDSP_DUMP_FILENAME"
+
+if dpkg-checkbuilddeps -d 'dctrl-tools' /dev/null >/dev/null 2>&1; then
+	testsuccessequal "$(cat Packages)
+" grep-dctrl -P depparse -s 'Package,Version,Architecture,Pre-Depends,Depends,Recommends,Suggests,Enhances,Replaces,Conflicts,Breaks' "$APT_EDSP_DUMP_FILENAME"
+fi

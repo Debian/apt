@@ -350,7 +350,7 @@ const char *pkgCache::DepType(unsigned char Type)
 }
 std::string_view pkgCache::DepType_NoL10n(unsigned char Type)
 {
-   std::array<std::string_view, 12> Types{"", "Depends", "PreDepends", "Suggests",
+   std::array<std::string_view, 12> Types{"", "Depends", "Pre-Depends", "Suggests",
 					  "Recommends", "Conflicts", "Replaces",
 					  "Obsoletes", "Breaks", "Enhances"};
    if (Type < Types.size())
