@@ -42,9 +42,11 @@ test solver3 and gpgv:
     - unbuffer ./test/integration/run-tests -q -j 4 --solver 3.0 --skip solver3.broken
 
 test as user:
-  image: i386/debian:testing
+  image:
+    name: debian:testing
+    docker:
+      platform: linux/i386
   stage: test
-  tags: [x86]
   script:
     - apt-get install --no-install-recommends -qq libxml2-utils
     - ./prepare-release post-build --report-failure
