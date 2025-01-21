@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-14 17:33+0000\n"
+"POT-Creation-Date: 2025-01-21 11:21+0000\n"
 "PO-Revision-Date: 2022-08-14 14:30+0900\n"
 "Last-Translator: Hideki Yamane <henrich@debian.org>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -2738,6 +2738,27 @@ msgid "Missing Signed-By in the %s entry for '%s'"
 msgstr ""
 
 #: apt-private/private-update.cc
+msgid ""
+"Consider migrating all sources.list(5) entries to the deb822 .sources format"
+msgstr ""
+
+#: apt-private/private-update.cc
+msgid ""
+"The deb822 .sources format supports both embedded as well as external "
+"OpenPGP keys"
+msgstr ""
+
+#: apt-private/private-update.cc
+#, fuzzy
+#| msgid ""
+#| "See apt-secure(8) manpage for repository creation and user configuration "
+#| "details."
+msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgstr ""
+"リポジトリの作成とユーザ設定の詳細は、apt-secure(8) man ページを参照してくだ"
+"さい。"
+
+#: apt-private/private-update.cc
 #, c-format
 msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
@@ -3938,13 +3959,6 @@ msgstr ""
 #| msgid "Unknown error executing apt-key"
 msgid "Unknown error executing gpgv"
 msgstr "apt-key の実行中に未知のエラーが発生"
-
-#: methods/gpgv.cc
-#, c-format
-msgid ""
-"Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. See "
-"the USER CONFIGURATION section in apt-secure(8) for details."
-msgstr ""
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc

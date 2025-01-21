@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-14 17:33+0000\n"
+"POT-Creation-Date: 2025-01-21 11:21+0000\n"
 "PO-Revision-Date: 2024-09-06 10:21+0100\n"
 "Last-Translator: Luca Vercelli <luca.vercelli.to@gmail.com>\n"
 "Language-Team: Italian <debian-l10n-italian@lists.debian.org>\n"
@@ -2785,6 +2785,27 @@ msgid "Missing Signed-By in the %s entry for '%s'"
 msgstr "Clausola Signed-By mancante nella voce %s per \"%s\""
 
 #: apt-private/private-update.cc
+msgid ""
+"Consider migrating all sources.list(5) entries to the deb822 .sources format"
+msgstr ""
+
+#: apt-private/private-update.cc
+msgid ""
+"The deb822 .sources format supports both embedded as well as external "
+"OpenPGP keys"
+msgstr ""
+
+#: apt-private/private-update.cc
+#, fuzzy
+#| msgid ""
+#| "See apt-secure(8) manpage for repository creation and user configuration "
+#| "details."
+msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgstr ""
+"Consultare la pagina man apt-secure(8) per la creazione di repository e la "
+"configurazione utente."
+
+#: apt-private/private-update.cc
 #, c-format
 msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
@@ -4007,18 +4028,6 @@ msgstr ""
 msgid "Unknown error executing gpgv"
 msgstr "Errore sconosciuto durante l'esecuzione di apt-key"
 
-#: methods/gpgv.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
-#| "section in apt-key(8) for details."
-msgid ""
-"Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. See "
-"the USER CONFIGURATION section in apt-secure(8) for details."
-msgstr ""
-"La chiave è conservata nel portachiavi obsoleto \"trusted.gpg\" (%s), per "
-"dettagli si veda la sezione DEPRECATO in apt-key(8)"
-
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
 #, c-format
@@ -4068,6 +4077,17 @@ msgstr "Impostazione della data di modifica non riuscita"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "File vuoti non possono essere archivi validi"
+
+#, fuzzy, c-format
+#~| msgid ""
+#~| "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
+#~| "section in apt-key(8) for details."
+#~ msgid ""
+#~ "Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. "
+#~ "See the USER CONFIGURATION section in apt-secure(8) for details."
+#~ msgstr ""
+#~ "La chiave è conservata nel portachiavi obsoleto \"trusted.gpg\" (%s), per "
+#~ "dettagli si veda la sezione DEPRECATO in apt-key(8)"
 
 #, c-format
 #~ msgid ""

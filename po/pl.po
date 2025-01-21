@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-14 17:33+0000\n"
+"POT-Creation-Date: 2025-01-21 11:21+0000\n"
 "PO-Revision-Date: 2024-07-08 17:53+0200\n"
 "Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -2782,6 +2782,27 @@ msgid "Missing Signed-By in the %s entry for '%s'"
 msgstr "Brakuje Signed-By (podpisu) we wpisie %s dla \"%s\""
 
 #: apt-private/private-update.cc
+msgid ""
+"Consider migrating all sources.list(5) entries to the deb822 .sources format"
+msgstr ""
+
+#: apt-private/private-update.cc
+msgid ""
+"The deb822 .sources format supports both embedded as well as external "
+"OpenPGP keys"
+msgstr ""
+
+#: apt-private/private-update.cc
+#, fuzzy
+#| msgid ""
+#| "See apt-secure(8) manpage for repository creation and user configuration "
+#| "details."
+msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgstr ""
+"Więcej informacji o tworzeniu repozytorium i szczegółach konfiguracji "
+"użytkownika znajduje się w podręczniku apt-secure(8)."
+
+#: apt-private/private-update.cc
 #, c-format
 msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
@@ -3988,19 +4009,6 @@ msgstr ""
 msgid "Unknown error executing gpgv"
 msgstr "Nieznany błąd podczas uruchamiania apt-key"
 
-# FIXME: Skoordynować tłumaczenie DEPRECATION z apt-key(8)
-#: methods/gpgv.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
-#| "section in apt-key(8) for details."
-msgid ""
-"Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. See "
-"the USER CONFIGURATION section in apt-secure(8) for details."
-msgstr ""
-"Klucz jest przechowywany w przestarzałym zbiorze kluczy trusted.gpg (%s), "
-"więcej informacji w rozdziale DEPRECATION w podręczniku apt-key(8)."
-
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
 #, c-format
@@ -4050,6 +4058,18 @@ msgstr "Nie udało się ustawić czasu modyfikacji"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Puste pliki nie mogą być prawidłowymi archiwami"
+
+# FIXME: Skoordynować tłumaczenie DEPRECATION z apt-key(8)
+#, fuzzy, c-format
+#~| msgid ""
+#~| "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
+#~| "section in apt-key(8) for details."
+#~ msgid ""
+#~ "Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. "
+#~ "See the USER CONFIGURATION section in apt-secure(8) for details."
+#~ msgstr ""
+#~ "Klucz jest przechowywany w przestarzałym zbiorze kluczy trusted.gpg (%s), "
+#~ "więcej informacji w rozdziale DEPRECATION w podręczniku apt-key(8)."
 
 #, c-format
 #~ msgid ""

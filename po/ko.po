@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-14 17:33+0000\n"
+"POT-Creation-Date: 2025-01-21 11:21+0000\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -2632,6 +2632,21 @@ msgid "Missing Signed-By in the %s entry for '%s'"
 msgstr ""
 
 #: apt-private/private-update.cc
+msgid ""
+"Consider migrating all sources.list(5) entries to the deb822 .sources format"
+msgstr ""
+
+#: apt-private/private-update.cc
+msgid ""
+"The deb822 .sources format supports both embedded as well as external "
+"OpenPGP keys"
+msgstr ""
+
+#: apt-private/private-update.cc
+msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgstr ""
+
+#: apt-private/private-update.cc
 #, c-format
 msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
@@ -3803,13 +3818,6 @@ msgstr ""
 #| msgid "Unknown error executing apt-key"
 msgid "Unknown error executing gpgv"
 msgstr "apt-key 실행 도중 알 수 없는 오류 발생"
-
-#: methods/gpgv.cc
-#, c-format
-msgid ""
-"Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. See "
-"the USER CONFIGURATION section in apt-secure(8) for details."
-msgstr ""
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc

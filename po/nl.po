@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-14 17:33+0000\n"
+"POT-Creation-Date: 2025-01-21 11:21+0000\n"
 "PO-Revision-Date: 2024-11-05 18:11+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -2766,6 +2766,27 @@ msgid "Missing Signed-By in the %s entry for '%s'"
 msgstr "Ontbrekende Signed-By in het item %s voor '%s'"
 
 #: apt-private/private-update.cc
+msgid ""
+"Consider migrating all sources.list(5) entries to the deb822 .sources format"
+msgstr ""
+
+#: apt-private/private-update.cc
+msgid ""
+"The deb822 .sources format supports both embedded as well as external "
+"OpenPGP keys"
+msgstr ""
+
+#: apt-private/private-update.cc
+#, fuzzy
+#| msgid ""
+#| "See apt-secure(8) manpage for repository creation and user configuration "
+#| "details."
+msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgstr ""
+"Zie de man-pagina apt-secure(8) voor details over het aanmaken van een "
+"pakketbron en over de configuratie langs gebruikerskant."
+
+#: apt-private/private-update.cc
 #, c-format
 msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
@@ -3983,19 +4004,6 @@ msgstr ""
 msgid "Unknown error executing gpgv"
 msgstr "Onbekende fout bij het uitvoeren van apt-key"
 
-#: methods/gpgv.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
-#| "section in apt-key(8) for details."
-msgid ""
-"Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. See "
-"the USER CONFIGURATION section in apt-secure(8) for details."
-msgstr ""
-"De sleutel wordt opgeslagen in de uitgefaseerde sleutelbos (%s) in "
-"trusted.gpg, raadpleeg de afdeling UITFASERING (DEPRECATION) in apt-key(8) "
-"voor details."
-
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
 #, c-format
@@ -4046,6 +4054,18 @@ msgstr "Instellen van de aanpassingstijd is mislukt"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Lege bestanden kunnen geen geldige archieven zijn"
+
+#, fuzzy, c-format
+#~| msgid ""
+#~| "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
+#~| "section in apt-key(8) for details."
+#~ msgid ""
+#~ "Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. "
+#~ "See the USER CONFIGURATION section in apt-secure(8) for details."
+#~ msgstr ""
+#~ "De sleutel wordt opgeslagen in de uitgefaseerde sleutelbos (%s) in "
+#~ "trusted.gpg, raadpleeg de afdeling UITFASERING (DEPRECATION) in apt-"
+#~ "key(8) voor details."
 
 #, c-format
 #~ msgid ""
