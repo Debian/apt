@@ -399,8 +399,8 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    if (not FoundKeyring)
    {
       Parts = GetListOfFilesInDir(_config->FindDir("Dir::Etc::TrustedParts"), std::vector<std::string>{"gpg", "asc"}, true);
-      if (char *env = getenv("APT_KEY_NO_LEGACY_KEYRING"); env == nullptr || not StringToBool(env, false))
-	 Parts.insert(Parts.begin(), _config->FindFile("Dir::Etc::Trusted"));
+      if (auto trusted = _config->FindFile("Dir::Etc::Trusted"); not trusted.empty())
+	 Parts.push_back(trusted);
       for (auto &Part : Parts)
       {
 	 if (Debug)

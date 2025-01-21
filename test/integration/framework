@@ -580,6 +580,8 @@ EOF
 
 	echo 'APT::Machine-ID "912e43bd1c1d4ba481f9f8ccab25f9ee";' > rootdir/etc/apt/apt.conf.d/machine-id
 
+	echo "APT::Get::Update::SourceListWarnings::SignedBy \"false\";" >> rootdir/etc/apt/apt.conf.d/signed-by
+
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 	confighashes 'SHA256' # these are tests, not security best-practices
 

@@ -133,6 +133,8 @@ bool SQVMethod::VerifyGetSigners(const char *file, const char *outfile,
    if (keyFiles.empty())
    {
       auto Parts = GetListOfFilesInDir(_config->FindDir("Dir::Etc::TrustedParts"), std::vector<std::string>{"gpg", "asc"}, true);
+      if (auto trusted = _config->FindFile("Dir::Etc::Trusted"); not trusted.empty())
+	 Parts.push_back(trusted);
       for (auto &Part : Parts)
       {
 	 if (Debug)
@@ -298,27 +300,8 @@ bool SQVMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
 
    // Run sqv on file, extract contents and get the key ID of the signer
    VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), keyFiles, Signers);
-   if (_error->PendingError())
-   {
-      // Legacy fallback to trusted.gpg
-      auto trusted = _config->FindFile("Dir::Etc::Trusted");
-      _error->PushToStack();
-      VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(), {trusted}, Signers);
-      bool error = _error->PendingError();
-      _error->RevertToStack();
-      if (error)
-	 return false;
-
-      _error->Discard();
-      std::string warning;
-      strprintf(warning,
-		_("Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. See the USER CONFIGURATION section in apt-secure(8) for details."),
-		trusted.c_str());
-      Warning(std::move(warning));
-   }
-
    if (Signers.empty())
-      return _error->Error("No good signature");
+      return _error->PendingError() ? false : _error->Error("No good signature");
 
    if (not keyFpts.empty())
    {

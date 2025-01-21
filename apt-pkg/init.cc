@@ -159,7 +159,6 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Etc::parts","apt.conf.d");
    Cnf.CndSet("Dir::Etc::preferences","preferences");
    Cnf.CndSet("Dir::Etc::preferencesparts","preferences.d");
-   Cnf.CndSet("Dir::Etc::trusted", "trusted.gpg");
    Cnf.CndSet("Dir::Etc::trustedparts","trusted.gpg.d");
    Cnf.CndSet("Dir::Bin::methods", LIBEXEC_DIR "/methods");
    Cnf.CndSet("Dir::Bin::solvers::",LIBEXEC_DIR  "/solvers");

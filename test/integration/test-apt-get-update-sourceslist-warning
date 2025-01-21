@@ -8,6 +8,7 @@ setupenvironment
 configarchitecture 'amd64'
 setupaptarchive --no-update
 
+rm rootdir/etc/apt/apt.conf.d/signed-by
 testsuccess apt update
 testsuccess apt update --no-download
 
@@ -44,7 +45,15 @@ rm rootdir/etc/apt/sources.list.d/example.sources
 msgmsg 'Detect login info embedded in sources.list'
 echo 'deb http://apt:debian@example.org/debian bookworm main' > rootdir/etc/apt/sources.list.d/example.list
 testsuccessequal "$BOILERPLATE
-N: Usage of apt_auth.conf(5) should be preferred over embedding login information directly in the sources.list(5) entry for 'http://example.org/debian'" apt update --no-download
+N: Usage of apt_auth.conf(5) should be preferred over embedding login information directly in the sources.list(5) entry for 'http://example.org/debian'
+N: Missing Signed-By in the sources.list(5) entry for 'http://example.org/debian'
+N: Consider migrating all sources.list(5) entries to the deb822 .sources format
+N: The deb822 .sources format supports both embedded as well as external OpenPGP keys
+N: See apt-secure(7) for best practices in configuring repository signing." apt update --no-download
 echo 'deb tor+https://apt:debian@example.org/debian bookworm main' > rootdir/etc/apt/sources.list.d/example.list
 testsuccessequal "$BOILERPLATE
-N: Usage of apt_auth.conf(5) should be preferred over embedding login information directly in the sources.list(5) entry for 'tor+https://example.org/debian'" apt update --no-download
+N: Usage of apt_auth.conf(5) should be preferred over embedding login information directly in the sources.list(5) entry for 'tor+https://example.org/debian'
+N: Missing Signed-By in the sources.list(5) entry for 'tor+https://example.org/debian'
+N: Consider migrating all sources.list(5) entries to the deb822 .sources format
+N: The deb822 .sources format supports both embedded as well as external OpenPGP keys
+N: See apt-secure(7) for best practices in configuring repository signing." apt update --no-download
