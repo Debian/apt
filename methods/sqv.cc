@@ -132,9 +132,20 @@ bool SQVMethod::VerifyGetSigners(const char *file, const char *outfile,
    };
    if (keyFiles.empty())
    {
+      // Either trusted or trustedparts must exist
+      _error->PushToStack();
       auto Parts = GetListOfFilesInDir(_config->FindDir("Dir::Etc::TrustedParts"), std::vector<std::string>{"gpg", "asc"}, true);
       if (auto trusted = _config->FindFile("Dir::Etc::Trusted"); not trusted.empty())
+      {
+	 std::string s;
+	 strprintf(s, "Loading %s from deprecated option Dir::Etc::Trusted\n", trusted.c_str());
+	 Warning(std::move(s));
 	 Parts.push_back(trusted);
+      }
+      if (Parts.empty())
+	 _error->MergeWithStack();
+      else
+	 _error->RevertToStack();
       for (auto &Part : Parts)
       {
 	 if (Debug)
