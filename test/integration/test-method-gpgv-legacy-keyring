@@ -1,0 +1,48 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture "amd64"
+
+insertpackage 'testing' 'foo' 'all' '1'
+
+buildaptarchive
+setupaptarchive --no-update
+changetowebserver
+
+alias inrelease_size="stat -c %s aptarchive/dists/testing/InRelease"
+
+testsuccessequal "Get:1 http://localhost:${APTHTTPPORT} testing InRelease [$(inrelease_size) B]
+Get:2 http://localhost:${APTHTTPPORT} testing/main all Packages [248 B]
+Get:3 http://localhost:${APTHTTPPORT} testing/main Translation-en [225 B]
+Reading package lists..." aptget update -q
+
+mv rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg rootdir/etc/apt/trusted.gpg
+
+if test -e "${METHODSDIR}/sqv"; then
+    missing_key="The signatures couldn't be verified because no keyring is specified"
+else
+    missing_key="The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 5A90D141DBAC8DAE"
+fi
+
+testwarningequal "Hit:1 http://localhost:${APTHTTPPORT} testing InRelease
+Reading package lists...
+W: http://localhost:${APTHTTPPORT}/dists/testing/InRelease: Loading ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg from deprecated option Dir::Etc::Trusted" aptget update -q -o Dir::Etc::trusted=trusted.gpg
+
+testwarningequal "Hit:1 http://localhost:${APTHTTPPORT} testing InRelease
+Err:1 http://localhost:${APTHTTPPORT} testing InRelease
+  $missing_key
+Reading package lists...
+W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: http://localhost:${APTHTTPPORT} testing InRelease: $missing_key
+W: Failed to fetch http://localhost:${APTHTTPPORT}/dists/testing/InRelease  $missing_key
+W: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -q
+
+rmdir rootdir/etc/apt/trusted.gpg.d
+
+testwarningequal "Hit:1 http://localhost:${APTHTTPPORT} testing InRelease
+Reading package lists...
+W: http://localhost:${APTHTTPPORT}/dists/testing/InRelease: Loading ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg from deprecated option Dir::Etc::Trusted" aptget update -q -o Dir::Etc::trusted=trusted.gpg
+

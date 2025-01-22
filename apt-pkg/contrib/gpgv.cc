@@ -395,12 +395,20 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       }
    }
 
-   std::vector<std::string> Parts;
    if (not FoundKeyring)
    {
-      Parts = GetListOfFilesInDir(_config->FindDir("Dir::Etc::TrustedParts"), std::vector<std::string>{"gpg", "asc"}, true);
+      // Either trusted or trustedparts must exist
+      _error->PushToStack();
+      auto Parts = GetListOfFilesInDir(_config->FindDir("Dir::Etc::TrustedParts"), std::vector<std::string>{"gpg", "asc"}, true);
       if (auto trusted = _config->FindFile("Dir::Etc::Trusted"); not trusted.empty())
+      {
+	 apt_warning(std::cerr, statusfd, fd, "Loading %s from deprecated option Dir::Etc::Trusted\n", trusted.c_str());
 	 Parts.push_back(trusted);
+      }
+      if (Parts.empty())
+	 _error->MergeWithStack();
+      else
+	 _error->RevertToStack();
       for (auto &Part : Parts)
       {
 	 if (Debug)
