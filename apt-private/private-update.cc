@@ -122,7 +122,7 @@ bool DoUpdate()
       {
 	 _error->Notice(_("Consider migrating all sources.list(5) entries to the deb822 .sources format"));
 	 _error->Notice(_("The deb822 .sources format supports both embedded as well as external OpenPGP keys"));
-	 _error->Notice(_("See apt-secure(7) for best practices in configuring repository signing."));
+	 _error->Notice(_("See apt-secure(8) for best practices in configuring repository signing."));
       }
    }
 
