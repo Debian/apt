@@ -129,7 +129,7 @@ bool pkgCdrom::FindPackages(string CD,
 	 for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
 	      c != compressor.end(); ++c)
 	 {
-	    string fileext = flExtension(file);
+	    string fileext{flExtension(file)};
 	    if (file == fileext)
 	       fileext.clear();
 	    else if (fileext.empty() == false)

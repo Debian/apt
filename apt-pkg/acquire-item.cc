@@ -3498,7 +3498,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
 	 StoreFilename = QuoteString(Version.ParentPkg().Name(), "_:") + '_' +
 			 QuoteString(Version.VerStr(), "_:") + '_' +
 			 QuoteString(Version.Arch(), "_:.") +
-			 "." + flExtension(poolfilename);
+			 '.' += flExtension(poolfilename);
 
 	 Desc.URI = Index->ArchiveURI(poolfilename);
 	 Desc.Description = Index->ArchiveInfo(Version);
