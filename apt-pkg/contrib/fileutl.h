@@ -253,7 +253,7 @@ APT_PUBLIC bool DropPrivileges();
 
 // File string manipulators
 APT_PUBLIC std::string_view flNotDir(std::string_view File);
-APT_PUBLIC std::string flNotFile(std::string File);
+APT_PUBLIC std::string flNotFile(std::string const &File); // XXX: this should take a string_view, but right now that causes more type problems than it solves
 APT_PUBLIC std::string flNoLink(std::string File);
 APT_PUBLIC std::string_view flExtension(std::string_view File);
 APT_PUBLIC std::string flCombine(std::string Dir,std::string File);
