@@ -157,7 +157,7 @@ static bool CheckGPGV(std::unordered_map<std::string, std::forward_list<std::str
       {
 	 if (unlikely(Debug))
 	    std::clog << "Read line: " << line << std::endl;
-	 checkedCommands[gpgv].push_front(APT::String::Strip(line));
+	 checkedCommands[gpgv].emplace_front(APT::String::Strip(line));
       }
       dumpOptions.Close();
       waitpid(child, NULL, 0);

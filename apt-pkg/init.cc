@@ -70,7 +70,7 @@ static bool pkgInitArchTupleMap()
       auto cpurow = split(cpuline);
       auto cpu = APT::String::Strip(cpurow.at(0));
 
-      cpus.push_back(cpu);
+      cpus.emplace_back(cpu);
    }
    if (!cputable.eof())
       return _error->Error("Error reading the CPU table");
@@ -97,14 +97,14 @@ static bool pkgInitArchTupleMap()
 
       if (tuple.find("<cpu>") == tuple.npos && arch.find("<cpu>") == arch.npos)
       {
-         APT::ArchToTupleMap.insert({arch, VectorizeString(tuple, '-')});
+         APT::ArchToTupleMap.insert({std::string{arch}, VectorizeString(tuple, '-')});
       }
       else
       {
          for (auto && cpu : cpus)
          {
-            auto mytuple = SubstVar(tuple, std::string("<cpu>"), cpu);
-            auto myarch = SubstVar(arch, std::string("<cpu>"), cpu);
+            auto mytuple = SubstVar(tuple, "<cpu>", cpu);
+            auto myarch = SubstVar(arch, "<cpu>", cpu);
 
             APT::ArchToTupleMap.insert({myarch, VectorizeString(mytuple, '-')});
          }

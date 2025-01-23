@@ -56,13 +56,13 @@ using namespace std;
 // ---------------------------------------------------------------------
 namespace APT {
    namespace String {
-std::string Strip(std::string_view str)
+std::string_view Strip(std::string_view str)
 {
    while (!str.empty() && isspace(str[0]))
       str.remove_prefix(1);
    while (!str.empty() && isspace(str.back()))
       str.remove_suffix(1);
-   return std::string{str};
+   return str;
 }
 
 bool Endswith(const std::string_view &s, const std::string_view &end)
@@ -490,10 +490,10 @@ string TimeToStr(unsigned long Sec)
 // SubstVar - Substitute a string for another string			/*{{{*/
 // ---------------------------------------------------------------------
 /* This replaces all occurrences of Subst with Contents in Str. */
-string SubstVar(const string &Str,const string &Subst,const string &Contents)
+string SubstVar(const string_view &Str,const string_view &Subst,const string_view &Contents)
 {
    if (Subst.empty() == true)
-      return Str;
+      return std::string{Str};
 
    string::size_type Pos = 0;
    string::size_type OldPos = 0;
@@ -510,7 +510,7 @@ string SubstVar(const string &Str,const string &Subst,const string &Contents)
    }
 
    if (OldPos == 0)
-      return Str;
+      return std::string{Str};
 
    if (OldPos >= Str.length())
       return Temp;
@@ -1363,13 +1363,13 @@ bool TokSplitString(char Tok,char *Input,char **List,
 /* This can be used to split a given string up into a vector, so the
    propose is the same as in the method above and this one is a bit slower
    also, but the advantage is that we have an iteratable vector */
-vector<string> VectorizeString(string const &haystack, char const &split)
+vector<string> VectorizeString(string_view const &haystack, char const &split)
 {
    vector<string> exploded;
    if (haystack.empty() == true)
       return exploded;
-   string::const_iterator start = haystack.begin();
-   string::const_iterator end = start;
+   auto start = haystack.begin();
+   auto end = start;
    do {
       for (; end != haystack.end() && *end != split; ++end);
       exploded.push_back(string(start, end));
@@ -1382,7 +1382,7 @@ vector<string> VectorizeString(string const &haystack, char const &split)
 // ---------------------------------------------------------------------
 /* See header for details.
  */
-vector<string> StringSplit(std::string const &s, std::string const &sep,
+vector<string> StringSplit(std::string_view const &s, std::string_view const &sep,
                            unsigned int maxsplit)
 {
    vector<string> split;
@@ -1396,8 +1396,8 @@ vector<string> StringSplit(std::string const &s, std::string const &sep,
    while (pos != string::npos)
    {
       pos = s.find(sep, start);
-      split.push_back(s.substr(start, pos-start));
-      
+      split.emplace_back(s.substr(start, pos-start));
+
       // if maxsplit is reached, the remaining string is the last item
       if(split.size() >= maxsplit)
       {

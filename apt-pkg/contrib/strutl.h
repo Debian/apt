@@ -42,7 +42,7 @@ namespace {
 
 namespace APT {
    namespace String {
-      APT_PUBLIC std::string Strip(std::string_view s);
+      APT_PUBLIC std::string_view Strip(std::string_view s);
       APT_PUBLIC bool Endswith(const std::string_view &s, const std::string_view &ending);
       APT_PUBLIC bool Startswith(const std::string_view &s, const std::string_view &starting);
       APT_PUBLIC std::string Join(std::vector<std::string> list, const std::string_view &sep);
@@ -111,7 +111,7 @@ APT_PUBLIC bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
 
 // split a given string by a char
-APT_PUBLIC std::vector<std::string> VectorizeString(std::string const &haystack, char const &split) APT_PURE;
+APT_PUBLIC std::vector<std::string> VectorizeString(std::string_view const &haystack, char const &split) APT_PURE;
 
 /* \brief Return a vector of strings from string "input" where "sep"
  * is used as the delimiter string.
@@ -127,8 +127,8 @@ APT_PUBLIC std::vector<std::string> VectorizeString(std::string const &haystack,
  * if used the string is only split on maxsplit places and the last
  * item in the vector contains the remainder string.
  */
-APT_PUBLIC std::vector<std::string> StringSplit(std::string const &input,
-                                     std::string const &sep,
+APT_PUBLIC std::vector<std::string> StringSplit(std::string_view const &input,
+                                     std::string_view const &sep,
                                      unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) APT_PURE;
 
 
@@ -248,7 +248,7 @@ struct SubstVar
    const std::string *Contents;
 };
 APT_PUBLIC std::string SubstVar(std::string Str,const struct SubstVar *Vars);
-APT_PUBLIC std::string SubstVar(const std::string &Str,const std::string &Subst,const std::string &Contents);
+APT_PUBLIC std::string SubstVar(const std::string_view &Str,const std::string_view &Subst,const std::string_view &Contents);
 
 struct RxChoiceList
 {

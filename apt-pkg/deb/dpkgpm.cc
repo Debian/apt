@@ -600,7 +600,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 
    // build the (prefix, pkgname, action) tuple, position of this
    // is different for "processing" or "status" messages
-   std::string prefix = APT::String::Strip(list[0]);
+   auto prefix = APT::String::Strip(list[0]);
    std::string pkgname;
    std::string action;
 
