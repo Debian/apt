@@ -330,7 +330,7 @@ int GetLock(string File,bool Errors)
 // FileExists - Check if a file exists					/*{{{*/
 // ---------------------------------------------------------------------
 /* Beware: Directories are also files! */
-bool FileExists(string File)
+bool FileExists(string const &File)
 {
    struct stat Buf;
    if (stat(File.c_str(),&Buf) != 0)
@@ -341,7 +341,7 @@ bool FileExists(string File)
 // RealFileExists - Check if a file exists and if it is really a file	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool RealFileExists(string File)
+bool RealFileExists(string const &File)
 {
    struct stat Buf;
    if (stat(File.c_str(),&Buf) != 0)
