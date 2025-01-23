@@ -56,43 +56,30 @@ using namespace std;
 // ---------------------------------------------------------------------
 namespace APT {
    namespace String {
-std::string Strip(const std::string &str)
+std::string Strip(std::string_view str)
 {
-   // ensure we have at least one character
-   if (str.empty() == true)
-      return str;
-
-   char const * const s = str.c_str();
-   size_t start = 0;
-   for (; isspace(s[start]) != 0; ++start)
-      ; // find the first not-space
-
-   // string contains only whitespaces
-   if (s[start] == '\0')
-      return "";
-
-   size_t end = str.length() - 1;
-   for (; isspace(s[end]) != 0; --end)
-      ; // find the last not-space
-
-   return str.substr(start, end - start + 1);
+   while (!str.empty() && isspace(str[0]))
+      str.remove_prefix(1);
+   while (!str.empty() && isspace(str.back()))
+      str.remove_suffix(1);
+   return std::string{str};
 }
 
-bool Endswith(const std::string &s, const std::string &end)
+bool Endswith(const std::string_view &s, const std::string_view &end)
 {
    if (end.size() > s.size())
       return false;
    return (s.compare(s.size() - end.size(), end.size(), end) == 0);
 }
 
-bool Startswith(const std::string &s, const std::string &start)
+bool Startswith(const std::string_view &s, const std::string_view &start)
 {
    if (start.size() > s.size())
       return false;
    return (s.compare(0, start.size(), start) == 0);
 }
 
-std::string Join(std::vector<std::string> list, const std::string &sep)
+std::string Join(std::vector<std::string> list, const std::string_view &sep)
 {
    std::ostringstream oss;
    for (auto it = list.begin(); it != list.end(); it++)
