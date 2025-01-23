@@ -755,7 +755,7 @@ static void * handleClient(int const client, size_t const id)		/*{{{*/
 	       }
 	       if (regexec(pattern, filename.c_str(), 0, 0, 0) == 0)
 	       {
-		  filename = _config->Find("aptwebserver::overwrite::" + I->Tag + "::filename", flNotDir(filename));
+		  filename = _config->Find("aptwebserver::overwrite::" + I->Tag + "::filename", std::string{flNotDir(filename)});
 		  if (filename.find("/") == std::string::npos)
 		  {
 		     auto directory = _config->Find("aptwebserver::overwrite::" + I->Tag + "::directory", flNotFile(filename));

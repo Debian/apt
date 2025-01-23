@@ -197,7 +197,8 @@ bool DoDownload(CommandLine &CmdL)
       pkgAcquire::Item *I = new pkgAcqArchive(&Fetcher, SrcList, &Recs, *Ver, storefile[i]);
       if (storefile[i].empty())
 	 continue;
-      std::string const filename = cwd + flNotDir(storefile[i]);
+      auto filename = cwd;
+      filename += flNotDir(storefile[i]);
       storefile[i].assign(filename);
       I->DestFile.assign(filename);
    }

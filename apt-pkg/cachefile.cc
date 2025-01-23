@@ -318,15 +318,15 @@ void pkgCacheFile::RemoveCaches()
    if (pkgcache.empty() == false)
    {
       std::string cachedir = flNotFile(pkgcache);
-      std::string cachefile = flNotDir(pkgcache);
+      std::string cachefile{flNotDir(pkgcache)};
       if (cachedir.empty() != true && cachefile.empty() != true && DirectoryExists(cachedir) == true)
       {
 	 cachefile.append(".");
 	 std::vector<std::string> caches = GetListOfFilesInDir(cachedir, false);
 	 for (std::vector<std::string>::const_iterator file = caches.begin(); file != caches.end(); ++file)
 	 {
-	    std::string nuke = flNotDir(*file);
-	    if (strncmp(cachefile.c_str(), nuke.c_str(), cachefile.length()) != 0)
+	    auto nuke = flNotDir(*file);
+            if (cachefile != nuke.substr(0, cachefile.length()))
 	       continue;
 	    RemoveFile("RemoveCaches", *file);
 	 }
@@ -337,15 +337,15 @@ void pkgCacheFile::RemoveCaches()
       return;
 
    std::string cachedir = flNotFile(srcpkgcache);
-   std::string cachefile = flNotDir(srcpkgcache);
+   std::string cachefile{flNotDir(srcpkgcache)};
    if (cachedir.empty() == true || cachefile.empty() == true || DirectoryExists(cachedir) == false)
       return;
    cachefile.append(".");
    std::vector<std::string> caches = GetListOfFilesInDir(cachedir, false);
    for (std::vector<std::string>::const_iterator file = caches.begin(); file != caches.end(); ++file)
    {
-      std::string nuke = flNotDir(*file);
-      if (strncmp(cachefile.c_str(), nuke.c_str(), cachefile.length()) != 0)
+      auto nuke = flNotDir(*file);
+      if (cachefile != nuke.substr(0, cachefile.length()))
 	 continue;
       RemoveFile("RemoveCaches", *file);
    }

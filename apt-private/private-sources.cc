@@ -24,7 +24,7 @@
 
 #include <apti18n.h>
 
-using std::operator""sv;
+using namespace std::literals;
 
 /* Interface discussion with donkult (for the future):
   apt [add-{archive,release,component}|edit|change-release|disable]-sources
@@ -192,9 +192,9 @@ static bool Modernize(std::string const &filename) /*{{{*/
 	 if (FileExists(dir + keyring))
 	    e.signedBy = dir + keyring;
       }
-      if (auto k = _config->FindDir("Dir::Etc::trustedparts") + flNotDir(std::regex_replace(filename, std::regex("\\.list$"), ".gpg")); FileExists(k))
+      if (auto k = _config->FindDir("Dir::Etc::trustedparts") += flNotDir(std::regex_replace(filename, std::regex("\\.list$"), ".gpg")); FileExists(k))
 	 e.signedBy = k;
-      if (auto k = _config->FindDir("Dir::Etc::trustedparts") + flNotDir(std::regex_replace(filename, std::regex("\\.list$"), ".asc")); FileExists(k))
+      if (auto k = _config->FindDir("Dir::Etc::trustedparts") += flNotDir(std::regex_replace(filename, std::regex("\\.list$"), ".asc")); FileExists(k))
 	 e.signedBy = k;
 
       if (isMain && not meta->GetOrigin().empty())

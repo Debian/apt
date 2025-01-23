@@ -37,7 +37,7 @@ class StoreMethod final : public aptMethod
 
    public:
 
-   explicit StoreMethod(std::string &&pProg) : aptMethod(std::move(pProg),"1.2",SingleInstance | SendConfig | SendURIEncoded)
+   explicit StoreMethod(std::string pProg) : aptMethod(std::move(pProg),"1.2",SingleInstance | SendConfig | SendURIEncoded)
    {
       SeccompFlags = aptMethod::BASE;
       if (Binary != "store")
@@ -144,5 +144,5 @@ bool StoreMethod::Fetch(FetchItem *Itm)					/*{{{*/
 
 int main(int, char *argv[])
 {
-   return StoreMethod(flNotDir(argv[0])).Run();
+   return StoreMethod(std::string{flNotDir(argv[0])}).Run();
 }

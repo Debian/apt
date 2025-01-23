@@ -611,12 +611,12 @@ SourcesWriter::SourcesWriter(FileFd * const GivenOutput, string const &DB, strin
 // SourcesWriter::DoPackage - Process a single package			/*{{{*/
 static std::string getDscHash(unsigned int const DoHashes,
       Hashes::SupportedHashes const DoIt, pkgTagSection &Tags, pkgTagSection::Key const FieldKey,
-      HashString const * const Hash, unsigned long long Size, std::string const &FileName)
+      HashString const * const Hash, unsigned long long Size, std::string_view const &FileName)
 {
    if ((DoHashes & DoIt) != DoIt || not Tags.Exists(FieldKey) || Hash == nullptr)
       return "";
    std::ostringstream out;
-   out << "\n " << Hash->HashValue() << " " << std::to_string(Size) << " " << FileName
+   out << "\n " << Hash->HashValue() << " " << Size << " " << FileName
       << "\n " << Tags.Find(FieldKey);
    return out.str();
 }
@@ -713,7 +713,7 @@ bool SourcesWriter::DoPackage(string FileName)
    }
 
    // Add the dsc to the files hash list
-   string const strippedName = flNotDir(FileName);
+   auto const strippedName = flNotDir(FileName);
    std::string const Files = getDscHash(DoHashes, Hashes::MD5SUM, Tags, pkgTagSection::Key::Files, Db.HashesList.find("MD5Sum"), St.st_size, strippedName);
    std::string ChecksumsSha1 = getDscHash(DoHashes, Hashes::SHA1SUM, Tags, pkgTagSection::Key::Checksums_Sha1, Db.HashesList.find("SHA1"), St.st_size, strippedName);
    std::string ChecksumsSha256 = getDscHash(DoHashes, Hashes::SHA256SUM, Tags, pkgTagSection::Key::Checksums_Sha256, Db.HashesList.find("SHA256"), St.st_size, strippedName);

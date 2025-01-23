@@ -423,7 +423,7 @@ bool DoSource(CommandLine &CmdL)
 	 queued.insert(Last->Index().ArchiveURI(I->Path));
 
 	 // check if we have a file with that md5 sum already localy
-	 std::string localFile = flNotDir(I->Path);
+	 std::string localFile{flNotDir(I->Path)};
 	 if (FileExists(localFile) == true)
 	    if(I->Hashes.VerifyFile(localFile) == true)
 	    {
