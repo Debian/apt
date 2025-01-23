@@ -247,7 +247,7 @@ static std::string GetProcessName(int pid)
    }
    return "";
 }
-int GetLock(string File,bool Errors)
+int GetLock(string const &File,bool Errors)
 {
    // GetLock() is used in aptitude on directories with public-write access
    // Use O_NOFOLLOW here to prevent symlink traversal attacks
