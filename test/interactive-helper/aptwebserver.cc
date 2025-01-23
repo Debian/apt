@@ -147,7 +147,7 @@ static void addFileHeaders(std::list<std::string> &headers, FileFd &data)/*{{{*/
        contentTypeSet(headers) == false)
    {
       std::string const name = data.Name();
-      std::string ext = flExtension(name);
+      std::string ext{flExtension(name)};
       if (name.empty() == false && ext.empty() == false && name != ext)
       {
 	 std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);

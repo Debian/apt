@@ -255,7 +255,7 @@ APT_PUBLIC bool DropPrivileges();
 APT_PUBLIC std::string flNotDir(std::string File);
 APT_PUBLIC std::string flNotFile(std::string File);
 APT_PUBLIC std::string flNoLink(std::string File);
-APT_PUBLIC std::string flExtension(std::string File);
+APT_PUBLIC std::string_view flExtension(std::string_view File);
 APT_PUBLIC std::string flCombine(std::string Dir,std::string File);
 
 /** \brief Takes a file path and returns the absolute path

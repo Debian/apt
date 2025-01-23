@@ -485,7 +485,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
       {
 	 if (RealFileExists(File) == false)
 	 {
-	    string d_ext = flExtension(Ent->d_name);
+	    auto d_ext = flExtension(Ent->d_name);
 	    // do not show ignoration warnings for directories
 	    if ((
 #ifdef _DIRENT_HAVE_D_TYPE
@@ -505,7 +505,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
       // extensions given -> "" extension allows no extension
       if (Ext.empty() == false)
       {
-	 string d_ext = flExtension(Ent->d_name);
+	 auto d_ext = flExtension(Ent->d_name);
 	 if (d_ext == Ent->d_name) // no extension
 	 {
 	    if (std::find(Ext.begin(), Ext.end(), "") == Ext.end())
@@ -694,13 +694,13 @@ string flNotFile(string File)
 // flExtension - Return the extension for the file			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string flExtension(string File)
+string_view flExtension(string_view File)
 {
-   string::size_type Res = File.rfind('.');
-   if (Res == string::npos)
+   string_view::size_type Res = File.rfind('.');
+   if (Res == string_view::npos)
       return File;
-   Res++;
-   return string(File,Res);
+   File.remove_prefix(Res + 1);
+   return File;
 }
 									/*}}}*/
 // flNoLink - If file is a symlink then deref it			/*{{{*/
