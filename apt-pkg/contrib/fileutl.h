@@ -181,7 +181,7 @@ APT_PUBLIC bool RunScripts(const char *Cnf);
 APT_PUBLIC bool CopyFile(FileFd &From,FileFd &To);
 APT_PUBLIC bool RemoveFile(char const * const Function, std::string const &FileName);
 APT_PUBLIC bool RemoveFileAt(char const * const Function, int const dirfd, std::string const &FileName);
-APT_PUBLIC int GetLock(std::string File,bool Errors = true);
+APT_PUBLIC int GetLock(std::string const &File,bool Errors = true);
 APT_PUBLIC bool FileExists(std::string const &File);
 APT_PUBLIC bool RealFileExists(std::string const &File);
 APT_PUBLIC bool DirectoryExists(std::string const &Path);
