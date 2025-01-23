@@ -968,7 +968,7 @@ static SSL_CTX *GetContextForHost(std::string const &host, aptConfigWrapperForMe
 
    // Client certificate setup, such that clients can authenticate to the server
    if (auto const cert = OwnerConf->ConfigFind("SslCert", ""); not cert.empty())
-      if (auto res = SSL_CTX_use_certificate_file(ctx, cert.c_str(), SSL_FILETYPE_PEM); res != 1)
+      if (auto res = SSL_CTX_use_certificate_chain_file(ctx, cert.c_str()); res != 1)
 	 return null_error("Could not load client certificate (%s, SslCert option): %s", cert.c_str(), ssl_strerr());
    if (auto const key = OwnerConf->ConfigFind("SslKey", ""); not key.empty())
       if (auto res = SSL_CTX_use_PrivateKey_file(ctx, key.c_str(), SSL_FILETYPE_PEM); res != 1)
