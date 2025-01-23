@@ -187,7 +187,7 @@ APT_PUBLIC bool RealFileExists(std::string const &File);
 APT_PUBLIC bool DirectoryExists(std::string const &Path);
 APT_PUBLIC bool CreateDirectory(std::string const &Parent, std::string const &Path);
 APT_PUBLIC time_t GetModificationTime(std::string const &Path);
-APT_PUBLIC bool Rename(std::string From, std::string To);
+APT_PUBLIC bool Rename(std::string const &From, std::string const &To);
 
 APT_PUBLIC std::string GetTempDir();
 APT_PUBLIC std::string GetTempDir(std::string const &User);
