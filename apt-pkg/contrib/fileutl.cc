@@ -682,7 +682,7 @@ string_view flNotDir(string_view File)
 // flNotFile - Strip the file from the directory name			/*{{{*/
 // ---------------------------------------------------------------------
 /* Result ends in a / */
-string flNotFile(string File)
+string flNotFile(string const &File)
 {
    string::size_type Res = File.rfind('/');
    if (Res == string::npos)
