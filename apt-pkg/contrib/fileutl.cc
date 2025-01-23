@@ -1010,7 +1010,7 @@ bool StartsWithGPGClearTextSignature(string const &FileName)
    }
 
    _strrstrip(lineptr);
-   static const char* SIGMSG = "-----BEGIN PGP SIGNED MESSAGE-----";
+   const char* SIGMSG = "-----BEGIN PGP SIGNED MESSAGE-----";
    if (result == -1 || strcmp(lineptr, SIGMSG) != 0)
       return false;
    return true;
