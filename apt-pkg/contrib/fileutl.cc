@@ -773,9 +773,9 @@ string flAbsPath(string File)
       _error->Errno("realpath", "flAbsPath on %s failed", File.c_str());
       return "";
    }
-   std::string AbsPath(p);
+   File = p;
    free(p);
-   return AbsPath;
+   return File;
 }
 									/*}}}*/
 std::string flNormalize(std::string file)				/*{{{*/
