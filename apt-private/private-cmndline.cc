@@ -487,7 +487,7 @@ static bool ShowCommonHelp(APT_CMD const Binary, CommandLine &CmdL, std::vector<
 									/*}}}*/
 static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
 {
-   std::string const binary = flNotDir(Binary);
+   auto const binary = flNotDir(Binary);
    if (binary == "apt-cdrom" || binary == "apt-config")
    {
       _config->CndSet("Binary::apt-cdrom::APT::Internal::OpProgress::EraseLines", false);
@@ -522,7 +522,7 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
 									/*}}}*/
 static void BinaryCommandSpecificConfiguration(char const * const Binary, char const * const Cmd)/*{{{*/
 {
-   std::string const binary = flNotDir(Binary);
+   auto const binary = flNotDir(Binary);
    if ((binary == "apt" || binary == "apt-get") && CmdMatches("upgrade", "dist-upgrade", "full-upgrade"))
    {
       //FIXME: the option is documented to apply only for install/remove, so

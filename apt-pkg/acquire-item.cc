@@ -482,7 +482,7 @@ bool pkgAcqTransactionItem::QueueURI(pkgAcquire::ItemDesc &Item)
 	    return false;
 	 auto altPath = uri.Path.substr(0, trailing_slash) + "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
 	 std::swap(uri.Path, altPath);
-	 PushAlternativeURI(uri, {{"Alternate-Paths", "../../" + flNotDir(altPath)}}, false);
+	 PushAlternativeURI(uri, {{"Alternate-Paths", "../../"s += flNotDir(altPath)}}, false);
 	 return true;
       };
       PushByHashURI(Item.URI);
@@ -546,7 +546,7 @@ std::string pkgAcqMetaBase::GetFinalFilename() const
 }
 std::string pkgAcqArchive::GetFinalFilename() const
 {
-   return _config->FindDir("Dir::Cache::Archives") + flNotDir(StoreFilename);
+   return _config->FindDir("Dir::Cache::Archives") += flNotDir(StoreFilename);
 }
 									/*}}}*/
 // pkgAcqTransactionItem::GetMetaKey and specialisations for child classes	/*{{{*/
@@ -3310,7 +3310,7 @@ void pkgAcqIndex::StageDownloadDone(string const &Message)
    if (StringToBool(LookupTag(Message, "IMS-Hit"), false))
    {
       Filename = GetExistingFilename(GetFinalFileNameFromURI(Target.URI));
-      EraseFileName = DestFile = flCombine(flNotFile(DestFile), flNotDir(Filename));
+      EraseFileName = DestFile = flCombine(flNotFile(DestFile), std::string{flNotDir(Filename)});
       if (symlink(Filename.c_str(), DestFile.c_str()) != 0)
 	 _error->WarningE("pkgAcqIndex::StageDownloadDone", "Symlinking file %s to %s failed", Filename.c_str(), DestFile.c_str());
       Stage = STAGE_DECOMPRESS_AND_VERIFY;
@@ -3527,7 +3527,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
 
    // Check if we already downloaded the file
    struct stat Buf;
-   auto FinalFile = _config->FindDir("Dir::Cache::Archives") + flNotDir(StoreFilename);
+   auto FinalFile = _config->FindDir("Dir::Cache::Archives") += flNotDir(StoreFilename);
    if (stat(FinalFile.c_str(), &Buf) == 0)
    {
       // Make sure the size matches
@@ -3546,7 +3546,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *const Owner, pkgSourceList *const Sourc
    }
 
    // Check the destination file
-   DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(StoreFilename);
+   DestFile = (_config->FindDir("Dir::Cache::Archives") += "partial/") += flNotDir(StoreFilename);
    if (stat(DestFile.c_str(), &Buf) == 0)
    {
       // Hmm, the partial file is too big, erase it
@@ -3953,9 +3953,9 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *const Owner, string const &URI, HashStringLis
    if(!DestFilename.empty())
       DestFile = DestFilename;
    else if(!DestDir.empty())
-      DestFile = DestDir + "/" + DeQuoteString(flNotDir(url.Path));
+      DestFile = DestDir + "/" + DeQuoteString(std::string{flNotDir(url.Path)});
    else
-      DestFile = DeQuoteString(flNotDir(url.Path));
+      DestFile = DeQuoteString(std::string{flNotDir(url.Path)});
 
    // Create the item
    Desc.URI = std::string(url);

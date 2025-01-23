@@ -33,6 +33,8 @@
 
 #include <sys/stat.h>
 #include <unistd.h>
+
+using namespace std::literals;
 									/*}}}*/
 
 // Sources Index							/*{{{*/
@@ -198,7 +200,7 @@ bool debDebPkgFileIndex::GetContent(std::ostream &content, std::string const &de
 bool debDebPkgFileIndex::OpenListFile(FileFd &Pkg, std::string const &FileName)
 {
    // write the control data to a tempfile
-   if (GetTempFile("deb-file-" + flNotDir(FileName), true, &Pkg) == NULL)
+   if (GetTempFile("deb-file-"s += flNotDir(FileName), true, &Pkg) == NULL)
       return false;
    std::ostringstream content;
    if (GetContent(content, FileName) == false)

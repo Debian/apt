@@ -36,6 +36,7 @@
 									/*}}}*/
 
 using namespace std;
+using namespace std::literals;
 
 // Global list of Items supported
 static pkgSourceList::Type *ItmList[10];
@@ -541,7 +542,7 @@ void pkgSourceList::AddVolatileFile(pkgIndexFile * const File)		/*{{{*/
       VolatileFiles.push_back(File);
 }
 									/*}}}*/
-static bool fileNameMatches(std::string const &filename, std::string const &idxtype)/*{{{*/
+static bool fileNameMatches(std::string_view const &filename, std::string const &idxtype)/*{{{*/
 {
    for (auto && type: APT::Configuration::getCompressionTypes())
    {
@@ -590,9 +591,9 @@ bool pkgSourceList::AddVolatileFile(std::string const &File, std::vector<std::st
    else
    {
       auto const filename = flNotDir(File);
-      auto const Target = IndexTarget(File, filename, File, "file:" + File, false, true, {
+      auto const Target = IndexTarget(File, std::string{filename}, File, "file:" + File, false, true, {
 	 { "FILENAME", File },
-	 { "REPO_URI", "file:" + flAbsPath(flNotFile(File)) + '/' },
+	 { "REPO_URI", ("file:"s += flAbsPath(flNotFile(File))) += '/' },
 	 { "COMPONENT", "volatile-packages-file" },
       });
       if (fileNameMatches(filename, "Packages"))

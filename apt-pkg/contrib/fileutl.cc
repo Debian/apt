@@ -670,13 +670,13 @@ time_t GetModificationTime(string const &Path)
 // flNotDir - Strip the directory from the filename			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string flNotDir(string File)
+string_view flNotDir(string_view File)
 {
-   string::size_type Res = File.rfind('/');
-   if (Res == string::npos)
+   string_view::size_type Res = File.rfind('/');
+   if (Res == string_view::npos)
       return File;
    Res++;
-   return string(File,Res,Res - File.length());
+   return File.substr(Res,Res - File.length());
 }
 									/*}}}*/
 // flNotFile - Strip the file from the directory name			/*{{{*/

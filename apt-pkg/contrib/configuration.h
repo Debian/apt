@@ -88,13 +88,13 @@ class APT_PUBLIC Configuration
    bool FindB(const char *Name,bool const &Default = false) const;
    bool FindB(std::string const &Name,bool const &Default = false) const {return FindB(Name.c_str(),Default);};
    std::string FindAny(const char *Name,const char *Default = 0) const;
-	      
-   inline void Set(const std::string &Name,const std::string &Value) {Set(Name.c_str(),Value);};
-   void CndSet(const char *Name,const std::string &Value);
+
+   inline void Set(const std::string &Name,const std::string_view &Value) {Set(Name.c_str(),Value);};
+   void CndSet(const char *Name,const std::string_view &Value);
    void CndSet(const char *Name,const int Value);
-   void Set(const char *Name,const std::string &Value);
+   void Set(const char *Name,const std::string_view &Value);
    void Set(const char *Name,const int &Value);
-   
+
    inline bool Exists(const std::string &Name) const {return Exists(Name.c_str());};
    bool Exists(const char *Name) const;
    bool ExistsAny(const char *Name) const;

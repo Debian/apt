@@ -252,7 +252,7 @@ APT_PUBLIC bool ChangeOwnerAndPermissionOfFile(char const * const requester, cha
 APT_PUBLIC bool DropPrivileges();
 
 // File string manipulators
-APT_PUBLIC std::string flNotDir(std::string File);
+APT_PUBLIC std::string_view flNotDir(std::string_view File);
 APT_PUBLIC std::string flNotFile(std::string File);
 APT_PUBLIC std::string flNoLink(std::string File);
 APT_PUBLIC std::string_view flExtension(std::string_view File);

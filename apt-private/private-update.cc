@@ -58,7 +58,7 @@ bool DoUpdate()
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
       {
-         std::string FileName = flNotDir(I->Owner->DestFile);
+         auto FileName = flNotDir(I->Owner->DestFile);
          if(compExt.empty() == false && 
             APT::String::Endswith(FileName, compExt))
             FileName = FileName.substr(0, FileName.size() - compExt.size() - 1);

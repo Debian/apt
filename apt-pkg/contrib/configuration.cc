@@ -540,7 +540,7 @@ string Configuration::FindAny(const char *Name,const char *Default) const
 // Configuration::CndSet - Conditional Set a value			/*{{{*/
 // ---------------------------------------------------------------------
 /* This will not overwrite */
-void Configuration::CndSet(const char *Name,const string &Value)
+void Configuration::CndSet(const char *Name,const string_view &Value)
 {
    Item *Itm = Lookup(Name,true);
    if (Itm == 0)
@@ -565,7 +565,7 @@ void Configuration::CndSet(const char *Name,int const Value)
 // Configuration::Set - Set a value					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Configuration::Set(const char *Name,const string &Value)
+void Configuration::Set(const char *Name,const string_view &Value)
 {
    Item *Itm = Lookup(Name,true);
    if (Itm == 0)
