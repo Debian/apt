@@ -42,10 +42,10 @@ namespace {
 
 namespace APT {
    namespace String {
-      APT_PUBLIC std::string Strip(const std::string &s);
-      APT_PUBLIC bool Endswith(const std::string &s, const std::string &ending);
-      APT_PUBLIC bool Startswith(const std::string &s, const std::string &starting);
-      APT_PUBLIC std::string Join(std::vector<std::string> list, const std::string &sep);
+      APT_PUBLIC std::string Strip(std::string_view s);
+      APT_PUBLIC bool Endswith(const std::string_view &s, const std::string_view &ending);
+      APT_PUBLIC bool Startswith(const std::string_view &s, const std::string_view &starting);
+      APT_PUBLIC std::string Join(std::vector<std::string> list, const std::string_view &sep);
       // Returns string display length honoring multi-byte characters
       APT_PUBLIC size_t DisplayLength(std::string_view str);
    }
