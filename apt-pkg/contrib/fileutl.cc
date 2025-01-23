@@ -3182,7 +3182,7 @@ FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink, FileFd * co
    return Fd;
 }
 									/*}}}*/
-bool Rename(std::string From, std::string To)				/*{{{*/
+bool Rename(std::string const &From, std::string const &To)				/*{{{*/
 {
    if (rename(From.c_str(),To.c_str()) != 0)
    {
