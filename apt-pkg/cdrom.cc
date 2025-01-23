@@ -490,7 +490,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    while (F.ReadLine(Buffer))
    {
       ++CurLine;
-      auto const Cleaned = APT::String::Strip(SubstVar(Buffer, "\t", "        "));
+      std::string const Cleaned{APT::String::Strip(SubstVar(Buffer, "\t", "        "))};
 
       // Comment or blank
       if (Cleaned.empty() || Cleaned[0] == '#')
