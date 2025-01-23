@@ -1,3 +1,13 @@
+apt (2.9.25+exp1) experimental; urgency=medium
+
+  * Upload with libapt-pkg7.0 soname; some minor ABI adjustments are
+    still on the way before this enters unstable, notable differences:
+    - The C++ standard library symbols are not re-exported anymore
+    - We use smart pointers in a bunch more places
+    - std::string_view replaces APT::StringView (thanks to наб)
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 23 Jan 2025 19:20:27 +0100
+
 apt (2.9.25) unstable; urgency=medium
 
   * sqv, gpgv: Do not fail if Dir::Etc::Trusted is set and trusted.gpg.d is missing
