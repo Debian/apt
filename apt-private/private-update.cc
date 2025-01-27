@@ -106,23 +106,40 @@ bool DoUpdate()
 
    if (_config->FindB("APT::Get::Update::SourceListWarnings::SignedBy", SLWarnings))
    {
-      bool allDeb822 = true;
+      bool modernize = false;
       for (auto *S : *List)
       {
-	 if (not S->GetSignedBy().empty())
-	    continue;
-
 	 URI uri(S->GetURI());
-	 // TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
-	 _error->Notice(_("Missing Signed-By in the %s entry for '%s'"),
-			"sources.list(5)", URI::ArchiveOnly(uri).c_str());
-	 allDeb822 &= S->HasFlag(metaIndex::Flag::DEB822);
+
+	 if (not S->HasFlag(metaIndex::Flag::DEB822))
+	 {
+	    // TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
+	    _error->Audit(_("The %s entry for '%s' should be upgraded to deb822 .sources"),
+			  "sources.list(5)", URI::ArchiveOnly(uri).c_str());
+	 }
+	 if (S->GetSignedBy().empty())
+	 {
+	    if (S->HasFlag(metaIndex::Flag::DEB822))
+	    {
+	       // TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
+	       _error->Notice(_("Missing Signed-By in the %s entry for '%s'"),
+			      "sources.list(5)", URI::ArchiveOnly(uri).c_str());
+	    }
+	    else
+	    {
+	       // TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
+	       _error->Audit(_("Missing Signed-By in the %s entry for '%s'"),
+			     "sources.list(5)", URI::ArchiveOnly(uri).c_str());
+	       modernize = true;
+	    }
+	 }
       }
-      if (not allDeb822)
+      if (modernize)
       {
-	 _error->Notice(_("Consider migrating all sources.list(5) entries to the deb822 .sources format"));
-	 _error->Notice(_("The deb822 .sources format supports both embedded as well as external OpenPGP keys"));
-	 _error->Notice(_("See apt-secure(8) for best practices in configuring repository signing."));
+         _error->Audit(_("Consider migrating all sources.list(5) entries to the deb822 .sources format"));
+         _error->Audit(_("The deb822 .sources format supports both embedded as well as external OpenPGP keys"));
+	 _error->Audit(_("See apt-secure(8) for best practices in configuring repository signing."));
+	 _error->Notice(_("Some sources can be modernized. Run 'apt modernize-sources' to do so."));
       }
    }
 
