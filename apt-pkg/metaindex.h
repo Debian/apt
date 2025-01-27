@@ -121,6 +121,10 @@ public:
    virtual bool IsArchitectureSupported(std::string const &arch) const;
    virtual bool IsArchitectureAllSupportedFor(IndexTarget const &target) const;
    virtual bool HasSupportForComponent(std::string const &component) const;
+
+#ifdef APT_COMPILING_APT
+   bool IsTrustedSet() { return Trusted == TRI_YES; }
+#endif
 };
 
 #endif
