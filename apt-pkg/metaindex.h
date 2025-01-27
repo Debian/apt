@@ -96,6 +96,7 @@ public:
    virtual std::vector<pkgIndexFile *> *GetIndexFiles() = 0;
    virtual bool IsTrusted() const = 0;
    virtual bool Load(std::string const &Filename, std::string * const ErrorText) = 0;
+   bool Load(std::string *const ErrorText);
    /** @return a new metaIndex object based on this one, but without information from #Load */
    virtual metaIndex * UnloadedClone() const = 0;
    // the given metaIndex is potentially invalid after this call and should be deleted
