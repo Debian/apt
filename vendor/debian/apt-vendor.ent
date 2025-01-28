@@ -2,15 +2,17 @@
 <!ENTITY keyring-distro "Debian">
 <!ENTITY keyring-package "<package>debian-archive-keyring</package>">
 
-<!ENTITY sourceslist-list-format "deb http://deb.debian.org/debian &debian-stable-codename; main contrib non-free non-free-firmware
-deb http://deb.debian.org/debian &debian-stable-codename;-updates main contrib non-free non-free-firmware
-deb http://deb.debian.org/debian-security &debian-stable-codename;-security main contrib non-free non-free-firmware">
+<!ENTITY sourceslist-list-format "deb [signed-by=/usr/share/keyrings/debian-archive-keyring.gpg] http://deb.debian.org/debian &debian-stable-codename; main contrib non-free non-free-firmware
+deb [signed-by=/usr/share/keyrings/debian-archive-keyring.gpg] http://deb.debian.org/debian &debian-stable-codename;-updates main contrib non-free non-free-firmware
+deb [signed-by=/usr/share/keyrings/debian-archive-keyring.gpg] http://deb.debian.org/debian-security &debian-stable-codename;-security main contrib non-free non-free-firmware">
 <!ENTITY sourceslist-sources-format "Types: deb
 URIs: http://deb.debian.org/debian
 Suites: &debian-stable-codename; &debian-stable-codename;-updates
 Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
 Types: deb
 URIs: http://deb.debian.org/debian-security
 Suites: &debian-stable-codename;-security
-Components: main contrib non-free non-free-firmware">
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg">
