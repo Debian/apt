@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-21 11:21+0000\n"
+"POT-Creation-Date: 2025-01-28 18:52+0000\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -2467,7 +2467,7 @@ msgid "Y"
 msgstr "Y"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
+#: apt-private/private-output.cc apt-private/private-sources.cc
 msgid "N"
 msgstr "N"
 
@@ -2691,6 +2691,11 @@ msgstr "Неуспех при преименуването на %s на %s"
 msgid "Your '%s' file changed, please run 'apt-get update'.\n"
 msgstr ""
 
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Rewrite %zu sources?"
+msgstr ""
+
 #: apt-private/private-unmet.cc
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
@@ -2711,6 +2716,12 @@ msgstr ""
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
 #, c-format
+msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
+msgstr ""
+
+#. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
 msgid "Missing Signed-By in the %s entry for '%s'"
 msgstr ""
 
@@ -2726,7 +2737,11 @@ msgid ""
 msgstr ""
 
 #: apt-private/private-update.cc
-msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgid "See apt-secure(8) for best practices in configuring repository signing."
+msgstr ""
+
+#: apt-private/private-update.cc
+msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
 msgstr ""
 
 #: apt-private/private-update.cc
@@ -3361,6 +3376,10 @@ msgstr ""
 #, fuzzy
 msgid "edit the source information file"
 msgstr "Четене на информацията за състоянието"
+
+#: cmdline/apt.cc
+msgid "modernize .list files to .sources files"
+msgstr ""
 
 #: cmdline/apt.cc
 #, fuzzy

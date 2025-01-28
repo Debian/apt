@@ -27,7 +27,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-21 11:21+0000\n"
+"POT-Creation-Date: 2025-01-28 18:52+0000\n"
 "PO-Revision-Date: 2024-09-02 00:21+0200\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -2590,7 +2590,7 @@ msgid "Y"
 msgstr "D"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
+#: apt-private/private-output.cc apt-private/private-sources.cc
 msgid "N"
 msgstr "N"
 
@@ -2828,6 +2828,11 @@ msgstr "Nu s-a putut analiza %s. Editați din nou? "
 msgid "Your '%s' file changed, please run 'apt-get update'.\n"
 msgstr "Fișierul „%s” s-a modificat, executați «apt-get update».\n"
 
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Rewrite %zu sources?"
+msgstr ""
+
 #: apt-private/private-unmet.cc
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
@@ -2846,6 +2851,12 @@ msgid ""
 msgstr ""
 "Utilizarea lui %s ar trebui să fie preferată în locul încorporării "
 "informațiilor de autentificare direct în intrarea %s pentru „%s”."
+
+#. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
+msgstr ""
 
 # R-GC, scrie:
 # mesaj, tradus cu ajutorul lui
@@ -2873,10 +2884,14 @@ msgstr ""
 #| msgid ""
 #| "See apt-secure(8) manpage for repository creation and user configuration "
 #| "details."
-msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgid "See apt-secure(8) for best practices in configuring repository signing."
 msgstr ""
 "Consultați pagina de manual apt-secure(8) pentru detalii privind crearea "
 "depozitului și configurarea utilizatorilor."
+
+#: apt-private/private-update.cc
+msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3535,6 +3550,10 @@ msgstr "înnoiește sistemul prin eliminarea/instalarea/înnoirea pachetelor"
 #: cmdline/apt.cc
 msgid "edit the source information file"
 msgstr "editează fișierul cu informații despre surse"
+
+#: cmdline/apt.cc
+msgid "modernize .list files to .sources files"
+msgstr ""
 
 #: cmdline/apt.cc
 msgid "satisfy dependency strings"

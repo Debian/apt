@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-21 11:21+0000\n"
+"POT-Creation-Date: 2025-01-28 18:52+0000\n"
 "PO-Revision-Date: 2024-11-09 20:38+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -2430,7 +2430,7 @@ msgid "Y"
 msgstr "Y"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
+#: apt-private/private-output.cc apt-private/private-sources.cc
 msgid "N"
 msgstr "N"
 
@@ -2652,6 +2652,11 @@ msgstr "Nepodařilo se zpracovat %s. Zkusit znovu upravit?"
 msgid "Your '%s' file changed, please run 'apt-get update'.\n"
 msgstr "Soubor „%s“ se změnil, spusťte prosím „apt-get update“.\n"
 
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Rewrite %zu sources?"
+msgstr ""
+
 #: apt-private/private-unmet.cc
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
@@ -2670,6 +2675,12 @@ msgid ""
 msgstr ""
 "Použití %s je preferováno před zadáním přihlašovacích údajů přímo v %s v "
 "záznamu „%s“"
+
+#. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
+msgstr ""
 
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
@@ -2693,10 +2704,14 @@ msgstr ""
 #| msgid ""
 #| "See apt-secure(8) manpage for repository creation and user configuration "
 #| "details."
-msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgid "See apt-secure(8) for best practices in configuring repository signing."
 msgstr ""
 "Podrobnosti o vytváření a nastavení repozitářů naleznete v manuálové stránce "
 "apt-secure(8)."
+
+#: apt-private/private-update.cc
+msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3331,6 +3346,10 @@ msgstr "aktualizuje systém instalací/aktualizací/odstraněním balíků"
 #: cmdline/apt.cc
 msgid "edit the source information file"
 msgstr "upraví soubor se zdroji balíků"
+
+#: cmdline/apt.cc
+msgid "modernize .list files to .sources files"
+msgstr ""
 
 #: cmdline/apt.cc
 msgid "satisfy dependency strings"

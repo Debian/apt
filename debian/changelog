@@ -1,3 +1,25 @@
+apt (2.9.26) unstable; urgency=medium
+
+  [ Sam Hartman ]
+  * Fix regression that prevented sending intermediate client certificates
+
+  [ Andreas Rönnquist ]
+  * apt-secure manual page is in manual section 8
+
+  [ Julian Andres Klode ]
+  * apt: Introduce the modernize-sources command
+  * Make notices about .list sources without signed-by less obnoxious
+    You get a single line telling you about modernize-sources now, unless
+    you run --audit (or have deb822 files without Signed-By).
+  * Documentation updates:
+    - Deprecate legacy one-line-style format harder. Removal not before 2029.
+    - Set signed-by/Signed-By in sources.list(5) short examples for Debian, Ubuntu
+    - Update Debian, Ubuntu example default sources to best practices:
+      We now ship debian.sources/ubuntu.sources instead of sources.list
+    - Update codenames for trixie, plucky as stable
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 28 Jan 2025 19:49:53 +0100
+
 apt (2.9.25) unstable; urgency=medium
 
   * sqv, gpgv: Do not fail if Dir::Etc::Trusted is set and trusted.gpg.d is missing

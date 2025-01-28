@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.11\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-21 11:21+0000\n"
+"POT-Creation-Date: 2025-01-28 18:52+0000\n"
 "PO-Revision-Date: 2024-11-18 23:14+0300\n"
 "Last-Translator: Алексей Шилин <shilin.aleksej@gmail.com>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -2505,7 +2505,7 @@ msgid "Y"
 msgstr "Д"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
+#: apt-private/private-output.cc apt-private/private-sources.cc
 msgid "N"
 msgstr "Н"
 
@@ -2731,6 +2731,11 @@ msgstr "Не удалось разобрать содержимое %s. Повт
 msgid "Your '%s' file changed, please run 'apt-get update'.\n"
 msgstr "Файл «%s» изменён, запустите «apt-get update».\n"
 
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Rewrite %zu sources?"
+msgstr ""
+
 #: apt-private/private-unmet.cc
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
@@ -2749,6 +2754,12 @@ msgid ""
 msgstr ""
 "Использование %s предпочтительнее, чем встраивание данных для входа "
 "непосредственно в запись %s для «%s»"
+
+#. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
+msgstr ""
 
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
@@ -2772,10 +2783,14 @@ msgstr ""
 #| msgid ""
 #| "See apt-secure(8) manpage for repository creation and user configuration "
 #| "details."
-msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgid "See apt-secure(8) for best practices in configuring repository signing."
 msgstr ""
 "Информацию о создании репозитория и настройках пользователя смотрите в "
 "справочной странице apt-secure(8)."
+
+#: apt-private/private-update.cc
+msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3427,6 +3442,10 @@ msgstr "обновить систему, удаляя/устанавливая/�
 #: cmdline/apt.cc
 msgid "edit the source information file"
 msgstr "редактировать файл с источниками пакетов"
+
+#: cmdline/apt.cc
+msgid "modernize .list files to .sources files"
+msgstr ""
 
 #: cmdline/apt.cc
 msgid "satisfy dependency strings"

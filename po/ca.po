@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-21 11:21+0000\n"
+"POT-Creation-Date: 2025-01-28 18:52+0000\n"
 "PO-Revision-Date: 2024-08-08 22:47+0100\n"
 "Last-Translator: Carles Pina i Estany <cpina@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -2514,7 +2514,7 @@ msgid "Y"
 msgstr "S"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
+#: apt-private/private-output.cc apt-private/private-sources.cc
 msgid "N"
 msgstr "N"
 
@@ -2745,6 +2745,11 @@ msgstr "No s'ha pogut analitzar %s. Voleu tornar a editar-lo? "
 msgid "Your '%s' file changed, please run 'apt-get update'.\n"
 msgstr "El fitxer «%s» ha canviat, executeu «apt-get update».\n"
 
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Rewrite %zu sources?"
+msgstr ""
+
 #: apt-private/private-unmet.cc
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
@@ -2763,6 +2768,12 @@ msgid ""
 msgstr ""
 "És preferible l'ús de %s abans que incrustar la informació d'inici de sessió "
 "directament a l'entrada %s per «%s»"
+
+#. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
+msgstr ""
 
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
@@ -2786,10 +2797,14 @@ msgstr ""
 #| msgid ""
 #| "See apt-secure(8) manpage for repository creation and user configuration "
 #| "details."
-msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgid "See apt-secure(8) for best practices in configuring repository signing."
 msgstr ""
 "Consulteu la pàgina de manual apt-secure(8) per obtenir detalls sobre la "
 "creació de dipòsits i la configuració d'usuaris."
+
+#: apt-private/private-update.cc
+msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3442,6 +3457,10 @@ msgstr "actualitza el sistema eliminant/instal·lant/actualitzant paquets"
 #: cmdline/apt.cc
 msgid "edit the source information file"
 msgstr "edita el fitxer d'informació d'origen"
+
+#: cmdline/apt.cc
+msgid "modernize .list files to .sources files"
+msgstr ""
 
 #: cmdline/apt.cc
 msgid "satisfy dependency strings"

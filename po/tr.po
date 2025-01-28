@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.6.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-21 11:21+0000\n"
+"POT-Creation-Date: 2025-01-28 18:52+0000\n"
 "PO-Revision-Date: 2023-04-19 15:15+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -2485,7 +2485,7 @@ msgid "Y"
 msgstr "E"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
+#: apt-private/private-output.cc apt-private/private-sources.cc
 msgid "N"
 msgstr "H"
 
@@ -2710,6 +2710,11 @@ msgstr "%s ayrıştırılamadı. Tekrar düzenlemek ister misiniz? "
 msgid "Your '%s' file changed, please run 'apt-get update'.\n"
 msgstr "'%s' dosyası değişti, lütfen 'apt-get update' komutunu çalıştırın.\n"
 
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Rewrite %zu sources?"
+msgstr ""
+
 #: apt-private/private-unmet.cc
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
@@ -2728,6 +2733,12 @@ msgid ""
 msgstr ""
 "Oturum açma ayrıcalıklarını '%3$s' '%2$s' girdisinin içinde doğrudan "
 "belirtmek yerine '%1$s' kullanmayı tercih edin"
+
+#. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
+msgstr ""
 
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
@@ -2751,10 +2762,14 @@ msgstr ""
 #| msgid ""
 #| "See apt-secure(8) manpage for repository creation and user configuration "
 #| "details."
-msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgid "See apt-secure(8) for best practices in configuring repository signing."
 msgstr ""
 "Depo oluşturma ve kullanıcı yapılandırması hakkında ayrıntılı bilgi için apt-"
 "secure(8) rehber sayfasında bulunabilir."
+
+#: apt-private/private-update.cc
+msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3397,6 +3412,10 @@ msgstr "Sistemi yükselt (paket kurarak, yükselterek ve kaldırarak)"
 #: cmdline/apt.cc
 msgid "edit the source information file"
 msgstr "Kaynak bilgi dosyasını düzenle"
+
+#: cmdline/apt.cc
+msgid "modernize .list files to .sources files"
+msgstr ""
 
 #: cmdline/apt.cc
 msgid "satisfy dependency strings"

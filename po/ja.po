@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-21 11:21+0000\n"
+"POT-Creation-Date: 2025-01-28 18:52+0000\n"
 "PO-Revision-Date: 2022-08-14 14:30+0900\n"
 "Last-Translator: Hideki Yamane <henrich@debian.org>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
@@ -2490,7 +2490,7 @@ msgid "Y"
 msgstr "Y"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
+#: apt-private/private-output.cc apt-private/private-sources.cc
 msgid "N"
 msgstr "N"
 
@@ -2714,6 +2714,11 @@ msgid "Your '%s' file changed, please run 'apt-get update'.\n"
 msgstr ""
 "'%s' ファイルが変更されています。「apt-get update」を実行してください。\n"
 
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Rewrite %zu sources?"
+msgstr ""
+
 #: apt-private/private-unmet.cc
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
@@ -2729,6 +2734,12 @@ msgstr "update コマンドは引数をとりません"
 msgid ""
 "Usage of %s should be preferred over embedding login information directly in "
 "the %s entry for '%s'"
+msgstr ""
+
+#. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
+msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
 msgstr ""
 
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
@@ -2753,10 +2764,14 @@ msgstr ""
 #| msgid ""
 #| "See apt-secure(8) manpage for repository creation and user configuration "
 #| "details."
-msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgid "See apt-secure(8) for best practices in configuring repository signing."
 msgstr ""
 "リポジトリの作成とユーザ設定の詳細は、apt-secure(8) man ページを参照してくだ"
 "さい。"
+
+#: apt-private/private-update.cc
+msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
+msgstr ""
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3412,6 +3427,10 @@ msgstr "パッケージを削除/インストール/更新してシステムを�
 #: cmdline/apt.cc
 msgid "edit the source information file"
 msgstr "ソース情報ファイルを編集"
+
+#: cmdline/apt.cc
+msgid "modernize .list files to .sources files"
+msgstr ""
 
 #: cmdline/apt.cc
 #, fuzzy

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-21 11:21+0000\n"
+"POT-Creation-Date: 2025-01-28 18:52+0000\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -2384,7 +2384,7 @@ msgid "Y"
 msgstr "Y"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc
+#: apt-private/private-output.cc apt-private/private-sources.cc
 msgid "N"
 msgstr "N"
 
@@ -2600,6 +2600,11 @@ msgstr "แจง %s ไม่สำเร็จ จะแก้ไขอีก�
 msgid "Your '%s' file changed, please run 'apt-get update'.\n"
 msgstr "แฟ้ม '%s' ของคุณมีการเปลี่ยนแปลง กรุณาเรียก 'apt-get update'\n"
 
+#: apt-private/private-sources.cc
+#, c-format
+msgid "Rewrite %zu sources?"
+msgstr ""
+
 #: apt-private/private-unmet.cc
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
@@ -2620,6 +2625,12 @@ msgstr ""
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
 #, c-format
+msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
+msgstr ""
+
+#. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
+#: apt-private/private-update.cc
+#, c-format
 msgid "Missing Signed-By in the %s entry for '%s'"
 msgstr ""
 
@@ -2635,7 +2646,11 @@ msgid ""
 msgstr ""
 
 #: apt-private/private-update.cc
-msgid "See apt-secure(7) for best practices in configuring repository signing."
+msgid "See apt-secure(8) for best practices in configuring repository signing."
+msgstr ""
+
+#: apt-private/private-update.cc
+msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
 msgstr ""
 
 #: apt-private/private-update.cc
@@ -3269,6 +3284,10 @@ msgstr "ปรับรุ่นระบบโดยถอดถอน/ติ�
 #: cmdline/apt.cc
 msgid "edit the source information file"
 msgstr "แก้ไขแฟ้มข้อมูลแหล่งแพกเกจ"
+
+#: cmdline/apt.cc
+msgid "modernize .list files to .sources files"
+msgstr ""
 
 #: cmdline/apt.cc
 #, fuzzy
