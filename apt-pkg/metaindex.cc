@@ -1,6 +1,7 @@
 // Include Files                                                       /*{{{*/
 #include <config.h>
 
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/pkgcachegen.h>
@@ -149,5 +150,17 @@ bool metaIndex::IsArchitectureAllSupportedFor(IndexTarget const &) const/*{{{*/
 bool metaIndex::HasSupportForComponent(std::string const &) const/*{{{*/
 {
    return true;
+}
+									/*}}}*/
+bool metaIndex::Load(std::string *ErrorText) /*{{{*/
+{
+   auto debmeta = dynamic_cast<debReleaseIndex *>(this);
+   if (not debmeta)
+      return false;
+   if (auto f = debmeta->MetaIndexFile("InRelease"); FileExists(f))
+      return Load(f, ErrorText);
+   if (auto f = debmeta->MetaIndexFile("Release"); FileExists(f))
+      return Load(f, ErrorText);
+   return false;
 }
 									/*}}}*/

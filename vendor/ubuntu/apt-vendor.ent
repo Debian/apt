@@ -2,15 +2,17 @@
 <!ENTITY keyring-distro "Ubuntu">
 <!ENTITY keyring-package "<package>ubuntu-keyring</package>">
 
-<!ENTITY sourceslist-list-format "deb http://us.archive.ubuntu.com/ubuntu &ubuntu-codename; main restricted
-deb http://security.ubuntu.com/ubuntu &ubuntu-codename;-security main restricted
-deb http://us.archive.ubuntu.com/ubuntu &ubuntu-codename;-updates main restricted">
+<!ENTITY sourceslist-list-format "deb [signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] http://archive.ubuntu.com/ubuntu &ubuntu-codename; main restricted
+deb [signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] http://security.ubuntu.com/ubuntu &ubuntu-codename;-security main restricted
+deb [signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg] http://us.archive.ubuntu.com/ubuntu &ubuntu-codename;-updates main restricted">
 <!ENTITY sourceslist-sources-format "Types: deb
 URIs: http://us.archive.ubuntu.com/ubuntu
 Suites: &ubuntu-codename; &ubuntu-codename;-updates
 Components: main restricted
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 
 Types: deb
 URIs: http://security.ubuntu.com/ubuntu
 Suites: &ubuntu-codename;-security
-Components: main restricted">
+Components: main restricted
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg">

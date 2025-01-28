@@ -1,0 +1,85 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'native'
+
+echo 'deb http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list.d/rocks.list
+echo 'deb http://deb.debian.org/debian stable main' >> rootdir/etc/apt/sources.list
+echo 'deb-src http://deb.debian.org/debian stable main' >> rootdir/etc/apt/sources.list
+echo 'deb-src http://deb.debian.org/debian unstable main' >> rootdir/etc/apt/sources.list
+echo 'deb http://example.org/debian stable bananas' >> rootdir/etc/apt/sources.list
+echo 'deb [trusted=yes] http://example.org/debian trusted bananas' >> rootdir/etc/apt/sources.list
+
+
+mkdir -p  rootdir/usr/share/keyrings/
+mkdir -p rootdir/var/lib/apt/lists
+echo > rootdir/etc/apt/trusted.gpg.d/rocks.gpg
+echo > rootdir/usr/share/keyrings/debian-archive-keyring.gpg
+echo "Date: $(date -ud '-2 weeks' '+%a, %d %b %Y %H:%M:%S %Z')" > rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_unstable_InRelease
+echo "Date: $(date -ud '-2 weeks' '+%a, %d %b %Y %H:%M:%S %Z')" > rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_stable_InRelease
+echo "Origin: Debian" >> rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_unstable_InRelease
+echo "Origin: Debian" >> rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_stable_InRelease
+
+# We test that appending produces valid output here, so we already configure a source in here.
+echo "Types: deb" >> rootdir/etc/apt/sources.list.d/debian.sources
+echo "URIs: https://deb.debian.org/debian/" >> rootdir/etc/apt/sources.list.d/debian.sources
+echo "Suites: experimental" >> rootdir/etc/apt/sources.list.d/debian.sources
+echo "Components: contrib" >> rootdir/etc/apt/sources.list.d/debian.sources
+echo "Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg" >> rootdir/etc/apt/sources.list.d/debian.sources
+
+testwarning apt modernize-sources -y
+
+testsuccessequal "rootdir/etc/apt/sources.list.bak
+
+rootdir/etc/apt/sources.list.d:
+debian.sources
+moved-from-main.sources
+rocks.list.bak
+rocks.sources" ls -1 rootdir/etc/apt/sources.list*
+
+testfileequal rootdir/etc/apt/sources.list.d/debian.sources "Types: deb
+URIs: https://deb.debian.org/debian/
+Suites: experimental
+Components: contrib
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+# Modernized from ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/sources.list
+Types: deb deb-src
+URIs: http://deb.debian.org/debian/
+Suites: stable
+Components: main
+Signed-By: ${TMPWORKINGDIRECTORY}/rootdir/usr/share/keyrings/debian-archive-keyring.gpg
+
+# Modernized from ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/sources.list
+Types: deb-src
+URIs: http://deb.debian.org/debian/
+Suites: unstable
+Components: main
+Signed-By: ${TMPWORKINGDIRECTORY}/rootdir/usr/share/keyrings/debian-archive-keyring.gpg"
+
+testfileequal rootdir/etc/apt/sources.list.d/rocks.sources "Types: deb
+URIs: http://example.org/debian/
+Suites: stable
+Components: rocks
+Signed-By: ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/trusted.gpg.d/rocks.gpg"
+
+testfileequal rootdir/etc/apt/sources.list.d/moved-from-main.sources "# Modernized from ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/sources.list
+Types: deb
+URIs: http://example.org/debian/
+Suites: stable
+Components: bananas
+Signed-By: 
+
+# Modernized from ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/sources.list
+Types: deb
+URIs: http://example.org/debian/
+Suites: trusted
+Components: bananas
+Signed-By: 
+Trusted: yes"
+
+testsuccessequal "All sources are modern." apt modernize-sources
