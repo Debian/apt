@@ -10,14 +10,14 @@
 # Carlos Z.F. Liu <carlosliu@users.sourceforge.net>, 2004, 2006.
 # Aron Xu <happyaron.xu@gmail.com>, 2009, 2010.
 # Mo Zhou <cdluminate@gmail.com>, 2014, 2015, 2016, 2017, 2019.
-# Boyuan Yang <073plan@gmail.com>, 2018, 2020, 2022, 2024.
+# Boyuan Yang <073plan@gmail.com>, 2018, 2020, 2022, 2024, 2025.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.9.1\n"
+"Project-Id-Version: apt 2.9.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2025-01-28 18:52+0000\n"
-"PO-Revision-Date: 2024-04-16 13:15-0400\n"
+"PO-Revision-Date: 2025-01-28 16:26-0500\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
 "Language: zh_CN\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.5\n"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -230,7 +230,7 @@ msgstr "无法下载 %s  %s"
 msgid ""
 "Repositories should provide a clear-signed InRelease file, but none found at "
 "%s."
-msgstr ""
+msgstr "仓库应当提供明文签署的 InRelease 文件，但在 %s 中并未找到。"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -642,26 +642,26 @@ msgstr "语法错误 %s:%u：文件尾部有多余的无意义的数据"
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Error:"
-msgstr ""
+msgstr "错误："
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Warning:"
-msgstr ""
+msgstr "警告："
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Notice:"
-msgstr ""
+msgstr "注意："
 
 #: apt-pkg/contrib/error.cc
 msgid "Audit:"
-msgstr ""
+msgstr "审计："
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Debug:"
-msgstr ""
+msgstr "调试："
 
 #: apt-pkg/contrib/extracttar.cc
 #, c-format
@@ -1012,7 +1012,7 @@ msgstr "软件包仓库 Release 文件 %s 内无哈希条目"
 msgid ""
 "No Hash entry in Release file %s which is considered strong enough for "
 "security purposes"
-msgstr "Release 文件 %s 中不含散列项，该文件用于保证足够的安全性。"
+msgstr "Release 文件 %s 中不含散列项，该文件用于保证足够的安全性"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -1085,6 +1085,7 @@ msgid ""
 "The dpkg executable set in Dir::Bin::dpkg is missing, falling back to using "
 "default dpkg."
 msgstr ""
+"由 Dir::Bin::dpkg 所设置的 dpkg 可执行文件缺失，回退到使用默认的 dpkg。"
 
 #. we don't care for the difference
 #: apt-pkg/deb/dpkgpm.cc
@@ -1271,10 +1272,8 @@ msgid "Calculating upgrade"
 msgstr "正在计算更新"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
-#| msgid "Installing dependencies:"
 msgid "Solving dependencies"
-msgstr "将要安装的依赖："
+msgstr "正在解析依赖"
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
@@ -2126,7 +2125,7 @@ msgstr "正在列表"
 msgid "There is %i additional version. Please use the '-a' switch to see it"
 msgid_plural ""
 "There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] "还有 %i 个版本。请使用 -a 选项来查看它(它们)。"
+msgstr[0] "还有 %i 个版本。请使用 -a 选项来查看它(它们)"
 
 #. TRANSLATORS: placeholder is a binary name like apt or apt-get
 #: apt-private/private-main.cc
@@ -2529,7 +2528,7 @@ msgstr "无法获得 %s 的构建依赖关系信息"
 #: apt-private/private-source.cc
 #, c-format
 msgid "%s has no build depends.\n"
-msgstr " %s 没有构建依赖关系信息。\n"
+msgstr "%s 没有构建依赖关系信息。\n"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -2569,7 +2568,7 @@ msgstr "无法处理构建依赖关系"
 #: apt-private/private-sources.cc
 #, c-format
 msgid "Failed to parse %s. Edit again? "
-msgstr "解析 %s 失败。请重新编辑之后再试。"
+msgstr "解析 %s 失败。要重新编辑之后再试吗？"
 
 #: apt-private/private-sources.cc
 #, c-format
@@ -2579,7 +2578,7 @@ msgstr "您的 %s 文件有过改动，请执行 ‘apt-get update’。\n"
 #: apt-private/private-sources.cc
 #, c-format
 msgid "Rewrite %zu sources?"
-msgstr ""
+msgstr "重新写入 %zu 个软件源配置吗？"
 
 #: apt-private/private-unmet.cc
 #, c-format
@@ -2588,7 +2587,7 @@ msgstr "版本为 %2$s 的软件包 %1$s 有未满足的依赖关系：\n"
 
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
-msgstr " update 命令不需要参数"
+msgstr "update 命令不接受参数"
 
 #. TRANSLATOR: the first two are manpage references, the last the URI from a sources.list
 #: apt-private/private-update.cc
@@ -2602,7 +2601,7 @@ msgstr "您应当优先考虑使用 %s 而非直接把账户信息直接写在 %
 #: apt-private/private-update.cc
 #, c-format
 msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
-msgstr ""
+msgstr "%s 用于“%s”的条目应当被升级为 deb822 .sources 格式"
 
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
@@ -2613,25 +2612,23 @@ msgstr "对‘%2$s’在 %1$s 一项中缺失了 Signed-By"
 #: apt-private/private-update.cc
 msgid ""
 "Consider migrating all sources.list(5) entries to the deb822 .sources format"
-msgstr ""
+msgstr "请考虑将所有 sources.list(5) 的条目迁移到 deb822 .sources 格式"
 
 #: apt-private/private-update.cc
 msgid ""
 "The deb822 .sources format supports both embedded as well as external "
 "OpenPGP keys"
-msgstr ""
+msgstr "deb822 .sources 格式同时支持嵌入式和外部的 OpenPGP 密钥"
 
 #: apt-private/private-update.cc
-#, fuzzy
-#| msgid ""
-#| "See apt-secure(8) manpage for repository creation and user configuration "
-#| "details."
 msgid "See apt-secure(8) for best practices in configuring repository signing."
-msgstr "参见 apt-secure(8) 手册以了解仓库创建和用户配置方面的细节。"
+msgstr "参见 apt-secure(8) 手册以了解配置仓库签名的最佳实践。"
 
 #: apt-private/private-update.cc
 msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
 msgstr ""
+"一些软件源配置可被改进为现代化的配置方法。请运行“apt modernize-sources”来进行"
+"此操作。"
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3015,10 +3012,8 @@ msgid "concatenate files, with automatic decompression"
 msgstr "自动解压并连接文件"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
-#| msgid "Problem hashing file"
 msgid "hash file"
-msgstr "把文件加入哈希表时出错"
+msgstr "散列文件"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
@@ -3254,7 +3249,7 @@ msgstr "编辑软件源信息文件"
 
 #: cmdline/apt.cc
 msgid "modernize .list files to .sources files"
-msgstr ""
+msgstr "将 .list 文件现代化并改写为 .sources 文件"
 
 #: cmdline/apt.cc
 msgid "satisfy dependency strings"
@@ -3762,7 +3757,7 @@ msgstr "不受信任的公钥算法：%s"
 #: methods/gpgv.cc
 #, c-format
 msgid "%s will be deprecated in a future release"
-msgstr ""
+msgstr "%s 将会在未来的版本中被弃用"
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
@@ -3781,17 +3776,12 @@ msgid ""
 msgstr "内部错误：签名正确无误，但是无法确认密钥指纹？！"
 
 #: methods/gpgv.cc
-#, fuzzy
-#| msgid ""
-#| "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgid "Could not execute 'gpgv' to verify signature (is gnupg installed?)"
-msgstr "无法运行 apt-key 以验证签名(您安装了 gnupg 吗？)"
+msgstr "无法运行 'gpgv' 以验证签名（您安装了 gnupg 吗？）"
 
 #: methods/gpgv.cc
-#, fuzzy
-#| msgid "Unknown error executing apt-key"
 msgid "Unknown error executing gpgv"
-msgstr "运行 apt-key 时发生未知错误"
+msgstr "运行 gpgv 时发生未知错误"
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
