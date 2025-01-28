@@ -12,8 +12,15 @@ endif()
 
 # Handle sources.list example
 if (WITH_DOC OR WITH_DOC_EXAMPLES)
-add_vendor_file(OUTPUT sources.list
-                INPUT "${CURRENT_VENDOR}/sources.list.in"
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CURRENT_VENDOR}/${CURRENT_VENDOR}.sources.in")
+    set(sources_in "${CURRENT_VENDOR}/${CURRENT_VENDOR}.sources.in")
+    set(sources_out "${CURRENT_VENDOR}.sources")
+else()
+    set(sources_in "${CURRENT_VENDOR}/sources.list.in")
+    set(sources_out "sources.list")
+endif()
+add_vendor_file(OUTPUT ${sources_out}
+                INPUT "${sources_in}"
                 MODE 644
                 VARIABLES sourceslist-list-format
                           debian-stable-codename
@@ -21,7 +28,7 @@ add_vendor_file(OUTPUT sources.list
                           debian-testing-codename
                           ubuntu-codename
                           current-codename)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/sources.list
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${sources_out}
         DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples)
 endif()
 
