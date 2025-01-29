@@ -324,7 +324,9 @@ pkgCacheListParser * pkgDebianIndexFile::CreateListParser(FileFd &Pkg)
 bool pkgDebianIndexFile::Merge(pkgCacheGenerator &Gen,OpProgress * const Prog)
 {
    std::string const PackageFile = IndexFileName();
+   const IndexTarget *Target = nullptr;
    FileFd Pkg;
+
    if (OpenListFile(Pkg, PackageFile) == false)
       return false;
    _error->PushToStack();
@@ -339,7 +341,10 @@ bool pkgDebianIndexFile::Merge(pkgCacheGenerator &Gen,OpProgress * const Prog)
    if (Prog != NULL)
       Prog->SubProgress(0, GetProgressDescription());
 
-   if (Gen.SelectFile(PackageFile, *this, GetArchitecture(), GetComponent(), GetIndexFlags()) == false)
+   if (auto tmp = dynamic_cast<pkgDebianIndexTargetFile *>(this))
+      Target = &tmp->Target;
+
+   if (Gen.SelectFile(PackageFile, *this, GetArchitecture(), GetComponent(), Target, GetIndexFlags()) == false)
       return _error->Error("Problem with SelectFile %s",PackageFile.c_str());
 
    // Store the IMS information

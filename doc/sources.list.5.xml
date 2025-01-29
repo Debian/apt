@@ -219,6 +219,15 @@ deb-src [ option1=value1 option2=value2 ] uri suite [component1] [component2] [.
        APT versions.
 
        <itemizedlist>
+	  <listitem><para><option>Include</option>
+		(<option>include</option>) is a multivalue option defining
+		which packages should be used from this repository. Others are not parsed.
+	  </para></listitem>
+	  <listitem><para><option>Exclude</option>
+		(<option>exclude</option>) is a multivalue option defining
+		which packages should not be used from this repository. They will not be parsed.
+		This option is mutually exclusive with <option>Include</option>.
+	  </para></listitem>
 	  <listitem><para><option>Architectures</option>
 		(<option>arch</option>) is a multivalue option defining for
 		which architectures information should be downloaded. If this

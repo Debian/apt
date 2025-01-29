@@ -172,6 +172,7 @@ public:
 
 class APT_PUBLIC pkgDebianIndexTargetFile : public pkgDebianIndexFile
 {
+   friend class pkgDebianIndexFile;
    void * const d;
 protected:
    IndexTarget const Target;

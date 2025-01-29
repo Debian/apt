@@ -1,0 +1,63 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'i386' 'armel'
+
+insertpackage 'unstable' 'foo' 'all' '1.0'
+insertpackage 'unstable' 'bar' 'all' '1.0'
+insertpackage 'unstable' 'baz' 'all' '1.0'
+
+setupaptarchive
+
+rm rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.list
+
+cat > rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.sources << EOF
+Types: deb
+URIs: file://${TMPWORKINGDIRECTORY}/aptarchive
+Suites: unstable
+Components: main
+Include: foo
+EOF
+
+testsuccess apt update
+testsuccessequal "foo/unstable 1.0 all" apt list -qq
+
+cat > rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.sources << EOF
+Types: deb
+URIs: file://${TMPWORKINGDIRECTORY}/aptarchive
+Suites: unstable
+Components: main
+Exclude: foo bar
+EOF
+
+testsuccess apt update
+testsuccessequal "baz/unstable 1.0 all" apt list -qq
+
+
+cat > rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.sources << EOF
+Types: deb
+URIs: file://${TMPWORKINGDIRECTORY}/aptarchive
+Suites: unstable
+Components: main
+Exclude: foo , baz
+EOF
+
+testsuccess apt update
+testsuccessequal "bar/unstable 1.0 all" apt list -qq
+
+cat > rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.sources << EOF
+Types: deb
+URIs: file://${TMPWORKINGDIRECTORY}/aptarchive
+Suites: unstable
+Components: main
+Include: foo
+Exclude: foo , baz
+EOF
+
+testfailureequal "E: Both 'Include' and 'Exclude' specified in ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.sources:1
+E: The list of sources could not be read." apt update
+

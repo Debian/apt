@@ -5,6 +5,7 @@
 #include <apt-pkg/metaindex.h>
 
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -63,12 +64,14 @@ class APT_HIDDEN debReleaseIndex : public metaIndex
 
    [[nodiscard]] time_t GetNotBefore() const override APT_PURE;
 
-   void AddComponent(std::string const &sourcesEntry,
-	 bool const isSrc, std::string const &Name,
-	 std::vector<std::string> const &Targets,
-	 std::vector<std::string> const &Architectures,
-	 std::vector<std::string> Languages,
-	 bool const usePDiffs, std::string const &useByHash);
+   bool AddComponent(std::string const &sourcesEntry,
+		     bool const isSrc, std::string const &Name,
+		     std::vector<std::string> const &Targets,
+		     std::vector<std::string> const &Architectures,
+		     std::vector<std::string> Languages,
+		     bool const usePDiffs, std::string const &useByHash,
+		     std::optional<std::vector<std::string>> const &include,
+		     std::optional<std::vector<std::string>> const &exclude);
 };
 
 #endif

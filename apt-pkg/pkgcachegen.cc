@@ -251,6 +251,15 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       if (PackageName.empty() == true)
 	 return false;
 
+      // Package is excluded
+      if (exclude.find(PackageName) != exclude.end())
+	 continue;
+
+      // Includes are specified, this is the total set of packages to include,
+      // so we need to skip the package if it is not in the include list.
+      if (not include.empty() && include.find(PackageName) == include.end())
+	 continue;
+
       Counter++;
       if (Counter % 100 == 0 && Progress != 0)
 	 Progress->Progress(List.Offset());
@@ -1332,6 +1341,7 @@ bool pkgCacheGenerator::SelectFile(std::string const &File,
 				   pkgIndexFile const &Index,
 				   std::string const &Architecture,
 				   std::string const &Component,
+				   const IndexTarget *Target,
 				   unsigned long const Flags)
 {
    CurrentFile = nullptr;
@@ -1373,6 +1383,22 @@ bool pkgCacheGenerator::SelectFile(std::string const &File,
    PkgFileName = File;
    Cache.HeaderP->FileList = map_pointer<pkgCache::PackageFile>{NarrowOffset(CurrentFile - Cache.PkgFileP)};
    Cache.HeaderP->PackageFileCount++;
+
+   include.clear();
+   exclude.clear();
+   if (Target)
+   {
+      if (auto inc = Target->Options.find("INCLUDE"); inc != Target->Options.end())
+      {
+	 auto v = VectorizeString(inc->second, ' ');
+	 include.insert(v.begin(), v.end());
+      }
+      if (auto exc = Target->Options.find("EXCLUDE"); exc != Target->Options.end())
+      {
+	 auto v = VectorizeString(exc->second, ' ');
+	 exclude.insert(v.begin(), v.end());
+      }
+   }
 
    if (Progress != 0)
       Progress->SubProgress(Index.Size());
