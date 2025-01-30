@@ -604,8 +604,9 @@ struct pkgCache::VerFile
    map_pointer<VerFile> NextFile;
    /** \brief position in the package file */
    map_filesize_t Offset;         // File offset
-   /** @TODO document pkgCache::VerFile::Size */
-   map_filesize_t Size;
+#if APT_PKG_ABI <= 600
+   [[deprecated("No usage in src:apt, try MaxVerFileSize instead")]] map_filesize_t Size;
+#endif
 };
 									/*}}}*/
 // DescFile structure							/*{{{*/

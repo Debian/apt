@@ -854,9 +854,14 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
    *Last = VF.MapPointer();
 
    VF->Offset = List.Offset();
-   VF->Size = List.Size();
-   if (Cache.HeaderP->MaxVerFileSize < VF->Size)
-      Cache.HeaderP->MaxVerFileSize = VF->Size;
+   auto const Size = List.Size();
+   if (Cache.HeaderP->MaxVerFileSize < Size)
+      Cache.HeaderP->MaxVerFileSize = Size;
+#if APT_PKG_ABI <= 600
+   APT_IGNORE_DEPRECATED_PUSH
+   VF->Size = Size;
+   APT_IGNORE_DEPRECATED_POP
+#endif
    Cache.HeaderP->VerFileCount++;
 
    return true;
