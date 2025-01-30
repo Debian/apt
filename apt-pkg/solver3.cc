@@ -187,8 +187,13 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
       return not b.optional && b.size < 2;
    if (group != b.group)
       return group > b.group;
-   if (optional && b.optional && reason.empty() != b.reason.empty())
-      return reason.empty();
+   if (optional && b.optional)
+   {
+      if ((size < 2) != (b.size < 2))
+	 return b.size < 2;
+      if (reason.empty() != b.reason.empty())
+	 return reason.empty();
+   }
    // An optional item is less important than a required one.
    if (optional != b.optional)
       return optional;
@@ -337,60 +342,25 @@ bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
       std::cerr << "[" << depth() << "] " << (decision ? "Install" : "Reject") << ":" << var.toString(cache) << " (" << WhyStr(state.reason) << ")\n";
 
    solved.push_back(Solved{var, std::nullopt});
+   propQ.push(var);
 
    if (not decision)
-   {
-      if (not PropagateReject(var))
-	 return false;
       needsRescore = true;
-   }
-   else
-   {
-      if (not PropagateInstall(var))
-	 return false;
-   }
+
    return true;
 }
 
-bool APT::Solver::Install(pkgCache::PkgIterator Pkg, Var reason, Group group)
+bool APT::Solver::Propagate()
 {
-   if ((*this)[Pkg].decision == Decision::MUST)
-      return true;
-
-   // Note decision
-   if (not Enqueue(Var(Pkg), true, reason))
-      return false;
-
-   bool anyInstallable = false;
-   // Insert the work item.
-   Work workItem{Var(Pkg), depth(), group};
-   for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
+   while (!propQ.empty())
    {
-      workItem.solutions.push_back(ver);
-      if ((*this)[ver].decision != Decision::MUSTNOT)
-	 anyInstallable = true;
+      Var var = propQ.front();
+      propQ.pop();
+      if ((*this)[var].decision == Decision::MUST && not PropagateInstall(var))
+	 return false;
+      else if ((*this)[var].decision == Decision::MUSTNOT && not PropagateReject(var))
+	 return false;
    }
-
-   if (not anyInstallable)
-   {
-      _error->Error("Conflict: %s -> %s but no versions are installable",
-		    WhyStr(reason).c_str(), Pkg.FullName().c_str());
-      for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
-	 _error->Error("Uninstallable version: %s", WhyStr(Var(ver)).c_str());
-      return false;
-   }
-
-   std::stable_sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, Pkg, *this});
-   assert(workItem.solutions.size() > 0);
-
-   if (workItem.solutions.size() > 1 || workItem.optional)
-      AddWork(std::move(workItem));
-   else if (not Enqueue(Var(pkgCache::VerIterator(cache, workItem.solutions[0])), true, workItem.reason))
-      return false;
-
-   if (not EnqueueCommonDependencies(Pkg))
-      return false;
-
    return true;
 }
 
@@ -398,6 +368,40 @@ bool APT::Solver::PropagateInstall(Var var)
 {
    if (auto Pkg = var.Pkg(cache); not Pkg.end())
    {
+      bool anyInstallable = false;
+      bool anyMust = false;
+      // Insert the work item.
+      Work workItem{Var(Pkg), depth(), Group::SelectVersion};
+      for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
+      {
+	 workItem.solutions.push_back(ver);
+	 if ((*this)[ver].decision != Decision::MUSTNOT)
+	    anyInstallable = true;
+	 if ((*this)[ver].decision == Decision::MUST)
+	    anyMust = true;
+      }
+
+      if (not anyInstallable)
+      {
+	 _error->Error("Conflict: %s -> %s but no versions are installable",
+		       WhyStr((*this)[Pkg].reason).c_str(), Pkg.FullName().c_str());
+	 for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
+	    _error->Error("Uninstallable version: %s", WhyStr(Var(ver)).c_str());
+	 return false;
+      }
+
+      std::stable_sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, Pkg, *this});
+      assert(workItem.solutions.size() > 0);
+
+      if (workItem.solutions.size() > 1 || workItem.optional)
+	 AddWork(std::move(workItem));
+      else if (not Enqueue(Var(pkgCache::VerIterator(cache, workItem.solutions[0])), true, workItem.reason))
+	 return false;
+
+      // FIXME: We skip enqueuing duplicate common dependencies if we already selected a version, but
+      // we should not have common dependencies duplicated in the version objects anyway.
+      if (not anyMust && not EnqueueCommonDependencies(Pkg))
+	 return false;
    }
    else if (auto Ver = var.Ver(cache); not Ver.end())
    {
@@ -598,8 +602,6 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 	 return true;
       }
    }
-   else if (workItem.optional && start.ParentPkg()->CurrentVer == 0)
-      workItem.group = Group::NewUnsatRecommends;
 
    if (not workItem.solutions.empty())
    {
@@ -827,8 +829,17 @@ void APT::Solver::RescoreWorkIfNeeded()
 
 bool APT::Solver::Solve()
 {
-   while (not work.empty())
+   while (true)
    {
+      while (not Propagate())
+      {
+	 if (not Pop())
+	    return false;
+      }
+
+      if (work.empty())
+	 break;
+
       // Rescore the work if we need to
       RescoreWorkIfNeeded();
       // *NOW* we can pop the item.
@@ -894,7 +905,7 @@ bool APT::Solver::Solve()
 	 }
 	 if (unlikely(debug >= 3))
 	    std::cerr << "(try it: " << ver.ParentPkg().FullName() << "=" << ver.VerStr() << ")\n";
-	 if (not Enqueue(Var(pkgCache::VerIterator(cache, ver)), true, item.reason) && not Pop())
+	 if (not Enqueue(Var(ver), true, item.reason) && not Pop())
 	    return false;
 	 foundSolution = true;
 	 break;
@@ -984,7 +995,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 if (not isOptional)
 	 {
 	    // Pre-empt the non-optional requests, as we don't want to queue them, we can just "unit propagate" here.
-	    if (depcache[P].Keep() ? not Install(P, {}, Group) : not Enqueue(Var(depcache.GetCandidateVersion(P)), true, {}))
+	    if (depcache[P].Keep() ? not Enqueue(Var(P), true, {}) : not Enqueue(Var(depcache.GetCandidateVersion(P)), true, {}))
 	       return false;
 	 }
 	 else
@@ -998,7 +1009,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
       }
    }
 
-   return true;
+   return Propagate();
 }
 
 bool APT::Solver::ToDepCache(pkgDepCache &depcache)

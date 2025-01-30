@@ -1,0 +1,46 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+allowremovemanual
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'a' 'all' '2'
+insertpackage 'unstable' 'b' 'all' '2'
+insertpackage 'unstable' 'x' 'all' '3' 'Depends: xx
+Recommends: b'
+insertpackage 'unstable' 'xx' 'all' '3' 'Depends: a | b
+Recommends: b'
+
+setupaptarchive
+
+msgmsg "Test that the Recommends does not influence the Depends"
+testsuccessequal "The following additional packages will be installed:
+  a b
+The following NEW packages will be installed:
+  a b xx
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Inst a (2 unstable [all])
+Inst b (2 unstable [all])
+Inst xx (3 unstable [all])
+Conf a (2 unstable [all])
+Conf b (2 unstable [all])
+Conf xx (3 unstable [all])" apt install -s xx -qq
+
+
+msgmsg "Test that the Recommends in x does not influence the Depends in xx (one level lower)"
+testsuccessequal "The following additional packages will be installed:
+  a b xx
+The following NEW packages will be installed:
+  a b x xx
+0 upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+Inst a (2 unstable [all])
+Inst b (2 unstable [all])
+Inst xx (3 unstable [all])
+Inst x (3 unstable [all])
+Conf a (2 unstable [all])
+Conf b (2 unstable [all])
+Conf xx (3 unstable [all])
+Conf x (3 unstable [all])" apt install -s x -qq

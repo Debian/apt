@@ -46,7 +46,6 @@ class Solver
    enum class Group : uint8_t
    {
       HoldOrDelete,
-      NewUnsatRecommends,
 
       // Satisfying dependencies on entirely new packages first is a good idea because
       // it may contain replacement packages like libfoo1t64 whereas we later will see
@@ -56,6 +55,9 @@ class Solver
       // On a similar note as for SatisfyNew, if the dependency contains obsolete packages
       // try it last.
       SatisfyObsolete,
+
+      // Select a version of a package chosen for install.
+      SelectVersion,
 
       // My intuition tells me that we should try to schedule upgrades first, then
       // any non-obsolete installed packages, and only finally obsolete ones, such
@@ -130,6 +132,9 @@ class Solver
    // queue to be concerned about
    std::vector<Solved> solved{};
 
+   // \brief Propagation queue
+   std::queue<Var> propQ;
+
    // \brief Current decision level.
    //
    // This is an index into the solved vector.
@@ -153,6 +158,8 @@ class Solver
    bool RejectReverseDependencies(pkgCache::VerIterator Ver);
    // \brief Enqueue a single or group
    bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
+   // \brief Propagate all pending propagations
+   bool Propagate();
    // \brief Propagate a "true" value of a variable
    bool PropagateInstall(Var var);
    // \brief Propagate a rejection of a variable
@@ -183,9 +190,6 @@ class Solver
    bool Assume(Var var, bool decision, Var reason);
    // Enqueue a decision fact
    bool Enqueue(Var var, bool decision, Var reason);
-
-   // \brief Mark the package for install. This is annoying as it incurs a decision
-   bool Install(pkgCache::PkgIterator Pkg, Var reason, Group group);
 
    // \brief Apply the selections from the dep cache to the solver
    bool FromDepCache(pkgDepCache &depcache);

@@ -33,10 +33,7 @@ insertpackage 'unstable' 'foo-same-breaker-none' 'i386' '1.0' 'Conflicts: foo-sa
 
 setupaptarchive
 
-testfailuremsg 'E: Conflict: foo:i386 but no versions are installable
-E: Uninstallable version: foo-breaker-none:i386=1.0 -> not foo:i386=4.0
-E: Uninstallable version: foo-breaker-none:i386=1.0 -> not foo:i386=2.0
-E: Uninstallable version: foo-breaker-none:i386=1.0 -> not foo:i386=2.0' aptget install foo-provider foo-breaker-none -s --solver 3.0
+testfailuremsg 'E: Conflict: foo-breaker-none:i386=1.0 -> not foo-provider:i386=1.0 but foo-provider:i386=1.0' aptget install foo-provider foo-breaker-none -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
@@ -75,10 +72,7 @@ Conf foo (4.0 unstable [i386])
 Conf foo-breaker-3 (1.0 unstable [i386])
 Conf foo-provider (1.0 unstable [i386])' aptget install foo-provider foo-breaker-3 -s
 
-testfailuremsg 'E: Conflict: foo-foreign:amd64 but no versions are installable
-E: Uninstallable version: foo-foreign-breaker-none:i386=1.0 -> not foo-foreign:amd64=4.0
-E: Uninstallable version: foo-foreign-breaker-none:i386=1.0 -> not foo-foreign:amd64=2.0
-E: Uninstallable version: foo-foreign-breaker-none:i386=1.0 -> not foo-foreign:amd64=4.0' aptget install foo-foreign-provider foo-foreign-breaker-none -s --solver 3.0
+testfailuremsg 'E: Conflict: foo-foreign-breaker-none:i386=1.0 -> not foo-foreign-provider:i386=1.0 but foo-foreign-provider:i386=1.0' aptget install foo-foreign-provider foo-foreign-breaker-none -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
@@ -117,7 +111,7 @@ Conf foo-foreign:amd64 (4.0 unstable [amd64])
 Conf foo-foreign-breaker-3 (1.0 unstable [i386])
 Conf foo-foreign-provider (1.0 unstable [i386])' aptget install foo-foreign-provider foo-foreign-breaker-3 -s
 
-testfailuremsg 'E: Conflict:  -> foo-same:i386 but foo-same-breaker-none:i386=1.0 -> not foo-same:i386=2.0 -> not foo-same:i386' aptget install foo-same-provider foo-same-breaker-none -s --solver 3.0
+testfailuremsg 'E: Conflict: foo-same-breaker-none:i386=1.0 -> not foo-same-provider:i386=1.0 but foo-same-provider:i386=1.0' aptget install foo-same-provider foo-same-breaker-none -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
