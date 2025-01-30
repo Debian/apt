@@ -187,8 +187,13 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
       return not b.optional && b.size < 2;
    if (group != b.group)
       return group > b.group;
-   if (optional && b.optional && reason.empty() != b.reason.empty())
-      return reason.empty();
+   if (optional && b.optional)
+   {
+      if ((size < 2) != (b.size < 2))
+	 return b.size < 2;
+      if (reason.empty() != b.reason.empty())
+	 return reason.empty();
+   }
    // An optional item is less important than a required one.
    if (optional != b.optional)
       return optional;
