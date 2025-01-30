@@ -5,6 +5,17 @@
  * Copyright (c) 2023 Canonical Ltd
  *
  * SPDX-License-Identifier: GPL-2.0+
+ *
+ * This solver started from scratch but turns slowly into a variant of
+ * MiniSat as documented in the paper
+ *    "An extensible SAT-solver [extended version 1.2]."
+ * by Niklas Eén, and Niklas Sörensson.
+ *
+ * It extends MiniSAT with support for optional clauses, and differs
+ * in that it removes non-deterministic aspects like the activity based
+ * ordering. Instead it uses a more nuanced static ordering that, to
+ * some extend, preserves some greediness and sub-optimality of the
+ * classic APT solver.
  */
 
 #define APT_COMPILING_APT
