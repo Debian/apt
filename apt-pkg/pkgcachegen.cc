@@ -949,9 +949,14 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
    *Last = DF.MapPointer();
 
    DF->Offset = List.Offset();
-   DF->Size = List.Size();
-   if (Cache.HeaderP->MaxDescFileSize < DF->Size)
-      Cache.HeaderP->MaxDescFileSize = DF->Size;
+   auto const Size = List.Size();
+   if (Cache.HeaderP->MaxDescFileSize < Size)
+      Cache.HeaderP->MaxDescFileSize = Size;
+#if APT_PKG_ABI <= 600
+   APT_IGNORE_DEPRECATED_PUSH
+   DF->Size = Size;
+   APT_IGNORE_DEPRECATED_POP
+#endif
    Cache.HeaderP->DescFileCount++;
 
    return true;

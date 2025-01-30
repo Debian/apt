@@ -618,8 +618,9 @@ struct pkgCache::DescFile
    map_pointer<DescFile> NextFile;
    /** \brief position in the file */
    map_filesize_t Offset;         // File offset
-   /** @TODO document pkgCache::DescFile::Size */
-   map_filesize_t Size;
+#if APT_PKG_ABI <= 600
+   [[deprecated("No usage in src:apt, try MaxDescFileSize instead")]] map_filesize_t Size;
+#endif
 };
 									/*}}}*/
 // Version structure							/*{{{*/
