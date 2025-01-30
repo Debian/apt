@@ -87,9 +87,10 @@ static bool DumpPackage(CommandLine &CmdL)
 	 cout << endl;
 	 for (pkgCache::DescIterator D = Cur.DescriptionList(); D.end() == false; ++D)
 	 {
-	    cout << " Description Language: " << D.LanguageCode() << endl
-		 << "                 File: " << D.FileList().File().FileName() << endl
-		 << "                  MD5: " << D.md5() << endl;
+	    cout << " Description Language: " << D.LanguageCode() << '\n';
+	    for (auto DF = D.FileList(); not DF.end(); ++DF)
+	       cout << "                 File: " << DF.File().FileName() << '\n';
+	    cout << "                  MD5: " << D.md5() << '\n';
 	 }
 	 cout << endl;
       }
