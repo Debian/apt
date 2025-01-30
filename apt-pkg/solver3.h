@@ -46,7 +46,6 @@ class Solver
    enum class Group : uint8_t
    {
       HoldOrDelete,
-      NewUnsatRecommends,
 
       // Satisfying dependencies on entirely new packages first is a good idea because
       // it may contain replacement packages like libfoo1t64 whereas we later will see

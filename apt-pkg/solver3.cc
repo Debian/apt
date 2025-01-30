@@ -603,8 +603,6 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 	 return true;
       }
    }
-   else if (workItem.optional && start.ParentPkg()->CurrentVer == 0)
-      workItem.group = Group::NewUnsatRecommends;
 
    if (not workItem.solutions.empty())
    {
