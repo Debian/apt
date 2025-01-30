@@ -341,8 +341,13 @@ struct pkgCache::Header
    map_id_t DependsDataCount;
    map_fileid_t ReleaseFileCount;
    map_fileid_t PackageFileCount;
+#if APT_PKG_ABI <= 600
    map_fileid_t VerFileCount;
    map_fileid_t DescFileCount;
+#else
+   map_id_t VerFileCount;
+   map_id_t DescFileCount;
+#endif
    map_id_t ProvidesCount;
 
    /** \brief index of the first PackageFile structure
