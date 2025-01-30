@@ -513,23 +513,26 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
       a version with a description of the same MD5 - if so we reuse this
       description group instead of creating our own for this version */
    for (pkgCache::PkgIterator P = Grp.PackageList();
-	P.end() == false; P = Grp.NextPkg(P))
+	not P.end() && Ver->DescriptionList == 0; P = Grp.NextPkg(P))
    {
-      for (pkgCache::VerIterator V = P.VersionList();
-	   V.end() == false; ++V)
+      for (pkgCache::VerIterator V = P.VersionList(); not V.end(); ++V)
       {
 	 if (V->DescriptionList == 0 || Cache.ViewString(V.DescriptionList()->md5sum) != CurMd5)
 	    continue;
 	 Ver->DescriptionList = V->DescriptionList;
+	 break;
       }
    }
 
    // We haven't found reusable descriptions, so add the first description(s)
    map_stringitem_t md5idx = Ver->DescriptionList == 0 ? 0 : Ver.DescriptionList()->md5sum;
-   std::vector<std::string> availDesc = List.AvailableDescriptionLanguages();
-   for (std::vector<std::string>::const_iterator CurLang = availDesc.begin(); CurLang != availDesc.end(); ++CurLang)
-      if (AddNewDescription(List, Ver, *CurLang, CurMd5, md5idx) == false)
+   for (auto const &CurLang : List.AvailableDescriptionLanguages())
+   {
+      if (Ver->DescriptionList != 0 && IsDuplicateDescription(Cache, Ver.DescriptionList(), CurMd5, CurLang))
+	 continue;
+      if (not AddNewDescription(List, Ver, CurLang, CurMd5, md5idx))
 	 return false;
+   }
    return true;
 }
 									/*}}}*/
