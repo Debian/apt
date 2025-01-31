@@ -45,9 +45,6 @@ template<class T> using Dynamic = pkgCacheGenerator::Dynamic<T>;
 typedef std::vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 
-static bool IsDuplicateDescription(pkgCache &Cache, pkgCache::DescIterator Desc,
-			    std::string_view CurMd5, std::string const &CurLang);
-
 using std::string;
 using std::string_view;
 
@@ -351,14 +348,10 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 	 continue;
 
       map_stringitem_t md5idx = VerDesc->md5sum;
-      for (std::vector<std::string>::const_iterator CurLang = availDesc.begin(); CurLang != availDesc.end(); ++CurLang)
+      for (auto const &CurLang : availDesc)
       {
-	 // don't add a new description if we have one for the given
-	 // md5 && language
-	 if (IsDuplicateDescription(Cache, VerDesc, CurMd5, *CurLang) == true)
-	    continue;
-
-	 AddNewDescription(List, Ver, *CurLang, CurMd5, md5idx);
+	 if (not AddNewDescription(List, Ver, CurLang, CurMd5, md5idx))
+	    return false;
       }
 
       // we can stop here as all "same" versions will share the description
@@ -513,47 +506,66 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
       a version with a description of the same MD5 - if so we reuse this
       description group instead of creating our own for this version */
    for (pkgCache::PkgIterator P = Grp.PackageList();
-	P.end() == false; P = Grp.NextPkg(P))
+	not P.end() && Ver->DescriptionList == 0; P = Grp.NextPkg(P))
    {
-      for (pkgCache::VerIterator V = P.VersionList();
-	   V.end() == false; ++V)
+      for (pkgCache::VerIterator V = P.VersionList(); not V.end(); ++V)
       {
 	 if (V->DescriptionList == 0 || Cache.ViewString(V.DescriptionList()->md5sum) != CurMd5)
 	    continue;
 	 Ver->DescriptionList = V->DescriptionList;
+	 break;
       }
    }
 
-   // We haven't found reusable descriptions, so add the first description(s)
    map_stringitem_t md5idx = Ver->DescriptionList == 0 ? 0 : Ver.DescriptionList()->md5sum;
-   std::vector<std::string> availDesc = List.AvailableDescriptionLanguages();
-   for (std::vector<std::string>::const_iterator CurLang = availDesc.begin(); CurLang != availDesc.end(); ++CurLang)
-      if (AddNewDescription(List, Ver, *CurLang, CurMd5, md5idx) == false)
+   for (auto const &CurLang : List.AvailableDescriptionLanguages())
+      if (not AddNewDescription(List, Ver, CurLang, CurMd5, md5idx))
 	 return false;
    return true;
 }
 									/*}}}*/
-bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterator &Ver, std::string const &lang, std::string_view CurMd5, map_stringitem_t &md5idx) /*{{{*/
+// findDescription							/*{{{*/
+static bool findDescription(pkgCache &Cache, pkgCache::DescIterator &Desc,
+			    std::string_view CurMd5, std::string_view const CurLang)
 {
-   pkgCache::DescIterator Desc;
+   // Descriptions in the same link-list have all the same md5
+   if (Desc.end() || Cache.ViewString(Desc->md5sum) != CurMd5)
+      return false;
+   for (; not Desc.end(); ++Desc)
+      if (CurLang == Cache.ViewString(Desc->language_code))
+	 return true;
+   return false;
+}
+									/*}}}*/
+bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterator &Ver, std::string const &CurLang, std::string_view CurMd5, map_stringitem_t &md5idx) /*{{{*/
+{
+   pkgCache::DescIterator Desc = Ver.DescriptionList();
    Dynamic<pkgCache::DescIterator> DynDesc(Desc);
 
-   map_pointer<pkgCache::Description> const descindex = NewDescription(Desc, lang, CurMd5, md5idx);
-   if (unlikely(descindex == 0))
-      return _error->Error(_("Error occurred while processing %s (%s%d)"),
-	    Ver.ParentPkg().Name(), "NewDescription", 1);
+   // don't add a new description if we have one for the given md5 && language
+   if (not findDescription(Cache, Desc, CurMd5, CurLang))
+   {
+      map_pointer<pkgCache::Description> const descindex = NewDescription(Desc, CurLang, CurMd5, md5idx);
+      if (unlikely(descindex == 0))
+	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
+	       Ver.ParentPkg().Name(), "NewDescription", 1);
 
-   md5idx = Desc->md5sum;
-   Desc->ParentPkg = Ver.ParentPkg().MapPointer();
+      md5idx = Desc->md5sum;
+      Desc->ParentPkg = Ver.ParentPkg().MapPointer();
 
-   // we add at the end, so that the start is constant as we need
-   // that to be able to efficiently share these lists
-   pkgCache::DescIterator VerDesc = Ver.DescriptionList(); // old value might be invalid after ReMap
-   for (;VerDesc.end() == false && VerDesc->NextDesc != 0; ++VerDesc);
-   map_pointer<pkgCache::Description> * const LastNextDesc = (VerDesc.end() == true) ? &Ver->DescriptionList : &VerDesc->NextDesc;
-   *LastNextDesc = descindex;
+      // we add at the end, so that the start is constant as we need
+      // that to be able to efficiently share these lists
+      if (Ver->DescriptionList == 0)
+	 Ver->DescriptionList = descindex;
+      else
+      {
+	 auto VerDesc = Ver.DescriptionList();
+	 for (; VerDesc->NextDesc != 0; ++VerDesc);
+	 VerDesc->NextDesc = descindex;
+      }
+   }
 
-   if (NewFileDesc(Desc,List) == false)
+   if (not NewFileDesc(Desc, List))
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
 	    Ver.ParentPkg().Name(), "NewFileDesc", 1);
 
@@ -854,9 +866,14 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
    *Last = VF.MapPointer();
 
    VF->Offset = List.Offset();
-   VF->Size = List.Size();
-   if (Cache.HeaderP->MaxVerFileSize < VF->Size)
-      Cache.HeaderP->MaxVerFileSize = VF->Size;
+   auto const Size = List.Size();
+   if (Cache.HeaderP->MaxVerFileSize < Size)
+      Cache.HeaderP->MaxVerFileSize = Size;
+#if APT_PKG_ABI <= 600
+   APT_IGNORE_DEPRECATED_PUSH
+   VF->Size = Size;
+   APT_IGNORE_DEPRECATED_POP
+#endif
    Cache.HeaderP->VerFileCount++;
 
    return true;
@@ -924,13 +941,17 @@ map_pointer<pkgCache::Version> pkgCacheGenerator::NewVersion(pkgCache::VerIterat
 }
 									/*}}}*/
 // CacheGenerator::NewFileDesc - Create a new File<->Desc association	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
 				   ListParser &List)
 {
    if (CurrentFile == nullptr)
       return true;
+
+   auto const DFFile = map_pointer<pkgCache::PackageFile>{NarrowOffset(CurrentFile - Cache.PkgFileP)};
+   auto const DFOffset = List.Offset();
+   for (auto DF = Desc.FileList(); not DF.end(); ++DF)
+      if (DF->File == DFFile && DF->Offset == DFOffset)
+	 return true;
 
    // Get a structure
    auto const DescFile = AllocateInMap<pkgCache::DescFile>();
@@ -938,20 +959,27 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
       return false;
 
    pkgCache::DescFileIterator DF(Cache,Cache.DescFileP + DescFile);
-   DF->File = map_pointer<pkgCache::PackageFile>{NarrowOffset(CurrentFile - Cache.PkgFileP)};
+   DF->File = DFFile;
+   DF->Offset = DFOffset;
 
    // Link it to the end of the list
-   map_pointer<pkgCache::DescFile> *Last = &Desc->FileList;
-   for (pkgCache::DescFileIterator D = Desc.FileList(); D.end() == false; ++D)
-      Last = &D->NextFile;
+   if (Desc->FileList == 0)
+      Desc->FileList = DescFile;
+   else
+   {
+      auto Last = Desc.FileList();
+      for (; Last->NextFile != 0; ++Last);
+      Last->NextFile = DescFile;
+   }
 
-   DF->NextFile = *Last;
-   *Last = DF.MapPointer();
-
-   DF->Offset = List.Offset();
-   DF->Size = List.Size();
-   if (Cache.HeaderP->MaxDescFileSize < DF->Size)
-      Cache.HeaderP->MaxDescFileSize = DF->Size;
+   auto const Size = List.Size();
+   if (Cache.HeaderP->MaxDescFileSize < Size)
+      Cache.HeaderP->MaxDescFileSize = Size;
+#if APT_PKG_ABI <= 600
+   APT_IGNORE_DEPRECATED_PUSH
+   DF->Size = Size;
+   APT_IGNORE_DEPRECATED_POP
+#endif
    Cache.HeaderP->DescFileCount++;
 
    return true;
@@ -1871,19 +1899,6 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
    *OutMap = Map.release();
 
    return true;
-}
-									/*}}}*/
-// IsDuplicateDescription						/*{{{*/
-static bool IsDuplicateDescription(pkgCache &Cache, pkgCache::DescIterator Desc,
-			    std::string_view CurMd5, std::string const &CurLang)
-{
-   // Descriptions in the same link-list have all the same md5
-   if (Desc.end() == true || Cache.ViewString(Desc->md5sum) != CurMd5)
-      return false;
-   for (; Desc.end() == false; ++Desc)
-      if (Desc.LanguageCode() == CurLang)
-	 return true;
-   return false;
 }
 									/*}}}*/
 

@@ -87,9 +87,10 @@ static bool DumpPackage(CommandLine &CmdL)
 	 cout << endl;
 	 for (pkgCache::DescIterator D = Cur.DescriptionList(); D.end() == false; ++D)
 	 {
-	    cout << " Description Language: " << D.LanguageCode() << endl
-		 << "                 File: " << D.FileList().File().FileName() << endl
-		 << "                  MD5: " << D.md5() << endl;
+	    cout << " Description Language: " << D.LanguageCode() << '\n';
+	    for (auto DF = D.FileList(); not DF.end(); ++DF)
+	       cout << "                 File: " << DF.File().FileName() << '\n';
+	    cout << "                  MD5: " << D.md5() << '\n';
 	 }
 	 cout << endl;
       }
@@ -464,7 +465,6 @@ static bool DumpAvail(CommandLine &)
    stdoutfd.OpenDescriptor(STDOUT_FILENO, FileFd::WriteOnly, false);
 
    // Iterate over all the package files and write them out.
-   char *Buffer = new char[Cache->HeaderP->MaxVerFileSize+10];
    for (pkgCache::VerFile **J = VFList; *J != 0;)
    {
       pkgCache::PkgFileIterator File(*Cache, Cache->PkgFileP + (*J)->File);
@@ -472,40 +472,23 @@ static bool DumpAvail(CommandLine &)
       FileFd PkgF(File.FileName(),FileFd::ReadOnly, FileFd::Extension);
       if (_error->PendingError() == true)
 	 break;
-      
-      /* Write all of the records from this package file, since we
-       	 already did locality sorting we can now just seek through the
-       	 file in read order. We apply 1 more optimization here, since often
-       	 there will be < 1 byte gaps between records (for the \n) we read that
-       	 into the next buffer and offset a bit.. */
-      unsigned long Pos = 0;
+
+      pkgTagFile tagsfile(&PkgF, Cache->HeaderP->MaxVerFileSize);
+      pkgTagSection Tags;
+
       for (; *J != 0; J++)
       {
 	 if (Cache->PkgFileP + (*J)->File != File)
 	    break;
-	 
+
 	 const pkgCache::VerFile &VF = **J;
-
-	 // Read the record and then write it out again.
-	 unsigned long Jitter = VF.Offset - Pos;
-	 if (Jitter > 8)
-	 {
-	    if (PkgF.Seek(VF.Offset) == false)
-	       break;
-	    Jitter = 0;
-	 }
-	 
-	 if (PkgF.Read(Buffer,VF.Size + Jitter) == false)
+	 if (not tagsfile.Jump(Tags, VF.Offset))
 	    break;
-	 Buffer[VF.Size + Jitter] = '\n';
 
-	 // See above..
 	 if ((File->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
 	 {
-	    pkgTagSection Tags;
-	    if (Tags.Scan(Buffer+Jitter,VF.Size+1) == false ||
-		Tags.Write(stdoutfd, NULL, RW) == false ||
-		stdoutfd.Write("\n", 1) == false)
+	    if (not Tags.Write(stdoutfd, NULL, RW) ||
+		  not stdoutfd.Write("\n", 1))
 	    {
 	       _error->Error("Internal Error, Unable to parse a package record");
 	       break;
@@ -513,18 +496,24 @@ static bool DumpAvail(CommandLine &)
 	 }
 	 else
 	 {
-	    if (stdoutfd.Write(Buffer + Jitter, VF.Size + 1) == false)
+	    char const *Start, *Stop;
+	    Tags.GetSection(Start, Stop);
+	    for (; Start < Stop; --Stop)
+	       if (std::string_view{"\n\r"}.find(*(Stop - 1)) == std::string_view::npos)
+		  break;
+	    if (not stdoutfd.Write(Start, Stop - Start) ||
+		not stdoutfd.Write("\n\n", 2))
+	    {
+	       _error->Error("Internal Error, Unable to parse a package record");
 	       break;
+	    }
 	 }
-
-	 Pos = VF.Offset + VF.Size;
       }
 
-      if (_error->PendingError() == true)
+      if (_error->PendingError())
          break;
    }
 
-   delete [] Buffer;
    delete [] VFList;
    return !_error->PendingError();
 }

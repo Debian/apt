@@ -67,7 +67,7 @@ pkgCache::Header::Header()
    APT_HEADER_SET(PackageSz, sizeof(pkgCache::Package));
    APT_HEADER_SET(ReleaseFileSz, sizeof(pkgCache::ReleaseFile));
    APT_HEADER_SET(PackageFileSz, sizeof(pkgCache::PackageFile));
-   APT_HEADER_SET(VersionSz, sizeof(pkgCache::Version));
+   APT_HEADER_SET(VersionSz, sizeof(pkgCache::Version) + sizeof(pkgCache::Version::Extra));
    APT_HEADER_SET(DescriptionSz, sizeof(pkgCache::Description));
    APT_HEADER_SET(DependencySz, sizeof(pkgCache::Dependency));
    APT_HEADER_SET(DependencyDataSz, sizeof(pkgCache::DependencyData));
