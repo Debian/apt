@@ -196,22 +196,12 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
 {
    if ((not optional && size < 2) != (not b.optional && b.size < 2))
       return not b.optional && b.size < 2;
-   if (group != b.group)
-      return group > b.group;
-   if (optional && b.optional)
-   {
-      if ((size < 2) != (b.size < 2))
-	 return b.size < 2;
-      if (reason.empty() != b.reason.empty())
-	 return reason.empty();
-   }
-   // An optional item is less important than a required one.
    if (optional != b.optional)
       return optional;
-   // We enqueue common dependencies at the package level to avoid choosing versions, so let's solve package items first,
-   // this improves the implication graph as it now tells you that common dependencies were installed by the package.
-   if (reason.Pkg() != b.reason.Pkg())
-      return reason.Pkg() == 0;
+   if (group != b.group)
+      return group > b.group;
+   if ((size < 2) != (b.size < 2))
+      return b.size < 2;
 
    return false;
 }
