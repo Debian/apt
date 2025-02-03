@@ -348,8 +348,8 @@ bool InstallPackages(CacheFile &Cache, APT::PackageVector &HeldBackPackages, boo
 	 if (statvfs(_config->FindDir("Dir::Usr").c_str(), &st) == 0)
 	 {
 	    struct statvfs st_boot;
-	    double BootSize = 0;
-	    double InitrdSize = 0;
+	    unsigned long long BootSize = 0;
+	    unsigned long long InitrdSize = 0;
 	    if (statvfs(_config->FindDir("Dir::Boot").c_str(), &st_boot) == 0 && st_boot.f_fsid != st.f_fsid)
 	       BootSize = Cache->BootSize(false);
 	    else

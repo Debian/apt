@@ -2638,9 +2638,8 @@ bool pkgDepCache::PhasingApplied(pkgCache::PkgIterator Pkg) const
 									/*}}}*/
 
 // DepCache::BootSize						/*{{{*/
-double pkgDepCache::BootSize(bool initrdOnly)
+unsigned long long pkgDepCache::BootSize(bool initrdOnly)
 {
-   double BootSize = 0;
    int BootCount = 0;
    auto VirtualKernelPkg = FindPkg("$kernel", "any");
    if (VirtualKernelPkg.end())
@@ -2650,44 +2649,38 @@ double pkgDepCache::BootSize(bool initrdOnly)
    {
       auto Pkg = Prv.OwnerPkg();
       if ((*this)[Pkg].NewInstall())
-	 BootSize += (*this)[Pkg].InstallVer->InstalledSize, BootCount++;
+	 BootCount++;
    }
    if (BootCount == 0)
       return 0;
-   if (initrdOnly)
-      BootSize = 0;
 
    DIR *boot = opendir(_config->FindDir("Dir::Boot").c_str());
-   struct dirent *ent;
-   if (boot)
+   if (not boot)
+      return 0;
+
+   enum
    {
-      double initrdSize = 0;
-      double mapSize = 0;
-      while ((ent = readdir(boot)))
-      {
-	 enum
-	 {
-	    INITRD,
-	    MAP
-	 } type;
-	 if (APT::String::Startswith(ent->d_name, "initrd.img-"))
-	    type = INITRD;
-	 else if (APT::String::Startswith(ent->d_name, "System.map-"))
-	    type = MAP;
-	 else
-	    continue;
+      VMLINUZ,
+      INITRD,
+      MAP,
+      MAX_ARTEFACT,
+   } type;
+   off_t sizes[MAX_ARTEFACT]{};
+   while (struct dirent *ent = readdir(boot))
+   {
+      if (APT::String::Startswith(ent->d_name, "initrd.img-"))
+	 type = INITRD;
+      else if (APT::String::Startswith(ent->d_name, "System.map-"))
+	 type = MAP;
+      else if (not initrdOnly && APT::String::Startswith(ent->d_name, "vmlinuz-"))
+	 type = VMLINUZ;
+      else
+	 continue;
 
-	 auto path = _config->FindDir("Dir::Boot") + ent->d_name;
-
-	 if (struct stat st; stat(path.c_str(), &st) == 0)
-	 {
-	    double &targetSize = type == INITRD ? initrdSize : mapSize;
-	    targetSize = std::max(targetSize, double(st.st_size));
-	 }
-      }
-      closedir(boot);
-      return initrdSize ? BootSize + BootCount * (initrdSize + mapSize) * 1.1 : 0;
+      if (struct stat st; fstatat(dirfd(boot), ent->d_name, &st, 0) == 0)
+	 sizes[type] = std::max(sizes[type], st.st_size);
    }
-   return 0;
+   closedir(boot);
+   return std::accumulate(sizes, sizes + MAX_ARTEFACT, off_t{0}) * BootCount * 110 / 100;
 }
 									/*}}}*/

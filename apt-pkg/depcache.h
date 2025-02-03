@@ -491,7 +491,7 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
 
    bool CheckConsistency(char const *const msgtag = "");
 #ifdef APT_COMPILING_APT
-   double BootSize(bool initrdOnly);
+   unsigned long long BootSize(bool initrdOnly);
 #endif
    protected:
    // methods call by IsInstallOk
