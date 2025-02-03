@@ -180,7 +180,7 @@ class Solver
    // \brief Undo a single assignment / solved work item
    void UndoOne();
    // \brief Add work to our work queue.
-   void AddWork(Work &&work);
+   [[nodiscard]] bool AddWork(Work &&work);
    // \brief Rescore the work after a reject or a pop
    void RescoreWorkIfNeeded();
 

@@ -404,9 +404,7 @@ bool APT::Solver::PropagateInstall(Var var)
       std::stable_sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, Pkg, *this});
       assert(workItem.solutions.size() > 0);
 
-      if (workItem.solutions.size() > 1 || workItem.optional)
-	 AddWork(std::move(workItem));
-      else if (not Enqueue(workItem.solutions[0], true, workItem.reason))
+      if (not AddWork(std::move(workItem)))
 	 return false;
 
       return EnqueueCommonDependencies(Pkg);
@@ -620,9 +618,7 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 	 workItem.Dump(cache);
 	 std::cerr << "\n";
       }
-      if (workItem.optional || workItem.solutions.size() > 1)
-	 AddWork(std::move(workItem));
-      else if (not Enqueue(workItem.solutions[0], true, reason))
+      if (not AddWork(std::move(workItem)))
 	 return false;
    }
    else if (start.IsCritical() && not start.IsNegative())
@@ -745,7 +741,8 @@ void APT::Solver::UndoOne()
 	 std::cerr << "\n";
       }
 
-      AddWork(std::move(*work));
+      if (not AddWork(std::move(*work)))
+	 abort();
    }
 
    solved.pop_back();
@@ -793,12 +790,16 @@ bool APT::Solver::Pop()
    return true;
 }
 
-void APT::Solver::AddWork(Work &&w)
+bool APT::Solver::AddWork(Work &&w)
 {
+   if (w.solutions.size() == 1 && not w.optional)
+      return Enqueue(w.solutions[0], true, w.reason);
+
    w.size = std::count_if(w.solutions.begin(), w.solutions.end(), [this](auto V)
 			  { return (*this)[V].decision != Decision::MUSTNOT; });
    work.push_back(std::move(w));
    std::push_heap(work.begin(), work.end());
+   return true;
 }
 
 void APT::Solver::RescoreWorkIfNeeded()
@@ -1010,7 +1011,8 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	    for (auto V = P.VersionList(); not V.end(); ++V)
 	       w.solutions.push_back(Var(V));
 	    std::stable_sort(w.solutions.begin(), w.solutions.end(), CompareProviders3{cache, policy, P, *this});
-	    AddWork(std::move(w));
+	    if (not AddWork(std::move(w)))
+	       return false;
 	 }
       }
    }
