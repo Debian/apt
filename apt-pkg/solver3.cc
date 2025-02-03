@@ -49,6 +49,15 @@ struct APT::Solver::CompareProviders3 /*{{{*/
    {
       return (*this)(pkgCache::VerIterator(Cache, AV), pkgCache::VerIterator(Cache, BV));
    }
+   bool operator()(Var a, Var b)
+   {
+      if (auto va = a.Ver(Cache))
+      {
+	 if (auto vb = b.Ver(Cache))
+	    return (*this)(va, vb);
+      }
+      abort();
+   }
    bool operator()(pkgCache::VerIterator const &AV, pkgCache::VerIterator const &BV)
    {
       pkgCache::PkgIterator const A = AV.ParentPkg();
@@ -219,10 +228,7 @@ void APT::Solver::Work::Dump(pkgCache &cache)
       std::cerr << Ver.ParentPkg().FullName() << "=" << Ver.VerStr();
    std::cerr << " -> ";
    for (auto sol : solutions)
-   {
-      auto Ver = pkgCache::VerIterator(cache, sol);
-      std::cerr << " | " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr();
-   }
+      std::cerr << " | " << sol.toString(cache);
 }
 
 // Prints an implication graph part of the form A -> B -> C, possibly with "not"
@@ -375,7 +381,7 @@ bool APT::Solver::PropagateInstall(Var var)
       Work workItem{Var(Pkg), depth(), Group::SelectVersion};
       for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
       {
-	 workItem.solutions.push_back(ver);
+	 workItem.solutions.push_back(Var(ver));
 	 if ((*this)[ver].decision != Decision::MUSTNOT)
 	    anyInstallable = true;
 	 if ((*this)[ver].decision == Decision::MUST)
@@ -396,7 +402,7 @@ bool APT::Solver::PropagateInstall(Var var)
 
       if (workItem.solutions.size() > 1 || workItem.optional)
 	 AddWork(std::move(workItem));
-      else if (not Enqueue(Var(pkgCache::VerIterator(cache, workItem.solutions[0])), true, workItem.reason))
+      else if (not Enqueue(workItem.solutions[0], true, workItem.reason))
 	 return false;
 
       // FIXME: We skip enqueuing duplicate common dependencies if we already selected a version, but
@@ -534,7 +540,7 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 	 {
 	    if (unlikely(debug >= 3))
 	       std::cerr << "Adding work to  item " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " -> " << tgti.ParentPkg().FullName() << "=" << tgti.VerStr() << "\n";
-	    workItem.solutions.push_back(*tgt);
+	    workItem.solutions.push_back(Var(pkgCache::VerIterator(cache, *tgt)));
 	 }
       }
       delete[] all;
@@ -553,11 +559,11 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
    if (not fixPolicy)
       std::stable_sort(workItem.solutions.begin(), workItem.solutions.end(), CompareProviders3{cache, policy, TgtPkg, *this});
 
-   if (std::all_of(workItem.solutions.begin(), workItem.solutions.end(), [this](auto V) -> auto
-		   { return pkgCache::VerIterator(cache, V).ParentPkg()->CurrentVer == 0; }))
+   if (std::all_of(workItem.solutions.begin(), workItem.solutions.end(), [this](auto var) -> auto
+		   { return var.CastPkg(cache)->CurrentVer == 0; }))
       workItem.group = Group::SatisfyNew;
-   if (std::any_of(workItem.solutions.begin(), workItem.solutions.end(), [this](auto V) -> auto
-		   { return Obsolete(pkgCache::VerIterator(cache, V).ParentPkg()); }))
+   if (std::any_of(workItem.solutions.begin(), workItem.solutions.end(), [this](auto var) -> auto
+		   { return Obsolete(var.CastPkg(cache)); }))
       workItem.group = Group::SatisfyObsolete;
    // Try to perserve satisfied Recommends. FIXME: We should check if the Recommends was there in the installed version?
    if (workItem.optional && start.ParentPkg()->CurrentVer)
@@ -569,8 +575,8 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 	 if (not D.IsCritical() && not D.IsNegative() && D.TargetPkg() == start.TargetPkg())
 	    newOptional = false, wasImportant = policy.IsImportantDep(D);
 
-      bool satisfied = std::any_of(workItem.solutions.begin(), workItem.solutions.end(), [this](auto ver)
-				   { return pkgCache::VerIterator(cache, ver).ParentPkg().CurrentVer() == ver; });
+      bool satisfied = std::any_of(workItem.solutions.begin(), workItem.solutions.end(), [this](auto var)
+				   { return Var(var.CastPkg(cache).CurrentVer()) == var; });
 
       if (important && wasImportant && not newOptional && not satisfied)
       {
@@ -615,7 +621,7 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
       }
       if (workItem.optional || workItem.solutions.size() > 1)
 	 AddWork(std::move(workItem));
-      else if (not Enqueue(Var(pkgCache::VerIterator(cache, workItem.solutions[0])), true, reason))
+      else if (not Enqueue(workItem.solutions[0], true, reason))
 	 return false;
    }
    else if (start.IsCritical() && not start.IsNegative())
@@ -759,7 +765,7 @@ bool APT::Solver::Pop()
 
    assert(choices.back() < solved.size());
    int itemsToUndo = solved.size() - choices.back();
-   pkgCache::VerIterator choice(cache, solved[choices.back()].work->choice);
+   auto choice = solved[choices.back()].work->choice;
 
    for (; itemsToUndo; --itemsToUndo)
       UndoOne();
@@ -774,14 +780,14 @@ bool APT::Solver::Pop()
    std::make_heap(work.begin(), work.end());
 
    if (unlikely(debug >= 2))
-      std::cerr << "Backtracking to choice " << choice.ParentPkg().FullName() << "=" << choice.VerStr() << "\n";
+      std::cerr << "Backtracking to choice " << choice.toString(cache) << "\n";
 
    // FIXME: There should be a reason!
-   if (not Enqueue(Var(choice), false, {}))
+   if (not Enqueue(choice, false, {}))
       return false;
 
    if (unlikely(debug >= 2))
-      std::cerr << "Backtracked to choice " << choice.ParentPkg().FullName() << "=" << choice.VerStr() << "\n";
+      std::cerr << "Backtracked to choice " << choice.toString(cache) << "\n";
 
    return true;
 }
@@ -892,21 +898,20 @@ bool APT::Solver::Solve()
       bool foundSolution = false;
       for (auto &sol : item.solutions)
       {
-	 pkgCache::VerIterator ver(cache, sol);
-	 if ((*this)[ver].decision == Decision::MUSTNOT)
+	 if ((*this)[sol].decision == Decision::MUSTNOT)
 	 {
 	    if (unlikely(debug >= 3))
-	       std::cerr << "(existing conflict: " << ver.ParentPkg().FullName() << "=" << ver.VerStr() << ")\n";
+	       std::cerr << "(existing conflict: " << sol.toString(cache) << ")\n";
 	    continue;
 	 }
 	 if (item.size > 1 || item.optional)
 	 {
-	    item.choice = ver;
+	    item.choice = sol;
 	    Push(item);
 	 }
 	 if (unlikely(debug >= 3))
-	    std::cerr << "(try it: " << ver.ParentPkg().FullName() << "=" << ver.VerStr() << ")\n";
-	 if (not Enqueue(Var(ver), true, item.reason) && not Pop())
+	    std::cerr << "(try it: " << sol.toString(cache) << ")\n";
+	 if (not Enqueue(sol, true, item.reason) && not Pop())
 	    return false;
 	 foundSolution = true;
 	 break;
@@ -916,13 +921,12 @@ bool APT::Solver::Solve()
 	 std::ostringstream dep;
 	 assert(item.solutions.size() > 0);
 	 for (auto &sol : item.solutions)
-	    dep << (dep.tellp() == 0 ? "" : " | ") << pkgCache::VerIterator(cache, sol).ParentPkg().FullName() << "=" << pkgCache::VerIterator(cache, sol).VerStr();
+	    dep << (dep.tellp() == 0 ? "" : " | ") << sol.toString(cache);
 	 _error->Error("Unsatisfiable dependency: %s -> %s", WhyStr(item.reason).c_str(), dep.str().c_str());
 	 for (auto &sol : item.solutions)
 	    if ((*this)[sol].decision == Decision::MUSTNOT)
-	       _error->Error("Not considered: %s=%s: %s", pkgCache::VerIterator(cache, sol).ParentPkg().FullName().c_str(),
-			     pkgCache::VerIterator(cache, sol).VerStr(),
-			     WhyStr(Var(pkgCache::VerIterator(cache, sol))).c_str());
+	       _error->Error("Not considered: %s: %s", sol.toString(cache).c_str(),
+			     WhyStr(sol).c_str());
 	 if (not Pop())
 	    return false;
       }
@@ -1003,7 +1007,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 {
 	    Work w{Var(), depth(), Group, isOptional};
 	    for (auto V = P.VersionList(); not V.end(); ++V)
-	       w.solutions.push_back(V);
+	       w.solutions.push_back(Var(V));
 	    std::stable_sort(w.solutions.begin(), w.solutions.end(), CompareProviders3{cache, policy, P, *this});
 	    AddWork(std::move(w));
 	 }

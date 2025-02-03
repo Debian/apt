@@ -7,6 +7,7 @@
  * SPDX-License-Identifier: GPL-2.0+
  */
 
+#include <cassert>
 #include <optional>
 #include <queue>
 #include <vector>
@@ -242,10 +243,20 @@ struct APT::Solver::Var
    {
       return IsVersion ? pkgCache::VerIterator(cache, cache.VerP + Ver()) : pkgCache::VerIterator();
    }
+   // \brief Return a package, cast from version if needed
+   pkgCache::PkgIterator CastPkg(pkgCache &cache) const
+   {
+      assert(MapPtr != 0);
+      return IsVersion ? Ver(cache).ParentPkg() : Pkg(cache);
+   }
    // \brief Check if there is no reason.
    bool empty() const
    {
       return IsVersion == 0 && MapPtr == 0;
+   }
+   bool operator==(Var const other)
+   {
+      return IsVersion == other.IsVersion && MapPtr == other.MapPtr;
    }
 
    std::string toString(pkgCache &cache) const
@@ -277,14 +288,14 @@ struct APT::Solver::Work
    // \brief The group we are in
    Group group;
    // \brief Possible solutions to this task, ordered in order of preference.
-   std::vector<pkgCache::Version *> solutions{};
+   std::vector<Var> solutions{};
 
    // This is a union because we only need to store the choice we made when adding
    // to the choice vector, and we don't need the size of valid choices in there.
    union
    {
       // The choice we took
-      pkgCache::Version *choice;
+      Var choice;
       // Number of valid choices
       size_t size;
    };
