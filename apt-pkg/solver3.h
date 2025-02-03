@@ -154,17 +154,17 @@ class Solver
    bool StrictPinning{_config->FindB("APT::Solver::Strict-Pinning", true)};
 
    // \brief Enqueue dependencies shared by all versions of the package.
-   bool EnqueueCommonDependencies(pkgCache::PkgIterator Pkg);
+   [[nodiscard]] bool EnqueueCommonDependencies(pkgCache::PkgIterator Pkg);
    // \brief Reject reverse dependencies. Must call std::make_heap() after.
-   bool RejectReverseDependencies(pkgCache::VerIterator Ver);
+   [[nodiscard]] bool RejectReverseDependencies(pkgCache::VerIterator Ver);
    // \brief Enqueue a single or group
-   bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
+   [[nodiscard]] bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
    // \brief Propagate all pending propagations
-   bool Propagate();
+   [[nodiscard]] bool Propagate();
    // \brief Propagate a "true" value of a variable
-   bool PropagateInstall(Var var);
+   [[nodiscard]] bool PropagateInstall(Var var);
    // \brief Propagate a rejection of a variable
-   bool PropagateReject(Var var);
+   [[nodiscard]] bool PropagateReject(Var var);
 
    // \brief Return the current depth (choices.size() with casting)
    depth_type depth()
@@ -176,7 +176,7 @@ class Solver
    // \brief Create a new decision level.
    void Push(Work work);
    // \brief Revert to the previous decision level.
-   bool Pop();
+   [[nodiscard]] bool Pop();
    // \brief Undo a single assignment / solved work item
    void UndoOne();
    // \brief Add work to our work queue.
@@ -188,17 +188,17 @@ class Solver
    Solver(pkgCache &Cache, pkgDepCache::Policy &Policy);
 
    // Assume that the variable is decided as specified.
-   bool Assume(Var var, bool decision, Var reason);
+   [[nodiscard]] bool Assume(Var var, bool decision, Var reason);
    // Enqueue a decision fact
-   bool Enqueue(Var var, bool decision, Var reason);
+   [[nodiscard]] bool Enqueue(Var var, bool decision, Var reason);
 
    // \brief Apply the selections from the dep cache to the solver
-   bool FromDepCache(pkgDepCache &depcache);
+   [[nodiscard]] bool FromDepCache(pkgDepCache &depcache);
    // \brief Apply the solver result to the depCache
-   bool ToDepCache(pkgDepCache &depcache);
+   [[nodiscard]] bool ToDepCache(pkgDepCache &depcache);
 
    // \brief Solve the dependencies
-   bool Solve();
+   [[nodiscard]] bool Solve();
 
    // Print dependency chain
    std::string WhyStr(Var reason);
