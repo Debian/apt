@@ -2638,7 +2638,7 @@ bool pkgDepCache::PhasingApplied(pkgCache::PkgIterator Pkg) const
 									/*}}}*/
 
 // DepCache::BootSize						/*{{{*/
-double pkgDepCache::BootSize(bool initrdOnly)
+unsigned long long pkgDepCache::BootSize(bool initrdOnly)
 {
    int BootCount = 0;
    auto VirtualKernelPkg = FindPkg("$kernel", "any");
@@ -2681,6 +2681,6 @@ double pkgDepCache::BootSize(bool initrdOnly)
 	 sizes[type] = std::max(sizes[type], st.st_size);
    }
    closedir(boot);
-   return std::accumulate(sizes, sizes + MAX_ARTEFACT, off_t{0}) * 1.1 * BootCount;
+   return std::accumulate(sizes, sizes + MAX_ARTEFACT, off_t{0}) * BootCount * 110 / 100;
 }
 									/*}}}*/
