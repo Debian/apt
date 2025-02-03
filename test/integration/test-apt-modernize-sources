@@ -9,6 +9,7 @@ configarchitecture 'native'
 
 echo 'deb http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list.d/rocks.list
 echo 'deb http://deb.debian.org/debian stable main' >> rootdir/etc/apt/sources.list
+echo 'deb http://deb.debian.org/debian-ports unstable main' >> rootdir/etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian stable main' >> rootdir/etc/apt/sources.list
 echo 'deb-src http://deb.debian.org/debian unstable main' >> rootdir/etc/apt/sources.list
 echo 'deb http://example.org/debian stable bananas' >> rootdir/etc/apt/sources.list
@@ -19,10 +20,13 @@ mkdir -p  rootdir/usr/share/keyrings/
 mkdir -p rootdir/var/lib/apt/lists
 echo > rootdir/etc/apt/trusted.gpg.d/rocks.gpg
 echo > rootdir/usr/share/keyrings/debian-archive-keyring.gpg
+echo > rootdir/usr/share/keyrings/debian-ports-archive-keyring.gpg
 echo "Date: $(date -ud '-2 weeks' '+%a, %d %b %Y %H:%M:%S %Z')" > rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_unstable_InRelease
 echo "Date: $(date -ud '-2 weeks' '+%a, %d %b %Y %H:%M:%S %Z')" > rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_stable_InRelease
+echo "Date: $(date -ud '-2 weeks' '+%a, %d %b %Y %H:%M:%S %Z')" > rootdir/var/lib/apt/lists/deb.debian.org_debian-ports_dists_unstable_InRelease
 echo "Origin: Debian" >> rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_unstable_InRelease
 echo "Origin: Debian" >> rootdir/var/lib/apt/lists/deb.debian.org_debian_dists_stable_InRelease
+echo "Origin: Debian Ports" >> rootdir/var/lib/apt/lists/deb.debian.org_debian-ports_dists_unstable_InRelease
 
 # We test that appending produces valid output here, so we already configure a source in here.
 echo "Types: deb" >> rootdir/etc/apt/sources.list.d/debian.sources
@@ -36,6 +40,7 @@ testwarning apt modernize-sources -y
 testsuccessequal "rootdir/etc/apt/sources.list.bak
 
 rootdir/etc/apt/sources.list.d:
+debian-ports.sources
 debian.sources
 moved-from-main.sources
 rocks.list.bak
@@ -60,6 +65,13 @@ URIs: http://deb.debian.org/debian/
 Suites: unstable
 Components: main
 Signed-By: ${TMPWORKINGDIRECTORY}/rootdir/usr/share/keyrings/debian-archive-keyring.gpg"
+
+testfileequal rootdir/etc/apt/sources.list.d/debian-ports.sources "# Modernized from ${TMPWORKINGDIRECTORY}/rootdir/etc/apt/sources.list
+Types: deb
+URIs: http://deb.debian.org/debian-ports/
+Suites: unstable
+Components: main
+Signed-By: ${TMPWORKINGDIRECTORY}/rootdir/usr/share/keyrings/debian-ports-archive-keyring.gpg"
 
 testfileequal rootdir/etc/apt/sources.list.d/rocks.sources "Types: deb
 URIs: http://example.org/debian/
