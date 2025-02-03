@@ -71,7 +71,7 @@ struct APT::Solver::CompareProviders3 /*{{{*/
 	 // Candidate wins in upgrade scenario
 	 if (upgrade)
 	 {
-	    auto Cand = Policy.GetCandidateVer(A);
+	    auto Cand = Solver.GetCandidateVer(A);
 	    if (AV == Cand || BV == Cand)
 	       return (AV == Cand);
 	 }
@@ -81,7 +81,7 @@ struct APT::Solver::CompareProviders3 /*{{{*/
 	    return (A.CurrentVer() == AV);
 
 	 // Rest is ordered list, first by priority
-	 if (auto pinA = Policy.GetPriority(AV), pinB = Policy.GetPriority(BV); pinA != pinB)
+	 if (auto pinA = Solver.GetPriority(AV), pinB = Solver.GetPriority(BV); pinA != pinB)
 	    return pinA > pinB;
 
 	 // Then by version
@@ -193,7 +193,9 @@ APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy)
       policy(policy),
       pkgStates(cache.Head().PackageCount),
       verStates(cache.Head().VersionCount),
-      pkgObsolete(cache.Head().PackageCount)
+      pkgObsolete(cache.Head().PackageCount),
+      priorities(cache.Head().VersionCount),
+      candidates(cache.Head().PackageCount)
 {
    static_assert(sizeof(APT::Solver::State) == 3 * sizeof(int));
    static_assert(sizeof(APT::Solver::Var) == sizeof(map_pointer<pkgCache::Package>));
@@ -270,7 +272,7 @@ std::string APT::Solver::WhyStr(Var reason)
 bool APT::Solver::ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) const
 {
    const auto pkg = cand.ParentPkg();
-   const int candPriority = policy.GetPriority(cand);
+   const int candPriority = GetPriority(cand);
 
    for (auto ver = cand.Cache()->FindGrp(cand.SourcePkgName()).VersionsInSource(); not ver.end(); ver = ver.NextInSource())
    {
@@ -279,7 +281,7 @@ bool APT::Solver::ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) cons
 	 continue;
 
       // We also take equal priority here, given that we have a higher version
-      const int priority = policy.GetPriority(ver, true);
+      const int priority = GetPriority(ver);
       if (priority == 0 || priority < candPriority)
 	 continue;
 
@@ -297,7 +299,7 @@ bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg) const
    if (pkgObsolete[pkg->ID] != 0)
       return pkgObsolete[pkg->ID] == 2;
 
-   auto ver = policy.GetCandidateVer(pkg);
+   auto ver = GetCandidateVer(pkg);
 
    if (ver.end() && not StrictPinning)
       ver = pkg.VersionList();

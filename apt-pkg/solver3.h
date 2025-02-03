@@ -114,6 +114,20 @@ class Solver
    mutable std::vector<char> pkgObsolete;
    bool Obsolete(pkgCache::PkgIterator pkg) const;
    bool ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) const;
+   mutable std::vector<short> priorities;
+   short GetPriority(pkgCache::VerIterator ver) const
+   {
+      if (priorities[ver->ID] == 0)
+	 priorities[ver->ID] = policy.GetPriority(ver);
+      return priorities[ver->ID];
+   }
+   mutable std::vector<pkgCache::VerIterator> candidates;
+   pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator pkg) const
+   {
+      if (candidates[pkg->ID].end())
+	 candidates[pkg->ID] = policy.GetCandidateVer(pkg);
+      return candidates[pkg->ID];
+   }
 
    // \brief Heap of the remaining work.
    //
