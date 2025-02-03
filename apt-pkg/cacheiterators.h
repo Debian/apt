@@ -330,6 +330,7 @@ class APT_PUBLIC pkgCache::DepIterator : public Iterator<Dependency, DepIterator
 	   but change architecture nonetheless as a Conflicts: foo does applies for all archs */
 	bool IsImplicit() const APT_PURE;
 
+	bool IsSatisfied(PkgIterator const &Pkg) const APT_PURE;
 	bool IsSatisfied(VerIterator const &Ver) const APT_PURE;
 	bool IsSatisfied(PrvIterator const &Prv) const APT_PURE;
 	void GlobOr(DepIterator &Start,DepIterator &End);
