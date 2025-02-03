@@ -388,6 +388,10 @@ bool APT::Solver::PropagateInstall(Var var)
 	    anyMust = true;
       }
 
+      // One is already marked for install, nothing to propagate
+      if (anyMust)
+	 return true;
+
       if (not anyInstallable)
       {
 	 _error->Error("Conflict: %s -> %s but no versions are installable",
@@ -405,10 +409,7 @@ bool APT::Solver::PropagateInstall(Var var)
       else if (not Enqueue(workItem.solutions[0], true, workItem.reason))
 	 return false;
 
-      // FIXME: We skip enqueuing duplicate common dependencies if we already selected a version, but
-      // we should not have common dependencies duplicated in the version objects anyway.
-      if (not anyMust && not EnqueueCommonDependencies(Pkg))
-	 return false;
+      return EnqueueCommonDependencies(Pkg);
    }
    else if (auto Ver = var.Ver(cache); not Ver.end())
    {
