@@ -222,7 +222,7 @@ void APT::Solver::Work::Dump(pkgCache &cache)
       std::cerr << "Erased ";
    if (optional)
       std::cerr << "Optional ";
-   std::cerr << "Item (" << ssize_t(size <= solutions.size() ? size : -1) << "@" << depth << (upgrade ? "u" : "") << ") ";
+   std::cerr << "Item (" << ssize_t(size <= solutions.size() ? size : -1) << "@" << depth << ") ";
    if (auto Pkg = reason.Pkg(cache); not Pkg.end())
       std::cerr << Pkg.FullName();
    if (auto Ver = reason.Ver(cache); not Ver.end())
@@ -1011,7 +1011,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 }
 	 else
 	 {
-	    Work w{Var(), depth(), Group, isOptional, Upgrade};
+	    Work w{Var(), depth(), Group, isOptional};
 	    for (auto V = P.VersionList(); not V.end(); ++V)
 	       w.solutions.push_back(V);
 	    std::stable_sort(w.solutions.begin(), w.solutions.end(), CompareProviders3{cache, policy, P, *this});

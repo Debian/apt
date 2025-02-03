@@ -291,8 +291,6 @@ struct APT::Solver::Work
 
    // \brief Whether this is an optional work item, they will be processed last
    bool optional;
-   // \brief Whether this is an ugprade
-   bool upgrade;
    // \brief This item should be removed from the queue.
    bool erased;
 
@@ -300,7 +298,7 @@ struct APT::Solver::Work
    // \brief Dump the work item to std::cerr
    void Dump(pkgCache &cache);
 
-   inline Work(Var reason, depth_type depth, Group group, bool optional = false, bool upgrade = false) : reason(reason), depth(depth), group(group), size(0), optional(optional), upgrade(upgrade), erased(false) {}
+   inline Work(Var reason, depth_type depth, Group group, bool optional = false) : reason(reason), depth(depth), group(group), size(0), optional(optional), erased(false) {}
 };
 
 // \brief This essentially describes the install state in RFC2119 terms.
