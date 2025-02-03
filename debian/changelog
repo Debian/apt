@@ -1,3 +1,34 @@
+apt (2.9.27) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Symbols: Update for 2.9.23/2.9.25
+  * Updates for the '3.0' solver:
+    - Soft unit propagation for optional items
+    - Do not accidentally solve new Recommends before hard dependencies
+    - Use a propagation queue instead of recursively propagating facts
+  * Correctly calculate kernel size in /boot (Closes: #1085184)
+  * Measure BootSize as integer
+
+  [ Boyuan Yang ]
+  * po/zh_CN.po: Refresh Simplified Chinese translation for apt
+
+  [ Rafael Fontenelle ]
+  * Brazilian Portuguese program translation update (Closes: #1092563)
+
+  [ David Kalnischkies ]
+  * Cleanups and fixes for cache counters/size fields:
+    - Do not overflow ver/desc<->file relation counters
+    - Drop unused description size info from binary cache
+    - Drop unused version stanza size info from binary cache
+    - Do not create descriptions structs for each architecture
+    - Record all available sources for descriptions
+    - Include Extra in the size counted for Version struct
+
+  [ Samuel Thibault ]
+  * Also support debian-ports modernization
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 03 Feb 2025 13:44:58 +0100
+
 apt (2.9.26) unstable; urgency=medium
 
   [ Sam Hartman ]
