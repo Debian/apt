@@ -160,12 +160,18 @@ class Solver
    int debug{_config->FindI("Debug::APT::Solver")};
    // \brief If set, we try to keep automatically installed packages installed.
    bool KeepAuto{not _config->FindB("APT::Get::AutomaticRemove")};
+   // \brief Determines if we are in upgrade mode.
+   bool IsUpgrade{_config->FindB("APT::Solver::Upgrade", false)};
    // \brief If set, removals are allowed.
    bool AllowRemove{_config->FindB("APT::Solver::Remove", true)};
+   // \brief If set, removal of manual packages is allowed.
+   bool AllowRemoveManual{AllowRemove && _config->FindB("APT::Solver::RemoveManual", false)};
    // \brief If set, installs are allowed.
    bool AllowInstall{_config->FindB("APT::Solver::Install", true)};
    // \brief If set, we use strict pinning.
    bool StrictPinning{_config->FindB("APT::Solver::Strict-Pinning", true)};
+   // \brief If set, we install missing recommends and pick new best packages.
+   bool FixPolicyBroken{_config->FindB("APT::Get::Fix-Policy-Broken")};
 
    // \brief Enqueue dependencies shared by all versions of the package.
    [[nodiscard]] bool EnqueueCommonDependencies(pkgCache::PkgIterator Pkg);
