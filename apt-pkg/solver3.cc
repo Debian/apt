@@ -239,22 +239,11 @@ std::string APT::Solver::WhyStr(Var reason)
 
    while (not reason.empty())
    {
-      if (auto Pkg = reason.Pkg(cache); not Pkg.end())
-      {
-	 if ((*this)[Pkg].decision == Decision::MUSTNOT)
-	    out.push_back(std::string("not ") + Pkg.FullName());
-	 else
-	    out.push_back(Pkg.FullName());
-	 reason = (*this)[Pkg].reason;
-      }
-      if (auto Ver = reason.Ver(cache); not Ver.end())
-      {
-	 if ((*this)[Ver].decision == Decision::MUSTNOT)
-	    out.push_back(std::string("not ") + Ver.ParentPkg().FullName() + "=" + Ver.VerStr());
-	 else
-	    out.push_back(Ver.ParentPkg().FullName() + "=" + Ver.VerStr());
-	 reason = (*this)[Ver].reason;
-      }
+      if ((*this)[reason].decision == Decision::MUSTNOT)
+	 out.push_back(std::string("not ") + reason.toString(cache));
+      else
+	 out.push_back(reason.toString(cache));
+      reason = (*this)[reason].reason;
    }
 
    std::string outstr;
