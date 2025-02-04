@@ -37,6 +37,7 @@ class Solver
    struct Var;
    struct CompareProviders3;
    struct State;
+   struct Clause;
    struct Work;
    struct Solved;
 
@@ -290,6 +291,29 @@ struct APT::Solver::Var
 };
 
 /**
+ * \brief A single clause
+ *
+ * A clause is a normalized, expanded dependency, translated into an implication
+ * in terms of Var objects, that is, `reason -> solutions[0] | ... | solutions[n]`
+ */
+struct APT::Solver::Clause
+{
+   // \brief Var for the work
+   Var reason;
+   // \brief The group we are in
+   Group group;
+   // \brief Possible solutions to this task, ordered in order of preference.
+   std::vector<Var> solutions{};
+   // \brief An optional clause does not need to be satisfied
+   bool optional;
+
+   inline Clause(Var reason, Group group, bool optional = false) : reason(reason), group(group), optional(optional) {}
+
+   // \brief Dump the clause to std::cerr
+   void Dump(pkgCache &cache);
+};
+
+/**
  * \brief A single work item
  *
  * A work item is a positive dependency that still needs to be resolved. Work
@@ -301,14 +325,10 @@ struct APT::Solver::Var
  */
 struct APT::Solver::Work
 {
-   // \brief Var for the work
-   Var reason;
+   Clause clause;
+
    // \brief The depth at which the item has been added
    depth_type depth;
-   // \brief The group we are in
-   Group group;
-   // \brief Possible solutions to this task, ordered in order of preference.
-   std::vector<Var> solutions{};
 
    // This is a union because we only need to store the choice we made when adding
    // to the choice vector, and we don't need the size of valid choices in there.
@@ -317,19 +337,16 @@ struct APT::Solver::Work
       // The choice we took
       Var choice;
       // Number of valid choices
-      size_t size;
+      size_t size{0};
    };
 
-   // \brief Whether this is an optional work item, they will be processed last
-   bool optional;
    // \brief This item should be removed from the queue.
-   bool erased;
+   bool erased{false};
 
    bool operator<(APT::Solver::Work const &b) const;
    // \brief Dump the work item to std::cerr
    void Dump(pkgCache &cache);
-
-   inline Work(Var reason, depth_type depth, Group group, bool optional = false) : reason(reason), depth(depth), group(group), size(0), optional(optional), erased(false) {}
+   inline Work(Clause clause, depth_type depth) : clause(std::move(clause)), depth(depth) {}
 };
 
 // \brief This essentially describes the install state in RFC2119 terms.
