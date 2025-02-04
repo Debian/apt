@@ -267,6 +267,42 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
       bool InstallSuggests;
    };
 
+   /**
+    * \brief Perform changes to the depcache atomically.
+    *
+    * The default policy for a transaction is to rollback if the number of broken packages
+    * increased, otherwise to commit. Call commit() or rollback() to override the default
+    * policy.
+    */
+   class APT_PUBLIC Transaction final
+   {
+      struct Private;
+      std::unique_ptr<Private> d;
+
+      public:
+      enum class Behavior
+      {
+	 COMMIT,
+	 ROLLBACK,
+	 AUTO,
+      };
+
+      explicit Transaction(pkgDepCache &cache, Behavior behavior);
+      /** \brief Commit the transaction immediately */
+      void commit();
+      /** \brief Rollback the transaction immediately */
+      void rollback();
+      /** \brief Like rollback, but can be called multiple times.
+       *
+       * You can for example create a new transaction, then temporarily
+       * rollback to the state before the previous transaction in that
+       * transaction.
+       */
+      void temporaryRollback();
+      /** \brief Commit or rollback the transaction based on default policy */
+      ~Transaction();
+   };
+
    private:
    /** The number of open "action groups"; certain post-action
     *  operations are suppressed if this number is > 0.
@@ -274,6 +310,8 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
    int group_level;
 
    friend class ActionGroup;
+   friend class Transaction;
+
    public:
    int IncreaseActionGroupLevel();
    int DecreaseActionGroupLevel();

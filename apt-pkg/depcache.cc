@@ -2650,3 +2650,74 @@ unsigned long long pkgDepCache::BootSize(bool initrdOnly)
    return std::accumulate(sizes, sizes + MAX_ARTEFACT, off_t{0}) * BootCount * 110 / 100;
 }
 									/*}}}*/
+// pkgDepCache::Transaction						/*{{{*/
+struct pkgDepCache::Transaction::Private
+{
+   template <typename T>
+   static T *copyArray(T *array, size_t count)
+   {
+      auto out = new T[count];
+      memcpy(&out[0], &array[0], sizeof(T) * count);
+      return out;
+   }
+   // State information
+   pkgDepCache &cache;
+   Behavior behavior;
+   std::unique_ptr<StateCache[]> PkgState{copyArray(cache.PkgState, cache.GetCache().Head().PackageCount)};
+   std::unique_ptr<unsigned char[]> DepState{copyArray(cache.DepState, cache.GetCache().Head().DependsCount)};
+   signed long long iUsrSize{cache.iUsrSize};
+   unsigned long long iDownloadSize{cache.iDownloadSize};
+   unsigned long iInstCount{cache.iInstCount};
+   unsigned long iDelCount{cache.iDelCount};
+   unsigned long iKeepCount{cache.iKeepCount};
+   unsigned long iBrokenCount{cache.iBrokenCount};
+   unsigned long iPolicyBrokenCount{cache.iPolicyBrokenCount};
+   unsigned long iBadCount{cache.iBadCount};
+
+   void rollback()
+   {
+      memcpy(&cache.PkgState[0], &PkgState[0], sizeof(PkgState[0]) * cache.GetCache().Head().PackageCount);
+      memcpy(&cache.DepState[0], &DepState[0], sizeof(DepState[0]) * cache.GetCache().Head().DependsCount);
+
+      cache.iUsrSize = iUsrSize;
+      cache.iDownloadSize = iDownloadSize;
+      cache.iInstCount = iInstCount;
+      cache.iDelCount = iDelCount;
+      cache.iKeepCount = iKeepCount;
+      cache.iBrokenCount = iBrokenCount;
+      cache.iPolicyBrokenCount = iPolicyBrokenCount;
+      cache.iBadCount = iBadCount;
+   }
+};
+
+pkgDepCache::Transaction::Transaction(pkgDepCache &cache, Behavior behavior) : d(new Private{cache, behavior}) {}
+
+void pkgDepCache::Transaction::temporaryRollback()
+{
+   d->rollback();
+}
+
+void pkgDepCache::Transaction::commit()
+{
+   d.reset();
+}
+
+void pkgDepCache::Transaction::rollback()
+{
+   if (d == nullptr)
+      return;
+
+   temporaryRollback();
+   d.reset();
+}
+
+pkgDepCache::Transaction::~Transaction()
+{
+   if (not d)
+      return;
+   if (d->behavior == Behavior::ROLLBACK || (d->behavior == Behavior::AUTO && d->cache.iBrokenCount > d->iBrokenCount))
+      rollback();
+   else
+      commit();
+}
+									/*}}}*/
