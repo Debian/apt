@@ -178,6 +178,8 @@ class Solver
    [[nodiscard]] bool EnqueueCommonDependencies(pkgCache::PkgIterator Pkg);
    // \brief Reject reverse dependencies. Must call std::make_heap() after.
    [[nodiscard]] bool RejectReverseDependencies(pkgCache::VerIterator Ver);
+   // \brief Translate an or group into a clause object
+   [[nodiscard]] Clause TranslateOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
    // \brief Enqueue a single or group
    [[nodiscard]] bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
    // \brief Propagate all pending propagations
@@ -307,7 +309,10 @@ struct APT::Solver::Clause
    // \brief An optional clause does not need to be satisfied
    bool optional;
 
-   inline Clause(Var reason, Group group, bool optional = false) : reason(reason), group(group), optional(optional) {}
+   // \brief A negative clause negates the solutions, that is X->A|B you get X->!(A|B), aka X->!A&!B
+   bool negative;
+
+   inline Clause(Var reason, Group group, bool optional = false, bool negative = false) : reason(reason), group(group), optional(optional), negative(negative) {}
 
    // \brief Dump the clause to std::cerr
    void Dump(pkgCache &cache);

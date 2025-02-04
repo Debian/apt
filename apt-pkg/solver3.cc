@@ -493,20 +493,45 @@ bool APT::Solver::EnqueueCommonDependencies(pkgCache::PkgIterator Pkg)
 
 bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason)
 {
+   auto clause = TranslateOrGroup(start, end, reason);
+   if (clause.negative)
+   {
+      for (auto var : clause.solutions)
+	 if (not Enqueue(var, false, clause.reason))
+	    return false;
+   }
+   else if (not clause.solutions.empty())
+   {
+      if (unlikely(debug >= 3 && clause.optional))
+      {
+	 std::cerr << "Enqueuing Recommends ";
+	 clause.Dump(cache);
+	 std::cerr << "\n";
+      }
+      return AddWork(Work{std::move(clause), depth()});
+   }
+   else if (not clause.optional)
+      return _error->Error("Unsatisfiable dependency group %s -> %s", reason.toString(cache).c_str(), start.TargetPkg().FullName().c_str());
+
+   return true;
+}
+
+APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason)
+{
    auto TgtPkg = start.TargetPkg();
    auto Ver = start.ParentVer();
 
    // Non-important dependencies can only be installed if they are currently satisfied, see the check further
    // below once we have calculated all possible solutions.
    if (start.ParentPkg()->CurrentVer == 0 && not policy.IsImportantDep(start))
-      return true;
+      return Clause{reason, Group::Satisfy, true};
    // Replaces and Enhances are not a real dependency.
    if (start->Type == pkgCache::Dep::Replaces || start->Type == pkgCache::Dep::Enhances)
-      return true;
+      return Clause{reason, Group::Satisfy, true};
    if (unlikely(debug >= 3))
       std::cerr << "Found dependency critical " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " -> " << start.TargetPkg().FullName() << "\n";
 
-   Clause clause{reason, Group::Satisfy, not start.IsCritical() /* optional */};
+   Clause clause{reason, Group::Satisfy, not start.IsCritical() /* optional */, start.IsNegative()};
 
    do
    {
@@ -516,21 +541,9 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
       for (auto tgt = all; *tgt; ++tgt)
       {
 	 pkgCache::VerIterator tgti(cache, *tgt);
-
-	 if (start.IsNegative())
-	 {
-	    if (unlikely(debug >= 3))
-	       std::cerr << "Reject: " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " -> " << tgti.ParentPkg().FullName() << "=" << tgti.VerStr() << "\n";
-	    // FIXME: We should be collecting these and marking the heap only once.
-	    if (not Enqueue(Var(pkgCache::VerIterator(cache, *tgt)), false, Var(Ver)))
-	       return false;
-	 }
-	 else
-	 {
-	    if (unlikely(debug >= 3))
-	       std::cerr << "Adding work to  item " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " -> " << tgti.ParentPkg().FullName() << "=" << tgti.VerStr() << "\n";
-	    clause.solutions.push_back(Var(pkgCache::VerIterator(cache, *tgt)));
-	 }
+	 if (unlikely(debug >= 3))
+	    std::cerr << "Adding work to  item " << reason.toString(cache) << " -> " << tgti.ParentPkg().FullName() << "=" << tgti.VerStr() << (clause.negative ? " (negative)" : "") << "\n";
+	 clause.solutions.push_back(Var(pkgCache::VerIterator(cache, *tgt)));
       }
       delete[] all;
 
@@ -575,9 +588,9 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 	    clause.Dump(cache);
 	    std::cerr << "\n";
 	 }
-	 return true;
+	 clause.solutions.clear();
       }
-      if (not important && not wasImportant && not newOptional && satisfied)
+      else if (not important && not wasImportant && not newOptional && satisfied)
       {
 	 if (unlikely(debug >= 3))
 	 {
@@ -587,7 +600,7 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 	 }
 	 important = true;
       }
-      if (not important)
+      else if (not important)
       {
 	 if (unlikely(debug >= 3))
 	 {
@@ -595,27 +608,11 @@ bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepItera
 	    clause.Dump(cache);
 	    std::cerr << "\n";
 	 }
-	 return true;
+	 return Clause{reason, Group::Satisfy, true};
       }
    }
 
-   if (not clause.solutions.empty())
-   {
-      // std::stable_sort(clause.solutions.begin(), clause.solutions.end(), CompareProviders3{cache, TgtPkg});
-      if (unlikely(debug >= 3 && clause.optional))
-      {
-	 std::cerr << "Enqueuing Recommends ";
-	 clause.Dump(cache);
-	 std::cerr << "\n";
-      }
-      if (not AddWork(Work{std::move(clause), depth()}))
-	 return false;
-   }
-   else if (start.IsCritical() && not start.IsNegative())
-   {
-      return _error->Error("Unsatisfiable dependency group %s=%s -> %s", Ver.ParentPkg().FullName().c_str(), Ver.VerStr(), TgtPkg.FullName().c_str());
-   }
-   return true;
+   return clause;
 }
 
 // \brief Find the or group containing the given dependency.
