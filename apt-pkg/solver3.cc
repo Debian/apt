@@ -44,21 +44,28 @@ struct APT::Solver::CompareProviders3 /*{{{*/
    pkgCache::PkgIterator const Pkg;
    APT::Solver &Solver;
 
-   bool operator()(pkgCache::Version *AV, pkgCache::Version *BV)
+   pkgCache::VerIterator bestVersion(pkgCache::PkgIterator pkg)
    {
-      return (*this)(pkgCache::VerIterator(Cache, AV), pkgCache::VerIterator(Cache, BV));
+      pkgCache::VerIterator res = pkg.VersionList();
+      for (auto v = res; not v.end(); ++v)
+	 res = std::max(res, v, *this);
+      return res;
    }
    bool operator()(Var a, Var b)
    {
-      if (auto va = a.Ver(Cache))
-      {
-	 if (auto vb = b.Ver(Cache))
-	    return (*this)(va, vb);
-      }
-      abort();
+      pkgCache::VerIterator va = a.Ver(Cache);
+      pkgCache::VerIterator vb = b.Ver(Cache);
+      if (auto pa = a.Pkg(Cache))
+	 va = bestVersion(pa);
+      if (auto pb = b.Pkg(Cache))
+	 vb = bestVersion(pb);
+
+      assert(not va.end() && not vb.end());
+      return (*this)(va, vb);
    }
    bool operator()(pkgCache::VerIterator const &AV, pkgCache::VerIterator const &BV)
    {
+      assert(not AV.end() && not BV.end());
       pkgCache::PkgIterator const A = AV.ParentPkg();
       pkgCache::PkgIterator const B = BV.ParentPkg();
       // Compare versions for the same package. FIXME: Move this to the real implementation
