@@ -383,8 +383,25 @@ bool APT::Solver::Propagate()
 	    if (not AddWork(Work{clause.get(), depth()}))
 	       return false;
       }
-      else if ((*this)[var].decision == Decision::MUSTNOT && not PropagateReject(var))
-	 return false;
+      else if ((*this)[var].decision == Decision::MUSTNOT)
+      {
+	 for (auto rclause : (*this)[var].rclauses)
+	 {
+	    if (rclause->negative || rclause->reason.empty() || rclause->optional ||
+		std::any_of(rclause->solutions.begin(), rclause->solutions.end(), [this](auto var)
+			    { return (*this)[var].decision != Decision::MUSTNOT; }))
+	       continue;
+
+	    if ((*this)[rclause->reason].decision == Decision::MUSTNOT)
+	       continue;
+
+	    if (unlikely(debug >= 3))
+	       std::cerr << "Propagate NOT " << var.toString(cache) << " to " << rclause->reason.toString(cache) << " for dep " << const_cast<Clause *>(rclause)->toString(cache) << std::endl;
+
+	    if (not Enqueue(rclause->reason, false, var)) // Last version invalidated
+	       return false;
+	 }
+      }
    }
    return true;
 }
@@ -393,6 +410,9 @@ void APT::Solver::RegisterClause(Clause &&clause)
 {
    auto &clauses = (*this)[clause.reason].clauses;
    clauses.push_back(std::make_unique<Clause>(std::move(clause)));
+   auto const &inserted = clauses.back();
+   for (auto var : inserted->solutions)
+      (*this)[var].rclauses.push_back(inserted.get());
 }
 
 void APT::Solver::Discover(Var var)
@@ -458,43 +478,6 @@ void APT::Solver::Discover(Var var)
 	    if ((*this)[var].decision != Decision::MUSTNOT || (*this)[var].depth > 0)
 	       discoverQ.push(var);
    }
-}
-
-bool APT::Solver::PropagateReject(Var var)
-{
-   if (auto Pkg = var.Pkg(cache); not Pkg.end())
-   {
-      for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
-	 if (not Enqueue(Var(ver), false, Var(Pkg)))
-	    return false;
-   }
-   else if (auto Ver = var.Ver(cache); not Ver.end())
-   {
-      if (auto pkg = Ver.ParentPkg(); (*this)[pkg].decision != Decision::MUSTNOT)
-      {
-	 bool anyInstallable = false;
-	 for (auto otherVer = pkg.VersionList(); not otherVer.end(); otherVer++)
-	    if (otherVer->ID != Ver->ID && (*this)[otherVer].decision != Decision::MUSTNOT)
-	       anyInstallable = true;
-
-	 if (anyInstallable)
-	    ;
-	 else if ((*this)[pkg].decision == Decision::MUST) // Must install, but none available
-	 {
-	    _error->Error("Conflict: %s but no versions are installable",
-			  WhyStr(Var(pkg)).c_str());
-	    for (auto otherVer = pkg.VersionList(); not otherVer.end(); otherVer++)
-	       if ((*this)[otherVer].decision == Decision::MUSTNOT)
-		  _error->Error("Uninstallable version: %s", WhyStr(Var(otherVer)).c_str());
-	    return _error->Error("Uninstallable version: %s", WhyStr(Var(Ver)).c_str());
-	 }
-	 else if (not Enqueue(Var(Ver.ParentPkg()), false, Var(Ver))) // Last version invalidated
-	    return false;
-      }
-      if (not RejectReverseDependencies(Ver))
-	 return false;
-   }
-   return true;
 }
 
 void APT::Solver::RegisterCommonDependencies(pkgCache::PkgIterator Pkg)
@@ -616,73 +599,6 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
    }
 
    return clause;
-}
-
-// \brief Find the or group containing the given dependency.
-static void FindOrGroup(pkgCache::DepIterator const &D, pkgCache::DepIterator &start, pkgCache::DepIterator &end)
-{
-   for (auto dep = D.ParentVer().DependsList(); not dep.end();)
-   {
-      dep.GlobOr(start, end); // advances dep
-
-      for (auto member = start;;)
-      {
-	 if (member == D)
-	    return;
-	 if (member == end)
-	    break;
-	 member++;
-      }
-   }
-
-   _error->Fatal("Found a dependency that does not exist in its parent version");
-   abort();
-}
-
-// This is the opposite of EnqueueOrDependencies, it rejects the reverse dependencies of the
-// given version iterator.
-bool APT::Solver::RejectReverseDependencies(pkgCache::VerIterator Ver)
-{
-   // This checks whether an or group is still satisfiable.
-   auto stillPossible = [this](pkgCache::DepIterator start, pkgCache::DepIterator end)
-   {
-      while (1)
-      {
-	 std::unique_ptr<pkgCache::Version *[]> Ts{start.AllTargets()};
-	 for (size_t i = 0; Ts[i] != nullptr; ++i)
-	    if ((*this)[Ts[i]].decision != Decision::MUSTNOT)
-	       return true;
-
-	 if (start == end)
-	    return false;
-
-	 start++;
-      }
-   };
-
-   for (auto RD = Ver.ParentPkg().RevDependsList(); not RD.end(); ++RD)
-   {
-      auto RDV = RD.ParentVer();
-      if (RD.IsNegative() || not RD.IsCritical() || not RD.IsSatisfied(Ver))
-	 continue;
-
-      if ((*this)[RDV].decision == Decision::MUSTNOT)
-	 continue;
-
-      pkgCache::DepIterator start;
-      pkgCache::DepIterator end;
-      FindOrGroup(RD, start, end);
-
-      if (stillPossible(start, end))
-	 continue;
-
-      if (unlikely(debug >= 3))
-	 std::cerr << "Propagate NOT " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " to " << RDV.ParentPkg().FullName() << "=" << RDV.VerStr() << " for dependency group starting with" << start.TargetPkg().FullName() << std::endl;
-
-      if (not Enqueue(Var(RDV), false, Var(Ver)))
-	 return false;
-   }
-   return true;
 }
 
 void APT::Solver::Push(Work work)
@@ -1019,6 +935,10 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	    RegisterClause(std::move(shortcircuit));
 	    if (not AddWork(Work{rootState->clauses.back().get(), depth()}))
 	       return false;
+
+	    // Discovery here is needed so the shortcircuit clause can actually become unit.
+	    if (P.VersionList() && P.VersionList()->NextVer)
+	       Discover(Var(P));
 	 }
       }
    }

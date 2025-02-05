@@ -248,14 +248,10 @@ class Solver
    // \brief Enqueue dependencies shared by all versions of the package.
    void RegisterCommonDependencies(pkgCache::PkgIterator Pkg);
 
-   // \brief Reject reverse dependencies. Must call std::make_heap() after.
-   [[nodiscard]] bool RejectReverseDependencies(pkgCache::VerIterator Ver);
    // \brief Translate an or group into a clause object
    [[nodiscard]] Clause TranslateOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
    // \brief Propagate all pending propagations
    [[nodiscard]] bool Propagate();
-   // \brief Propagate a rejection of a variable
-   [[nodiscard]] bool PropagateReject(Var var);
 
    // \brief Return the current depth (choices.size() with casting)
    depth_type depth()
@@ -470,6 +466,8 @@ struct APT::Solver::State
 
    // \brief Clauses owned by this package/version
    std::vector<std::unique_ptr<Clause>> clauses;
+   // \brief Reverse clauses, that is dependencies (or conflicts) from other packages on this one
+   std::vector<const Clause *> rclauses;
 };
 
 /**
