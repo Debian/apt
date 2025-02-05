@@ -174,18 +174,19 @@ class Solver
    // \brief If set, we install missing recommends and pick new best packages.
    bool FixPolicyBroken{_config->FindB("APT::Get::Fix-Policy-Broken")};
 
+   // \brief Discover a variable, translating the underlying dependencies to the SAT presentation
+   void Discover(Var var);
+   // \brief Link a clause into the watchers
+   void RegisterClause(Clause &&clause);
    // \brief Enqueue dependencies shared by all versions of the package.
-   [[nodiscard]] bool EnqueueCommonDependencies(pkgCache::PkgIterator Pkg);
+   void RegisterCommonDependencies(pkgCache::PkgIterator Pkg);
+
    // \brief Reject reverse dependencies. Must call std::make_heap() after.
    [[nodiscard]] bool RejectReverseDependencies(pkgCache::VerIterator Ver);
    // \brief Translate an or group into a clause object
    [[nodiscard]] Clause TranslateOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
-   // \brief Enqueue a single or group
-   [[nodiscard]] bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
    // \brief Propagate all pending propagations
    [[nodiscard]] bool Propagate();
-   // \brief Propagate a "true" value of a variable
-   [[nodiscard]] bool PropagateInstall(Var var);
    // \brief Propagate a rejection of a variable
    [[nodiscard]] bool PropagateReject(Var var);
 
@@ -300,6 +301,8 @@ struct APT::Solver::Var
  */
 struct APT::Solver::Clause
 {
+   // \brief Underyling dependency
+   pkgCache::Dependency *dep = nullptr;
    // \brief Var for the work
    Var reason;
    // \brief The group we are in
@@ -365,17 +368,6 @@ enum class APT::Solver::Decision : uint16_t
    MUSTNOT,
 };
 
-// \brief Hints for the solver about the item.
-enum class APT::Solver::Hint : uint16_t
-{
-   // \brief We have not made a choice about the package yet
-   NONE,
-   // \brief This package was listed as a Recommends of a must package,
-   SHOULD,
-   // \brief This package was listed as a Suggests of a must-not package
-   MAY,
-};
-
 /**
  * \brief The solver state
  *
@@ -403,8 +395,16 @@ struct APT::Solver::State
    // \brief This essentially describes the install state in RFC2119 terms.
    Decision decision{Decision::NONE};
 
-   // \brief Any hint.
-   Hint hint{Hint::NONE};
+   // \brief Flags.
+   struct
+   {
+      bool discovered{};
+   } flags;
+
+   static_assert(sizeof(flags) <= sizeof(int));
+
+   // \brief Clauses owned by this package/version
+   std::vector<std::unique_ptr<Clause>> clauses;
 };
 
 /**

@@ -196,7 +196,6 @@ APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy)
       priorities(cache.Head().VersionCount),
       candidates(cache.Head().PackageCount)
 {
-   static_assert(sizeof(APT::Solver::State) == 3 * sizeof(int));
    static_assert(sizeof(APT::Solver::Var) == sizeof(map_pointer<pkgCache::Package>));
    static_assert(sizeof(APT::Solver::Var) == sizeof(map_pointer<pkgCache::Version>));
 }
@@ -356,61 +355,59 @@ bool APT::Solver::Propagate()
    {
       Var var = propQ.front();
       propQ.pop();
-      if ((*this)[var].decision == Decision::MUST && not PropagateInstall(var))
-	 return false;
+      if ((*this)[var].decision == Decision::MUST)
+      {
+	 Discover(var);
+	 for (auto &clause : (*this)[var].clauses)
+	    if (not AddWork(Work{*clause.get(), depth()}))
+	       return false;
+      }
       else if ((*this)[var].decision == Decision::MUSTNOT && not PropagateReject(var))
 	 return false;
    }
    return true;
 }
 
-bool APT::Solver::PropagateInstall(Var var)
+void APT::Solver::RegisterClause(Clause &&clause)
 {
+   auto &clauses = (*this)[clause.reason].clauses;
+   clauses.push_back(std::make_unique<Clause>(std::move(clause)));
+}
+
+void APT::Solver::Discover(Var var)
+{
+   auto &state = (*this)[var];
+
+   if (state.flags.discovered)
+      return;
+
+   state.flags.discovered = true;
+
    if (auto Pkg = var.Pkg(cache); not Pkg.end())
    {
-      bool anyInstallable = false;
-      bool anyMust = false;
-      // Insert the work item.
       Clause clause{Var(Pkg), Group::SelectVersion};
       for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
-      {
 	 clause.solutions.push_back(Var(ver));
-	 if ((*this)[ver].decision != Decision::MUSTNOT)
-	    anyInstallable = true;
-	 if ((*this)[ver].decision == Decision::MUST)
-	    anyMust = true;
-      }
-
-      // One is already marked for install, nothing to propagate
-      if (anyMust)
-	 return true;
-
-      if (not anyInstallable)
-      {
-	 _error->Error("Conflict: %s -> %s but no versions are installable",
-		       WhyStr((*this)[Pkg].reason).c_str(), Pkg.FullName().c_str());
-	 for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
-	    _error->Error("Uninstallable version: %s", WhyStr(Var(ver)).c_str());
-	 return false;
-      }
 
       std::stable_sort(clause.solutions.begin(), clause.solutions.end(), CompareProviders3{cache, policy, Pkg, *this});
-      assert(clause.solutions.size() > 0);
+      RegisterClause(std::move(clause));
 
-      if (not AddWork(Work{clause, depth()}))
-	 return false;
-
-      return EnqueueCommonDependencies(Pkg);
+      RegisterCommonDependencies(Pkg);
    }
    else if (auto Ver = var.Ver(cache); not Ver.end())
    {
-      if (not Enqueue(Var(Ver.ParentPkg()), true, Var(Ver)))
-	 return false;
+      Clause clause{Var(Ver), Group::SelectVersion};
+      clause.solutions = {Var(Ver.ParentPkg())};
+      RegisterClause(std::move(clause));
 
       for (auto OV = Ver.ParentPkg().VersionList(); not OV.end(); ++OV)
       {
-	 if (OV != Ver && not Enqueue(Var(OV), false, Var(Ver)))
-	    return false;
+	 if (OV == Ver)
+	    continue;
+
+	 Clause clause{Var(Ver), Group::SelectVersion, false, true /* negative */};
+	 clause.solutions = {Var(OV)};
+	 RegisterClause(std::move(clause));
       }
 
       for (auto dep = Ver.DependsList(); not dep.end();)
@@ -420,12 +417,11 @@ bool APT::Solver::PropagateInstall(Var var)
 	 pkgCache::DepIterator end;
 	 dep.GlobOr(start, end); // advances dep
 
-	 if (not EnqueueOrGroup(start, end, Var(Ver)))
-	    return false;
+	 auto clause = TranslateOrGroup(start, end, Var(Ver));
+
+	 RegisterClause(std::move(clause));
       }
    }
-
-   return true;
 }
 
 bool APT::Solver::PropagateReject(Var var)
@@ -465,7 +461,7 @@ bool APT::Solver::PropagateReject(Var var)
    return true;
 }
 
-bool APT::Solver::EnqueueCommonDependencies(pkgCache::PkgIterator Pkg)
+void APT::Solver::RegisterCommonDependencies(pkgCache::PkgIterator Pkg)
 {
    for (auto dep = Pkg.VersionList().DependsList(); not dep.end();)
    {
@@ -484,36 +480,9 @@ bool APT::Solver::EnqueueCommonDependencies(pkgCache::PkgIterator Pkg)
       }
       if (not allHaveDep)
 	 continue;
-      if (not EnqueueOrGroup(start, end, Var(Pkg)))
-	 return false;
+      auto clause = TranslateOrGroup(start, end, Var(Pkg));
+      RegisterClause(std::move(clause));
    }
-
-   return true;
-}
-
-bool APT::Solver::EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason)
-{
-   auto clause = TranslateOrGroup(start, end, reason);
-   if (clause.negative)
-   {
-      for (auto var : clause.solutions)
-	 if (not Enqueue(var, false, clause.reason))
-	    return false;
-   }
-   else if (not clause.solutions.empty())
-   {
-      if (unlikely(debug >= 3 && clause.optional))
-      {
-	 std::cerr << "Enqueuing Recommends ";
-	 clause.Dump(cache);
-	 std::cerr << "\n";
-      }
-      return AddWork(Work{std::move(clause), depth()});
-   }
-   else if (not clause.optional)
-      return _error->Error("Unsatisfiable dependency group %s -> %s", reason.toString(cache).c_str(), start.TargetPkg().FullName().c_str());
-
-   return true;
 }
 
 APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason)
@@ -532,6 +501,8 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
       std::cerr << "Found dependency critical " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " -> " << start.TargetPkg().FullName() << "\n";
 
    Clause clause{reason, Group::Satisfy, not start.IsCritical() /* optional */, start.IsNegative()};
+
+   clause.dep = start;
 
    do
    {
@@ -779,13 +750,32 @@ bool APT::Solver::Pop()
 
 bool APT::Solver::AddWork(Work &&w)
 {
-   if (w.clause.solutions.size() == 1 && not w.clause.optional)
-      return Enqueue(w.clause.solutions[0], true, w.clause.reason);
+   if (w.clause.negative)
+   {
+      for (auto var : w.clause.solutions)
+	 if (not Enqueue(var, false, w.clause.reason))
+	    return false;
+   }
+   else if (not w.clause.solutions.empty())
+   {
+      if (unlikely(debug >= 3 && w.clause.optional))
+      {
+	 std::cerr << "Enqueuing Recommends ";
+	 w.clause.Dump(cache);
+	 std::cerr << "\n";
+      }
+      if (w.clause.solutions.size() == 1 && not w.clause.optional)
+	 return Enqueue(w.clause.solutions[0], true, w.clause.reason);
 
-   w.size = std::count_if(w.clause.solutions.begin(), w.clause.solutions.end(), [this](auto V)
-			  { return (*this)[V].decision != Decision::MUSTNOT; });
-   work.push_back(std::move(w));
-   std::push_heap(work.begin(), work.end());
+      w.size = std::count_if(w.clause.solutions.begin(), w.clause.solutions.end(), [this](auto V)
+			     { return (*this)[V].decision != Decision::MUSTNOT; });
+      work.push_back(std::move(w));
+      std::push_heap(work.begin(), work.end());
+   }
+   else if (not w.clause.optional && w.clause.dep)
+      return _error->Error("Unsatisfiable dependency group %s -> %s", w.clause.reason.toString(cache).c_str(), pkgCache::DepIterator(cache, w.clause.dep).TargetPkg().FullName().c_str());
+   else if (not w.clause.optional)
+      return _error->Error("Unsatisfiable dependency group %s", w.clause.reason.toString(cache).c_str());
    return true;
 }
 
