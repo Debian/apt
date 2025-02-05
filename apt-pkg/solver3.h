@@ -317,8 +317,7 @@ struct APT::Solver::Clause
 
    inline Clause(Var reason, Group group, bool optional = false, bool negative = false) : reason(reason), group(group), optional(optional), negative(negative) {}
 
-   // \brief Dump the clause to std::cerr
-   void Dump(pkgCache &cache);
+   std::string toString(pkgCache &cache);
 };
 
 /**
@@ -352,8 +351,7 @@ struct APT::Solver::Work
    bool erased{false};
 
    bool operator<(APT::Solver::Work const &b) const;
-   // \brief Dump the work item to std::cerr
-   void Dump(pkgCache &cache);
+   std::string toString(pkgCache &cache);
    inline Work(Clause clause, depth_type depth) : clause(std::move(clause)), depth(depth) {}
 };
 

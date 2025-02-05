@@ -221,24 +221,30 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
 
    return false;
 }
-void APT::Solver::Clause::Dump(pkgCache &cache)
+
+std::string APT::Solver::Clause::toString(pkgCache &cache)
 {
+   std::string out;
    if (auto Pkg = reason.Pkg(cache); not Pkg.end())
-      std::cerr << Pkg.FullName();
+      out.append(Pkg.FullName());
    if (auto Ver = reason.Ver(cache); not Ver.end())
-      std::cerr << Ver.ParentPkg().FullName() << "=" << Ver.VerStr();
-   std::cerr << " -> ";
-   for (auto sol : solutions)
-      std::cerr << " | " << sol.toString(cache);
+      out.append(Ver.ParentPkg().FullName()).append("=").append(Ver.VerStr());
+   out.append(" -> ");
+   for (auto var : solutions)
+      out.append(" | ").append(var.toString(cache));
+   return out;
 }
-void APT::Solver::Work::Dump(pkgCache &cache)
+
+std::string APT::Solver::Work::toString(pkgCache &cache)
 {
+   std::ostringstream out;
    if (erased)
-      std::cerr << "Erased ";
+      out << "Erased ";
    if (clause.optional)
-      std::cerr << "Optional ";
-   std::cerr << "Item (" << ssize_t(size <= clause.solutions.size() ? size : -1) << "@" << depth << ") ";
-   clause.Dump(cache);
+      out << "Optional ";
+   out << "Item (" << ssize_t(size <= clause.solutions.size() ? size : -1) << "@" << depth << ") ";
+   out << clause.toString(cache);
+   return out.str();
 }
 
 // Prints an implication graph part of the form A -> B -> C, possibly with "not"
@@ -561,31 +567,19 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
       if (important && wasImportant && not newOptional && not satisfied)
       {
 	 if (unlikely(debug >= 3))
-	 {
-	    std::cerr << "Ignoring unsatisfied Recommends ";
-	    clause.Dump(cache);
-	    std::cerr << "\n";
-	 }
+	    std::cerr << "Ignoring unsatisfied Recommends " << clause.toString(cache) << std::endl;
 	 clause.solutions.clear();
       }
       else if (not important && not wasImportant && not newOptional && satisfied)
       {
 	 if (unlikely(debug >= 3))
-	 {
-	    std::cerr << "Promoting satisfied Suggests to Recommends: ";
-	    clause.Dump(cache);
-	    std::cerr << "\n";
-	 }
+	    std::cerr << "Promoting satisfied Suggests to Recommends: " << clause.toString(cache) << std::endl;
 	 important = true;
       }
       else if (not important)
       {
 	 if (unlikely(debug >= 3))
-	 {
-	    std::cerr << "Ignoring Suggests ";
-	    clause.Dump(cache);
-	    std::cerr << "\n";
-	 }
+	    std::cerr << "Ignoring Suggests " << clause.toString(cache) << std::endl;
 	 return Clause{reason, Group::Satisfy, true};
       }
    }
@@ -663,11 +657,7 @@ bool APT::Solver::RejectReverseDependencies(pkgCache::VerIterator Ver)
 void APT::Solver::Push(Work work)
 {
    if (unlikely(debug >= 2))
-   {
-      std::cerr << "Trying choice for ";
-      work.Dump(cache);
-      std::cerr << "\n";
-   }
+      std::cerr << "Trying choice for " << work.toString(cache) << std::endl;
 
    choices.push_back(solved.size());
    solved.push_back(Solved{Var(), std::move(work)});
@@ -700,11 +690,7 @@ void APT::Solver::UndoOne()
    if (auto work = solvedItem.work)
    {
       if (unlikely(debug >= 4))
-      {
-	 std::cerr << "Adding work item ";
-	 work->Dump(cache);
-	 std::cerr << "\n";
-      }
+	 std::cerr << "Adding work item " << work->toString(cache) << std::endl;
 
       if (not AddWork(std::move(*work)))
 	 abort();
@@ -766,11 +752,7 @@ bool APT::Solver::AddWork(Work &&w)
    else if (not w.clause.solutions.empty())
    {
       if (unlikely(debug >= 3 && w.clause.optional))
-      {
-	 std::cerr << "Enqueuing Recommends ";
-	 w.clause.Dump(cache);
-	 std::cerr << "\n";
-      }
+	 std::cerr << "Enqueuing Recommends " << w.clause.toString(cache) << std::endl;
       if (w.clause.solutions.size() == 1 && not w.clause.optional)
 	 return Enqueue(w.clause.solutions[0], true, w.clause.reason);
 
@@ -865,19 +847,12 @@ bool APT::Solver::Solve()
 		      { return (*this)[ver].decision == Decision::MUST; }))
       {
 	 if (unlikely(debug >= 2))
-	 {
-	    std::cerr << "ELIDED ";
-	    item.Dump(cache);
-	    std::cerr << "\n";
-	 }
+	    std::cerr << "ELIDED " << item.toString(cache) << std::endl;
 	 continue;
       }
 
       if (unlikely(debug >= 1))
-      {
-	 item.Dump(cache);
-	 std::cerr << "\n";
-      }
+	 std::cerr << item.toString(cache) << std::endl;
 
       assert(item.clause.solutions.size() > 1 || item.clause.optional);
 
