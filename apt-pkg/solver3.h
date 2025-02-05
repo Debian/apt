@@ -228,6 +228,8 @@ class Solver
    bool StrictPinning{_config->FindB("APT::Solver::Strict-Pinning", true)};
    // \brief If set, we install missing recommends and pick new best packages.
    bool FixPolicyBroken{_config->FindB("APT::Get::Fix-Policy-Broken")};
+   // \brief If set, we use strict pinning.
+   bool DeferVersionSelection{_config->FindB("APT::Solver::Defer-Version-Selection", true)};
 
    // \brief Discover a variable, translating the underlying dependencies to the SAT presentation
    void Discover(Var var);

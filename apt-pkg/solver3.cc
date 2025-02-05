@@ -527,23 +527,31 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
    do
    {
       auto begin = clause.solutions.size();
-      auto all = start.AllTargets();
 
-      for (auto tgt = all; *tgt; ++tgt)
+      if (DeferVersionSelection && not start.IsNegative() && start.TargetPkg().ProvidesList().end() && start.IsSatisfied(start.TargetPkg()))
       {
-	 pkgCache::VerIterator tgti(cache, *tgt);
-	 if (unlikely(debug >= 3))
-	    std::cerr << "Adding work to  item " << reason.toString(cache) << " -> " << tgti.ParentPkg().FullName() << "=" << tgti.VerStr() << (clause.negative ? " (negative)" : "") << "\n";
-	 clause.solutions.push_back(Var(pkgCache::VerIterator(cache, *tgt)));
+	 clause.solutions.push_back(Var(start.TargetPkg()));
       }
-      delete[] all;
+      else
+      {
+	 auto all = start.AllTargets();
 
-      // If we are fixing the policy, we need to sort each alternative in an or group separately
-      // FIXME: This is not really true, though, we should fix the CompareProviders to ignore the
-      // installed state
-      if (FixPolicyBroken)
-	 std::stable_sort(clause.solutions.begin() + begin, clause.solutions.end(), CompareProviders3{cache, policy, TgtPkg, *this});
+	 for (auto tgt = all; *tgt; ++tgt)
+	 {
+	    pkgCache::VerIterator tgti(cache, *tgt);
 
+	    if (unlikely(debug >= 3))
+	       std::cerr << "Adding work to  item " << reason.toString(cache) << " -> " << tgti.ParentPkg().FullName() << "=" << tgti.VerStr() << (clause.negative ? " (negative)" : "") << "\n";
+	    clause.solutions.push_back(Var(pkgCache::VerIterator(cache, *tgt)));
+	 }
+	 delete[] all;
+
+	 // If we are fixing the policy, we need to sort each alternative in an or group separately
+	 // FIXME: This is not really true, though, we should fix the CompareProviders to ignore the
+	 // installed state
+	 if (FixPolicyBroken)
+	    std::stable_sort(clause.solutions.begin() + begin, clause.solutions.end(), CompareProviders3{cache, policy, TgtPkg, *this});
+      }
       if (start == end)
 	 break;
       ++start;
