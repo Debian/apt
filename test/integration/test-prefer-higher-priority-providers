@@ -91,7 +91,7 @@ Inst awesome (1 unstable [all])
 Conf baz (1 unstable [all])
 Conf awesome (1 unstable [all])" aptget install awesome foo- bar- -s
 
-testfailuremsg "E: Conflict: awesome:$native=1 -> baz:$native=1 -> baz:$native but not baz:$native" aptget install awesome foo- bar- baz- -s --solver 3.0
+testfailuremsg "E: Conflict: awesome:$native=1 -> awesome:$native -> baz:$native=1 -> baz:$native but not baz:$native" aptget install awesome foo- bar- baz- -s --solver 3.0
 testfailureequal "Reading package lists...
 Building dependency tree...
 Package 'foo' is not installed, so not removed

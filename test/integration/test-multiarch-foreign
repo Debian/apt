@@ -179,14 +179,14 @@ distribution that some required packages have not yet been created
 or been moved out of Incoming.
 The following information may help to resolve the situation:
 '
-	testfailuremsg "E: Conflict: hates-foo:amd64=1.0 -> not ${1%:*}:$4=1.0 but ${1%:*}:$4=1.0"  aptget install $1 hates-foo -s --solver 3.0
+	testfailuremsg "E: Conflict: ${1%:*}:$4=1.0 -> not hates-foo:amd64 but hates-foo:amd64=1.0 -> hates-foo:amd64"  aptget install $1 hates-foo -s --solver 3.0
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  hates-foo : Conflicts: foo
              Conflicts: foo:i386
              Conflicts: foo:armel
 E: Unable to correct problems, you have held broken packages." aptget install $1 hates-foo -s --solver internal
-	testfailuremsg "E: Conflict: $2:amd64=1.0 -> not foo:$4=1.0 but foo:$4=1.0" aptget install $1 $2 -s --solver 3.0
+	testfailuremsg "E: Conflict: $2:amd64=1.0 -> $2:amd64 -> not foo:$4=1.0 but foo:$4=1.0" aptget install $1 $2 -s --solver 3.0
 	testfailureequal "$BADPREFIX
 The following packages have unmet dependencies:
  $2 : Conflicts: foo:$4

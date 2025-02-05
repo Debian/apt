@@ -171,7 +171,7 @@ testfailureequal "$BADSOLVETEXT3
 The following packages have unmet dependencies:
  bad-conflict-level2 : Depends: bad-conflict-level1 but it is not going to be installed
                        Depends: unneeded2 but it is not going to be installed
-E: Conflict: bad-conflict-level2:amd64=1 -> bad-conflict-level1:amd64 -> bad-conflict-level0:amd64 but bad-conflict-level2:amd64=1 -> not bad-conflict-level0:amd64" apt install bad-conflict-level2 -s --solver 3.0
+E: Conflict: bad-conflict-level2:amd64=1 -> not bad-conflict-level0:amd64 -> not bad-conflict-level1:amd64 but bad-conflict-level2:amd64=1 -> bad-conflict-level2:amd64 -> bad-conflict-level1:amd64" apt install bad-conflict-level2 -s --solver 3.0
 
 if $TEST_WITH_APTITUDE; then
 	testsuccesstailequal 6 'The following packages have been kept back:

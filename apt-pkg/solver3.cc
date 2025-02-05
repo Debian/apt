@@ -454,6 +454,10 @@ void APT::Solver::Discover(Var var)
       var = discoverQ.front();
       discoverQ.pop();
 
+      // Package needs to be discovered before the version to be able to dedup shared dependencies
+      if (auto Ver = var.Ver(cache); not Ver.end() && not(*this)[Ver.ParentPkg()].flags.discovered)
+	 var = Var(Ver.ParentPkg());
+
       auto &state = (*this)[var];
 
       if (state.flags.discovered)
@@ -494,6 +498,12 @@ void APT::Solver::Discover(Var var)
 	    pkgCache::DepIterator start;
 	    pkgCache::DepIterator end;
 	    dep.GlobOr(start, end); // advances dep
+
+	    // This dependency is shared across all versions, skip it.
+	    if (auto &pkgClauses = (*this)[Ver.ParentPkg()].clauses;
+		std::any_of(pkgClauses.begin(), pkgClauses.end(), [start](auto &c)
+			    { return c->dep && c->dep->DependencyData == start->DependencyData; }))
+	       continue;
 
 	    auto clause = TranslateOrGroup(start, end, Var(Ver));
 
