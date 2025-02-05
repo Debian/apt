@@ -382,6 +382,15 @@ bool APT::Solver::Propagate()
 	 for (auto &clause : (*this)[var].clauses)
 	    if (not AddWork(Work{clause.get(), depth()}))
 	       return false;
+	 for (auto rclause : (*this)[var].rclauses)
+	 {
+	    if (not rclause->negative || rclause->optional || rclause->reason.empty())
+	       continue;
+	    if (unlikely(debug >= 3))
+	       std::cerr << "Propagate " << var.toString(cache) << " to NOT " << rclause->reason.toString(cache) << " for dep " << const_cast<Clause *>(rclause)->toString(cache) << std::endl;
+	    if (not Enqueue(rclause->reason, false, var))
+	       return false;
+	 }
       }
       else if ((*this)[var].decision == Decision::MUSTNOT)
       {

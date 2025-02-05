@@ -34,7 +34,7 @@ After this operation, 0 B of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation.' aptget dist-upgrade --trivial-only --solver 3.0
 
 testfailure aptget dist-upgrade --trivial-only --solver 3.0 -o debug::apt::solver=2
-testsuccess grep -Fx "Branch failed: Conflict: apt:$native -> apt:$native=0.8.10 -> not oldcrap:$native=1-1 but oldcrap:$native -> oldcrap:$native=1-1" rootdir/tmp/testfailure.output
+testsuccess grep -Fx "[0] Reject:apt:$native=0.8.10 (oldcrap:$native -> oldcrap:$native=1-1)" rootdir/tmp/testfailure.output
 
 allowremovemanual
 
