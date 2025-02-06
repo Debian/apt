@@ -105,14 +105,23 @@ class Solver
    {
       return pkgStates[P->ID];
    }
+   inline const State &operator[](pkgCache::Package *P) const
+   {
+      return pkgStates[P->ID];
+   }
 
    // \brief Helper function for safe access to version state.
    inline State &operator[](pkgCache::Version *V)
    {
       return verStates[V->ID];
    }
+   inline const State &operator[](pkgCache::Version *V) const
+   {
+      return verStates[V->ID];
+   }
    // \brief Helper function for safe access to either state.
    inline State &operator[](Var r);
+   inline const State &operator[](Var r) const;
 
    mutable std::vector<char> pkgObsolete;
    bool Obsolete(pkgCache::PkgIterator pkg) const;
@@ -221,13 +230,13 @@ class Solver
    // \brief Apply the selections from the dep cache to the solver
    [[nodiscard]] bool FromDepCache(pkgDepCache &depcache);
    // \brief Apply the solver result to the depCache
-   [[nodiscard]] bool ToDepCache(pkgDepCache &depcache);
+   [[nodiscard]] bool ToDepCache(pkgDepCache &depcache) const;
 
    // \brief Solve the dependencies
    [[nodiscard]] bool Solve();
 
    // Print dependency chain
-   std::string WhyStr(Var reason);
+   std::string WhyStr(Var reason) const;
 };
 
 }; // namespace APT
@@ -319,7 +328,7 @@ struct APT::Solver::Clause
 
    inline Clause(Var reason, Group group, bool optional = false, bool negative = false) : reason(reason), group(group), optional(optional), negative(negative) {}
 
-   std::string toString(pkgCache &cache);
+   std::string toString(pkgCache &cache) const;
 };
 
 /**
@@ -334,7 +343,7 @@ struct APT::Solver::Clause
  */
 struct APT::Solver::Work
 {
-   Clause *clause;
+   const Clause *clause;
 
    // \brief The depth at which the item has been added
    depth_type depth;
@@ -353,8 +362,8 @@ struct APT::Solver::Work
    bool erased{false};
 
    bool operator<(APT::Solver::Work const &b) const;
-   std::string toString(pkgCache &cache);
-   inline Work(Clause *clause, depth_type depth) : clause(clause), depth(depth) {}
+   std::string toString(pkgCache &cache) const;
+   inline Work(const Clause *clause, depth_type depth) : clause(clause), depth(depth) {}
 };
 
 // \brief This essentially describes the install state in RFC2119 terms.
@@ -428,4 +437,9 @@ inline APT::Solver::State &APT::Solver::operator[](Var r)
    if (auto V = r.Ver())
       return (*this)[cache.VerP + V];
    return *rootState.get();
+}
+
+inline const APT::Solver::State &APT::Solver::operator[](Var r) const
+{
+   return const_cast<Solver &>(*this)[r];
 }

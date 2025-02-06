@@ -229,7 +229,7 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
    return false;
 }
 
-std::string APT::Solver::Clause::toString(pkgCache &cache)
+std::string APT::Solver::Clause::toString(pkgCache &cache) const
 {
    std::string out;
    if (auto Pkg = reason.Pkg(cache); not Pkg.end())
@@ -242,7 +242,7 @@ std::string APT::Solver::Clause::toString(pkgCache &cache)
    return out;
 }
 
-std::string APT::Solver::Work::toString(pkgCache &cache)
+std::string APT::Solver::Work::toString(pkgCache &cache) const
 {
    std::ostringstream out;
    if (erased)
@@ -255,7 +255,7 @@ std::string APT::Solver::Work::toString(pkgCache &cache)
 }
 
 // Prints an implication graph part of the form A -> B -> C, possibly with "not"
-std::string APT::Solver::WhyStr(Var reason)
+std::string APT::Solver::WhyStr(Var reason) const
 {
    std::vector<std::string> out;
 
@@ -997,7 +997,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
    return Propagate();
 }
 
-bool APT::Solver::ToDepCache(pkgDepCache &depcache)
+bool APT::Solver::ToDepCache(pkgDepCache &depcache) const
 {
    pkgDepCache::ActionGroup group(depcache);
    for (auto P = cache.PkgBegin(); not P.end(); P++)
