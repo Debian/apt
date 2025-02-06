@@ -334,7 +334,7 @@ struct APT::Solver::Clause
  */
 struct APT::Solver::Work
 {
-   Clause clause;
+   Clause *clause;
 
    // \brief The depth at which the item has been added
    depth_type depth;
@@ -354,7 +354,7 @@ struct APT::Solver::Work
 
    bool operator<(APT::Solver::Work const &b) const;
    std::string toString(pkgCache &cache);
-   inline Work(Clause clause, depth_type depth) : clause(std::move(clause)), depth(depth) {}
+   inline Work(Clause *clause, depth_type depth) : clause(clause), depth(depth) {}
 };
 
 // \brief This essentially describes the install state in RFC2119 terms.

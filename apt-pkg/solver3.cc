@@ -204,6 +204,9 @@ APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy)
       priorities(cache.Head().VersionCount),
       candidates(cache.Head().PackageCount)
 {
+   // Ensure trivially
+   static_assert(std::is_trivially_destructible_v<Work>);
+   static_assert(std::is_trivially_destructible_v<Solved>);
    static_assert(sizeof(APT::Solver::Var) == sizeof(map_pointer<pkgCache::Package>));
    static_assert(sizeof(APT::Solver::Var) == sizeof(map_pointer<pkgCache::Version>));
    // Root state is "true".
@@ -213,12 +216,12 @@ APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy)
 // This function determines if a work item is less important than another.
 bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
 {
-   if ((not clause.optional && size < 2) != (not b.clause.optional && b.size < 2))
-      return not b.clause.optional && b.size < 2;
-   if (clause.optional != b.clause.optional)
-      return clause.optional;
-   if (clause.group != b.clause.group)
-      return clause.group > b.clause.group;
+   if ((not clause->optional && size < 2) != (not b.clause->optional && b.size < 2))
+      return not b.clause->optional && b.size < 2;
+   if (clause->optional != b.clause->optional)
+      return clause->optional;
+   if (clause->group != b.clause->group)
+      return clause->group > b.clause->group;
    if ((size < 2) != (b.size < 2))
       return b.size < 2;
    if (size == 1 && b.size == 1) // Special case: 'shortcircuit' optional packages
@@ -244,10 +247,10 @@ std::string APT::Solver::Work::toString(pkgCache &cache)
    std::ostringstream out;
    if (erased)
       out << "Erased ";
-   if (clause.optional)
+   if (clause->optional)
       out << "Optional ";
-   out << "Item (" << ssize_t(size <= clause.solutions.size() ? size : -1) << "@" << depth << ") ";
-   out << clause.toString(cache);
+   out << "Item (" << ssize_t(size <= clause->solutions.size() ? size : -1) << "@" << depth << ") ";
+   out << clause->toString(cache);
    return out.str();
 }
 
@@ -376,7 +379,7 @@ bool APT::Solver::Propagate()
       {
 	 Discover(var);
 	 for (auto &clause : (*this)[var].clauses)
-	    if (not AddWork(Work{*clause.get(), depth()}))
+	    if (not AddWork(Work{clause.get(), depth()}))
 	       return false;
       }
       else if ((*this)[var].decision == Decision::MUSTNOT && not PropagateReject(var))
@@ -747,28 +750,28 @@ bool APT::Solver::Pop()
 
 bool APT::Solver::AddWork(Work &&w)
 {
-   if (w.clause.negative)
+   if (w.clause->negative)
    {
-      for (auto var : w.clause.solutions)
-	 if (not Enqueue(var, false, w.clause.reason))
+      for (auto var : w.clause->solutions)
+	 if (not Enqueue(var, false, w.clause->reason))
 	    return false;
    }
-   else if (not w.clause.solutions.empty())
+   else if (not w.clause->solutions.empty())
    {
-      if (unlikely(debug >= 3 && w.clause.optional))
-	 std::cerr << "Enqueuing Recommends " << w.clause.toString(cache) << std::endl;
-      if (w.clause.solutions.size() == 1 && not w.clause.optional)
-	 return Enqueue(w.clause.solutions[0], true, w.clause.reason);
+      if (unlikely(debug >= 3 && w.clause->optional))
+	 std::cerr << "Enqueuing Recommends " << w.clause->toString(cache) << std::endl;
+      if (w.clause->solutions.size() == 1 && not w.clause->optional)
+	 return Enqueue(w.clause->solutions[0], true, w.clause->reason);
 
-      w.size = std::count_if(w.clause.solutions.begin(), w.clause.solutions.end(), [this](auto V)
+      w.size = std::count_if(w.clause->solutions.begin(), w.clause->solutions.end(), [this](auto V)
 			     { return (*this)[V].decision != Decision::MUSTNOT; });
       work.push_back(std::move(w));
       std::push_heap(work.begin(), work.end());
    }
-   else if (not w.clause.optional && w.clause.dep)
-      return _error->Error("Unsatisfiable dependency group %s -> %s", w.clause.reason.toString(cache).c_str(), pkgCache::DepIterator(cache, w.clause.dep).TargetPkg().FullName().c_str());
-   else if (not w.clause.optional)
-      return _error->Error("Unsatisfiable dependency group %s", w.clause.reason.toString(cache).c_str());
+   else if (not w.clause->optional && w.clause->dep)
+      return _error->Error("Unsatisfiable dependency group %s -> %s", w.clause->reason.toString(cache).c_str(), pkgCache::DepIterator(cache, w.clause->dep).TargetPkg().FullName().c_str());
+   else if (not w.clause->optional)
+      return _error->Error("Unsatisfiable dependency group %s", w.clause->reason.toString(cache).c_str());
    return true;
 }
 
@@ -783,7 +786,7 @@ void APT::Solver::RescoreWorkIfNeeded()
    {
       if (w.erased)
 	 continue;
-      size_t newSize = std::count_if(w.clause.solutions.begin(), w.clause.solutions.end(), [this](auto V)
+      size_t newSize = std::count_if(w.clause->solutions.begin(), w.clause->solutions.end(), [this](auto V)
 				     { return (*this)[V].decision != Decision::MUSTNOT; });
 
       // Notably we only insert the work into the queue if it got smaller. Work that got larger
@@ -832,7 +835,7 @@ bool APT::Solver::Solve()
       }
 
       // If our size increased, queue again.
-      size_t newSize = std::count_if(work.back().clause.solutions.begin(), work.back().clause.solutions.end(), [this](auto V)
+      size_t newSize = std::count_if(work.back().clause->solutions.begin(), work.back().clause->solutions.end(), [this](auto V)
 				     { return (*this)[V].decision != Decision::MUSTNOT; });
 
       if (newSize > work.back().size)
@@ -847,7 +850,7 @@ bool APT::Solver::Solve()
       work.pop_back();
       solved.push_back(Solved{Var(), item});
 
-      if (std::any_of(item.clause.solutions.begin(), item.clause.solutions.end(), [this](auto ver)
+      if (std::any_of(item.clause->solutions.begin(), item.clause->solutions.end(), [this](auto ver)
 		      { return (*this)[ver].decision == Decision::MUST; }))
       {
 	 if (unlikely(debug >= 2))
@@ -858,10 +861,10 @@ bool APT::Solver::Solve()
       if (unlikely(debug >= 1))
 	 std::cerr << item.toString(cache) << std::endl;
 
-      assert(item.clause.solutions.size() > 1 || item.clause.optional);
+      assert(item.clause->solutions.size() > 1 || item.clause->optional);
 
       bool foundSolution = false;
-      for (auto &sol : item.clause.solutions)
+      for (auto &sol : item.clause->solutions)
       {
 	 if ((*this)[sol].decision == Decision::MUSTNOT)
 	 {
@@ -869,26 +872,26 @@ bool APT::Solver::Solve()
 	       std::cerr << "(existing conflict: " << sol.toString(cache) << ")\n";
 	    continue;
 	 }
-	 if (item.size > 1 || item.clause.optional)
+	 if (item.size > 1 || item.clause->optional)
 	 {
 	    item.choice = sol;
 	    Push(item);
 	 }
 	 if (unlikely(debug >= 3))
 	    std::cerr << "(try it: " << sol.toString(cache) << ")\n";
-	 if (not Enqueue(sol, true, item.clause.reason) && not Pop())
+	 if (not Enqueue(sol, true, item.clause->reason) && not Pop())
 	    return false;
 	 foundSolution = true;
 	 break;
       }
-      if (not foundSolution && not item.clause.optional)
+      if (not foundSolution && not item.clause->optional)
       {
 	 std::ostringstream dep;
-	 assert(item.clause.solutions.size() > 0);
-	 for (auto &sol : item.clause.solutions)
+	 assert(item.clause->solutions.size() > 0);
+	 for (auto &sol : item.clause->solutions)
 	    dep << (dep.tellp() == 0 ? "" : " | ") << sol.toString(cache);
-	 _error->Error("Unsatisfiable dependency: %s -> %s", WhyStr(item.clause.reason).c_str(), dep.str().c_str());
-	 for (auto &sol : item.clause.solutions)
+	 _error->Error("Unsatisfiable dependency: %s -> %s", WhyStr(item.clause->reason).c_str(), dep.str().c_str());
+	 for (auto &sol : item.clause->solutions)
 	    if ((*this)[sol].decision == Decision::MUSTNOT)
 	       _error->Error("Not considered: %s: %s", sol.toString(cache).c_str(),
 			     WhyStr(sol).c_str());
@@ -972,7 +975,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	    Clause w{Var(), Group, isOptional};
 	    w.solutions.push_back(Var(P));
 	    RegisterClause(std::move(w));
-	    if (not AddWork(Work{*rootState->clauses.back(), depth()}))
+	    if (not AddWork(Work{rootState->clauses.back().get(), depth()}))
 	       return false;
 
 	    // Given A->A2|A1, B->B1|B2; Bn->An, if we select `not A1`, we
