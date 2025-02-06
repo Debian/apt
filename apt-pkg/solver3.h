@@ -93,6 +93,8 @@ class Solver
    pkgCache &cache;
    // Policy is needed for determining candidate version.
    pkgDepCache::Policy &policy;
+   // Root state
+   std::unique_ptr<State> rootState;
    // States for packages
    std::vector<State> pkgStates{};
    // States for versions
@@ -425,6 +427,5 @@ inline APT::Solver::State &APT::Solver::operator[](Var r)
       return (*this)[cache.PkgP + P];
    if (auto V = r.Ver())
       return (*this)[cache.VerP + V];
-
-   abort();
+   return *rootState.get();
 }

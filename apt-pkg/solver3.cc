@@ -197,6 +197,7 @@ class DefaultRootSetFunc2 : public pkgDepCache::DefaultRootSetFunc
 APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy)
     : cache(cache),
       policy(policy),
+      rootState(new State),
       pkgStates(cache.Head().PackageCount),
       verStates(cache.Head().VersionCount),
       pkgObsolete(cache.Head().PackageCount),
@@ -205,6 +206,8 @@ APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy)
 {
    static_assert(sizeof(APT::Solver::Var) == sizeof(map_pointer<pkgCache::Package>));
    static_assert(sizeof(APT::Solver::Var) == sizeof(map_pointer<pkgCache::Version>));
+   // Root state is "true".
+   rootState->decision = Decision::MUST;
 }
 
 // This function determines if a work item is less important than another.
@@ -218,7 +221,8 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
       return clause.group > b.clause.group;
    if ((size < 2) != (b.size < 2))
       return b.size < 2;
-
+   if (size == 1 && b.size == 1) // Special case: 'shortcircuit' optional packages
+      return clause->solutions.size() < b.clause->solutions.size();
    return false;
 }
 
@@ -966,10 +970,22 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 else
 	 {
 	    Clause w{Var(), Group, isOptional};
+	    w.solutions.push_back(Var(P));
+	    RegisterClause(std::move(w));
+	    if (not AddWork(Work{*rootState->clauses.back(), depth()}))
+	       return false;
+
+	    // Given A->A2|A1, B->B1|B2; Bn->An, if we select `not A1`, we
+	    // should try to install A2 before trying B so we end up with
+	    // A2, B2, instead of removing A1 to keep B1 installed. This
+	    // requires some special casing in Work::operator< above.
+	    // Compare test-bug-712116-dpkg-pre-install-pkgs-hook-multiarch
+	    Clause shortcircuit{Var(), Group, isOptional};
 	    for (auto V = P.VersionList(); not V.end(); ++V)
-	       w.solutions.push_back(Var(V));
-	    std::stable_sort(w.solutions.begin(), w.solutions.end(), CompareProviders3{cache, policy, P, *this});
-	    if (not AddWork(Work{std::move(w), depth()}))
+	       shortcircuit.solutions.push_back(Var(V));
+	    std::stable_sort(shortcircuit.solutions.begin(), shortcircuit.solutions.end(), CompareProviders3{cache, policy, P, *this});
+	    RegisterClause(std::move(shortcircuit));
+	    if (not AddWork(Work{rootState->clauses.back().get(), depth()}))
 	       return false;
 	 }
       }
