@@ -20,6 +20,48 @@
 namespace APT
 {
 
+/**
+ * \brief A simple mapping from objects in the cache to user-defined types.
+ *
+ * This default initializes an array with the specified value type for each
+ * object in the cache of that type.
+ */
+template <typename K, typename V, bool fast = false>
+class ContiguousCacheMap
+{
+   V *data_; // Avoid std::unique_ptr() as it may check that it's non-null.
+
+   public:
+   ContiguousCacheMap(pkgCache &cache)
+   {
+      static_assert(std::is_constructible_v<V>);
+      if constexpr (fast)
+      {
+	 static_assert(std::is_trivially_constructible_v<V>);
+	 static_assert(std::is_trivially_destructible_v<V>);
+      }
+
+      size_t size;
+      if constexpr (std::is_same_v<K, pkgCache::Version>)
+	 size = cache.Head().VersionCount;
+      else if constexpr (std::is_same_v<K, pkgCache::Package>)
+	 size = cache.Head().PackageCount;
+      else
+	 static_assert(false, "Cannot construct map for key type");
+
+      data_ = new V[size]{};
+   }
+   V &operator[](const K *key) { return data_[key->ID]; }
+   const V &operator[](const K *key) const { return data_[key->ID]; }
+   ~ContiguousCacheMap() { delete[] data_; }
+};
+
+/**
+ * \brief A version of ContiguousCacheMap that ensures allocation and deallocation is trivial.
+ */
+template <typename K, typename V>
+using FastContiguousCacheMap = ContiguousCacheMap<K, V, true>;
+
 /*
  * \brief APT 3.0 solver
  *
@@ -96,49 +138,51 @@ class Solver
    // Root state
    std::unique_ptr<State> rootState;
    // States for packages
-   std::vector<State> pkgStates{};
+   ContiguousCacheMap<pkgCache::Package, State> pkgStates;
    // States for versions
-   std::vector<State> verStates{};
+   ContiguousCacheMap<pkgCache::Version, State> verStates;
 
    // \brief Helper function for safe access to package state.
    inline State &operator[](pkgCache::Package *P)
    {
-      return pkgStates[P->ID];
+      return pkgStates[P];
    }
    inline const State &operator[](pkgCache::Package *P) const
    {
-      return pkgStates[P->ID];
+      return pkgStates[P];
    }
 
    // \brief Helper function for safe access to version state.
    inline State &operator[](pkgCache::Version *V)
    {
-      return verStates[V->ID];
+      return verStates[V];
    }
    inline const State &operator[](pkgCache::Version *V) const
    {
-      return verStates[V->ID];
+      return verStates[V];
    }
    // \brief Helper function for safe access to either state.
    inline State &operator[](Var r);
    inline const State &operator[](Var r) const;
 
-   mutable std::vector<char> pkgObsolete;
+   mutable FastContiguousCacheMap<pkgCache::Package, char> pkgObsolete;
    bool Obsolete(pkgCache::PkgIterator pkg) const;
    bool ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) const;
-   mutable std::vector<short> priorities;
+
+   mutable FastContiguousCacheMap<pkgCache::Version, short> priorities;
    short GetPriority(pkgCache::VerIterator ver) const
    {
-      if (priorities[ver->ID] == 0)
-	 priorities[ver->ID] = policy.GetPriority(ver);
-      return priorities[ver->ID];
+      if (priorities[ver] == 0)
+	 priorities[ver] = policy.GetPriority(ver);
+      return priorities[ver];
    }
-   mutable std::vector<pkgCache::VerIterator> candidates;
+
+   mutable ContiguousCacheMap<pkgCache::Package, pkgCache::VerIterator> candidates;
    pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator pkg) const
    {
-      if (candidates[pkg->ID].end())
-	 candidates[pkg->ID] = policy.GetCandidateVer(pkg);
-      return candidates[pkg->ID];
+      if (candidates[pkg].end())
+	 candidates[pkg] = policy.GetCandidateVer(pkg);
+      return candidates[pkg];
    }
 
    // \brief Heap of the remaining work.

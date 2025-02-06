@@ -198,11 +198,11 @@ APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy)
     : cache(cache),
       policy(policy),
       rootState(new State),
-      pkgStates(cache.Head().PackageCount),
-      verStates(cache.Head().VersionCount),
-      pkgObsolete(cache.Head().PackageCount),
-      priorities(cache.Head().VersionCount),
-      candidates(cache.Head().PackageCount)
+      pkgStates(cache),
+      verStates(cache),
+      pkgObsolete(cache),
+      priorities(cache),
+      candidates(cache)
 {
    // Ensure trivially
    static_assert(std::is_trivially_destructible_v<Work>);
@@ -295,7 +295,7 @@ bool APT::Solver::ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) cons
       if (priority == 0 || priority < candPriority)
 	 continue;
 
-      pkgObsolete[pkg->ID] = 2;
+      pkgObsolete[pkg] = 2;
       if (debug >= 3)
 	 std::cerr << "Obsolete: " << cand.ParentPkg().FullName() << "=" << cand.VerStr() << " due to " << ver.ParentPkg().FullName() << "=" << ver.VerStr() << "\n";
       return true;
@@ -306,8 +306,8 @@ bool APT::Solver::ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) cons
 
 bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg) const
 {
-   if (pkgObsolete[pkg->ID] != 0)
-      return pkgObsolete[pkg->ID] == 2;
+   if (pkgObsolete[pkg] != 0)
+      return pkgObsolete[pkg] == 2;
 
    auto ver = GetCandidateVer(pkg);
 
@@ -317,7 +317,7 @@ bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg) const
    {
       if (debug >= 3)
 	 std::cerr << "Obsolete: " << pkg.FullName() << " - not installable\n";
-      pkgObsolete[pkg->ID] = 2;
+      pkgObsolete[pkg] = 2;
       return true;
    }
 
@@ -327,12 +327,12 @@ bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg) const
    for (auto file = ver.FileList(); !file.end(); file++)
       if ((file.File()->Flags & pkgCache::Flag::NotSource) == 0)
       {
-	 pkgObsolete[pkg->ID] = 1;
+	 pkgObsolete[pkg] = 1;
 	 return false;
       }
    if (debug >= 3)
       std::cerr << "Obsolete: " << ver.ParentPkg().FullName() << "=" << ver.VerStr() << " - not installable\n";
-   pkgObsolete[pkg->ID] = 2;
+   pkgObsolete[pkg] = 2;
    return true;
 }
 bool APT::Solver::Assume(Var var, bool decision, Var reason)
