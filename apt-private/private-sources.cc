@@ -44,8 +44,6 @@ bool EditSources(CommandLine &CmdL)
    if (CmdL.FileList[1] != NULL)
    {
       sourceslist = _config->FindDir("Dir::Etc::sourceparts") + CmdL.FileList[1];
-      if (!APT::String::Endswith(sourceslist, ".list"))
-         sourceslist += ".list";
    } else {
       sourceslist = _config->FindFile("Dir::Etc::sourcelist");
    }
