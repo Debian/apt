@@ -7,6 +7,7 @@
  * SPDX-License-Identifier: GPL-2.0+
  */
 
+#include <cassert>
 #include <optional>
 #include <queue>
 #include <vector>
@@ -18,6 +19,48 @@
 
 namespace APT
 {
+
+/**
+ * \brief A simple mapping from objects in the cache to user-defined types.
+ *
+ * This default initializes an array with the specified value type for each
+ * object in the cache of that type.
+ */
+template <typename K, typename V, bool fast = false>
+class ContiguousCacheMap
+{
+   V *data_; // Avoid std::unique_ptr() as it may check that it's non-null.
+
+   public:
+   ContiguousCacheMap(pkgCache &cache)
+   {
+      static_assert(std::is_constructible_v<V>);
+      if constexpr (fast)
+      {
+	 static_assert(std::is_trivially_constructible_v<V>);
+	 static_assert(std::is_trivially_destructible_v<V>);
+      }
+
+      size_t size;
+      if constexpr (std::is_same_v<K, pkgCache::Version>)
+	 size = cache.Head().VersionCount;
+      else if constexpr (std::is_same_v<K, pkgCache::Package>)
+	 size = cache.Head().PackageCount;
+      else
+	 static_assert(false, "Cannot construct map for key type");
+
+      data_ = new V[size]{};
+   }
+   V &operator[](const K *key) { return data_[key->ID]; }
+   const V &operator[](const K *key) const { return data_[key->ID]; }
+   ~ContiguousCacheMap() { delete[] data_; }
+};
+
+/**
+ * \brief A version of ContiguousCacheMap that ensures allocation and deallocation is trivial.
+ */
+template <typename K, typename V>
+using FastContiguousCacheMap = ContiguousCacheMap<K, V, true>;
 
 /*
  * \brief APT 3.0 solver
@@ -36,6 +79,7 @@ class Solver
    struct Var;
    struct CompareProviders3;
    struct State;
+   struct Clause;
    struct Work;
    struct Solved;
 
@@ -91,28 +135,55 @@ class Solver
    pkgCache &cache;
    // Policy is needed for determining candidate version.
    pkgDepCache::Policy &policy;
+   // Root state
+   std::unique_ptr<State> rootState;
    // States for packages
-   std::vector<State> pkgStates{};
+   ContiguousCacheMap<pkgCache::Package, State> pkgStates;
    // States for versions
-   std::vector<State> verStates{};
+   ContiguousCacheMap<pkgCache::Version, State> verStates;
 
    // \brief Helper function for safe access to package state.
    inline State &operator[](pkgCache::Package *P)
    {
-      return pkgStates[P->ID];
+      return pkgStates[P];
+   }
+   inline const State &operator[](pkgCache::Package *P) const
+   {
+      return pkgStates[P];
    }
 
    // \brief Helper function for safe access to version state.
    inline State &operator[](pkgCache::Version *V)
    {
-      return verStates[V->ID];
+      return verStates[V];
+   }
+   inline const State &operator[](pkgCache::Version *V) const
+   {
+      return verStates[V];
    }
    // \brief Helper function for safe access to either state.
    inline State &operator[](Var r);
+   inline const State &operator[](Var r) const;
 
-   mutable std::vector<char> pkgObsolete;
+   mutable FastContiguousCacheMap<pkgCache::Package, char> pkgObsolete;
    bool Obsolete(pkgCache::PkgIterator pkg) const;
    bool ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) const;
+
+   mutable FastContiguousCacheMap<pkgCache::Version, short> priorities;
+   short GetPriority(pkgCache::VerIterator ver) const
+   {
+      if (priorities[ver] == 0)
+	 priorities[ver] = policy.GetPriority(ver);
+      return priorities[ver];
+   }
+
+   mutable ContiguousCacheMap<pkgCache::Package, pkgCache::VerIterator> candidates;
+   pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator pkg) const
+   {
+      if (candidates[pkg].end())
+	 candidates[pkg] = policy.GetCandidateVer(pkg);
+      return candidates[pkg];
+   }
 
    // \brief Heap of the remaining work.
    //
@@ -145,25 +216,34 @@ class Solver
    int debug{_config->FindI("Debug::APT::Solver")};
    // \brief If set, we try to keep automatically installed packages installed.
    bool KeepAuto{not _config->FindB("APT::Get::AutomaticRemove")};
+   // \brief Determines if we are in upgrade mode.
+   bool IsUpgrade{_config->FindB("APT::Solver::Upgrade", false)};
    // \brief If set, removals are allowed.
    bool AllowRemove{_config->FindB("APT::Solver::Remove", true)};
+   // \brief If set, removal of manual packages is allowed.
+   bool AllowRemoveManual{AllowRemove && _config->FindB("APT::Solver::RemoveManual", false)};
    // \brief If set, installs are allowed.
    bool AllowInstall{_config->FindB("APT::Solver::Install", true)};
    // \brief If set, we use strict pinning.
    bool StrictPinning{_config->FindB("APT::Solver::Strict-Pinning", true)};
+   // \brief If set, we install missing recommends and pick new best packages.
+   bool FixPolicyBroken{_config->FindB("APT::Get::Fix-Policy-Broken")};
 
+   // \brief Discover a variable, translating the underlying dependencies to the SAT presentation
+   void Discover(Var var);
+   // \brief Link a clause into the watchers
+   void RegisterClause(Clause &&clause);
    // \brief Enqueue dependencies shared by all versions of the package.
-   bool EnqueueCommonDependencies(pkgCache::PkgIterator Pkg);
+   void RegisterCommonDependencies(pkgCache::PkgIterator Pkg);
+
    // \brief Reject reverse dependencies. Must call std::make_heap() after.
-   bool RejectReverseDependencies(pkgCache::VerIterator Ver);
-   // \brief Enqueue a single or group
-   bool EnqueueOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
+   [[nodiscard]] bool RejectReverseDependencies(pkgCache::VerIterator Ver);
+   // \brief Translate an or group into a clause object
+   [[nodiscard]] Clause TranslateOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
    // \brief Propagate all pending propagations
-   bool Propagate();
-   // \brief Propagate a "true" value of a variable
-   bool PropagateInstall(Var var);
+   [[nodiscard]] bool Propagate();
    // \brief Propagate a rejection of a variable
-   bool PropagateReject(Var var);
+   [[nodiscard]] bool PropagateReject(Var var);
 
    // \brief Return the current depth (choices.size() with casting)
    depth_type depth()
@@ -175,11 +255,11 @@ class Solver
    // \brief Create a new decision level.
    void Push(Work work);
    // \brief Revert to the previous decision level.
-   bool Pop();
+   [[nodiscard]] bool Pop();
    // \brief Undo a single assignment / solved work item
    void UndoOne();
    // \brief Add work to our work queue.
-   void AddWork(Work &&work);
+   [[nodiscard]] bool AddWork(Work &&work);
    // \brief Rescore the work after a reject or a pop
    void RescoreWorkIfNeeded();
 
@@ -187,20 +267,20 @@ class Solver
    Solver(pkgCache &Cache, pkgDepCache::Policy &Policy);
 
    // Assume that the variable is decided as specified.
-   bool Assume(Var var, bool decision, Var reason);
+   [[nodiscard]] bool Assume(Var var, bool decision, Var reason);
    // Enqueue a decision fact
-   bool Enqueue(Var var, bool decision, Var reason);
+   [[nodiscard]] bool Enqueue(Var var, bool decision, Var reason);
 
    // \brief Apply the selections from the dep cache to the solver
-   bool FromDepCache(pkgDepCache &depcache);
+   [[nodiscard]] bool FromDepCache(pkgDepCache &depcache);
    // \brief Apply the solver result to the depCache
-   bool ToDepCache(pkgDepCache &depcache);
+   [[nodiscard]] bool ToDepCache(pkgDepCache &depcache) const;
 
    // \brief Solve the dependencies
-   bool Solve();
+   [[nodiscard]] bool Solve();
 
    // Print dependency chain
-   std::string WhyStr(Var reason);
+   std::string WhyStr(Var reason) const;
 };
 
 }; // namespace APT
@@ -242,10 +322,20 @@ struct APT::Solver::Var
    {
       return IsVersion ? pkgCache::VerIterator(cache, cache.VerP + Ver()) : pkgCache::VerIterator();
    }
+   // \brief Return a package, cast from version if needed
+   pkgCache::PkgIterator CastPkg(pkgCache &cache) const
+   {
+      assert(MapPtr != 0);
+      return IsVersion ? Ver(cache).ParentPkg() : Pkg(cache);
+   }
    // \brief Check if there is no reason.
    bool empty() const
    {
       return IsVersion == 0 && MapPtr == 0;
+   }
+   bool operator==(Var const other)
+   {
+      return IsVersion == other.IsVersion && MapPtr == other.MapPtr;
    }
 
    std::string toString(pkgCache &cache) const
@@ -256,6 +346,33 @@ struct APT::Solver::Var
 	 return V.ParentPkg().FullName() + "=" + V.VerStr();
       return "(root)";
    }
+};
+
+/**
+ * \brief A single clause
+ *
+ * A clause is a normalized, expanded dependency, translated into an implication
+ * in terms of Var objects, that is, `reason -> solutions[0] | ... | solutions[n]`
+ */
+struct APT::Solver::Clause
+{
+   // \brief Underyling dependency
+   pkgCache::Dependency *dep = nullptr;
+   // \brief Var for the work
+   Var reason;
+   // \brief The group we are in
+   Group group;
+   // \brief Possible solutions to this task, ordered in order of preference.
+   std::vector<Var> solutions{};
+   // \brief An optional clause does not need to be satisfied
+   bool optional;
+
+   // \brief A negative clause negates the solutions, that is X->A|B you get X->!(A|B), aka X->!A&!B
+   bool negative;
+
+   inline Clause(Var reason, Group group, bool optional = false, bool negative = false) : reason(reason), group(group), optional(optional), negative(negative) {}
+
+   std::string toString(pkgCache &cache) const;
 };
 
 /**
@@ -270,37 +387,27 @@ struct APT::Solver::Var
  */
 struct APT::Solver::Work
 {
-   // \brief Var for the work
-   Var reason;
+   const Clause *clause;
+
    // \brief The depth at which the item has been added
    depth_type depth;
-   // \brief The group we are in
-   Group group;
-   // \brief Possible solutions to this task, ordered in order of preference.
-   std::vector<pkgCache::Version *> solutions{};
 
    // This is a union because we only need to store the choice we made when adding
    // to the choice vector, and we don't need the size of valid choices in there.
    union
    {
       // The choice we took
-      pkgCache::Version *choice;
+      Var choice;
       // Number of valid choices
-      size_t size;
+      size_t size{0};
    };
 
-   // \brief Whether this is an optional work item, they will be processed last
-   bool optional;
-   // \brief Whether this is an ugprade
-   bool upgrade;
    // \brief This item should be removed from the queue.
-   bool erased;
+   bool erased{false};
 
    bool operator<(APT::Solver::Work const &b) const;
-   // \brief Dump the work item to std::cerr
-   void Dump(pkgCache &cache);
-
-   inline Work(Var reason, depth_type depth, Group group, bool optional = false, bool upgrade = false) : reason(reason), depth(depth), group(group), size(0), optional(optional), upgrade(upgrade), erased(false) {}
+   std::string toString(pkgCache &cache) const;
+   inline Work(const Clause *clause, depth_type depth) : clause(clause), depth(depth) {}
 };
 
 // \brief This essentially describes the install state in RFC2119 terms.
@@ -312,17 +419,6 @@ enum class APT::Solver::Decision : uint16_t
    MUST,
    // \brief We cannot install this package (need conflicts with it)
    MUSTNOT,
-};
-
-// \brief Hints for the solver about the item.
-enum class APT::Solver::Hint : uint16_t
-{
-   // \brief We have not made a choice about the package yet
-   NONE,
-   // \brief This package was listed as a Recommends of a must package,
-   SHOULD,
-   // \brief This package was listed as a Suggests of a must-not package
-   MAY,
 };
 
 /**
@@ -352,8 +448,16 @@ struct APT::Solver::State
    // \brief This essentially describes the install state in RFC2119 terms.
    Decision decision{Decision::NONE};
 
-   // \brief Any hint.
-   Hint hint{Hint::NONE};
+   // \brief Flags.
+   struct
+   {
+      bool discovered{};
+   } flags;
+
+   static_assert(sizeof(flags) <= sizeof(int));
+
+   // \brief Clauses owned by this package/version
+   std::vector<std::unique_ptr<Clause>> clauses;
 };
 
 /**
@@ -376,6 +480,10 @@ inline APT::Solver::State &APT::Solver::operator[](Var r)
       return (*this)[cache.PkgP + P];
    if (auto V = r.Ver())
       return (*this)[cache.VerP + V];
+   return *rootState.get();
+}
 
-   abort();
+inline const APT::Solver::State &APT::Solver::operator[](Var r) const
+{
+   return const_cast<Solver &>(*this)[r];
 }
