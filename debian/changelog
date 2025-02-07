@@ -1,3 +1,38 @@
+apt (2.9.28) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * modernize-sources: Avoid opening /dev/stdout for simulate
+  * dpkg: Pass --admindir if a different one is specified; fixes issue
+    where foreign architectures from the host were used when Dir is set.
+  * Various updates to the '3.0' solver: Particularly it now has a clause
+    database for reals rather than rediscovering clauses when backtracking.
+    - refactor: Drop unused code, annotate [[nodiscard]] and const, simplify,
+      extract functions, and particularly introduce the Clause class.
+    - algorithm: Simplify work ordering. This may cause some changes in
+      how dependencies are resolved.
+    - algorithm: Replace PropagateInstall() with Discover() and then
+      propagate based on the stored clauses. Clauses are discovered
+      from package dependencies and persistent, i.e. they have no
+      decision level associated. Discovery is incremental so far.
+    - algorithm: Support comparing packages and versions, such that
+      we can store both package and version variables in a clause.
+    - algorithm: Use a package clause for optional roots. This allows
+      deciding to keep an automatically installed package installed,
+      without having to decide the version (and hence enqueue common
+      dependencies first).
+    - performance: Cache calls to policy.
+    - performance: Cache all configuration calls
+    - performance: Point to stored clauses, do not copy them
+    - performance: Avoid std::vector for statically sized arrays. Due
+      to adding libstdc++ assertions, vector range checks accounted
+      for up to 20% of solver runtime.
+
+  [ Christopher Bock ]
+  * completion: Add modernize-sources (Closes: #1094904)
+  * edit-sources: don't force .list
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 07 Feb 2025 21:00:48 +0100
+
 apt (2.9.27) unstable; urgency=medium
 
   [ Julian Andres Klode ]
