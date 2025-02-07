@@ -420,6 +420,13 @@ std::vector<std::string> debSystem::GetDpkgBaseCommand()		/*{{{*/
 	 Args.push_back(Opts->Value);
       }
    }
+   auto status = _config->FindFile("Dir::State::status");
+   auto admindir = StripDpkgChrootDirectory(flNotFile(status));
+   if (admindir != "/var/lib/dpkg/")
+   {
+      Args.push_back("--admindir");
+      Args.push_back(admindir);
+   }
    return Args;
 }
 									/*}}}*/
