@@ -1,3 +1,14 @@
+apt (2.9.29+exp1) experimental; urgency=medium
+
+  * Rebuild with libapt-pkg7.0 soname; some minor ABI adjustments are
+    still on the way before this enters unstable, notable differences:
+    - The C++ standard library symbols are not re-exported anymore
+      (Closes: #1088398)
+    - We use smart pointers in a bunch more places
+    - std::string_view replaces APT::StringView (thanks to наб)
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 14 Feb 2025 19:45:28 +0100
+
 apt (2.9.29) unstable; urgency=medium
 
   [ Helge Kreutzmann ]
