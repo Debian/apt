@@ -9,14 +9,14 @@
 # Wannes Soenen <wannes@wannes.cjb.net>, 2002.
 # Frans Pop <elendil@planet.nl>, 2010.
 # Jeroen Schot <schot@a-eskwadraat.nl>, 2011.
-# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2014-2024.
+# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2014-2025.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.9.10\n"
+"Project-Id-Version: apt 2.9.23\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-28 18:52+0000\n"
-"PO-Revision-Date: 2024-11-05 18:11+0100\n"
+"POT-Creation-Date: 2025-02-07 20:17+0000\n"
+"PO-Revision-Date: 2025-01-21 20:32+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -1169,6 +1169,8 @@ msgid ""
 "The dpkg executable set in Dir::Bin::dpkg is missing, falling back to using "
 "default dpkg."
 msgstr ""
+"Het voor dpkg in Dir::Bin::dpkg ingestelde uitvoerbare bestand ontbreekt. Er "
+"wordt teruggevallen op de standaardinstelling dpkg."
 
 #. we don't care for the difference
 #: apt-pkg/deb/dpkgpm.cc
@@ -3207,10 +3209,8 @@ msgid "concatenate files, with automatic decompression"
 msgstr "bestanden samenvoegen, met automatische decompressie"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
-#| msgid "Problem hashing file"
 msgid "hash file"
-msgstr "Probleem bij het frommelen van het bestand"
+msgstr "hash-bestand"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
@@ -4009,19 +4009,14 @@ msgstr ""
 "niet bepalen?!"
 
 #: methods/gpgv.cc
-#, fuzzy
-#| msgid ""
-#| "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgid "Could not execute 'gpgv' to verify signature (is gnupg installed?)"
 msgstr ""
-"Kon 'apt-key' niet uitvoeren om ondertekening te verifiëren (is gnupg "
+"Kon 'gpgv' niet uitvoeren om ondertekening te verifiëren (is gnupg "
 "geïnstalleerd?)"
 
 #: methods/gpgv.cc
-#, fuzzy
-#| msgid "Unknown error executing apt-key"
 msgid "Unknown error executing gpgv"
-msgstr "Onbekende fout bij het uitvoeren van apt-key"
+msgstr "Onbekende fout bij het uitvoeren van gpgv"
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
@@ -4074,131 +4069,11 @@ msgstr "Instellen van de aanpassingstijd is mislukt"
 msgid "Empty files can't be valid archives"
 msgstr "Lege bestanden kunnen geen geldige archieven zijn"
 
-#, fuzzy, c-format
-#~| msgid ""
-#~| "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
-#~| "section in apt-key(8) for details."
+#, c-format
 #~ msgid ""
 #~ "Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. "
 #~ "See the USER CONFIGURATION section in apt-secure(8) for details."
 #~ msgstr ""
-#~ "De sleutel wordt opgeslagen in de uitgefaseerde sleutelbos (%s) in "
-#~ "trusted.gpg, raadpleeg de afdeling UITFASERING (DEPRECATION) in apt-"
-#~ "key(8) voor details."
-
-#, c-format
-#~ msgid ""
-#~ "The method '%s' is unsupported and disabled by default. Consider "
-#~ "switching to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it "
-#~ "again."
-#~ msgstr ""
-#~ "Methode '%s' wordt niet ondersteund en is standaard uitgeschakeld. U "
-#~ "schakelt best over op http(s). Stel Dir::Bin::Methods::%s in op \"%s\" om "
-#~ "deze opnieuw in te schakelen."
-
-#~ msgid "Logging in"
-#~ msgstr "Bezig met aanmelden"
-
-#~ msgid "Unable to determine the peer name"
-#~ msgstr "Kan de naam van de peer niet vaststellen"
-
-#~ msgid "Unable to determine the local name"
-#~ msgstr "Kan de lokale naam niet vaststellen"
-
-#, c-format
-#~ msgid "The server refused the connection and said: %s"
-#~ msgstr "De verbinding is door de server geweigerd met bericht: %s"
-
-#, c-format
-#~ msgid "USER failed, server said: %s"
-#~ msgstr "USER (gebruiker) mislukt; bericht van de server: %s"
-
-#, c-format
-#~ msgid "PASS failed, server said: %s"
-#~ msgstr "PASS (wachtwoord) mislukt; bericht van de server: %s"
-
-#~ msgid ""
-#~ "A proxy server was specified but no login script, "
-#~ "Acquire::ftp::ProxyLogin is empty."
-#~ msgstr ""
-#~ "Er was een proxy-server opgegeven, maar geen aanmeldscript. "
-#~ "Acquire::ftp::ProxyLogin is leeg."
-
-#, c-format
-#~ msgid "Login script command '%s' failed, server said: %s"
-#~ msgstr ""
-#~ "Opdracht '%s' uit het aanmeldscript is mislukt; bericht van de server: %s"
-
-#, c-format
-#~ msgid "TYPE failed, server said: %s"
-#~ msgstr "TYPE mislukt; bericht van de server: %s"
-
-#~ msgid "Connection timeout"
-#~ msgstr "De verbinding is verlopen"
-
-#~ msgid "Server closed the connection"
-#~ msgstr "De verbinding is verbroken door de server"
-
-#~ msgid "A response overflowed the buffer."
-#~ msgstr "Een reactie deed de buffer overlopen."
-
-#~ msgid "Protocol corruption"
-#~ msgstr "Protocolfouten"
-
-#~ msgid "Could not create a socket"
-#~ msgstr "Kon geen socket aanmaken"
-
-#~ msgid "Could not connect data socket, connection timed out"
-#~ msgstr "Kon de datasocket niet verbinden. De verbinding verliep"
-
-#~ msgid "Could not connect passive socket."
-#~ msgstr "Kon de passieve socket niet verbinden."
-
-#~ msgid "getaddrinfo was unable to get a listening socket"
-#~ msgstr "getaddrinfo kon geen luistersocket verkrijgen"
-
-#~ msgid "Could not bind a socket"
-#~ msgstr "Kon geen socket binden"
-
-#~ msgid "Could not listen on the socket"
-#~ msgstr "Kon niet luisteren op de socket"
-
-#~ msgid "Could not determine the socket's name"
-#~ msgstr "Kon de socketnaam niet vaststellen"
-
-#~ msgid "Unable to send PORT command"
-#~ msgstr "Kan PORT-commando niet verzenden"
-
-#, c-format
-#~ msgid "Unknown address family %u (AF_*)"
-#~ msgstr "Onbekende adresfamilie %u (AF_*)"
-
-#, c-format
-#~ msgid "EPRT failed, server said: %s"
-#~ msgstr "EPRT is mislukt; bericht van de server: %s"
-
-#~ msgid "Data socket connect timed out"
-#~ msgstr "Verbinding met de datasocket is verlopen"
-
-#~ msgid "Unable to accept connection"
-#~ msgstr "Kan de verbinding niet aanvaarden"
-
-#, c-format
-#~ msgid "Unable to fetch file, server said '%s'"
-#~ msgstr "Kan het bestand niet ophalen; bericht van de server: %s"
-
-#~ msgid "Data socket timed out"
-#~ msgstr "Datasocket verliep"
-
-#, c-format
-#~ msgid "Data transfer failed, server said '%s'"
-#~ msgstr "Datatransfer is mislukt; bericht van de server: %s"
-
-#~ msgid "Query"
-#~ msgstr "Zoekopdracht"
-
-#~ msgid "Unable to invoke "
-#~ msgstr "Mislukking bij aanroepen van "
-
-#~ msgid "Connection closed prematurely"
-#~ msgstr "Verbinding werd voortijdig afgebroken"
+#~ "De sleutel wordt opgeslagen in de uitgefaseerde sleutelbos (%s) van "
+#~ "trusted.gpg. Raadpleeg de afdeling GEBRUIKERSCONFIGURATIE in apt-"
+#~ "secure(8) voor details."
