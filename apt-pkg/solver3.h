@@ -259,6 +259,7 @@ class Solver
    {
       return static_cast<depth_type>(choices.size());
    }
+   inline Var bestReason(Clause const *clause, Var var) const;
 
    public:
    // \brief Create a new decision level.
@@ -274,9 +275,9 @@ class Solver
    Solver(pkgCache &Cache, pkgDepCache::Policy &Policy, EDSP::Request::Flags requestFlags);
 
    // Assume that the variable is decided as specified.
-   [[nodiscard]] bool Assume(Var var, bool decision, Var reason);
+   [[nodiscard]] bool Assume(Var var, bool decision, const Clause *reason = nullptr);
    // Enqueue a decision fact
-   [[nodiscard]] bool Enqueue(Var var, bool decision, Var reason);
+   [[nodiscard]] bool Enqueue(Var var, bool decision, const Clause *reason = nullptr);
 
    // \brief Apply the selections from the dep cache to the solver
    [[nodiscard]] bool FromDepCache(pkgDepCache &depcache);
@@ -340,7 +341,7 @@ struct APT::Solver::Var
    {
       return IsVersion == 0 && MapPtr == 0;
    }
-   bool operator==(Var const other)
+   bool operator==(Var const other) const
    {
       return IsVersion == other.IsVersion && MapPtr == other.MapPtr;
    }
@@ -447,7 +448,7 @@ struct APT::Solver::State
    // doesn't increase to unwind.
    //
    // Vars < 0 are package ID, reasons > 0 are version IDs.
-   Var reason{};
+   const Clause *reason{};
 
    // \brief The depth at which the decision has been taken
    depth_type depth{0};

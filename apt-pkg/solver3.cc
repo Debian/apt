@@ -256,18 +256,28 @@ std::string APT::Solver::Work::toString(pkgCache &cache) const
    return out.str();
 }
 
+inline APT::Solver::Var APT::Solver::bestReason(APT::Solver::Clause const *clause, APT::Solver::Var var) const
+{
+   if (not clause)
+      return Var{};
+   if (clause->reason == var)
+      for (auto choice : clause->solutions)
+	 if ((*this)[choice].decision != Decision::NONE)
+	    return choice;
+   return clause->reason;
+}
+
 // Prints an implication graph part of the form A -> B -> C, possibly with "not"
 std::string APT::Solver::WhyStr(Var reason) const
 {
    std::vector<std::string> out;
-
    while (not reason.empty())
    {
       if ((*this)[reason].decision == Decision::MUSTNOT)
 	 out.push_back(std::string("not ") + reason.toString(cache));
       else
 	 out.push_back(reason.toString(cache));
-      reason = (*this)[reason].reason;
+      reason = bestReason((*this)[reason].reason, reason);
    }
 
    std::string outstr;
@@ -337,13 +347,13 @@ bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg) const
    pkgObsolete[pkg] = 2;
    return true;
 }
-bool APT::Solver::Assume(Var var, bool decision, Var reason)
+bool APT::Solver::Assume(Var var, bool decision, const Clause *reason)
 {
    choices.push_back(solved.size());
    return Enqueue(var, decision, std::move(reason));
 }
 
-bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
+bool APT::Solver::Enqueue(Var var, bool decision, const Clause *reason)
 {
    auto &state = (*this)[var];
    auto decisionCast = decision ? Decision::MUST : Decision::MUSTNOT;
@@ -351,7 +361,7 @@ bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
    if (state.decision != Decision::NONE)
    {
       if (state.decision != decisionCast)
-	 return _error->Error("Conflict: %s -> %s%s but %s", WhyStr(reason).c_str(), decision ? "" : "not ", var.toString(cache).c_str(), WhyStr(var).c_str());
+	 return _error->Error("Conflict: %s -> %s%s but %s", WhyStr(bestReason(reason, var)).c_str(), decision ? "" : "not ", var.toString(cache).c_str(), WhyStr(var).c_str());
       return true;
    }
 
@@ -360,7 +370,7 @@ bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
    state.reason = reason;
 
    if (unlikely(debug >= 1))
-      std::cerr << "[" << depth() << "] " << (decision ? "Install" : "Reject") << ":" << var.toString(cache) << " (" << WhyStr(state.reason) << ")\n";
+      std::cerr << "[" << depth() << "] " << (decision ? "Install" : "Reject") << ":" << var.toString(cache) << " (" << WhyStr(bestReason(reason, var)) << ")\n";
 
    solved.push_back(Solved{var, std::nullopt});
    propQ.push(var);
@@ -386,7 +396,7 @@ bool APT::Solver::Propagate()
 	       continue;
 	    if (unlikely(debug >= 3))
 	       std::cerr << "Propagate " << var.toString(cache) << " to NOT " << rclause->reason.toString(cache) << " for dep " << const_cast<Clause *>(rclause)->toString(cache) << std::endl;
-	    if (not Enqueue(rclause->reason, false, var))
+	    if (not Enqueue(rclause->reason, false, rclause))
 	       return false;
 	 }
       }
@@ -416,7 +426,7 @@ bool APT::Solver::Propagate()
 	       {
 		  // Find the variable that must be chosen and enqueue it as a fact
 		  for (auto sol : rclause->solutions)
-		     if ((*this)[sol].decision == Decision::NONE && not Enqueue(sol, true, rclause->reason))
+		     if ((*this)[sol].decision == Decision::NONE && not Enqueue(sol, true, rclause))
 			return false;
 	       }
 	       continue;
@@ -427,7 +437,7 @@ bool APT::Solver::Propagate()
 	    if (unlikely(debug >= 3))
 	       std::cerr << "Propagate NOT " << var.toString(cache) << " to " << rclause->reason.toString(cache) << " for dep " << const_cast<Clause *>(rclause)->toString(cache) << std::endl;
 
-	    if (not Enqueue(rclause->reason, false, var)) // Last version invalidated
+	    if (not Enqueue(rclause->reason, false, rclause)) // Last version invalidated
 	       return false;
 	 }
       }
@@ -680,7 +690,7 @@ void APT::Solver::UndoOne()
 	 std::cerr << "Unassign " << solvedItem.assigned.toString(cache) << "\n";
       auto &state = (*this)[solvedItem.assigned];
       state.decision = Decision::NONE;
-      state.reason = Var();
+      state.reason = nullptr;
       state.depth = 0;
    }
 
@@ -747,7 +757,7 @@ bool APT::Solver::AddWork(Work &&w)
    if (w.clause->negative)
    {
       for (auto var : w.clause->solutions)
-	 if (not Enqueue(var, false, w.clause->reason))
+	 if (not Enqueue(var, false, w.clause))
 	    return false;
    }
    else if (not w.clause->solutions.empty())
@@ -755,7 +765,7 @@ bool APT::Solver::AddWork(Work &&w)
       if (unlikely(debug >= 3 && w.clause->optional))
 	 std::cerr << "Enqueuing Recommends " << w.clause->toString(cache) << std::endl;
       if (w.clause->solutions.size() == 1 && not w.clause->optional)
-	 return Enqueue(w.clause->solutions[0], true, w.clause->reason);
+	 return Enqueue(w.clause->solutions[0], true, w.clause);
 
       w.size = std::count_if(w.clause->solutions.begin(), w.clause->solutions.end(), [this](auto V)
 			     { return (*this)[V].decision != Decision::MUSTNOT; });
@@ -825,7 +835,7 @@ bool APT::Solver::Solve()
 	 }
 	 if (unlikely(debug >= 3))
 	    std::cerr << "(try it: " << sol.toString(cache) << ")\n";
-	 if (not Enqueue(sol, true, item.clause->reason) && not Pop())
+	 if (not Enqueue(sol, true, item.clause) && not Pop())
 	    return false;
 	 foundSolution = true;
 	 break;
@@ -878,7 +888,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
       {
 	 if (unlikely(debug >= 1))
 	    std::cerr << "Hold " << P.FullName() << "\n";
-	 if (P->CurrentVer ? not Enqueue(Var(P.CurrentVer()), true, {}) : not Enqueue(Var(P), false, Var()))
+	 if (P->CurrentVer ? not Enqueue(Var(P.CurrentVer()), true) : not Enqueue(Var(P), false))
 	    return false;
       }
       else if (state.Delete()						  // Normal delete request.
@@ -888,7 +898,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
       {
 	 if (unlikely(debug >= 1))
 	    std::cerr << "Delete " << P.FullName() << "\n";
-	 if (not Enqueue(Var(P), false, Var()))
+	 if (not Enqueue(Var(P), false))
 	    return false;
       }
       else if (state.Install() || (state.Keep() && P->CurrentVer))
@@ -915,7 +925,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 if (not isOptional)
 	 {
 	    // Pre-empt the non-optional requests, as we don't want to queue them, we can just "unit propagate" here.
-	    if (depcache[P].Keep() ? not Enqueue(Var(P), true, {}) : not Enqueue(Var(depcache.GetCandidateVersion(P)), true, {}))
+	    if (depcache[P].Keep() ? not Enqueue(Var(P), true) : not Enqueue(Var(depcache.GetCandidateVersion(P)), true))
 	       return false;
 	 }
 	 else
@@ -977,9 +987,10 @@ bool APT::Solver::ToDepCache(pkgDepCache &depcache) const
 	    if ((*this)[V].decision == Decision::MUST)
 	       cand = V;
 
-	 auto reason = (*this)[cand].reason;
+	 auto reasonClause = (*this)[cand].reason;
+	 auto reason = reasonClause ? reasonClause->reason : Var();
 	 if (auto RP = reason.Pkg(); RP == P.MapPointer())
-	    reason = (*this)[P].reason;
+	    reason = (*this)[P].reason ? (*this)[P].reason->reason : Var();
 
 	 if (cand != P.CurrentVer())
 	 {
@@ -996,7 +1007,7 @@ bool APT::Solver::ToDepCache(pkgDepCache &depcache) const
       }
       else if (P->CurrentVer || depcache[P].Install())
       {
-	 depcache.MarkDelete(P, false, 0, (*this)[P].reason.empty());
+	 depcache.MarkDelete(P, false, 0, not(*this)[P].reason);
 	 depcache[P].Marked = 0;
 	 depcache[P].Garbage = 1;
       }
