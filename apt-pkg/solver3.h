@@ -213,6 +213,9 @@ class Solver
    // This is an index into the solved vector.
    std::vector<depth_type> choices{};
 
+   // \brief The time we called Solve()
+   time_t startTime;
+
    /// Various configuration options
    // \brief Debug level
    int debug{_config->FindI("Debug::APT::Solver")};
@@ -232,6 +235,8 @@ class Solver
    bool FixPolicyBroken{_config->FindB("APT::Get::Fix-Policy-Broken")};
    // \brief If set, we use strict pinning.
    bool DeferVersionSelection{_config->FindB("APT::Solver::Defer-Version-Selection", true)};
+   // \brief If set, we use strict pinning.
+   int Timeout{_config->FindI("APT::Solver::Timeout", 10)};
 
    // \brief Discover a variable, translating the underlying dependencies to the SAT presentation
    //

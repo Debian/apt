@@ -32,8 +32,9 @@
 #include <apt-pkg/solver3.h>
 #include <apt-pkg/version.h>
 
-#include <algorithm>
 #include <cassert>
+#include <chrono>
+#include <ctime>
 #include <sstream>
 
 // FIXME: Helpers stolen from DepCache, please give them back.
@@ -740,6 +741,10 @@ bool APT::Solver::Pop()
       for (std::string msg; _error->PopMessage(msg);)
 	 std::cerr << "Branch failed: " << msg << std::endl;
 
+   time_t now = time(nullptr);
+   if (now - startTime >= Timeout)
+      return _error->Error("Solver timed out.");
+
    _error->RevertToStack();
 
    assert(choices.back() < solved.size());
@@ -834,6 +839,7 @@ void APT::Solver::RescoreWorkIfNeeded()
 
 bool APT::Solver::Solve()
 {
+   startTime = time(nullptr);
    while (true)
    {
       while (not Propagate())
