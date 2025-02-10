@@ -205,6 +205,8 @@ class Solver
 
    // \brief Propagation queue
    std::queue<Var> propQ;
+   // \brief Discover variables
+   std::queue<Var> discoverQ;
 
    // \brief Current decision level.
    //
@@ -232,6 +234,9 @@ class Solver
    bool DeferVersionSelection{_config->FindB("APT::Solver::Defer-Version-Selection", true)};
 
    // \brief Discover a variable, translating the underlying dependencies to the SAT presentation
+   //
+   // This does a breadth-first search of the entire dependency tree of var,
+   // utilizing the discoverQ above.
    void Discover(Var var);
    // \brief Link a clause into the watchers
    void RegisterClause(Clause &&clause);

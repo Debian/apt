@@ -396,51 +396,66 @@ void APT::Solver::RegisterClause(Clause &&clause)
 
 void APT::Solver::Discover(Var var)
 {
-   auto &state = (*this)[var];
+   assert(discoverQ.empty());
+   discoverQ.push(var);
 
-   if (state.flags.discovered)
-      return;
-
-   state.flags.discovered = true;
-
-   if (auto Pkg = var.Pkg(cache); not Pkg.end())
+   while (not discoverQ.empty())
    {
-      Clause clause{Var(Pkg), Group::SelectVersion};
-      for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
-	 clause.solutions.push_back(Var(ver));
+      var = discoverQ.front();
+      discoverQ.pop();
 
-      std::stable_sort(clause.solutions.begin(), clause.solutions.end(), CompareProviders3{cache, policy, Pkg, *this});
-      RegisterClause(std::move(clause));
+      auto &state = (*this)[var];
 
-      RegisterCommonDependencies(Pkg);
-   }
-   else if (auto Ver = var.Ver(cache); not Ver.end())
-   {
-      Clause clause{Var(Ver), Group::SelectVersion};
-      clause.solutions = {Var(Ver.ParentPkg())};
-      RegisterClause(std::move(clause));
+      if (state.flags.discovered)
+	 continue;
 
-      for (auto OV = Ver.ParentPkg().VersionList(); not OV.end(); ++OV)
+      state.flags.discovered = true;
+
+      if (auto Pkg = var.Pkg(cache); not Pkg.end())
       {
-	 if (OV == Ver)
-	    continue;
+	 Clause clause{Var(Pkg), Group::SelectVersion};
+	 for (auto ver = Pkg.VersionList(); not ver.end(); ver++)
+	    clause.solutions.push_back(Var(ver));
 
-	 Clause clause{Var(Ver), Group::SelectVersion, false, true /* negative */};
-	 clause.solutions = {Var(OV)};
+	 std::stable_sort(clause.solutions.begin(), clause.solutions.end(), CompareProviders3{cache, policy, Pkg, *this});
 	 RegisterClause(std::move(clause));
+
+	 RegisterCommonDependencies(Pkg);
+      }
+      else if (auto Ver = var.Ver(cache); not Ver.end())
+      {
+	 Clause clause{Var(Ver), Group::SelectVersion};
+	 clause.solutions = {Var(Ver.ParentPkg())};
+	 RegisterClause(std::move(clause));
+
+	 for (auto OV = Ver.ParentPkg().VersionList(); not OV.end(); ++OV)
+	 {
+	    if (OV == Ver)
+	       continue;
+
+	    Clause clause{Var(Ver), Group::SelectVersion, false, true /* negative */};
+	    clause.solutions = {Var(OV)};
+	    RegisterClause(std::move(clause));
+	 }
+
+	 for (auto dep = Ver.DependsList(); not dep.end();)
+	 {
+	    // Compute a single dependency element (glob or)
+	    pkgCache::DepIterator start;
+	    pkgCache::DepIterator end;
+	    dep.GlobOr(start, end); // advances dep
+
+	    auto clause = TranslateOrGroup(start, end, Var(Ver));
+
+	    RegisterClause(std::move(clause));
+	 }
       }
 
-      for (auto dep = Ver.DependsList(); not dep.end();)
-      {
-	 // Compute a single dependency element (glob or)
-	 pkgCache::DepIterator start;
-	 pkgCache::DepIterator end;
-	 dep.GlobOr(start, end); // advances dep
-
-	 auto clause = TranslateOrGroup(start, end, Var(Ver));
-
-	 RegisterClause(std::move(clause));
-      }
+      // Recursively discover everything else that is not already FALSE by fact (MUSTNOT at depth 0)
+      for (auto const &clause : state.clauses)
+	 for (auto const &var : clause->solutions)
+	    if ((*this)[var].decision != Decision::MUSTNOT || (*this)[var].depth > 0)
+	       discoverQ.push(var);
    }
 }
 
