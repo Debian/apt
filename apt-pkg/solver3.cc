@@ -554,19 +554,23 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
 	 }
 	 delete[] all;
 
-	 // If we are fixing the policy, we need to sort each alternative in an or group separately
-	 // FIXME: This is not really true, though, we should fix the CompareProviders to ignore the
-	 // installed state
-	 if (FixPolicyBroken)
-	    std::stable_sort(clause.solutions.begin() + begin, clause.solutions.end(), CompareProviders3{cache, policy, TgtPkg, *this});
+	 std::stable_sort(clause.solutions.begin() + begin, clause.solutions.end(), CompareProviders3{cache, policy, TgtPkg, *this});
       }
       if (start == end)
 	 break;
       ++start;
    } while (1);
 
+   // Move obsolete packages to the end, and (non-obsolete) installed packages to the front
    if (not FixPolicyBroken)
-      std::stable_sort(clause.solutions.begin(), clause.solutions.end(), CompareProviders3{cache, policy, TgtPkg, *this});
+      std::stable_sort(clause.solutions.begin(), clause.solutions.end(), [this](Var a, Var b)
+		       {
+	    if (IsUpgrade)
+	       if (auto obsoleteA = Obsolete(a.CastPkg(cache)), obsoleteB = Obsolete(b.CastPkg(cache)); obsoleteA != obsoleteB)
+		  return obsoleteB;
+	    if ((a.CastPkg(cache)->CurrentVer == 0 || b.CastPkg(cache)->CurrentVer == 0) && a.CastPkg(cache)->CurrentVer != b.CastPkg(cache)->CurrentVer)
+	       return a.CastPkg(cache)->CurrentVer != 0;
+	    return false; });
 
    if (std::all_of(clause.solutions.begin(), clause.solutions.end(), [this](auto var) -> auto
 		   { return var.CastPkg(cache)->CurrentVer == 0; }))
