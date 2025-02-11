@@ -5,6 +5,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
 configarchitecture 'i386'
+allowremovemanual
 
 insertpackage 'unstable' 'bar' 'i386' '1' 'Depends: foo'
 insertpackage 'unstable' 'foo' 'i386' '1' 'Multi-Arch: foreign
