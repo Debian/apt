@@ -879,8 +879,10 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
    {
       for (auto P = cache.PkgBegin(); not P.end(); P++)
       {
+	 bool isForced = depcache[P].Protect() && depcache[P].Install();
+	 bool isPhasing = IsUpgrade && depcache.PhasingApplied(P) && not isForced;
 	 for (auto V = P.VersionList(); not V.end(); ++V)
-	    if (P.CurrentVer() != V && depcache.GetCandidateVersion(P) != V)
+	    if (P.CurrentVer() != V && (depcache.GetCandidateVersion(P) != V || isPhasing))
 	       if (not Enqueue(Var(V), false, {}))
 		  return false;
       }
