@@ -237,7 +237,7 @@ Conf depends-phased-dep (3 unstable-updates [all])
 Conf phased-new (3 unstable-updates [all])
 Conf depends-phased-new (3 unstable-updates [all])
 Conf phased-security (3 unstable-updates [all])
-Conf phased-security-same (3 unstable-security, unstable-updates [all])" aptget $upgrade -s -q depends-phased-dep
+Conf phased-security-same (3 unstable-security, unstable-updates [all])" aptget $upgrade -s -q depends-phased-dep --solver internal # FIXME? 3.0 does not support overrides of the policy
 done
 
 testsuccessequal "Reading package lists...
@@ -257,7 +257,7 @@ Inst phased-security-same [1] (3 unstable-security, unstable-updates [all])
 Conf phased-dep (3 unstable-updates [all])
 Conf depends-phased-dep (3 unstable-updates [all])
 Conf phased-security (3 unstable-updates [all])
-Conf phased-security-same (3 unstable-security, unstable-updates [all])" aptget upgrade -s -q depends-phased-dep
+Conf phased-security-same (3 unstable-security, unstable-updates [all])" aptget upgrade -s -q depends-phased-dep --solver internal # FIXME? 3.0 does not support overrides of the policy
 
 # install does not respect phasing
 testsuccessequal "Reading package lists...
