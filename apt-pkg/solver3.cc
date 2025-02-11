@@ -978,21 +978,25 @@ bool APT::Solver::ToDepCache(pkgDepCache &depcache) const
       depcache[P].Garbage = 0;
       if ((*this)[P].decision == Decision::MUST)
       {
-	 for (auto V = P.VersionList(); not V.end(); V++)
-	 {
+	 pkgCache::VerIterator cand;
+	 for (auto V = P.VersionList(); cand.end() && not V.end(); V++)
 	    if ((*this)[V].decision == Decision::MUST)
-	    {
-	       depcache.SetCandidateVersion(V);
-	       break;
-	    }
-	 }
-	 auto reason = (*this)[depcache.GetCandidateVersion(P)].reason;
+	       cand = V;
+
+	 auto reason = (*this)[cand].reason;
 	 if (auto RP = reason.Pkg(); RP == P.MapPointer())
 	    reason = (*this)[P].reason;
 
-	 depcache.MarkInstall(P, false, 0, reason.empty() && not(depcache[P].Flags & pkgCache::Flag::Auto));
-	 if (not P->CurrentVer)
-	    depcache.MarkAuto(P, not reason.empty());
+	 if (cand != P.CurrentVer())
+	 {
+	    depcache.SetCandidateVersion(cand);
+	    depcache.MarkInstall(P, false, 0, reason.empty() && not(depcache[P].Flags & pkgCache::Flag::Auto));
+	    if (not P->CurrentVer)
+	       depcache.MarkAuto(P, not reason.empty());
+	 }
+	 else
+	    depcache.MarkKeep(P, false, reason.empty() && not(depcache[P].Flags & pkgCache::Flag::Auto));
+
 	 depcache[P].Marked = 1;
 	 depcache[P].Garbage = 0;
       }
