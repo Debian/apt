@@ -195,7 +195,7 @@ class DefaultRootSetFunc2 : public pkgDepCache::DefaultRootSetFunc
 }; // FIXME: DEDUP with pkgDepCache.
 /*}}}*/
 
-APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy)
+APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy, EDSP::Request::Flags requestFlags)
     : cache(cache),
       policy(policy),
       rootState(new State),
@@ -203,7 +203,8 @@ APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy)
       verStates(cache),
       pkgObsolete(cache),
       priorities(cache),
-      candidates(cache)
+      candidates(cache),
+      requestFlags(requestFlags)
 {
    // Ensure trivially
    static_assert(std::is_trivially_destructible_v<Work>);

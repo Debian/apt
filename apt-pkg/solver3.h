@@ -14,6 +14,7 @@
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/edsp.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
 
@@ -216,6 +217,7 @@ class Solver
    // \brief The time we called Solve()
    time_t startTime;
 
+   EDSP::Request::Flags requestFlags;
    /// Various configuration options
    std::string version{_config->Find("APT::Solver", "3.0")};
    // \brief Debug level
@@ -223,13 +225,13 @@ class Solver
    // \brief If set, we try to keep automatically installed packages installed.
    bool KeepAuto{version == "3.0" || not _config->FindB("APT::Get::AutomaticRemove")};
    // \brief Determines if we are in upgrade mode.
-   bool IsUpgrade{_config->FindB("APT::Solver::Upgrade", false)};
+   bool IsUpgrade{_config->FindB("APT::Solver::Upgrade", requestFlags &EDSP::Request::UPGRADE_ALL)};
    // \brief If set, removals are allowed.
-   bool AllowRemove{_config->FindB("APT::Solver::Remove", true)};
+   bool AllowRemove{_config->FindB("APT::Solver::Remove", not(requestFlags & EDSP::Request::FORBID_REMOVE))};
    // \brief If set, removal of manual packages is allowed.
    bool AllowRemoveManual{AllowRemove && _config->FindB("APT::Solver::RemoveManual", false)};
    // \brief If set, installs are allowed.
-   bool AllowInstall{_config->FindB("APT::Solver::Install", true)};
+   bool AllowInstall{_config->FindB("APT::Solver::Install", not(requestFlags & EDSP::Request::FORBID_NEW_INSTALL))};
    // \brief If set, we use strict pinning.
    bool StrictPinning{_config->FindB("APT::Solver::Strict-Pinning", true)};
    // \brief If set, we install missing recommends and pick new best packages.
@@ -273,7 +275,7 @@ class Solver
    void RescoreWorkIfNeeded();
 
    // \brief Basic solver initializer. This cannot fail.
-   Solver(pkgCache &Cache, pkgDepCache::Policy &Policy);
+   Solver(pkgCache &Cache, pkgDepCache::Policy &Policy, EDSP::Request::Flags requestFlags);
 
    // Assume that the variable is decided as specified.
    [[nodiscard]] bool Assume(Var var, bool decision, Var reason);
