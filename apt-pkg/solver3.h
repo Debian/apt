@@ -217,10 +217,11 @@ class Solver
    time_t startTime;
 
    /// Various configuration options
+   std::string version{_config->Find("APT::Solver", "3.0")};
    // \brief Debug level
    int debug{_config->FindI("Debug::APT::Solver")};
    // \brief If set, we try to keep automatically installed packages installed.
-   bool KeepAuto{not _config->FindB("APT::Get::AutomaticRemove")};
+   bool KeepAuto{version == "3.0" || not _config->FindB("APT::Get::AutomaticRemove")};
    // \brief Determines if we are in upgrade mode.
    bool IsUpgrade{_config->FindB("APT::Solver::Upgrade", false)};
    // \brief If set, removals are allowed.

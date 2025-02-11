@@ -754,7 +754,7 @@ static bool CreateDumpFile(char const * const id, char const * const type, FileF
 // EDSP::ResolveExternal - resolve problems by asking external for help	{{{*/
 bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 			 unsigned int const flags, OpProgress *Progress) {
-   if (strcmp(solver, "3.0") == 0)
+   if (strstr(solver, "3.") == solver)
    {
       APT::Solver s(Cache.GetCache(), Cache.GetPolicy());
       FileFd output;

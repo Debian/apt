@@ -976,7 +976,7 @@ bool APT::Solver::ToDepCache(pkgDepCache &depcache) const
 	 if (auto RP = reason.Pkg(); RP == P.MapPointer())
 	    reason = (*this)[P].reason;
 
-	 depcache.MarkInstall(P, false, 0, reason.empty());
+	 depcache.MarkInstall(P, false, 0, reason.empty() && not(depcache[P].Flags & pkgCache::Flag::Auto));
 	 if (not P->CurrentVer)
 	    depcache.MarkAuto(P, not reason.empty());
 	 depcache[P].Marked = 1;
