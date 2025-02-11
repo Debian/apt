@@ -6,6 +6,7 @@ TESTDIR="$(readlink -f "$(dirname "$0")")"
 setupenvironment
 configarchitecture 'arm64'
 configdpkgnoopchroot
+allowremovemanual
 
 buildsimplenativepackage 'pkga' 'arm64' '1' 'stable'
 buildsimplenativepackage 'pkgb' 'arm64' '1' 'stable'
@@ -38,6 +39,6 @@ testsuccess apt update
 
 #apt upgrade pkga -o Debug::pkgDpkgPm=1 -y -o Dpkg::use-pty=0
 rm -f rootdir/var/cache/apt/*.bin
-testsuccess apt upgrade pkga -y
+testsuccess apt install pkga -y
 testdpkginstalled 'pkga'
 testdpkgnotinstalled 'pkgb'
