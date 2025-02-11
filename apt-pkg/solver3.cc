@@ -599,6 +599,18 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
 	    std::cerr << "Promoting satisfied Suggests to Recommends: " << clause.toString(cache) << std::endl;
 	 important = true;
       }
+      else if (satisfied && important && wasImportant && clause.solutions.size() > 0)
+      {
+	 if (unlikely(debug >= 3))
+	    std::cerr << "Promoting existing Recommends " << clause.toString(cache) << " to depends in upgrade" << std::endl;
+	 clause.optional = false;
+      }
+      else if (newOptional && important && reason.Ver() && clause.solutions.size() > 0 && reason.Ver(cache) != reason.CastPkg(cache).CurrentVer() && IsUpgrade)
+      {
+	 if (unlikely(debug >= 3))
+	    std::cerr << "Promoting new Recommends " << clause.toString(cache) << " to depends in upgrade" << std::endl;
+	 clause.optional = false;
+      }
       else if (not important)
       {
 	 if (unlikely(debug >= 3))
