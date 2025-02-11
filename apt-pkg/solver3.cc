@@ -950,6 +950,20 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	       Discover(Var(P));
 	 }
       }
+      else if (IsUpgrade && AllowRemove && AllowInstall && (P->Flags & pkgCache::Flag::Essential))
+      {
+	 Clause w{Var(), Group::InstallManual, false};
+	 auto G = P.Group();
+	 for (auto P = G.PackageList(); not P.end(); P = G.NextPkg(P))
+	    if (P->Flags & pkgCache::Flag::Essential)
+	       w.solutions.push_back(Var(P));
+	 std::stable_sort(w.solutions.begin(), w.solutions.end(), CompareProviders3{cache, policy, P, *this});
+	 if (unlikely(debug >= 1))
+	    std::cerr << "Install essential package " << P << std::endl;
+	 RegisterClause(std::move(w));
+	 if (not AddWork(Work{rootState->clauses.back().get(), depth()}))
+	    return false;
+      }
    }
 
    return Propagate();

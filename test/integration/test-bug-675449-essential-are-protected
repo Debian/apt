@@ -112,4 +112,17 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  foo : Depends: libfoo but it is not going to be installed
-E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.' aptget purge libfoo -s
+E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.' aptget purge libfoo -s --solver internal
+
+testequal 'Reading package lists...
+Building dependency tree...
+Solving dependencies...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ foo : Depends: libfoo but it is not going to be installed
+E: Conflict: foo:amd64 -> libfoo:amd64 but not libfoo:amd64' aptget purge libfoo -s --solver 3.0
