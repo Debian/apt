@@ -1273,7 +1273,7 @@ bool pkgProblemResolver::KeepPhasedUpdates()
 bool pkgProblemResolver::ResolveByKeep(OpProgress * const Progress)
 {
    std::string const solver = _config->Find("APT::Solver", "internal");
-   constexpr auto flags = EDSP::Request::UPGRADE_ALL | EDSP::Request::FORBID_NEW_INSTALL | EDSP::Request::FORBID_REMOVE;
+   constexpr auto flags = EDSP::Request::FORBID_NEW_INSTALL | EDSP::Request::FORBID_REMOVE;
    auto const ret = EDSP::ResolveExternal(solver.c_str(), Cache, flags, Progress);
    if (solver != "internal")
       return ret;
