@@ -193,8 +193,6 @@ class Solver
    // be able to iterate over the queued work and see if a choice would
    // invalidate any work.
    heap<Work> work{};
-   // \brief Whether RescoreWork() actually needs to rescore the work.
-   bool needsRescore{false};
 
    // \brief Backlog of solved work.
    //
@@ -271,8 +269,6 @@ class Solver
    void UndoOne();
    // \brief Add work to our work queue.
    [[nodiscard]] bool AddWork(Work &&work);
-   // \brief Rescore the work after a reject or a pop
-   void RescoreWorkIfNeeded();
 
    // \brief Basic solver initializer. This cannot fail.
    Solver(pkgCache &Cache, pkgDepCache::Policy &Policy, EDSP::Request::Flags requestFlags);

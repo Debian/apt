@@ -365,9 +365,6 @@ bool APT::Solver::Enqueue(Var var, bool decision, Var reason)
    solved.push_back(Solved{var, std::nullopt});
    propQ.push(var);
 
-   if (not decision)
-      needsRescore = true;
-
    return true;
 }
 
@@ -397,12 +394,34 @@ bool APT::Solver::Propagate()
       {
 	 for (auto rclause : (*this)[var].rclauses)
 	 {
-	    if (rclause->negative || rclause->reason.empty() || rclause->optional ||
-		std::any_of(rclause->solutions.begin(), rclause->solutions.end(), [this](auto var)
-			    { return (*this)[var].decision != Decision::MUSTNOT; }))
+	    if (rclause->negative || rclause->reason.empty())
+	       continue;
+	    if ((*this)[rclause->reason].decision == Decision::MUSTNOT)
 	       continue;
 
-	    if ((*this)[rclause->reason].decision == Decision::MUSTNOT)
+	    auto count = std::count_if(rclause->solutions.begin(), rclause->solutions.end(), [this](auto var)
+				       { return (*this)[var].decision != Decision::MUSTNOT; });
+
+	    if (count == 1 && (*this)[rclause->reason].decision == Decision::MUST)
+	    {
+	       if (unlikely(debug >= 3))
+		  std::cerr << "Propagate NOT " << var.toString(cache) << " to unit clause " << rclause->toString(cache);
+	       if (rclause->optional)
+	       {
+		  // Enqueue duplicated item, this will ensure we see it at the correct time
+		  if (not AddWork(Work{rclause, depth()}))
+		     return false;
+	       }
+	       else
+	       {
+		  // Find the variable that must be chosen and enqueue it as a fact
+		  for (auto sol : rclause->solutions)
+		     if ((*this)[sol].decision == Decision::NONE && not Enqueue(sol, true, rclause->reason))
+			return false;
+	       }
+	       continue;
+	    }
+	    if (count >= 1 || rclause->optional)
 	       continue;
 
 	    if (unlikely(debug >= 3))
@@ -740,40 +759,6 @@ bool APT::Solver::AddWork(Work &&w)
    return true;
 }
 
-void APT::Solver::RescoreWorkIfNeeded()
-{
-   if (not needsRescore)
-      return;
-
-   needsRescore = false;
-   std::vector<Work> resized;
-   for (auto &w : work)
-   {
-      if (w.erased)
-	 continue;
-      size_t newSize = std::count_if(w.clause->solutions.begin(), w.clause->solutions.end(), [this](auto V)
-				     { return (*this)[V].decision != Decision::MUSTNOT; });
-
-      // Notably we only insert the work into the queue if it got smaller. Work that got larger
-      // we just move around when we get to it too early in Solve(). This reduces memory usage
-      // at the expense of counting each item we see in Solve().
-      if (newSize < w.size)
-      {
-	 Work newWork(w);
-	 newWork.size = newSize;
-	 resized.push_back(std::move(newWork));
-	 w.erased = true;
-      }
-   }
-   if (unlikely(debug >= 2))
-      std::cerr << "Rescored: " << resized.size() << "items\n";
-   for (auto &w : resized)
-   {
-      work.push_back(std::move(w));
-      std::push_heap(work.begin(), work.end());
-   }
-}
-
 bool APT::Solver::Solve()
 {
    startTime = time(nullptr);
@@ -788,8 +773,6 @@ bool APT::Solver::Solve()
       if (work.empty())
 	 break;
 
-      // Rescore the work if we need to
-      RescoreWorkIfNeeded();
       // *NOW* we can pop the item.
       std::pop_heap(work.begin(), work.end());
 
@@ -799,19 +782,6 @@ bool APT::Solver::Solve()
 	 work.pop_back();
 	 continue;
       }
-
-      // If our size increased, queue again.
-      size_t newSize = std::count_if(work.back().clause->solutions.begin(), work.back().clause->solutions.end(), [this](auto V)
-				     { return (*this)[V].decision != Decision::MUSTNOT; });
-
-      if (newSize > work.back().size)
-      {
-	 work.back().size = newSize;
-	 std::push_heap(work.begin(), work.end());
-	 continue;
-      }
-      assert(newSize == work.back().size);
-
       auto item = std::move(work.back());
       work.pop_back();
       solved.push_back(Solved{Var(), item});
