@@ -648,12 +648,7 @@ void APT::Solver::UndoOne()
    if (not solvedItem.assigned.empty())
    {
       if (unlikely(debug >= 4))
-      {
-	 if (auto P = solvedItem.assigned.Pkg(cache); not P.end())
-	    std::cerr << "Unassign " << P.FullName() << "\n";
-	 if (auto V = solvedItem.assigned.Ver(cache); not V.end())
-	    std::cerr << "Unassign " << V.ParentPkg().FullName() << "=" << V.VerStr() << "\n";
-      }
+	 std::cerr << "Unassign " << solvedItem.assigned.toString(cache) << "\n";
       auto &state = (*this)[solvedItem.assigned];
       state.decision = Decision::NONE;
       state.reason = Var();
