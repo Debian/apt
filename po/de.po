@@ -4,7 +4,7 @@
 # Licensing is complex as the msgid come from several files, please see
 # the individual files for licensing information.
 #
-# Helge Kreutzmann <debian@helgefjell.de>, 2020-2023.
+# Helge Kreutzmann <debian@helgefjell.de>, 2020-2023, 2025.
 # Holger Wansing <linux@wansing-online.de>, 2008, 2009, 2010, 2012, 2014, 2017, 2018.
 # Jens Seidel <jensseidel@users.sf.net>, 2008.
 # Michael Piefel <piefel@informatik.hu-berlin.de>, 2001, 2002, 2003, 2004, 2006.
@@ -13,10 +13,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.7.2\n"
+"Project-Id-Version: apt 2.9.27\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2025-02-07 20:17+0000\n"
-"PO-Revision-Date: 2023-09-21 18:04+0200\n"
+"PO-Revision-Date: 2025-02-09 18:21+0100\n"
 "Last-Translator: Helge Kreutzmann <debian@helgefjell.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "Language: de\n"
@@ -256,6 +256,8 @@ msgid ""
 "Repositories should provide a clear-signed InRelease file, but none found at "
 "%s."
 msgstr ""
+"Depots sollten eine InRelease-Datei mit Klartextsignatur bereitstellen, aber "
+"unter %s wurde keine gefunden."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -699,26 +701,26 @@ msgstr "Syntaxfehler %s:%u: Zusätzlicher Unsinn am Dateiende"
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Error:"
-msgstr ""
+msgstr "Fehler:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Warning:"
-msgstr ""
+msgstr "Warnung:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Notice:"
-msgstr ""
+msgstr "Hinweis:"
 
 #: apt-pkg/contrib/error.cc
 msgid "Audit:"
-msgstr ""
+msgstr "Audit:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Debug:"
-msgstr ""
+msgstr "Fehlersuche:"
 
 #: apt-pkg/contrib/extracttar.cc
 #, c-format
@@ -1176,6 +1178,8 @@ msgid ""
 "The dpkg executable set in Dir::Bin::dpkg is missing, falling back to using "
 "default dpkg."
 msgstr ""
+"Das in Dir::Bin::dpkg gesetzte Programm für Dpkg fehlt, es wird auf das "
+"Standard-Dpkg zurückgefallen."
 
 #. we don't care for the difference
 #: apt-pkg/deb/dpkgpm.cc
@@ -1374,10 +1378,8 @@ msgid "Calculating upgrade"
 msgstr "Paketaktualisierung (Upgrade) wird berechnet"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
-#| msgid "Total dependencies: "
 msgid "Solving dependencies"
-msgstr "Gesamtzahl an Abhängigkeiten: "
+msgstr "Auflösen von Abhängigkeiten"
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
@@ -1985,7 +1987,7 @@ msgid ""
 "system."
 msgstr ""
 "Nicht zusammengeführtes usr wird nicht mehr unterstützt, verwenden Sie "
-"usrmerge, um auf ein System mit zusammengeführtem usr zu konvertieren."
+"usrmerge, um auf ein zusammengeführtes-usr-System zu wechseln."
 
 #. TRANSLATORS: %s is a url to a page describing merged-usr (bookworm release notes)
 #: apt-private/private-install.cc
@@ -2042,10 +2044,9 @@ msgstr ""
 "E-Mail an apt@packages.debian.org (auf Englisch bitte)."
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Downloading %s %s"
+#, c-format
 msgid "  Download size: %sB / %sB\n"
-msgstr "Herunterladen von %s %s"
+msgstr "  Herunterlade-Größe: %sB / %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2055,10 +2056,9 @@ msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Es müssen noch %sB von %sB an Archiven heruntergeladen werden.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Downloading %s %s"
+#, c-format
 msgid "  Download size: %sB\n"
-msgstr "Herunterladen von %s %s"
+msgstr "  Herunterlade-Größe: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2077,7 +2077,7 @@ msgstr "Nach dieser Operation werden %sB Plattenplatz zusätzlich benutzt.\n"
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB / %sB available\n"
-msgstr ""
+msgstr "Benötigter Platz: %sB / %sB verfügbar\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2085,6 +2085,7 @@ msgstr ""
 #, c-format
 msgid "More space needed than available: %sB > %sB, installation may fail"
 msgstr ""
+"Mehr Platz benötigt als verfügbar: %sB > %sB, Installation kann fehlschlagen"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
@@ -2094,7 +2095,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "in %s:  %sB / %sB available\n"
-msgstr ""
+msgstr "in %s:  %sB / %sB verfügbar\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2104,17 +2105,18 @@ msgstr ""
 msgid ""
 "More space needed in %s than available: %sB > %sB, installation may fail"
 msgstr ""
+"In %s wird mehr Platz als verfügbar benötigt: %sB > %sB, Installation kann "
+"fehlschlagen"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB\n"
-msgstr ""
+msgstr "Benötigter Platz: %sB\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Stored label: %s\n"
+#, c-format
 msgid "  Freed space: %sB\n"
-msgstr "Gespeicherte Kennzeichnung: %s\n"
+msgstr "  Freigegebener Platz: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2138,11 +2140,11 @@ msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Continue anyway?"
-msgstr ""
+msgstr "Trotzdem fortfahren?"
 
 #: apt-private/private-install.cc
 msgid "Continue?"
-msgstr ""
+msgstr "Fortfahren?"
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
@@ -2392,50 +2394,42 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Die folgenden Pakete haben unerfüllte Abhängigkeiten:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "satisfy dependency strings"
 msgid "Unsatisfied dependencies:"
-msgstr "Abhängigkeitszeichenketten erfüllen"
+msgstr "Nichterfüllte Abhängigkeiten:"
 
 #: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Die folgenden NEUEN Pakete werden installiert:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Installing %s"
 msgid "Installing:"
-msgstr "%s wird installiert."
+msgstr "Installation:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Total dependencies: "
 msgid "Installing dependencies:"
-msgstr "Gesamtzahl an Abhängigkeiten: "
+msgstr "Abhängigkeiten werden installiert: "
 
 #: apt-private/private-output.cc
 msgid "REMOVING:"
-msgstr ""
+msgstr "ENTFERNUNG:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
 msgstr "Die folgenden Pakete werden ENTFERNT:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "The following upgrades have been deferred due to phasing:"
-msgstr "Die folgenden Pakete sind zurückgehalten worden:"
+msgstr ""
+"Die folgenden Aktualisierungen sind wegen Phasenstufung zurückgestellt "
+"worden:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "Not upgrading yet due to phasing:"
-msgstr "Die folgenden Pakete sind zurückgehalten worden:"
+msgstr "Noch keine Aktualisierung wegen Phasenstufung:"
 
 #: apt-private/private-output.cc
 msgid "Not upgrading:"
-msgstr ""
+msgstr "Keine Aktualisierung:"
 
 #: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
@@ -2447,11 +2441,11 @@ msgstr "Die folgenden Pakete werden aktualisiert (Upgrade):"
 
 #: apt-private/private-output.cc
 msgid "Upgrading:"
-msgstr ""
+msgstr "Aktualisierung:"
 
 #: apt-private/private-output.cc
 msgid "DOWNGRADING:"
-msgstr ""
+msgstr "ZURÜCK ZU ÄLTERER VERSION:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
@@ -2459,10 +2453,8 @@ msgstr ""
 "Die folgenden Pakete werden durch eine ÄLTERE VERSION ERSETZT (Downgrade):"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Pinned packages:"
 msgid "Changing held packages:"
-msgstr "Mit Pinning verwaltete Pakete:"
+msgstr "Änderung von gehaltenen Paketen:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2483,7 +2475,7 @@ msgstr ""
 
 #: apt-private/private-output.cc
 msgid "Summary:"
-msgstr ""
+msgstr "Zusammenfassung:"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2491,10 +2483,9 @@ msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu aktualisiert, %lu neu installiert, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Upgrading: %lu, Installing: %lu, "
-msgstr "%s wird installiert."
+msgstr "Aktualisierung: %lu, Installation: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2502,10 +2493,9 @@ msgid "%lu reinstalled, "
 msgstr "%lu erneut installiert, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Reinstalling: %lu, "
-msgstr "%s wird installiert."
+msgstr "Erneut installieren: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2513,10 +2503,9 @@ msgid "%lu downgraded, "
 msgstr "%lu durch eine ältere Version ersetzt, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Downloading %s %s"
+#, c-format
 msgid "Downgrading: %lu, "
-msgstr "Herunterladen von %s %s"
+msgstr "Durch ältere Version ersetzen: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2526,7 +2515,7 @@ msgstr "%lu zu entfernen und %lu nicht aktualisiert.\n"
 #: apt-private/private-output.cc
 #, c-format
 msgid "Removing: %lu, Not Upgrading: %lu\n"
-msgstr ""
+msgstr "Entfernen: %lu, nicht aktualisieren: %lu\n"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2792,10 +2781,11 @@ msgid "Your '%s' file changed, please run 'apt-get update'.\n"
 msgstr ""
 "Ihre »%s«-Datei wurde verändert, bitte führen Sie »apt-get update« aus.\n"
 
+# FIXME a TRANSLATOR note explaining this string would be helpful
 #: apt-private/private-sources.cc
 #, c-format
 msgid "Rewrite %zu sources?"
-msgstr ""
+msgstr "%zu an »sources« umschreiben?"
 
 #: apt-private/private-unmet.cc
 #, c-format
@@ -2821,6 +2811,8 @@ msgstr ""
 #, c-format
 msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
 msgstr ""
+"Der Eintrag %s für »%s« sollte auf .sources im Format deb822 aktualisiert "
+"werden."
 
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
@@ -2832,26 +2824,28 @@ msgstr "Fehlendes Signed-By im Eintrag %s für »%s«"
 msgid ""
 "Consider migrating all sources.list(5) entries to the deb822 .sources format"
 msgstr ""
+"Es wird empfohlen, alle sources.list(5)-Einträge in das deb822-Format "
+"für .sources umzuwandeln"
 
 #: apt-private/private-update.cc
 msgid ""
 "The deb822 .sources format supports both embedded as well as external "
 "OpenPGP keys"
 msgstr ""
+"Das deb822-Format für .sources unterstützt sowohl eingebettete als auch "
+"externe OpenPGP-Schlüssel"
 
 #: apt-private/private-update.cc
-#, fuzzy
-#| msgid ""
-#| "See apt-secure(8) manpage for repository creation and user configuration "
-#| "details."
 msgid "See apt-secure(8) for best practices in configuring repository signing."
 msgstr ""
-"Weitere Details zur Erzeugung von Paketdepots sowie zu deren "
-"Benutzerkonfiguration finden Sie in der Handbuchseite apt-secure(8)."
+"Bewährte Vorgehensweisen zur Konfiguration des Signierens von Depots finden "
+"Sie in apt-secure(8)."
 
 #: apt-private/private-update.cc
 msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
 msgstr ""
+"Einige Quellen können modernisiert werden. Führen Sie dafür »apt modernize-"
+"sources« aus."
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3272,10 +3266,8 @@ msgid "concatenate files, with automatic decompression"
 msgstr "verketten von Dateien, mit automatischer Dekomprimierung"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
-#| msgid "Problem hashing file"
 msgid "hash file"
-msgstr "Problem bei Bestimmung des Hashwertes einer Datei"
+msgstr "Hash-Datei"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
@@ -3528,7 +3520,7 @@ msgstr "die Datei für die Paketquellen bearbeiten"
 
 #: cmdline/apt.cc
 msgid "modernize .list files to .sources files"
-msgstr ""
+msgstr ".list-Dateien wurden zu .sources-Dateien modernisiert"
 
 #: cmdline/apt.cc
 msgid "satisfy dependency strings"
@@ -4057,12 +4049,12 @@ msgstr "Ungültige URI, lokale URIs dürfen nicht mit // beginnen."
 #: methods/gpgv.cc
 #, c-format
 msgid "untrusted public key algorithm: %s"
-msgstr ""
+msgstr "nicht vertrauenswürdiger »public key«-Algorithmus: %s"
 
 #: methods/gpgv.cc
 #, c-format
 msgid "%s will be deprecated in a future release"
-msgstr ""
+msgstr "%s wird in einer zukünftigen Veröffentlichung als veraltet markiert"
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
@@ -4085,27 +4077,20 @@ msgstr ""
 "jedoch nicht ermittelt werden?!"
 
 #: methods/gpgv.cc
-#, fuzzy
-#| msgid ""
-#| "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgid "Could not execute 'gpgv' to verify signature (is gnupg installed?)"
 msgstr ""
-"»apt-key« konnte zur Überprüfung der Signatur nicht ausgeführt werden (ist "
-"gnupg installiert?)"
+"»gpgv« konnte zur Überprüfung der Signatur nicht ausgeführt werden (ist "
+"Gnupg installiert?)"
 
 #: methods/gpgv.cc
-#, fuzzy
-#| msgid "Unknown error executing apt-key"
 msgid "Unknown error executing gpgv"
-msgstr "Unbekannter Fehler beim Ausführen von apt-key"
+msgstr "Unbekannter Fehler beim Ausführen von gpgv"
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
-#, fuzzy, c-format
-#| msgid "Signature by key %s uses weak digest algorithm (%s)"
+#, c-format
 msgid "Signature by key %s uses weak algorithm (%s)"
-msgstr ""
-"Signatur von Schlüssel %s verwendet einen schwachen Hash-Algorithmus (%s)"
+msgstr "Signatur von Schlüssel %s verwendet einen schwachen Algorithmus (%s)"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
@@ -4153,17 +4138,6 @@ msgstr "Änderungszeitpunkt kann nicht gesetzt werden."
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Leere Dateien können kein gültiges Archiv sein."
-
-#, fuzzy, c-format
-#~| msgid ""
-#~| "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
-#~| "section in apt-key(8) for details."
-#~ msgid ""
-#~ "Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. "
-#~ "See the USER CONFIGURATION section in apt-secure(8) for details."
-#~ msgstr ""
-#~ "Schlüssel ist im veralteten Schlüsselbund trusted.gpg gespeichert (%s), "
-#~ "siehe den Abschnitt MISSBILLIGUNG in apt-key(8) für Details."
 
 #, c-format
 #~ msgid ""
