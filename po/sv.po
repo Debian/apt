@@ -5,42 +5,48 @@
 # the individual files for licensing information.
 #
 # This file is distributed under the same license as the apt package.
-# Peter Karlsson <peterk@debian.org>, 2002-2008.
+# Peter Krefting <peter@softwolves.pp.se>, 2002-2025.
 # Daniel Nylander <po@danielnylander.se>, 2005-2010.
 # Anders Jonsson <anders.jonsson@norsjovallen.se>, 2015.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.0.5\n"
+"Project-Id-Version: apt 2.9.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-01-28 18:52+0000\n"
-"PO-Revision-Date: 2015-08-19 21:33+0200\n"
-"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
-"Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
+"POT-Creation-Date: 2025-02-07 20:17+0000\n"
+"PO-Revision-Date: 2025-02-12 22:07+0100\n"
+"Last-Translator: Peter Krefting <peter@softwolves.pp.se>\n"
+"Language-Team: Swedish <debian-l10n-swedish@lists.debian.org>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.3\n"
+"X-Generator: Gtranslator 42.0\n"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Updating from such a repository can't be done securely, and is therefore "
 "disabled by default."
 msgstr ""
+"Kan inte uppdatera från ett sådant förråd på ett säkert sätt, det har därför "
+"inaktiverats som standard."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "Data from such a repository can't be authenticated and is therefore "
 "potentially dangerous to use."
 msgstr ""
+"Kan inte autentisera data från ett sådant förråd och det kan därför "
+"potentiellt vara farligt att använda."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
 "See apt-secure(8) manpage for repository creation and user configuration "
 "details."
 msgstr ""
+"Se manualsidan apt-secure(8) för detaljer om att skapa förråd och "
+"användarkonfiguration."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -48,9 +54,9 @@ msgid "The repository '%s' is no longer signed."
 msgstr "Förrådet ”%s” är inte längre signerat."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' no longer has a Release file."
-msgstr "Förrådet ”%s” är inte längre signerat."
+msgstr "Förrådet ”%s” har inte längre någon Release-fil."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -61,19 +67,19 @@ msgstr ""
 "Acquire::AllowDowngradeToInsecureRepositories gavs för att åsidosätta detta."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' is not signed."
-msgstr "Förrådet ”%s” är inte längre signerat."
+msgstr "Förrådet ”%s” är inte signerat."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' does not have a Release file."
-msgstr "Förrådet ”%s” är inte längre signerat."
+msgstr "Förrådet ”%s” saknar filen Release."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "The repository '%s' provides only weak security information."
-msgstr "Förrådet ”%s” är inte längre signerat."
+msgstr "Förrådet ”%s” tillhandahåller endast svag säkerhetsinformation."
 
 #: apt-pkg/acquire-item.cc ftparchive/writer.cc
 #, c-format
@@ -91,7 +97,7 @@ msgstr "Hash-kontrollsumman stämmer inte"
 
 #: apt-pkg/acquire-item.cc
 msgid "Insufficient information available to perform this download securely"
-msgstr ""
+msgstr "Inte tillräcklig information för att utföra hämtningen säkert"
 
 #: apt-pkg/acquire-item.cc apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -121,14 +127,13 @@ msgstr ""
 "autentisering?)"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. GPG error: %s: %s"
 msgstr ""
 "Ett fel inträffade vid verifiering av signaturen. Förrådet har inte "
-"uppdaterats och de tidigare indexfilerna kommer att användas. GPG-fel: %s: "
-"%s\n"
+"uppdaterats och de tidigare indexfilerna kommer att användas. GPG-fel: %s: %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
@@ -142,6 +147,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't have the "
 "component '%s' (component misspelt in sources.list?)"
 msgstr ""
+"Hoppar över hämtning av den konfigurerade filen ”%s” eftersom förrådet ”%s” "
+"saknar komponenten ”%s” (felstavad komponent i sources.list?)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -149,6 +156,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' doesn't support "
 "architecture '%s'"
 msgstr ""
+"Hoppar över hämtning av den konfigurerade filen ”%s” eftersom förrådet ”%s” "
+"inte stöder arkitekturen ”%s”"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -156,6 +165,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' does not seem to "
 "provide it (sources.list entry misspelt?)"
 msgstr ""
+"Hoppar över hämtning av den konfigurerade filen ”%s” eftersom förrådet ”%s” "
+"inte verkar tillhandahålla den (felstavad post i sources.list?)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -163,6 +174,8 @@ msgid ""
 "Skipping acquire of configured file '%s' as repository '%s' provides only "
 "weak security information for it"
 msgstr ""
+"Hoppar över hämtning av den konfigurerade filen ”%s” eftersom förrådet ”%s” "
+"endast tillhandahåller svag säkerhetsinformation för den"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formatted in the same way as in
@@ -180,16 +193,13 @@ msgstr ""
 #. the time until the file will be valid - formatted in the same way as in
 #. the download progress display (e.g. 7d 3h 42min 1s)
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Release file for %s is expired (invalid since %s). Updates for this "
-#| "repository will not be applied."
+#, c-format
 msgid ""
 "Release file for %s is not valid yet (invalid for another %s). Updates for "
 "this repository will not be applied."
 msgstr ""
-"Release-fil för %s har gått ut (ogiltig sedan %s). Uppdateringar för detta "
-"förråd kommer inte verkställas."
+"Release-fil för %s är inte giltig ännu (ogiltig ytterligare %s). "
+"Uppdateringar för detta förråd kommer inte verkställas."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -199,19 +209,19 @@ msgstr "Konflikt i distribution: %s (förväntade %s men fick %s)"
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its '%s' value from '%s' to '%s'"
-msgstr ""
+msgstr "Förrådet ”%s” ändrade värdet på ”%s” från ”%s” till ”%s”"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "Repository '%s' changed its default priority for %s from %hi to %hi."
-msgstr ""
+msgstr "Förrådet ”%s” ändrade sin förvalda prioritet för %s från %hi till %hi."
 
 #. TRANSLATOR: the "this" refers to changes in the repository like a new release or owner change
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid ""
 "More information about this can be found online in the Release notes at: %s"
-msgstr ""
+msgstr "Ytterligare information om detta finns på nätet i versionsfakta på: %s"
 
 #. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
 #: apt-pkg/acquire-item.cc
@@ -220,6 +230,8 @@ msgid ""
 "This must be accepted explicitly before updates for this repository can be "
 "applied. See %s manpage for details."
 msgstr ""
+"Detta måste accepteras explicit innan uppdateringar från förrådet kan tas "
+"emot. Se manualsidan %s för detaljer."
 
 #: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
 #, c-format
@@ -232,6 +244,8 @@ msgid ""
 "Repositories should provide a clear-signed InRelease file, but none found at "
 "%s."
 msgstr ""
+"Förrådet bör tillhandahålla en läslig signerad ”InRelease”-fil, men ingen "
+"hittades på %s."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -249,19 +263,20 @@ msgstr "Kan inte hitta en källa för att hämta version ”%s” av ”%s”"
 
 #. TRANSLATOR: %s=%s is sourcename=sourceversion, e.g. apt=1.1
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Changelog unavailable for %s=%s"
-msgstr "Ändringslogg för %s (%s)"
+msgstr "Ändringslogg inte tillgänglig för %s=%s"
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
 msgid "The method '%s' is explicitly disabled via configuration."
-msgstr ""
+msgstr "Metoden ”%s” har explicit inaktiverats i konfigurationen."
 
 #: apt-pkg/acquire-worker.cc methods/connect.cc
 #, c-format
 msgid "If you meant to use Tor remember to use %s instead of %s."
 msgstr ""
+"Om det är meningen att använda Tor, kom ihåg att använda %s istället för %s."
 
 #: apt-pkg/acquire-worker.cc
 #, c-format
@@ -303,18 +318,16 @@ msgstr "Kunde inte låsa katalogen %s"
 #, c-format
 msgid "No sandbox user '%s' on the system, can not drop privileges"
 msgstr ""
+"Ingen sandlåda för användaren ”%s” på systemet, kan inte släppa privilegier"
 
 #: apt-pkg/acquire.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Can't drop privileges for downloading as file '%s' couldn't be accessed "
-#| "by user '%s'."
+#, c-format
 msgid ""
 "Download is performed unsandboxed as root as file '%s' couldn't be accessed "
 "by user '%s'."
 msgstr ""
-"Kan inte släppa privilegier för hämtning eftersom filen ”%s” inte kunde "
-"kommas åt av användaren ”%s”."
+"Hämtningen utförs utan sandlåda eftersom filen ”%s” inte kunde kommas åt av "
+"användaren ”%s”."
 
 #: apt-pkg/acquire.cc apt-pkg/clean.cc
 #, c-format
@@ -555,18 +568,20 @@ msgid "Failed to stat the cdrom"
 msgstr "Kunde inte ta status på cd-romen"
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option '%c' [from %s] is not understood in combination with the "
 "other options."
-msgstr "Kommandoradsflaggan ”%c” [från %s] är inte känd."
+msgstr ""
+"Kommandoradsflaggan ”%c” [från %s] förstås inte tillsammans med de andra "
+"flaggorna."
 
 #: apt-pkg/contrib/cmndline.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Command line option %s is not understood in combination with the other "
 "options"
-msgstr "Förstår inte kommandoradsflaggan %s"
+msgstr "Kommandoradsflaggan %s förstås inte tillsammans med de andra flaggorna"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -657,31 +672,31 @@ msgstr "Syntaxfel %s:%u: Överflödigt skräp vid filens slut"
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Error:"
-msgstr ""
+msgstr "Fel:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Warning:"
-msgstr ""
+msgstr "Varning:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Notice:"
-msgstr ""
+msgstr "Notis:"
 
 #: apt-pkg/contrib/error.cc
 msgid "Audit:"
-msgstr ""
+msgstr "Granskning:"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
 msgid "Debug:"
-msgstr ""
+msgstr "Felsökning:"
 
 #: apt-pkg/contrib/extracttar.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot find a configured compressor for '%s'"
-msgstr "Kan inte hitta autentiseringspost för: %s"
+msgstr "Kan inte hitta konfigurerad komprimerare för ”%s”"
 
 #: apt-pkg/contrib/extracttar.cc
 msgid "Corrupted archive"
@@ -692,10 +707,9 @@ msgid "Tar checksum failed, archive corrupted"
 msgstr "Tar-kontrollsumma misslyckades, arkivet skadat"
 
 #: apt-pkg/contrib/extracttar.cc
-#, fuzzy, c-format
-#| msgid "Unknown TAR header type %u, member %s"
+#, c-format
 msgid "Unknown TAR header type %u"
-msgstr "Okänd TAR-rubriktyp %u, del %s"
+msgstr "Okänd TAR-rubriktyp %u"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -718,15 +732,14 @@ msgid "Not using locking for nfs mounted lock file %s"
 msgstr "Använder inte låsning för nfs-monterade låsfilen %s"
 
 #: apt-pkg/contrib/fileutl.cc
-#, fuzzy, c-format
-#| msgid "Could not get lock %s"
+#, c-format
 msgid "Could not get lock %s. It is held by process %d"
-msgstr "Kunde inte erhålla låset %s"
+msgstr "Kunde inte erhålla låset %s. Det hålls av process %d"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Could not get lock %s. It is held by process %d (%s)"
-msgstr ""
+msgstr "Kunde inte erhålla låset %s. Det hålls av process %d (%s)"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -738,6 +751,8 @@ msgid ""
 "Be aware that removing the lock file is not a solution and may break your "
 "system."
 msgstr ""
+"Observera att ta bort låsfilen inte är en lösning och kan ödelägga ditt "
+"system."
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -804,7 +819,7 @@ msgstr "Problem med att stänga gzip-filen %s"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Unexpected end of file"
-msgstr ""
+msgstr "Oväntat filslut"
 
 #: apt-pkg/contrib/fileutl.cc
 msgid "Failed to create subprocess IPC"
@@ -920,6 +935,8 @@ msgid ""
 "%s: Credentials for %s match, but the protocol is not encrypted. Annotate "
 "with %s:// to use."
 msgstr ""
+"%s: Vitsorden för %s stämmer, men protokollet är inte krypterat. Förse med "
+"%s:// för att använda."
 
 #: apt-pkg/contrib/progress.cc
 #, c-format
@@ -936,16 +953,14 @@ msgid "..."
 msgstr "…"
 
 #: apt-pkg/contrib/progress.cc
-#, fuzzy, c-format
-#| msgid "%c%s... %u%%"
+#, c-format
 msgid "%c%s... %llu/%llus"
-msgstr "%c%s… %u%%"
+msgstr "%c%s... %llu/%llus"
 
 #: apt-pkg/contrib/progress.cc
-#, fuzzy, c-format
-#| msgid "%c%s... %u%%"
+#, c-format
 msgid "%c%s... %llus"
-msgstr "%c%s… %u%%"
+msgstr "%c%s... %llus"
 
 #: apt-pkg/contrib/progress.cc
 #, c-format
@@ -996,10 +1011,9 @@ msgid "Unparsable control file"
 msgstr "Kunde inte tolka control-filen"
 
 #: apt-pkg/deb/debindexfile.cc
-#, fuzzy, c-format
-#| msgid "Could not get lock %s"
+#, c-format
 msgid "Could not read meta data from %s"
-msgstr "Kunde inte erhålla låset %s"
+msgstr "Kunde inte läsa metadata från %s"
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; another identifier like Contents;
@@ -1007,7 +1021,7 @@ msgstr "Kunde inte erhålla låset %s"
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s wants to acquire the same file (%s) as %s from source %s"
-msgstr ""
+msgstr "Målet %s önskar hämta samma fil (%s) som %s från källan %s"
 
 #. TRANSLATOR: an identifier like Packages; Releasefile key indicating
 #. a file like main/binary-amd64/Packages; filename and linenumber of
@@ -1015,7 +1029,7 @@ msgstr ""
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Target %s (%s) is configured multiple times in %s and %s"
-msgstr ""
+msgstr "Målet %s (%s) är konfigurerat flera gånger i %s och %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -1038,6 +1052,8 @@ msgid ""
 "No Hash entry in Release file %s which is considered strong enough for "
 "security purposes"
 msgstr ""
+"Ingen Hash-post i Release-filen %s som anses vara stark nog för "
+"säkerhetsmässiga syften."
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -1049,16 +1065,19 @@ msgstr "Ogiltig ”%s”-post i Release-filen %s"
 #, c-format
 msgid "Conflicting values set for option %s regarding source %s %s"
 msgstr ""
+"Motstridiga värden inställda för flaggan %s i förhållande till källan %s %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Invalid value set for option %s regarding source %s %s (%s)"
-msgstr ""
+msgstr "Ogiltigt värde för flaggan %s i förhållande till källan %s %s (%s)"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Conflicting values set for option %s regarding source %s %s: %s != %s"
 msgstr ""
+"Motstridiga värden inställda för flaggan %s i förhållande till källan %s %s: "
+"%s != %s"
 
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
@@ -1066,26 +1085,21 @@ msgid "Unable to parse package file %s (%d)"
 msgstr "Kunde inte tolka paketfilen %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid "Waiting for headers"
+#, c-format
 msgid "Waiting for cache lock: %s"
-msgstr "Väntar på rubriker"
+msgstr "Väntar på cachelås: %s"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "Unable to lock the administration directory (%s), is another process "
-#| "using it?"
+#, c-format
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
 msgstr ""
-"Kunde inte låsa administrationskatalogen (%s). Använder en annan process den?"
+"Kunde inte låsa dpkg-framändelåset (%s), använder en annan process det?"
 
 #: apt-pkg/deb/debsystem.cc
-#, fuzzy, c-format
-#| msgid "Unable to lock the administration directory (%s), are you root?"
+#, c-format
 msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
-msgstr "Kunde inte låsa administrationskatalogen (%s). Är du root?"
+msgstr "Kunde inte låsa dpkg-framändelåset (%s), är du root?"
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -1315,33 +1329,29 @@ msgstr "Beräknar uppgradering"
 
 #: apt-pkg/edsp.cc
 #, fuzzy
-#| msgid "Total dependencies: "
+#| msgid "Installing dependencies:"
 msgid "Solving dependencies"
-msgstr "Totalt antal beroenden: "
+msgstr "Installerar beroenden:"
 
 #: apt-pkg/edsp.cc
 msgid "Execute external solver"
 msgstr "Kör extern lösare"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Execute external planner"
-msgstr "Kör extern lösare"
+msgstr "Kör extern planerare"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send request to planner"
-msgstr "Skicka förfrågan till lösare"
+msgstr "Skicka förfrågan till planerare"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "Send scenario to planner"
-msgstr "Skicka scenario till lösare"
+msgstr "Skicka scenario till planerare"
 
 #: apt-pkg/edsp.cc
-#, fuzzy
 msgid "External planner failed without a proper error message"
-msgstr "Extern lösare misslyckades utan något informativt felmeddelande"
+msgstr "Extern planerare misslyckades utan något informativt felmeddelande"
 
 #: apt-pkg/indexcopy.cc
 #, c-format
@@ -1443,9 +1453,8 @@ msgid "The package cache was built for different architectures: %s vs %s"
 msgstr "Paketcachen byggdes för andra arkitekturer: %s gentemot %s"
 
 #: apt-pkg/pkgcache.cc
-#, fuzzy
 msgid "The package cache file is corrupted, it has the wrong hash"
-msgstr "Paketcachefilen är skadad, den är för liten"
+msgstr "Paketcachefilen är skadad, den har fel hash-värde"
 
 #: apt-pkg/pkgcache.cc
 msgid "Depends"
@@ -1571,11 +1580,15 @@ msgstr "Förstod inte nåltypen %s"
 msgid ""
 "%s: The special 'Pin-Priority: %s' can only be used for 'Package: *' records"
 msgstr ""
+"%s: Den speciella ”Pin-Priority: %s” kan endast användas för ”Package: *”-"
+"poster"
 
 #: apt-pkg/policy.cc
 #, c-format
 msgid "%s: Value %s is outside the range of valid pin priorities (%d to %d)"
 msgstr ""
+"%s: Värdet %s är utanför intervallet för giltiga fastnålningsprioriteter (%d "
+"till %d)"
 
 #: apt-pkg/policy.cc
 msgid "No priority (or zero) specified for pin"
@@ -1584,9 +1597,9 @@ msgstr "Prioritet ej angiven (eller noll) för nål"
 # parametrar: filnamn, radnummer
 #. TRANSLATOR: %u is a line number, the first %s is a filename of a file with the extension "second %s" and the third %s is a unique identifier for bugreports
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed entry %u in %s file %s (%s)"
-msgstr "Felaktig åsidosättning %s rad %llu (%s)"
+msgstr "Felaktig post %u i %s-filen %s (%s)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -1599,9 +1612,9 @@ msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Typ ”%s” är inte känd på rad %u i källistan %s"
 
 #: apt-pkg/sourcelist.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed stanza %u in source list %s (type)"
-msgstr "Rad %u i källistan %s har fel format (typ)"
+msgstr "Stycket %u i källistan %s har fel format (typ)"
 
 #: apt-pkg/sourcelist.cc
 #, c-format
@@ -1611,18 +1624,16 @@ msgstr "Typen ”%s” är inte känd i post %u i källistan %s"
 #: apt-pkg/sourcelist.cc apt-private/private-install.cc
 #, c-format
 msgid "Unsupported file %s given on commandline"
-msgstr ""
+msgstr "Filen %s som angavs på kommandoraden stöds ej"
 
 #: apt-pkg/srcrecords.cc
-#, fuzzy
-#| msgid "You must put some 'source' URIs in your sources.list"
 msgid "You must put some 'deb-src' URIs in your sources.list"
-msgstr "Du måste lägga till några ”source”-URI:er i din sources.list"
+msgstr "Du måste lägga till några ”deb-src”-URI:er i din sources.list"
 
 #: apt-pkg/tagfile.cc
 #, c-format
 msgid "Cannot convert %s to integer: out of range"
-msgstr ""
+msgstr "Kan inte omvandla %s till heltal: utanför intervallet"
 
 #: apt-pkg/update.cc
 msgid ""
@@ -1684,6 +1695,7 @@ msgid ""
 "Do you want to accept these changes and continue updating from this "
 "repository?"
 msgstr ""
+"Vill du godta dessa ändringar och fortsätta uppdatera från detta förråd?"
 
 #: apt-private/private-cachefile.cc
 msgid "Correcting dependencies..."
@@ -1724,17 +1736,17 @@ msgstr "Sorterar"
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Observera, väljer \"%s\" för funktionen \"%s\"\n"
+msgstr "Observera, väljer ”%s” för funktionen ”%s”\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for glob '%s'\n"
-msgstr "Observera, väljer \"%s\" för det reguljära uttrycket \"%s\"\n"
+msgstr "Observera, väljer ”%s” för jokermönstret ”%s”\n"
 
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Observera, väljer \"%s\" för det reguljära uttrycket \"%s\"\n"
+msgstr "Observera, väljer ”%s” för det reguljära uttrycket ”%s”\n"
 
 #: apt-private/private-cacheset.cc
 #, c-format
@@ -1742,9 +1754,8 @@ msgid "Package %s is a virtual package provided by:\n"
 msgstr "Paketet %s är ett virtuellt paket som tillhandahålls av:\n"
 
 #: apt-private/private-cacheset.cc
-#, fuzzy
 msgid " [Installed]"
-msgstr "[installerat]"
+msgstr " [Installerat]"
 
 #: apt-private/private-cacheset.cc
 msgid " [Not candidate version]"
@@ -1772,12 +1783,12 @@ msgstr "Dock kan följande paket ersätta det:"
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Package '%s' has no installation candidate"
-msgstr "Paketet \"%s\" har ingen installationskandidat"
+msgstr "Paketet ”%s” har ingen installationskandidat"
 
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
-msgstr "Virtuella paket som \"%s\" kan inte tas bort\n"
+msgstr "Virtuella paket som ”%s” kan inte tas bort\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: apt-private/private-cacheset.cc apt-private/private-install.cc
@@ -1794,16 +1805,16 @@ msgstr "Paketet ”%s” är inte installerat, så det tas inte bort\n"
 #: apt-private/private-cacheset.cc
 #, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "Observera, väljer \"%s\" istället för \"%s\"\n"
+msgstr "Observera, väljer ”%s” istället för ”%s”\n"
 
 #: apt-private/private-cmndline.cc
 msgid "Most used commands:"
-msgstr ""
+msgstr "Vanligaste kommandona:"
 
 #: apt-private/private-cmndline.cc
 #, c-format
 msgid "See %s for more information about the available commands."
-msgstr ""
+msgstr "Se %s för mer information om tillgängliga kommandon."
 
 #: apt-private/private-cmndline.cc
 msgid ""
@@ -1812,6 +1823,10 @@ msgid ""
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
 msgstr ""
+"Konfigurationsflaggor och –syntax beskrivs i apt.conf(5).\n"
+"Information om hur du konfigurerar källor hittas i sources.list(5).\n"
+"Paket- och versionsval kan uttryckas genom apt_preferences(5).\n"
+"Säkerhetsinformation finns i apt-secure(8).\n"
 
 #: apt-private/private-cmndline.cc
 msgid "This APT has Super Cow Powers."
@@ -1826,6 +1841,8 @@ msgid ""
 "--force-yes is deprecated, use one of the options starting with --allow "
 "instead."
 msgstr ""
+"--force-yes rekommenderas inte, använd en av flaggorna som börjar med --"
+"allow istället."
 
 #: apt-private/private-depends.cc apt-private/private-download.cc
 #: apt-private/private-show.cc cmdline/apt-mark.cc
@@ -1849,11 +1866,11 @@ msgid "Install these packages without verification?"
 msgstr "Installera dessa paket utan verifiering?"
 
 #: apt-private/private-download.cc
-#, fuzzy
 msgid ""
 "There were unauthenticated packages and -y was used without --allow-"
 "unauthenticated"
-msgstr "Problem har uppstått och -y användes utan --force-yes"
+msgstr ""
+"Hittade oautentiserade paket och -y användes utan --allow-unauthenticated"
 
 #: apt-private/private-download.cc
 #, c-format
@@ -1904,12 +1921,14 @@ msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
 msgstr ""
+"Ej sammanslagen usr stöds inte längre, använd usrmerge för att konvertera "
+"till system med sammanslaget usr."
 
 #. TRANSLATORS: %s is a url to a page describing merged-usr (bookworm release notes)
 #: apt-private/private-install.cc
 #, c-format
 msgid "See %s for more details."
-msgstr ""
+msgstr "Se %s för ytterligare detaljer."
 
 #: apt-private/private-install.cc
 msgid ""
@@ -1928,23 +1947,22 @@ msgid "Packages need to be removed but remove is disabled."
 msgstr "Paketen måste tas bort men ”Remove” är inaktiverat."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid ""
 "Essential packages were removed and -y was used without --allow-remove-"
 "essential."
-msgstr "Problem har uppstått och -y användes utan --force-yes"
+msgstr ""
+"Systemkritiska paket togs bort och -y användes utan --allow-remove-essential."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "Packages were downgraded and -y was used without --allow-downgrades."
-msgstr "Problem har uppstått och -y användes utan --force-yes"
+msgstr "Paket nedgraderades och -y användes utan --allow-downgrades."
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
-msgstr "Problem har uppstått och -y användes utan --force-yes"
+msgstr ""
+"Fasthållna paket ändrades -y användes utan --allow-change-held-packages."
 
 #: apt-private/private-install.cc
 msgid "Internal error, Ordering didn't finish"
@@ -1957,10 +1975,9 @@ msgstr ""
 "apt@packages.debian.org"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Download Failed"
+#, c-format
 msgid "  Download size: %sB / %sB\n"
-msgstr "Hämtning misslyckades"
+msgstr "  Hämtningsstorlek: %sB / %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1970,10 +1987,9 @@ msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Behöver hämta %sB/%sB arkiv.\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Download Failed"
+#, c-format
 msgid "  Download size: %sB\n"
-msgstr "Hämtning misslyckades"
+msgstr "  Hämtningsstorlek: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -1993,7 +2009,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB / %sB available\n"
-msgstr ""
+msgstr "Nödvändigt utrymme: %sB / %sB tillgängligt\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2001,6 +2017,7 @@ msgstr ""
 #, c-format
 msgid "More space needed than available: %sB > %sB, installation may fail"
 msgstr ""
+"Behöver mer plats än tillgängligt: %sB > %sB, installationen kan misslyckas"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB -
@@ -2010,7 +2027,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "in %s:  %sB / %sB available\n"
-msgstr ""
+msgstr "i %s:  %sB / %sB tillgängligt\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2020,17 +2037,18 @@ msgstr ""
 msgid ""
 "More space needed in %s than available: %sB > %sB, installation may fail"
 msgstr ""
+"Behöver mer plats i %s än tillgängligt: %sB > %sB, installationen kan "
+"misslyckas"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB\n"
-msgstr ""
+msgstr "Nödvändigt utrymme: %sB\n"
 
 #: apt-private/private-install.cc
-#, fuzzy, c-format
-#| msgid "Stored label: %s\n"
+#, c-format
 msgid "  Freed space: %sB\n"
-msgstr "Lagrad etikett: %s\n"
+msgstr "  Frigjort utrymme: %sB\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2048,14 +2066,16 @@ msgid ""
 "Removing essential system-critical packages is not permitted. This might "
 "break the system."
 msgstr ""
+"Tillåter inte ta bort nödvändiga systemkritiska paket. Detta kan ödelägga "
+"systemet."
 
 #: apt-private/private-install.cc
 msgid "Continue anyway?"
-msgstr ""
+msgstr "Fortsätta ändå?"
 
 #: apt-private/private-install.cc
 msgid "Continue?"
-msgstr ""
+msgstr "Fortsätta?"
 
 #: apt-private/private-install.cc cmdline/apt-mark.cc
 msgid "Do you want to continue?"
@@ -2158,7 +2178,6 @@ msgid "Recommended packages:"
 msgstr "Rekommenderade paket:"
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "The following additional packages will be installed:"
 msgstr "Följande ytterligare paket kommer att installeras:"
 
@@ -2182,9 +2201,9 @@ msgstr "Ominstallation av %s är inte möjlig, det kan inte hämtas.\n"
 
 #. TRANSLATORS: First string is package name, second is version
 #: apt-private/private-install.cc
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the newest version (%s).\n"
-msgstr "%s är redan den senaste versionen.\n"
+msgstr "%s är redan den senaste versionen (%s).\n"
 
 #: apt-private/private-install.cc cmdline/apt-get.cc cmdline/apt-mark.cc
 #, c-format
@@ -2225,7 +2244,7 @@ msgid ""
 "      Keep also in mind that locking is deactivated,\n"
 "      so don't depend on the relevance to the real current situation!\n"
 msgstr ""
-"OBSERVERA: Detta är endast en simulation!\n"
+"OBSERVERA: Detta är endast en simulering!\n"
 "           %s behöver root-privilegier för verklig körning.\n"
 "           Tänk också på att låsningen är inaktiverad, så\n"
 "           förlita dig inte på relevansen till den verkliga situationen!\n"
@@ -2299,50 +2318,40 @@ msgid "The following packages have unmet dependencies:"
 msgstr "Följande paket har beroenden som inte kan tillfredsställas:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Failed to satisfy %s dependency for %s: %s"
 msgid "Unsatisfied dependencies:"
-msgstr "Misslyckades med att tillfredsställa %s-beroendet för %s: %s"
+msgstr "Otillfredsställda beroenden:"
 
 #: apt-private/private-output.cc
 msgid "The following NEW packages will be installed:"
 msgstr "Följande NYA paket kommer att installeras:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Installing %s"
 msgid "Installing:"
-msgstr "Installerar %s"
+msgstr "Installerar:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Total dependencies: "
 msgid "Installing dependencies:"
-msgstr "Totalt antal beroenden: "
+msgstr "Installerar beroenden:"
 
 #: apt-private/private-output.cc
 msgid "REMOVING:"
-msgstr ""
+msgstr "TAR BORT:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be REMOVED:"
 msgstr "Följande paket kommer att TAS BORT:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "The following upgrades have been deferred due to phasing:"
-msgstr "Följande paket har hållits tillbaka:"
+msgstr "Följande uppgraderingar har skjutits upp på grund av fasning:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "The following packages have been kept back:"
 msgid "Not upgrading yet due to phasing:"
-msgstr "Följande paket har hållits tillbaka:"
+msgstr "Uppgraderar inte ännu på grund av fasning:"
 
 #: apt-private/private-output.cc
 msgid "Not upgrading:"
-msgstr ""
+msgstr "Uppgraderar inte:"
 
 #: apt-private/private-output.cc
 msgid "The following packages have been kept back:"
@@ -2354,21 +2363,19 @@ msgstr "Följande paket kommer att uppgraderas:"
 
 #: apt-private/private-output.cc
 msgid "Upgrading:"
-msgstr ""
+msgstr "Uppgraderar:"
 
 #: apt-private/private-output.cc
 msgid "DOWNGRADING:"
-msgstr ""
+msgstr "NEDGRADERAR:"
 
 #: apt-private/private-output.cc
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Följande paket kommer att NEDGRADERAS:"
 
 #: apt-private/private-output.cc
-#, fuzzy
-#| msgid "Pinned packages:"
 msgid "Changing held packages:"
-msgstr "Fastnålade paket:"
+msgstr "Ändrar kvarhållna paket:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
@@ -2389,7 +2396,7 @@ msgstr ""
 
 #: apt-private/private-output.cc
 msgid "Summary:"
-msgstr ""
+msgstr "Sammanfattning:"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2397,10 +2404,9 @@ msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu att uppgradera, %lu att nyinstallera, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Upgrading: %lu, Installing: %lu, "
-msgstr "Installerar %s"
+msgstr "Uppgraderar: %lu, Installerar: %lu,"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2408,10 +2414,9 @@ msgid "%lu reinstalled, "
 msgstr "%lu att installera om, "
 
 #: apt-private/private-output.cc
-#, fuzzy, c-format
-#| msgid "Installing %s"
+#, c-format
 msgid "Reinstalling: %lu, "
-msgstr "Installerar %s"
+msgstr "Ominstallerar: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2421,7 +2426,7 @@ msgstr "%lu att nedgradera, "
 #: apt-private/private-output.cc
 #, c-format
 msgid "Downgrading: %lu, "
-msgstr ""
+msgstr "Nedgraderar: %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2431,7 +2436,7 @@ msgstr "%lu att ta bort och %lu att inte uppgradera.\n"
 #: apt-private/private-output.cc
 #, c-format
 msgid "Removing: %lu, Not Upgrading: %lu\n"
-msgstr ""
+msgstr "Tar bort: %lu, Uppgraderar inte: %lu\n"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2501,7 +2506,7 @@ msgstr "Fastnålade paket:"
 #: apt-private/private-show.cc
 #, c-format
 msgid "%s -> %s with priority %d\n"
-msgstr ""
+msgstr "%s -> %s med prioritet %d\n"
 
 #: apt-private/private-show.cc
 msgid "  Installed: "
@@ -2522,7 +2527,7 @@ msgstr "  Versionstabell:"
 
 #: apt-private/private-show.cc
 msgid "phased"
-msgstr ""
+msgstr "fasad"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -2655,6 +2660,7 @@ msgstr "Du måste ange minst ett paket att kontrollera byggberoenden för"
 msgid ""
 "Invalid operator '%c' at offset %d, did you mean '%c%c' or '%c='? - in: %s"
 msgstr ""
+"Ogiltig operator ”%c” vid offset %d, menade du ”%c%c” eller ”%c=”? - i: %s"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -2686,10 +2692,9 @@ msgid "Rewrite %zu sources?"
 msgstr ""
 
 #: apt-private/private-unmet.cc
-#, fuzzy, c-format
+#, c-format
 msgid "Package %s version %s has an unmet dep:\n"
-msgstr ""
-"Paketet %s med version %s har ett beroende som inte kan tillfredsställas:\n"
+msgstr "Paketet %s med version %s har ett otillfredsställt beroende:\n"
 
 #: apt-private/private-update.cc
 msgid "The update command takes no arguments"
@@ -2702,6 +2707,8 @@ msgid ""
 "Usage of %s should be preferred over embedding login information directly in "
 "the %s entry for '%s'"
 msgstr ""
+"Det rekommenderas att använda %s istället för att bädda in "
+"inloggningsinformation direkt i %s-posten för ”%s”"
 
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
@@ -2713,7 +2720,7 @@ msgstr ""
 #: apt-private/private-update.cc
 #, c-format
 msgid "Missing Signed-By in the %s entry for '%s'"
-msgstr ""
+msgstr "Saknad Signed-By i %s-posten för ”%s”"
 
 #: apt-private/private-update.cc
 msgid ""
@@ -2727,8 +2734,14 @@ msgid ""
 msgstr ""
 
 #: apt-private/private-update.cc
+#, fuzzy
+#| msgid ""
+#| "See apt-secure(8) manpage for repository creation and user configuration "
+#| "details."
 msgid "See apt-secure(8) for best practices in configuring repository signing."
 msgstr ""
+"Se manualsidan apt-secure(8) för detaljer om att skapa förråd och "
+"användarkonfiguration."
 
 #: apt-private/private-update.cc
 msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
@@ -2749,9 +2762,9 @@ msgid "All packages are up to date."
 msgstr "Alla paket är uppdaterade."
 
 #: cmdline/apt-cache.cc cmdline/apt-mark.cc
-#, fuzzy, c-format
+#, c-format
 msgid "%s does not take any arguments"
-msgstr "Uppdateringskommandot tar inga argument"
+msgstr "%s tar inga argument"
 
 #: cmdline/apt-cache.cc
 msgid "Total package names: "
@@ -2833,6 +2846,15 @@ msgid ""
 "too long ago, but in exchange apt-cache works independently of the\n"
 "availability of the configured sources (e.g. offline).\n"
 msgstr ""
+"Användning: apt-cache [flaggor] kommando\n"
+"            apt-cache [flaggor] show paket1 [paket2 …]\n"
+"\n"
+"apt-cache efterfrågar och visar tillgänglig information om installerade\n"
+"och installerbara paket. Det jobbar helt och hållet på data hämtat till\n"
+"den lokala cachen med kommandot ”update” i t.ex. apt-get. Den visade\n"
+"information kan därför vara föråldrad och den senaste uppdateringen\n"
+"gjordes för länge sedan, men apt-cache fungerar däremot oavsett om de\n"
+"konfigurerade källorna är tillgängliga (t.ex. utan nätverk).\n"
 
 #: cmdline/apt-cache.cc
 msgid "Show source records"
@@ -2901,13 +2923,17 @@ msgid ""
 "media types as package sources to APT. The mount point and device\n"
 "information is taken from apt.conf(5), udev(7) and fstab(5).\n"
 msgstr ""
+"Användning: apt-cdrom [flaggor] kommando\n"
+"\n"
+"apt-cdrom används för att lägga till CDROM:ar, USB-minnen och andra\n"
+"borttagbara mediatyper som paketkällor för APT. Monteringspunkten\n"
+"och enhetsinformationen hämtas från apt.conf(5), udev(7) och fstab(5).\n"
 
 #: cmdline/apt-config.cc
 msgid "Arguments not in pairs"
 msgstr "Argumenten gavs inte parvis"
 
 #: cmdline/apt-config.cc
-#, fuzzy
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
@@ -2916,15 +2942,17 @@ msgid ""
 msgstr ""
 "Användning: apt-config [flaggor] kommando\n"
 "\n"
-"apt-config är ett enkelt verktyg för att läsa APTs konfigurationsfil\n"
+"apt-config är ett gränssnitt mot konfigurationsinställningarna som\n"
+"används av alla APT-verktyg, huvudsakligen tänkt för felsökning\n"
+"och skalskript.\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
-msgstr ""
+msgstr "hämta konfigurationsvärden via skalutvärdering"
 
 #: cmdline/apt-config.cc
 msgid "show the active configuration setting"
-msgstr ""
+msgstr "visa aktiv konfigurationsinställning"
 
 #: cmdline/apt-dump-solver.cc
 msgid ""
@@ -2933,9 +2961,12 @@ msgid ""
 "apt-dump-solver is an interface to store an EDSP scenario in\n"
 "a file and optionally forwards it to another solver.\n"
 msgstr ""
+"Användning: apt-dump-solver\n"
+"\n"
+"apt-dump-solver är ett gränssnitt för att lagra ett EDSP-scenario\n"
+"i en fil och möjligen vidaresända den till en annan lösare.\n"
 
 #: cmdline/apt-extracttemplates.cc
-#, fuzzy
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -2945,14 +2976,10 @@ msgid ""
 msgstr ""
 "Användning: apt-extracttemplates fil1 [fil2 …]\n"
 "\n"
-"apt-extracttemplates är ett verktyg för att hämta ut konfigurations- \n"
-"och mallinformation från paket\n"
-"\n"
-"Flaggor:\n"
-"  -h   Denna hjälptext.\n"
-"  -t   Ställ in temporärkatalogen.\n"
-"  -c=? Läs denna konfigurationsfil.\n"
-"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
+"apt-extracttemplates används för att hämta ut konfigurations- \n"
+"och mallfiler från debianpaket. Det används huvudsakligen av\n"
+"debconf(1) för att ställa konfigurationsfrågor innan paket\n"
+"installeras.\n"
 
 #: cmdline/apt-extracttemplates.cc
 msgid "Cannot get debconf version. Is debconf installed?"
@@ -2985,7 +3012,6 @@ msgid "Supported modules:"
 msgstr "Moduler som stöds:"
 
 #: cmdline/apt-get.cc
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -2997,11 +3023,12 @@ msgid ""
 "with their dependencies.\n"
 msgstr ""
 "Användning: apt-get [flaggor] kommando\n"
-"       apt-get [flaggor] install|remove paket1 [paket2 …]\n"
-"       apt-get [flaggor] source paket1 [paket2 …]\n"
+"            apt-get [flaggor] install|remove paket1 [paket2 …]\n"
+"            apt-get [flaggor] source paket1 [paket2 …]\n"
 "\n"
-"apt-get är ett enkelt kommandoradsgränssnitt för att hämta och installera\n"
-"paket. De mest använda kommandona är ”update” och ”install”.\n"
+"apt-get är ett kommandoradsgränssnitt för att hämta paket\n"
+"och installation om dem från autentiserade källor och för att\n"
+"installera, uppgradera och ta bort paket och deras beroenden.\n"
 
 #: cmdline/apt-get.cc
 msgid "Retrieve new lists of packages"
@@ -3016,10 +3043,8 @@ msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr "Installera nya paket (paket är libc6, inte libc6.deb)"
 
 #: cmdline/apt-get.cc
-#, fuzzy
-#| msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
-msgstr "Installera nya paket (paket är libc6, inte libc6.deb)"
+msgstr "Ominstallera paket (paket är libc6, inte libc6.deb)"
 
 #: cmdline/apt-get.cc
 msgid "Remove packages"
@@ -3046,10 +3071,8 @@ msgid "Configure build-dependencies for source packages"
 msgstr "Tillfredsställ byggberoenden för källkodspaket"
 
 #: cmdline/apt-get.cc
-#, fuzzy
-#| msgid "Building dependency tree"
 msgid "Satisfy dependency strings"
-msgstr "Bygger beroendeträd"
+msgstr "Uppfyll beroendesträngar"
 
 #: cmdline/apt-get.cc
 msgid "Erase downloaded archive files"
@@ -3090,10 +3113,9 @@ msgstr "Hämtning misslyckades"
 #: cmdline/apt-helper.cc
 #, c-format
 msgid "GetSrvRec failed for %s"
-msgstr ""
+msgstr "GetSrvRec misslyckades för %s"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] cat-file file ...\n"
@@ -3103,9 +3125,12 @@ msgid ""
 "e.g. the same proxy configuration or acquire system as APT would.\n"
 msgstr ""
 "Användning: apt-helper [flaggor] kommando\n"
-"       apt-helper [flaggor] download-file uri målsökväg\n"
+"            apt-helper [flaggor] cat-file file …\n"
+"            apt-helper [flaggor] download-file uri målsökväg\n"
 "\n"
-"apt-helper är en intern hjälpare för apt\n"
+"apt-helper innehåller flera olika kommandon som kan användas av\n"
+"skalskript för att t.ex använda samma mellanserverinställningar\n"
+"eller hämtningssystem som APT.\n"
 
 #: cmdline/apt-helper.cc
 msgid "download the given uri to the target-path"
@@ -3113,11 +3138,11 @@ msgstr "hämta angiven uri till målsökvägen"
 
 #: cmdline/apt-helper.cc
 msgid "lookup a SRV record (e.g. _http._tcp.ftp.debian.org)"
-msgstr ""
+msgstr "slå upp en SRV-post (t.ex. _http._tcp.ftp.debian.org)"
 
 #: cmdline/apt-helper.cc
 msgid "concatenate files, with automatic decompression"
-msgstr ""
+msgstr "slå ihop filer, med automatisk dekomprimering"
 
 #: cmdline/apt-helper.cc
 #, fuzzy
@@ -3131,18 +3156,17 @@ msgstr "hitta proxy med hjälp av apt.conf"
 
 #: cmdline/apt-helper.cc
 msgid "wait for system to be online"
-msgstr ""
+msgstr "vänta på att systemet ansluter till nätverket"
 
 #: cmdline/apt-helper.cc
 msgid "drop privileges before running given command"
-msgstr ""
+msgstr "släpp privilegier innan angivet kommando körs"
 
 #: cmdline/apt-helper.cc
 msgid "analyse a pattern"
-msgstr ""
+msgstr "analysera ett mönster"
 
 #: cmdline/apt-internal-planner.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-planner\n"
 "\n"
@@ -3150,20 +3174,13 @@ msgid ""
 "installation planner for the APT family like an external one,\n"
 "for debugging or the like.\n"
 msgstr ""
-"Användning: apt-internal-solver\n"
+"Användning: apt-internal-planner\n"
 "\n"
-"apt-internal-solver är ett gränssnitt för att använda den interna\n"
-"lösaren som en extern lösare för APT-familjen för felsökning eller\n"
-"liknande\n"
-"\n"
-"Flaggor:\n"
-"  -h   Denna hjälptext.\n"
-"  -q  Loggbar utmatning - ingen förloppsindikator\n"
-"  -c=? Läs denna konfigurationsfil.\n"
-"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
+"apt-internal-planner är ett gränssnitt för att använda den aktuella\n"
+"interna installationsplaneraren för APT-familjen på samma sätt som\n"
+"en extern, för felsökning eller liknande.\n"
 
 #: cmdline/apt-internal-solver.cc
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -3173,15 +3190,9 @@ msgid ""
 msgstr ""
 "Användning: apt-internal-solver\n"
 "\n"
-"apt-internal-solver är ett gränssnitt för att använda den interna\n"
-"lösaren som en extern lösare för APT-familjen för felsökning eller\n"
-"liknande\n"
-"\n"
-"Flaggor:\n"
-"  -h   Denna hjälptext.\n"
-"  -q  Loggbar utmatning - ingen förloppsindikator\n"
-"  -c=? Läs denna konfigurationsfil.\n"
-"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
+"apt-internal-solver är ett gränssnitt för att använda den aktuella\n"
+"interna lösaren för APT-familjen på samma sätt som en extern, för\n"
+"felsökning eller liknande.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -3200,13 +3211,11 @@ msgstr "%s var redan satt till automatiskt installerad.\n"
 
 #: cmdline/apt-mark.cc
 msgid "No changes necessary"
-msgstr ""
+msgstr "Inga ändringar nödvändiga"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
-#| msgid "The following NEW packages will be installed:"
 msgid "The following packages will be marked as automatically installed:"
-msgstr "Följande NYA paket kommer att installeras:"
+msgstr "Följande paket kommer markeras som automatiskt installerade:"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -3235,20 +3244,19 @@ msgstr "Avbröt tillbakahållning av %s.\n"
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for purge.\n"
-msgstr ""
+msgstr "Valde ”%s” för radering.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for removal.\n"
-msgstr ""
+msgstr "Valde ”%s” för borttagning.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Selected %s for installation.\n"
-msgstr ""
+msgstr "Valde ”%s” för installation.\n"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -3261,7 +3269,8 @@ msgstr ""
 "\n"
 "apt-mark är ett enkelt kommandoradsgränssnitt för att markera\n"
 "paket som manuellt eller automatiskt installerade. Det kan också\n"
-"lista markeringar.\n"
+"användas för att ändra dpkg(1)-markeringsläge för paket, och\n"
+"för att lista alla paket med eller utan vissa markeringar.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Mark the given packages as automatically installed"
@@ -3272,10 +3281,8 @@ msgid "Mark the given packages as manually installed"
 msgstr "Markera de angivna paketen som manuellt installerade"
 
 #: cmdline/apt-mark.cc
-#, fuzzy
-#| msgid "Mark the given packages as automatically installed"
 msgid "Mark all dependencies of meta packages as automatically installed."
-msgstr "Markera de angivna paketen som automatiskt installerade"
+msgstr "Markera alla beroenden för metapaket som automatiskt installerade."
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
@@ -3309,6 +3316,12 @@ msgid ""
 "By default it sorts by binary package information, but the -s option\n"
 "can be used to switch to source package ordering instead.\n"
 msgstr ""
+"Användning: apt-sortpkgs [flaggor] fil1 [fil2 …]\n"
+"\n"
+"apt-sortpkgs är ett enkelt verktyg för att sortera paket-\n"
+"informationsfiler. Som standard sorterar det efter binär\n"
+"paketinformation, men flaggan -s kan användas för att byta till\n"
+"källkodspaketsortering istället.\n"
 
 #: cmdline/apt.cc
 msgid ""
@@ -3320,6 +3333,13 @@ msgid ""
 "like apt-get and apt-cache, but enables options more suitable for\n"
 "interactive use by default.\n"
 msgstr ""
+"Användning: apt [flaggor] kommando\n"
+"\n"
+"apt är ett kommandoradspakethanterare och tillhandahåller kommandon\n"
+"för att söka och hantera såväl som efterfråga information om paket.\n"
+"Det tillhandahåller samma funktionalitet som de specialiserade\n"
+"APT-verktygen, såsom apt-get och apt-cache, men tillhandahåller\n"
+"som standard flaggor som är mer lämpliga för att användas interaktivt.\n"
 
 #. query
 #: cmdline/apt.cc
@@ -3340,20 +3360,16 @@ msgid "install packages"
 msgstr "installera paket"
 
 #: cmdline/apt.cc
-#, fuzzy
-#| msgid "install packages"
 msgid "reinstall packages"
-msgstr "installera paket"
+msgstr "ominstallera paket"
 
 #: cmdline/apt.cc
 msgid "remove packages"
 msgstr "ta bort paket"
 
 #: cmdline/apt.cc
-#, fuzzy
-#| msgid "Remove automatically all unused packages"
 msgid "automatically remove all unused packages"
-msgstr "Ta automatiskt bort alla oanvända paket"
+msgstr "ta automatiskt bort alla oanvända paket"
 
 #. system wide stuff
 #: cmdline/apt.cc
@@ -3378,10 +3394,8 @@ msgid "modernize .list files to .sources files"
 msgstr ""
 
 #: cmdline/apt.cc
-#, fuzzy
-#| msgid "Failed to satisfy %s dependency for %s: %s"
 msgid "satisfy dependency strings"
-msgstr "Misslyckades med att tillfredsställa %s-beroendet för %s: %s"
+msgstr "tillfredsställ beroendesträngar"
 
 #: dselect/install
 msgid "Bad default setting!"
@@ -3404,8 +3418,7 @@ msgstr "Det uppstod fel vid uppackning. Paketen som blev installerade kommer"
 
 #: dselect/install
 msgid "will be configured. This may result in duplicate errors"
-msgstr ""
-"att konfigureras. Detta kan resultera i dubbletta fel eller fel orsakade"
+msgstr "att konfigureras. Detta kan resultera i dubblettfel eller fel orsakade"
 
 #: dselect/install
 msgid "or errors caused by missing dependencies. This is OK, only the errors"
@@ -3705,25 +3718,29 @@ msgid "Archive had no package field"
 msgstr "Arkivet har inget package-fält"
 
 #: ftparchive/writer.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid "  %s has no override entry\n"
 msgid "  %.*s has no override entry\n"
-msgstr "  %.*s har ingen post i åsidosättningsfilen\n"
+msgstr "  %s har ingen post i åsidosättningsfilen\n"
 
 # parametrar: paket, ny, gammal
 #: ftparchive/writer.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid "  %s maintainer is %s not %s\n"
 msgid "  %.*s maintainer is %.*s not %s\n"
-msgstr "  ansvarig för paketet %.*s är %.*s ej %s\n"
+msgstr "  ansvarig för paketet %s är %s ej %s\n"
 
 #: ftparchive/writer.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid "  %s has no source override entry\n"
 msgid "  %.*s has no source override entry\n"
-msgstr "  %.*s har ingen källåsidosättningspost\n"
+msgstr "  %s har ingen källåsidosättningspost\n"
 
 #: ftparchive/writer.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid "  %s has no binary override entry either\n"
 msgid "  %.*s has no binary override entry either\n"
-msgstr "  %.*s har heller ingen binär åsidosättningspost\n"
+msgstr "  %s har heller ingen binär åsidosättningspost\n"
 
 #: methods/basehttp.cc
 msgid "Waiting for headers"
@@ -3764,7 +3781,7 @@ msgstr "Anslutningen misslyckades"
 #: methods/basehttp.cc methods/http.cc
 #, c-format
 msgid "File has unexpected size (%llu != %llu). Mirror sync in progress?"
-msgstr ""
+msgstr "Filen har oväntad storlek (%llu != %llu). Spegelsynkning pågår?"
 
 #: methods/basehttp.cc
 #, c-format
@@ -3813,7 +3830,7 @@ msgstr "Filen hittades inte"
 #: methods/connect.cc
 #, c-format
 msgid "Direct connection to %s domains is blocked by default."
-msgstr ""
+msgstr "Direkt anslutning till %s-domäner blockeras som standard."
 
 #: methods/connect.cc
 #, c-format
@@ -3821,10 +3838,9 @@ msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
 
 #: methods/connect.cc
-#, fuzzy, c-format
-#| msgid "Connecting to %s (%s)"
+#, c-format
 msgid "Connected to %s (%s)"
-msgstr "Ansluter till %s (%s)"
+msgstr "Ansluten till %s (%s)"
 
 #: methods/connect.cc methods/http.cc
 #, c-format
@@ -3899,7 +3915,7 @@ msgstr "Ogiltig URI, lokala URI:er får inte börja med //"
 #: methods/gpgv.cc
 #, c-format
 msgid "untrusted public key algorithm: %s"
-msgstr ""
+msgstr "obetrodd algoritm för öppen nyckel: %s"
 
 #: methods/gpgv.cc
 #, c-format
@@ -3908,12 +3924,11 @@ msgstr ""
 
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: methods/gpgv.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Signed file isn't valid, got '%s' (does the network require authentication?)"
 msgstr ""
-"Klartextsignerad fil är inte giltig, fick ”%s” (kräver nätverket "
-"autentisering?)"
+"Signerad fil är inte giltig, fick ”%s” (kräver nätverket autentisering?)"
 
 #: methods/gpgv.cc
 msgid "At least one invalid signature was encountered."
@@ -3927,24 +3942,19 @@ msgstr ""
 "fingeravtryck?!"
 
 #: methods/gpgv.cc
-#, fuzzy
-#| msgid ""
-#| "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgid "Could not execute 'gpgv' to verify signature (is gnupg installed?)"
 msgstr ""
-"Kunde inte köra ”apt-key” för att verifiera signatur (är gnupg installerad?)"
+"Kunde inte köra ”gpgv” för att verifiera signatur (är gnupg installerad?)"
 
 #: methods/gpgv.cc
-#, fuzzy
-#| msgid "Unknown error executing apt-key"
 msgid "Unknown error executing gpgv"
-msgstr "Okänt fel vid körning av apt-key"
+msgstr "Okänt fel vid körning av gpgv"
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
 #, c-format
 msgid "Signature by key %s uses weak algorithm (%s)"
-msgstr ""
+msgstr "Signaturen för nyckeln %s använder en svag algoritm (%s)"
 
 #: methods/gpgv.cc
 msgid "The following signatures were invalid:\n"
@@ -3989,6 +3999,16 @@ msgstr "Misslyckades med att ställa in ändringstid"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomma filer kan inte vara giltiga arkiv"
+
+#, c-format
+#~ msgid ""
+#~ "The method '%s' is unsupported and disabled by default. Consider "
+#~ "switching to http(s). Set Dir::Bin::Methods::%s to \"%s\" to enable it "
+#~ "again."
+#~ msgstr ""
+#~ "Metoden ”%s” stöds inte och har inaktiverats som standard. Överväg att "
+#~ "byta till http(s). Sätt Dir::Bin::Methods::%s till ”%s” för att aktivera "
+#~ "det igen."
 
 #~ msgid "Logging in"
 #~ msgstr "Loggar in"
@@ -4094,16 +4114,22 @@ msgstr "Tomma filer kan inte vara giltiga arkiv"
 #~ msgid "Unable to invoke "
 #~ msgstr "Kunde inte starta "
 
+#, c-format
+#~ msgid ""
+#~ "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
+#~ "section in apt-key(8) for details."
+#~ msgstr ""
+#~ "Nyckel lagras i den gamla nyckelringen trusted.gpg (%s), se DEPRECATION-"
+#~ "stycket i apt-key(8) för detaljer."
+
 #~ msgid "Connection closed prematurely"
 #~ msgstr "Anslutningen stängdes i förtid"
 
 #, fuzzy, c-format
-#~| msgid "  Installed: "
 #~ msgid "  Installed size: %sB\n"
 #~ msgstr "  Installerad: "
 
 #, fuzzy
-#~| msgid "The following held packages will be changed:"
 #~ msgid "Changing held packages:Changing held packages:"
 #~ msgstr "Följande tillbakahållna paket kommer att ändras:"
 
