@@ -1,3 +1,39 @@
+apt (2.9.29) unstable; urgency=medium
+
+  [ Helge Kreutzmann ]
+  * German program translation update (Closes: #1052411)
+  * German program translation update (Closes: #1095681)
+
+  [ Frans Spiesschaert ]
+  * Dutch program translation update (Closes: #1095409)
+  * Dutch manpages translation update (Closes: #1095411)
+
+  [ Jean-Pierre Giraud ]
+  * French manpage translation update (Closes: #1088326, #1050876)
+
+  [ Arnaud Rebillout ]
+  * test: Fix skipping test cases
+
+  [ Peter Krefting ]
+  * Swedish program translation update (Closes: #1070029)
+
+  [ Julian Andres Klode ]
+  * Add DepIterator::IsSatisfied(PkgIterator)
+  * test: Support comments in --skip/--only files
+  * Major 3.0 solver update, improving version selection, unit propagation,
+    and as a result significantly performance (2x for apt-tests). Also new:
+    - Phased updates are now supported
+    - The number of broken test cases is down from 31 to 9
+    - dist-upgrade now installs Essential packages
+    - The order of alternatives in or groups is now better preserved
+    - Recommends for upgrades of installed dependencies are now upgraded
+      to Depends if they are new or previously satisfied; to avoid breaking
+      Recommends or introducing unsatisfied Recommends in an upgrade.
+    - A time out of 10s has been added that is checked whenever the solver
+      backtracks to prevent practically infinite runtime.
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 14 Feb 2025 19:42:43 +0100
+
 apt (2.9.28) unstable; urgency=medium
 
   [ Julian Andres Klode ]
