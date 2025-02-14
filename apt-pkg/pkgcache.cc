@@ -776,6 +776,13 @@ bool pkgCache::DepIterator::IsIgnorable(PrvIterator const &Prv) const
 }
 									/*}}}*/
 // DepIterator::IsSatisfied - check if a version satisfied the dependency /*{{{*/
+bool pkgCache::DepIterator::IsSatisfied(PkgIterator const &Pkg) const
+{
+   for (auto ver = Pkg.VersionList(); not ver.end(); ++ver)
+      if (not IsSatisfied(ver))
+	 return false;
+   return not Pkg.VersionList().end();
+}
 bool pkgCache::DepIterator::IsSatisfied(VerIterator const &Ver) const
 {
    return Owner->VS->CheckDep(Ver.VerStr(),S2->CompareOp,TargetVer());

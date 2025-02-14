@@ -2496,7 +2496,7 @@ static bool MarkPackage(pkgCache::PkgIterator const &Pkg,
 // pkgDepCache::MarkRequired - the main mark algorithm			/*{{{*/
 bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 {
-   if (_config->Find("APT::Solver", "internal") != "internal")
+   if (_config->Find("APT::Solver", "internal") != "internal" && _config->Find("APT::Solver") != "3.0")
       return true;
 
    // init the states

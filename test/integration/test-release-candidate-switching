@@ -117,6 +117,8 @@ Need to get 0 B/252 B of archives.
 After this operation, 258 kB of additional disk space will be used.
 E: Trivial Only specified but this is not a trivial operation." aptget install amarok/experimental --trivial-only -V
 
+phonon_backend_default="phonon-backend-null (4:4.20.0+sid)"
+[ "$APT_SOLVER" != "3.0" ] || phonon_backend_default="phonon-backend-xine (4:4.6.0really4.4.2-1+sid)"
 testfailureequal "Reading package lists...
 Building dependency tree...
 Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-null'
@@ -127,14 +129,14 @@ The following additional packages will be installed:
    amarok-utils (2.3.2-2+exp)
    libc6 (2.11.2-7+sid)
    libmtp8 (0.3.1+sid)
-   phonon-backend-null (4:4.20.0+sid)
+   $phonon_backend_default
 The following NEW packages will be installed:
    amarok-common (2.3.2-2+exp)
    amarok-null (2.3.2-2+exp)
    amarok-utils (2.3.2-2+exp)
    libc6 (2.11.2-7+sid)
    libmtp8 (0.3.1+sid)
-   phonon-backend-null (4:4.20.0+sid)
+   $phonon_backend_default
 0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
 Need to get 0 B/252 B of archives.
 After this operation, 258 kB of additional disk space will be used.
@@ -431,7 +433,23 @@ The following information may help to resolve the situation:
 The following packages have unmet dependencies:
  uninstallablepkg : Depends: libmtp8 (>= 10:0.20.1) but it is not going to be installed
                     Depends: amarok-utils (= 2.3.2-2+exp) but 2.3.1-1+sid is to be installed
-E: Unable to correct problems, you have held broken packages." aptget install uninstallablepkg/experimental --trivial-only -V
+E: Unable to correct problems, you have held broken packages." aptget install uninstallablepkg/experimental --trivial-only -V --solver internal
+
+# if one depends doesn't work, we don't need to look deeper… (solver3 version)
+testfailureequal "Reading package lists...
+Building dependency tree...
+Selected version '1.0' (experimental [all]) for 'uninstallablepkg'
+Solving dependencies...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ uninstallablepkg : Depends: libmtp8 (>= 10:0.20.1) but it is not going to be installed
+                    Depends: amarok-utils (= 2.3.2-2+exp) but it is not going to be installed
+E: Unsatisfiable dependency group uninstallablepkg:i386 -> libmtp8:i386" aptget install uninstallablepkg/experimental --trivial-only -V --solver 3.0
 
 insertinstalledpackage 'libmtp8' 'i386'  '1'
 insertinstalledpackage 'amarok' 'i386' '3' 'Depends: amarok-common (= 3), libmtp8 (>= 1)'

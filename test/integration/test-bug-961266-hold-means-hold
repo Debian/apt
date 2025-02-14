@@ -75,7 +75,21 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  git-ng : Depends: git (> 1:2.26.2)
-E: Unable to correct problems, you have held broken packages.' apt install git-ng -s
+E: Unable to correct problems, you have held broken packages.' apt install git-ng -s --solver internal
+
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Solving dependencies...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ git-ng : Depends: git (> 1:2.26.2)
+E: Conflict: git:amd64=1:2.25.1-1 -> not git:amd64=1:2.26.2-1 -> not git-ng:amd64 but git-ng:amd64=1:2.26.2-1 -> git-ng:amd64' apt install git-ng -s --solver 3.0
 
 
 msgmsg 'Now mix it up by' 'holding git-cvs'
@@ -98,7 +112,21 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  git-cvs : Depends: git (< 1:2.25.1-.)
-E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.' apt install git-ng -s
+E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.' apt install git-ng -s --solver internal
+
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Solving dependencies...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ git-ng : Depends: git (> 1:2.26.2)
+E: Conflict: git-cvs:amd64=1:2.25.1-1 -> git:amd64=1:2.25.1-1 -> not git:amd64=1:2.26.2-1 but git-ng:amd64=1:2.26.2-1 -> git-ng:amd64 -> git:amd64=1:2.26.2-1' apt install git-ng -s --solver 3.0
 
 
 msgmsg 'Now mix it up by' 'holding both'
@@ -121,4 +149,17 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  git-ng : Depends: git (> 1:2.26.2)
-E: Unable to correct problems, you have held broken packages.' apt install git-ng -s
+E: Unable to correct problems, you have held broken packages.' apt install git-ng -s --solver internal
+
+testfailureequal 'Reading package lists...
+Building dependency tree...
+Solving dependencies...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ git-ng : Depends: git (> 1:2.26.2)
+E: Conflict: git:amd64=1:2.25.1-1 -> not git:amd64=1:2.26.2-1 -> not git-ng:amd64 but git-ng:amd64=1:2.26.2-1 -> git-ng:amd64' apt install git-ng -s --solver 3.0

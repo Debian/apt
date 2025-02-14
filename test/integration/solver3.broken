@@ -1,31 +1,9 @@
-test-allow-scores-for-all-dependency-types
-test-apt-get-autoremove
-test-apt-get-autoremove-kernel-module-providers
-test-apt-get-upgrade-by-source
-test-apt-install-file-reltag
-test-apt-install-order-matters-a-bit
-test-apt-move-and-forget-manual-sections
-test-apt-patterns
-test-bug-470115-new-and-tighten-recommends
-test-bug-602412-dequote-redirect
-test-bug-611729-mark-as-manual
-test-bug-675449-essential-are-protected
-test-bug-745046-candidate-propagation-fails
-test-bug-753297-upgradable
-test-bug-767891-force-essential-important
-test-bug-961266-hold-means-hold
-test-dont-forget-conflicts-via-unknown-architectures
-test-explore-or-groups-in-markinstall
-test-external-dependency-solver-protocol
-test-method-mirror
-test-parse-all-archs-into-cache
-test-phased-updates-new-depends
-test-phased-updates-upgrade
-test-prevent-markinstall-multiarch-same-versionscrew
-test-release-candidate-switching
-test-resolve-by-keep-new-recommends
-test-resolve-by-keep-obsolete-removals
-test-ubuntu-bug-1304403-obsolete-priority-standard
-test-ubuntu-bug-1990586
-test-ubuntu-bug-2025462-phased-dist-upgrade
-test-ubuntu-bug-614993
+test-allow-scores-for-all-dependency-types                  # TBD: We are lacking single-sided conflicts preferences
+test-apt-get-upgrade-by-source                              # TBD: Upgrading by source is not supported yet, mostly same issue as above
+test-apt-install-order-matters-a-bit                        # Wontfix: Cannot fix, the order is not recorded in the depcache
+test-apt-move-and-forget-manual-sections                    # TBD: Moving the auto bit is not implemented
+test-bug-470115-new-and-tighten-recommends                  # TBD: Calculation of what is already satisfied Recommends is broken
+test-prevent-markinstall-multiarch-same-versionscrew        # TBD: We consider the skewed ones obsolete and remove them...
+test-resolve-by-keep-new-recommends                         # TBD: Fixing this seems to break test-bug-591882-conkeror, why?
+test-resolve-by-keep-obsolete-removals                      # TBD: ResolveByKeep() usage is badly aligned here
+test-ubuntu-bug-1304403-obsolete-priority-standard          # TBD: Solver3 here happily removes 10 deps to upgrade a package

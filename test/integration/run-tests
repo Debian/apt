@@ -61,7 +61,7 @@ if [ -n "$TESTTORUN" ]; then
 	CURRENTTRAP="rm -f \"$OUTPUT\"; $CURRENTTRAP"
 	trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 	{
-		if [ "$APT_SKIP_TEST_FILE" ] && grep -qFx "${TESTTORUN##*/}" "$APT_SKIP_TEST_FILE"; then
+		if [ "$APT_SKIP_TEST_FILE" ] &&  sed 's/ *#.*//' "$APT_SKIP_TEST_FILE" | grep -qFx "${TESTTORUN##*/}"; then
 			if [ "$MSGLEVEL" -le 2 ]; then
 				printf "${CTEST}Skip Testcase ${CHIGH}${TESTTORUN##*/}${CRESET}"
 			else
@@ -117,7 +117,7 @@ FAILED_TESTS=""
 DIR="$(readlink -f "$(dirname "$0")")"
 cd "$DIR"
 if [ -e "$TESTLIST" ]; then
-	TESTLIST="$(sort < "$TESTLIST" | sed 's#^#./#')"
+	TESTLIST="$(sort < "$TESTLIST" | sed 's#^#./#;s/ *#.*//')"
 else
 	TESTLIST="$(find . -mindepth 1 -maxdepth 1 -regex '^\./test-[^/]*$' | sort)"
 fi

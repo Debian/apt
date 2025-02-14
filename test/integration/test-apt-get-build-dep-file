@@ -160,7 +160,7 @@ cd ../..
 
 testfailureequal 'E: Must specify at least one package to check builddeps for' aptget build-dep
 testfailuremsg 'W: No architecture information available for armel. See apt.conf(5) APT::Architectures for setup
-E: Unsatisfiable dependency group builddeps:./foo-1.0:armel=1 -> debhelper:armel' aptget build-dep --simulate ./foo-1.0 -a armel --solver 3.0
+E: Unsatisfiable dependency group builddeps:./foo-1.0:armel -> debhelper:armel' aptget build-dep --simulate ./foo-1.0 -a armel --solver 3.0
 testfailureequal "Note, using directory './foo-1.0' to get the build dependencies
 Reading package lists...
 Building dependency tree...

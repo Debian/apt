@@ -14,6 +14,7 @@
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/edsp.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
 
@@ -192,8 +193,6 @@ class Solver
    // be able to iterate over the queued work and see if a choice would
    // invalidate any work.
    heap<Work> work{};
-   // \brief Whether RescoreWork() actually needs to rescore the work.
-   bool needsRescore{false};
 
    // \brief Backlog of solved work.
    //
@@ -205,51 +204,62 @@ class Solver
 
    // \brief Propagation queue
    std::queue<Var> propQ;
+   // \brief Discover variables
+   std::queue<Var> discoverQ;
 
    // \brief Current decision level.
    //
    // This is an index into the solved vector.
    std::vector<depth_type> choices{};
 
+   // \brief The time we called Solve()
+   time_t startTime;
+
+   EDSP::Request::Flags requestFlags;
    /// Various configuration options
+   std::string version{_config->Find("APT::Solver", "3.0")};
    // \brief Debug level
    int debug{_config->FindI("Debug::APT::Solver")};
    // \brief If set, we try to keep automatically installed packages installed.
-   bool KeepAuto{not _config->FindB("APT::Get::AutomaticRemove")};
+   bool KeepAuto{version == "3.0" || not _config->FindB("APT::Get::AutomaticRemove")};
    // \brief Determines if we are in upgrade mode.
-   bool IsUpgrade{_config->FindB("APT::Solver::Upgrade", false)};
+   bool IsUpgrade{_config->FindB("APT::Solver::Upgrade", requestFlags &EDSP::Request::UPGRADE_ALL)};
    // \brief If set, removals are allowed.
-   bool AllowRemove{_config->FindB("APT::Solver::Remove", true)};
+   bool AllowRemove{_config->FindB("APT::Solver::Remove", not(requestFlags & EDSP::Request::FORBID_REMOVE))};
    // \brief If set, removal of manual packages is allowed.
    bool AllowRemoveManual{AllowRemove && _config->FindB("APT::Solver::RemoveManual", false)};
    // \brief If set, installs are allowed.
-   bool AllowInstall{_config->FindB("APT::Solver::Install", true)};
+   bool AllowInstall{_config->FindB("APT::Solver::Install", not(requestFlags & EDSP::Request::FORBID_NEW_INSTALL))};
    // \brief If set, we use strict pinning.
    bool StrictPinning{_config->FindB("APT::Solver::Strict-Pinning", true)};
    // \brief If set, we install missing recommends and pick new best packages.
    bool FixPolicyBroken{_config->FindB("APT::Get::Fix-Policy-Broken")};
+   // \brief If set, we use strict pinning.
+   bool DeferVersionSelection{_config->FindB("APT::Solver::Defer-Version-Selection", true)};
+   // \brief If set, we use strict pinning.
+   int Timeout{_config->FindI("APT::Solver::Timeout", 10)};
 
    // \brief Discover a variable, translating the underlying dependencies to the SAT presentation
+   //
+   // This does a breadth-first search of the entire dependency tree of var,
+   // utilizing the discoverQ above.
    void Discover(Var var);
    // \brief Link a clause into the watchers
    void RegisterClause(Clause &&clause);
    // \brief Enqueue dependencies shared by all versions of the package.
    void RegisterCommonDependencies(pkgCache::PkgIterator Pkg);
 
-   // \brief Reject reverse dependencies. Must call std::make_heap() after.
-   [[nodiscard]] bool RejectReverseDependencies(pkgCache::VerIterator Ver);
    // \brief Translate an or group into a clause object
    [[nodiscard]] Clause TranslateOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason);
    // \brief Propagate all pending propagations
    [[nodiscard]] bool Propagate();
-   // \brief Propagate a rejection of a variable
-   [[nodiscard]] bool PropagateReject(Var var);
 
    // \brief Return the current depth (choices.size() with casting)
    depth_type depth()
    {
       return static_cast<depth_type>(choices.size());
    }
+   inline Var bestReason(Clause const *clause, Var var) const;
 
    public:
    // \brief Create a new decision level.
@@ -260,16 +270,14 @@ class Solver
    void UndoOne();
    // \brief Add work to our work queue.
    [[nodiscard]] bool AddWork(Work &&work);
-   // \brief Rescore the work after a reject or a pop
-   void RescoreWorkIfNeeded();
 
    // \brief Basic solver initializer. This cannot fail.
-   Solver(pkgCache &Cache, pkgDepCache::Policy &Policy);
+   Solver(pkgCache &Cache, pkgDepCache::Policy &Policy, EDSP::Request::Flags requestFlags);
 
    // Assume that the variable is decided as specified.
-   [[nodiscard]] bool Assume(Var var, bool decision, Var reason);
+   [[nodiscard]] bool Assume(Var var, bool decision, const Clause *reason = nullptr);
    // Enqueue a decision fact
-   [[nodiscard]] bool Enqueue(Var var, bool decision, Var reason);
+   [[nodiscard]] bool Enqueue(Var var, bool decision, const Clause *reason = nullptr);
 
    // \brief Apply the selections from the dep cache to the solver
    [[nodiscard]] bool FromDepCache(pkgDepCache &depcache);
@@ -333,7 +341,7 @@ struct APT::Solver::Var
    {
       return IsVersion == 0 && MapPtr == 0;
    }
-   bool operator==(Var const other)
+   bool operator==(Var const other) const
    {
       return IsVersion == other.IsVersion && MapPtr == other.MapPtr;
    }
@@ -440,7 +448,7 @@ struct APT::Solver::State
    // doesn't increase to unwind.
    //
    // Vars < 0 are package ID, reasons > 0 are version IDs.
-   Var reason{};
+   const Clause *reason{};
 
    // \brief The depth at which the decision has been taken
    depth_type depth{0};
@@ -458,6 +466,8 @@ struct APT::Solver::State
 
    // \brief Clauses owned by this package/version
    std::vector<std::unique_ptr<Clause>> clauses;
+   // \brief Reverse clauses, that is dependencies (or conflicts) from other packages on this one
+   std::vector<const Clause *> rclauses;
 };
 
 /**

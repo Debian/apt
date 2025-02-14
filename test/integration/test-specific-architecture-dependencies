@@ -194,7 +194,7 @@ The following NEW packages will be installed:
 Inst foo-depender (1 unstable [amd64])
 Conf foo-depender (1 unstable [amd64])' aptget install foo-depender -s
 
-testfailuremsg 'E: Unsatisfiable dependency group foo-depender:i386=1 -> foo:i386' aptget install foo-depender:i386 -s --solver 3.0
+testfailuremsg 'E: Unsatisfiable dependency group foo-depender:i386 -> foo:i386' aptget install foo-depender:i386 -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
@@ -313,7 +313,7 @@ Remv libold [1]
 Inst breaker-x64 (1 unstable [amd64])
 Conf breaker-x64 (1 unstable [amd64])' aptget install breaker-x64:amd64 -s
 
-testfailuremsg 'E: Unsatisfiable dependency group depender-x32:amd64=1 -> libc6:i386:any' aptget install depender-x32 -s --solver 3.0
+testfailuremsg 'E: Unsatisfiable dependency group depender-x32:amd64 -> libc6:i386:any' aptget install depender-x32 -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have

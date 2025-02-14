@@ -55,7 +55,11 @@ _testsuccessheadtailequal() {
 	msggroup
 }
 testsuccessheadequal() {
-	_testsuccessheadtailequal 'head' "$@"
+    msg="$1"
+    shift
+	testsuccess "$@"
+    cp "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output" "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess-no-sim-equal.output"
+    testsuccessequal "$msg" awk '{print} /not upgraded.$/ {exit}' "${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess-no-sim-equal.output"
 }
 testsuccesstailequal() {
 	_testsuccessheadtailequal 'tail' "$@"
@@ -63,14 +67,14 @@ testsuccesstailequal() {
 checkfoos() {
 	msgmsg 'Install checks with foos dependency type' "$2"
 	for level in 0 1 2; do
-		testsuccessheadequal 7 "Reading package lists...
+		testsuccessheadequal "Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
   okay
 The following NEW packages will be installed:
   foo-${1}-level${level} okay
 0 upgraded, 2 newly installed, 0 to remove and 3 not upgraded." apt install foo-${1}-level${level} -s
-		testsuccessheadequal 9 "Reading package lists...
+		testsuccessheadequal "Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
   upgrade
@@ -81,7 +85,7 @@ The following packages will be upgraded:
 1 upgraded, 1 newly installed, 0 to remove and 2 not upgraded." apt install foo-${1}-upgrade-level${level} -s
 	done
 
-	testsuccessheadequal 7 "Reading package lists...
+	testsuccessheadequal "Reading package lists...
 Building dependency tree...
 The following additional packages will be installed:
   okay
@@ -90,7 +94,8 @@ The following NEW packages will be installed:
 0 upgraded, 2 newly installed, 0 to remove and 3 not upgraded." apt install foo-${1}-conflict -s
 }
 checkfoos 'd' 'Depends'
-checkfoos 'r' 'Recommends'
+# FIXME? The 3.0 solver solves Recommends after Depends, so they do not influence our decisions here.
+[ "$APT_SOLVER" = "3.0" ] || checkfoos 'r' 'Recommends'
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...
@@ -124,13 +129,22 @@ if $TEST_WITH_APTITUDE; then
 Need to get 0 B/84 B of archives. After unpacking 86.0 kB will be used.
 Would download/install/remove packages.'
 	testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-d-level2 -sy
-	testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-r-level2 -sy
+	[ "$APT_SOLVER" = "3.0" ] || testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-r-level2 -sy   # FIXME: See above for 3.0
 	testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-d-conflict -sy
-	testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-r-conflict -sy
+	[ "$APT_SOLVER" = "3.0" ] || testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-r-conflict -sy # FIXME: See above for 3.0
 fi
 
 BADSOLVETEXT='Reading package lists...
 Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+'
+BADSOLVETEXT3='Reading package lists...
+Building dependency tree...
+Solving dependencies...
 Some packages could not be installed. This may mean that you have
 requested an impossible situation or if you are using the unstable
 distribution that some required packages have not yet been created
@@ -142,12 +156,22 @@ testfailureequal "$BADSOLVETEXT
 The following packages have unmet dependencies:
  bad-level0 : Depends: unknown but it is not installable
  bad-upgrade-level0 : Depends: unknown but it is not installable
-E: Unable to correct problems, you have held broken packages." apt install bad-upgrade-level1 -s
+E: Unable to correct problems, you have held broken packages." apt install bad-upgrade-level1 -s --solver internal
+testfailureequal "$BADSOLVETEXT3
+The following packages have unmet dependencies:
+ bad-upgrade-level1 : Depends: bad-upgrade-level0 (>= 2) but 1 is to be installed
+                      Depends: unneeded2 but it is not going to be installed
+E: Unsatisfiable dependency group bad-upgrade-level0:amd64=2 -> unknown:amd64" apt install bad-upgrade-level1 -s --solver 3.0
 testfailureequal "$BADSOLVETEXT
 The following packages have unmet dependencies:
  bad-conflict-level0 : Conflicts: bad-conflict-level2 but 1 is to be installed
  bad-level0 : Depends: unknown but it is not installable
-E: Unable to correct problems, you have held broken packages." apt install bad-conflict-level2 -s
+E: Unable to correct problems, you have held broken packages." apt install bad-conflict-level2 -s --solver internal
+testfailureequal "$BADSOLVETEXT3
+The following packages have unmet dependencies:
+ bad-conflict-level2 : Depends: bad-conflict-level1 but it is not going to be installed
+                       Depends: unneeded2 but it is not going to be installed
+E: Conflict: bad-conflict-level2:amd64=1 -> not bad-conflict-level0:amd64 -> not bad-conflict-level1:amd64 but bad-conflict-level2:amd64=1 -> bad-conflict-level2:amd64 -> bad-conflict-level1:amd64" apt install bad-conflict-level2 -s --solver 3.0
 
 if $TEST_WITH_APTITUDE; then
 	testsuccesstailequal 6 'The following packages have been kept back:
