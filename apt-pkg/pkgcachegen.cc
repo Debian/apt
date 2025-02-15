@@ -894,6 +894,11 @@ map_pointer<pkgCache::Version> pkgCacheGenerator::NewVersion(pkgCache::VerIterat
    Ver->d = d;
    if (not Ver.PhasedUpdatePercentage(100))
       abort();
+   auto SourceVersion = AllocateInMap<pkgCache::SourceVersion>(); // sequence point so Ver can be moved if needed
+   Ver->SourceVersion = SourceVersion;
+   Ver.SourceVersion()->ID = Cache.HeaderP->SourceVersionCount++;
+   if (not Ver.SourceVersion())
+      abort();
 
    //Dynamic<pkgCache::VerIterator> DynV(Ver); // caller MergeListVersion already takes care of it
    Ver->NextVer = Next;

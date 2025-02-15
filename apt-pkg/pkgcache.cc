@@ -67,6 +67,7 @@ pkgCache::Header::Header()
    APT_HEADER_SET(PackageSz, sizeof(pkgCache::Package));
    APT_HEADER_SET(ReleaseFileSz, sizeof(pkgCache::ReleaseFile));
    APT_HEADER_SET(PackageFileSz, sizeof(pkgCache::PackageFile));
+   APT_HEADER_SET(SourceVersionSz, sizeof(pkgCache::SourceVersion));
    APT_HEADER_SET(VersionSz, sizeof(pkgCache::Version) + sizeof(pkgCache::Version::Extra));
    APT_HEADER_SET(DescriptionSz, sizeof(pkgCache::Description));
    APT_HEADER_SET(DependencySz, sizeof(pkgCache::Dependency));
@@ -79,6 +80,7 @@ pkgCache::Header::Header()
    GroupCount = 0;
    PackageCount = 0;
    VersionCount = 0;
+   SourceVersionCount = 0;
    DescriptionCount = 0;
    DependsCount = 0;
    DependsDataCount = 0;
@@ -112,6 +114,7 @@ bool pkgCache::Header::CheckSizes(Header &Against) const
        ReleaseFileSz == Against.ReleaseFileSz &&
        PackageFileSz == Against.PackageFileSz &&
        VersionSz == Against.VersionSz &&
+       SourceVersionSz == Against.SourceVersionSz &&
        DescriptionSz == Against.DescriptionSz &&
        DependencySz == Against.DependencySz &&
        DependencyDataSz == Against.DependencyDataSz &&
@@ -151,6 +154,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    RlsFileP = (ReleaseFile *)Map.Data();
    PkgFileP = (PackageFile *)Map.Data();
    VerP = (Version *)Map.Data();
+   SrcVerP = (SourceVersion *)Map.Data();
    DescP = (Description *)Map.Data();
    ProvideP = (Provides *)Map.Data();
    DepP = (Dependency *)Map.Data();

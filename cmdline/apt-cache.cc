@@ -239,6 +239,8 @@ static bool Stats(CommandLine &CmdL)
    cout << _("  Mixed virtual packages: ") << NVirt << endl;
    cout << _("  Missing: ") << Missing << endl;
 
+   cout << _("Total distinct source versions: ") << Cache->Head().SourceVersionCount << " (" << SizeToStr(Cache->Head().SourceVersionCount * Cache->Head().SourceVersionSz) << ')' << endl;
+
    cout << _("Total distinct versions: ") << Cache->Head().VersionCount << " (" <<
       SizeToStr(Cache->Head().VersionCount*Cache->Head().VersionSz) << ')' << endl;
    cout << _("Total distinct descriptions: ") << Cache->Head().DescriptionCount << " (" <<
@@ -266,8 +268,8 @@ static bool Stats(CommandLine &CmdL)
 	    stritems.insert(V->VerStr);
 	 if (V->Section != 0)
 	    stritems.insert(V->Section);
-	 stritems.insert(V->SourcePkgName);
-	 stritems.insert(V->SourceVerStr);
+	 // FIXME: Count the source versions
+	 stritems.insert(V.SourceVersion()->VerStr);
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; ++D)
 	 {
 	    if (D->Version != 0)
@@ -317,18 +319,19 @@ static bool Stats(CommandLine &CmdL)
    unsigned long Total = 0;
 #define APT_CACHESIZE(X,Y) (Cache->Head().X * Cache->Head().Y)
    Total = Slack + Size +
-      APT_CACHESIZE(GroupCount, GroupSz) +
-      APT_CACHESIZE(PackageCount, PackageSz) +
-      APT_CACHESIZE(VersionCount, VersionSz) +
-      APT_CACHESIZE(DescriptionCount, DescriptionSz) +
-      APT_CACHESIZE(DependsCount, DependencySz) +
-      APT_CACHESIZE(DependsDataCount, DependencyDataSz) +
-      APT_CACHESIZE(ReleaseFileCount, ReleaseFileSz) +
-      APT_CACHESIZE(PackageFileCount, PackageFileSz) +
-      APT_CACHESIZE(VerFileCount, VerFileSz) +
-      APT_CACHESIZE(DescFileCount, DescFileSz) +
-      APT_CACHESIZE(ProvidesCount, ProvidesSz) +
-      (2 * Cache->Head().GetHashTableSize() * sizeof(map_id_t));
+	   APT_CACHESIZE(GroupCount, GroupSz) +
+	   APT_CACHESIZE(PackageCount, PackageSz) +
+	   APT_CACHESIZE(VersionCount, VersionSz) +
+	   APT_CACHESIZE(SourceVersionCount, SourceVersionSz) +
+	   APT_CACHESIZE(DescriptionCount, DescriptionSz) +
+	   APT_CACHESIZE(DependsCount, DependencySz) +
+	   APT_CACHESIZE(DependsDataCount, DependencyDataSz) +
+	   APT_CACHESIZE(ReleaseFileCount, ReleaseFileSz) +
+	   APT_CACHESIZE(PackageFileCount, PackageFileSz) +
+	   APT_CACHESIZE(VerFileCount, VerFileSz) +
+	   APT_CACHESIZE(DescFileCount, DescFileSz) +
+	   APT_CACHESIZE(ProvidesCount, ProvidesSz) +
+	   (2 * Cache->Head().GetHashTableSize() * sizeof(map_id_t));
    cout << _("Total space accounted for: ") << SizeToStr(Total) << endl;
 #undef APT_CACHESIZE
 

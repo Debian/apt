@@ -188,6 +188,31 @@ class APT_PUBLIC pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 	inline PkgIterator() : Iterator<Package, PkgIterator>(), HashIndex(0) {}
 };
 									/*}}}*/
+// SourceVersion Iterator						/*{{{*/
+class APT_PUBLIC pkgCache::SrcVerIterator : public Iterator<SourceVersion, SrcVerIterator>
+{
+   public:
+   inline SourceVersion *OwnerPointer() const
+   {
+      return (Owner != 0) ? Owner->SrcVerP : 0;
+   }
+#if 0
+	// Iteration
+	inline SrcVerIterator& operator++() {if (S != Owner->SrcVerP) S = Owner->SrcVerP + S->NextSourceVersion; return *this;}
+	inline SrcVerIterator operator++(int) { SrcVerIterator const tmp(*this); operator++(); return tmp; }
+#endif
+   inline APT_PURE GrpIterator Group() const { return GrpIterator(*Owner, Owner->GrpP + S->Group); }
+   inline const char *VerStr() const { return S->VerStr == 0 ? 0 : Owner->StrP + S->VerStr; }
+
+   inline SrcVerIterator(pkgCache &Owner, SourceVersion *Trg = 0) : Iterator<SourceVersion, SrcVerIterator>(Owner, Trg)
+   {
+      if (S == 0)
+	 S = OwnerPointer();
+   }
+   inline SrcVerIterator() : Iterator<SourceVersion, SrcVerIterator>() {}
+};
+									/*}}}*/
+
 // Version Iterator							/*{{{*/
 class APT_PUBLIC pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	public:
@@ -219,12 +244,15 @@ class APT_PUBLIC pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	// Accessors
 	inline const char *VerStr() const {return S->VerStr == 0?0:Owner->StrP + S->VerStr;}
 	inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;}
-	/** \brief source package name this version comes from
-	   Always contains the name, even if it is the same as the binary name */
-	inline const char *SourcePkgName() const {return Owner->StrP + S->SourcePkgName;}
 	/** \brief source version this version comes from
 	   Always contains the version string, even if it is the same as the binary version */
-	inline const char *SourceVerStr() const {return Owner->StrP + S->SourceVerStr;}
+	SrcVerIterator SourceVersion() const { return SrcVerIterator(*Owner, Owner->SrcVerP + S->SourceVersion); }
+	/** \brief source package name this version comes from
+	   Always contains the name, even if it is the same as the binary name */
+	inline const char *SourcePkgName() const { return SourceVersion().Group().Name(); }
+	/** \brief source version this version comes from
+	   Always contains the version string, even if it is the same as the binary version */
+	inline const char *SourceVerStr() const { return SourceVersion().VerStr(); }
 	inline const char *Arch() const {
 		if ((S->MultiArch & pkgCache::Version::All) == pkgCache::Version::All)
 			return "all";

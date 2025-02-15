@@ -169,8 +169,8 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    pkgCache::GrpIterator G = Ver.ParentPkg().Group();
 
    // Setup the defaults
-   Ver->SourcePkgName = G->Name;
-   Ver->SourceVerStr = Ver->VerStr;
+   Ver.SourceVersion()->Group = G.MapPointer();
+   Ver.SourceVersion()->VerStr = Ver->VerStr;
 
    // Parse the name and version str
    if (Section.Find(pkgTagSection::Key::Source,Start,Stop) == true)
@@ -191,7 +191,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 	       {
 		  map_stringitem_t const idx = StoreString(pkgCacheGenerator::VERSIONNUMBER, version);
 		  G = Ver.ParentPkg().Group();
-		  Ver->SourceVerStr = idx;
+		  Ver.SourceVersion()->VerStr = idx;
 	       }
 	    }
 	 }
@@ -208,7 +208,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    }
 
    // Link into by source package group.
-   Ver->SourcePkgName = G->Name;
+   Ver.SourceVersion()->Group = G.MapPointer();
    Ver->NextInSource = G->VersionsInSource;
    G->VersionsInSource = Ver.MapPointer();
 

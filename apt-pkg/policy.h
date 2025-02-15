@@ -58,6 +58,7 @@ class APT_PUBLIC pkgPolicy : public pkgDepCache::Policy
       explicit PkgPin(std::string const &Pkg) : Pin(), Pkg(Pkg) {};
    };
 
+   std::unique_ptr<Pin[]> SrcVerPins;
    std::unique_ptr<Pin[]> VerPins;
    std::unique_ptr<signed short[]> PFPriority;
    std::vector<Pin> Defaults;

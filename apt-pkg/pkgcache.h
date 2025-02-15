@@ -130,6 +130,7 @@ class APT_PUBLIC pkgCache								/*{{{*/
    struct Package;
    struct ReleaseFile;
    struct PackageFile;
+   struct SourceVersion;
    struct Version;
    struct Description;
    struct Provides;
@@ -144,6 +145,7 @@ class APT_PUBLIC pkgCache								/*{{{*/
    class GrpIterator;
    class PkgIterator;
    class VerIterator;
+   class SrcVerIterator;
    class DescIterator;
    class DepIterator;
    class PrvIterator;
@@ -224,13 +226,14 @@ class APT_PUBLIC pkgCache								/*{{{*/
    DescFile *DescFileP;
    ReleaseFile *RlsFileP;
    PackageFile *PkgFileP;
+   SourceVersion *SrcVerP; // reserved for SourceVersion objects
    Version *VerP;
    Description *DescP;
    Provides *ProvideP;
    Dependency *DepP;
    DependencyData *DepDataP;
    char *StrP;
-   void *reserved[12];
+   void *reserved[13];
 
    virtual bool ReMap(bool const &Errorchecks = true);
    inline bool Sync() {return Map.Sync();}
@@ -320,6 +323,7 @@ struct pkgCache::Header
    map_number_t ReleaseFileSz;
    map_number_t PackageFileSz;
    map_number_t VersionSz;
+   map_number_t SourceVersionSz;
    map_number_t DescriptionSz;
    map_number_t DependencySz;
    map_number_t DependencyDataSz;
@@ -335,6 +339,7 @@ struct pkgCache::Header
    map_id_t GroupCount;
    map_id_t PackageCount;
    map_id_t VersionCount;
+   map_id_t SourceVersionCount;
    map_id_t DescriptionCount;
    map_id_t DependsCount;
    map_id_t DependsDataCount;
@@ -371,7 +376,7 @@ struct pkgCache::Header
        twice the number of pools as there are non-private structure types. The generator
        stores this information so future additions can make use of any unused pool
        blocks. */
-   DynamicMMap::Pool Pools[2 * 12];
+   DynamicMMap::Pool Pools[2 * 13];
 
    /** \brief hash tables providing rapid group/package name lookup
 
@@ -430,6 +435,9 @@ struct pkgCache::Group
 
    /** \brief List of binary produces by source package with this name. */
    map_pointer<Version> VersionsInSource;
+
+   /** \brief SourceVersionList */
+   map_pointer<SourceVersion> SourceVersionList;
 
    /** \brief Private pointer */
    map_pointer<void> d;
@@ -612,6 +620,27 @@ struct pkgCache::DescFile
    map_filesize_t Offset;         // File offset
 };
 									/*}}}*/
+// SourceVersion structure					  	/*{{{*/
+/** \brief information for a single version of a source package
+
+    The version list is always sorted from highest version to lowest
+    version by the generator. Equal version numbers are either merged
+    or handled as separate versions based on the Hash value. */
+struct pkgCache::SourceVersion
+{
+   /** \brief unique sequel ID */
+   map_id_t ID;
+   /** \brief Group the source package belongs too */
+   map_pointer<pkgCache::Group> Group;
+   /** \brief complete version string */
+   map_stringitem_t VerStr;
+   map_pointer<Version> VersionList [[gnu::unavailable("not yet available")]];
+   map_pointer<SourceVersion> NextSourceVersion [[gnu::unavailable("not yet available")]];
+
+   /** \brief Private pointer */
+   map_pointer<void> d;
+};
+									/*}}}*/
 // Version structure							/*{{{*/
 /** \brief information for a single version of a package
 
@@ -626,12 +655,11 @@ struct pkgCache::Version
    map_stringitem_t VerStr;
    /** \brief section this version is filled in */
    map_stringitem_t Section;
-   /** \brief source package name this version comes from
-      Always contains the name, even if it is the same as the binary name */
-   map_stringitem_t SourcePkgName;
-   /** \brief source version this version comes from
-      Always contains the version string, even if it is the same as the binary version */
-   map_stringitem_t SourceVerStr;
+
+   /** \brief the source version object */
+   map_pointer<pkgCache::SourceVersion> SourceVersion;
+   /** \brief next version in the source package (might be different binary) */
+   map_pointer<Version> NextInSourceVersion;
 
    /** \brief Multi-Arch capabilities of a package version */
    enum VerMultiArch { No = 0, /*!< is the default and doesn't trigger special behaviour */
@@ -825,6 +853,7 @@ class pkgCache::Namespace						/*{{{*/
    typedef pkgCache::GrpIterator GrpIterator;
    typedef pkgCache::PkgIterator PkgIterator;
    typedef pkgCache::VerIterator VerIterator;
+   typedef pkgCache::SrcVerIterator SrcVerIterator;
    typedef pkgCache::DescIterator DescIterator;
    typedef pkgCache::DepIterator DepIterator;
    typedef pkgCache::PrvIterator PrvIterator;

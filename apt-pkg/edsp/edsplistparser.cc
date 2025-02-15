@@ -52,7 +52,7 @@ bool edspLikeListParser::NewVersion(pkgCache::VerIterator &Ver)
       if (version != Ver.VerStr())
       {
 	 map_stringitem_t const idx = StoreString(pkgCacheGenerator::VERSIONNUMBER, version);
-	 Ver->SourceVerStr = idx;
+	 Ver.SourceVersion()->VerStr = idx;
       }
    }
 
