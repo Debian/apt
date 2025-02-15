@@ -1290,13 +1290,13 @@ public:
 									/*}}}*/
 class APT_HIDDEN BufferedWriteFileFdPrivate : public FileFdPrivate {	/*{{{*/
 protected:
-   FileFdPrivate *wrapped;
+   std::unique_ptr<FileFdPrivate> wrapped;
    simple_buffer writebuffer;
 
 public:
 
-   explicit BufferedWriteFileFdPrivate(FileFdPrivate *Priv) :
-      FileFdPrivate(Priv->filefd), wrapped(Priv) {};
+   explicit BufferedWriteFileFdPrivate(std::unique_ptr<FileFdPrivate> &&Priv) :
+      FileFdPrivate(Priv->filefd), wrapped(std::move(Priv)) {};
 
    [[nodiscard]] APT::Configuration::Compressor get_compressor() const override
    {
@@ -1429,7 +1429,6 @@ public:
    }
    virtual ~BufferedWriteFileFdPrivate()
    {
-      delete wrapped;
    }
 };
 									/*}}}*/
@@ -2396,20 +2395,20 @@ ssize_t InternalUnbufferedRead(void *const To, unsigned long long const Size) ov
 };
 									/*}}}*/
 // FileFd Constructors							/*{{{*/
-FileFd::FileFd(std::string FileName,unsigned int const Mode,unsigned long AccessMode) : iFd(-1), Flags(0), d(NULL)
+FileFd::FileFd(std::string FileName,unsigned int const Mode,unsigned long AccessMode) : iFd(-1), Flags(0), d(nullptr)
 {
    Open(FileName,Mode, None, AccessMode);
 }
-FileFd::FileFd(std::string FileName,unsigned int const Mode, CompressMode Compress, unsigned long AccessMode) : iFd(-1), Flags(0), d(NULL)
+FileFd::FileFd(std::string FileName,unsigned int const Mode, CompressMode Compress, unsigned long AccessMode) : iFd(-1), Flags(0), d(nullptr)
 {
    Open(FileName,Mode, Compress, AccessMode);
 }
-FileFd::FileFd() : iFd(-1), Flags(AutoClose), d(NULL) {}
-FileFd::FileFd(int const Fd, unsigned int const Mode, CompressMode Compress) : iFd(-1), Flags(0), d(NULL)
+FileFd::FileFd() : iFd(-1), Flags(AutoClose), d(nullptr) {}
+FileFd::FileFd(int const Fd, unsigned int const Mode, CompressMode Compress) : iFd(-1), Flags(0), d(nullptr)
 {
    OpenDescriptor(Fd, Mode, Compress);
 }
-FileFd::FileFd(int const Fd, bool const AutoClose) : iFd(-1), Flags(0), d(NULL)
+FileFd::FileFd(int const Fd, bool const AutoClose) : iFd(-1), Flags(0), d(nullptr)
 {
    OpenDescriptor(Fd, ReadWrite, None, AutoClose);
 }
@@ -2643,7 +2642,7 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 	 /* dummy so that the rest can be 'else if's */;
 #define APT_COMPRESS_INIT(NAME, CONSTRUCTOR) \
       else if (compressor.Name == NAME) \
-	 d = new CONSTRUCTOR(this)
+	 d = std::make_unique<CONSTRUCTOR>(this)
 #ifdef HAVE_ZLIB
       APT_COMPRESS_INIT("gzip", GzipFileFdPrivate);
 #endif
@@ -2662,12 +2661,12 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 #endif
 #undef APT_COMPRESS_INIT
       else if (compressor.Name == "." || compressor.Binary.empty() == true)
-	 d = new DirectFileFdPrivate(this);
+	 d = std::make_unique<DirectFileFdPrivate>(this);
       else
-	 d = new PipedFileFdPrivate(this);
+	 d = std::make_unique<PipedFileFdPrivate>(this);
 
       if (Mode & BufferedWrite)
-	 d = new BufferedWriteFileFdPrivate(d);
+	 d = std::make_unique<BufferedWriteFileFdPrivate>(std::move(d));
 
       d->set_openmode(Mode);
       d->set_compressor(compressor);
@@ -2692,8 +2691,6 @@ FileFd::~FileFd()
    Close();
    if (d != NULL)
       d->InternalClose(FileName);
-   delete d;
-   d = NULL;
 }
 									/*}}}*/
 // FileFd::Read - Read a bit of the file				/*{{{*/
@@ -2911,7 +2908,7 @@ unsigned long long FileFd::Tell()
    return Res;
 }
 									/*}}}*/
-static bool StatFileFd(char const * const msg, int const iFd, std::string const &FileName, struct stat &Buf, FileFdPrivate * const d) /*{{{*/
+static bool StatFileFd(char const * const msg, int const iFd, std::string const &FileName, struct stat &Buf, std::unique_ptr<FileFdPrivate> const &d) /*{{{*/
 {
    bool ispipe = (d != NULL && d->get_is_pipe() == true);
    if (ispipe == false)
@@ -2989,7 +2986,6 @@ bool FileFd::Close()
    if (d != NULL)
    {
       Res &= d->InternalClose(FileName);
-      delete d;
       d = NULL;
    }
 
