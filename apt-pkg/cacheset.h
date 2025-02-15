@@ -344,7 +344,7 @@ private:
 	void * const d;
 };
 									/*}}}*/
-template<class Container> class APT_PUBLIC PackageContainer : public PackageContainerInterface {/*{{{*/
+template<class Container> class PackageContainer : public PackageContainerInterface {/*{{{*/
 /** \class APT::PackageContainer
 
     Simple wrapper around a container class like std::set to provide a similar
@@ -798,7 +798,7 @@ protected:								/*{{{*/
 									/*}}}*/
 };
 									/*}}}*/
-template<class Container> class APT_PUBLIC VersionContainer : public VersionContainerInterface {/*{{{*/
+template<class Container> class VersionContainer : public VersionContainerInterface {/*{{{*/
 /** \class APT::VersionContainer
 
     Simple wrapper around a container class like std::set to provide a similar
