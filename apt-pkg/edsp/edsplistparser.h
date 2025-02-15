@@ -16,6 +16,7 @@
 #include <apt-pkg/pkgcache.h>
 
 #include <string>
+#include <string_view>
 
 
 class APT_HIDDEN edspLikeListParser : public debListParser
