@@ -20,6 +20,7 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 

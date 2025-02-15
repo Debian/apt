@@ -8,6 +8,7 @@
  */
 
 #include <cassert>
+#include <memory>
 #include <optional>
 #include <queue>
 #include <vector>
