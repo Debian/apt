@@ -150,15 +150,9 @@ class APT_PUBLIC pkgTagSection
       std::string Name;
       std::string Data;
 
-#if APT_PKG_ABI > 600
       static Tag Remove(std::string_view Name);
       static Tag Rename(std::string_view OldName, std::string_view NewName);
       static Tag Rewrite(std::string_view Name, std::string_view Data);
-#else
-      static Tag Remove(std::string const &Name);
-      static Tag Rename(std::string const &OldName, std::string const &NewName);
-      static Tag Rewrite(std::string const &Name, std::string const &Data);
-#endif
       private:
       Tag(ActionType const Action, std::string_view Name, std::string_view Data) :
 	 Action(Action), Name(Name), Data(Data) {}

@@ -55,11 +55,7 @@ HashString::HashString(std::string Type, std::string Hash) : Type(Type), Hash(Ha
 {
 }
 
-#if APT_PKG_ABI > 600
 HashString::HashString(std::string_view StringedHash)			/*{{{*/
-#else
-HashString::HashString(std::string StringedHash)        /*{{{*/
-#endif
 {
    if (StringedHash.find(":") == std::string::npos)
    {

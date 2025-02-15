@@ -40,11 +40,7 @@ class APT_PUBLIC HashString
 
  public:
    HashString(std::string Type, std::string Hash);
-#if APT_PKG_ABI > 600
    explicit HashString(std::string_view StringedHashString);  // init from str as "type:hash"
-#else
-   explicit HashString(std::string StringedHashString);  // init from str as "type:hash"
-#endif
    HashString();
 
    // get hash type used

@@ -958,27 +958,15 @@ APT_PURE unsigned int pkgTagSection::Count() const {			/*{{{*/
 }
 									/*}}}*/
 // TagSection::Write - Ordered (re)writing of fields			/*{{{*/
-#if APT_PKG_ABI > 600
 pkgTagSection::Tag pkgTagSection::Tag::Remove(std::string_view Name)
-#else
-pkgTagSection::Tag pkgTagSection::Tag::Remove(std::string const &Name)
-#endif
 {
    return Tag(REMOVE, Name, "");
 }
-#if APT_PKG_ABI > 600
 pkgTagSection::Tag pkgTagSection::Tag::Rename(std::string_view OldName, std::string_view NewName)
-#else
-pkgTagSection::Tag pkgTagSection::Tag::Rename(std::string const &OldName, std::string const &NewName)
-#endif
 {
    return Tag(RENAME, OldName, NewName);
 }
-#if APT_PKG_ABI > 600
 pkgTagSection::Tag pkgTagSection::Tag::Rewrite(std::string_view Name, std::string_view Data)
-#else
-pkgTagSection::Tag pkgTagSection::Tag::Rewrite(std::string const &Name, std::string const &Data)
-#endif
 {
    if (Data.empty() == true)
       return Tag(REMOVE, Name, "");

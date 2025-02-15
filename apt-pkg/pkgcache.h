@@ -340,13 +340,8 @@ struct pkgCache::Header
    map_id_t DependsDataCount;
    map_fileid_t ReleaseFileCount;
    map_fileid_t PackageFileCount;
-#if APT_PKG_ABI <= 600
-   map_fileid_t VerFileCount;
-   map_fileid_t DescFileCount;
-#else
    map_id_t VerFileCount;
    map_id_t DescFileCount;
-#endif
    map_id_t ProvidesCount;
 
    /** \brief index of the first PackageFile structure
@@ -603,9 +598,6 @@ struct pkgCache::VerFile
    map_pointer<VerFile> NextFile;
    /** \brief position in the package file */
    map_filesize_t Offset;         // File offset
-#if APT_PKG_ABI <= 600
-   [[deprecated("No usage in src:apt, try MaxVerFileSize instead")]] map_filesize_t Size;
-#endif
 };
 									/*}}}*/
 // DescFile structure							/*{{{*/
@@ -618,9 +610,6 @@ struct pkgCache::DescFile
    map_pointer<DescFile> NextFile;
    /** \brief position in the file */
    map_filesize_t Offset;         // File offset
-#if APT_PKG_ABI <= 600
-   [[deprecated("No usage in src:apt, try MaxDescFileSize instead")]] map_filesize_t Size;
-#endif
 };
 									/*}}}*/
 // Version structure							/*{{{*/
