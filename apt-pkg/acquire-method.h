@@ -102,8 +102,6 @@ class APT_PUBLIC pkgAcqMethod
    bool MediaFail(std::string Required,std::string Drive);
    virtual void Exit() {};
 
-   [[deprecated("Use SendMessage instead")]] void PrintStatus(char const * const header, const char* Format, va_list &args) const;
-
    public:
    enum CnfFlags
    {

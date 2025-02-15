@@ -235,41 +235,6 @@ char *_strrstrip(char *String)
    return String;
 }
 									/*}}}*/
-// strtabexpand - Converts tabs into 8 spaces				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-char *_strtabexpand(char *String,size_t Len)
-{
-   for (char *I = String; I != I + Len && *I != 0; I++)
-   {
-      if (*I != '\t')
-	 continue;
-      if (I + 8 > String + Len)
-      {
-	 *I = 0;
-	 return String;
-      }
-
-      /* Assume the start of the string is 0 and find the next 8 char
-         division */
-      int Len;
-      if (String == I)
-	 Len = 1;
-      else
-	 Len = 8 - ((String - I) % 8);
-      Len -= 2;
-      if (Len <= 0)
-      {
-	 *I = ' ';
-	 continue;
-      }
-      
-      memmove(I + Len,I + 1,strlen(I) + 1);
-      for (char *J = I; J + Len != I; *I = ' ', I++);
-   }
-   return String;
-}
-									/*}}}*/
 // ParseQuoteWord - Parse a single word out of a string			/*{{{*/
 // ---------------------------------------------------------------------
 /* This grabs a single word, converts any % escaped characters to their
@@ -1179,20 +1144,6 @@ bool RFC1123StrToTime(std::string const &str,time_t &time)
    struct tm Tm;
    if (strptime(datetime.c_str(), "%Y-%m-%d %H:%M:%S", &Tm) == nullptr)
       return false;
-   time = timegm(&Tm);
-   return true;
-}
-									/*}}}*/
-// FTPMDTMStrToTime - Converts a ftp modification date into a time_t	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool FTPMDTMStrToTime(const char* const str,time_t &time)
-{
-   struct tm Tm;
-   // MDTM includes no whitespaces but recommend and ignored by strptime
-   if (strptime(str, "%Y %m %d %H %M %S", &Tm) == NULL)
-      return false;
-
    time = timegm(&Tm);
    return true;
 }
