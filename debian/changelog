@@ -1,3 +1,16 @@
+apt (2.9.29+exp2) experimental; urgency=medium
+
+  * Run unifdef -DAPT_PKG_ABI=700 again
+  * Remove some more unused functions
+  * fileutl: Convert FileFd::d to std::unique_ptr
+  * cacheset: Drop APT_PUBLIC from templates
+  * cache: Introduce partial SourceVersion support
+  * Add missing #include <memory>
+  * Add missing #include <string_view>
+  * Add more excludes to the versionscript
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 15 Feb 2025 19:41:18 +0100
+
 apt (2.9.29+exp1) experimental; urgency=medium
 
   * Rebuild with libapt-pkg7.0 soname; some minor ABI adjustments are
