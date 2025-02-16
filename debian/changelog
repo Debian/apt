@@ -1,26 +1,18 @@
-apt (2.9.29+exp2) experimental; urgency=medium
+apt (2.9.30) unstable; urgency=medium
 
-  * Run unifdef -DAPT_PKG_ABI=700 again
-  * Remove some more unused functions
-  * fileutl: Convert FileFd::d to std::unique_ptr
-  * cacheset: Drop APT_PUBLIC from templates
-  * cache: Introduce partial SourceVersion support
-  * Add missing #include <memory>
-  * Add missing #include <string_view>
-  * Add more excludes to the versionscript
+  * Upload libapt-pkg 7.0 ABI transition to unstable:
+    - Use smart pointers in a whole bunch of places (probably only an API break)
+    - Add a version script to hide any standard library symbols
+    - Remove the functions marked as deprecated, such as PrintStatus and _strtabexpand
+    - Introduce SourceVersion objects in the cache
+    - Migrate from APT::StringView to std::string view and change a bunch of
+      functions from std::string to std::string_view.
+      Thanks to наб for the merge requests, very appreciated, that was a lot
+      of busywork.
+    Several other changes were already queued in the previous releases in
+    #ifdef, please have a look at them.
 
- -- Julian Andres Klode <jak@debian.org>  Sat, 15 Feb 2025 19:41:18 +0100
-
-apt (2.9.29+exp1) experimental; urgency=medium
-
-  * Rebuild with libapt-pkg7.0 soname; some minor ABI adjustments are
-    still on the way before this enters unstable, notable differences:
-    - The C++ standard library symbols are not re-exported anymore
-      (Closes: #1088398)
-    - We use smart pointers in a bunch more places
-    - std::string_view replaces APT::StringView (thanks to наб)
-
- -- Julian Andres Klode <jak@debian.org>  Fri, 14 Feb 2025 19:45:28 +0100
+ -- Julian Andres Klode <jak@debian.org>  Sun, 16 Feb 2025 17:58:07 +0100
 
 apt (2.9.29) unstable; urgency=medium
 
