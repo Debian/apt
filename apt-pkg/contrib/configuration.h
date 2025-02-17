@@ -117,6 +117,9 @@ class APT_PUBLIC Configuration
    void Dump(std::ostream& str, char const * const root,
 	     char const * const format, bool const emptyValue);
 
+#ifdef APT_COMPILING_APT
+   bool SectionInSubTree(char const *const SubTree, std::string_view Needle);
+#endif
    explicit Configuration(const Item *Root);
    Configuration();
    ~Configuration();

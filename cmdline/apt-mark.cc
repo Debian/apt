@@ -139,40 +139,6 @@ static bool DoMarkAuto(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-// helper for Install-Recommends-Sections and Never-MarkAuto-Sections	/*{{{*/
-// FIXME: Copied verbatim from apt-pkg/depcache.cc
-static bool ConfigValueInSubTree(const char* SubTree, std::string_view const needle)
-{
-   if (needle.empty())
-      return false;
-   Configuration::Item const *Opts = _config->Tree(SubTree);
-   if (Opts != nullptr && Opts->Child != nullptr)
-   {
-      Opts = Opts->Child;
-      for (; Opts != nullptr; Opts = Opts->Next)
-      {
-	 if (Opts->Value.empty())
-	    continue;
-	 if (needle == Opts->Value)
-	    return true;
-      }
-   }
-   return false;
-}
-static bool SectionInSubTree(char const * const SubTree, std::string_view Needle)
-{
-   if (ConfigValueInSubTree(SubTree, Needle))
-      return true;
-   auto const sub = Needle.rfind('/');
-   if (sub == std::string_view::npos)
-   {
-      std::string special{"/"};
-      special.append(Needle);
-      return ConfigValueInSubTree(SubTree, special);
-   }
-   return ConfigValueInSubTree(SubTree, Needle.substr(sub + 1));
-}
-									/*}}}*/
 /* DoMinimize - minimize manually installed	{{{*/
 /* Traverses dependencies of meta packages and marks them as manually
  * installed. */
@@ -192,7 +158,7 @@ static bool DoMinimize(CommandLine &CmdL)
       auto ver = pkg.CurrentVer();
       return ver.end() == false && ((*DepCache)[pkg].Flags & pkgCache::Flag::Auto) == 0 &&
 	     ver->Section != 0 &&
-	     SectionInSubTree("APT::Never-MarkAuto-Sections", ver.Section());
+	     _config->SectionInSubTree("APT::Never-MarkAuto-Sections", ver.Section());
    };
 
    APT::PackageSet roots;
