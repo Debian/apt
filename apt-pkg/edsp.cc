@@ -735,7 +735,7 @@ static bool CreateDumpFile(char const * const id, char const * const type, FileF
 	auto const dumpdir = flNotFile(dumpfile);
 	_error->PushToStack();
 	bool errored_out = CreateAPTDirectoryIfNeeded(dumpdir, dumpdir) == false ||
-	   output.Open(dumpfile, FileFd::WriteOnly | FileFd::Exclusive | FileFd::Create, FileFd::Extension, 0644) == false;
+	   output.Open(dumpfile, FileFd::WriteOnly | FileFd::Exclusive | FileFd::Create | FileFd::BufferedWrite, FileFd::Extension, 0644) == false;
 	std::vector<std::string> downgrademsgs;
 	while (_error->empty() == false)
 	{
