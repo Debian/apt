@@ -673,8 +673,6 @@ void APT::Solver::Push(Work work)
 
    choices.push_back(solved.size());
    solved.push_back(Solved{Var(), std::move(work)});
-   // Pop() will call MergeWithStack() when reverting to level 0, or RevertToStack after dumping to the debug log.
-   _error->PushToStack();
 }
 
 void APT::Solver::UndoOne()
@@ -713,15 +711,15 @@ bool APT::Solver::Pop()
    if (depth() == 0)
       return false;
 
-   if (unlikely(debug >= 2))
-      for (std::string msg; _error->PopMessage(msg);)
-	 std::cerr << "Branch failed: " << msg << std::endl;
-
    time_t now = time(nullptr);
    if (now - startTime >= Timeout)
       return _error->Error("Solver timed out.");
 
-   _error->RevertToStack();
+   if (unlikely(debug >= 2))
+      for (std::string msg; _error->PopMessage(msg);)
+	 std::cerr << "Branch failed: " << msg << std::endl;
+
+   _error->Discard();
 
    assert(choices.back() < solved.size());
    int itemsToUndo = solved.size() - choices.back();
@@ -781,6 +779,8 @@ bool APT::Solver::AddWork(Work &&w)
 
 bool APT::Solver::Solve()
 {
+   _error->PushToStack();
+   DEFER([&]() { _error->MergeWithStack(); });
    startTime = time(nullptr);
    while (true)
    {
