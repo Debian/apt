@@ -673,8 +673,6 @@ void APT::Solver::Push(Work work)
 
    choices.push_back(solved.size());
    solved.push_back(Solved{Var(), std::move(work)});
-   // Pop() will call MergeWithStack() when reverting to level 0, or RevertToStack after dumping to the debug log.
-   _error->PushToStack();
 }
 
 void APT::Solver::UndoOne()
@@ -713,15 +711,15 @@ bool APT::Solver::Pop()
    if (depth() == 0)
       return false;
 
-   if (unlikely(debug >= 2))
-      for (std::string msg; _error->PopMessage(msg);)
-	 std::cerr << "Branch failed: " << msg << std::endl;
-
    time_t now = time(nullptr);
    if (now - startTime >= Timeout)
       return _error->Error("Solver timed out.");
 
-   _error->RevertToStack();
+   if (unlikely(debug >= 2))
+      for (std::string msg; _error->PopMessage(msg);)
+	 std::cerr << "Branch failed: " << msg << std::endl;
+
+   _error->Discard();
 
    assert(choices.back() < solved.size());
    int itemsToUndo = solved.size() - choices.back();
@@ -781,6 +779,8 @@ bool APT::Solver::AddWork(Work &&w)
 
 bool APT::Solver::Solve()
 {
+   _error->PushToStack();
+   DEFER([&]() { _error->MergeWithStack(); });
    startTime = time(nullptr);
    while (true)
    {
@@ -975,6 +975,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 
 bool APT::Solver::ToDepCache(pkgDepCache &depcache) const
 {
+   FastContiguousCacheMap<pkgCache::Package, bool> movedManual(cache);
    pkgDepCache::ActionGroup group(depcache);
    for (auto P = cache.PkgBegin(); not P.end(); P++)
    {
@@ -994,10 +995,31 @@ bool APT::Solver::ToDepCache(pkgDepCache &depcache) const
 
 	 if (cand != P.CurrentVer())
 	 {
+	    bool automatic = (not reason.empty() || (depcache[P].Flags & pkgCache::Flag::Auto)) && not movedManual[P];
 	    depcache.SetCandidateVersion(cand);
-	    depcache.MarkInstall(P, false, 0, reason.empty() && not(depcache[P].Flags & pkgCache::Flag::Auto));
+	    depcache.MarkInstall(P, false, 0, not automatic);
+
+	    // Set the automatic bit for new packages or move it on upgrades to oldlibs
 	    if (not P->CurrentVer)
-	       depcache.MarkAuto(P, not reason.empty());
+	       depcache.MarkAuto(P, automatic);
+	    else if (not(depcache[P].Flags & pkgCache::Flag::Auto) && P.CurrentVer()->Section && cand->Section && not _config->SectionInSubTree("APT::Move-Autobit-Sections", P.CurrentVer().Section()) && _config->SectionInSubTree("APT::Move-Autobit-Sections", cand.Section()))
+	    {
+	       bool moved = false;
+	       for (auto const &clause : (*this)[cand].clauses)
+		  for (auto sol : clause->solutions)
+		  {
+		     // New installs move the auto-bit. TODO: Should we look at whether clause is the reason for installing it?
+		     if (sol.CastPkg(cache) == P || sol.CastPkg(cache)->CurrentVer)
+			continue;
+		     std::cerr << "Move  manual bit from " << P.FullName() << " to " << sol.CastPkg(cache).Name() << std::endl;
+		     movedManual[sol.CastPkg(cache)] = true;
+		     depcache.MarkAuto(sol.CastPkg(cache), false);
+		     moved = true;
+		  }
+	       if (moved)
+		  depcache.MarkAuto(P, true);
+	    }
+
 	 }
 	 else
 	    depcache.MarkKeep(P, false, reason.empty() && not(depcache[P].Flags & pkgCache::Flag::Auto));

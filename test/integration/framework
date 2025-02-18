@@ -1555,22 +1555,15 @@ downloadfile() {
 	fi
 }
 
-cleanup_solver3_pipe() {
-	if [ "$APT_SOLVER" != "3.0" ]; then
-		cat
-	else
-		# FIXME: We do not have support for listing autoremovals yet.
-		# FIXME: Progress output is different
-		sed -e '/Solving dependencies\.\.\./ d' \
-			-e "/no longer required[.:]$/,/^Use '.* autoremove'/ d"
-	fi
-}
 cleanup_output() {
 	cat "$1" | sed \
 		-e '/gpgv: WARNING: This key is not suitable for signing in --compliance=gnupg mode/ d' \
 		-e '/^profiling:/ d' \
-		| sed -e '/\.\.\.profiling:/ {N;s#\.\.\.profiling:.*\n#...#g}' \
-		| cleanup_solver3_pipe \
+		-e '/\.\.\.profiling:/ {N;s#\.\.\.profiling:.*\n#...#g}' \
+		-e '/^Solving dependencies\.\.\.$/ d'    \
+		-e '/^Calculating upgrade\.\.\.$/ d' \
+		-e 's/Solving dependencies\.\.\.//'  \
+		-e 's/Calculating upgrade\.\.\.//' \
 			>"$2"
 }
 
