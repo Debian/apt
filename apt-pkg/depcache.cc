@@ -110,6 +110,7 @@ struct pkgDepCache::Private
    std::unique_ptr<InRootSetFunc> inRootSetFunc;
    std::unique_ptr<APT::CacheFilter::Matcher> IsAVersionedKernelPackage, IsProtectedKernelPackage;
    std::string machineID;
+   unsigned long iUpgradeCount{0};
 };
 pkgDepCache::pkgDepCache(pkgCache *const pCache, Policy *const Plcy) : group_level(0), Cache(pCache), PkgState(0), DepState(0),
 								       iUsrSize(0), iDownloadSize(0), iInstCount(0), iDelCount(0), iKeepCount(0),
@@ -148,6 +149,7 @@ bool pkgDepCache::CheckConsistency(char const *const msgtag)		/*{{{*/
    auto const origUsrSize = iUsrSize;
    auto const origDownloadSize = iDownloadSize;
    auto const origInstCount = iInstCount;
+   auto const origUpgradeCount = d->iUpgradeCount;
    auto const origDelCount = iDelCount;
    auto const origKeepCount = iKeepCount;
    auto const origBrokenCount = iBrokenCount;
@@ -208,6 +210,7 @@ bool pkgDepCache::CheckConsistency(char const *const msgtag)		/*{{{*/
    iUsrSize = origUsrSize;
    iDownloadSize = origDownloadSize;
    iInstCount = origInstCount;
+   d->iUpgradeCount = origUpgradeCount;
    iDelCount = origDelCount;
    iKeepCount = origKeepCount;
    iBrokenCount = origBrokenCount;
@@ -632,7 +635,11 @@ void pkgDepCache::AddStates(const PkgIterator &Pkg, bool const Invert)
    else if (State.Mode == ModeKeep)
       iKeepCount += Add;
    else if (State.Mode == ModeInstall)
+   {
       iInstCount += Add;
+      if (Pkg->CurrentVer != 0 && State.Status > 0)
+	 d->iUpgradeCount += Add;
+   }
 }
 									/*}}}*/
 // DepCache::BuildGroupOrs - Generate the Or group dep data		/*{{{*/
@@ -762,6 +769,7 @@ void pkgDepCache::PerformDependencyPass(OpProgress * const Prog)
    iUsrSize = 0;
    iDownloadSize = 0;
    iInstCount = 0;
+   d->iUpgradeCount = 0;
    iDelCount = 0;
    iKeepCount = 0;
    iBrokenCount = 0;
@@ -2650,6 +2658,12 @@ unsigned long long pkgDepCache::BootSize(bool initrdOnly)
    return std::accumulate(sizes, sizes + MAX_ARTEFACT, off_t{0}) * BootCount * 110 / 100;
 }
 									/*}}}*/
+// pkgDepCache::UpgradeCount						/*{{{*/
+unsigned long pkgDepCache::UpgradeCount()
+{
+   return d->iUpgradeCount;
+}
+									/*}}}*/
 // pkgDepCache::Transaction						/*{{{*/
 struct pkgDepCache::Transaction::Private
 {
@@ -2668,6 +2682,7 @@ struct pkgDepCache::Transaction::Private
    signed long long iUsrSize{cache.iUsrSize};
    unsigned long long iDownloadSize{cache.iDownloadSize};
    unsigned long iInstCount{cache.iInstCount};
+   unsigned long iUpgradeCount{cache.d->iUpgradeCount};
    unsigned long iDelCount{cache.iDelCount};
    unsigned long iKeepCount{cache.iKeepCount};
    unsigned long iBrokenCount{cache.iBrokenCount};
@@ -2682,6 +2697,7 @@ struct pkgDepCache::Transaction::Private
       cache.iUsrSize = iUsrSize;
       cache.iDownloadSize = iDownloadSize;
       cache.iInstCount = iInstCount;
+      cache.d->iUpgradeCount = iUpgradeCount;
       cache.iDelCount = iDelCount;
       cache.iKeepCount = iKeepCount;
       cache.iBrokenCount = iBrokenCount;

@@ -517,6 +517,7 @@ class APT_PUBLIC pkgDepCache : protected pkgCache::Namespace
    inline unsigned long DelCount() {return iDelCount;};
    inline unsigned long KeepCount() {return iKeepCount;};
    inline unsigned long InstCount() {return iInstCount;};
+   unsigned long UpgradeCount();
    inline unsigned long BrokenCount() {return iBrokenCount;};
    inline unsigned long PolicyBrokenCount() {return iPolicyBrokenCount;};
    inline unsigned long BadCount() {return iBadCount;};
