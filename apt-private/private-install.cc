@@ -28,6 +28,7 @@
 #include <iostream>
 #include <map>
 #include <set>
+#include <sstream>
 #include <vector>
 #include <langinfo.h>
 #include <sys/statvfs.h>
@@ -45,7 +46,7 @@
 									/*}}}*/
 class pkgSourceList;
 
-bool CheckNothingBroken(CacheFile &Cache)				/*{{{*/
+static bool CheckNothingBroken(std::ostream &out, CacheFile &Cache) /*{{{*/
 {
    // Now we check the state of the packages,
    if (Cache->BrokenCount() == 0)
@@ -55,11 +56,11 @@ bool CheckNothingBroken(CacheFile &Cache)				/*{{{*/
    if (_error->PendingError() && _config->Find("APT::Solver") == "dump")
       return false;
 
-   c1out <<
-      _("Some packages could not be installed. This may mean that you have\n"
+   out << _("Some packages could not be installed. This may mean that you have\n"
 	    "requested an impossible situation or if you are using the unstable\n"
 	    "distribution that some required packages have not yet been created\n"
-	    "or been moved out of Incoming.") << std::endl;
+	    "or been moved out of Incoming.")
+       << std::endl;
    /*
    if (Packages == 1)
    {
@@ -71,15 +72,68 @@ bool CheckNothingBroken(CacheFile &Cache)				/*{{{*/
    }
    */
 
-   c1out << _("The following information may help to resolve the situation:") << std::endl;
-   c1out << std::endl;
-   ShowBroken(c1out,Cache,false);
+   out << _("The following information may help to resolve the situation:") << std::endl;
+   out << std::endl;
+   ShowBroken(out, Cache, false);
    if (_error->PendingError() == true)
       return false;
    else
       return _error->Error(_("Broken packages"));
 }
+bool CheckNothingBroken(CacheFile &Cache)
+{
+   return CheckNothingBroken(c1out, Cache);
+}
 									/*}}}*/
+// WriteApportReport - Write an apport bug report	 		/*{{{*/
+// ---------------------------------------------------------------------
+static void WriteApportReport(pkgCacheFile &Cache, std::string &title, std::vector<std::string> const &errors, int mode, bool distUpgrade)
+{
+   auto dumpfile = flCombine(_config->FindDir("Dir::Log"), "edsp.log");
+   auto crashfile = flCombine(_config->FindDir("Dir::Apport", "/var/crash"), "apt-edsp." + std::to_string(getuid()) + ".crash");
+   auto apt = Cache->FindPkg("apt");
+   if (access(flNotFile(dumpfile).c_str(), W_OK) != 0 || access(flNotFile(crashfile).c_str(), W_OK) != 0)
+      return;
+   OpTextProgress Progress(*_config);
+   Progress.OverallProgress(0, 100, 50, _("Writing error report"));
+   FileFd edspDump(dumpfile,
+		   FileFd::Exclusive | FileFd::Create | FileFd::WriteOnly | FileFd::BufferedWrite);
+   int edspFlags = 0;
+   if (mode || distUpgrade)
+      edspFlags |= EDSP::Request::UPGRADE_ALL;
+   if (mode & APT::Upgrade::FORBID_REMOVE_PACKAGES)
+      edspFlags |= EDSP::Request::FORBID_REMOVE;
+   if (mode & APT::Upgrade::FORBID_INSTALL_NEW_PACKAGES)
+      edspFlags |= EDSP::Request::FORBID_NEW_INSTALL;
+
+   EDSP::WriteRequest(Cache, edspDump, edspFlags, &Progress);
+   EDSP::WriteScenario(Cache, edspDump, &Progress);
+   edspDump.Close();
+
+   Progress.OverallProgress(50, 100, 50, _("Writing error report"));
+
+   std::ofstream crash(crashfile, std::ios::out | std::ios::trunc);
+   chmod(crashfile.c_str(), 0600);
+   time_t now = time(NULL);
+   char ctime_buf[26]; // need at least 26 bytes according to ctime(3)
+   crash << "ProblemType: AptSolver\n"
+	 << "Architecture: " << _config->Find("APT::Architecture") << "\n"
+	 << "Date: " << ctime_r(&now, ctime_buf)
+	 << "Package: apt " << (apt.end() || apt.CurrentVer().end() ? "" : apt.CurrentVer().VerStr()) << "\n"
+	 << "Title: " << title << "\n"
+	 << "SourcePackage: apt\n";
+
+   crash << "ErrorMessage:\n";
+   for (auto &error : errors)
+      crash << " " << error << "\n";
+
+   crash << "AptSolverDump:\n";
+   std::ifstream toCopy(edspDump.Name());
+   for (std::string line; std::getline(toCopy, line);)
+      crash << " " << line << "\n";
+   crash.close();
+}
+
 // InstallPackages - Actually download and install the packages		/*{{{*/
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
@@ -836,85 +890,168 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
   TryToInstall InstallAction(Cache, Fix.get(), BrokenFix);
   TryToRemove RemoveAction(Cache, Fix.get());
   APT::PackageSet UpgradablePackages;
+  bool const distUpgradeMode = strcmp(CmdL.FileList[0], "dist-upgrade") == 0 || strcmp(CmdL.FileList[0], "full-upgrade") == 0;
 
-   {
-      unsigned short const order[] = { MOD_REMOVE, MOD_INSTALL, 0 };
+  {
+     unsigned short const order[] = {MOD_REMOVE, MOD_INSTALL, 0};
 
-      for (unsigned short i = 0; order[i] != 0; ++i)
-      {
-	 if (order[i] == MOD_INSTALL)
-	    InstallAction = std::for_each(verset[MOD_INSTALL].begin(), verset[MOD_INSTALL].end(), InstallAction);
-	 else if (order[i] == MOD_REMOVE)
-	    RemoveAction = std::for_each(verset[MOD_REMOVE].begin(), verset[MOD_REMOVE].end(), RemoveAction);
-      }
+     for (unsigned short i = 0; order[i] != 0; ++i)
+     {
+	if (order[i] == MOD_INSTALL)
+	   InstallAction = std::for_each(verset[MOD_INSTALL].begin(), verset[MOD_INSTALL].end(), InstallAction);
+	else if (order[i] == MOD_REMOVE)
+	   RemoveAction = std::for_each(verset[MOD_REMOVE].begin(), verset[MOD_REMOVE].end(), RemoveAction);
+     }
 
-      {
-	 APT::CacheSetHelper helper;
-	 helper.PackageFrom(APT::CacheSetHelper::PATTERN, &UpgradablePackages, Cache, "?upgradable");
-      }
+     {
+	APT::CacheSetHelper helper;
+	helper.PackageFrom(APT::CacheSetHelper::PATTERN, &UpgradablePackages, Cache, "?upgradable");
+     }
 
-      if (Fix != NULL && _config->FindB("APT::Get::AutoSolving", true) == true)
-      {
-	 InstallAction.propagateReleaseCandidateSwitching(helper.selectedByRelease, c0out);
-	 InstallAction.doAutoInstall();
-      }
+     // Record the state before we call the solver.
+     pkgDepCache::Transaction transaction(Cache, pkgDepCache::Transaction::Behavior::COMMIT);
+     auto runTheSolver = [&](std::ostream &out) -> bool
+     {
+	if (Fix != NULL && _config->FindB("APT::Get::AutoSolving", true) == true)
+	{
+	   InstallAction.propagateReleaseCandidateSwitching(helper.selectedByRelease, c0out);
+	   InstallAction.doAutoInstall();
+	}
 
-      if (_error->PendingError() == true)
-      {
-	 return false;
-      }
+	if (_error->PendingError() == true)
+	{
+	   return false;
+	}
 
-      /* If we are in the Broken fixing mode we do not attempt to fix the
-	 problems. This is if the user invoked install without -f and gave
-	 packages */
-      if (BrokenFix == true && Cache->BrokenCount() != 0)
-      {
-	 c1out << _("You might want to run 'apt --fix-broken install' to correct these.") << std::endl;
-	 ShowBroken(c1out,Cache,false);
-	 return _error->Error(_("Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution)."));
-      }
+	/* If we are in the Broken fixing mode we do not attempt to fix the
+	   problems. This is if the user invoked install without -f and gave
+	   packages */
+	if (BrokenFix == true && Cache->BrokenCount() != 0)
+	{
+	   out << _("You might want to run 'apt --fix-broken install' to correct these.") << std::endl;
+	   ShowBroken(out, Cache, false);
+	   return _error->Error(_("Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution)."));
+	}
 
-      if (Fix != NULL)
-      {
-	 // Call the scored problem resolver
-	 OpTextProgress Progress(*_config);
-	 bool const distUpgradeMode = strcmp(CmdL.FileList[0], "dist-upgrade") == 0 || strcmp(CmdL.FileList[0], "full-upgrade") == 0;
+	if (Fix != NULL)
+	{
+	   // Call the scored problem resolver
+	   OpTextProgress Progress(*_config);
 
-	 if (distUpgradeMode && _config->Find("Binary") == "apt")
-	    _config->CndSet("APT::Get::AutomaticRemove::Kernels", _config->FindB("APT::Get::AutomaticRemove", true));
+	   if (distUpgradeMode && _config->Find("Binary") == "apt")
+	      _config->CndSet("APT::Get::AutomaticRemove::Kernels", _config->FindB("APT::Get::AutomaticRemove", true));
 
-	 bool resolver_fail = false;
-	 if (distUpgradeMode == true || UpgradeMode != APT::Upgrade::ALLOW_EVERYTHING)
-	    resolver_fail = APT::Upgrade::Upgrade(Cache, UpgradeMode, &Progress);
-	 else
-	    resolver_fail = Fix->Resolve(true, &Progress);
+	   bool resolver_fail = false;
+	   if (distUpgradeMode == true || UpgradeMode != APT::Upgrade::ALLOW_EVERYTHING)
+	      resolver_fail = APT::Upgrade::Upgrade(Cache, UpgradeMode, &Progress);
+	   else
+	      resolver_fail = Fix->Resolve(true, &Progress);
 
-	 if (resolver_fail == false && Cache->BrokenCount() == 0)
-	    return false;
-      }
+	   if (resolver_fail == false && Cache->BrokenCount() == 0)
+	      return false;
+	}
 
-      if (CheckNothingBroken(Cache) == false)
-	 return false;
-   }
-   if (!DoAutomaticRemove(Cache)) 
-      return false;
+	if (CheckNothingBroken(out, Cache) == false)
+	   return false;
 
-   // if nothing changed in the cache, but only the automark information
-   // we write the StateFile here, otherwise it will be written in 
-   // cache.commit()
-   if (InstallAction.AutoMarkChanged > 0 &&
-       Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
-       Cache->BadCount() == 0 &&
-       _config->FindB("APT::Get::Simulate",false) == false)
-      Cache->writeStateFile(NULL);
+	return true;
+     };
 
-   SortedPackageUniverse Universe(Cache);
-   for (auto const &Pkg: Universe)
-      if (Pkg->CurrentVer != 0 && not Cache[Pkg].Upgrade() && not Cache[Pkg].Delete() &&
-	  UpgradablePackages.find(Pkg) != UpgradablePackages.end())
-	 HeldBackPackages.push_back(Pkg);
+     std::ostringstream out;
+     _error->PushToStack();
+     auto res = runTheSolver(out);
 
-   return true;
+     // 3.0 solver is a bit more strict and applies the rules to user provided arguments as well, so if you provide
+     // a removal request, but don't allow removals, it fails; or if you install something conflicting with an installed
+     // package during an `upgrade` run, that's the same problem. So if an upgrade restriction is set and we have
+     // arguments specified, don't try solver3.
+     auto invalidCombinations = UpgradeMode && (not verset[MOD_REMOVE].empty() || not verset[MOD_INSTALL].empty());
+     // Fallback to 3.0 if we don't get a result or apport is installed
+     if (not invalidCombinations && _config->Find("APT::Solver", "internal") == "internal" && (not res || (not Cache->FindPkg("apport").end() && Cache->FindPkg("apport")->CurrentVer)))
+     {
+	auto internalBroken = Cache->BrokenCount();
+	auto internalDel = Cache->DelCount();
+	auto internalInst = Cache->InstCount();
+	auto internalUpgrade = Cache->UpgradeCount();
+	auto internalKeep = Cache->KeepCount();
+
+	// Create a nested transaction. When leaving this scope, we are back to the 'internal' result.
+	pkgDepCache::Transaction solver3(Cache, pkgDepCache::Transaction::Behavior::ROLLBACK);
+	transaction.temporaryRollback(); // Rollback to before internal solver made changes
+
+	std::vector<std::string> errors;
+	_error->PushToStack();
+	_config->Set("APT::Solver", "3.0");
+	_config->CndSet("APT::Solver::RemoveManual", "true"); // otherwise we are always "worse"
+	std::ofstream solver3out;			      // empty out stream...
+	bool solver3Res = runTheSolver(solver3out);
+
+	std::string str;
+	while (not _error->empty())
+	   if (_error->PopMessage(str))
+	      errors.push_back(str);
+	_config->Set("APT::Solver", "internal");
+	_error->RevertToStack();
+	// An error summary for apport.
+	std::string error;
+	if (solver3Res && Cache->BrokenCount())
+	{
+	   error = "Internal error: The 3.0 solver produced a broken cache";
+	}
+	else if (not solver3Res || Cache->BrokenCount() || not errors.empty())
+	{
+	   if (res && not internalBroken)
+	      error = "Failure: The 3.0 solver did not find a result";
+	}
+	else if (not res)
+	{
+	   // Commit the changes from the 3.0 solver. This in turn commits the 3.0 transaction into the internal
+	   // transaction which sounds a bit awkward, but that's the way it goes: commit() is just delete the
+	   // transaction stage so it can't rollback.
+	   _error->Discard();
+	   _error->Audit(_("Result calculated by the 3.0 solver."));
+	   solver3.commit();
+	   res = true;
+	}
+	else if (std::make_tuple(Cache->DelCount(), -Cache->UpgradeCount(), Cache->KeepCount(), Cache->InstCount()) > std::make_tuple(internalDel, -internalUpgrade, internalKeep, internalInst))
+	{
+	   error = "Failure: The 3.0 solver produced a worse result";
+	}
+
+	if (res && not error.empty() && not Cache->FindPkg("apport").end() && Cache->FindPkg("apport")->CurrentVer)
+	{
+	   pkgDepCache::Transaction dumpTransaction(Cache, pkgDepCache::Transaction::Behavior::ROLLBACK);
+	   transaction.temporaryRollback(); // Rollback to before internal solver made changes so we can dump the OG request
+	   WriteApportReport(Cache, error, errors, UpgradeMode, distUpgradeMode);
+	}
+     }
+     // If the 3.0 solver could not recover either, abort.
+     _error->MergeWithStack();
+     if (not res)
+     {
+	c1out << out.str() << std::flush;
+	return false;
+     }
+  }
+  if (!DoAutomaticRemove(Cache))
+     return false;
+
+  // if nothing changed in the cache, but only the automark information
+  // we write the StateFile here, otherwise it will be written in
+  // cache.commit()
+  if (InstallAction.AutoMarkChanged > 0 &&
+      Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
+      Cache->BadCount() == 0 &&
+      _config->FindB("APT::Get::Simulate", false) == false)
+     Cache->writeStateFile(NULL);
+
+  SortedPackageUniverse Universe(Cache);
+  for (auto const &Pkg : Universe)
+     if (Pkg->CurrentVer != 0 && not Cache[Pkg].Upgrade() && not Cache[Pkg].Delete() &&
+	 UpgradablePackages.find(Pkg) != UpgradablePackages.end())
+	HeldBackPackages.push_back(Pkg);
+
+  return true;
 }
 									/*}}}*/
 bool AddVolatileSourceFile(pkgSourceList *const SL, PseudoPkg &&pkg, std::vector<PseudoPkg> &VolatileCmdL)/*{{{*/
