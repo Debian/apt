@@ -304,47 +304,48 @@ class Solver
  */
 struct APT::Solver::Var
 {
-   uint32_t IsVersion : 1;
-   uint32_t MapPtr : 31;
+   uint32_t value;
 
-   Var() : IsVersion(0), MapPtr(0) {}
-   explicit Var(pkgCache::PkgIterator const &Pkg) : IsVersion(0), MapPtr(Pkg.MapPointer()) {}
-   explicit Var(pkgCache::VerIterator const &Ver) : IsVersion(1), MapPtr(Ver.MapPointer()) {}
+   explicit constexpr Var(uint32_t value = 0) : value{value} {}
+   explicit Var(pkgCache::PkgIterator const &Pkg) : value(uint32_t(Pkg.MapPointer()) << 1) {}
+   explicit Var(pkgCache::VerIterator const &Ver) : value(uint32_t(Ver.MapPointer()) << 1 | 1) {}
+
+   inline constexpr bool isVersion() const { return value & 1; }
+   inline constexpr uint32_t mapPtr() const { return value >> 1; }
 
    // \brief Return the package, if any, otherwise 0.
    map_pointer<pkgCache::Package> Pkg() const
    {
-      return IsVersion ? 0 : map_pointer<pkgCache::Package>{(uint32_t)MapPtr};
+      return isVersion() ? 0 : map_pointer<pkgCache::Package>{mapPtr()};
    }
    // \brief Return the version, if any, otherwise 0.
    map_pointer<pkgCache::Version> Ver() const
    {
-      return IsVersion ? map_pointer<pkgCache::Version>{(uint32_t)MapPtr} : 0;
+      return isVersion() ? map_pointer<pkgCache::Version>{mapPtr()} : 0;
    }
    // \brief Return the package iterator if storing a package, or an empty one
    pkgCache::PkgIterator Pkg(pkgCache &cache) const
    {
-      return IsVersion ? pkgCache::PkgIterator() : pkgCache::PkgIterator(cache, cache.PkgP + Pkg());
+      return isVersion() ? pkgCache::PkgIterator() : pkgCache::PkgIterator(cache, cache.PkgP + Pkg());
    }
    // \brief Return the version iterator if storing a package, or an empty end.
    pkgCache::VerIterator Ver(pkgCache &cache) const
    {
-      return IsVersion ? pkgCache::VerIterator(cache, cache.VerP + Ver()) : pkgCache::VerIterator();
+      return isVersion() ? pkgCache::VerIterator(cache, cache.VerP + Ver()) : pkgCache::VerIterator();
    }
    // \brief Return a package, cast from version if needed
    pkgCache::PkgIterator CastPkg(pkgCache &cache) const
    {
-      assert(MapPtr != 0);
-      return IsVersion ? Ver(cache).ParentPkg() : Pkg(cache);
+      return isVersion() ? Ver(cache).ParentPkg() : Pkg(cache);
    }
    // \brief Check if there is no reason.
-   bool empty() const
+   constexpr bool empty() const
    {
-      return IsVersion == 0 && MapPtr == 0;
+      return value == 0;
    }
-   bool operator==(Var const other) const
+   constexpr bool operator==(Var const other) const
    {
-      return IsVersion == other.IsVersion && MapPtr == other.MapPtr;
+      return value == other.value;
    }
 
    std::string toString(pkgCache &cache) const
