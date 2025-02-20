@@ -246,7 +246,7 @@ class Solver
    // utilizing the discoverQ above.
    void Discover(Var var);
    // \brief Link a clause into the watchers
-   void RegisterClause(Clause &&clause);
+   const Clause *RegisterClause(Clause &&clause);
    // \brief Enqueue dependencies shared by all versions of the package.
    void RegisterCommonDependencies(pkgCache::PkgIterator Pkg);
 

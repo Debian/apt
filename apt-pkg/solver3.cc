@@ -444,13 +444,14 @@ bool APT::Solver::Propagate()
    return true;
 }
 
-void APT::Solver::RegisterClause(Clause &&clause)
+const APT::Solver::Clause *APT::Solver::RegisterClause(Clause &&clause)
 {
    auto &clauses = (*this)[clause.reason].clauses;
    clauses.push_back(std::make_unique<Clause>(std::move(clause)));
    auto const &inserted = clauses.back();
    for (auto var : inserted->solutions)
       (*this)[var].rclauses.push_back(inserted.get());
+   return inserted.get();
 }
 
 void APT::Solver::Discover(Var var)
@@ -931,8 +932,8 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 {
 	    Clause w{Var(), Group, isOptional};
 	    w.solutions.push_back(Var(P));
-	    RegisterClause(std::move(w));
-	    if (not AddWork(Work{rootState->clauses.back().get(), depth()}))
+	    auto insertedW = RegisterClause(std::move(w));
+	    if (not AddWork(Work{insertedW, depth()}))
 	       return false;
 
 	    // Given A->A2|A1, B->B1|B2; Bn->An, if we select `not A1`, we
@@ -944,8 +945,8 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	    for (auto V = P.VersionList(); not V.end(); ++V)
 	       shortcircuit.solutions.push_back(Var(V));
 	    std::stable_sort(shortcircuit.solutions.begin(), shortcircuit.solutions.end(), CompareProviders3{cache, policy, P, *this});
-	    RegisterClause(std::move(shortcircuit));
-	    if (not AddWork(Work{rootState->clauses.back().get(), depth()}))
+	    auto insertedShort = RegisterClause(std::move(shortcircuit));
+	    if (not AddWork(Work{insertedShort, depth()}))
 	       return false;
 
 	    // Discovery here is needed so the shortcircuit clause can actually become unit.
@@ -963,8 +964,8 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 std::stable_sort(w.solutions.begin(), w.solutions.end(), CompareProviders3{cache, policy, P, *this});
 	 if (unlikely(debug >= 1))
 	    std::cerr << "Install essential package " << P << std::endl;
-	 RegisterClause(std::move(w));
-	 if (not AddWork(Work{rootState->clauses.back().get(), depth()}))
+	 auto inserted = RegisterClause(std::move(w));
+	 if (not AddWork(Work{inserted, depth()}))
 	    return false;
       }
    }
