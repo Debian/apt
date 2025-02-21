@@ -616,7 +616,7 @@ static std::string getDscHash(unsigned int const DoHashes,
    if ((DoHashes & DoIt) != DoIt || not Tags.Exists(FieldKey) || Hash == nullptr)
       return "";
    std::ostringstream out;
-   out << "\n " << Hash->HashValue() << " " << Size << " " << FileName
+   out << "\n " << Hash->HashValue() << " " << std::to_string(Size) << " " << FileName
       << "\n " << Tags.Find(FieldKey);
    return out.str();
 }
