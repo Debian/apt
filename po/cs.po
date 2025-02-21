@@ -5,15 +5,15 @@
 #
 # This file originally stated:
 # This file is put in the public domain.
-# Miroslav Kure <kurem@debian.cz>, 2004-2024.
+# Miroslav Kure <kurem@debian.cz>, 2004-2025.
 #
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.9.10\n"
+"Project-Id-Version: apt 2.9.28\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2025-02-16 16:59+0000\n"
-"PO-Revision-Date: 2024-11-09 20:38+0100\n"
+"PO-Revision-Date: 2025-02-14 14:54+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
 "Language: cs\n"
@@ -1113,6 +1113,7 @@ msgid ""
 "The dpkg executable set in Dir::Bin::dpkg is missing, falling back to using "
 "default dpkg."
 msgstr ""
+"Program dpkg nastavený v Dir::Bin::dpkg neexistuje, použije se výchozí dpkg."
 
 #. we don't care for the difference
 #: apt-pkg/deb/dpkgpm.cc
@@ -2655,7 +2656,7 @@ msgstr "Soubor „%s“ se změnil, spusťte prosím „apt-get update“.\n"
 #: apt-private/private-sources.cc
 #, c-format
 msgid "Rewrite %zu sources?"
-msgstr ""
+msgstr "Přepsat %zu zdrojů?"
 
 #: apt-private/private-unmet.cc
 #, c-format
@@ -2680,7 +2681,7 @@ msgstr ""
 #: apt-private/private-update.cc
 #, c-format
 msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
-msgstr ""
+msgstr "%s záznam pro „%s“ by měl být aktualizován na deb822 .sources"
 
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
@@ -2692,26 +2693,27 @@ msgstr "Chybí Signed-By v %s pro „%s“"
 msgid ""
 "Consider migrating all sources.list(5) entries to the deb822 .sources format"
 msgstr ""
+"Zvažte migraci všech záznamů sources.list(5) do formátu deb822 .sources"
 
 #: apt-private/private-update.cc
 msgid ""
 "The deb822 .sources format supports both embedded as well as external "
 "OpenPGP keys"
 msgstr ""
+"Formát deb822 .sources podporuje jak klíče OpenPGP vložené v souboru, tak i "
+"externí"
 
 #: apt-private/private-update.cc
-#, fuzzy
-#| msgid ""
-#| "See apt-secure(8) manpage for repository creation and user configuration "
-#| "details."
 msgid "See apt-secure(8) for best practices in configuring repository signing."
 msgstr ""
-"Podrobnosti o vytváření a nastavení repozitářů naleznete v manuálové stránce "
-"apt-secure(8)."
+"Nejlepší praktiky pro nastavení podepisování repozitářů naleznete v "
+"manuálové stránce apt-secure(8)."
 
 #: apt-private/private-update.cc
 msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
 msgstr ""
+"Některé zdroje mohou být modernizovány. Provedete to příkazem „apt modernize-"
+"sources“."
 
 #: apt-private/private-update.cc
 #, c-format
@@ -3114,10 +3116,8 @@ msgid "concatenate files, with automatic decompression"
 msgstr "spojí soubory, automaticky je rozbalí"
 
 #: cmdline/apt-helper.cc
-#, fuzzy
-#| msgid "Problem hashing file"
 msgid "hash file"
-msgstr "Problém s kontrolním součtem souboru"
+msgstr "spočítá kontrolní součet souboru"
 
 #: cmdline/apt-helper.cc
 msgid "detect proxy using apt.conf"
@@ -3355,7 +3355,7 @@ msgstr "upraví soubor se zdroji balíků"
 
 #: cmdline/apt.cc
 msgid "modernize .list files to .sources files"
-msgstr ""
+msgstr "modernizuje soubory .list na .sources"
 
 #: cmdline/apt.cc
 msgid "satisfy dependency strings"
@@ -3889,17 +3889,12 @@ msgid ""
 msgstr "Vnitřní chyba: Dobrý podpis, ale nelze zjistit otisk klíče?!"
 
 #: methods/gpgv.cc
-#, fuzzy
-#| msgid ""
-#| "Could not execute 'apt-key' to verify signature (is gnupg installed?)"
 msgid "Could not execute 'gpgv' to verify signature (is gnupg installed?)"
-msgstr "Nelze spustit „apt-key“ pro ověření podpisu (je gnupg nainstalováno?)"
+msgstr "Nelze spustit „gpgv“ pro ověření podpisu (je gnupg nainstalováno?)"
 
 #: methods/gpgv.cc
-#, fuzzy
-#| msgid "Unknown error executing apt-key"
 msgid "Unknown error executing gpgv"
-msgstr "Neznámá chyba při spouštění apt-key"
+msgstr "Neznámá chyba při spouštění gpgv"
 
 #. TRANSLATORS: The second %s is the reason and is untranslated for repository owners.
 #: methods/gpgv.cc
@@ -3951,16 +3946,14 @@ msgstr "Nelze nastavit čas modifikace"
 msgid "Empty files can't be valid archives"
 msgstr "Prázdné soubory nejsou platnými archivy"
 
-#, fuzzy, c-format
-#~| msgid ""
-#~| "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
-#~| "section in apt-key(8) for details."
+#, c-format
 #~ msgid ""
 #~ "Key is stored in legacy trusted.gpg keyring (%s). Use Signed-By instead. "
 #~ "See the USER CONFIGURATION section in apt-secure(8) for details."
 #~ msgstr ""
-#~ "Klíč je uložen v zastaralé klíčence trusted.gpg (%s), podrobnosti viz "
-#~ "část DEPRECATION v manuálové stránce apt-key(8)."
+#~ "Klíč je uložen v zastaralé klíčence trusted.gpg (%s). Použijte Signed-By. "
+#~ "Podrobnosti naleznete v manuálové stránce apt-secure(8) v části "
+#~ "UŽIVATELSKÉ NASTAVENÍ."
 
 #, c-format
 #~ msgid ""
