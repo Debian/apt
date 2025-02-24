@@ -68,6 +68,8 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 		    Map(*pMap), Cache(pMap,false), Progress(Prog),
 		     CurrentRlsFile(nullptr), CurrentFile(nullptr), d(nullptr)
 {
+   // Reserve some space for version extra data, to avoid lots of small resizes.
+   VersionExtra.reserve(32 * 1024);
 }
 bool pkgCacheGenerator::Start()
 {
@@ -396,8 +398,8 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 	    if (List.SameVersion(Hash, Ver))
 	    {
                // We do not have SHA256 for both, so we cannot compare them, trust the call from SameVersion()
-               if (ListSHA256.empty() || VersionExtra[Ver->ID].SHA256[0] == 0)
-                  break;
+	       if (ListSHA256.empty() || Ver->ID >= VersionExtra.size() || VersionExtra[Ver->ID].SHA256[0] == 0)
+		  break;
                // We have SHA256 for both, so they must match.
                if (ListSHA256 == std::string_view(VersionExtra[Ver->ID].SHA256, 64))
                   break;
