@@ -107,3 +107,13 @@ testsuccessequal "diff-sha256:
         500 file:${APTARCHIVE} testing/main all Packages
      1 500
         500 file:${APTARCHIVE} unstable/main all Packages" apt policy diff-sha256
+testsuccessequal "diff-sha256:
+  Installed: (none)
+  Candidate: 1
+  Version table:
+     1 500
+        500 file:${APTARCHIVE} testing/main all Packages
+        500 ${APTARCHIVE}/dists/unstable/main/binary-all/Packages
+        500 ${APTARCHIVE}/dists/testing/main/binary-all/Packages
+     1 500
+        500 file:${APTARCHIVE} unstable/main all Packages" apt policy diff-sha256 --with-source ${APTARCHIVE}/dists/unstable/main/binary-all/Packages --with-source ${APTARCHIVE}/dists/testing/main/binary-all/Packages

@@ -80,7 +80,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    {
       char SHA256[64];
    };
-   std::vector<VersionExtra> VersionExtra{32 * 1024};
+   std::vector<VersionExtra> VersionExtra;
 
    friend class pkgCacheListParser;
    typedef pkgCacheListParser ListParser;
