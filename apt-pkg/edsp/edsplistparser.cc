@@ -56,6 +56,8 @@ bool edspLikeListParser::NewVersion(pkgCache::VerIterator &Ver)
       }
    }
 
+   // Fake a size such that the deb appears downloadable if it has a source
+   Ver->Size = Section.Exists("APT-Release");
    return true;
 }
 									/*}}}*/
