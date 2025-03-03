@@ -243,6 +243,8 @@ static bool WriteScenarioEDSPVersion(pkgDepCache &Cache, FileFd &output, pkgCach
       WriteOkay(Okay, output, "\nPriority: ", Prio);
    if (Ver->Section != 0)
       WriteOkay(Okay, output, "\nSection: ", Ver.Section());
+   if (Ver->Size != 0)
+      WriteOkay(Okay, output, "\nSize: ", Ver->Size);
    if (Pkg.CurrentVer() == Ver)
       WriteOkay(Okay, output, "\nInstalled: yes");
    if (Pkg->SelectedState == pkgCache::State::Hold ||
