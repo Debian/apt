@@ -56,6 +56,11 @@ bool edspLikeListParser::NewVersion(pkgCache::VerIterator &Ver)
       }
    }
 
+   // If we have a Size field, use it, otherwise fake one based on APT-Release to
+   // be able to distinguish downloadable debs from installed ones.
+   Ver->Size = Section.Exists(pkgTagSection::Key::Size)
+		  ? Section.FindI(pkgTagSection::Key::Size)
+		  : Section.Exists("APT-Release");
    return true;
 }
 									/*}}}*/

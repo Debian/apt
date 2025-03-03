@@ -249,11 +249,8 @@ struct APT_HIDDEN PackageIsObsolete : public PackageMatcher
       // if so return false
       for (auto ver = pkg.VersionList(); !ver.end(); ver++)
       {
-	 for (auto file = ver.FileList(); !file.end(); file++)
-	 {
-	    if ((file.File()->Flags & pkgCache::Flag::NotSource) == 0)
-	       return false;
-	 }
+	 if (ver.Downloadable())
+	    return false;
       }
 
       return true;

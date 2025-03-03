@@ -864,6 +864,10 @@ int pkgCache::VerIterator::CompareVer(const VerIterator &B) const
 /* */
 APT_PURE bool pkgCache::VerIterator::Downloadable() const
 {
+   // A zero size deb is not downloadable
+   if (S->Size == 0)
+      return false;
+
    VerFileIterator Files = FileList();
    for (; Files.end() == false; ++Files)
       if (Files.File().Flagged(pkgCache::Flag::NotSource) == false)
