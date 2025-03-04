@@ -34,12 +34,18 @@ test_packagestoobig() {
 	signreleasefiles
 	# append junk at the end of the Packages.gz/Packages
 	SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages.gz)"
+	SHA256="$(sha256sum aptarchive/dists/unstable/main/binary-i386/Packages.gz | awk '{print $1}')"
+	DATE="$(grep ^Date aptarchive/dists/unstable/Release | cut -f2- -d' ')"
 	find aptarchive/dists -name 'Packages*' | while read pkg; do
 		echo "1234567890" >> "$pkg"
 		touch -d '+1hour' "$pkg"
 	done
 	NEW_SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages.gz)"
 	testfailuremsg "E: Failed to fetch ${1}/dists/unstable/main/binary-i386/Packages.gz  File has unexpected size ($NEW_SIZE != $SIZE). Mirror sync in progress?
+   Hashes of expected file:
+    - Filesize:$SIZE [weak]
+    - SHA256:$SHA256
+   Release file created at: $DATE
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::Transaction=0
 	testsuccess ls rootdir/var/lib/apt/lists/partial/*Packages*.FAILED
 	testfailure test -e rootdir/var/lib/apt/lists/partial/Old.FAILED
@@ -51,12 +57,18 @@ test_packagestoosmall() {
 	signreleasefiles
 	# replace Packages.gz/Packages with short junk
 	SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages.gz)"
+	SHA256="$(sha256sum aptarchive/dists/unstable/main/binary-i386/Packages.gz | awk '{print $1}')"
+	DATE="$(grep ^Date aptarchive/dists/unstable/Release | cut -f2- -d' ')"
 	find aptarchive/dists -name 'Packages*' | while read pkg; do
 		echo "1234567890" > "$pkg"
 		touch -d '+1hour' "$pkg"
 	done
 	NEW_SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages.gz)"
 	testfailuremsg "E: Failed to fetch ${1}/dists/unstable/main/binary-i386/Packages.gz  File is smaller than expected ($NEW_SIZE < $SIZE). Mirror sync in progress?
+   Hashes of expected file:
+    - Filesize:$SIZE [weak]
+    - SHA256:$SHA256
+   Release file created at: $DATE
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -o Debug::pkgAcquire::Worker=1 -o Debug::Acquire::Transaction=0
 	testsuccess ls rootdir/var/lib/apt/lists/partial/*Packages*.FAILED
 	testfailure test -e rootdir/var/lib/apt/lists/partial/Old.FAILED
