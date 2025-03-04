@@ -339,14 +339,9 @@ struct APT::Solver::Var
       return isVersion() ? Ver(cache).ParentPkg() : Pkg(cache);
    }
    // \brief Check if there is no reason.
-   constexpr bool empty() const
-   {
-      return value == 0;
-   }
-   constexpr bool operator==(Var const other) const
-   {
-      return value == other.value;
-   }
+   constexpr bool empty() const { return value == 0; }
+   constexpr bool operator!=(Var const other) const { return value != other.value; }
+   constexpr bool operator==(Var const other) const { return value == other.value; }
 
    std::string toString(pkgCache &cache) const
    {
