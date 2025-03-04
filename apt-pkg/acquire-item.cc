@@ -1378,20 +1378,20 @@ bool pkgAcqMetaBase::CheckStopAuthentication(pkgAcquire::Item * const I, const s
       I->Status = StatTransientNetworkError;
       _error->Warning(_("An error occurred during the signature verification. "
 	       "The repository is not updated and the previous index files will be used. "
-	       "GPG error: %s: %s"),
+	       "OpenPGP signature verification failed: %s: %s"),
 	    Desc.Description.c_str(),
 	    GPGError.c_str());
       RunScripts("APT::Update::Auth-Failure");
       return true;
    } else if (LookupTag(Message,"Message").find("NODATA") != string::npos) {
       /* Invalid signature file, reject (LP: #346386) (Closes: #627642) */
-      _error->Error(_("GPG error: %s: %s"),
+      _error->Error(_("OpenPGP signature verification failed: %s: %s"),
 	    Desc.Description.c_str(),
 	    GPGError.c_str());
       I->Status = StatAuthError;
       return true;
    } else {
-      _error->Warning(_("GPG error: %s: %s"),
+      _error->Warning(_("OpenPGP signature verification failed: %s: %s"),
 	    Desc.Description.c_str(),
 	    GPGError.c_str());
    }
