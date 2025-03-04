@@ -423,12 +423,12 @@ runtest2() {
 	msgmsg 'Cold archive signed by' 'Empty signature'
 	rm -rf rootdir/var/lib/apt/lists
 	find aptarchive -name Release -exec touch {}.gpg \;
-	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  Release: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update -o Debug::gpgv=1
+	testfailuremsg "E: OpenPGP signature verification failed: http://localhost:${APTHTTPPORT}  Release: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update -o Debug::gpgv=1
 
 	msgmsg 'Cold archive signed by' 'Unknown format signature'
 	rm -rf rootdir/var/lib/apt/lists
 	find aptarchive -name Release -exec sh -c "echo Hello > {}.gpg" \;
-	testfailuremsg "E: GPG error: http://localhost:${APTHTTPPORT}  Release: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update
+	testfailuremsg "E: OpenPGP signature verification failed: http://localhost:${APTHTTPPORT}  Release: Signed file isn't valid, got 'NODATA' (does the network require authentication?)" aptget update
 
 	find aptarchive/ \( -name InRelease -o -name Release.gpg \) -delete
 
