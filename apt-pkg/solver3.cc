@@ -231,13 +231,24 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
    return false;
 }
 
-std::string APT::Solver::Clause::toString(pkgCache &cache) const
+std::string APT::Solver::Clause::toString(pkgCache &cache, bool pretty) const
 {
    std::string out;
-   if (auto Pkg = reason.Pkg(cache); not Pkg.end())
-      out.append(Pkg.FullName());
-   if (auto Ver = reason.Ver(cache); not Ver.end())
-      out.append(Ver.ParentPkg().FullName()).append("=").append(Ver.VerStr());
+   out.append(reason.toString(cache));
+   if (dep && pretty)
+   {
+      out.append(" ").append(pkgCache::DepIterator(cache, dep).DepType()).append(" ");
+      for (auto dep = pkgCache::DepIterator(cache, this->dep); not dep.end(); ++dep)
+      {
+	 out.append(dep.TargetPkg().FullName(true));
+	 if (dep.TargetVer())
+	    out.append(" (").append(dep.CompType()).append(" ").append(dep.TargetVer()).append(")");
+	 if (!(dep->CompareOp & pkgCache::Dep::Or))
+	    break;
+	 out.append(" | ");
+      }
+      return out;
+   }
    out.append(" -> ");
    for (auto var : solutions)
       out.append(" | ").append(var.toString(cache));

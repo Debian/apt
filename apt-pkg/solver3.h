@@ -377,7 +377,7 @@ struct APT::Solver::Clause
 
    inline Clause(Var reason, Group group, bool optional = false, bool negative = false) : reason(reason), group(group), optional(optional), negative(negative) {}
 
-   std::string toString(pkgCache &cache) const;
+   std::string toString(pkgCache &cache, bool pretty = false) const;
 };
 
 /**
