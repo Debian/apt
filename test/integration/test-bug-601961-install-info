@@ -60,4 +60,8 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  findutils : Depends: essentialpkg but it is not going to be installed
-E: Conflict: findutils:i386 -> essentialpkg:i386 but not essentialpkg:i386' aptget remove essentialpkg --trivial-only --solver 3.0
+E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. essentialpkg:i386 is selected for removal
+   2. essentialpkg:i386 is selected for install because:
+      1. findutils:i386 is selected for install
+      2. findutils:i386 Depends essentialpkg' aptget remove essentialpkg --trivial-only --solver 3.0

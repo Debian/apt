@@ -161,7 +161,13 @@ testfailureequal "$BADSOLVETEXT3
 The following packages have unmet dependencies:
  bad-upgrade-level1 : Depends: bad-upgrade-level0 (>= 2) but 1 is to be installed
                       Depends: unneeded2 but it is not going to be installed
-E: Unsatisfiable dependency group bad-upgrade-level0:amd64=2 -> unknown:amd64" apt install bad-upgrade-level1 -s --solver 3.0
+E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. bad-upgrade-level0:amd64=2 is selected as an upgrade because:
+      1. bad-upgrade-level1:amd64=2 is selected as an upgrade
+      2. bad-upgrade-level1:amd64=2 Depends bad-upgrade-level0 (>= 2)
+   2. bad-upgrade-level0:amd64=2 Depends unknown
+      but none of the choices are installable:
+      [no choices]" apt install bad-upgrade-level1 -s --solver 3.0
 testfailureequal "$BADSOLVETEXT
 The following packages have unmet dependencies:
  bad-conflict-level0 : Conflicts: bad-conflict-level2 but 1 is to be installed
@@ -171,7 +177,15 @@ testfailureequal "$BADSOLVETEXT3
 The following packages have unmet dependencies:
  bad-conflict-level2 : Depends: bad-conflict-level1 but it is not going to be installed
                        Depends: unneeded2 but it is not going to be installed
-E: Conflict: bad-conflict-level2:amd64=1 -> not bad-conflict-level0:amd64 -> not bad-conflict-level1:amd64 but bad-conflict-level2:amd64=1 -> bad-conflict-level2:amd64 -> bad-conflict-level1:amd64" apt install bad-conflict-level2 -s --solver 3.0
+E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. bad-conflict-level1:amd64 is selected for install because:
+      1. bad-conflict-level2:amd64=1 is selected for install
+      2. bad-conflict-level2:amd64 Depends bad-conflict-level1
+   2. bad-conflict-level1:amd64 Depends bad-conflict-level0
+      but none of the choices are installable:
+      - bad-conflict-level0:amd64 is not selected for install because:
+        1. bad-conflict-level2:amd64=1 is selected for install as above
+        2. bad-conflict-level0:amd64 Conflicts bad-conflict-level2" apt install bad-conflict-level2 -s --solver 3.0
 
 if $TEST_WITH_APTITUDE; then
 	testsuccesstailequal 6 'The following packages have been kept back:

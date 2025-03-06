@@ -84,6 +84,7 @@ class Solver
    struct Clause;
    struct Work;
    struct Solved;
+   friend struct std::hash<APT::Solver::Var>;
 
    // \brief Groups of works, these are ordered.
    //
@@ -290,6 +291,19 @@ class Solver
 
    // Print dependency chain
    std::string WhyStr(Var reason) const;
+
+   /**
+    * \brief Print a long reason string
+    *
+    * Print a reason as to why `rclause` implies `decision` for the variable `var`.
+    *
+    * \param var The variable to print the reason for
+    * \param decision The assumed decision to print the reason for (may be different from actual decision if rclause is specified)
+    * \param rclause The clause that caused this variable to be marked (or would be marked)
+    * \param prefix A prefix, for indentation purposes, as this is recursive
+    * \param seen A set of seen objects such that the output does not repeat itself (not for safety, it is acyclic)
+    */
+   std::string LongWhyStr(Var var, bool decision, const Clause *rclause, std::string prefix, std::unordered_set<Var> &seen) const;
 };
 
 }; // namespace APT
@@ -494,3 +508,11 @@ inline const APT::Solver::State &APT::Solver::operator[](Var r) const
 {
    return const_cast<Solver &>(*this)[r];
 }
+
+// Custom specialization of std::hash can be injected in namespace std.
+template <>
+struct std::hash<APT::Solver::Var>
+{
+   std::hash<decltype(APT::Solver::Var::value)> hash_value;
+   std::size_t operator()(const APT::Solver::Var &v) const noexcept { return hash_value(v.value); }
+};

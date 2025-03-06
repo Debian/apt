@@ -1,4 +1,4 @@
-#!/bin/sh
+t-bug-598669-install-postfix-gets-exim-heavy!/bin/sh
 set -e
 
 TESTDIR="$(readlink -f "$(dirname "$0")")"
@@ -7,7 +7,13 @@ setupenvironment
 configarchitecture "i386"
 setupaptarchive
 
-testfailuremsg "E: Conflict: exim4-daemon-light:i386 -> not postfix:i386=2.7.1-1 but postfix:i386=2.7.1-1" aptget install postfix --solver 3.0
+# FIXME: Should this say selected postifx?
+testfailuremsg "E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. postfix:i386=2.7.1-1 is selected for install
+   2. postfix:i386=2.7.1-1 is not selected for install because:
+      1. exim4-daemon-light:i386 is selected for install
+      2. exim4-daemon-light:i386 Conflicts mail-transport-agent
+         [selected exim4-daemon-light:i386]" aptget install postfix --solver 3.0
 allowremovemanual
 testfailureequal "Reading package lists...
 Building dependency tree...

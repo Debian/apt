@@ -114,7 +114,7 @@ The following packages have unmet dependencies:
  foo : Depends: libfoo but it is not going to be installed
 E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.' aptget purge libfoo -s --solver internal
 
-testequal 'Reading package lists...
+testfailureequal 'Reading package lists...
 Building dependency tree...
 Solving dependencies...
 Some packages could not be installed. This may mean that you have
@@ -125,4 +125,8 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  foo : Depends: libfoo but it is not going to be installed
-E: Conflict: foo:amd64 -> libfoo:amd64 but not libfoo:amd64' aptget purge libfoo -s --solver 3.0
+E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. libfoo:amd64 is selected for removal
+   2. libfoo:amd64 is selected for install because:
+      1. foo:amd64 is selected for install
+      2. foo:amd64 Depends libfoo' aptget purge libfoo -s --solver 3.0

@@ -33,7 +33,12 @@ insertpackage 'unstable' 'foo-same-breaker-none' 'i386' '1.0' 'Conflicts: foo-sa
 
 setupaptarchive
 
-testfailuremsg 'E: Conflict: foo-provider:i386=1.0 -> not foo-breaker-none:i386 but foo-breaker-none:i386=1.0 -> foo-breaker-none:i386' aptget install foo-provider foo-breaker-none -s --solver 3.0
+testfailuremsg 'E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. foo-breaker-none:i386=1.0 is selected for install
+   2. foo-breaker-none:i386 is not selected for install because:
+      1. foo-provider:i386=1.0 is selected for install
+      2. foo-breaker-none:i386 Conflicts foo
+         [selected foo-provider:i386=1.0]' aptget install foo-provider foo-breaker-none -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
@@ -72,7 +77,12 @@ Conf foo (4.0 unstable [i386])
 Conf foo-breaker-3 (1.0 unstable [i386])
 Conf foo-provider (1.0 unstable [i386])' aptget install foo-provider foo-breaker-3 -s
 
-testfailuremsg 'E: Conflict: foo-foreign-breaker-none:i386=1.0 -> foo-foreign-breaker-none:i386 -> not foo-foreign-provider:i386=1.0 but foo-foreign-provider:i386=1.0' aptget install foo-foreign-provider foo-foreign-breaker-none -s --solver 3.0
+testfailuremsg 'E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. foo-foreign-provider:i386=1.0 is selected for install
+   2. foo-foreign-provider:i386=1.0 is not selected for install because:
+      1. foo-foreign-breaker-none:i386=1.0 is selected for install
+      2. foo-foreign-breaker-none:i386 Conflicts foo-foreign
+         [selected foo-foreign-breaker-none:i386]' aptget install foo-foreign-provider foo-foreign-breaker-none -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
@@ -111,7 +121,12 @@ Conf foo-foreign:amd64 (4.0 unstable [amd64])
 Conf foo-foreign-breaker-3 (1.0 unstable [i386])
 Conf foo-foreign-provider (1.0 unstable [i386])' aptget install foo-foreign-provider foo-foreign-breaker-3 -s
 
-testfailuremsg 'E: Conflict: foo-same-provider:i386=1.0 -> not foo-same-breaker-none:i386 but foo-same-breaker-none:i386=1.0 -> foo-same-breaker-none:i386' aptget install foo-same-provider foo-same-breaker-none -s --solver 3.0
+testfailuremsg 'E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. foo-same-breaker-none:i386=1.0 is selected for install
+   2. foo-same-breaker-none:i386 is not selected for install because:
+      1. foo-same-provider:i386=1.0 is selected for install
+      2. foo-same-breaker-none:i386 Conflicts foo-same
+         [selected foo-same-provider:i386=1.0]' aptget install foo-same-provider foo-same-breaker-none -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have

@@ -50,7 +50,13 @@ Remv lib32nss-mdns [0.9-1]
 Inst libnss-mdns [0.9-1] (0.10-6 unstable [amd64])
 Conf libnss-mdns (0.10-6 unstable [amd64])' aptget dist-upgrade -s --solver internal
 
-testfailuremsg 'E: Unsatisfiable dependency group libfoo:amd64 -> libfoo-bin:amd64' aptget install foo -s --solver 3.0
+testfailuremsg 'E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. libfoo:amd64 is selected for install because:
+      1. foo:amd64=1 is selected for install
+      2. foo:amd64 Depends libfoo
+   2. libfoo:amd64 Depends libfoo-bin
+      but none of the choices are installable:
+      [no choices]' aptget install foo -s --solver 3.0
 testfailureequal 'Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have

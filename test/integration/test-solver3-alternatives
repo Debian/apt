@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'unsat' 'all' '3' 'Depends: a | b'
+insertpackage 'unstable' 'a' 'all' '3' 'Depends: aa|ab'
+insertpackage 'unstable' 'b' 'all' '3' 'Depends: ba|bb'
+insertpackage 'unstable' 'aa' 'all' '3' 'Depends: aax'
+insertpackage 'unstable' 'ab' 'all' '3' 'Depends: abx'
+insertpackage 'unstable' 'ba' 'all' '3' 'Depends: bay'
+insertpackage 'unstable' 'bb' 'all' '3' 'Depends: bby'
+setupaptarchive
+
+testfailuremsg "E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. bb:amd64 is selected for install because:
+      1. unsat:amd64=3 is selected for install
+      2. unsat:amd64 Depends a | b
+         [selected b:amd64 for install]
+      3. b:amd64 Depends ba | bb
+         [selected b:amd64]
+      For context, additional choices that could not be installed:
+      * In unsat:amd64 Depends a | b:
+        - a:amd64 is not selected for install
+      * In b:amd64 Depends ba | bb:
+        - ba:amd64 is not selected for install
+   2. bb:amd64 Depends bby
+      but none of the choices are installable:
+      [no choices]" apt install unsat --solver 3.0
