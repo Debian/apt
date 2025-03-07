@@ -273,8 +273,12 @@ inline APT::Solver::Var APT::Solver::bestReason(APT::Solver::Clause const *claus
       return Var{};
    if (clause->reason == var)
       for (auto choice : clause->solutions)
-	 if ((*this)[choice].decision != Decision::NONE)
+      {
+	 if (clause->negative && (*this)[choice].decision == Decision::MUST)
 	    return choice;
+	 if (not clause->negative && (*this)[choice].decision == Decision::MUSTNOT)
+	    return choice;
+      }
    return clause->reason;
 }
 
