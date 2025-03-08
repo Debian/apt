@@ -14,7 +14,11 @@ insertpackage 'unstable' 'exim4-daemon-heavy' 'all' '1.0' 'Depends: libdb4.8'
 setupaptarchive
 
 # This does not work in 3.0 solver: We do not remove manually installed packages.
-testfailuremsg "E: Conflict: not libdb4.8:i386 -> not exim4-daemon-light:i386 but exim4-daemon-light:i386" aptget remove libdb4.8 --solver 3.0 -s
+testfailuremsg "E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. exim4-daemon-light:i386 is selected for install
+   2. exim4-daemon-light:i386 Depends libdb4.8
+      but none of the choices are installable:
+      - libdb4.8:i386 is selected for removal" aptget remove libdb4.8 --solver 3.0 -s
 allowremovemanual
 testsuccessequal "Reading package lists...
 Building dependency tree...

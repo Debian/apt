@@ -31,7 +31,7 @@ buildsimplenativepackage 'foobar2' 'all' '1' 'unstable' 'Depends: foo (= 5), baz
 
 testunsat() {
     testfailure "$@"
-    testsuccess grep -E "^E: (Unable to correct problems,|Conflict:)" "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
+    testsuccess grep -E "^E: (Unable to correct problems,|Unable to satisfy dependencies. Reached two conflicting decisions)" "${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
 }
 
 ln -s "$(readlink -f ./incoming/foobar2_1_all.deb)" foobar.deb

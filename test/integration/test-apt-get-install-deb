@@ -32,7 +32,11 @@ done
 
 buildsimplenativepackage 'foo' 'i386,amd64' '1.0'
 
-testfailuremsg "E: Conflict: foo:amd64=1.0 -> foo:amd64 but foo:i386=1.0 -> not foo:amd64" aptget install ./incoming/foo_1.0_i386.deb ./incoming/foo_1.0_amd64.deb -s --solver 3.0
+testfailuremsg "E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. foo:amd64 is not selected for install because:
+      1. foo:i386=1.0 is selected for install
+      2. foo:amd64 Conflicts foo:i386
+   2. foo:amd64=1.0 is selected for install" aptget install ./incoming/foo_1.0_i386.deb ./incoming/foo_1.0_amd64.deb -s --solver 3.0
 testfailureequal "Reading package lists...
 Building dependency tree...
 Note, selecting 'foo:i386' instead of './incoming/foo_1.0_i386.deb'
@@ -177,7 +181,11 @@ echo 'Package: /pkg-/
 Pin: release a=experimental
 Pin-Priority: 501' > rootdir/etc/apt/preferences.d/pinit
 
-testfailuremsg 'E: Unsatisfiable dependency group pkg-last-line-parse:amd64 -> pkg-as-it-should-be:amd64' aptget install -q=0 ./incoming/pkg-last-line-parse_0_all.deb --solver 3.0
+testfailuremsg 'E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. pkg-last-line-parse:amd64=0 is selected for install
+   2. pkg-last-line-parse:amd64 PreDepends pkg-as-it-should-be
+      but none of the choices are installable:
+      [no choices]' aptget install -q=0 ./incoming/pkg-last-line-parse_0_all.deb --solver 3.0
 testfailuremsg 'E: Unable to correct problems, you have held broken packages.' aptget install -q=0 ./incoming/pkg-last-line-parse_0_all.deb --solver internal
 testsuccess aptget install ./incoming/pkg-as-it-should-be_0_all.deb
 testsuccess aptget install ./incoming/pkg-last-line-parse_0_all.deb

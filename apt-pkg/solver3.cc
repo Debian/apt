@@ -35,6 +35,7 @@
 #include <cassert>
 #include <chrono>
 #include <ctime>
+#include <iomanip>
 #include <sstream>
 
 // FIXME: Helpers stolen from DepCache, please give them back.
@@ -231,16 +232,31 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
    return false;
 }
 
-std::string APT::Solver::Clause::toString(pkgCache &cache) const
+std::string APT::Solver::Clause::toString(pkgCache &cache, bool pretty) const
 {
    std::string out;
-   if (auto Pkg = reason.Pkg(cache); not Pkg.end())
-      out.append(Pkg.FullName());
-   if (auto Ver = reason.Ver(cache); not Ver.end())
-      out.append(Ver.ParentPkg().FullName()).append("=").append(Ver.VerStr());
-   out.append(" -> ");
-   for (auto var : solutions)
-      out.append(" | ").append(var.toString(cache));
+   out.append(reason.toString(cache));
+   if (dep && pretty)
+   {
+      out.append(" ").append(pkgCache::DepIterator(cache, dep).DepType()).append(" ");
+      for (auto dep = pkgCache::DepIterator(cache, this->dep); not dep.end(); ++dep)
+      {
+	 out.append(dep.TargetPkg().FullName(true));
+	 if (dep.TargetVer())
+	    out.append(" (").append(dep.CompType()).append(" ").append(dep.TargetVer()).append(")");
+	 if (!(dep->CompareOp & pkgCache::Dep::Or))
+	    break;
+	 out.append(" | ");
+      }
+   }
+   else if (group == Group::SelectVersion && negative)
+      out.append(" conflicts with other versions of itself");
+   else
+   {
+      out.append(" -> ");
+      for (auto var : solutions)
+	 out.append(" | ").append(var.toString(cache));
+   }
    return out;
 }
 
@@ -262,8 +278,12 @@ inline APT::Solver::Var APT::Solver::bestReason(APT::Solver::Clause const *claus
       return Var{};
    if (clause->reason == var)
       for (auto choice : clause->solutions)
-	 if ((*this)[choice].decision != Decision::NONE)
+      {
+	 if (clause->negative && (*this)[choice].decision == Decision::MUST)
 	    return choice;
+	 if (not clause->negative && (*this)[choice].decision == Decision::MUSTNOT)
+	    return choice;
+      }
    return clause->reason;
 }
 
@@ -286,6 +306,167 @@ std::string APT::Solver::WhyStr(Var reason) const
       outstr += (outstr.size() == 0 ? "" : " -> ") + *I;
    }
    return outstr;
+}
+
+std::string APT::Solver::LongWhyStr(Var var, bool decision, const Clause *rclause, std::string prefix, std::unordered_set<Var> &seen) const
+{
+   std::ostringstream out;
+
+   // Helper function to nicely print more details than just "install/do not install", such as "removal", "upgrade", "downgrade", "install"
+   auto printSelection = [this](Var var, bool decision)
+   {
+      std::string s;
+      if (auto pkg = var.Pkg(cache); not decision && pkg && pkg->CurrentVer)
+	 strprintf(s, "%s is selected for removal", var.toString(cache).c_str());
+      else if (auto ver = var.Ver(cache); decision && ver && ver.ParentPkg().CurrentVer() && ver.ParentPkg().CurrentVer() != ver)
+      {
+	 if (cache.VS->CmpVersion(ver.ParentPkg().CurrentVer().VerStr(), ver.VerStr()) < 0)
+	    strprintf(s, "%s is selected as an upgrade", var.toString(cache).c_str());
+	 else
+	    strprintf(s, "%s is selected as a downgrade", var.toString(cache).c_str());
+      }
+      else if (not decision)
+	 strprintf(s, "%s is not selected for install", var.toString(cache).c_str());
+      else
+	 strprintf(s, "%s is selected for install", var.toString(cache).c_str());
+      return s;
+   };
+
+   // Helper: Recurse into all of the children of the clause and print the decision for them.
+   auto recurseChildren = [&](const Clause *clause, Var skip = Var())
+   {
+      if (clause->solutions.empty())
+	 out << prefix << "[no choices]\n";
+      for (auto choice : clause->solutions)
+      {
+	 if (choice == skip)
+	    continue;
+
+	 if ((*this)[choice].decision == Decision::NONE)
+	    out << prefix << "- " << choice.toString(cache) << " is undecided\n";
+	 else
+	    out << prefix << "- " << LongWhyStr(choice, (*this)[choice].decision == Decision::MUST, (*this)[choice].reason, prefix + "  ", seen).substr(prefix.size() + 2);
+      }
+   };
+
+   // Version selection clauses like pkg=ver -> pkg or pkg -> pkg=ver are irrelevant for the user, skip them
+   if (decision && rclause && rclause->group == Group::SelectVersion)
+   {
+      var = rclause->reason;
+      rclause = (*this)[var].reason;
+   }
+
+   // No reason given, probably a user request or manually installed or essential or whatnot.
+   if (not rclause)
+   {
+      out << prefix << printSelection(var, decision) << "\n";
+      return out.str();
+   }
+
+   // We could be called with a decision we tried to make but failed due to a conflict;
+   // this checks if it is the real decision.
+   if ((*this)[var].decision != Decision::NONE && decision == ((*this)[var].decision == Decision::MUST) && (*this)[var].reason == rclause)
+   {
+      // If we have seen the real decision before; we dont't need to print it again.
+      if (seen.find(var) != seen.end())
+      {
+	 out << prefix << printSelection(var, decision) << " as above\n";
+	 return out.str();
+      }
+      seen.insert(var);
+   }
+
+   // A package was decided "not install" due to a positive clause, so the clause is unsat.
+   if (not decision && rclause && not rclause->negative)
+   {
+      out << prefix << rclause->toString(cache, true) << "\n";
+      out << prefix << "but none of the choices are installable:\n";
+      recurseChildren(rclause);
+      return out.str();
+   }
+
+   // Build the strongest path from a root to our decision leaf
+   std::vector<Var> path;
+   for (auto reason = bestReason(rclause, var); not reason.empty(); reason = bestReason((*this)[reason].reason, reason))
+      path.push_back(reason);
+
+   // Render the strong reasoning path
+   out << prefix << printSelection(var, decision) << " because:\n";
+   auto w = std::to_string(path.size() + 1).size();
+   size_t i = 1;
+   for (auto it = path.rbegin(); it != path.rend(); ++it, ++i)
+   {
+      auto const &state = (*this)[*it];
+      // Don't print version selection clauses
+      if (state.reason && state.reason->group == Group::SelectVersion)
+      {
+	 --i;
+	 continue;
+      }
+      if (seen.find(*it) != seen.end())
+      {
+	 if ((it + 1) == path.rend() || seen.find(*(it + 1)) == seen.end())
+	 {
+	    out << prefix << (i == 1 ? "" : "1-") << i << ". " << printSelection(*it, state.decision == Decision::MUST) << " as above\n";
+	 }
+	 continue;
+      }
+      seen.insert(*it);
+      if (state.reason)
+      {
+	 out << prefix << std::setw(w) << i << ". " << state.reason->toString(cache, true) << "\n";
+	 if (state.reason->solutions.size() > 1)
+	    out << prefix << std::setw(w) << " " << "  [selected " << it->toString(cache) << " for " << (state.decision == Decision::MUST ? "install" : "remove") << "]\n";
+      }
+      else
+	 out << prefix << std::setw(w) << i << ". " << printSelection(*it, state.decision == Decision::MUST) << "\n";
+   }
+
+   // Print the leaf. We can't have the leaf in the path because we might be called for an attempted decision
+   // that conflicts with the actual assignment (to simplify: we marked X for not install, then we process Y depends X
+   // and try to mark X and reach the conflict, we are called with "X" and the "Y depends X" clause).
+   out << prefix << std::setw(w) << i << ". " << rclause->toString(cache, true) << "\n";
+   if (rclause->solutions.size() > 1)
+      out << prefix << std::setw(w) << " " << "  " << "[selected " << bestReason(rclause, var).toString(cache) << "]\n";
+
+   bool firstContext = true;
+   // Show alternative paths not taken. Consider you have Y depends X|Z; and you mark X
+   // for it; we show above Y -> X as the path, but here we go show why Z was not considered in "Y depends X|Z".
+   for (auto it = path.rbegin(); it != path.rend(); ++it)
+   {
+      auto const &state = (*this)[*it];
+      if (not state.reason) // If we have no reason, we don't have alternatives
+	 continue;
+      if (state.reason->solutions.size() <= 1) // Nothing to print if we no alternatives
+	 continue;
+      if (state.reason->negative) // We only actually need one conflicting choice, ignore others
+	 continue;
+
+      if (firstContext)
+      {
+	 out << prefix << "For context, additional choices that could not be installed:" << "\n";
+      }
+
+      firstContext = false;
+      out << prefix << "* In " << state.reason->toString(cache, true) << ":\n";
+      prefix += "  ";
+      recurseChildren(state.reason, *it);
+      prefix.resize(prefix.size() - 2);
+   }
+   if (rclause->solutions.size() > 1 && not rclause->negative)
+   {
+      if (firstContext)
+      {
+	 out << prefix << "For context, additional choices that could not be installed:" << "\n";
+      }
+      firstContext = false;
+      out << prefix << "* In " << rclause->toString(cache, true) << ":\n";
+      prefix += "  ";
+      recurseChildren(rclause, var);
+      prefix.resize(prefix.size() - 2);
+   }
+
+   return out.str();
 }
 
 // This is essentially asking whether any other binary in the source package has a higher candidate
@@ -360,7 +541,14 @@ bool APT::Solver::Enqueue(Var var, bool decision, const Clause *reason)
    if (state.decision != Decision::NONE)
    {
       if (state.decision != decisionCast)
-	 return _error->Error("Conflict: %s -> %s%s but %s", WhyStr(bestReason(reason, var)).c_str(), decision ? "" : "not ", var.toString(cache).c_str(), WhyStr(var).c_str());
+      {
+	 std::ostringstream err;
+	 err << "Unable to satisfy dependencies. Reached two conflicting decisions:" << "\n";
+	 std::unordered_set<Var> seen;
+	 err << "1. " << LongWhyStr(var, state.decision == Decision::MUST, state.reason, "   ", seen).substr(3) << "\n";
+	 err << "2. " << LongWhyStr(var, decision, reason, "   ", seen).substr(3);
+	 return _error->Error("%s", err.str().c_str());
+      }
       return true;
    }
 
@@ -444,13 +632,14 @@ bool APT::Solver::Propagate()
    return true;
 }
 
-void APT::Solver::RegisterClause(Clause &&clause)
+const APT::Solver::Clause *APT::Solver::RegisterClause(Clause &&clause)
 {
    auto &clauses = (*this)[clause.reason].clauses;
    clauses.push_back(std::make_unique<Clause>(std::move(clause)));
    auto const &inserted = clauses.back();
    for (auto var : inserted->solutions)
       (*this)[var].rclauses.push_back(inserted.get());
+   return inserted.get();
 }
 
 void APT::Solver::Discover(Var var)
@@ -757,7 +946,7 @@ bool APT::Solver::AddWork(Work &&w)
 	 if (not Enqueue(var, false, w.clause))
 	    return false;
    }
-   else if (not w.clause->solutions.empty())
+   else
    {
       if (unlikely(debug >= 3 && w.clause->optional))
 	 std::cerr << "Enqueuing Recommends " << w.clause->toString(cache) << std::endl;
@@ -769,10 +958,6 @@ bool APT::Solver::AddWork(Work &&w)
       work.push_back(std::move(w));
       std::push_heap(work.begin(), work.end());
    }
-   else if (not w.clause->optional && w.clause->dep)
-      return _error->Error("Unsatisfiable dependency group %s -> %s", w.clause->reason.toString(cache).c_str(), pkgCache::DepIterator(cache, w.clause->dep).TargetPkg().FullName().c_str());
-   else if (not w.clause->optional)
-      return _error->Error("Unsatisfiable dependency group %s", w.clause->reason.toString(cache).c_str());
    return true;
 }
 
@@ -816,8 +1001,6 @@ bool APT::Solver::Solve()
       if (unlikely(debug >= 1))
 	 std::cerr << item.toString(cache) << std::endl;
 
-      assert(item.clause->solutions.size() > 1 || item.clause->optional);
-
       bool foundSolution = false;
       for (auto &sol : item.clause->solutions)
       {
@@ -841,15 +1024,13 @@ bool APT::Solver::Solve()
       }
       if (not foundSolution && not item.clause->optional)
       {
-	 std::ostringstream dep;
-	 assert(item.clause->solutions.size() > 0);
-	 for (auto &sol : item.clause->solutions)
-	    dep << (dep.tellp() == 0 ? "" : " | ") << sol.toString(cache);
-	 _error->Error("Unsatisfiable dependency: %s -> %s", WhyStr(item.clause->reason).c_str(), dep.str().c_str());
-	 for (auto &sol : item.clause->solutions)
-	    if ((*this)[sol].decision == Decision::MUSTNOT)
-	       _error->Error("Not considered: %s: %s", sol.toString(cache).c_str(),
-			     WhyStr(sol).c_str());
+	 std::ostringstream err;
+
+	 err << "Unable to satisfy dependencies. Reached two conflicting decisions:" << "\n";
+	 std::unordered_set<Var> seen;
+	 err << "1. " << LongWhyStr(item.clause->reason, true, (*this)[item.clause->reason].reason, "   ", seen).substr(3) << "\n";
+	 err << "2. " << LongWhyStr(item.clause->reason, false, item.clause, "   ", seen).substr(3);
+	 _error->Error("%s", err.str().c_str());
 	 if (not Pop())
 	    return false;
       }
@@ -931,8 +1112,8 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 {
 	    Clause w{Var(), Group, isOptional};
 	    w.solutions.push_back(Var(P));
-	    RegisterClause(std::move(w));
-	    if (not AddWork(Work{rootState->clauses.back().get(), depth()}))
+	    auto insertedW = RegisterClause(std::move(w));
+	    if (not AddWork(Work{insertedW, depth()}))
 	       return false;
 
 	    // Given A->A2|A1, B->B1|B2; Bn->An, if we select `not A1`, we
@@ -944,8 +1125,8 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	    for (auto V = P.VersionList(); not V.end(); ++V)
 	       shortcircuit.solutions.push_back(Var(V));
 	    std::stable_sort(shortcircuit.solutions.begin(), shortcircuit.solutions.end(), CompareProviders3{cache, policy, P, *this});
-	    RegisterClause(std::move(shortcircuit));
-	    if (not AddWork(Work{rootState->clauses.back().get(), depth()}))
+	    auto insertedShort = RegisterClause(std::move(shortcircuit));
+	    if (not AddWork(Work{insertedShort, depth()}))
 	       return false;
 
 	    // Discovery here is needed so the shortcircuit clause can actually become unit.
@@ -963,8 +1144,8 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 std::stable_sort(w.solutions.begin(), w.solutions.end(), CompareProviders3{cache, policy, P, *this});
 	 if (unlikely(debug >= 1))
 	    std::cerr << "Install essential package " << P << std::endl;
-	 RegisterClause(std::move(w));
-	 if (not AddWork(Work{rootState->clauses.back().get(), depth()}))
+	 auto inserted = RegisterClause(std::move(w));
+	 if (not AddWork(Work{inserted, depth()}))
 	    return false;
       }
    }

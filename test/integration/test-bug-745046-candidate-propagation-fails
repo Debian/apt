@@ -39,7 +39,11 @@ The following information may help to resolve the situation:
 
 The following packages have unmet dependencies:
  gedit : Depends: common (>= 2) but it is not installable
-E: Unsatisfiable dependency group gedit:amd64=2 -> common:amd64" aptget install gedit/experimental -sq=0 --solver 3.0
+E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. gedit:amd64=2 is selected as an upgrade
+   2. gedit:amd64=2 Depends common (>= 2)
+      but none of the choices are installable:
+      [no choices]" aptget install gedit/experimental -sq=0 --solver 3.0
 
 insertinstalledpackage 'common' 'amd64' '2'
 

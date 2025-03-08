@@ -83,7 +83,16 @@ testsuccessequal "$(installsfoosamey 'amd64' 'i386')" apt build-dep cool-foo -s 
 testsuccessequal "$(installsfoosamey 'i386' 'i386')" apt build-dep bad-amd64-foo -s -a i386
 testsuccessequal "$(installsfoosamey 'amd64' 'i386')" apt build-dep bad-armel-foo -s -a i386
 testsuccessequal "$(installsfoosamey 'i386' 'i386')" apt build-dep bad-amd64-armel-foo -s -a i386
-testfailuremsg 'E: Conflict: builddeps:bad-amd64-i386-foo:i386=1 -> builddeps:bad-amd64-i386-foo:i386 -> not foo:amd64=1 -> not builddeps:bad-amd64-i386-foo:i386 but builddeps:bad-amd64-i386-foo:i386=1 -> builddeps:bad-amd64-i386-foo:i386'  apt build-dep bad-amd64-i386-foo -s -a i386 --solver 3.0
+testfailuremsg 'E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. builddeps:bad-amd64-i386-foo:i386=1 is selected for install
+   2. builddeps:bad-amd64-i386-foo:i386 Depends foo:i386
+      but none of the choices are installable:
+      - foo:amd64=1 is not selected for install because:
+        1. builddeps:bad-amd64-i386-foo:i386=1 is selected for install
+        2. builddeps:bad-amd64-i386-foo:i386 Conflicts foo:amd64
+      - foo:i386=1 is not selected for install because:
+        1. builddeps:bad-amd64-i386-foo:i386=1 is selected for install as above
+        2. builddeps:bad-amd64-i386-foo:i386 Conflicts foo:i386'  apt build-dep bad-amd64-i386-foo -s -a i386 --solver 3.0
 testfailureequal 'Reading package lists...
 Reading package lists...
 Building dependency tree...
@@ -96,7 +105,16 @@ The following information may help to resolve the situation:
 The following packages have unmet dependencies:
  builddeps:bad-amd64-i386-foo:i386 : Depends: foo:i386
 E: Unable to correct problems, you have held broken packages.' apt build-dep bad-amd64-i386-foo -s -a i386 --solver internal
-testfailuremsg 'E: Conflict: builddeps:bad-amd64-i386-armel-foo:i386=1 -> builddeps:bad-amd64-i386-armel-foo:i386 -> not foo:amd64=1 -> not builddeps:bad-amd64-i386-armel-foo:i386 but builddeps:bad-amd64-i386-armel-foo:i386=1 -> builddeps:bad-amd64-i386-armel-foo:i386' apt build-dep bad-amd64-i386-armel-foo -s -a i386 --solver 3.0
+testfailuremsg 'E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. builddeps:bad-amd64-i386-armel-foo:i386=1 is selected for install
+   2. builddeps:bad-amd64-i386-armel-foo:i386 Depends foo:i386
+      but none of the choices are installable:
+      - foo:amd64=1 is not selected for install because:
+        1. builddeps:bad-amd64-i386-armel-foo:i386=1 is selected for install
+        2. builddeps:bad-amd64-i386-armel-foo:i386 Conflicts foo:amd64
+      - foo:i386=1 is not selected for install because:
+        1. builddeps:bad-amd64-i386-armel-foo:i386=1 is selected for install as above
+        2. builddeps:bad-amd64-i386-armel-foo:i386 Conflicts foo:i386' apt build-dep bad-amd64-i386-armel-foo -s -a i386 --solver 3.0
 testfailureequal 'Reading package lists...
 Reading package lists...
 Building dependency tree...
@@ -115,7 +133,19 @@ testsuccessequal "$(installsfoosamey 'i386' 'armel')" apt build-dep bad-amd64-fo
 testsuccessequal "$(installsfoosamey 'amd64' 'armel')" apt build-dep bad-armel-foo -s -a armel
 testsuccessequal "$(installsfoosamey 'i386' 'armel')" apt build-dep bad-amd64-armel-foo -s -a armel
 testsuccessequal "$(installsfoosamey 'armel' 'armel')" apt build-dep bad-amd64-i386-foo -s -a armel
-FAILUREMSG="E: Conflict: builddeps:bad-amd64-i386-armel-foo:armel=1 -> builddeps:bad-amd64-i386-armel-foo:armel -> not foo:amd64=1 -> not builddeps:bad-amd64-i386-armel-foo:armel but builddeps:bad-amd64-i386-armel-foo:armel=1 -> builddeps:bad-amd64-i386-armel-foo:armel"
+FAILUREMSG="E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. builddeps:bad-amd64-i386-armel-foo:armel=1 is selected for install
+   2. builddeps:bad-amd64-i386-armel-foo:armel Depends foo:armel
+      but none of the choices are installable:
+      - foo:amd64=1 is not selected for install because:
+        1. builddeps:bad-amd64-i386-armel-foo:armel=1 is selected for install
+        2. builddeps:bad-amd64-i386-armel-foo:armel Conflicts foo:amd64
+      - foo:i386=1 is not selected for install because:
+        1. builddeps:bad-amd64-i386-armel-foo:armel=1 is selected for install as above
+        2. builddeps:bad-amd64-i386-armel-foo:armel Conflicts foo:i386
+      - foo:armel=1 is not selected for install because:
+        1. builddeps:bad-amd64-i386-armel-foo:armel=1 is selected for install as above
+        2. builddeps:bad-amd64-i386-armel-foo:armel Conflicts foo:armel"
 FAILURE='Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have
