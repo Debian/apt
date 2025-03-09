@@ -589,6 +589,8 @@ EOF
 	echo 'DPkg::Path "";' >> aptconfig.conf
 	echo 'Dir::Bin::ischroot "/bin/false";' >> aptconfig.conf
 
+	echo 'quiet::NoSolver3Explanation "true";' > rootdir/etc/apt/apt.conf.d/disable-solver3-context
+
 	# most tests just need one signed Release file, not both
 	export APT_DONT_SIGN='Release.gpg'
 
