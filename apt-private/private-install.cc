@@ -1024,6 +1024,9 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
 	   transaction.temporaryRollback(); // Rollback to before internal solver made changes so we can dump the OG request
 	   WriteApportReport(Cache, error, errors, UpgradeMode, distUpgradeMode);
 	}
+
+	if (not res && not errors.empty() && not _config->FindB("quiet::NoSolver3Explanation", false))
+	   _error->Error("The following information from --solver 3.0 may provide additional context:\n%s", APT::String::Join(errors, "\n").c_str());
      }
      // If the 3.0 solver could not recover either, abort.
      _error->MergeWithStack();
