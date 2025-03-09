@@ -146,21 +146,21 @@ class Solver
    ContiguousCacheMap<pkgCache::Version, State> verStates;
 
    // \brief Helper function for safe access to package state.
-   inline State &operator[](pkgCache::Package *P)
+   inline State &operator[](const pkgCache::Package *P)
    {
       return pkgStates[P];
    }
-   inline const State &operator[](pkgCache::Package *P) const
+   inline const State &operator[](const pkgCache::Package *P) const
    {
       return pkgStates[P];
    }
 
    // \brief Helper function for safe access to version state.
-   inline State &operator[](pkgCache::Version *V)
+   inline State &operator[](const pkgCache::Version *V)
    {
       return verStates[V];
    }
-   inline const State &operator[](pkgCache::Version *V) const
+   inline const State &operator[](const pkgCache::Version *V) const
    {
       return verStates[V];
    }
@@ -169,7 +169,9 @@ class Solver
    inline const State &operator[](Var r) const;
 
    mutable FastContiguousCacheMap<pkgCache::Package, char> pkgObsolete;
-   bool Obsolete(pkgCache::PkgIterator pkg) const;
+   // \brief Check if package is obsolete.
+   // \param AllowManual controls whether manual packages can be obsolete
+   bool Obsolete(pkgCache::PkgIterator pkg, bool AllowManual=false) const;
    bool ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) const;
 
    mutable FastContiguousCacheMap<pkgCache::Version, short> priorities;
@@ -471,6 +473,7 @@ struct APT::Solver::State
    struct
    {
       bool discovered{};
+      bool manual{};
    } flags;
 
    static_assert(sizeof(flags) <= sizeof(int));

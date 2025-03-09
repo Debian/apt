@@ -46,6 +46,10 @@ testobsolete() {
     testsuccessequal "$out" grep "Obsolete:" upgrade.output
 }
 
+# Test with manually installed local-only first, it cannot be obsolete
+testobsolete "Obsolete: obsolete:amd64=1 due to obsolete-reason:amd64=2" aptget dist-upgrade
+
+testsuccess aptmark auto '*'
 testobsolete "Obsolete: obsolete:amd64=1 due to obsolete-reason:amd64=2
 Obsolete: local-only:amd64=1 - not installable" aptget dist-upgrade
 testobsolete "Obsolete: obsolete:amd64=1 due to obsolete-reason:amd64=2
