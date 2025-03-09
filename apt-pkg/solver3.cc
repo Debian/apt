@@ -497,8 +497,10 @@ bool APT::Solver::ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) cons
    return false;
 }
 
-bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg) const
+bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg, bool AllowManual) const
 {
+   if ((*this)[pkg].flags.manual && not AllowManual)
+      return false;
    if (pkgObsolete[pkg] != 0)
       return pkgObsolete[pkg] == 2;
 
@@ -804,7 +806,7 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
 		   { return var.CastPkg(cache)->CurrentVer == 0; }))
       clause.group = Group::SatisfyNew;
    if (std::any_of(clause.solutions.begin(), clause.solutions.end(), [this](auto var) -> auto
-		   { return Obsolete(var.CastPkg(cache)); }))
+		   { return Obsolete(var.CastPkg(cache), true); }))
       clause.group = Group::SatisfyObsolete;
    // Try to perserve satisfied Recommends. FIXME: We should check if the Recommends was there in the installed version?
    if (clause.optional && start.ParentPkg()->CurrentVer)
@@ -1102,6 +1104,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	    std::cerr << "Install " << P.FullName() << " (" << (isEssential ? "E" : "") << (isAuto ? "M" : "") << (Root ? "R" : "") << ")"
 		      << "\n";
 
+	 (*this)[P].flags.manual = not isAuto;
 	 if (not isOptional)
 	 {
 	    // Pre-empt the non-optional requests, as we don't want to queue them, we can just "unit propagate" here.
