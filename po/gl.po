@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2011-05-12 15:28+0100\n"
 "Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: galician <proxecto@trasno.net>\n"
@@ -125,7 +125,8 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "Produciuse un erro durante a verificación da sinatura. O repositorio non foi "
 "actualizado, empregaranse os ficheiros de índice anteriores. Erro de GPG: "
@@ -134,8 +135,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "Produciuse un erro de GPG: %s %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1897,6 +1898,12 @@ msgid "Broken packages"
 msgstr "Paquetes estragados"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Produciuse un erro de escritura"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2146,6 +2153,10 @@ msgid_plural ""
 msgstr[0] "%lu paquete foi instalado automaticamente e xa non é necesario.\n"
 msgstr[1] ""
 "%lu paquetes foron instalados automaticamente e xa non son necesarios.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -3973,6 +3984,10 @@ msgstr "Non foi posíbel estabelecer a hora de modificación"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Os ficheiros baleiros non poden ser arquivadores válidos"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "Produciuse un erro de GPG: %s %s"
 
 #~ msgid "Logging in"
 #~ msgstr "Identificándose"

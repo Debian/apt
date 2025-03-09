@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2019-01-21 09:19+0100\n"
 "Last-Translator: Julien Patriarca <leatherface@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -130,10 +130,14 @@ msgstr ""
 "Peut-être le réseau nécessite-t-il une authentification."
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "An error occurred during the signature verification. The repository is "
+#| "not updated and the previous index files will be used. GPG error: %s: %s"
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "Une erreur s'est produite lors du contrôle de la signature. Le dépôt n'est "
 "pas mis à jour et les fichiers d'index précédents seront utilisés. Erreur de "
@@ -142,8 +146,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "Erreur de GPG : %s : %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1990,6 +1994,12 @@ msgid "Broken packages"
 msgstr "Paquets défectueux"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Erreur d'écriture"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2249,6 +2259,10 @@ msgstr[0] ""
 "%lu paquet a été installé automatiquement et n'est plus nécessaire.\n"
 msgstr[1] ""
 "%lu paquets ont été installés automatiquement et ne sont plus nécessaires.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -4169,6 +4183,10 @@ msgstr "Impossible de modifier l'heure "
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Les fichiers vides ne peuvent être des archives valables"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "Erreur de GPG : %s : %s"
 
 #~ msgid "Logging in"
 #~ msgstr "Connexion en cours"

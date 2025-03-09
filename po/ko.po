@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -116,7 +116,8 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "디지털 서명 확인에 오류가 발생했습니다. 저장고를 업데이트하지 않고\n"
 "예전의 인덱스 파일을 사용합니다. GPG 오류: %s: %s\n"
@@ -124,8 +125,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "GPG 오류: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1849,6 +1850,12 @@ msgid "Broken packages"
 msgstr "망가진 패키지"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "쓰기 오류"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2084,6 +2091,10 @@ msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] "패키지 %lu개가 자동으로 설치되었지만 더 이상 필요하지 않습니다.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -3891,6 +3902,10 @@ msgstr "파일 변경 시각을 설정하는데 실패했습니다"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr ""
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "GPG 오류: %s: %s"
 
 #~ msgid "Logging in"
 #~ msgstr "로그인하는 중입니다"

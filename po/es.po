@@ -37,7 +37,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2016-01-26 01:51+0100\n"
 "Last-Translator: Manuel \"Venturi\" Porras Peralta "
 "<venturi@openmailbox.org>\n"
@@ -183,10 +183,14 @@ msgstr ""
 "autenticación?)"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "An error occurred during the signature verification. The repository is "
+#| "not updated and the previous index files will be used. GPG error: %s: %s"
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "Se produjo un error durante la verificación de las firmas. El repositorio no "
 "está actualizado y se utilizarán los ficheros de índice antiguos. Error de "
@@ -195,8 +199,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "Error de GPG: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -2021,6 +2025,12 @@ msgid "Broken packages"
 msgstr "Paquetes rotos"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Error de escritura"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2275,6 +2285,10 @@ msgid_plural ""
 msgstr[0] "Se instaló  %lu paquete de forma automática y ya no es necesario.\n"
 msgstr[1] ""
 "Se instalaron %lu paquetes de forma automática y ya no son necesarios.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -4149,6 +4163,10 @@ msgstr "Fallo al establecer el tiempo de modificación"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Los ficheros vacíos no pueden ser archivos válidos"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "Error de GPG: %s: %s"
 
 #~ msgid "Logging in"
 #~ msgstr "Ingresando"

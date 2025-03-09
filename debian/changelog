@@ -1,3 +1,42 @@
+apt (2.9.32) unstable; urgency=medium
+
+  * Rewordings and documentation updates:
+    - Add doc/design/install.md: Installation design
+    - Replace "GPG error" with "OpenPGP signature verification failed"
+  * Bug fix: Correctly detect obsolete packages in EDSP
+    - refactor obsolete checks to use VerFileIterator::Downloadable()
+    - Consider 0-size debs not downloadable, set a size in EDSP
+    - edsp: Write 'Size' to the EDSP files
+  * UX: Produce more human-readable dependency errors in 3.0 solver.
+    - test: Grep continuation lines in error messages
+    - solver3: Simplify Var pointer tagging
+    - solver3: cleanup operators for Var
+    - solver3: Support pretty printing clauses
+    - solver3: Verbose error messages
+    The output now has multiple lines, prints the underlying concrete
+    dependency (foo Depends bar), and prints paths not taken.
+  * Bug fixes:
+    - solver3: bestReason: Only find actual assignments [i.e. when the
+      path to a decision is determined for printing, we sometimes picked
+      assignments with the wrong polarity, e.g. when determining "why not foo"
+      in "foo Conflicts mail-transport-agent" we might have picked a
+      decision "not exim4" rather than a choice "postfix"].
+    - solver3: Do not prefer new installs over manually installed obsoletes.
+      (LP: #2100247) - We still try dependencies with obsolete packages
+      last, even if manual, so a "Depends: new" is processed before
+      "Depends: new | obsolete" either way.
+  * Feature: Introduce transaction support and upgrade count for pkgDepCache.
+    - Introduce pkgDepCache::Transaction for transactional depcache updates
+    - depcache: Add a new UpgradeCount() member
+  * Feature: Fall back to the 3.0 solver if internal failed, or apport is
+    installed.
+    - Evaluate and fall back to the 3.0 solver
+    - Print --solver 3.0 explanation if both internal and it failed
+  * Both features have been shipped for several weeks in Ubuntu already and
+    received minor bug fixes and additional test cases.
+
+ -- Julian Andres Klode <jak@debian.org>  Sun, 09 Mar 2025 18:19:14 +0100
+
 apt (2.9.31) unstable; urgency=medium
 
   [ Julian Andres Klode ]

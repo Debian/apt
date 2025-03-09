@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -121,7 +121,8 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "Med preverjanjem podpisa je prišlo do napake. Skladišče ni bilo posodobljeno "
 "zato bodo uporabljene predhodne datoteke kazal. Napaka GPG: %s: %s\n"
@@ -129,8 +130,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "Napaka GPG: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1876,6 +1877,12 @@ msgid "Broken packages"
 msgstr "Pokvarjeni paketi"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Napaka pisanja"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2132,6 +2139,10 @@ msgstr[0] "%lu paketov je bilo samodejno nameščenih in niso več zahtevani.\n"
 msgstr[1] "%lu paket je bil samodejno nameščen in ni bil več zahtevan.\n"
 msgstr[2] "%lu paketa sta bila samodejno nameščena in nista več zahtevana.\n"
 msgstr[3] "%lu paketi so bili samodejno nameščeni in niso več zahtevani.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -3960,6 +3971,10 @@ msgstr "Nastavitev časa spremembe je spodletela"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prazne datoteke ne morejo biti veljavni arhivi"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "Napaka GPG: %s: %s"
 
 #~ msgid "Logging in"
 #~ msgstr "Prijavljanje"

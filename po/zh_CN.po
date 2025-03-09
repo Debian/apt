@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2025-01-28 16:26-0500\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
@@ -122,10 +122,14 @@ msgid ""
 msgstr "明文签署文件不可用，结果为‘%s’（您的网络需要认证吗？）"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "An error occurred during the signature verification. The repository is "
+#| "not updated and the previous index files will be used. GPG error: %s: %s"
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "校验数字签名时出错。此仓库未被更新，所以仍然使用此前的索引文件。GPG 错误："
 "%s: %s"
@@ -133,8 +137,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "GPG 错误：%s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1839,6 +1843,12 @@ msgid "Broken packages"
 msgstr "破损的软件包"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "写出错"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2067,6 +2077,10 @@ msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] "%lu 个自动安装的的软件包现在已不再需要了。\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -3836,6 +3850,10 @@ msgstr "无法设置文件的修改日期"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "空文件不是有效归档"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "GPG 错误：%s: %s"
 
 #, fuzzy, c-format
 #~| msgid ""

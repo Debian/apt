@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -128,10 +128,14 @@ msgstr ""
 "hitelesítést?)"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "An error occurred during the signature verification. The repository is "
+#| "not updated and the previous index files will be used. GPG error: %s: %s"
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "Hiba történt az aláírás ellenőrzése közben. A tároló nem frissült, és az "
 "előző indexfájl lesz használva. GPG hiba: %s: %s"
@@ -139,8 +143,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "GPG hiba: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, fuzzy, c-format
@@ -1943,6 +1947,12 @@ msgid "Broken packages"
 msgstr "Törött csomagok"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Írási hiba"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2190,6 +2200,10 @@ msgid_plural ""
 msgstr[0] "%lu csomag automatikusan lett telepítve, és már nincs rá szükség.\n"
 msgstr[1] ""
 "%lu csomag automatikusan lett telepítve, és már nincs rájuk szükség.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -4046,6 +4060,10 @@ msgstr "A módosítási idő beállítása sikertelen"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Az üres fájlok biztosan nem érvényes csomagok"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "GPG hiba: %s: %s"
 
 #~ msgid "Logging in"
 #~ msgstr "Bejelentkezés"

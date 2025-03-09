@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2004-05-06 15:25+0100\n"
 "Last-Translator: Safir Šećerović <sapphire@linux.org.ba>\n"
 "Language-Team: Bosnian <lokal@lugbih.org>\n"
@@ -119,13 +119,14 @@ msgstr ""
 #, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
 msgstr ""
 
 #: apt-pkg/acquire-item.cc
@@ -1801,6 +1802,12 @@ msgid "Broken packages"
 msgstr "Oštećeni paketi"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Greška pri pisanju"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2028,6 +2035,10 @@ msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] "Slijedeći NOVI paketi će biti instalirani:"
 msgstr[1] "Slijedeći NOVI paketi će biti instalirani:"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"

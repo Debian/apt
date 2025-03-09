@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.28\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2025-02-14 14:54+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -125,10 +125,14 @@ msgstr ""
 "ověření?)"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "An error occurred during the signature verification. The repository is "
+#| "not updated and the previous index files will be used. GPG error: %s: %s"
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "Při ověřování podpisů se objevila chyba. Repozitář není aktualizovaný, tudíž "
 "se použijí předchozí indexové soubory. Chyba GPG: %s: %s"
@@ -136,8 +140,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "Chyba GPG: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1884,6 +1888,12 @@ msgid "Broken packages"
 msgstr "Poškozené balíky"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Chyba zápisu"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2137,6 +2147,10 @@ msgid_plural ""
 msgstr[0] "%lu balík byl nainstalován automaticky a již není potřeba.\n"
 msgstr[1] "%lu balíky byly nainstalovány automaticky a již nejsou potřeba.\n"
 msgstr[2] "%lu balíků bylo nainstalováno automaticky a již nejsou potřeba.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -3945,6 +3959,10 @@ msgstr "Nelze nastavit čas modifikace"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Prázdné soubory nejsou platnými archivy"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "Chyba GPG: %s: %s"
 
 #, c-format
 #~ msgid ""

@@ -27,7 +27,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2024-09-02 00:21+0200\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -146,10 +146,14 @@ msgstr ""
 "autentificare?)"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "An error occurred during the signature verification. The repository is "
+#| "not updated and the previous index files will be used. GPG error: %s: %s"
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "S-a produs o eroare în timpul verificării semnăturii. Depozitul nu este "
 "actualizat și vor fi utilizate fișierele de index anterioare. Eroare GPG: "
@@ -158,8 +162,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "Eroare GPG: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -2012,6 +2016,12 @@ msgid "Broken packages"
 msgstr "Pachete deteriorate"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Eroare de scriere"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2294,6 +2304,10 @@ msgid_plural ""
 msgstr[0] "%lu pachet a fost instalat automat și nu mai este necesar:\n"
 msgstr[1] "%lu pachete au fost instalate automat și nu mai sunt necesare:\n"
 msgstr[2] "%lu de pachete au fost instalate automat și nu mai sunt necesare:\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -4175,6 +4189,10 @@ msgstr "Eșec la ajustarea timpului de modificare"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Fișierele goale nu pot fi arhive valide"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "Eroare GPG: %s: %s"
 
 #, fuzzy, c-format
 #~| msgid ""

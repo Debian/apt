@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.6.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2023-04-19 15:15+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -130,10 +130,14 @@ msgstr ""
 "gerektiriyor mu?)"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "An error occurred during the signature verification. The repository is "
+#| "not updated and the previous index files will be used. GPG error: %s: %s"
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "İmza doğrulama sırasında bir hata meydana geldi. Depo güncel değil ve önceki "
 "indeks dosyaları kullanılacak. GPG hatası: %s: %s"
@@ -141,8 +145,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "GPG hatası: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1923,6 +1927,12 @@ msgid "Broken packages"
 msgstr "Bozuk paketler"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Yazma hatası"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2175,6 +2185,10 @@ msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] "%lu paket otomatik olarak kurulmuş ve artık gerekli değil.\n"
 msgstr[1] "%lu paket otomatik olarak kurulmuş ve artık gerekli değil.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -4023,6 +4037,10 @@ msgstr "Değişiklik zamanı ayarlanamadı"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Boş dosyalar geçerli birer arşiv dosyası olamazlar"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "GPG hatası: %s: %s"
 
 #, fuzzy, c-format
 #~| msgid ""

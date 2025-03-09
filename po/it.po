@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2024-09-06 10:21+0100\n"
 "Last-Translator: Luca Vercelli <luca.vercelli.to@gmail.com>\n"
 "Language-Team: Italian <debian-l10n-italian@lists.debian.org>\n"
@@ -130,10 +130,14 @@ msgstr ""
 "richiede autenticazione?)"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "An error occurred during the signature verification. The repository is "
+#| "not updated and the previous index files will be used. GPG error: %s: %s"
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "Si è verificato un errore nel verificare la firma. Il repository non è "
 "aggiornato e verranno usati i file indice precedenti. Errore GPG: %s: %s"
@@ -141,8 +145,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "Errore GPG: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1968,6 +1972,12 @@ msgid "Broken packages"
 msgstr "Pacchetti danneggiati"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Errore di scrittura"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2228,6 +2238,10 @@ msgstr[0] ""
 msgstr[1] ""
 "%lu pacchetti sono stati installati automaticamente e non sono più "
 "richiesti.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -4102,6 +4116,10 @@ msgstr "Impostazione della data di modifica non riuscita"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "File vuoti non possono essere archivi validi"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "Errore GPG: %s: %s"
 
 #, fuzzy, c-format
 #~| msgid ""

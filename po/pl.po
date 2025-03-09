@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2024-07-08 17:53+0200\n"
 "Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -130,10 +130,14 @@ msgstr ""
 "sieć wymaga uwierzytelnienia?)"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "An error occurred during the signature verification. The repository is "
+#| "not updated and the previous index files will be used. GPG error: %s: %s"
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "Podczas weryfikacji podpisu wystąpił błąd. Nie zaktualizowano repozytorium i "
 "w dalszym ciągu będą używane poprzednie pliki indeksu. Błąd GPG %s: %s"
@@ -141,8 +145,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "Błąd GPG: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1955,6 +1959,12 @@ msgid "Broken packages"
 msgstr "Pakiety są uszkodzone lub mają niespełnione zależności"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Błąd zapisu"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2221,6 +2231,10 @@ msgstr[1] ""
 msgstr[2] ""
 "%lu pakietów zostało zainstalowanych automatycznie i nie są już więcej "
 "wymagane.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -4083,6 +4097,10 @@ msgstr "Nie udało się ustawić czasu modyfikacji"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Puste pliki nie mogą być prawidłowymi archiwami"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "Błąd GPG: %s: %s"
 
 # FIXME: Skoordynować tłumaczenie DEPRECATION z apt-key(8)
 #, fuzzy, c-format

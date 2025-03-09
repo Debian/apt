@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.30\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2025-02-26 11:30+0300\n"
 "Last-Translator: Алексей Шилин <shilin.aleksej@gmail.com>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -66,11 +66,11 @@ msgstr "Репозиторий «%s» больше не содержит фай�
 
 #: apt-pkg/acquire-item.cc
 msgid ""
-"This is normally not allowed, but the option Acquire::"
-"AllowDowngradeToInsecureRepositories was given to override it."
+"This is normally not allowed, but the option "
+"Acquire::AllowDowngradeToInsecureRepositories was given to override it."
 msgstr ""
-"Обычно это не разрешается, однако указан параметр Acquire::"
-"AllowDowngradeToInsecureRepositories для продолжения."
+"Обычно это не разрешается, однако указан параметр "
+"Acquire::AllowDowngradeToInsecureRepositories для продолжения."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -133,10 +133,14 @@ msgstr ""
 "аутентификация?)"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "An error occurred during the signature verification. The repository is "
+#| "not updated and the previous index files will be used. GPG error: %s: %s"
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "Произошла ошибка при проверке подписи. Репозиторий не обновлён, и будут "
 "использованы предыдущие индексные файлы. Ошибка GPG: %s: %s"
@@ -144,8 +148,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "Ошибка GPG: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -154,8 +158,8 @@ msgid ""
 "component '%s' (component misspelt in sources.list?)"
 msgstr ""
 "Пропускается получение настроенного файла «%s», так как в репозитории «%s» "
-"отсутствует компонент «%s» (возможно, компонент указан с ошибкой в sources."
-"list?)"
+"отсутствует компонент «%s» (возможно, компонент указан с ошибкой в "
+"sources.list?)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1951,6 +1955,12 @@ msgid "Broken packages"
 msgstr "Сломанные пакеты"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Ошибка записи"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2214,6 +2224,10 @@ msgid_plural ""
 msgstr[0] "%lu пакет был установлен автоматически и больше не требуется.\n"
 msgstr[1] "%lu пакета было установлено автоматически и больше не требуется.\n"
 msgstr[2] "%lu пакетов было установлено автоматически и больше не требуется.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -2688,11 +2702,11 @@ msgstr "%s не имеет сборочных зависимостей.\n"
 #: apt-private/private-source.cc
 #, c-format
 msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
+"No architecture information available for %s. See apt.conf(5) "
+"APT::Architectures for setup"
 msgstr ""
-"Отсутствует информация об архитектуре %s. Для её настройки смотрите apt."
-"conf(5) об APT::Architectures"
+"Отсутствует информация об архитектуре %s. Для её настройки смотрите "
+"apt.conf(5) об APT::Architectures"
 
 #: apt-private/private-source.cc
 msgid "Must specify at least one package to check builddeps for"
@@ -3102,14 +3116,14 @@ msgstr "выполнить обновление"
 #: cmdline/apt-get.cc
 msgid "Install new packages (pkg is libc6 not libc6.deb)"
 msgstr ""
-"установить новые пакеты (указывается имя пакета libc6, а не имя файла libc6."
-"deb)"
+"установить новые пакеты (указывается имя пакета libc6, а не имя файла "
+"libc6.deb)"
 
 #: cmdline/apt-get.cc
 msgid "Reinstall packages (pkg is libc6 not libc6.deb)"
 msgstr ""
-"переустановить пакеты (указывается имя пакета libc6, а не имя файла libc6."
-"deb)"
+"переустановить пакеты (указывается имя пакета libc6, а не имя файла "
+"libc6.deb)"
 
 #: cmdline/apt-get.cc
 msgid "Remove packages"
@@ -4066,6 +4080,10 @@ msgstr "Не удалось установить время модификаци
 msgid "Empty files can't be valid archives"
 msgstr "Пустые файлы не могут быть допустимыми архивами"
 
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "Ошибка GPG: %s: %s"
+
 #, fuzzy, c-format
 #~| msgid ""
 #~| "Key is stored in legacy trusted.gpg keyring (%s), see the DEPRECATION "
@@ -4110,11 +4128,11 @@ msgstr "Пустые файлы не могут быть допустимыми 
 #~ msgstr "Команда PASS не выполнена, сервер сообщил: %s"
 
 #~ msgid ""
-#~ "A proxy server was specified but no login script, Acquire::ftp::"
-#~ "ProxyLogin is empty."
+#~ "A proxy server was specified but no login script, "
+#~ "Acquire::ftp::ProxyLogin is empty."
 #~ msgstr ""
-#~ "Прокси-сервер указан, однако нет сценария входа в систему: Acquire::ftp::"
-#~ "ProxyLogin пуст."
+#~ "Прокси-сервер указан, однако нет сценария входа в систему: "
+#~ "Acquire::ftp::ProxyLogin пуст."
 
 #, c-format
 #~ msgid "Login script command '%s' failed, server said: %s"

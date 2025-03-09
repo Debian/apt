@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -120,7 +120,8 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "เกิดข้อผิดพลาดขณะตรวจสอบลายเซ็น จะไม่ปรับข้อมูลคลังแพกเกจนี้ และจะใช้แฟ้มดัชนีเก่า "
 "ข้อผิดพลาดจาก GPG: %s: %s\n"
@@ -128,8 +129,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "ข้อผิดพลาดจาก GPG: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1846,6 +1847,12 @@ msgid "Broken packages"
 msgstr "แพกเกจมีปัญหา"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "การเขียนข้อมูลผิดพลาด"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2078,6 +2085,10 @@ msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] "มีแพกเกจ %lu แพกเกจถูกติดตั้งแบบอัตโนมัติไว้ และไม่ต้องใช้อีกต่อไปแล้ว\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -3880,6 +3891,10 @@ msgstr "กำหนดเวลาแก้ไขไม่สำเร็จ"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "แฟ้มว่างเปล่าไม่สามารถเป็นแฟ้มจัดเก็บที่ใช้การได้"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "ข้อผิดพลาดจาก GPG: %s: %s"
 
 #~ msgid "Logging in"
 #~ msgstr "เข้าระบบ"

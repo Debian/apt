@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2018-10-30 20:53+0100\n"
 "Last-Translator: Petter Reinholdtsen <pere@hungry.com>\n"
 "Language-Team: Norwegian Bokmål <i18n-no@lister.ping.uio.no>\n"
@@ -132,7 +132,8 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "En feil oppstod under signaturverifisering. Depotet er ikke oppdatert og den "
 "forrige indeksfilen vil bli brukt. GPG-feil: %s: %s\n"
@@ -140,8 +141,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "GPG-feil: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1884,6 +1885,12 @@ msgid "Broken packages"
 msgstr "Ødelagte pakker"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Skrivefeil"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2130,6 +2137,10 @@ msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] "%lu pakke ble automatisk installert og er ikke lenger påkrevet.\n"
 msgstr[1] "%lu pakker ble automatisk installert og er ikke lenger påkrevet.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -3971,6 +3982,10 @@ msgstr "Klarte ikke å sette endringstidspunkt"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomme filer kan ikke være gyldige arkiver"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "GPG-feil: %s: %s"
 
 #~ msgid "Logging in"
 #~ msgstr "Logger inn"

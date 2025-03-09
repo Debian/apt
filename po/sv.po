@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2025-02-12 22:07+0100\n"
 "Last-Translator: Peter Krefting <peter@softwolves.pp.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@lists.debian.org>\n"
@@ -127,10 +127,14 @@ msgstr ""
 "autentisering?)"
 
 #: apt-pkg/acquire-item.cc
-#, c-format
+#, fuzzy, c-format
+#| msgid ""
+#| "An error occurred during the signature verification. The repository is "
+#| "not updated and the previous index files will be used. GPG error: %s: %s"
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 "Ett fel inträffade vid verifiering av signaturen. Förrådet har inte "
 "uppdaterats och de tidigare indexfilerna kommer att användas. GPG-fel: %s: %s"
@@ -138,8 +142,8 @@ msgstr ""
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
-msgstr "GPG-fel: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
+msgstr ""
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1917,6 +1921,12 @@ msgid "Broken packages"
 msgstr "Trasiga paket"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Skrivfel"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2168,6 +2178,10 @@ msgstr[0] ""
 "%lu paket blev installerat automatiskt och är inte längre nödvändigt.\n"
 msgstr[1] ""
 "%lu paket blev installerade automatiskt och är inte längre nödvändiga.\n"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -4005,6 +4019,10 @@ msgstr "Misslyckades med att ställa in ändringstid"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Tomma filer kan inte vara giltiga arkiv"
+
+#, c-format
+#~ msgid "GPG error: %s: %s"
+#~ msgstr "GPG-fel: %s: %s"
 
 #, c-format
 #~ msgid ""

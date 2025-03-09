@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-16 16:59+0000\n"
+"POT-Creation-Date: 2025-03-09 17:32+0000\n"
 "PO-Revision-Date: 2007-03-29 21:36+0800\n"
 "Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
@@ -122,13 +122,14 @@ msgstr ""
 #, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s"
+"updated and the previous index files will be used. OpenPGP signature "
+"verification failed: %s: %s"
 msgstr ""
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
-msgid "GPG error: %s: %s"
+msgid "OpenPGP signature verification failed: %s: %s"
 msgstr ""
 
 #: apt-pkg/acquire-item.cc
@@ -1854,6 +1855,12 @@ msgid "Broken packages"
 msgstr "Sirang mga pakete"
 
 #: apt-private/private-install.cc
+#, fuzzy
+#| msgid "Write error"
+msgid "Writing error report"
+msgstr "Error sa pagsulat"
+
+#: apt-private/private-install.cc
 msgid ""
 "Unmerged usr is no longer supported, use usrmerge to convert to a merged-usr "
 "system."
@@ -2092,6 +2099,10 @@ msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
 msgstr[1] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
+
+#: apt-private/private-install.cc
+msgid "Result calculated by the 3.0 solver."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
