@@ -819,7 +819,7 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
 	    newOptional = false, wasImportant = policy.IsImportantDep(D);
 
       bool satisfied = std::any_of(clause.solutions.begin(), clause.solutions.end(), [this](auto var)
-				   { return Var(var.CastPkg(cache).CurrentVer()) == var; });
+				   { return var.Pkg(cache) ? var.Pkg(cache)->CurrentVer != nullptr : Var(var.CastPkg(cache).CurrentVer()) == var; });
 
       if (important && wasImportant && not newOptional && not satisfied)
       {
