@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'installed' 'a' 'all' '2' 'Depends: a|b'
+insertpackage 'unstable' 'a' 'all' '3' 'Depends: a|c'
+
+setupaptarchive
+testsuccess apt install -o debug::apt::solver=3 a -s --solver 3.0
+cp rootdir/tmp/testsuccess.output log
+msgmsg "Test that æ|b and a|c are different or groups"
+testsuccess grep "Found dependency critical a:amd64=2 -> a:amd64" log
+testsuccess grep "Found dependency critical a:amd64=3 -> a:amd64" log
+

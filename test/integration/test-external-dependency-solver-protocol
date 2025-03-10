@@ -136,6 +136,43 @@ testsuccess test -s "$APT_EDSP_DUMP_FILENAME"
 testequal 'Install: awesomecoolstuff:i386' grep :i386 "$APT_EDSP_DUMP_FILENAME"
 testfailure grep -e ':amd64' -e 'Architecture: any' "$APT_EDSP_DUMP_FILENAME"
 
+rm -f "$APT_EDSP_DUMP_FILENAME"
+testfailure apt upgrade --solver dump
+testsuccess test -s "$APT_EDSP_DUMP_FILENAME"
+testsuccessequal "Request: EDSP 0.5
+Architecture: amd64
+Architectures: amd64 i386
+Machine-ID: 912e43bd1c1d4ba481f9f8ccab25f9ee
+Upgrade-All: yes
+Upgrade: yes
+Forbid-New-Install: no
+Forbid-Remove: yes
+Solver: dump" awk '/^$/ {exit} {print}' "$APT_EDSP_DUMP_FILENAME"
+
+rm -f "$APT_EDSP_DUMP_FILENAME"
+testfailure aptget upgrade --solver dump
+testsuccess test -s "$APT_EDSP_DUMP_FILENAME"
+testsuccessequal "Request: EDSP 0.5
+Architecture: amd64
+Architectures: amd64 i386
+Machine-ID: 912e43bd1c1d4ba481f9f8ccab25f9ee
+Upgrade-All: yes
+Upgrade: yes
+Forbid-New-Install: yes
+Forbid-Remove: yes
+Solver: dump" awk '/^$/ {exit} {print}' "$APT_EDSP_DUMP_FILENAME"
+
+rm -f "$APT_EDSP_DUMP_FILENAME"
+testfailure aptget dist-upgrade --solver dump
+testsuccess test -s "$APT_EDSP_DUMP_FILENAME"
+testsuccessequal "Request: EDSP 0.5
+Architecture: amd64
+Architectures: amd64 i386
+Machine-ID: 912e43bd1c1d4ba481f9f8ccab25f9ee
+Upgrade-All: yes
+Dist-Upgrade: yes
+Solver: dump" awk '/^$/ {exit} {print}' "$APT_EDSP_DUMP_FILENAME"
+
 testsuccess aptget dist-upgrade -s
 testsuccess aptget dist-upgrade -s --solver apt
 
