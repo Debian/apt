@@ -746,7 +746,6 @@ void APT::Solver::RegisterCommonDependencies(pkgCache::PkgIterator Pkg)
 APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason)
 {
    auto TgtPkg = start.TargetPkg();
-   auto Ver = start.ParentVer();
 
    // Non-important dependencies can only be installed if they are currently satisfied, see the check further
    // below once we have calculated all possible solutions.
@@ -756,7 +755,7 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
    if (start->Type == pkgCache::Dep::Replaces || start->Type == pkgCache::Dep::Enhances)
       return Clause{reason, Group::Satisfy, true};
    if (unlikely(debug >= 3))
-      std::cerr << "Found dependency critical " << Ver.ParentPkg().FullName() << "=" << Ver.VerStr() << " -> " << start.TargetPkg().FullName() << "\n";
+      std::cerr << "Found dependency critical " << reason.toString(cache) << " -> " << start.TargetPkg().FullName() << "\n";
 
    Clause clause{reason, Group::Satisfy, not start.IsCritical() /* optional */, start.IsNegative()};
 
