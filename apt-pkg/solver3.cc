@@ -634,6 +634,23 @@ bool APT::Solver::Propagate()
    return true;
 }
 
+static bool SameOrGroup(pkgCache::DepIterator a, pkgCache::DepIterator b)
+{
+   while (1)
+   {
+      if (a->DependencyData != b->DependencyData)
+	 return false;
+
+      // At least one has reached the end, break
+      if (not(a->CompareOp & pkgCache::Dep::Or) || not(b->CompareOp & pkgCache::Dep::Or))
+	 break;
+
+      ++a, ++b;
+   }
+   // Fully iterated over a and b
+   return not(a->CompareOp & pkgCache::Dep::Or) && not(b->CompareOp & pkgCache::Dep::Or);
+}
+
 const APT::Solver::Clause *APT::Solver::RegisterClause(Clause &&clause)
 {
    auto &clauses = (*this)[clause.reason].clauses;
@@ -701,8 +718,8 @@ void APT::Solver::Discover(Var var)
 
 	    // This dependency is shared across all versions, skip it.
 	    if (auto &pkgClauses = (*this)[Ver.ParentPkg()].clauses;
-		std::any_of(pkgClauses.begin(), pkgClauses.end(), [start](auto &c)
-			    { return c->dep && c->dep->DependencyData == start->DependencyData; }))
+		std::any_of(pkgClauses.begin(), pkgClauses.end(), [this, start](auto &c)
+			    { return c->dep && SameOrGroup(start, pkgCache::DepIterator(cache, c->dep)); }))
 	       continue;
 
 	    auto clause = TranslateOrGroup(start, end, Var(Ver));
@@ -723,18 +740,21 @@ void APT::Solver::RegisterCommonDependencies(pkgCache::PkgIterator Pkg)
 {
    for (auto dep = Pkg.VersionList().DependsList(); not dep.end();)
    {
-      pkgCache::DepIterator start;
-      pkgCache::DepIterator end;
+      pkgCache::DepIterator start, end;
       dep.GlobOr(start, end); // advances dep
 
       bool allHaveDep = true;
-      for (auto ver = Pkg.VersionList()++; not ver.end(); ver++)
+      for (auto ver = Pkg.VersionList()++; allHaveDep && not ver.end(); ver++)
       {
 	 bool haveDep = false;
-	 for (auto otherDep = ver.DependsList(); not haveDep && not otherDep.end(); otherDep++)
-	    haveDep = otherDep->DependencyData == start->DependencyData;
-	 if (!haveDep)
-	    allHaveDep = haveDep;
+	 for (auto otherDep = ver.DependsList(); not haveDep && not otherDep.end();)
+	 {
+	    pkgCache::DepIterator otherStart, otherEnd;
+	    otherDep.GlobOr(otherStart, otherEnd); // advances other dep
+	    haveDep = SameOrGroup(start, otherStart);
+	 }
+	 if (not haveDep)
+	    allHaveDep = false;
       }
       if (not allHaveDep)
 	 continue;
