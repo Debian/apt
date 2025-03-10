@@ -373,8 +373,12 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output,
    }
    if (flags & Request::FORBID_NEW_INSTALL)
       WriteOkay(Okay, output, "Forbid-New-Install: yes\n");
+   else if (flags & Request::FORBID_REMOVE)
+      WriteOkay(Okay, output, "Forbid-New-Install: no\n");
    if (flags & Request::FORBID_REMOVE)
       WriteOkay(Okay, output, "Forbid-Remove: yes\n");
+   else if (flags & Request::FORBID_NEW_INSTALL)
+      WriteOkay(Okay, output, "Forbid-Remove: no\n");
    auto const solver = _config->Find("APT::Solver", "internal");
    WriteOkay(Okay, output, "Solver: ", solver, "\n");
    if (_config->FindB("APT::Solver::Strict-Pinning", true) == false)
