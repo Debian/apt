@@ -833,9 +833,17 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
       bool important = policy.IsImportantDep(start);
       bool newOptional = true;
       bool wasImportant = false;
+      auto importantToKeep = [this](pkgCache::DepIterator d)
+      {
+	 return policy.IsImportantDep(d) || (KeepRecommends && d->Type == pkgCache::Dep::Recommends) || (KeepSuggests && d->Type == pkgCache::Dep::Suggests);
+      };
+
       for (auto D = start.ParentPkg().CurrentVer().DependsList(); not D.end(); D++)
-	 if (not D.IsCritical() && not D.IsNegative() && D.TargetPkg() == start.TargetPkg())
+	 if (not D.IsCritical() && importantToKeep(D) && D.TargetPkg() == start.TargetPkg())
+	 {
 	    newOptional = false, wasImportant = policy.IsImportantDep(D);
+	    break;
+	 }
 
       bool satisfied = std::any_of(clause.solutions.begin(), clause.solutions.end(), [this](auto var)
 				   { return var.Pkg(cache) ? var.Pkg(cache)->CurrentVer != nullptr : Var(var.CastPkg(cache).CurrentVer()) == var; });

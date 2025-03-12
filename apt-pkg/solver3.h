@@ -243,6 +243,11 @@ class Solver
    // \brief If set, we use strict pinning.
    int Timeout{_config->FindI("APT::Solver::Timeout", 10)};
 
+   // \brief Keep recommends installed
+   bool KeepRecommends{_config->FindB("APT::AutoRemove::RecommendsImportant", true)};
+   // \brief Keep suggests installed
+   bool KeepSuggests{_config->FindB("APT::AutoRemove::SuggestsImportant", true)};
+
    // \brief Discover a variable, translating the underlying dependencies to the SAT presentation
    //
    // This does a breadth-first search of the entire dependency tree of var,
