@@ -13,8 +13,16 @@ insertpackage 'unstable' 'x' 'all' '3' 'Depends: xx
 Recommends: b'
 insertpackage 'unstable' 'xx' 'all' '3' 'Depends: a | b
 Recommends: b'
+insertpackage 'installed,unstable' 'recommends-and-enhances' 'all' '3' 'Recommends: b
+Enhances:b'
 
 setupaptarchive
+
+msgmsg "Test that the Enhances does not confuse the Recommends algorithm"
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." apt full-upgrade -s
 
 msgmsg "Test that the Recommends does not influence the Depends"
 testsuccessequal "The following additional packages will be installed:

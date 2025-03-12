@@ -831,44 +831,54 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
    if (clause.optional && start.ParentPkg()->CurrentVer)
    {
       bool important = policy.IsImportantDep(start);
-      bool newOptional = true;
-      bool wasImportant = false;
-      for (auto D = start.ParentPkg().CurrentVer().DependsList(); not D.end(); D++)
-	 if (not D.IsCritical() && not D.IsNegative() && D.TargetPkg() == start.TargetPkg())
-	    newOptional = false, wasImportant = policy.IsImportantDep(D);
-
+      auto importantToKeep = [this](pkgCache::DepIterator d)
+      {
+	 return policy.IsImportantDep(d) || (KeepRecommends && d->Type == pkgCache::Dep::Recommends) || (KeepSuggests && d->Type == pkgCache::Dep::Suggests);
+      };
       bool satisfied = std::any_of(clause.solutions.begin(), clause.solutions.end(), [this](auto var)
 				   { return var.Pkg(cache) ? var.Pkg(cache)->CurrentVer != nullptr : Var(var.CastPkg(cache).CurrentVer()) == var; });
 
-      if (important && wasImportant && not newOptional && not satisfied)
+      // Find the existing dependency
+      pkgCache::DepIterator existing;
+      for (auto D = start.ParentPkg().CurrentVer().DependsList(); not D.end(); D++)
+	 if (not D.IsCritical() && importantToKeep(D) && D.TargetPkg() == start.TargetPkg())
+	 {
+	    existing = D;
+	    break;
+	 }
+
+      if (not existing.end() && not important && importantToKeep(start) && satisfied)
       {
 	 if (unlikely(debug >= 3))
-	    std::cerr << "Ignoring unsatisfied Recommends " << clause.toString(cache) << std::endl;
-	 clause.solutions.clear();
-      }
-      else if (not important && not wasImportant && not newOptional && satisfied)
-      {
-	 if (unlikely(debug >= 3))
-	    std::cerr << "Promoting satisfied Suggests to Recommends: " << clause.toString(cache) << std::endl;
-	 important = true;
-      }
-      else if (satisfied && important && wasImportant && clause.solutions.size() > 0)
-      {
-	 if (unlikely(debug >= 3))
-	    std::cerr << "Promoting existing Recommends " << clause.toString(cache) << " to depends in upgrade" << std::endl;
-	 clause.optional = false;
-      }
-      else if (newOptional && important && reason.Ver() && clause.solutions.size() > 0 && reason.Ver(cache) != reason.CastPkg(cache).CurrentVer() && IsUpgrade)
-      {
-	 if (unlikely(debug >= 3))
-	    std::cerr << "Promoting new Recommends " << clause.toString(cache) << " to depends in upgrade" << std::endl;
-	 clause.optional = false;
+	    std::cerr << "Try to keep satisfied: " << clause.toString(cache, true) << std::endl;
       }
       else if (not important)
       {
 	 if (unlikely(debug >= 3))
-	    std::cerr << "Ignoring Suggests " << clause.toString(cache) << std::endl;
+	    std::cerr << "Ignore unimportant clause: " << clause.toString(cache, true) << std::endl;
 	 return Clause{reason, Group::Satisfy, true};
+      }
+      else if (not existing.end() && policy.IsImportantDep(existing) && not satisfied)
+      {
+	 if (unlikely(debug >= 3))
+	    std::cerr << "Ignoring unsatisfied clause: " << clause.toString(cache, true) << std::endl;
+	 return Clause{reason, Group::Satisfy, true};
+      }
+      else if (IsUpgrade && not existing.end() && satisfied)
+      {
+	 if (unlikely(debug >= 3))
+	    std::cerr << "Promoting previously satisfied clause to hard dependency: " << clause.toString(cache, true) << std::endl;
+	 clause.optional = false;
+      }
+      else if (
+	 IsUpgrade && not(AllowRemove && AllowInstall)				    // promote Recommends to Depends in upgrade, not in dist-upgrade.
+	 && reason.Ver() && reason.Ver(cache) != reason.CastPkg(cache).CurrentVer() // and if this an upgrade to an installed package
+	 && (existing.end() || not policy.IsImportantDep(existing))		    // new Recommends, or upgraded from Suggests
+      )
+      {
+	 if (unlikely(debug >= 3))
+	    std::cerr << "Promoting new clause to hard dependency: " << clause.toString(cache) << std::endl;
+	 clause.optional = false;
       }
    }
 
