@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64' 's390x'
+
+insertpackage 'unstable' 'sbuild-build-depends-main-dummy' 's390x' '0.invalid.0' 'Depends: libgstreamer1.0-dev'
+insertpackage 'unstable' 'libgstreamer1.0-dev' 's390x' '1.25.90-2' 'Depends: libc6 (>= 2.34)'
+insertpackage 'unstable' 'libc6' 's390x' '14.2.0-17' 'Depends: libgcc-s1'
+insertpackage 'unstable' 'libgcc-s1' 's390x' '14.2.0-17' 'Multi-Arch: same'
+insertpackage 'installed,unstable' 'libgcc-s1' 'amd64' '14.2.0-18' 'Multi-Arch: same'
+
+setupaptarchive
+
+testfailuremsg "E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. libc6:s390x is selected for install because:
+      1. sbuild-build-depends-main-dummy:s390x=0.invalid.0 is selected for install
+      2. sbuild-build-depends-main-dummy:s390x Depends libgstreamer1.0-dev:s390x
+      3. libgstreamer1.0-dev:s390x Depends libc6:s390x (>= 2.34)
+   2. libc6:s390x Depends libgcc-s1:s390x
+      but none of the choices are installable:
+      - libgcc-s1:s390x is not selected for install because:
+        1. libgcc-s1:amd64 is selected for install
+        2. libgcc-s1:amd64 is available in version 14.2.0-18
+        3. libgcc-s1:s390x Breaks libgcc-s1 (!= 14.2.0-17)" apt install sbuild-build-depends-main-dummy --solver 3.0
+

@@ -249,8 +249,17 @@ std::string APT::Solver::Clause::toString(pkgCache &cache, bool pretty) const
 	 out.append(" | ");
       }
    }
-   else if (group == Group::SelectVersion && negative)
+   else if (pretty && group == Group::SelectVersion && negative)
       out.append(" conflicts with other versions of itself");
+   else if (pretty && group == Group::SelectVersion && reason.Pkg()) {
+      out.append(solutions.size() > 1 ? " is available in versions " : " is available in version ");
+      for (auto var : solutions) {
+	 assert(var.Ver());
+	 if (var != solutions.front())
+	    out.append(", ");
+	 out.append(var.Ver(cache).VerStr());
+      }
+   }
    else
    {
       out.append(" -> ");
@@ -349,8 +358,9 @@ std::string APT::Solver::LongWhyStr(Var var, bool decision, const Clause *rclaus
       }
    };
 
-   // Version selection clauses like pkg=ver -> pkg or pkg -> pkg=ver are irrelevant for the user, skip them
-   if (decision && rclause && rclause->group == Group::SelectVersion)
+   // Inverse version selection clauses that select the package if the version is selected,
+   // such as pkg=ver -> pkg, are irrelevant for the user, skip them
+   if (var.Pkg() && decision && rclause && rclause->group == Group::SelectVersion)
    {
       var = rclause->reason;
       rclause = (*this)[var].reason;
@@ -398,7 +408,7 @@ std::string APT::Solver::LongWhyStr(Var var, bool decision, const Clause *rclaus
    {
       auto const &state = (*this)[*it];
       // Don't print version selection clauses
-      if (state.reason && state.reason->group == Group::SelectVersion)
+      if (it->Pkg() && state.reason && state.reason->group == Group::SelectVersion)
       {
 	 --i;
 	 continue;
