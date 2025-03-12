@@ -1,3 +1,19 @@
+apt (2.9.33) unstable; urgency=medium
+
+  * 3.0 solver updates:
+    - Fix detection of satisfied recommends for pkg variables
+    - Print correct reason when registering dependency
+    - Correctly determine 'same' or groups (a|c was same as a|b...)
+    - Fix Recommends/Suggests vs Enhances confusion (LP: #2101800)
+    - Fix test-resolve-by-keep-new-recommend
+  * edsp: Set Forbid-New-Install/Forbid-Remove: no if other is set such
+    that `apt upgrade` dumps are different from `apt-get upgrade` ones
+    and can be correctly reproduced (as the one in the LP bug above).
+  * test: Fix some weird editing artefact introduced in 2.9.32 causing
+    a test to effectively be skipped.
+
+ -- Julian Andres Klode <jak@debian.org>  Wed, 12 Mar 2025 19:22:59 +0100
+
 apt (2.9.32) unstable; urgency=medium
 
   * Rewordings and documentation updates:
