@@ -107,7 +107,7 @@ static void WriteApportReport(pkgCacheFile &Cache, std::string &title, std::vect
       edspFlags |= EDSP::Request::FORBID_NEW_INSTALL;
 
    EDSP::WriteRequest(Cache, edspDump, edspFlags, &Progress);
-   EDSP::WriteScenario(Cache, edspDump, &Progress);
+   EDSP::WriteLimitedScenario(Cache, edspDump, &Progress);
    edspDump.Close();
 
    Progress.OverallProgress(50, 100, 50, _("Writing error report"));
