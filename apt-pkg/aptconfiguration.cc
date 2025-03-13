@@ -368,7 +368,7 @@ const Configuration::getCompressors(bool const Cached) {
 	{ CompressorsDone.push_back(NAME); compressors.emplace_back(NAME, EXT, BINARY, ARG, DEARG, COST); }
 	APT_ADD_COMPRESSOR(".", "", "", nullptr, nullptr, 0)
 	if (_config->Exists("Dir::Bin::zstd") == false || FileExists(_config->Find("Dir::Bin::zstd")) == true)
-	   APT_ADD_COMPRESSOR("zstd", ".zst", "zstd", "-19", "-d", 60)
+	   APT_ADD_COMPRESSOR("zstd", ".zst", "zstd", "-6", "-d", 60)
 #ifdef HAVE_ZSTD
 	else
 	   APT_ADD_COMPRESSOR("zstd", ".zst", "false", nullptr, nullptr, 60)
