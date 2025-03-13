@@ -816,7 +816,7 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 		FileFd output;
 		bool Okay = CreateDumpFile("EDSP::Resolve", "solver", output);
 		Okay &= EDSP::WriteRequest(Cache, output, flags, nullptr);
-		return Okay && EDSP::WriteScenario(Cache, output, nullptr);
+		return Okay && EDSP::WriteLimitedScenario(Cache, output, nullptr);
 	}
 	_error->PushToStack();
 	int solver_in, solver_out;
