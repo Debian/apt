@@ -408,24 +408,19 @@ Signed-By:
 		and the fallback to <filename>Release</filename> files will be disabled.
     </para></listitem>
 
-    <listitem><para><option>Snapshot</option> (<option>snapshot</option>)
-        allows selecting an earlier version of the archive from the snapshot service. Supported
-    values are: </para>
-        <itemizedlist>
-        <listitem>
-            <para><literal>enable</literal> to allow selecting a snapshot with the <option>--snapshot</option> option, or</para>
-        </listitem>
-        <listitem>
-            <para>a snapshot ID to select a specific snapshot.</para>
-        </listitem>
-    </itemizedlist>
-        <para>
-            Snapshot IDs are usually timestamps in the form of <literal>YYYYMMDDTHHMMSSZ</literal>, such as
-            <literal>20220102T030405Z</literal> which is the January 2nd, 2022 at 03:04:05 UTC, servers may
-            however support additional types of IDs, and APT does not perform any checks so far.
-	  </para></listitem>
+    <listitem>
+	    <para><option>Snapshot</option> (<option>snapshot</option>)
+	    allows selecting an earlier version of the archive from the snapshot service. Supported
+	    values are: <literal>enable</literal> (default) to allow selecting a snapshot with the <option>--snapshot</option> option,
+	    <literal>ID</literal>, or <literal>disable</literal> to exclude the repository.
+    </para>
+    <para>Snapshot IDs are usually timestamps in the form of <literal>YYYYMMDDTHHMMSSZ</literal>, such as
+    <literal>20220102T030405Z</literal> which is the January 2nd, 2022 at 03:04:05 UTC, servers may
+    however support additional types of IDs, and APT does not perform any checks so far.
+		</para>
+	</listitem>
 
-       </itemizedlist>
+  </itemizedlist>
 
     </para>
  </refsect1>
@@ -601,6 +596,22 @@ URIs: http://deb.debian.org/debian
 Suites: stable testing unstable
 Components: main contrib
 </literallayout>
+
+   <para>Uses a specific timestamp for Snapshots.</para>
+   <literallayout>Types: deb deb-src
+URIs: http://deb.debian.org/debian
+Suites: stable testing unstable
+Snapshot: 20250311T030104Z
+Components: main contrib
+   </literallayout>
+
+   <para>Doesn't allow the optional parameter --snapshot.</para>
+   <literallayout>Types: deb deb-src
+URIs: http://deb.debian.org/debian-security
+Suites: stable-security
+Snapshot: disable
+Components: main contrib non-free-firmware
+   </literallayout>
 
  </refsect1>
 
