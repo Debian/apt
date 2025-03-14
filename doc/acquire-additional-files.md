@@ -214,7 +214,8 @@ information about all files downloaded (aka: you will see *Packages*,
 default output format as parameter to filter out all entries which do
 not have such a line. With `--format`, you can further more define your
 own output style. The variables are what you see in the output, just all
-uppercase and wrapped in `$()`, as in the configuration file.
+uppercase, hyphens replaced with underscores and wrapped in `$()`, as in
+the configuration file.
 
 To get all the filenames of all *Translation-en* files you can e.g. call:
 
@@ -235,8 +236,8 @@ creates and calling `GetIndexTargets()` on them. See the source code of
 
 Note that by default targets are not listed if they weren't downloaded.
 If you want to see all targets, you can use the `--no-release-info`, which
-also removes the *Codename*, *Suite*, *Version*, *Origin*, *Label* and *Trusted*
-fields from the output as these also display data which needs to be
+also removes the *Codename*, *Suite*, *Version*, *Origin*, *Label*, *Trusted*,
+and *Signed-By* fields from the output as these also display data which needs to be
 downloaded first and could hence be inaccurate [on the pro-side: This
 mode is faster as it doesn't require a valid binary cache to operate].
 The most notable difference perhaps is in the *Filename* field through: By
@@ -251,6 +252,8 @@ Remarks on fields only available in (default) `--release-info mode`:
 * `Trusted`: Denotes with a *yes* or *no* if the data in this file is
   authenticated by a trust chain rooted in a trusted gpg key. You should
   be careful with untrusted data and warn the user if you use it.
+* `Signed-By`: The path to the OpenPGP keyring or an ASCII-armored embedded
+   OpenPGP certificate. The latter is DEB822-multi-line encoded.
 * `Codename`, `Suite`, `Version`, `Origin` and `Label` are fields from the
   *Release* file, are only present if they are present in the *Release* file
   and contain the same data.

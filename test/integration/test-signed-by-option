@@ -40,13 +40,7 @@ setupaptarchive --no-update
 rm -f rootdir/etc/apt/sources.list.d/* rootdir/etc/apt/sources.list
 rm -f rootdir/etc/apt/trusted.gpg.d/* rootdir/etc/apt/trusted.gpg
 
-cat > rootdir/etc/apt/sources.list.d/deb822.sources << EOF
-Types: deb
-URIs: file://$PWD/aptarchive
-Suites: stable
-Components: main
-xSigned-By:
-    -----BEGIN PGP PUBLIC KEY BLOCK-----
+GPGKEYBLOCK='-----BEGIN PGP PUBLIC KEY BLOCK-----
     .
     mQENBExsGNYBCADNVx+TQ6h1tEyUP11f7ihfta3ZePkW1rIdkdHgA3Fw/TeLnTEq
     mWuhMw2pL4zy1vQhU8efNrRaNUrUS7kV3LIdSjd5K4Aizqtsdy/gLKFoTcO8LFIm
@@ -63,15 +57,22 @@ xSigned-By:
     xNHhRHzEPTYZ4PCCyaRX4YRAwsEMFsscsghpQgqRDhGSWq+jUVI+Aay7FTnd+1UA
     1snsGpB0o9qxx8JpGMXI
     =c/k4
-    -----END PGP PUBLIC KEY BLOCK-----
+    -----END PGP PUBLIC KEY BLOCK-----'
+cat > rootdir/etc/apt/sources.list.d/deb822.sources << EOF
+Types: deb
+URIs: file://$PWD/aptarchive
+Suites: stable
+Components: main
+xSigned-By:
+    $GPGKEYBLOCK
 EOF
 testfailure apt update  -o Debug::Acquire::gpgv=1
 testsuccess grep -E "(NO_PUBKEY 5A90D141DBAC8DAE|no keyring is specified)" rootdir/tmp/testfailure.output
 sed -i s/^xSigned-By/Signed-By/ rootdir/etc/apt/sources.list.d/deb822.sources
 testsuccess apt update  -o Debug::Acquire::gpgv=1
+testsuccessequal "$(echo "$GPGKEYBLOCK" | sed 's/^ \+/ /')\n$(echo "$GPGKEYBLOCK" | sed 's/^ \+/ /')" aptget indextargets --format '$(SIGNED_BY)'
 # make sure we did not leave leftover files (LP: #1995247)
 testsuccessequal "" ls "${TMPDIR}"
-
 rm -f rootdir/etc/apt/sources.list.d/*
 
 msgtest 'Check that a repository with' 'only the fisrt entry has no Signed-By value works'
