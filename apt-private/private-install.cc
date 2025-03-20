@@ -89,7 +89,7 @@ bool CheckNothingBroken(CacheFile &Cache)
 // ---------------------------------------------------------------------
 static void WriteApportReport(pkgCacheFile &Cache, std::string &title, std::vector<std::string> const &errors, int mode, bool distUpgrade)
 {
-   auto dumpfile = flCombine(_config->FindDir("Dir::Log"), "edsp.log");
+   auto dumpfile = flCombine(_config->FindDir("Dir::Log"), "edsp.log.zst");
    auto crashfile = flCombine(_config->FindDir("Dir::Apport", "/var/crash"), "apt-edsp." + std::to_string(getuid()) + ".crash");
    auto apt = Cache->FindPkg("apt");
    if (access(flNotFile(dumpfile).c_str(), W_OK) != 0 || access(flNotFile(crashfile).c_str(), W_OK) != 0)
@@ -97,7 +97,8 @@ static void WriteApportReport(pkgCacheFile &Cache, std::string &title, std::vect
    OpTextProgress Progress(*_config);
    Progress.OverallProgress(0, 100, 50, _("Writing error report"));
    FileFd edspDump(dumpfile,
-		   FileFd::Exclusive | FileFd::Create | FileFd::WriteOnly | FileFd::BufferedWrite);
+		   FileFd::Exclusive | FileFd::Create | FileFd::WriteOnly | FileFd::BufferedWrite,
+		   FileFd::Extension);
    int edspFlags = 0;
    if (mode || distUpgrade)
       edspFlags |= EDSP::Request::UPGRADE_ALL;
@@ -123,14 +124,25 @@ static void WriteApportReport(pkgCacheFile &Cache, std::string &title, std::vect
 	 << "Title: " << title << "\n"
 	 << "SourcePackage: apt\n";
 
-   crash << "ErrorMessage:\n";
-   for (auto &error : errors)
-      crash << " " << error << "\n";
+   if (not errors.empty())
+   {
+      crash << "ErrorMessage:\n";
+      for (auto &error : errors)
+	 crash << " " << error << "\n";
+   }
 
-   crash << "AptSolverDump:\n";
    std::ifstream toCopy(edspDump.Name());
-   for (std::string line; std::getline(toCopy, line);)
-      crash << " " << line << "\n";
+   std::ostringstream readStream;
+   readStream << toCopy.rdbuf();
+   const auto base64 = Base64Encode(readStream.str());
+   if (not base64.empty())
+   {
+      crash << "AptSolverDump:\n";
+      // Print the base64, with line wrapping, indented by one space; substr(i, 76)
+      // returns at most 76 characters or as many as are left.
+      for (size_t i=0; i < base64.size(); i += 76)
+	 crash << " " << std::string_view{base64}.substr(i, 76) << "\n";
+   }
    crash.close();
 }
 
