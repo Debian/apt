@@ -862,6 +862,11 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
 	 if (unlikely(debug >= 3))
 	    std::cerr << "Try to keep satisfied: " << clause.toString(cache, true) << std::endl;
 	 clause.group = Group::SatisfySuggests;
+	 // Erase the non-installed solutions. We will process this last and try to keep the previously installed
+	 // "best" solution installed.
+	 clause.solutions.erase(std::remove_if(clause.solutions.begin(), clause.solutions.end(), [this](auto var)
+					       { return var.CastPkg(cache)->CurrentVer == nullptr; }),
+				clause.solutions.end());
       }
       else if (not important)
       {
