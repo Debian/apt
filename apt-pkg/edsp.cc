@@ -327,6 +327,36 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
       Progress->Done();
    return Okay;
 }
+
+static void MarkPackage(std::vector<bool> &pkgset, pkgCache::PkgIterator pkg)
+{
+   if (pkgset[pkg->ID])
+      return;
+   pkgset[pkg->ID] = true;
+   for (auto ver = pkg.VersionList(); not ver.end(); ++ver)
+   {
+      for (auto P = ver.ProvidesList(); not P.end(); ++P)
+	 MarkPackage(pkgset, P.ParentPkg());
+      for (auto D = ver.DependsList(); not D.end(); ++D)
+      {
+	 std::unique_ptr<pkgCache::Version *[]> targets(D.AllTargets());
+	 for (size_t i = 0; targets[i] != 0; ++i)
+	    MarkPackage(pkgset, pkgCache::VerIterator(*ver.Cache(), targets[i]).ParentPkg());
+
+	 MarkPackage(pkgset, D.TargetPkg());
+      }
+   }
+}
+
+bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FileFd &output,
+				OpProgress *Progress)
+{
+   std::vector<bool> pkgset(Cache.Head().PackageCount);
+   for (auto Pkg = Cache.PkgBegin(); not Pkg.end(); ++Pkg)
+      if (Cache[Pkg].Install() || Pkg->CurrentVer)
+	 MarkPackage(pkgset, Pkg);
+   return WriteLimitedScenario(Cache, output, pkgset, Progress);
+}
 									/*}}}*/
 // EDSP::WriteRequest - to the given file descriptor			/*{{{*/
 bool EDSP::WriteRequest(pkgDepCache &Cache, FileFd &output,
@@ -786,7 +816,7 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 		FileFd output;
 		bool Okay = CreateDumpFile("EDSP::Resolve", "solver", output);
 		Okay &= EDSP::WriteRequest(Cache, output, flags, nullptr);
-		return Okay && EDSP::WriteScenario(Cache, output, nullptr);
+		return Okay && EDSP::WriteLimitedScenario(Cache, output, nullptr);
 	}
 	_error->PushToStack();
 	int solver_in, solver_out;
