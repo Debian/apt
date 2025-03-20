@@ -1099,6 +1099,11 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
       }
    }
 
+   // Clause discovery depends on the manual flag, so we need to set the manual flag first before we discover any packages
+   for (auto P = cache.PkgBegin(); not P.end(); P++)
+      if (P->CurrentVer && not(depcache[P].Flags & pkgCache::Flag::Auto) && (depcache[P].Keep() || depcache[P].Install()))
+	 (*this)[P].flags.manual = true;
+
    for (auto P = cache.PkgBegin(); not P.end(); P++)
    {
       if (P->VersionList == nullptr)
@@ -1142,8 +1147,6 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 if (unlikely(debug >= 1))
 	    std::cerr << "Install " << P.FullName() << " (" << (isEssential ? "E" : "") << (isAuto ? "M" : "") << (Root ? "R" : "") << ")"
 		      << "\n";
-
-	 (*this)[P].flags.manual = not isAuto;
 	 if (not isOptional)
 	 {
 	    // Pre-empt the non-optional requests, as we don't want to queue them, we can just "unit propagate" here.
