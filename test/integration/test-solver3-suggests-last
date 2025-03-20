@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'installed' 'avahi-daemon' 'all' '1' 'Suggests: avahi-autoipd'
+insertpackage 'installed' 'dhcpd-base' 'all' '1' 'Provides: avahi-autoipd'
+insertpackage 'unstable' 'avahi-autoipd' 'all'  2
+insertpackage 'unstable' 'dhcpd-base' 'all' '2'
+
+setupaptarchive
+
+for command in "aptget upgrade" "aptget dist-upgrade" "apt upgrade" "apt dist-upgrade"; do
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Calculating upgrade...
+The following packages will be upgraded:
+  dhcpd-base
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst dhcpd-base [1] (2 unstable [all])
+Conf dhcpd-base (2 unstable [all])" $command -s -q
+done
+
