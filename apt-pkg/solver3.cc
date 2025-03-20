@@ -861,6 +861,7 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
       {
 	 if (unlikely(debug >= 3))
 	    std::cerr << "Try to keep satisfied: " << clause.toString(cache, true) << std::endl;
+	 clause.group = Group::SatisfySuggests;
       }
       else if (not important)
       {

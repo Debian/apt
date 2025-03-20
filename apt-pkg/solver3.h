@@ -122,7 +122,10 @@ class Solver
       // allowing a simple implementation of an autoremoval code.
       UpgradeAuto,
       KeepAuto,
-      ObsoleteAuto
+      ObsoleteAuto,
+
+      // Satisfy optional dependencies that were previously satisfied but won't otherwise be installed
+      SatisfySuggests,
    };
 
    // \brief Type to record depth at. This may very well be a 16-bit
