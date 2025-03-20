@@ -124,9 +124,12 @@ static void WriteApportReport(pkgCacheFile &Cache, std::string &title, std::vect
 	 << "Title: " << title << "\n"
 	 << "SourcePackage: apt\n";
 
-   crash << "ErrorMessage:\n";
-   for (auto &error : errors)
-      crash << " " << error << "\n";
+   if (not errors.empty())
+   {
+      crash << "ErrorMessage:\n";
+      for (auto &error : errors)
+	 crash << " " << error << "\n";
+   }
 
    std::ifstream toCopy(edspDump.Name());
    std::ostringstream readStream;
