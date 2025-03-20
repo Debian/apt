@@ -1,3 +1,30 @@
+apt (2.9.34) unstable; urgency=medium
+
+  [ Julian Andres Klode ]
+  * Fix uploads to errors.ubuntu.com with whoopsie:
+    - zstd: The compressor level should be -6, not -19
+    - edsp: Add functionality to only write relevant packages
+    - solver evaluation: write minimized solver dumps
+    - edsp: Dump minimized Dir::Log::Solver logs
+    - solver3: Use zstd-compressed, base64-encoded dumps
+    - solver3: Avoid empty ErrorMessage field in evaluation crash report
+  * solver3: Only hide ver->pkg clauses, not pkg->ver version selection ones
+    - previously we hid version information vital to the understanding
+    - thanks to Helmut Grohne for the report
+  * solver3: Record manual flag before discovering packages (LP: #2102720)
+  * solver3: Handle previously satisfied Suggests last and do not install
+    new packages for Suggests (LP: #2103556)
+
+  [ Johannes Schauer Marin Rodrigues ]
+  * apt-pkg/solver3.h: avoid static_assert(false)
+  * cmdline/apt-get.cc: emit Signed-By field and support $(SIGNED_BY) in
+    apt-get indextargets --format
+
+  [ Christopher Bock ]
+  * doc/sources.list.5.xml: snapshot infos
+
+ -- Julian Andres Klode <jak@debian.org>  Thu, 20 Mar 2025 22:45:30 +0100
+
 apt (2.9.33) unstable; urgency=medium
 
   * 3.0 solver updates:

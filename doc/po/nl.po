@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-doc 2.9.23\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-02-07 20:17+0000\n"
+"POT-Creation-Date: 2025-03-20 21:51+0000\n"
 "PO-Revision-Date: 2025-01-21 21:13+0100\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
@@ -3389,16 +3389,16 @@ msgid ""
 "literal>."
 msgstr ""
 "Als alternatief kunnen sleutels worden geplaatst in <filename>/etc/apt/"
-"keyrings</filename> voor lokale sleutels, of <filename>/usr/share/"
-"keyrings</filename> voor sleutels die worden beheerd door pakketten, en "
-"vervolgens kan er naar worden verwezen via de optie <literal>Signed-By: /etc/"
-"apt/keyrings/example-archive-keyring.asc</literal> in een <literal>.sources</"
-"literal>-bestand of via <literal>deb [signed-by=/etc/apt/keyrings/example-"
-"archive-keyring.asc] ...</literal> te gebruiken in de oude <literal>.list</"
-"literal>-indeling. Dit kan handig zijn voor vroegere APT-versies dan 2.4, "
-"die geen ingesloten sleutels ondersteunen. ASCII-gepantserde sleutels moeten "
-"een extensie <literal>.asc</literal> gebruiken, en niet-gepantserde sleutels "
-"een extensie <literal>.gpg</literal>."
+"keyrings</filename> voor lokale sleutels, of <filename>/usr/share/keyrings</"
+"filename> voor sleutels die worden beheerd door pakketten, en vervolgens kan "
+"er naar worden verwezen via de optie <literal>Signed-By: /etc/apt/keyrings/"
+"example-archive-keyring.asc</literal> in een <literal>.sources</literal>-"
+"bestand of via <literal>deb [signed-by=/etc/apt/keyrings/example-archive-"
+"keyring.asc] ...</literal> te gebruiken in de oude <literal>.list</literal>-"
+"indeling. Dit kan handig zijn voor vroegere APT-versies dan 2.4, die geen "
+"ingesloten sleutels ondersteunen. ASCII-gepantserde sleutels moeten een "
+"extensie <literal>.asc</literal> gebruiken, en niet-gepantserde sleutels een "
+"extensie <literal>.gpg</literal>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -8747,28 +8747,21 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
+#, fuzzy
+#| msgid ""
+#| "<option>Snapshot</option> (<option>snapshot</option>)  allows selecting "
+#| "an earlier version of the archive from the snapshot service. Supported "
+#| "values are:"
 msgid ""
 "<option>Snapshot</option> (<option>snapshot</option>)  allows selecting an "
 "earlier version of the archive from the snapshot service. Supported values "
-"are:"
+"are: <literal>enable</literal> (default) to allow selecting a snapshot with "
+"the <option>--snapshot</option> option, <literal>ID</literal>, or "
+"<literal>disable</literal> to exclude the repository."
 msgstr ""
 "<option>Snapshot</option> (<option>snapshot</option>) maakt het mogelijk om "
 "een eerdere versie van het archief te selecteren via de dienst "
 "momentopnames. Ondersteunde waarden zijn:"
-
-#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><itemizedlist><listitem><para>
-#: sources.list.5.xml
-msgid ""
-"<literal>enable</literal> to allow selecting a snapshot with the <option>--"
-"snapshot</option> option, or"
-msgstr ""
-"<literal>enable</literal> om het selecteren van een momentopname met de "
-"optie <option>--snapshot</option> mogelijk te maken, of"
-
-#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><itemizedlist><listitem><para>
-#: sources.list.5.xml
-msgid "a snapshot ID to select a specific snapshot."
-msgstr "een momentopname-ID om een specifieke momentopname te selecteren."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -9251,6 +9244,58 @@ msgid ""
 "URIs: http://deb.debian.org/debian\n"
 "Suites: stable testing unstable\n"
 "Components: main contrib\n"
+msgstr ""
+"Types: deb deb-src\n"
+"URIs: http://deb.debian.org/debian\n"
+"Suites: stable testing unstable\n"
+"Components: main contrib\n"
+
+#. type: Content of: <refentry><refsect1><para>
+#: sources.list.5.xml
+msgid "Uses a specific timestamp for Snapshots."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><literallayout>
+#: sources.list.5.xml
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Types: deb deb-src\n"
+#| "URIs: http://deb.debian.org/debian\n"
+#| "Suites: stable testing unstable\n"
+#| "Components: main contrib\n"
+msgid ""
+"Types: deb deb-src\n"
+"URIs: http://deb.debian.org/debian\n"
+"Suites: stable testing unstable\n"
+"Snapshot: 20250311T030104Z\n"
+"Components: main contrib\n"
+"   "
+msgstr ""
+"Types: deb deb-src\n"
+"URIs: http://deb.debian.org/debian\n"
+"Suites: stable testing unstable\n"
+"Components: main contrib\n"
+
+#. type: Content of: <refentry><refsect1><para>
+#: sources.list.5.xml
+msgid "Doesn't allow the optional parameter --snapshot."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><literallayout>
+#: sources.list.5.xml
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Types: deb deb-src\n"
+#| "URIs: http://deb.debian.org/debian\n"
+#| "Suites: stable testing unstable\n"
+#| "Components: main contrib\n"
+msgid ""
+"Types: deb deb-src\n"
+"URIs: http://deb.debian.org/debian-security\n"
+"Suites: stable-security\n"
+"Snapshot: disable\n"
+"Components: main contrib non-free-firmware\n"
+"   "
 msgstr ""
 "Types: deb deb-src\n"
 "URIs: http://deb.debian.org/debian\n"
@@ -14095,3 +14140,13 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 msgid "Which will use the already fetched archives on the disc."
 msgstr ""
 "En dit zal gebruik maken van de reeds opgehaalde archieven op de schijf."
+
+#~ msgid ""
+#~ "<literal>enable</literal> to allow selecting a snapshot with the "
+#~ "<option>--snapshot</option> option, or"
+#~ msgstr ""
+#~ "<literal>enable</literal> om het selecteren van een momentopname met de "
+#~ "optie <option>--snapshot</option> mogelijk te maken, of"
+
+#~ msgid "a snapshot ID to select a specific snapshot."
+#~ msgstr "een momentopname-ID om een specifieke momentopname te selecteren."
