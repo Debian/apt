@@ -160,7 +160,17 @@ bool InitOutputPager()
 	 signal(sig, SIG_DFL);
 
       for (auto &v: pagerEnv)
-	 putenv(v.data());
+      {
+	 // WARNING: VectorizeString() is not thread-safe, do not call after creating a thread.
+	 auto keyAndValue = VectorizeString(v, '=');
+	 if (keyAndValue.size() != 2)
+	 {
+	    _error->Fatal("Invalid environment string: %s", v.c_str());
+	    goto err;
+	 }
+	 // NOTE: Must not override user values, so setenv(..., override=0) is used rather than putenv()
+	 setenv(keyAndValue[0].c_str(), keyAndValue[1].c_str(), 0);
+      }
 
       {
 	 // If our pager name contains a space we need to invoke it in a shell. Boooo!

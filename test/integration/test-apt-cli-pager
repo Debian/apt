@@ -125,3 +125,6 @@ Checksums-Sha256:
 
 PAGER="head -2" testsuccessequal "Package: foo
 Binary: foo"  runapt --unbuffer apt showsrc foo -o TestPager="head- 2"
+
+PAGER='echo $LESS' testsuccessequal "FRX"  runapt --unbuffer apt showsrc foo -o TestPager='echo $LESS (1)'
+LESS=FRXM PAGER='echo $LESS' testsuccessequal "FRXM"  runapt --unbuffer apt showsrc foo -o TestPager='echo $LESS (2)'
