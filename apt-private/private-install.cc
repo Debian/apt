@@ -128,7 +128,9 @@ static void WriteApportReport(pkgCacheFile &Cache, std::string &title, std::vect
    {
       crash << "ErrorMessage:\n";
       for (auto &error : errors)
-	 crash << " " << error << "\n";
+      {
+	 crash << " " << SubstVar(SubstVar(APT::String::Strip(error), "\n\n", "\n.\n"), "\n", "\n ") << "\n";
+      }
    }
 
    std::ifstream toCopy(edspDump.Name());
