@@ -145,3 +145,38 @@ E: The following information from --solver 3.0 may provide additional context:
    2. a:amd64 Depends c
       but none of the choices are installable:
       - c:amd64 is not selected for install" apt install -s a c- --solver internal
+
+
+rm rootdir/var/crash/apt-edsp.$(id -u).crash
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Solving dependencies...
+Writing error report...
+The following additional packages will be installed:
+  c
+The following NEW packages will be installed:
+  a c
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst c (3 unstable [all])
+Inst a (3 unstable [all])
+Conf c (3 unstable [all])
+Conf a (3 unstable [all])" aptget install a --solver internal -s -o Dir::Apport=var/crash -o APT::Solver::Install=false
+
+testsuccess sed -i "s/^Date:.*/Date: Sun Mar  9 00:08:41 2025/" rootdir/var/crash/apt-edsp.$(id -u).crash
+
+testsuccessequal "ProblemType: AptSolver
+Architecture: amd64
+Date: Sun Mar  9 00:08:41 2025
+Package: apt 
+Title: Failure: The 3.0 solver did not find a result
+SourcePackage: apt
+ErrorMessage:
+ Unable to satisfy dependencies. Reached two conflicting decisions:
+ 1. a:amd64=3 is selected for install
+ .
+ 2. a:amd64 Depends c
+    but none of the choices are installable:
+    - c:amd64 is not selected for install
+AptSolverDump:
+$(cat rootdir/var/log/apt/edsp.log.zst | base64 | sed 's#^# #')" cat rootdir/var/crash/apt-edsp.$(id -u).crash
