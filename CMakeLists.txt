@@ -237,7 +237,7 @@ set(BIN_DIR "${CMAKE_INSTALL_FULL_BINDIR}")
 
 # Setup the default pager and the environment
 set(DEFAULT_PAGER "pager" CACHE STRING "The default pager to use for commands that support it.")
-set(PAGER_ENV "LESS=FRX\\nMORE=FRX\\nLV=C" CACHE STRING "Environment to pass to the pager. One variable per line, with escaped newlines")
+set(PAGER_ENV "LESS=FRSXMK\\nMORE=FRX\\nLV=-c" CACHE STRING "Environment to pass to the pager. One variable per line, with escaped newlines")
 
 # Configure our configuration headers (config.h and apti18n.h)
 configure_file(CMake/config.h.in ${PROJECT_BINARY_DIR}/include/config.h)
