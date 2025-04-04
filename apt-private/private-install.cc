@@ -988,7 +988,6 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
 	auto internalDel = Cache->DelCount();
 	auto internalInst = Cache->InstCount();
 	auto internalUpgrade = Cache->UpgradeCount();
-	auto internalKeep = Cache->KeepCount();
 
 	// Create a nested transaction. When leaving this scope, we are back to the 'internal' result.
 	pkgDepCache::Transaction solver3(Cache, pkgDepCache::Transaction::Behavior::ROLLBACK);
