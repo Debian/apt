@@ -1,4 +1,5 @@
 # Brazilian Portuguese translation for apt.
+#
 # Licensing is complex as the msgid come from several files, please see
 # the individual files for licensing information.
 #
@@ -10,18 +11,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.9.21\n"
+"Project-Id-Version: apt 2.9.33\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-03-09 17:32+0000\n"
-"PO-Revision-Date: 2024-12-26 14:38+0000\n"
+"POT-Creation-Date: 2025-03-27 21:54+0000\n"
+"PO-Revision-Date: 2025-03-15 04:08+0000\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
-"Language-Team: Brazilian Portuguese <debian-l10n-"
-"portuguese@lists.debian.org>\n"
+"Language-Team: l10n Portuguese <debian-l10n-portuguese@lists.debian.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Gtranslator 47.1\n"
 
 #: apt-pkg/acquire-item.cc
 msgid ""
@@ -118,7 +119,6 @@ msgstr "Formato de arquivo inválido"
 msgid "Signature error"
 msgstr "Erro de assinatura"
 
-# Mantive clearsigned em inglês por ser um termo técnico: https://www.gnupg.org/gph/en/manual/x135.html#AEN152
 #. TRANSLATORS: %s is a single techy word like 'NODATA'
 #: apt-pkg/acquire-item.cc methods/gpgv.cc
 #, c-format
@@ -126,26 +126,25 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
-"O arquivo clearsigned não é válido, obteve '%s' (a rede requer autenticação?)"
+"Arquivo assinado em texto simples não é válido, obteve '%s' (a rede requer "
+"autenticação?)"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "An error occurred during the signature verification. The repository is "
-#| "not updated and the previous index files will be used. GPG error: %s: %s"
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. OpenPGP signature "
 "verification failed: %s: %s"
 msgstr ""
 "Ocorreu um erro durante a verificação da assinatura. O repositório não é "
-"atualizado e os arquivos de índice anteriores serão usados. Erro GPG: %s: %s"
+"atualizado e os arquivos de índice anteriores serão usados. Verificação de "
+"assinatura OpenPGP falhou: %s: %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "OpenPGP signature verification failed: %s: %s"
-msgstr ""
+msgstr "Verificação de assinatura OpenPGP falhou: %s: %s"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -229,8 +228,8 @@ msgstr ""
 msgid ""
 "More information about this can be found online in the Release notes at: %s"
 msgstr ""
-"Mais informações sobre isso podem ser encontradas online nas notas do "
-"Release em: %s"
+"Mais informações sobre isso podem ser encontradas online nas notas de "
+"lançamento em: %s"
 
 #. TRANSLATOR: %s is the name of the manpage in question, e.g. apt-secure(8)
 #: apt-pkg/acquire-item.cc
@@ -245,7 +244,7 @@ msgstr ""
 #: apt-pkg/acquire-item.cc apt-pkg/update.cc apt-private/private-download.cc
 #, c-format
 msgid "Failed to fetch %s  %s"
-msgstr "Falhou ao buscar %s  %s"
+msgstr "Falhou ao obter %s  %s"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -263,8 +262,8 @@ msgid ""
 "to manually fix this package. (due to missing arch)"
 msgstr ""
 "Não foi possível localizar um arquivo para o pacote %s. Isto pode significar "
-"que você precisa consertar manualmente este pacote. (devido a arquitetura "
-"não especificada)"
+"que você precisa corrigir manualmente este pacote. (devido a arquitetura não "
+"especificada)"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -322,7 +321,7 @@ msgstr "Diretório de arquivos %s está faltando."
 #: apt-pkg/acquire.cc
 #, c-format
 msgid "Unable to lock directory %s"
-msgstr "Impossível travar o diretório %s"
+msgstr "Não é possível travar o diretório %s"
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -352,7 +351,7 @@ msgstr "A limpeza de %s não é suportada"
 #: apt-pkg/policy.cc apt-pkg/sourcelist.cc
 #, c-format
 msgid "Unable to read %s"
-msgstr "Impossível ler %s"
+msgstr "Não é possível ler %s"
 
 #: apt-pkg/acquire.cc
 #, c-format
@@ -378,13 +377,12 @@ msgid ""
 "held packages."
 msgstr ""
 "Erro, pkgProblemResolver::Resolve gerou falhas, isto pode ser causado por "
-"pacotes marcados para não atualizar."
+"pacotes retidos."
 
 #: apt-pkg/algorithms.cc
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
-"Impossível corrigir problemas, você tem pacotes quebrados marcados para não "
-"atualizar."
+"Não é possível corrigir os problemas, você tem pacotes retidos quebrados."
 
 #: apt-pkg/cachefile.cc
 msgid "The package lists or status file could not be parsed or opened."
@@ -409,22 +407,22 @@ msgstr "Erro de compilação de regex - %s"
 #: apt-pkg/cacheset.cc
 #, c-format
 msgid "Couldn't find task '%s'"
-msgstr "Impossível achar tarefa '%s'"
+msgstr "Não é possível achar tarefa '%s'"
 
 #: apt-pkg/cacheset.cc
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
-msgstr "Impossível achar qualquer pacote com a regex '%s'"
+msgstr "Não é possível achar qualquer pacote com a regex '%s'"
 
 #: apt-pkg/cacheset.cc
 #, c-format
 msgid "Couldn't find any package by glob '%s'"
-msgstr "Impossível achar qualquer pacote com o glob '%s'"
+msgstr "Não é possível achar qualquer pacote com o glob '%s'"
 
 #: apt-pkg/cacheset.cc apt-private/private-show.cc
 #, c-format
 msgid "Unable to locate package %s"
-msgstr "Impossível encontrar o pacote %s"
+msgstr "Não é possível encontrar o pacote %s"
 
 #: apt-pkg/cacheset.cc
 #, c-format
@@ -517,8 +515,8 @@ msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
 msgstr ""
-"Impossível localizar os arquivos do pacote. Talvez não seja um Disco Debian "
-"ou seja a arquitetura incorreta?"
+"Não é possível localizar os arquivos do pacote. Talvez não seja um Disco "
+"Debian ou seja a arquitetura incorreta?"
 
 #: apt-pkg/cdrom.cc
 #, c-format
@@ -553,7 +551,7 @@ msgstr "Entradas na lista de fontes para este disco são:\n"
 #: apt-pkg/clean.cc
 #, c-format
 msgid "Unable to stat %s."
-msgstr "Impossível executar \"stat\" %s."
+msgstr "Não é possível executar \"stat\" %s."
 
 #: apt-pkg/contrib/arfile.cc
 msgid "Invalid archive signature"
@@ -578,11 +576,11 @@ msgstr "Falhou ao ler os cabeçalhos do arquivo"
 #: apt-pkg/contrib/cdromutl.cc
 #, c-format
 msgid "Unable to stat the mount point %s"
-msgstr "Impossível executar \"stat\" no ponto de montagem %s"
+msgstr "Não é possível executar \"stat\" no ponto de montagem %s"
 
 #: apt-pkg/contrib/cdromutl.cc
 msgid "Failed to stat the cdrom"
-msgstr "Impossível executar \"stat\" no cdrom"
+msgstr "Não é possível executar \"stat\" no cdrom"
 
 #: apt-pkg/contrib/cmndline.cc
 #, c-format
@@ -718,7 +716,7 @@ msgstr "Depuração:"
 #: apt-pkg/contrib/extracttar.cc
 #, c-format
 msgid "Cannot find a configured compressor for '%s'"
-msgstr "Impossível encontrar um compactador configurado para '%s'"
+msgstr "Não é possível encontrar um compactador configurado para '%s'"
 
 #: apt-pkg/contrib/extracttar.cc
 msgid "Corrupted archive"
@@ -753,6 +751,7 @@ msgstr "Não foi possível abrir arquivo de trava %s"
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "Evitando usar travamento para arquivo de trava montado via nfs %s"
 
+# held aqui não tem o sentido de retenção de pacotes
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Could not get lock %s. It is held by process %d"
@@ -893,12 +892,12 @@ msgstr "Problema ao sincronizar o arquivo"
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to mkstemp %s"
-msgstr "Impossível executar \"mkstemp\" em %s"
+msgstr "Não é possível executar \"mkstemp\" em %s"
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Unable to write to %s"
-msgstr "Impossível escrever para %s"
+msgstr "Não é possível escrever para %s"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Can't mmap an empty file"
@@ -916,11 +915,11 @@ msgstr "Não foi possível duplicar o descritor de arquivo %i"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Unable to close mmap"
-msgstr "Impossível fechar mmap"
+msgstr "Não é possível fechar mmap"
 
 #: apt-pkg/contrib/mmap.cc
 msgid "Unable to synchronize mmap"
-msgstr "Impossível sincronizar mmap"
+msgstr "Não é possível sincronizar mmap"
 
 #: apt-pkg/contrib/mmap.cc
 #, c-format
@@ -946,15 +945,15 @@ msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr ""
-"Não foi possível aumentar o tamanho do MMap, pois o limite de %lu bytes já "
-"foi atingido."
+"Não é possível aumentar o tamanho do MMap, pois o limite de %lu bytes já foi "
+"atingido."
 
 #: apt-pkg/contrib/mmap.cc
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
-"Não foi possível aumentar o tamanho do MMap, pois o crescimento automático "
-"foi desabilitado pelo usuário."
+"Não é possível aumentar o tamanho do MMap, pois o crescimento automático foi "
+"desabilitado pelo usuário."
 
 #: apt-pkg/contrib/netrc.cc
 #, c-format
@@ -973,7 +972,7 @@ msgstr "%c%s... Erro!"
 #: apt-pkg/contrib/progress.cc
 #, c-format
 msgid "%c%s... Done"
-msgstr "%c%s... Pronto"
+msgstr "%c%s... Concluído"
 
 #: apt-pkg/contrib/progress.cc
 msgid "..."
@@ -1061,7 +1060,7 @@ msgstr "O alvo %s (%s) está configurado várias vezes em %s e %s"
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
 msgid "Unable to parse Release file %s"
-msgstr "Impossível analisar o arquivo Release %s"
+msgstr "Não é possível analisar o arquivo Release %s"
 
 #: apt-pkg/deb/debmetaindex.cc
 #, c-format
@@ -1109,7 +1108,7 @@ msgstr ""
 #: apt-pkg/deb/debrecords.cc apt-pkg/tagfile.cc
 #, c-format
 msgid "Unable to parse package file %s (%d)"
-msgstr "Impossível analisar arquivo de pacote %s (%d)"
+msgstr "Não é possível analisar arquivo de pacote %s (%d)"
 
 #: apt-pkg/deb/debsystem.cc
 #, c-format
@@ -1121,13 +1120,14 @@ msgstr "Aguardando por trava de cache: %s"
 msgid ""
 "Unable to acquire the dpkg frontend lock (%s), is another process using it?"
 msgstr ""
-"Impossível adquirir a trava da interface do dpkg (%s), outro processo está "
-"usando-a?"
+"Não é possível adquirir a trava da interface do dpkg (%s), outro processo "
+"está usando-a?"
 
 #: apt-pkg/deb/debsystem.cc
 #, c-format
 msgid "Unable to acquire the dpkg frontend lock (%s), are you root?"
-msgstr "Impossível adquirir a trava da interface do dpkg (%s), você é root?"
+msgstr ""
+"Não é possível adquirir a trava da interface do dpkg (%s), você é root?"
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -1145,13 +1145,13 @@ msgid ""
 "Unable to lock the administration directory (%s), is another process using "
 "it?"
 msgstr ""
-"Impossível travar o diretório de administração (%s), outro processo está "
+"Não é possível travar o diretório de administração (%s), outro processo está "
 "usando-o?"
 
 #: apt-pkg/deb/debsystem.cc
 #, c-format
 msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "Impossível travar o diretório de administração (%s), você é root?"
+msgstr "Não é possível travar o diretório de administração (%s), você é root?"
 
 #: apt-pkg/deb/debsystem.cc
 msgid "Not locked"
@@ -1162,6 +1162,8 @@ msgid ""
 "The dpkg executable set in Dir::Bin::dpkg is missing, falling back to using "
 "default dpkg."
 msgstr ""
+"O executável dpkg definido em Dir::Bin::dpkg está faltando, retornando ao "
+"uso do dpkg padrão."
 
 #. we don't care for the difference
 #: apt-pkg/deb/dpkgpm.cc
@@ -1243,7 +1245,7 @@ msgstr "%s completamente removido"
 #: apt-pkg/deb/dpkgpm.cc
 #, c-format
 msgid "Can not write log (%s)"
-msgstr "Impossível escrever log (%s)"
+msgstr "Não é possível escrever o log (%s)"
 
 #: apt-pkg/deb/dpkgpm.cc
 msgid "Is /dev/pts mounted?"
@@ -1420,7 +1422,8 @@ msgstr "Sistema de empacotamento '%s' não é suportado"
 
 #: apt-pkg/init.cc
 msgid "Unable to determine a suitable packaging system type"
-msgstr "Impossível determinar um tipo de sistema de empacotamento aplicável"
+msgstr ""
+"Não é possível determinar um tipo de sistema de empacotamento aplicável"
 
 #: apt-pkg/install-progress.cc
 #, c-format
@@ -1704,7 +1707,7 @@ msgstr "Erro:%lu %s"
 #: apt-private/acqprogress.cc
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "Baixados %sB em %s (%sB/s)\n"
+msgstr "Obtidos %sB em %s (%sB/s)\n"
 
 #: apt-private/acqprogress.cc
 msgid " [Working]"
@@ -1739,15 +1742,15 @@ msgstr " falhou."
 
 #: apt-private/private-cachefile.cc
 msgid "Unable to correct dependencies"
-msgstr "Impossível corrigir dependências"
+msgstr "Não é possível corrigir as dependências"
 
 #: apt-private/private-cachefile.cc
 msgid "Unable to minimize the upgrade set"
-msgstr "Impossível minimizar o conjunto de atualizações"
+msgstr "Não é possível minimizar o conjunto de atualizações"
 
 #: apt-private/private-cachefile.cc
 msgid " Done"
-msgstr " Pronto"
+msgstr " Concluído"
 
 #: apt-private/private-cachefile.cc apt-private/private-install.cc
 msgid "You might want to run 'apt --fix-broken install' to correct these."
@@ -1888,7 +1891,7 @@ msgstr "AVISO: Os pacotes a seguir não podem ser autenticados!"
 
 #: apt-private/private-download.cc
 msgid "Authentication warning overridden.\n"
-msgstr "Aviso de autenticação sobreposto.\n"
+msgstr "Aviso de autenticação ignorado.\n"
 
 #: apt-private/private-download.cc
 msgid "Some packages could not be authenticated"
@@ -1917,7 +1920,7 @@ msgstr "Você não possui espaço suficiente em %s."
 
 #: apt-private/private-download.cc
 msgid "Unable to lock the download directory"
-msgstr "Impossível criar trava no diretório de download"
+msgstr "Não é possível criar trava no diretório de download"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -1950,10 +1953,8 @@ msgid "Broken packages"
 msgstr "Pacotes quebrados"
 
 #: apt-private/private-install.cc
-#, fuzzy
-#| msgid "Write error"
 msgid "Writing error report"
-msgstr "Erro de escrita"
+msgstr "Escrevendo relatório de erros"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -1974,8 +1975,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
 msgstr ""
-"Impossível buscar alguns arquivos, talvez executar apt-get update ou tentar "
-"com --fix-missing?"
+"Não é possível obter alguns arquivos, talvez executar apt-get update ou "
+"tentar com --fix-missing?"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -2002,8 +2003,8 @@ msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
 msgstr ""
-"Os pacotes marcados para não atualizar foram alterados e -y foi usado sem --"
-"allow-change-held-packages."
+"Os pacotes retidos foram alterados e -y foi usado sem --allow-change-held-"
+"packages."
 
 #: apt-private/private-install.cc
 msgid "Internal error, Ordering didn't finish"
@@ -2141,7 +2142,7 @@ msgstr "--fix-missing e troca de mídia não são suportados atualmente"
 
 #: apt-private/private-install.cc
 msgid "Unable to correct missing packages."
-msgstr "Impossível corrigir pacotes faltantes."
+msgstr "Não é possível corrigir pacotes faltantes."
 
 #: apt-private/private-install.cc
 msgid "Aborting install."
@@ -2167,7 +2168,7 @@ msgstr "Nota: Isso é feito automaticamente e propositalmente pelo dpkg."
 
 #: apt-private/private-install.cc
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr "Nós não deveríamos apagar coisas, impossível iniciar AutoRemover"
+msgstr "Nós não deveríamos apagar coisas, não é possível iniciar AutoRemover"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -2211,7 +2212,7 @@ msgstr[1] ""
 
 #: apt-private/private-install.cc
 msgid "Result calculated by the 3.0 solver."
-msgstr ""
+msgstr "Resultado calculado pelo resolvedor 3.0."
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -2417,7 +2418,7 @@ msgstr "Alterando pacotes retidos:"
 
 #: apt-private/private-output.cc
 msgid "The following held packages will be changed:"
-msgstr "Os seguintes pacotes marcados para não atualizar serão mudados:"
+msgstr "Os seguintes pacotes retidos serão mudados:"
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2574,17 +2575,17 @@ msgstr "faseado"
 #: apt-private/private-source.cc
 #, c-format
 msgid "Can not find a package for architecture '%s'"
-msgstr "Impossível encontrar um pacote para a arquitetura '%s'"
+msgstr "Não é possível encontrar um pacote para a arquitetura '%s'"
 
 #: apt-private/private-source.cc
 #, c-format
 msgid "Can not find a package '%s' with version '%s'"
-msgstr "Impossível encontrar um pacote '%s' com versão '%s'"
+msgstr "Não é possível encontrar um pacote '%s' com a versão '%s'"
 
 #: apt-private/private-source.cc
 #, c-format
 msgid "Can not find a package '%s' with release '%s'"
-msgstr "Impossível encontrar um pacote '%s' com lançamento '%s'"
+msgstr "Não é possível encontrar um pacote '%s' com o lançamento '%s'"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -2594,7 +2595,7 @@ msgstr "Escolhendo '%s' como pacote-fonte em vez de '%s'\n"
 #: apt-private/private-source.cc
 #, c-format
 msgid "Can not find version '%s' of package '%s'"
-msgstr "Impossível encontrar a versão '%s' do pacote '%s'"
+msgstr "Não é possível encontrar a versão '%s' do pacote '%s'"
 
 #: apt-private/private-source.cc
 msgid "Must specify at least one package to fetch source for"
@@ -2603,7 +2604,7 @@ msgstr "Deve-se especificar pelo menos um pacote para que se busque o fonte"
 #: apt-private/private-source.cc
 #, c-format
 msgid "Unable to find a source package for %s"
-msgstr "Impossível encontrar um pacote-fonte para %s"
+msgstr "Não é possível encontrar um pacote-fonte para %s"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -2652,7 +2653,7 @@ msgstr "Obter fonte %s\n"
 
 #: apt-private/private-source.cc
 msgid "Failed to fetch some archives."
-msgstr "Falhou ao buscar alguns arquivos."
+msgstr "Falhou ao obter alguns arquivos."
 
 #: apt-private/private-source.cc
 #, c-format
@@ -2676,7 +2677,7 @@ msgstr "Comando de construção '%s' falhou.\n"
 #: apt-private/private-source.cc
 #, c-format
 msgid "Unable to get build-dependency information for %s"
-msgstr "Impossível conseguir informações de dependência de construção para %s"
+msgstr "Não é possível obter informações de dependência de construção para %s"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -2734,7 +2735,7 @@ msgstr "Seu arquivo '%s' mudou, por favor execute 'apt-get update'.\n"
 #: apt-private/private-sources.cc
 #, c-format
 msgid "Rewrite %zu sources?"
-msgstr ""
+msgstr "Reescrever %zu fontes?"
 
 #: apt-private/private-unmet.cc
 #, c-format
@@ -2759,7 +2760,7 @@ msgstr ""
 #: apt-private/private-update.cc
 #, c-format
 msgid "The %s entry for '%s' should be upgraded to deb822 .sources"
-msgstr ""
+msgstr "A entrada %s para '%s' deve ser atualizada para .sources do deb822"
 
 #. TRANSLATOR: the first is manpage reference, the last the URI from a sources.list
 #: apt-private/private-update.cc
@@ -2771,26 +2772,28 @@ msgstr "Faltando Signed-By na entrada %s para '%s'"
 msgid ""
 "Consider migrating all sources.list(5) entries to the deb822 .sources format"
 msgstr ""
+"Considere migrar todas as entradas sources.list(5) para o formato .sources "
+"do deb822"
 
 #: apt-private/private-update.cc
 msgid ""
 "The deb822 .sources format supports both embedded as well as external "
 "OpenPGP keys"
 msgstr ""
+"O formato .sources do deb822 oferece suporte a tanto a chaves OpenPGP "
+"embutidas quanto externas"
 
 #: apt-private/private-update.cc
-#, fuzzy
-#| msgid ""
-#| "See apt-secure(8) manpage for repository creation and user configuration "
-#| "details."
 msgid "See apt-secure(8) for best practices in configuring repository signing."
 msgstr ""
-"Veja a página man apt-secure(8) para detalhes sobre criação de repositório e "
-"configuração de usuário."
+"Veja apt-secure(8) para melhores práticas sobre a configuração de assinatura "
+"de repositório."
 
 #: apt-private/private-update.cc
 msgid "Some sources can be modernized. Run 'apt modernize-sources' to do so."
 msgstr ""
+"Algumas fontes podem ser modernizadas. Execute 'apt modernize-sources' para "
+"fazer isso."
 
 #: apt-private/private-update.cc
 #, c-format
@@ -2841,10 +2844,8 @@ msgid "  Missing: "
 msgstr "  Faltando: "
 
 #: cmdline/apt-cache.cc
-#, fuzzy
-#| msgid "Total distinct versions: "
 msgid "Total distinct source versions: "
-msgstr "Total de versões distintas: "
+msgstr "Total de versões fontes distintas: "
 
 #: cmdline/apt-cache.cc
 msgid "Total distinct versions: "
@@ -3045,7 +3046,7 @@ msgstr "Não foi possível obter a versão do debconf. O debconf está instalado
 #: cmdline/apt-get.cc
 #, c-format
 msgid "Couldn't find package %s"
-msgstr "Impossível achar pacote %s"
+msgstr "Não é possível achar o pacote %s"
 
 #: cmdline/apt-get.cc cmdline/apt-mark.cc
 #, c-format
@@ -3276,12 +3277,12 @@ msgstr "Os pacotes a seguir serão marcados como instalados automaticamente:"
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already set on hold.\n"
-msgstr "%s já tinha sido configurado para não atualizar.\n"
+msgstr "%s já tinha sido configurado como retido.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "%s was already not on hold.\n"
-msgstr "%s já estava como não suspenso.\n"
+msgstr "%s já não estava configurado como retido.\n"
 
 #: cmdline/apt-mark.cc
 msgid "Executing dpkg failed. Are you root?"
@@ -3290,12 +3291,12 @@ msgstr "Falha na execução do dpkg. Você é root?"
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "%s set on hold.\n"
-msgstr "%s configurado para não atualizar.\n"
+msgstr "%s configurado como retido.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
 msgid "Canceled hold on %s.\n"
-msgstr "Cancelada a configuração de não atualizar %s.\n"
+msgstr "Cancelada retenção em %s.\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -3343,11 +3344,11 @@ msgstr ""
 
 #: cmdline/apt-mark.cc
 msgid "Mark a package as held back"
-msgstr "Marca um pacote para não atualizar"
+msgstr "Marca um pacote como retido"
 
 #: cmdline/apt-mark.cc
 msgid "Unset a package set as held back"
-msgstr "Desmarca um pacote configurado para não atualizar"
+msgstr "Desmarca um pacote configurado como retido"
 
 #: cmdline/apt-mark.cc
 msgid "Print the list of automatically installed packages"
@@ -3359,7 +3360,7 @@ msgstr "Exibe a lista de pacotes instalados manualmente"
 
 #: cmdline/apt-mark.cc
 msgid "Print the list of packages on hold"
-msgstr "Exibe a lista de pacotes marcados para não atualizar"
+msgstr "Exibe a lista de pacotes retidos"
 
 #: cmdline/apt-sortpkgs.cc
 msgid "Unknown package record!"
@@ -3448,7 +3449,7 @@ msgstr "edita o arquivo de informações de fontes"
 
 #: cmdline/apt.cc
 msgid "modernize .list files to .sources files"
-msgstr ""
+msgstr "moderniza arquivos .list para arquivos .sources"
 
 #: cmdline/apt.cc
 msgid "satisfy dependency strings"
@@ -3486,7 +3487,7 @@ msgstr "dependências faltantes. Não tem problema, apenas os erros acima são"
 #: dselect/install
 msgid ""
 "above this message are important. Please fix them and run [I]nstall again"
-msgstr "importantes. Por favor, conserte-os e execute [I]nstalar novamente"
+msgstr "importantes. Por favor, corrija-os e execute [I]nstalar novamente"
 
 #: dselect/update
 msgid "Merging available information"
@@ -3626,7 +3627,7 @@ msgstr ""
 #: ftparchive/cachedb.cc
 #, c-format
 msgid "Unable to open DB file %s: %s"
-msgstr "Impossível abrir o arquivo BD %s: %s"
+msgstr "Não é possível abrir o arquivo BD %s: %s"
 
 #: ftparchive/cachedb.cc
 msgid "Failed to read .dsc"
@@ -3638,7 +3639,7 @@ msgstr "Repositório não possui registro de controle"
 
 #: ftparchive/cachedb.cc
 msgid "Unable to get a cursor"
-msgstr "Impossível obter um cursor"
+msgstr "Não é possível obter um cursor"
 
 #: ftparchive/contents.cc
 msgid "realloc - Failed to allocate memory"
@@ -3687,7 +3688,7 @@ msgstr "Falhou ao renomear %s para %s"
 #: ftparchive/override.cc
 #, c-format
 msgid "Unable to open %s"
-msgstr "Impossível abrir %s"
+msgstr "Não é possível abrir %s"
 
 #. skip spaces
 #. find end of word
@@ -3719,12 +3720,12 @@ msgstr "Override malformado %s linha %llu #3"
 #: ftparchive/writer.cc
 #, c-format
 msgid "W: Unable to read directory %s\n"
-msgstr "W: Impossível ler o diretório %s\n"
+msgstr "A: Não é possível ler o diretório %s\n"
 
 #: ftparchive/writer.cc
 #, c-format
 msgid "W: Unable to stat %s\n"
-msgstr "W: Impossível executar \"stat\" em %s\n"
+msgstr "A: Não é possível executar \"stat\" em %s\n"
 
 #: ftparchive/writer.cc
 msgid "E: "
@@ -3732,7 +3733,7 @@ msgstr "E: "
 
 #: ftparchive/writer.cc
 msgid "W: "
-msgstr "W: "
+msgstr "A: "
 
 #: ftparchive/writer.cc
 msgid "E: Errors apply to file "
@@ -3850,7 +3851,7 @@ msgstr "Erro interno"
 #: methods/cdrom.cc
 #, c-format
 msgid "Unable to read the cdrom database %s"
-msgstr "Impossível ler o banco de dados de cdrom %s"
+msgstr "Não é possível ler o banco de dados de cdrom %s"
 
 #: methods/cdrom.cc
 msgid ""
@@ -3867,7 +3868,8 @@ msgstr "CD-ROM errado"
 #: methods/cdrom.cc
 #, c-format
 msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr "Impossível desmontar o CD-ROM em %s, o mesmo ainda pode estar em uso."
+msgstr ""
+"Não é possível desmontar o CD-ROM em %s, o mesmo ainda pode estar em uso."
 
 #: methods/cdrom.cc
 msgid "Disk not found."
@@ -3881,7 +3883,7 @@ msgstr "Arquivo não encontrado"
 #: methods/connect.cc
 #, c-format
 msgid "Direct connection to %s domains is blocked by default."
-msgstr "A conexão direta com os domínios %s está bloqueada por padrão."
+msgstr "A conexão direta com os domínios %s está travada por padrão."
 
 #: methods/connect.cc
 #, c-format
@@ -3950,7 +3952,7 @@ msgstr "Algo estranho aconteceu ao resolver '%s:%s' (%i - %s)"
 #: methods/connect.cc
 #, c-format
 msgid "Unable to connect to %s:%s:"
-msgstr "Impossível conectar em %s %s:"
+msgstr "Não é possível conectar em %s %s:"
 
 #: methods/copy.cc
 msgid "Failed to stat"
@@ -4075,10 +4077,10 @@ msgstr "Arquivos vazios não podem ser arquivos válidos"
 #~ msgstr "Efetuando login"
 
 #~ msgid "Unable to determine the peer name"
-#~ msgstr "Impossível determinar o nome do ponto"
+#~ msgstr "Não é possível determinar o nome do ponto"
 
 #~ msgid "Unable to determine the local name"
-#~ msgstr "Impossível determinar o nome local"
+#~ msgstr "Não é possível determinar o nome local"
 
 #, c-format
 #~ msgid "The server refused the connection and said: %s"
@@ -4141,7 +4143,7 @@ msgstr "Arquivos vazios não podem ser arquivos válidos"
 #~ msgstr "Não foi possível determinar o nome do socket"
 
 #~ msgid "Unable to send PORT command"
-#~ msgstr "Impossível enviar o comando PORT"
+#~ msgstr "Não é possível enviar o comando PORT"
 
 #, c-format
 #~ msgid "Unknown address family %u (AF_*)"
@@ -4155,11 +4157,11 @@ msgstr "Arquivos vazios não podem ser arquivos válidos"
 #~ msgstr "Conexão do socket de dados expirou"
 
 #~ msgid "Unable to accept connection"
-#~ msgstr "Impossível aceitar conexão"
+#~ msgstr "Não é possível aceitar conexão"
 
 #, c-format
 #~ msgid "Unable to fetch file, server said '%s'"
-#~ msgstr "Impossível obter arquivo, servidor disse '%s'"
+#~ msgstr "Não é possível obter arquivo, servidor disse '%s'"
 
 #~ msgid "Data socket timed out"
 #~ msgstr "Socket de dados expirou"
@@ -4172,7 +4174,7 @@ msgstr "Arquivos vazios não podem ser arquivos válidos"
 #~ msgstr "Pesquisa"
 
 #~ msgid "Unable to invoke "
-#~ msgstr "Impossível invocar "
+#~ msgstr "Não é possível invocar "
 
 #~ msgid "Connection closed prematurely"
 #~ msgstr "Conexão encerrada prematuramente"
@@ -4235,7 +4237,7 @@ msgstr "Arquivos vazios não podem ser arquivos válidos"
 #~ msgstr "Arquivo %s/%s sobrescreve arquivo no pacote %s"
 
 #~ msgid "Unable to stat %s"
-#~ msgstr "Impossível executar \"stat\" em %s"
+#~ msgstr "Não é possível executar \"stat\" em %s"
 
 #~ msgid "DropNode called on still linked node"
 #~ msgstr "\"DropNode\" chamado em nó ainda ligado (\"linked\")"
@@ -4259,7 +4261,7 @@ msgstr "Arquivos vazios não podem ser arquivos válidos"
 #~ msgstr "Arquivo de configuração duplicado %s/%s"
 
 #~ msgid "Unable to change to %s"
-#~ msgstr "Impossível mudar para %s"
+#~ msgstr "Não é possível mudar para %s"
 
 #~ msgid "Removed %s"
 #~ msgstr "%s removido"
@@ -4503,7 +4505,7 @@ msgstr "Arquivos vazios não podem ser arquivos válidos"
 
 #, fuzzy
 #~ msgid "Unable to find hash sum for '%s' in Release file"
-#~ msgstr "Impossível analisar arquivo de pacote %s (1)"
+#~ msgstr "Não é possível analisar arquivo de pacote %s (1)"
 
 #~ msgid "Vendor block %s contains no fingerprint"
 #~ msgstr "Bloco fornecedor %s não contém impressão digital (\"fingerprint\")"
@@ -4547,10 +4549,11 @@ msgstr "Arquivos vazios não podem ser arquivos válidos"
 #~ "need to manually fix this package."
 #~ msgstr ""
 #~ "Não foi possível localizar arquivo para o pacote %s. Isto pode significar "
-#~ "que você precisa consertar manualmente este pacote."
+#~ "que você precisa corrigir manualmente este pacote."
 
 #~ msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
-#~ msgstr "Impossível escrever log, openpty() falhou (/dev/pts não montado?)\n"
+#~ msgstr ""
+#~ "Não é possível escrever log, openpty() falhou (/dev/pts não montado?)\n"
 
 #, fuzzy
 #~ msgid "Skipping nonexistent file %s"
@@ -4560,7 +4563,7 @@ msgstr "Arquivos vazios não podem ser arquivos válidos"
 #~ msgstr "Falhou ao remover %s"
 
 #~ msgid "Unable to create %s"
-#~ msgstr "Impossível criar %s"
+#~ msgstr "Não é possível criar %s"
 
 #~ msgid "Failed to stat %sinfo"
 #~ msgstr "Falhou ao executar \"stat\" em %sinfo."
@@ -4815,7 +4818,7 @@ msgstr "Arquivos vazios não podem ser arquivos válidos"
 #~ msgstr "Pronto"
 
 #~ msgid "Could not find a record in the DSC '%s'"
-#~ msgstr "Impossível achar pacote %s"
+#~ msgstr "Não é possível achar pacote %s"
 
 #~ msgid "Failed too stat %s"
-#~ msgstr "Impossível checar %s."
+#~ msgstr "Não é possível checar %s."
