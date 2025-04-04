@@ -983,6 +983,7 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
      // Fallback to 3.0 if we don't get a result or apport is installed
      if (not invalidCombinations && _config->Find("APT::Solver", "internal") == "internal" && (not res || (not Cache->FindPkg("apport").end() && Cache->FindPkg("apport")->CurrentVer)))
      {
+	bool isUpgrade = distUpgradeMode || UpgradeMode != APT::Upgrade::ALLOW_EVERYTHING;
 	auto internalBroken = Cache->BrokenCount();
 	auto internalDel = Cache->DelCount();
 	auto internalInst = Cache->InstCount();
@@ -1006,6 +1007,11 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
 	      errors.push_back(str);
 	_config->Set("APT::Solver", "internal");
 	_error->RevertToStack();
+
+	// Cost factors to compare two solutions
+	auto solver3Cost = std::make_tuple(Cache->DelCount(), isUpgrade  ? -Cache->UpgradeCount() : 0, Cache->InstCount() - Cache->UpgradeCount(), Cache->UpgradeCount());
+	auto internalCost = std::make_tuple(internalDel, isUpgrade ? -internalUpgrade : 0, internalInst - internalUpgrade, internalUpgrade);
+
 	// An error summary for apport.
 	std::string error;
 	if (solver3Res && Cache->BrokenCount())
@@ -1027,7 +1033,7 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, std::vector<PseudoPkg
 	   solver3.commit();
 	   res = true;
 	}
-	else if (std::make_tuple(Cache->DelCount(), -Cache->UpgradeCount(), Cache->KeepCount(), Cache->InstCount()) > std::make_tuple(internalDel, -internalUpgrade, internalKeep, internalInst))
+	else if (solver3Cost > internalCost)
 	{
 	   error = "Failure: The 3.0 solver produced a worse result";
 	}

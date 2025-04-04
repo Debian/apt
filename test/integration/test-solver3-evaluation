@@ -11,8 +11,8 @@ insertinstalledpackage 'apport' 'all' '3'
 insertpackage 'unstable' 'x' 'all' '3' 'Depends: a | b'
 insertpackage 'unstable' 'y' 'all' '3' 'Depends: b | a'
 insertpackage 'unstable' 'a' 'all' '3' 'Depends: c'
-insertpackage 'unstable' 'b' 'all' '3'
-insertpackage 'unstable' 'c' 'all' '3'
+insertpackage 'unstable' 'b' 'all' '3' 'Source: src'
+insertpackage 'unstable' 'c' 'all' '3' 'Source: src'
 insertpackage 'unstable' 'unrelated' 'all' '3'
 
 setupaptarchive
@@ -20,6 +20,7 @@ setupaptarchive
 rm rootdir/etc/apt/apt.conf.d/disable-solver3-context
 mkdir rootdir/var/log/apt
 
+msgmsg "Test 'worse  result'"
 testsuccess aptget install y x --solver internal -s -o Dir::Apport=var/crash
 
 testsuccess sed -i "s/^Date:.*/Date: Sun Mar  9 00:08:41 2025/" rootdir/var/crash/apt-edsp.$(id -u).crash
@@ -59,7 +60,7 @@ Package: b
 Architecture: all
 Version: 3
 APT-ID: 3
-Source: b
+Source: src
 Source-Version: 3
 Priority: optional
 Section: other
@@ -73,7 +74,7 @@ Package: c
 Architecture: all
 Version: 3
 APT-ID: 4
-Source: c
+Source: src
 Source-Version: 3
 Priority: optional
 Section: other
@@ -126,6 +127,7 @@ APT-Pin: 100
 APT-Candidate: yes
 " apthelper cat-file rootdir/var/log/apt/edsp.log.zst
 
+msgmsg "Test that solver 3.0 explanations are shown"
 testfailureequal "Reading package lists...
 Building dependency tree...
 Package 'c' is not installed, so not removed
@@ -146,6 +148,8 @@ E: The following information from --solver 3.0 may provide additional context:
       but none of the choices are installable:
       - c:amd64 is not selected for install" apt install -s a c- --solver internal
 
+
+msgmsg "Test for 'did not find a result'"
 
 rm rootdir/var/crash/apt-edsp.$(id -u).crash
 
@@ -180,3 +184,35 @@ ErrorMessage:
     - c:amd64 is not selected for install
 AptSolverDump:
 $(cat rootdir/var/log/apt/edsp.log.zst | base64 | sed 's#^# #')" cat rootdir/var/crash/apt-edsp.$(id -u).crash
+
+msgmsg "Test that more upgrades are not better in installs"
+# FIXME: This will fail once 3.0 solver tries upgrading by source package.
+insertinstalledpackage 'b' 'all' '2' 'Source: src'
+insertinstalledpackage  'c' 'all' '2' 'Source: src'
+
+# No "Writing error report..."
+testsuccess rm rootdir/var/crash/apt-edsp.$(id -u).crash
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Solving dependencies...
+The following additional packages will be installed:
+  c
+The following packages will be upgraded:
+  b c
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst b [2] (3 unstable [all])
+Inst c [2] (3 unstable [all])
+Conf b (3 unstable [all])
+Conf c (3 unstable [all])"  apt install --solver internal b  -s
+
+testfailure test -e rootdir/var/crash/apt-edsp.$(id -u).crash
+
+# Safety check to check that the 3.0 result actually looks worse
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Solving dependencies...
+The following packages will be upgraded:
+  b
+1 upgraded, 0 newly installed, 0 to remove and 1 not upgraded.
+Inst b [2] (3 unstable [all])
+Conf b (3 unstable [all])"  apt install --solver 3.0 b  -s
