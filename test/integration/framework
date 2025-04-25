@@ -591,6 +591,10 @@ EOF
 
 	echo 'quiet::NoSolver3Explanation "true";' > rootdir/etc/apt/apt.conf.d/disable-solver3-context
 
+
+	export APT_SEQUOIA_CRYPTO_POLICY="$PWD/sequoia.config"
+	touch "$APT_SEQUOIA_CRYPTO_POLICY"
+
 	# most tests just need one signed Release file, not both
 	export APT_DONT_SIGN='Release.gpg'
 
