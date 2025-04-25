@@ -1,3 +1,21 @@
+apt (3.0.1) unstable; urgency=medium
+
+  [ Laurent Bigonville ]
+  * Remove boggus option in French manpage translation
+
+  [ Julian Andres Klode ]
+  * Update Sequoia crypto policy.
+    Move our cut-offs to February to align with Sequoia, and cut-off more:
+    - 2024-02: DSA keys retroactively (align with GnuPG config)
+    - 2026-02: SHA224 hashes
+    - 2028-02: Brainpool keys (align closer with GnuPG backend)
+    - 2030-02: RSA2048 keys
+    These algorithms will not be valid starting on those cut-off dates.
+  * sqv: Refactor execution of sqv into separate method
+  * sqv: Warn about signatures that will be rejected by policy within a year
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 25 Apr 2025 23:08:27 +0200
+
 apt (3.0.0) unstable; urgency=medium
 
   [ Julian Andres Klode ]
