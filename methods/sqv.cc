@@ -19,6 +19,7 @@ class SQVMethod : public aptMethod
    bool VerifyGetSigners(const char *file, const char *outfile,
 			 vector<string> keyFiles,
 			 vector<string> &signers);
+   bool ExecuteSqv(const std::vector<std::string> &args, std::vector<std::string> &signers);
 
    protected:
    bool URIAcquire(std::string const &Message, FetchItem *Itm) override;
@@ -204,6 +205,13 @@ bool SQVMethod::VerifyGetSigners(const char *file, const char *outfile,
       args.push_back(file);
       args.push_back(outfile);
    }
+
+   return ExecuteSqv(args, signers);
+}
+
+bool SQVMethod::ExecuteSqv(const std::vector<std::string> &args, std::vector<std::string> &signers)
+{
+   bool const Debug = DebugEnabled();
 
    // FIXME: Use a select() loop
    FileFd sqvout;
