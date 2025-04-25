@@ -19,6 +19,7 @@ class SQVMethod : public aptMethod
    bool VerifyGetSigners(const char *file, const char *outfile,
 			 vector<string> keyFiles,
 			 vector<string> &signers);
+   bool ExecuteSqv(const std::vector<std::string> &args, std::vector<std::string> &signers);
 
    protected:
    bool URIAcquire(std::string const &Message, FetchItem *Itm) override;
@@ -204,6 +205,57 @@ bool SQVMethod::VerifyGetSigners(const char *file, const char *outfile,
       args.push_back(file);
       args.push_back(outfile);
    }
+
+   bool res = false;
+   std::vector<std::string> aheadErrors;
+   // Check the signature with a one-year-ahead policy first
+   {
+      _error->PushToStack();
+      auto time = std::time(nullptr);
+      auto tm = std::localtime(&time);
+      std::string yearAheadDate;
+      strprintf(yearAheadDate, "%d-%d-%d", tm->tm_year + 1900 + 1, tm->tm_mon + 1, tm->tm_mday);
+
+      args.push_back("--policy-as-of");
+      args.push_back(std::move(yearAheadDate));
+      res = ExecuteSqv(args, signers);
+      args.pop_back();
+      args.pop_back();
+
+      // Preserve any warnings or whatnot on success
+      if (res)
+	 _error->MergeWithStack();
+      else
+      {
+	 while (not _error->empty())
+	 {
+	    std::string msg;
+	    _error->PopMessage(msg);
+	    aheadErrors.push_back(msg);
+	 }
+	 _error->RevertToStack();
+      }
+   }
+
+   // The year-ahead-policy produced no valid signer, check if valid at current time.
+   if (not res)
+   {
+      // clear signers, args have already been cleaned post-execution
+      signers.clear();
+      res = ExecuteSqv(args, signers);
+      if (res)
+      {
+	 Warning(_("Policy will reject signature within a year, see --audit for details"));
+	 for (auto &&msg : aheadErrors)
+	    Audit(std::move(msg));
+      }
+   }
+   return res;
+}
+
+bool SQVMethod::ExecuteSqv(const std::vector<std::string> &args, std::vector<std::string> &signers)
+{
+   bool const Debug = DebugEnabled();
 
    // FIXME: Use a select() loop
    FileFd sqvout;
