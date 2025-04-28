@@ -34,6 +34,12 @@ apt (2.9.15) unstable; urgency=medium
   This release stops using apt-key to verify the signatures.
   Final call to stop using it before it's gone next week.
 
+  Please note that due to the switch to internal verification, APT now
+  has the same requirements on files in trusted.gpg.d as for other .d
+  directories: Only alphanumerical characters, '_', '-', ':' and '.'
+  are supported, other characters such as '@' cause the file to silently
+  be ignored.
+
  -- Julian Andres Klode <jak@debian.org>  Thu, 28 Nov 2024 19:31:24 +0100
 
 apt (2.9.11) unstable; urgency=medium
