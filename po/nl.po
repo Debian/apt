@@ -13,10 +13,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.9.31\n"
+"Project-Id-Version: apt 3.0.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2025-04-04 16:12+0200\n"
-"PO-Revision-Date: 2025-03-09 22:43+0100\n"
+"PO-Revision-Date: 2025-04-15 20:26+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -62,12 +62,11 @@ msgstr "De pakketbron '%s' heeft niet langer een Release-bestand."
 
 #: apt-pkg/acquire-item.cc
 msgid ""
-"This is normally not allowed, but the option "
-"Acquire::AllowDowngradeToInsecureRepositories was given to override it."
+"This is normally not allowed, but the option Acquire::"
+"AllowDowngradeToInsecureRepositories was given to override it."
 msgstr ""
-"Normaal gezien is dit niet toegelaten, maar de optie "
-"Acquire::AllowDowngradeToInsecureRepositories werd gegeven om dit te "
-"omzeilen."
+"Normaal gezien is dit niet toegelaten, maar de optie Acquire::"
+"AllowDowngradeToInsecureRepositories werd gegeven om dit te omzeilen."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -132,10 +131,7 @@ msgstr ""
 "het netwerk authenticatie?)"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "An error occurred during the signature verification. The repository is "
-#| "not updated and the previous index files will be used. GPG error: %s: %s"
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. OpenPGP signature "
@@ -143,13 +139,13 @@ msgid ""
 msgstr ""
 "Er is een fout opgetreden bij de controle van de ondertekening. De "
 "pakketbron is niet bijgewerkt en de oude indexbestanden zullen worden "
-"gebruikt. GPG-fout: %s: %s"
+"gebruikt. Verificatie OpenPGP handtekening is mislukt: %s: %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "OpenPGP signature verification failed: %s: %s"
-msgstr ""
+msgstr "Verificatie OpenPGP handtekening is mislukt: %s: %s"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1871,8 +1867,8 @@ msgid ""
 "Security details are available in apt-secure(8).\n"
 msgstr ""
 "Configuratieopties en syntaxis worden gespecificeerd in apt.conf(5).\n"
-"Informatie over het configureren van pakketbronnen vindt u in "
-"sources.list(5).\n"
+"Informatie over het configureren van pakketbronnen vindt u in sources."
+"list(5).\n"
 "Keuzes voor pakketten en versies kunnen geuit worden via "
 "apt_preferences(5).\n"
 "Details over beveiliging zijn te vinden in apt-secure(8).\n"
@@ -1968,10 +1964,8 @@ msgid "Broken packages"
 msgstr "Niet-werkende pakketten"
 
 #: apt-private/private-install.cc
-#, fuzzy
-#| msgid "Write error"
 msgid "Writing error report"
-msgstr "Schrijffout"
+msgstr "Foutrapport schrijven"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -2032,8 +2026,8 @@ msgstr "Interne fout. Rangschikken is niet voltooid"
 #: apt-private/private-install.cc
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
-"Merkwaardig... De groottes kwamen niet overeen. Gelieve "
-"apt@packages.debian.org te mailen"
+"Merkwaardig... De groottes kwamen niet overeen. Gelieve apt@packages.debian."
+"org te mailen"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2229,7 +2223,7 @@ msgstr[1] ""
 
 #: apt-private/private-install.cc
 msgid "Result calculated by the 3.0 solver."
-msgstr ""
+msgstr "Resultaat berekend door de 3.0 oplosser."
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -2712,8 +2706,8 @@ msgstr "%s heeft geen bouwvereisten.\n"
 #: apt-private/private-source.cc
 #, c-format
 msgid ""
-"No architecture information available for %s. See apt.conf(5) "
-"APT::Architectures for setup"
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
 msgstr ""
 "Er is geen architectuurinformatie beschikbaar voor %s. Raadpleeg apt.conf(5) "
 "APT::Architectures om dit te configureren"
@@ -4089,7 +4083,3 @@ msgstr "Instellen van de aanpassingstijd is mislukt"
 #: methods/store.cc
 msgid "Empty files can't be valid archives"
 msgstr "Lege bestanden kunnen geen geldige archieven zijn"
-
-#, c-format
-#~ msgid "GPG error: %s: %s"
-#~ msgstr "GPG-fout: %s: %s"
