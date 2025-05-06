@@ -114,7 +114,7 @@ function(apt_add_translation_domain)
             DEPENDS ${file} ${CMAKE_CURRENT_BINARY_DIR}/${domain}.pot-tmp
         )
         add_custom_command(OUTPUT ${outdir}/${domain}.mo
-            COMMAND msgfmt --statistics -o ${outdir}/${domain}.mo  ${outdir}/${domain}.po
+            COMMAND msgfmt --check --statistics -o ${outdir}/${domain}.mo  ${outdir}/${domain}.po
             DEPENDS ${outdir}/${domain}.po
         )
 
@@ -179,7 +179,7 @@ function(apt_add_po_statistics excluded)
             add_custom_command(
                 TARGET statistics PRE_BUILD
                 COMMAND printf "%-6s " "${langcode}:"
-                COMMAND msgfmt --statistics -o /dev/null ${translation}
+                COMMAND msgfmt --check --statistics -o /dev/null ${translation}
                 VERBATIM
             )
     endforeach()
