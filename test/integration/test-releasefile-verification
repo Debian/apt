@@ -374,14 +374,13 @@ Signed-By: ${SEBASTIAN}" rootdir/var/lib/apt/lists/*Release
 " aptcache show apt
 	installaptnew
 
-	if test -e "${METHODSDIR}/sqv"; then
+	if [ -z "$GPGV" ] && test -e "${METHODSDIR}/sqv"; then
 	msgmsg 'Warm archive with ahead-policy-rejected subkey signing' 'Sebastian Subkey'
-    cat > sequoia.config << EOF
+    cat > test-sequoia.config << EOF
 [asymmetric_algorithms]
 rsa3072 = $(date +%Y-%m-%d --date="now + 6 months")
 EOF
-	APT_SEQUOIA_CRYPTO_POLICY=$PWD/sequoia.config updatewithwarnings "W: http://localhost:${APTHTTPPORT}/Release.gpg: Policy will reject signature within a year, see --audit for details"
-    exit
+	APT_SEQUOIA_CRYPTO_POLICY=$PWD/test-sequoia.config updatewithwarnings "W: http://localhost:${APTHTTPPORT}/.*Release.*: Policy will reject signature within a year, see --audit for details"
     fi
 
 	msgmsg 'Warm archive with wrong exact subkey signing' 'Sebastian Subkey'
