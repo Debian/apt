@@ -41,6 +41,20 @@
       configured sources is acquired by <command>apt-get update</command> (or
       by an equivalent command from another APT front-end).
    </para>
+   <para>
+      If multiple source lists are used,
+      the most-preferred sources are those listed in
+      <filename>/etc/apt/sources.list</filename>,
+      followed by each file in
+      <filename>/etc/apt/sources.list.d/</filename>
+      in lexicographic order:
+      for example,
+      <filename>00-high-preference.list</filename>
+      is more-preferred than
+      <filename>50-middle-preference.sources</filename>
+      which is more-preferred than
+      <filename>z-low-preference.list</filename>.
+   </para>
  </refsect1>
  
  <refsect1><title>sources.list.d</title>
