@@ -1,2 +1,9 @@
 Acquire::Changelogs::AlwaysOnline "true";
 Acquire::http::User-Agent-Non-Interactive "true";
+
+// Enable the new solver by default for our commands
+binary::apt::APT::Solver "3.0";
+binary::apt-get::APT::Solver "3.0";
+// Allow apt-get to remove manually installed packages for the
+// first phase.
+binary::apt-get::APT::Solver::RemoveManual "true";

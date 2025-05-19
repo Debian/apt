@@ -622,7 +622,7 @@ unsigned short DispatchCommandLine(CommandLine &CmdL, std::vector<CommandLine::D
       _error->DumpErrors();
    else
       _error->DumpErrors(GlobalError::NOTICE);
-   if (returned == false)
+   if (returned == false || std::cout.bad() || std::cerr.bad() || std::clog.bad())
       return 100;
    return Errors == true ? 100 : 0;
 }

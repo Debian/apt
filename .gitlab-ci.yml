@@ -50,6 +50,7 @@ test as user:
   script:
     - apt-get install --no-install-recommends -qq libxml2-utils
     - ./prepare-release post-build --report-failure
+    - sudo -u travis unbuffer ./debian/tests/pkg-config-test
     - sudo -u travis CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
     - chmod -R o-w $PWD
     - sudo -u travis unbuffer ./test/integration/run-tests -q -j 4
