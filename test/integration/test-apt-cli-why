@@ -1,0 +1,71 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'root' 'all' '1' 'Depends: level-1'
+insertinstalledpackage 'level-1' 'all' '1' 'Depends: level-2'
+insertinstalledpackage 'level-2' 'all' '1' 'Depends: level-2'
+insertpackage 'unstable' 'other-level-2' 'all' '1' 'Conflicts: level-2
+Provides: level-2'
+insertpackage 'unstable' 'almost-level-2' 'all' '1' 'Conflicts: level-2'
+insertpackage 'unstable' 'level-3' 'all' '1' 'Conflicts: level-3'
+setupaptarchive
+
+testsuccess aptmark auto level-1 level-2
+
+
+testsuccessequal "level-2:amd64=1 is selected for install because:
+1. root:amd64 is selected for install
+2. root:amd64 Depends level-1
+3. level-1:amd64 Depends level-2
+   [selected level-1:amd64]
+For context, additional choices that could not be installed:
+* In level-1:amd64 Depends level-2:
+  - other-level-2:amd64=1 ->  | other-level-2:amd64
+    but none of the choices are installable:
+    - other-level-2:amd64 is not selected for install because:
+      1-3. level-2:amd64=1 is selected for install as above
+      4. other-level-2:amd64 Conflicts level-2
+      For context, additional choices that could not be installed:
+      * In level-1:amd64 Depends level-2:
+        - other-level-2:amd64=1 is not selected for install as above" apt why level-2
+
+
+testsuccessequal "other-level-2:amd64 is not actually marked for install" apt why other-level-2
+testsuccessequal "other-level-2:amd64 is not selected for install because:
+1. root:amd64 is selected for install
+2. root:amd64 Depends level-1
+3. level-1:amd64 Depends level-2
+   [selected level-2:amd64=1 for install]
+4. other-level-2:amd64 Conflicts level-2
+For context, additional choices that could not be installed:
+* In level-1:amd64 Depends level-2:
+  - other-level-2:amd64=1 ->  | other-level-2:amd64
+    but none of the choices are installable:
+    - other-level-2:amd64 is not selected for install as above" apt why-not other-level-2
+
+testsuccessequal "almost-level-2:amd64 is not actually marked for install" apt why almost-level-2
+testsuccessequal "almost-level-2:amd64 is not selected for install because:
+1. root:amd64 is selected for install
+2. root:amd64 Depends level-1
+3. level-1:amd64 Depends level-2
+   [selected level-2:amd64=1 for install]
+4. almost-level-2:amd64 Conflicts level-2
+   [selected level-2:amd64=1]
+For context, additional choices that could not be installed:
+* In level-1:amd64 Depends level-2:
+  - other-level-2:amd64=1 ->  | other-level-2:amd64
+    but none of the choices are installable:
+    - other-level-2:amd64 is not selected for install because:
+      1-3. level-2:amd64=1 is selected for install as above
+      4. other-level-2:amd64 Conflicts level-2
+      For context, additional choices that could not be installed:
+      * In level-1:amd64 Depends level-2:
+        - other-level-2:amd64=1 is not selected for install as above" apt why-not almost-level-2
+
+
+testsuccessequal "level-3:amd64 is undecided" apt why level-3

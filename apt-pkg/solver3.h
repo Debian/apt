@@ -316,6 +316,9 @@ class Solver
     * \param seen A set of seen objects such that the output does not repeat itself (not for safety, it is acyclic)
     */
    std::string LongWhyStr(Var var, bool decision, const Clause *rclause, std::string prefix, std::unordered_set<Var> &seen) const;
+
+   // \brief Temporary internal API with external linkage for the `apt why` and `apt why-not` commands.
+   APT_PUBLIC static std::string InternalCliWhy(pkgDepCache &depcache, pkgCache::PkgIterator Pkg, bool decision);
 };
 
 }; // namespace APT
