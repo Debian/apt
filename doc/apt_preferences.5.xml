@@ -64,13 +64,26 @@ together with other packages from different releases.
 You have been warned.</para>
 
 <para>Note that the files in the <filename>/etc/apt/preferences.d</filename>
-directory are parsed in alphanumeric ascending order and need to obey the
+directory need to obey the
 following naming convention: The files have either no or "<literal>pref</literal>"
 as filename extension and only contain alphanumeric, hyphen (-),
 underscore (_) and period (.) characters.
 Otherwise APT will print a notice that it has ignored a file, unless that
 file matches a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
 configuration list - in which case it will be silently ignored.</para>
+
+<para><filename>/etc/apt/preferences</filename>
+is parsed first,
+followed by the files in
+<filename>/etc/apt/preferences.d</filename>
+in lexicographic order.
+For example,
+<filename>/etc/apt/preferences.d/00-high-priority.pref</filename>,
+<filename>/etc/apt/preferences.d/50-mid-priority</filename>
+and
+<filename>/etc/apt/preferences.d/z-low-priority.pref</filename>
+would be parsed in that order.
+</para>
 
 <refsect2><title>APT's Default Priority Assignments</title>
 
