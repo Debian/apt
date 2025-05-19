@@ -121,6 +121,17 @@
      </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>why, why-not</option></term>
+     <listitem>
+      <para>These commands print the reasoning path from the solver. They are similar to the equivalent aptitude commands for many use cases, but are different in that they print the actual reason the solver picked rather than the potential strongest path.</para>
+      <para>The <option>why</option> command determines why an installed package is installed. This
+      provides reasonable feedback as to why an automatically installed package is installed; for a
+      manually installed package no other reason is given. If the package is not installed, no reason
+      can be determined.</para>
+      <para>The <option>why-not</option> command determines why a package was determined to not be installable. This
+      may not always yield a result, even if a package is uninstallable.</para>
+      <para>Both commands take a single argument, the name of a package.</para>
+     </listitem></varlistentry>
 
      <varlistentry><term><option>search</option> (&apt-cache;)</term>
      <listitem><para><option>search</option> can be used to search for the given

@@ -1267,3 +1267,23 @@ bool APT::Solver::ToDepCache(pkgDepCache &depcache) const
    }
    return true;
 }
+
+// Command-line
+std::string APT::Solver::InternalCliWhy(pkgDepCache &cache, pkgCache::PkgIterator pkg, bool decision)
+{
+   APT::Solver solver(cache.GetCache(), cache.GetPolicy(), EDSP::Request::Flags(0));
+   // In case nothing has a positive dependency on pkg it may not actually be discovered in a `why-not`
+   // scenario, so make sure we discover it explicitly.
+   solver.Discover(Var(pkg));
+   if (not solver.FromDepCache(cache) || not solver.Solve())
+      return "";
+   std::unordered_set<Var> seen;
+   std::string buf;
+   if (solver[Var(pkg)].decision == Decision::NONE)
+      return strprintf(buf, "%s is undecided\n", pkg.FullName().c_str()), buf;
+   if (decision && solver[Var(pkg)].decision != Decision::MUST)
+      return strprintf(buf, "%s is not actually marked for install\n", pkg.FullName().c_str()), buf;
+   if (not decision && solver[Var(pkg)].decision == Decision::MUST)
+      return strprintf(buf, "%s is actually marked for install\n", pkg.FullName().c_str()), buf;
+   return solver.LongWhyStr(Var(pkg), decision, solver[Var(pkg)].reason, "", seen);
+}

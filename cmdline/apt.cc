@@ -16,6 +16,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/solver3.h>
 #include <apt-pkg/strutl.h>
 
 #include <apt-private/private-cmndline.h>
@@ -53,6 +54,20 @@ static bool ShowHelp(CommandLine &)					/*{{{*/
    return true;
 }
 									/*}}}*/
+
+static bool DoWhy(CommandLine &CmdL) /*{{{*/
+{
+   pkgCacheFile CacheFile;
+   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   bool const decision = strcmp(CmdL.FileList[0], "why") == 0;
+   if (pkgset.size() != 1)
+      return _error->PendingError() ? false : _error->Error("Only a single argument is supported at this time.");
+   if (unlikely(not CacheFile.BuildDepCache()))
+      return false;
+   for (auto pkg : pkgset)
+      std::cout << APT::Solver::InternalCliWhy(CacheFile, pkg, decision) << std::flush;
+   return not _error->PendingError();
+}
 static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 {
    // advanced commands are left undocumented on purpose
@@ -81,6 +96,8 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"modernize-sources", &ModernizeSources, _("modernize .list files to .sources files")},
       {"moo", &DoMoo, nullptr},
       {"satisfy", &DoBuildDep, _("satisfy dependency strings")},
+      {"why", &DoWhy, _("produce a reason trace for the current state of the package")},
+      {"why-not", &DoWhy, _("produce a reason trace for the current state of the package")},
 
       // for compat with muscle memory
       {"dist-upgrade", &DoDistUpgrade, nullptr},
