@@ -767,7 +767,7 @@ signed int pkgTagSection::FindIInternal(unsigned int Pos,signed long Default) co
 
    // Copy it into a temp buffer so we can use strtol
    char S[300];
-   if ((unsigned)(Stop - Start) >= sizeof(S))
+   if ((size_t)(Stop - Start) >= sizeof(S))
       return Default;
    strncpy(S,Start,Stop-Start);
    S[Stop - Start] = 0;
@@ -809,7 +809,7 @@ unsigned long long pkgTagSection::FindULLInternal(unsigned int Pos, unsigned lon
 
    // Copy it into a temp buffer so we can use strtoull
    char S[100];
-   if ((unsigned)(Stop - Start) >= sizeof(S))
+   if ((size_t)(Stop - Start) >= sizeof(S))
       return Default;
    strncpy(S,Start,Stop-Start);
    S[Stop - Start] = 0;
