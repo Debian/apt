@@ -35,6 +35,7 @@
 
 class FileFd;
 class pkgSourceList;
+class IndexTarget;
 class OpProgress;
 class pkgIndexFile;
 class pkgCacheListParser;
@@ -114,6 +115,8 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    pkgCache::ReleaseFile *CurrentRlsFile;
    std::string PkgFileName;
    pkgCache::PackageFile *CurrentFile;
+   std::unordered_set<std::string> include;
+   std::unordered_set<std::string> exclude;
 
    bool NewGroup(pkgCache::GrpIterator &Grp, std::string_view Name);
    bool NewPackage(pkgCache::PkgIterator &Pkg, std::string_view Name, std::string_view Arch);
@@ -137,7 +140,7 @@ class APT_HIDDEN pkgCacheGenerator					/*{{{*/
    inline map_stringitem_t StoreString(enum StringType const type, std::string_view S) {return StoreString(type, S.data(),S.length());};
 
    void DropProgress() {Progress = 0;};
-   bool SelectFile(const std::string &File,pkgIndexFile const &Index, std::string const &Architecture, std::string const &Component, unsigned long Flags = 0);
+   bool SelectFile(const std::string &File, pkgIndexFile const &Index, std::string const &Architecture, std::string const &Component, const IndexTarget *target, unsigned long Flags = 0);
    bool SelectReleaseFile(const std::string &File, const std::string &Site, unsigned long Flags = 0);
    bool MergeList(ListParser &List,pkgCache::VerIterator *Ver = 0);
    inline pkgCache &GetCache() {return Cache;};

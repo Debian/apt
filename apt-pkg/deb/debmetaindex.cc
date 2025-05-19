@@ -111,6 +111,8 @@ class APT_HIDDEN debReleaseIndexPrivate					/*{{{*/
       std::vector<std::string> const Languages;
       bool const UsePDiffs;
       std::string const UseByHash;
+      std::optional<std::vector<std::string>> const include;
+      std::optional<std::vector<std::string>> const exclude;
    };
 
    std::vector<debSectionEntry> DebEntries;
@@ -375,6 +377,10 @@ static void GetIndexTargetsFor(char const * const Type, std::string const &URI, 
 		  Options.insert(std::make_pair("COMPRESSIONTYPES", CompressionTypes));
 		  Options.insert(std::make_pair("KEEPCOMPRESSEDAS", KeepCompressedAs));
 		  Options.insert(std::make_pair("SOURCESENTRY", E->sourcesEntry));
+		  if (auto include = E->include)
+		     Options.insert(std::make_pair("INCLUDE", APT::String::Join(*include, " ")));
+		  if (auto exclude = E->exclude)
+		     Options.insert(std::make_pair("EXCLUDE", APT::String::Join(*exclude, " ")));
 
 		  bool IsOpt = IsOptional;
 		  {
@@ -425,22 +431,36 @@ std::vector<IndexTarget> debReleaseIndex::GetIndexTargets() const
    return IndexTargets;
 }
 									/*}}}*/
-void debReleaseIndex::AddComponent(std::string const &sourcesEntry,	/*{{{*/
-	 bool const isSrc, std::string const &Name,
-	 std::vector<std::string> const &Targets,
-	 std::vector<std::string> const &Architectures,
-	 std::vector<std::string> Languages,
-	 bool const usePDiffs, std::string const &useByHash)
+bool debReleaseIndex::AddComponent(std::string const &sourcesEntry, /*{{{*/
+				   bool const isSrc, std::string const &Name,
+				   std::vector<std::string> const &Targets,
+				   std::vector<std::string> const &Architectures,
+				   std::vector<std::string> Languages,
+				   bool const usePDiffs, std::string const &useByHash,
+				   std::optional<std::vector<std::string>> const &include,
+				   std::optional<std::vector<std::string>> const &exclude)
 {
+   if (include && exclude)
+      return _error->Error("Both 'Include' and 'Exclude' specified in %s", sourcesEntry.c_str());
    if (Languages.empty() == true)
       Languages.push_back("none");
    debReleaseIndexPrivate::debSectionEntry const entry = {
-      sourcesEntry, Name, Targets, Architectures, Languages, usePDiffs, useByHash
+      sourcesEntry,
+      Name,
+      Targets,
+      Architectures,
+      Languages,
+      usePDiffs,
+      useByHash,
+      include,
+      exclude,
    };
    if (isSrc)
       d->DebSrcEntries.push_back(entry);
    else
       d->DebEntries.push_back(entry);
+
+   return true;
 }
 									/*}}}*/
 std::string debReleaseIndex::ArchiveURI(std::string const &File) const	/*{{{*/
@@ -1403,16 +1423,18 @@ class APT_HIDDEN debSLTypeDebian : public pkgSourceList::Type		/*{{{*/
       }
 
       auto const entry = Options.find("sourceslist-entry");
-      Deb->AddComponent(
-	    entry->second,
-	    IsSrc,
-	    Section,
-	    parsePlusMinusTargetOptions(Name, Options),
-	    parsePlusMinusArchOptions("arch", Options),
-	    parsePlusMinusOptions("lang", Options, APT::Configuration::getLanguages(true)),
-	    UsePDiffs,
-	    UseByHash
-	    );
+      if (not Deb->AddComponent(
+	     entry->second,
+	     IsSrc,
+	     Section,
+	     parsePlusMinusTargetOptions(Name, Options),
+	     parsePlusMinusArchOptions("arch", Options),
+	     parsePlusMinusOptions("lang", Options, APT::Configuration::getLanguages(true)),
+	     UsePDiffs,
+	     UseByHash,
+	     getDefaultSetOf("include", Options),
+	     getDefaultSetOf("exclude", Options)))
+	 return false;
 
       if (Deb->SetTrusted(GetTriStateOption(Options, "trusted")) == false ||
 	  Deb->SetCheckValidUntil(GetTriStateOption(Options, "check-valid-until")) == false ||
