@@ -1,3 +1,47 @@
+apt (3.1.0) experimental; urgency=medium
+
+  [ Julian Andres Klode ]
+  * debian/NEWS: Document new requirements on trusted.gpg.d (Closes: #1104320)
+  * test: Fix test-skipped regression in 3.0.1
+  * test: Do not use host's sequoia config
+  * Pass --check to msgfmt and fix broken format strings
+  * Add 'Include'/'Exclude' options to limit packages used from a repository
+    'Include' allows limiting a repository to a allowlist of packages,
+    'Exclude' allows removing packages from a repository.
+  * Introduce apt why, apt why-not
+  * Update translation templates and merge translations
+  * Ubuntu: Enable 3.0 solver by default in apt CLI tools
+
+  [ Herman Semenov ]
+  * apt-pkg: fixed type comparison in 64bit systems using memsize cast
+
+  [ Walter Lozano ]
+  * Fix error handling with getline
+
+  [ Guillem Jover ]
+  * dselect: Add https support
+  * dselect: Pass available file from stdin to dpkg --update-avail
+  * dselect: Refactor bold printing into its own function
+  * dselect: Use strict and warnings pragmas
+  * dselect: Use Term::ANSIColor instead of forking setterm
+  * dselect: Use qw() instead of lists of quoted strings
+  * dselect: Replaces obsolete file comment header with copyright and SPDX marker
+
+  [ Simon McVittie ]
+  * apt_preferences(5): Specify the order in which files are parsed
+  * sources.list(5): Explicitly say what the precedence order is
+
+  [ Max Coplan ]
+  * 💬 Recommend use of `apt update` over `apt-get update`
+
+  [ David Kalnischkies ]
+  * Include everything in our pkg-config autopkgtest
+
+  [ Demi M. Obenour ]
+  * Fail on stdio errors
+
+ -- Julian Andres Klode <jak@debian.org>  Mon, 19 May 2025 19:13:54 +0200
+
 apt (3.0.1) unstable; urgency=medium
 
   [ Laurent Bigonville ]
