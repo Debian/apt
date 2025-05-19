@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.27\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-03-20 21:51+0000\n"
+"POT-Creation-Date: 2025-05-19 18:28+0200\n"
 "PO-Revision-Date: 2025-02-28 15:48+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -884,6 +884,38 @@ msgid ""
 msgstr ""
 "Beispiel: <literal>apt satisfy \"foo, bar (>= 1.0)\" \"Conflicts: baz, "
 "fuzz\"</literal>"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"These commands print the reasoning path from the solver. They are similar to "
+"the equivalent aptitude commands for many use cases, but are different in "
+"that they print the actual reason the solver picked rather than the "
+"potential strongest path."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"The <option>why</option> command determines why an installed package is "
+"installed. This provides reasonable feedback as to why an automatically "
+"installed package is installed; for a manually installed package no other "
+"reason is given. If the package is not installed, no reason can be "
+"determined."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid ""
+"The <option>why-not</option> command determines why a package was determined "
+"to not be installable. This may not always yield a result, even if a package "
+"is uninstallable."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml
+msgid "Both commands take a single argument, the name of a package."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
@@ -6335,15 +6367,24 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_preferences.5.xml
+#, fuzzy
+#| msgid ""
+#| "Note that the files in the <filename>/etc/apt/preferences.d</filename> "
+#| "directory are parsed in alphanumeric ascending order and need to obey the "
+#| "following naming convention: The files have either no or \"<literal>pref</"
+#| "literal>\" as filename extension and only contain alphanumeric, hyphen "
+#| "(-), underscore (_) and period (.) characters.  Otherwise APT will print "
+#| "a notice that it has ignored a file, unless that file matches a pattern "
+#| "in the <literal>Dir::Ignore-Files-Silently</literal> configuration list - "
+#| "in which case it will be silently ignored."
 msgid ""
 "Note that the files in the <filename>/etc/apt/preferences.d</filename> "
-"directory are parsed in alphanumeric ascending order and need to obey the "
-"following naming convention: The files have either no or \"<literal>pref</"
-"literal>\" as filename extension and only contain alphanumeric, hyphen (-), "
-"underscore (_) and period (.) characters.  Otherwise APT will print a notice "
-"that it has ignored a file, unless that file matches a pattern in the "
-"<literal>Dir::Ignore-Files-Silently</literal> configuration list - in which "
-"case it will be silently ignored."
+"directory need to obey the following naming convention: The files have "
+"either no or \"<literal>pref</literal>\" as filename extension and only "
+"contain alphanumeric, hyphen (-), underscore (_) and period (.) characters.  "
+"Otherwise APT will print a notice that it has ignored a file, unless that "
+"file matches a pattern in the <literal>Dir::Ignore-Files-Silently</literal> "
+"configuration list - in which case it will be silently ignored."
 msgstr ""
 "Beachten Sie, dass die Dateien im Verzeichnis <filename>/etc/apt/"
 "preferences.d</filename> in alphanumerisch aufsteigender Reihenfolge "
@@ -6354,6 +6395,17 @@ msgstr ""
 "ausgeben, dass es eine Datei ignoriert hat, falls die Datei nicht auf ein "
 "Muster in der Konfigurationsliste <literal>Dir::Ignore-Files-Silently</"
 "literal> passt – in diesem Fall wird sie stillschweigend ignoriert."
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt_preferences.5.xml
+msgid ""
+"<filename>/etc/apt/preferences</filename> is parsed first, followed by the "
+"files in <filename>/etc/apt/preferences.d</filename> in lexicographic "
+"order.  For example, <filename>/etc/apt/preferences.d/00-high-priority.pref</"
+"filename>, <filename>/etc/apt/preferences.d/50-mid-priority</filename> and "
+"<filename>/etc/apt/preferences.d/z-low-priority.pref</filename> would be "
+"parsed in that order."
+msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
@@ -7856,6 +7908,17 @@ msgstr ""
 "Quellen werden durch <command>apt-get update</command> (oder einem "
 "vergleichbaren Befehl einer anderen APT-Oberfläche) beschafft."
 
+#. type: Content of: <refentry><refsect1><para>
+#: sources.list.5.xml
+msgid ""
+"If multiple source lists are used, the most-preferred sources are those "
+"listed in <filename>/etc/apt/sources.list</filename>, followed by each file "
+"in <filename>/etc/apt/sources.list.d/</filename> in lexicographic order: for "
+"example, <filename>00-high-preference.list</filename> is more-preferred than "
+"<filename>50-middle-preference.sources</filename> which is more-preferred "
+"than <filename>z-low-preference.list</filename>."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
 msgid "sources.list.d"
@@ -8257,6 +8320,34 @@ msgstr ""
 "haben, sie basierend auf dem Vorgabewert zu ändern, aber diese Namen werden "
 "hier nicht explizit aufgeführt. Nicht unterstützte Optionen werden "
 "stillschweigend von allen APT-Versionen ignoriert."
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: sources.list.5.xml
+msgid ""
+"<option>Include</option> (<option>include</option>) is a multivalue option "
+"defining which packages should be used from this repository. Others are not "
+"parsed."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: sources.list.5.xml
+#, fuzzy
+#| msgid ""
+#| "<option>Architectures</option> (<option>arch</option>) is a multivalue "
+#| "option defining for which architectures information should be downloaded. "
+#| "If this option isn't set the default is all architectures as defined by "
+#| "the <option>APT::Architectures</option> config option."
+msgid ""
+"<option>Exclude</option> (<option>exclude</option>) is a multivalue option "
+"defining which packages should not be used from this repository. They will "
+"not be parsed.  This option is mutually exclusive with <option>Include</"
+"option>."
+msgstr ""
+"<option>Architectures</option> (<option>arch</option>) ist eine Option mit "
+"mehreren Werten, die definiert, für welche Architekturen Informationen "
+"heruntergeladen werden sollen. Falls diese Option nicht gesetzt ist, ist die "
+"Voreinstellung alle durch die Konfigurationsoption "
+"<option>APT::Architectures</option> definierten Architekturen."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
