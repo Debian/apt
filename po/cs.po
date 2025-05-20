@@ -10,10 +10,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.9.28\n"
+"Project-Id-Version: apt 3.0.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
-"PO-Revision-Date: 2025-02-14 14:54+0100\n"
+"POT-Creation-Date: 2025-06-13 12:44+0200\n"
+"PO-Revision-Date: 2025-05-20 15:18+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
 "Language: cs\n"
@@ -125,23 +125,21 @@ msgstr ""
 "ověření?)"
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
-#| msgid ""
-#| "An error occurred during the signature verification. The repository is "
-#| "not updated and the previous index files will be used. GPG error: %s: %s"
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. OpenPGP signature "
 "verification failed: %s: %s"
 msgstr ""
 "Při ověřování podpisů se objevila chyba. Repozitář není aktualizovaný, tudíž "
-"se použijí předchozí indexové soubory. Chyba GPG: %s: %s"
+"se použijí předchozí indexové soubory. Ověření OpenPGP podpisu selhalo: %s: "
+"%s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "OpenPGP signature verification failed: %s: %s"
-msgstr ""
+msgstr "Ověření OpenPGP podpisu selhalo: %s: %s"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -1888,10 +1886,8 @@ msgid "Broken packages"
 msgstr "Poškozené balíky"
 
 #: apt-private/private-install.cc
-#, fuzzy
-#| msgid "Write error"
 msgid "Writing error report"
-msgstr "Chyba zápisu"
+msgstr "Vytváří se chybové hlášení"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -1912,8 +1908,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"Nelze stáhnout některé archivy. Možná spusťte apt update nebo zkuste --"
-"fix-missing?"
+"Nelze stáhnout některé archivy. Možná spusťte apt-get update nebo zkuste --fix-"
+"missing?"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -2150,7 +2146,7 @@ msgstr[2] "%lu balíků bylo nainstalováno automaticky a již nejsou potřeba.\
 
 #: apt-private/private-install.cc
 msgid "Result calculated by the 3.0 solver."
-msgstr ""
+msgstr "Výsledek spočítán řešitelem 3.0."
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -2779,10 +2775,8 @@ msgid "  Missing: "
 msgstr "  Chybějících: "
 
 #: cmdline/apt-cache.cc
-#, fuzzy
-#| msgid "Total distinct versions: "
 msgid "Total distinct source versions: "
-msgstr "Celkem různých verzí: "
+msgstr "Celkem různých zdrojových verzí: "
 
 #: cmdline/apt-cache.cc
 msgid "Total distinct versions: "
