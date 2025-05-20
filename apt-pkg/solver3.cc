@@ -901,13 +901,13 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
    return clause;
 }
 
-void APT::Solver::Push(Work work)
+void APT::Solver::Push(Var var, Work work)
 {
    if (unlikely(debug >= 2))
       std::cerr << "Trying choice for " << work.toString(cache) << std::endl;
 
    choices.push_back(solved.size());
-   solved.push_back(Solved{Var(), std::move(work)});
+   solved.push_back(Solved{var, std::move(work)});
 }
 
 void APT::Solver::UndoOne()
@@ -958,7 +958,7 @@ bool APT::Solver::Pop()
 
    assert(choices.back() < solved.size());
    int itemsToUndo = solved.size() - choices.back();
-   auto choice = solved[choices.back()].work->choice;
+   auto choice = solved[choices.back()].assigned;
 
    for (; itemsToUndo; --itemsToUndo)
       UndoOne();
@@ -1059,8 +1059,7 @@ bool APT::Solver::Solve()
 	 }
 	 if (item.size > 1 || item.clause->optional)
 	 {
-	    item.choice = sol;
-	    Push(item);
+	    Push(sol, item);
 	 }
 	 if (unlikely(debug >= 3))
 	    std::cerr << "(try it: " << sol.toString(cache) << ")\n";
