@@ -601,7 +601,11 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
       {
 	 // empty lines are the end of the request
 	 if (line.empty() == true)
+	 {
+	    // Clear the architecture cache, since we may have set different ones
+	    APT::Configuration::getArchitectures(false);
 	    return true;
+	 }
 
 	 std::list<std::string> *request = NULL;
 	 if (LineStartsWithAndStrip(line, "Install:"))
