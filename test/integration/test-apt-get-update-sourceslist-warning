@@ -51,7 +51,7 @@ A: Missing Signed-By in the sources.list(5) entry for 'http://example.org/debian
 A: Consider migrating all sources.list(5) entries to the deb822 .sources format
 A: The deb822 .sources format supports both embedded as well as external OpenPGP keys
 A: See apt-secure(8) for best practices in configuring repository signing.
-N: Some sources can be modernized. Run 'apt modernize-sources' to do so." apt update --no-download --audit
+A: Some sources can be modernized. Run 'apt modernize-sources' to do so." apt update --no-download --audit
 echo 'deb tor+https://apt:debian@example.org/debian bookworm main' > rootdir/etc/apt/sources.list.d/example.list
 testsuccessequal "$BOILERPLATE
 N: Usage of apt_auth.conf(5) should be preferred over embedding login information directly in the sources.list(5) entry for 'tor+https://example.org/debian'
@@ -60,4 +60,4 @@ A: Missing Signed-By in the sources.list(5) entry for 'tor+https://example.org/d
 A: Consider migrating all sources.list(5) entries to the deb822 .sources format
 A: The deb822 .sources format supports both embedded as well as external OpenPGP keys
 A: See apt-secure(8) for best practices in configuring repository signing.
-N: Some sources can be modernized. Run 'apt modernize-sources' to do so." apt update --no-download --audit
+A: Some sources can be modernized. Run 'apt modernize-sources' to do so." apt update --no-download --audit

@@ -139,7 +139,7 @@ bool DoUpdate()
          _error->Audit(_("Consider migrating all sources.list(5) entries to the deb822 .sources format"));
          _error->Audit(_("The deb822 .sources format supports both embedded as well as external OpenPGP keys"));
 	 _error->Audit(_("See apt-secure(8) for best practices in configuring repository signing."));
-	 _error->Notice(_("Some sources can be modernized. Run 'apt modernize-sources' to do so."));
+	 _error->Audit(_("Some sources can be modernized. Run 'apt modernize-sources' to do so."));
       }
    }
 
