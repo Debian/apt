@@ -135,7 +135,7 @@ struct APT::Solver::CompareProviders3 /*{{{*/
       if ((A->CurrentVer == 0 || B->CurrentVer == 0) && A->CurrentVer != B->CurrentVer)
 	 return A->CurrentVer != 0;
       // Prefer packages in the same group as the target; e.g. foo:i386, foo:amd64
-      if (A->Group != B->Group)
+      if (A->Group != B->Group && not Pkg.end())
       {
 	 if (A->Group == Pkg->Group && B->Group != Pkg->Group)
 	    return true;
