@@ -956,6 +956,13 @@ bool APT::Solver::Pop()
 
    _error->Discard();
 
+   // Assume() actually failed to enqueue anything, abort here
+   if (choices.back() == solved.size())
+   {
+      choices.pop_back();
+      return true;
+   }
+
    assert(choices.back() < solved.size());
    int itemsToUndo = solved.size() - choices.back();
    auto choice = solved[choices.back()].assigned;
