@@ -27,7 +27,7 @@ class GenContents
    {
       const char *data;
       const char *c_str() const { return data; }
-      bool operator<(const StringInBlock &other) const { return strcmp(data, other.data) < 0; }
+      auto operator<=>(const StringInBlock &other) const noexcept { return strcmp(data, other.data); }
    };
    struct BigBlock
    {

@@ -41,7 +41,7 @@ bool CopyMethod::URIAcquire(std::string const &Message, FetchItem *Itm)
    struct FileCopyType {
       std::string name;
       struct stat stat{};
-      explicit FileCopyType(std::string &&file) : name{std::move(file)} {}
+      explicit FileCopyType(std::string &&file) noexcept : name{std::move(file)} {}
    };
    std::vector<FileCopyType> files;
    // this ensures that relative paths work
