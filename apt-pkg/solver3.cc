@@ -983,7 +983,7 @@ bool APT::Solver::Pop()
       std::cerr << "Backtracking to choice " << choice.toString(cache) << "\n";
 
    // FIXME: There should be a reason!
-   if (not Enqueue(choice, false, {}))
+   if (not choice.empty() && not Enqueue(choice, false, {}))
       return false;
 
    if (unlikely(debug >= 2))
