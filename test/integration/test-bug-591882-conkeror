@@ -4,7 +4,6 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
-allowremovemanual
 configarchitecture "i386"
 setupaptarchive
 
@@ -77,7 +76,7 @@ E: Trivial Only specified but this is not a trivial operation."
 
 # solver3 otherwise chooses to keep back xulrunner-1.9 rather than replace it with xulrunner-1.9.1,,
 # and keep back reverse dependencies of xulrunner-1.9 which seems correct.
-testsuccess aptmark auto xulrunner-1.9
+testsuccess aptmark auto libdatrie0 libkrb53 libxcb-xlib0 xulrunner-1.9
 # Test that the old behavior can be restored with the option
 testfailureequal "$UPGRADEFAIL" aptget dist-upgrade --trivial-only -o pkgProblemResolver::FixByInstall=0 --solver internal
 testfailureequal "$UPGRADESUCCESS" aptget dist-upgrade --trivial-only #-o pkgProblemResolver::FixByInstall=0

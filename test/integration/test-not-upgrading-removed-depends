@@ -4,7 +4,6 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
-allowremovemanual
 configarchitecture 'amd64'
 
 insertpackage 'unstable' 'untouchable-for-solving' 'all' '1' 'Conflicts: main'
@@ -18,9 +17,11 @@ insertpackage 'unstable' 'else' 'all' '1'
 insertpackage 'unstable' 'meta' 'all' '1' 'Depends: main (= 2) | else'
 
 setupaptarchive
+testsuccess aptmark auto ~i
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...
+Reading state information...
 The following packages will be REMOVED:
   bad
 The following packages will be upgraded:
@@ -33,6 +34,7 @@ testsuccess apt install -s main -o Debug::pkgProblemResolver=1 -o Debug::pkgDepC
 testfailure grep 'untouchable-for-solving' rootdir/tmp/testsuccess.output
 testsuccessequal 'Reading package lists...
 Building dependency tree...
+Reading state information...
 The following additional packages will be installed:
   main
 The following packages will be REMOVED:

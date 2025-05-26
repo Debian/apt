@@ -4,7 +4,6 @@ set -e
 TESTDIR="$(readlink -f "$(dirname "$0")")"
 . "$TESTDIR/framework"
 setupenvironment
-allowremovemanual
 configarchitecture 'amd64'
 
 insertinstalledpackage 'fuse' 'all' '2'
@@ -22,10 +21,12 @@ Conflicts: fuse3'
 insertpackage 'unstable' 'foobar-r3' 'all' '1' 'Recommends: fuse3'
 
 setupaptarchive
+testsuccess aptmark auto ~i
 
 installfoobars() {
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
+Reading state information...
 The following NEW packages will be installed:
   foobar-d
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
@@ -33,6 +34,7 @@ Inst foobar-d (1 unstable [all])
 Conf foobar-d (1 unstable [all])' apt install -s foobar-d
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
+Reading state information...
 The following NEW packages will be installed:
   foobar-d2
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
@@ -40,6 +42,7 @@ Inst foobar-d2 (1 unstable [all])
 Conf foobar-d2 (1 unstable [all])' apt install -s foobar-d2
 	testsuccessequal "Reading package lists...
 Building dependency tree...
+Reading state information...
 The following additional packages will be installed:
   fuse3
 The following packages will be REMOVED:
@@ -55,6 +58,7 @@ Conf foobar-d3 (1 unstable [all])" apt install -s foobar-d3
 
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
+Reading state information...
 The following NEW packages will be installed:
   foobar-r
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
@@ -62,6 +66,7 @@ Inst foobar-r (1 unstable [all])
 Conf foobar-r (1 unstable [all])' apt install -s foobar-r
 	testsuccessequal 'Reading package lists...
 Building dependency tree...
+Reading state information...
 The following NEW packages will be installed:
   foobar-r2
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
@@ -70,6 +75,22 @@ Conf foobar-r2 (1 unstable [all])' apt install -s foobar-r2
 	if [ -z "$1" ]; then
 		testsuccessequal "Reading package lists...
 Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  fuse3
+The following packages will be REMOVED:
+  fuse
+The following NEW packages will be installed:
+  foobar-r3 fuse3
+0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv fuse [2]$1
+Inst foobar-r3 (1 unstable [all])
+Inst fuse3 (3 unstable [all])
+Conf foobar-r3 (1 unstable [all])
+Conf fuse3 (3 unstable [all])" apt install -s foobar-r3
+		testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
 The following additional packages will be installed:
   fuse3
 The following packages will be REMOVED:
@@ -85,6 +106,7 @@ Conf fuse3 (3 unstable [all])" apt install -s foobar-r3
 	else
 		testsuccessequal "Reading package lists...
 Building dependency tree...
+Reading state information...
 The following additional packages will be installed:
   fuse3
 The following packages will be REMOVED:
@@ -96,7 +118,18 @@ Remv fuse [2]$1
 Inst fuse3 (3 unstable [all])
 Inst foobar-r3 (1 unstable [all])
 Conf fuse3 (3 unstable [all])
-Conf foobar-r3 (1 unstable [all])" apt install -s foobar-r3
+Conf foobar-r3 (1 unstable [all])" apt install -s foobar-r3 --solver internal
+	testsuccessequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+Solving dependencies...
+Recommended packages:
+  fuse3
+The following NEW packages will be installed:
+  foobar-r3
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foobar-r3 (1 unstable [all])
+Conf foobar-r3 (1 unstable [all])" apt install -s foobar-r3 --solver 3.0
 	fi
 }
 msgmsg 'fuse has no installed dependers'

@@ -135,7 +135,7 @@ struct APT::Solver::CompareProviders3 /*{{{*/
       if ((A->CurrentVer == 0 || B->CurrentVer == 0) && A->CurrentVer != B->CurrentVer)
 	 return A->CurrentVer != 0;
       // Prefer packages in the same group as the target; e.g. foo:i386, foo:amd64
-      if (A->Group != B->Group)
+      if (A->Group != B->Group && not Pkg.end())
       {
 	 if (A->Group == Pkg->Group && B->Group != Pkg->Group)
 	    return true;
@@ -901,13 +901,13 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
    return clause;
 }
 
-void APT::Solver::Push(Work work)
+void APT::Solver::Push(Var var, Work work)
 {
    if (unlikely(debug >= 2))
       std::cerr << "Trying choice for " << work.toString(cache) << std::endl;
 
    choices.push_back(solved.size());
-   solved.push_back(Solved{Var(), std::move(work)});
+   solved.push_back(Solved{var, std::move(work)});
 }
 
 void APT::Solver::UndoOne()
@@ -947,6 +947,8 @@ bool APT::Solver::Pop()
       return false;
 
    time_t now = time(nullptr);
+   if (startTime == 0)
+      startTime = now;
    if (now - startTime >= Timeout)
       return _error->Error("Solver timed out.");
 
@@ -956,9 +958,16 @@ bool APT::Solver::Pop()
 
    _error->Discard();
 
+   // Assume() actually failed to enqueue anything, abort here
+   if (choices.back() == solved.size())
+   {
+      choices.pop_back();
+      return true;
+   }
+
    assert(choices.back() < solved.size());
    int itemsToUndo = solved.size() - choices.back();
-   auto choice = solved[choices.back()].work->choice;
+   auto choice = solved[choices.back()].assigned;
 
    for (; itemsToUndo; --itemsToUndo)
       UndoOne();
@@ -976,7 +985,7 @@ bool APT::Solver::Pop()
       std::cerr << "Backtracking to choice " << choice.toString(cache) << "\n";
 
    // FIXME: There should be a reason!
-   if (not Enqueue(choice, false, {}))
+   if (not choice.empty() && not Enqueue(choice, false, {}))
       return false;
 
    if (unlikely(debug >= 2))
@@ -1059,8 +1068,7 @@ bool APT::Solver::Solve()
 	 }
 	 if (item.size > 1 || item.clause->optional)
 	 {
-	    item.choice = sol;
-	    Push(item);
+	    Push(sol, item);
 	 }
 	 if (unlikely(debug >= 3))
 	    std::cerr << "(try it: " << sol.toString(cache) << ")\n";
@@ -1090,6 +1098,7 @@ bool APT::Solver::Solve()
 bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 {
    DefaultRootSetFunc2 rootSet(&cache);
+   std::vector<Var> manualPackages;
 
    // Enforce strict pinning rules by rejecting all forbidden versions.
    if (StrictPinning)
@@ -1167,6 +1176,9 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	    if (not AddWork(Work{insertedW, depth()}))
 	       return false;
 
+	    if (not isAuto)
+	       manualPackages.push_back(Var(P));
+
 	    // Given A->A2|A1, B->B1|B2; Bn->An, if we select `not A1`, we
 	    // should try to install A2 before trying B so we end up with
 	    // A2, B2, instead of removing A1 to keep B1 installed. This
@@ -1201,7 +1213,18 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
       }
    }
 
-   return Propagate();
+   if (not Propagate())
+      return false;
+
+   std::stable_sort(manualPackages.begin(), manualPackages.end(), CompareProviders3{cache, policy, {}, *this});
+   for (auto assumption : manualPackages)
+   {
+      if (not Assume(assumption, true, {}) || not Propagate())
+	 if (not Pop())
+	    abort();
+   }
+
+   return true;
 }
 
 bool APT::Solver::ToDepCache(pkgDepCache &depcache) const

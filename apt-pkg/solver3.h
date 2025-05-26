@@ -222,7 +222,7 @@ class Solver
    std::vector<depth_type> choices{};
 
    // \brief The time we called Solve()
-   time_t startTime;
+   time_t startTime{};
 
    EDSP::Request::Flags requestFlags;
    /// Various configuration options
@@ -277,7 +277,7 @@ class Solver
 
    public:
    // \brief Create a new decision level.
-   void Push(Work work);
+   void Push(Var var, Work work);
    // \brief Revert to the previous decision level.
    [[nodiscard]] bool Pop();
    // \brief Undo a single assignment / solved work item
@@ -426,15 +426,8 @@ struct APT::Solver::Work
    // \brief The depth at which the item has been added
    depth_type depth;
 
-   // This is a union because we only need to store the choice we made when adding
-   // to the choice vector, and we don't need the size of valid choices in there.
-   union
-   {
-      // The choice we took
-      Var choice;
-      // Number of valid choices
-      size_t size{0};
-   };
+   // Number of valid choices
+   size_t size{0};
 
    // \brief This item should be removed from the queue.
    bool erased{false};
