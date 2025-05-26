@@ -25,12 +25,16 @@ The following packages have been kept back:
   maas-common maas-region-controller maas-region-controller-min
 0 upgraded, 0 newly installed, 0 to remove and 3 not upgraded.' aptget dist-upgrade -s --solver 3.0
 
-allowremovemanual
+testsuccess aptmark auto ~i
 
 testsuccess aptget dist-upgrade -s -o Debug::pkgDepCache::AutoInstall=true  -o Debug::pkgPackageManager=yes  -o Debug::pkgProblemResolver=yes
-testsuccessequal 'Reading package lists...
+testsuccessequal "Reading package lists...
 Building dependency tree...
+Reading state information...
 Calculating upgrade...
+The following packages were automatically installed and are no longer required:
+  maas-common maas-region-api maas-region-controller
+Use 'apt autoremove' to remove them.
 The following packages will be REMOVED:
   maas-region-controller-min
 The following NEW packages will be installed:
@@ -44,5 +48,5 @@ Inst maas-common [2.0.0~alpha3+bzr4810-0ubuntu1] (2.0.0~alpha4+bzr4843-0ubuntu1~
 Inst maas-region-api (2.0.0~alpha4+bzr4843-0ubuntu1~xenial2 unstable [amd64])
 Conf maas-region-controller (2.0.0~alpha4+bzr4843-0ubuntu1~xenial2 unstable [all])
 Conf maas-common (2.0.0~alpha4+bzr4843-0ubuntu1~xenial2 unstable [all])
-Conf maas-region-api (2.0.0~alpha4+bzr4843-0ubuntu1~xenial2 unstable [amd64])' \
+Conf maas-region-api (2.0.0~alpha4+bzr4843-0ubuntu1~xenial2 unstable [amd64])" \
 aptget dist-upgrade -s

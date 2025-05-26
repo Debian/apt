@@ -23,11 +23,24 @@ The following packages have been kept back:
   xserver-xorg-core
 0 upgraded, 0 newly installed, 0 to remove and 1 not upgraded.' aptget dist-upgrade --trivial-only --solver 3.0
 
-allowremovemanual
 
-testfailureequal 'Reading package lists...
+allowremovemanual
+testsuccessequal 'Reading package lists...
 Building dependency tree...
 Calculating upgrade...
+The following packages have been kept back:
+  xserver-xorg-core
+0 upgraded, 0 newly installed, 0 to remove and 1 not upgraded.' aptget dist-upgrade --trivial-only --solver 3.0
+
+testsuccess aptmark auto ~i
+
+testfailureequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+Calculating upgrade...
+The following package was automatically installed and is no longer required:
+  xserver-xorg-core
+Use 'apt autoremove' to remove it.
 The following packages will be REMOVED:
   xserver-xorg-video-driver1 xserver-xorg-video-driver10
   xserver-xorg-video-driver11 xserver-xorg-video-driver12
@@ -59,4 +72,4 @@ The following packages will be upgraded:
 1 upgraded, 0 newly installed, 50 to remove and 0 not upgraded.
 Need to get 0 B/42 B of archives.
 After this operation, 2150 kB disk space will be freed.
-E: Trivial Only specified but this is not a trivial operation.' aptget dist-upgrade --trivial-only
+E: Trivial Only specified but this is not a trivial operation." aptget dist-upgrade --trivial-only

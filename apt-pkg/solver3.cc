@@ -1098,6 +1098,7 @@ bool APT::Solver::Solve()
 bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 {
    DefaultRootSetFunc2 rootSet(&cache);
+   std::vector<Var> manualPackages;
 
    // Enforce strict pinning rules by rejecting all forbidden versions.
    if (StrictPinning)
@@ -1175,6 +1176,9 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	    if (not AddWork(Work{insertedW, depth()}))
 	       return false;
 
+	    if (not isAuto)
+	       manualPackages.push_back(Var(P));
+
 	    // Given A->A2|A1, B->B1|B2; Bn->An, if we select `not A1`, we
 	    // should try to install A2 before trying B so we end up with
 	    // A2, B2, instead of removing A1 to keep B1 installed. This
@@ -1209,7 +1213,18 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
       }
    }
 
-   return Propagate();
+   if (not Propagate())
+      return false;
+
+   std::stable_sort(manualPackages.begin(), manualPackages.end(), CompareProviders3{cache, policy, {}, *this});
+   for (auto assumption : manualPackages)
+   {
+      if (not Assume(assumption, true, {}) || not Propagate())
+	 if (not Pop())
+	    abort();
+   }
+
+   return true;
 }
 
 bool APT::Solver::ToDepCache(pkgDepCache &depcache) const
