@@ -947,6 +947,8 @@ bool APT::Solver::Pop()
       return false;
 
    time_t now = time(nullptr);
+   if (startTime == 0)
+      startTime = now;
    if (now - startTime >= Timeout)
       return _error->Error("Solver timed out.");
 

@@ -222,7 +222,7 @@ class Solver
    std::vector<depth_type> choices{};
 
    // \brief The time we called Solve()
-   time_t startTime;
+   time_t startTime{};
 
    EDSP::Request::Flags requestFlags;
    /// Various configuration options
