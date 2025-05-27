@@ -683,7 +683,7 @@ const APT::Solver::Clause *APT::Solver::RegisterClause(Clause &&clause)
       bool merged = false;
       for (auto const &earlierClause : clauses)
       {
-	 if (earlierClause->negative || earlierClause->optional != clause.optional)
+	 if (earlierClause->negative)
 	    continue;
 	 if (std::none_of(earlierClause->solutions.begin(), earlierClause->solutions.end(), [&clause](auto earlierSol)
 			  { return std::find(clause.solutions.begin(),
@@ -691,13 +691,29 @@ const APT::Solver::Clause *APT::Solver::RegisterClause(Clause &&clause)
 					     earlierSol) != clause.solutions.end(); }))
 	    continue;
 
-	 std::erase_if(earlierClause->solutions, [&clause, this](auto earlierSol)
-		       { return std::find(clause.solutions.begin(),
-					  clause.solutions.end(),
-					  earlierSol) == clause.solutions.end(); });
+	 if (earlierClause->optional == clause.optional)
+	 {
+	    std::erase_if(earlierClause->solutions, [&clause, this](auto earlierSol)
+			  { return std::find(clause.solutions.begin(),
+					     clause.solutions.end(),
+					     earlierSol) == clause.solutions.end(); });
 
-	 earlierClause->merged.push_front(clause);
-	 merged = true;
+	    earlierClause->merged.push_front(clause);
+	    merged = true;
+	 }
+	 else if (clause.optional)
+	 {
+	    // If say a Depends has fewer solution than a Recommends, remove the Recommend's extranous ones.
+	    std::erase_if(clause.solutions, [&earlierClause, this](auto sol)
+			  { return std::find(earlierClause->solutions.begin(),
+					     earlierClause->solutions.end(),
+					     sol) == earlierClause->solutions.end(); });
+
+	    // Remove recursion here, such that we display correctly (if we ever display anywhere...)
+	    auto earlierClauseCopy = *earlierClause;
+	    clause.merged = std::move(earlierClauseCopy.merged);
+	    clause.merged.push_front(earlierClauseCopy);
+	 }
       }
 
       if (merged)

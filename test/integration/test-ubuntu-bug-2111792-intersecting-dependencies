@@ -20,6 +20,8 @@ insertinstalledpackage 'git-cvs' 'amd64' '1:2.25.1-1' 'Depends: git (>> 1:2.25.1
 insertpackage 'unstable' 'git' 'amd64,i386' '1:2.26.2-1' 'Multi-Arch: foreign'
 insertpackage 'unstable' 'git-cvs' 'amd64,i386' '1:2.26.2-1' 'Depends: git (>> 1:2.26.2), git (<< 1:2.26.2-.)'
 insertpackage 'unstable' 'git-ng' 'amd64,i386' '1:2.26.2-1' 'Depends: git (>> 1:2.26.2), git (<< 1:2.26.2-.)'
+insertpackage 'unstable' 'git-rec-ng' 'amd64,i386' '1:2.26.2-1' 'Recommends: git (>> 1:2.26.2)
+Depends: git (<< 1:2.26.2-.)'
 insertpackage 'unstable' 'chaos-actor' 'amd64,i386' '1' 'Provides: git (2:1)'
 
 setupaptarchive
@@ -165,3 +167,14 @@ E: Unable to satisfy dependencies. Reached two conflicting decisions:
         1. git:amd64=1:2.25.1-1 is selected for install as above
         2. git:amd64 Conflicts git:i386' apt install git-ng -s
 
+# The Recommends: git (>> 1:2.26.2-1) will be left unsatisfied rather than pulling in chaos-actor.
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Solving dependencies...
+Recommended packages:
+  git
+The following NEW packages will be installed:
+  git-rec-ng
+0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+Inst git-rec-ng (1:2.26.2-1 unstable [amd64])
+Conf git-rec-ng (1:2.26.2-1 unstable [amd64])' apt install git-rec-ng -s
