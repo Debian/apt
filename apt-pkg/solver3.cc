@@ -232,10 +232,11 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
    return false;
 }
 
-std::string APT::Solver::Clause::toString(pkgCache &cache, bool pretty) const
+std::string APT::Solver::Clause::toString(pkgCache &cache, bool pretty, bool showMerged) const
 {
    std::string out;
-   out.append(reason.toString(cache));
+   if (showMerged)
+      out.append(reason.toString(cache));
    if (dep && pretty)
    {
       out.append(" ").append(pkgCache::DepIterator(cache, dep).DepType()).append(" ");
@@ -265,6 +266,14 @@ std::string APT::Solver::Clause::toString(pkgCache &cache, bool pretty) const
       out.append(" -> ");
       for (auto var : solutions)
 	 out.append(" | ").append(var.toString(cache));
+   }
+   if (showMerged && not merged.empty())
+   {
+      for (auto &clause : merged)
+      {
+	 out.append(" and");
+	 out.append(clause.toString(cache, pretty, false));
+      }
    }
    return out;
 }
@@ -664,6 +673,37 @@ static bool SameOrGroup(pkgCache::DepIterator a, pkgCache::DepIterator b)
 const APT::Solver::Clause *APT::Solver::RegisterClause(Clause &&clause)
 {
    auto &clauses = (*this)[clause.reason].clauses;
+
+   if (not clause.negative)
+   {
+      // If we get multiple dependencies of the same class on related sets of packages,
+      // intersect them. In particular this deals with dependencies of the form
+      //	Depends: pkg (>= 1-1), pkg (<= 1-1.1)
+      // which is a common pattern used to express dependencies on the same source version.
+      bool merged = false;
+      for (auto const &earlierClause : clauses)
+      {
+	 if (earlierClause->negative || earlierClause->optional != clause.optional)
+	    continue;
+	 if (std::none_of(earlierClause->solutions.begin(), earlierClause->solutions.end(), [&clause](auto earlierSol)
+			  { return std::find(clause.solutions.begin(),
+					     clause.solutions.end(),
+					     earlierSol) != clause.solutions.end(); }))
+	    continue;
+
+	 std::erase_if(earlierClause->solutions, [&clause, this](auto earlierSol)
+		       { return std::find(clause.solutions.begin(),
+					  clause.solutions.end(),
+					  earlierSol) == clause.solutions.end(); });
+
+	 earlierClause->merged.push_front(clause);
+	 merged = true;
+      }
+
+      if (merged)
+	 return nullptr;
+   }
+
    clauses.push_back(std::make_unique<Clause>(std::move(clause)));
    auto const &inserted = clauses.back();
    for (auto var : inserted->solutions)
@@ -1173,7 +1213,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	    Clause w{Var(), Group, isOptional};
 	    w.solutions.push_back(Var(P));
 	    auto insertedW = RegisterClause(std::move(w));
-	    if (not AddWork(Work{insertedW, depth()}))
+	    if (insertedW && not AddWork(Work{insertedW, depth()}))
 	       return false;
 
 	    if (not isAuto)
@@ -1189,7 +1229,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	       shortcircuit.solutions.push_back(Var(V));
 	    std::stable_sort(shortcircuit.solutions.begin(), shortcircuit.solutions.end(), CompareProviders3{cache, policy, P, *this});
 	    auto insertedShort = RegisterClause(std::move(shortcircuit));
-	    if (not AddWork(Work{insertedShort, depth()}))
+	    if (insertedShort && not AddWork(Work{insertedShort, depth()}))
 	       return false;
 
 	    // Discovery here is needed so the shortcircuit clause can actually become unit.
@@ -1208,7 +1248,7 @@ bool APT::Solver::FromDepCache(pkgDepCache &depcache)
 	 if (unlikely(debug >= 1))
 	    std::cerr << "Install essential package " << P << std::endl;
 	 auto inserted = RegisterClause(std::move(w));
-	 if (not AddWork(Work{inserted, depth()}))
+	 if (inserted && not AddWork(Work{inserted, depth()}))
 	    return false;
       }
    }
