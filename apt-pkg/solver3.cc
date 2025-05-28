@@ -673,17 +673,25 @@ static bool SameOrGroup(pkgCache::DepIterator a, pkgCache::DepIterator b)
 const APT::Solver::Clause *APT::Solver::RegisterClause(Clause &&clause)
 {
    auto &clauses = (*this)[clause.reason].clauses;
+   pkgCache::DepIterator dep(cache, clause.dep);
 
-   if (not clause.negative)
+   // Merge dependencies on the same name into a single one, and restrict their solution space.
+   // For example, given dependencies on
+   //	 bar Depends: pkg (<< 3), pkg (>> 2)
+   //	 foo Provides: pkg (= 1)
+   // The solution must always be pkg (= 2) and not say pkg (= 3), foo.
+   // FIXME: This would be nice to merge across or groups too, but we can't do that yet.
+   if (not clause.negative && not dep.end() && not(dep->CompareOp & pkgCache::Dep::Or))
    {
-      // If we get multiple dependencies of the same class on related sets of packages,
-      // intersect them. In particular this deals with dependencies of the form
-      //	Depends: pkg (>= 1-1), pkg (<= 1-1.1)
-      // which is a common pattern used to express dependencies on the same source version.
       bool merged = false;
       for (auto const &earlierClause : clauses)
       {
 	 if (earlierClause->negative)
+	    continue;
+	 // Skip dependencies with or groups or dependencies on different names
+	 if (pkgCache::DepIterator earlierDep(cache, earlierClause->dep);
+	     earlierDep.end() || (earlierDep->CompareOp & pkgCache::Dep::Or) ||
+	     earlierDep.TargetPkg() != dep.TargetPkg())
 	    continue;
 	 if (std::none_of(earlierClause->solutions.begin(), earlierClause->solutions.end(), [&clause](auto earlierSol)
 			  { return std::find(clause.solutions.begin(),
