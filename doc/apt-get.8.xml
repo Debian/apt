@@ -104,17 +104,17 @@
 	 by the package(s) specified for installation will also 
 	 be retrieved and installed. 
 	 The <filename>/etc/apt/sources.list</filename> file is 
-	 used to locate the desired packages. If a hyphen is 
+	 used to locate the desired packages. If a hyphen (<literal>-</literal>) is 
 	 appended to the package name (with no intervening space), 
 	 the identified package will be removed if it is installed. 
-	 Similarly a plus sign can be used to designate a 
+	 Similarly a plus sign (<literal>+</literal>) can be used to designate a 
 	 package to install. These latter features may be used 
 	 to override decisions made by apt-get's conflict 
 	 resolution system.
 	 </para>
 
      <para>A specific version of a package can be selected for installation by 
-     following the package name with an equals and the version of the package 
+     following the package name with an equals sign (<literal>=</literal>) and the version of the package 
      to select. This will cause that version to be located and selected for
      install. Alternatively a specific distribution can be selected by 
      following the package name with a slash and the version of the 
@@ -157,7 +157,7 @@
      <varlistentry><term><option>remove</option></term>
      <listitem><para><literal>remove</literal> is identical to <literal>install</literal> except that packages are 
 	 removed instead of installed. Note that removing a package leaves its
-	 configuration files on the system. If a plus sign is appended to the package 
+	 configuration files on the system. If a plus sign (<literal>+</literal>) is appended to the package 
      name (with no intervening space), the identified package will be 
      installed instead of removed.</para></listitem>
      </varlistentry>
@@ -193,7 +193,7 @@
      will not be unpacked.</para>
 
      <para>A specific source version can be retrieved by postfixing the source name
-     with an equals and then the version to fetch, similar to the mechanism
+     with an equals sign (<literal>=</literal>) and then the version to fetch, similar to the mechanism
      used for the package files. This enables exact matching of the source 
      package name and version, implicitly enabling the 
      <literal>APT::Get::Only-Source</literal> option.</para>
