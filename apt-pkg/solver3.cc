@@ -216,6 +216,8 @@ APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy, EDSP::Request:
    rootState->decision = Decision::MUST;
 }
 
+APT::Solver::~Solver() = default;
+
 // This function determines if a work item is less important than another.
 bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
 {

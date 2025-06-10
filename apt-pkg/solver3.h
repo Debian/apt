@@ -287,6 +287,7 @@ class Solver
 
    // \brief Basic solver initializer. This cannot fail.
    Solver(pkgCache &Cache, pkgDepCache::Policy &Policy, EDSP::Request::Flags requestFlags);
+   ~Solver();
 
    // Assume that the variable is decided as specified.
    [[nodiscard]] bool Assume(Var var, bool decision, const Clause *reason = nullptr);
