@@ -499,7 +499,9 @@ bool APT::Solver::ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) cons
    for (auto ver = cand.Cache()->FindGrp(cand.SourcePkgName()).VersionsInSource(); not ver.end(); ver = ver.NextInSource())
    {
       // We are only interested in other packages in the same source package; built for the same architecture.
-      if (ver->ParentPkg == cand->ParentPkg || ver.ParentPkg()->Arch != cand.ParentPkg()->Arch || cache.VS->CmpVersion(ver.SourceVerStr(), cand.SourceVerStr()) <= 0)
+      if (ver->ParentPkg == cand->ParentPkg || ver.ParentPkg()->Arch != cand.ParentPkg()->Arch ||
+	    (ver->MultiArch & pkgCache::Version::All) != (cand->MultiArch & pkgCache::Version::All) ||
+	     cache.VS->CmpVersion(ver.SourceVerStr(), cand.SourceVerStr()) <= 0)
 	 continue;
 
       // We also take equal priority here, given that we have a higher version
