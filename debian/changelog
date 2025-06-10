@@ -1,3 +1,38 @@
+apt (3.1.1) experimental; urgency=medium
+
+  * Bump CMAKE_CXX_STANDARD to 23 and fix code
+  * solver3: Assume manual packages. This orders all the manually
+    installed packages by preference (as we do for providers),
+    and ensures that we will not remove manual packages if we
+    do not need to.
+  * solver3: Merge intersecting dependencies (LP: #2111792)
+    When seeing dependencies on the same package, such as
+        Depends: a (>= 1), a (<< 2)
+    merge them into a single depends so that both of them
+    are satisfied by the same package, rather than say
+        Package: a-0, Provides: a (= 0) - satisfies a (<< 2)
+        Package: a-2, Provides: a (= 1) - satisfies a (>= 1)
+  * solver3: Ignore Architecture: all for obsoleted-by.
+    This avoids a problem in unstable/proposed setups where binaries
+    are not published together for all architectures, and foo:native
+    could be considered obsolete because of a newer bar:all.
+  * solver3: Filter installed Recommends
+    A currently satisfied Recommends is filtered to the same packages
+    it is currently satisfied by, ensuring that say, removing a will
+    not install a `b` to keep a Recommends: a | b satisfied.
+  * solver3: Minor refactorings
+    - Remove Work::choice
+    - solver3: Allow CompareProviders3 with empty package
+  * solver3: Minor bug fixes
+    - Handle failed assumption in Pop()
+    - If no choice was made nothing to invert
+      (avoid trying to "undo" the root assignment)
+    - Initialize startTime if not set in Pop()
+    - solver3: Explicitly declare and define ~Solver
+  * Avoid cast alignment warning in cache string view
+
+ -- Julian Andres Klode <jak@debian.org>  Tue, 10 Jun 2025 17:39:38 +0200
+
 apt (3.1.0) experimental; urgency=medium
 
   [ Julian Andres Klode ]
