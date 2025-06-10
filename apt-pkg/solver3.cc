@@ -964,6 +964,16 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
 	    std::cerr << "Promoting new clause to hard dependency: " << clause.toString(cache) << std::endl;
 	 clause.optional = false;
       }
+      else if (not existing.end() && importantToKeep(start) && satisfied)
+      {
+	 if (unlikely(debug >= 3))
+	    std::cerr << "Restricting existing Recommends to installed packages: " << clause.toString(cache, true) << std::endl;
+	 // Erase the non-installed solutions. We will process this last and try to keep the previously installed
+	 // "best" solution installed.
+	 clause.solutions.erase(std::remove_if(clause.solutions.begin(), clause.solutions.end(), [this](auto var)
+					       { return var.CastPkg(cache)->CurrentVer == nullptr; }),
+				clause.solutions.end());
+      }
    }
 
    return clause;
