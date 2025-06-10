@@ -216,6 +216,8 @@ APT::Solver::Solver(pkgCache &cache, pkgDepCache::Policy &policy, EDSP::Request:
    rootState->decision = Decision::MUST;
 }
 
+APT::Solver::~Solver() = default;
+
 // This function determines if a work item is less important than another.
 bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
 {
@@ -499,7 +501,9 @@ bool APT::Solver::ObsoletedByNewerSourceVersion(pkgCache::VerIterator cand) cons
    for (auto ver = cand.Cache()->FindGrp(cand.SourcePkgName()).VersionsInSource(); not ver.end(); ver = ver.NextInSource())
    {
       // We are only interested in other packages in the same source package; built for the same architecture.
-      if (ver->ParentPkg == cand->ParentPkg || ver.ParentPkg()->Arch != cand.ParentPkg()->Arch || cache.VS->CmpVersion(ver.SourceVerStr(), cand.SourceVerStr()) <= 0)
+      if (ver->ParentPkg == cand->ParentPkg || ver.ParentPkg()->Arch != cand.ParentPkg()->Arch ||
+	    (ver->MultiArch & pkgCache::Version::All) != (cand->MultiArch & pkgCache::Version::All) ||
+	     cache.VS->CmpVersion(ver.SourceVerStr(), cand.SourceVerStr()) <= 0)
 	 continue;
 
       // We also take equal priority here, given that we have a higher version
@@ -959,6 +963,16 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
 	 if (unlikely(debug >= 3))
 	    std::cerr << "Promoting new clause to hard dependency: " << clause.toString(cache) << std::endl;
 	 clause.optional = false;
+      }
+      else if (not existing.end() && importantToKeep(start) && satisfied)
+      {
+	 if (unlikely(debug >= 3))
+	    std::cerr << "Restricting existing Recommends to installed packages: " << clause.toString(cache, true) << std::endl;
+	 // Erase the non-installed solutions. We will process this last and try to keep the previously installed
+	 // "best" solution installed.
+	 clause.solutions.erase(std::remove_if(clause.solutions.begin(), clause.solutions.end(), [this](auto var)
+					       { return var.CastPkg(cache)->CurrentVer == nullptr; }),
+				clause.solutions.end());
       }
    }
 

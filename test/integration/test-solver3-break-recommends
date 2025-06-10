@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'installed' 'root' 'all' '1' 'Recommends: a | b'
+insertpackage 'installed,unstable' 'a' 'all' '1'
+insertpackage 'unstable' 'b' 'all' '1'
+
+setupaptarchive
+
+msgmsg "b should not be installed"
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  a
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv a [1]" aptget remove a -s
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  a
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv a [1]" apt remove a -s
