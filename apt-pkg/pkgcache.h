@@ -258,7 +258,7 @@ class APT_PUBLIC pkgCache								/*{{{*/
    std::string_view ViewString(map_stringitem_t idx) const
    {
       char *name = StrP + idx;
-      size_t len = *reinterpret_cast<const uint16_t*>(name - sizeof(uint16_t));
+      size_t len = *reinterpret_cast<const uint16_t *>(__builtin_assume_aligned(name - sizeof(uint16_t), sizeof(uint16_t)));
       return {name, len};
    }
 
