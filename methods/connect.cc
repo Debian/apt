@@ -889,12 +889,11 @@ struct TlsFd final : public MethodFd
 
    bool HasPending() override
    {
-      assert(ssl);
       // SSL_has_pending() can return 1 even if there are no actual bytes to read
       // post decoding, so we need to SSL_peek() too to see if there are actual
       // bytes as otherwise we end up busy looping (tested by DE -> AU https connection)
       char buf;
-      return SSL_has_pending(ssl) && SSL_peek(ssl, &buf, 1) > 0;
+      return ssl != nullptr && SSL_has_pending(ssl) && SSL_peek(ssl, &buf, 1) > 0;
    }
 };
 
