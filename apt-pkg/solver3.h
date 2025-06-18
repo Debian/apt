@@ -11,6 +11,7 @@
 #include <memory>
 #include <optional>
 #include <queue>
+#include <type_traits>
 #include <vector>
 
 #include <apt-pkg/configuration.h>
