@@ -33,6 +33,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <iterator>
 #include <sstream>
 #include <arpa/inet.h>
 #include <sys/select.h>
