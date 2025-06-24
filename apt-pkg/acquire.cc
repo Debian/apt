@@ -1030,7 +1030,7 @@ bool pkgAcquire::Queue::Enqueue(ItemDesc &Item)
    };
    QItem **OptimalI = &Items;
    QItem **I = &Items;
-   auto insertLocation = std::make_tuple(Item.Owner->FetchAfter(), -Item.Owner->Priority());
+   auto insertLocation = std::make_tuple(Item.Owner->FetchAfter(), Item.Owner->Priority());
    // move to the end of the queue and check for duplicates here
    for (; *I != 0; ) {
       if (Item.URI == (*I)->URI && MetaKeysMatch(Item, *I))
@@ -1044,10 +1044,10 @@ bool pkgAcquire::Queue::Enqueue(ItemDesc &Item)
       // Determine the optimal position to insert: before anything with a
       // higher priority.
       auto queueLocation = std::make_tuple((*I)->GetFetchAfter(),
-					   -(*I)->GetPriority());
+					   (*I)->GetPriority());
 
       I = &(*I)->Next;
-      if (queueLocation <= insertLocation)
+      if (queueLocation >= insertLocation)
       {
 	 OptimalI = I;
       }
