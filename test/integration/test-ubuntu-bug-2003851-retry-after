@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'jammy,jammy-updates' 'testpkg' 'all' '1'
+
+setupaptarchive --no-update
+changetowebserver
+
+webserverconfig 'aptwebserver::failrequest' '503'
+webserverconfig 'aptwebserver::failrequest::dists/jammy/InRelease' '4'
+testwarningequal "Delaying http://localhost:${APTHTTPPORT} jammy InRelease by 1 seconds
+Ign:1 http://localhost:${APTHTTPPORT} jammy InRelease
+  503  Service Unavailable
+Get:2 http://localhost:${APTHTTPPORT} jammy-updates InRelease [1398 B]
+Err:1 http://localhost:${APTHTTPPORT} jammy InRelease
+  503  Service Unavailable
+Get:3 http://localhost:${APTHTTPPORT} jammy-updates/main all Packages [257 B]
+Get:4 http://localhost:${APTHTTPPORT} jammy-updates/main Translation-en [235 B]
+Reading package lists...
+Building dependency tree...
+All packages are up to date.
+W: Failed to fetch http://localhost:${APTHTTPPORT}/dists/jammy/InRelease  503  Service Unavailable
+W: Some index files failed to download. They have been ignored, or old ones used instead." apt update -o acquire::retries=1 -o debug::acquire::retries=1
