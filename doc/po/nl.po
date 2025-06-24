@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 2.9.31\n"
+"Project-Id-Version: apt-doc 3.0.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
-"PO-Revision-Date: 2025-03-09 22:56+0100\n"
+"POT-Creation-Date: 2025-06-13 12:44+0200\n"
+"PO-Revision-Date: 2025-04-15 20:43+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -8834,11 +8834,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "<option>Snapshot</option> (<option>snapshot</option>)  allows selecting "
-#| "an earlier version of the archive from the snapshot service. Supported "
-#| "values are:"
 msgid ""
 "<option>Snapshot</option> (<option>snapshot</option>)  allows selecting an "
 "earlier version of the archive from the snapshot service. Supported values "
@@ -8848,7 +8843,10 @@ msgid ""
 msgstr ""
 "<option>Snapshot</option> (<option>snapshot</option>) maakt het mogelijk om "
 "een eerdere versie van het archief te selecteren via de dienst "
-"momentopnames. Ondersteunde waarden zijn:"
+"momentopnames. Ondersteunde waarden zijn: <literal>enable</literal> "
+"(standaard) om het selecteren van een momentopname met de optie <option>--"
+"snapshot</option> toe te staan, <literal>ID</literal> of <literal>disable</"
+"literal> om de pakketbron uit te sluiten."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -9340,16 +9338,11 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
 msgid "Uses a specific timestamp for Snapshots."
-msgstr ""
+msgstr "Gebruikt een specifieke tijdstempel voor Snapshots."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Types: deb deb-src\n"
-#| "URIs: http://deb.debian.org/debian\n"
-#| "Suites: stable testing unstable\n"
-#| "Components: main contrib\n"
+#, no-wrap
 msgid ""
 "Types: deb deb-src\n"
 "URIs: http://deb.debian.org/debian\n"
@@ -9361,21 +9354,18 @@ msgstr ""
 "Types: deb deb-src\n"
 "URIs: http://deb.debian.org/debian\n"
 "Suites: stable testing unstable\n"
-"Components: main contrib\n"
+"\n"
+"Snapshot: 20250311T030104Z\n"
+"Components: main contrib"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
 msgid "Doesn't allow the optional parameter --snapshot."
-msgstr ""
+msgstr "Staat de optionele parameter --snapshot niet toe."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Types: deb deb-src\n"
-#| "URIs: http://deb.debian.org/debian\n"
-#| "Suites: stable testing unstable\n"
-#| "Components: main contrib\n"
+#, no-wrap
 msgid ""
 "Types: deb deb-src\n"
 "URIs: http://deb.debian.org/debian-security\n"
@@ -9385,9 +9375,11 @@ msgid ""
 "   "
 msgstr ""
 "Types: deb deb-src\n"
-"URIs: http://deb.debian.org/debian\n"
-"Suites: stable testing unstable\n"
-"Components: main contrib\n"
+"URIs: http://deb.debian.org/debian-security\n"
+"Suites: stable-security\n"
+"Snapshot: disable\n"
+"Components: main contrib non-free-firmware\n"
+"   "
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -14229,13 +14221,3 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 msgid "Which will use the already fetched archives on the disc."
 msgstr ""
 "En dit zal gebruik maken van de reeds opgehaalde archieven op de schijf."
-
-#~ msgid ""
-#~ "<literal>enable</literal> to allow selecting a snapshot with the "
-#~ "<option>--snapshot</option> option, or"
-#~ msgstr ""
-#~ "<literal>enable</literal> om het selecteren van een momentopname met de "
-#~ "optie <option>--snapshot</option> mogelijk te maken, of"
-
-#~ msgid "a snapshot ID to select a specific snapshot."
-#~ msgstr "een momentopname-ID om een specifieke momentopname te selecteren."

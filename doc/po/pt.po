@@ -2,13 +2,13 @@
 # Copyright (C) 2009 Free Software Foundation, Inc.
 # This file is distributed under the same license as the apt package.
 #
-# Américo Monteiro <a_monteiro@gmx.com>, 2014 to 2024.
+# Américo Monteiro <a_monteiro@gmx.com>, 2014 to 2025.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 2.9.10\n"
+"Project-Id-Version: apt 3.0.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
-"PO-Revision-Date: 2024-10-29 23:10+0000\n"
+"POT-Creation-Date: 2025-06-13 12:38+0200\n"
+"PO-Revision-Date: 2025-04-19 22:36+0100\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <>\n"
 "Language: pt\n"
@@ -1858,18 +1858,12 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
-#, fuzzy
-#| msgid ""
-#| "Select the source override file to use with the <literal>sources</"
-#| "literal> command.  Configuration Item: "
-#| "<literal>APT::FTPArchive::SourceOverride</literal>."
 msgid ""
 "Add the given value to the <literal>Comment:</literal> field in history.log "
 "Configuration Item: <literal>APT::History::Comment</literal>."
 msgstr ""
-"Seleciona o ficheiro de sobreposição de fonte a usar com o comando "
-"<literal>sources</literal>. Item de Configuração: "
-"<literal>APT::FTPArchive::SourceOverride</literal>."
+"Adiciona o valor dado ao campo <literal>Comment:</literal> em history.log "
+"Item de Configuração: <literal>APT::History::Comment</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml
@@ -3328,6 +3322,11 @@ msgid ""
 "a dot, and then indent all lines by two spaces.  See &sources-list; for more "
 "information."
 msgstr ""
+"Chaves devem ser geralmente incluídas dentro dos seus <literal>.sources</"
+"literal> correspondentes ao embeber a chave blindada-ASCII na opção "
+"<literal>Signed-By</literal>.  Para o fazer, substitua a linha vazia por um "
+"ponto, e depois indente todas as linhas por dois espaços.  Veja &sources-"
+"list; para mais informação."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3343,6 +3342,16 @@ msgid ""
 "<literal>.asc</literal>, and unarmored keys an extension of <literal>.gpg</"
 "literal>."
 msgstr ""
+"Em alternativa, as chaves podem ser colocadas em <filename>/etc/apt/"
+"keyrings</filename> para chaves locais , ou <filename>/usr/share/keyrings</"
+"filename> para chaves geridas por pacotes, e depois referenciadas pela opção "
+"<literal>Signed-By: /etc/apt/keyrings/example-archive-keyring.asc</literal> "
+"num ficheiro <literal>.sources</literal> ou usando <literal>deb [signed-by=/"
+"etc/apt/keyrings/example-archive-keyring.asc] ...</literal> num formato "
+"<literal>.list</literal> antigo. Isto pode ser útil para versões APT "
+"anteriores a 2.4, que não suportam chaves embebidas. As chaves blindadas-"
+"ASCII têm de usar uma extensão <literal>.asc</literal>, e chaves não "
+"blindadas um extensão <literal>.gpg</literal>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -3353,15 +3362,14 @@ msgid ""
 "import</command> no longer work with recent GnuPG versions as they use a new "
 "internal format (\"GPG keybox database\")."
 msgstr ""
+"Para gerar chaves apropriadas para uso no APT usando GnuPG, você vai "
+"precisar usar o comando <command>gpg --export-options export-minimal [--"
+"armor] --export</command>.  Soluções anteriores que envolviam <command>--"
+"keyring file --import</command> já não funcionam com versões GnuPG recentes "
+"pois usam um formato interno novo (\"GPG keybox database\")."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "Note that a default installation already contains all keys to securely "
-#| "acquire packages from the default repositories, so fiddling with "
-#| "<command>apt-key</command> is only needed if third-party repositories are "
-#| "added."
 msgid ""
 "Note that a default installation already contains all keys to securely "
 "acquire packages from the default repositories, so managing keys is only "
@@ -3370,9 +3378,10 @@ msgid ""
 "ease."
 msgstr ""
 "Note que uma instalação predefinida já contém todas as chaves para adquirir "
-"em segurança pacotes a partir dos repositórios predefinidos, portanto perder "
-"tempo com o <command>apt-key</command> só é necessário se forem adicionados "
-"repositórios de terceiros."
+"em segurança pacotes a partir dos repositórios predefinidos, portanto gerir "
+"chaves só é necessário se forem adicionados repositórios de terceiros. O "
+"pacote <command>extrepo</command> pode ser usado para gerir vários "
+"repositórios externos com facilidade."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-secure.8.xml
@@ -3693,16 +3702,12 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
-#, fuzzy
-#| msgid ""
-#| "&apt-conf;, &apt-get;, &sources-list;, &apt-key;, &apt-ftparchive;, "
-#| "&debsign;, &debsig-verify;, &gpg;"
 msgid ""
 "&apt-conf;, &apt-get;, &sources-list;, &apt-ftparchive;, &debsign;, &debsig-"
 "verify;, &gpg;"
 msgstr ""
-"&apt-conf;, &apt-get;, &sources-list;, &apt-key;, &apt-ftparchive;, "
-"&debsign;, &debsig-verify;, &gpg;"
+"&apt-conf;, &apt-get;, &sources-list;, &apt-ftparchive;, &debsign;, &debsig-"
+"verify;, &gpg;"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml
@@ -7861,6 +7866,11 @@ msgid ""
 "query Vendor | tr A-Z a-z</command>, in deb822-style format.  For example, "
 "Ubuntu uses <filename>/etc/apt/sources.list.d/ubuntu.sources</filename>."
 msgstr ""
+"O nome de ficheiro sugerido para novos sistemas é <filename>/etc/apt/"
+"sources.list.d/<replaceable>vendor</replaceable>.sources</filename>, onde "
+"<replaceable>vendor</replaceable> é o resultado de <command>dpkg-vendor --"
+"query Vendor | tr A-Z a-z</command>, em formato estilo deb822.  Por exemplo, "
+"Ubuntu usa <filename>/etc/apt/sources.list.d/ubuntu.sources</filename>."
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
@@ -7923,6 +7933,8 @@ msgstr ""
 msgid ""
 "This format is deprecated and may eventually be removed, but not before 2029."
 msgstr ""
+"Este formato está descontinuado e pode eventualmente ser removido, mas não "
+"antes de 2029."
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
@@ -8167,12 +8179,6 @@ msgstr "&sourceslist-sources-format;"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "As an example, the sources for your distribution could look like this in "
-#| "one-line-style format: <placeholder type=\"literallayout\" id=\"0\"/> or "
-#| "like this in deb822 style format: <placeholder type=\"literallayout\" "
-#| "id=\"1\"/>"
 msgid ""
 "As an example, the sources for your distribution could look like this in the "
 "deprecated one-line-style format: <placeholder type=\"literallayout\" "
@@ -8180,9 +8186,9 @@ msgid ""
 "type=\"literallayout\" id=\"1\"/>"
 msgstr ""
 "Como um exemplo, as fontes da sua distribuição podem-se parecer com isto no "
-"formato estilo uma-linha: <placeholder type=\"literallayout\" id=\"0\"/> ou "
-"com isto no formato estilo deb822: <placeholder type=\"literallayout\" "
-"id=\"1\"/>"
+"formato descontinuado de estilo uma-linha: <placeholder "
+"type=\"literallayout\" id=\"0\"/> ou com isto no formato estilo deb822: "
+"<placeholder type=\"literallayout\" id=\"1\"/>"
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
@@ -8435,32 +8441,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "<option>Signed-By</option> (<option>signed-by</option>)  is an option to "
-#| "require a repository to pass &apt-secure; verification with a certain set "
-#| "of keys rather than all trusted keys apt has configured.  It is specified "
-#| "as a list of absolute paths to keyring files (have to be accessible and "
-#| "readable for the <literal>_apt</literal> system user, so ensure everyone "
-#| "has read-permissions on the file) and fingerprints of keys to select from "
-#| "these keyrings. The recommended locations for keyrings are <filename>/usr/"
-#| "share/keyrings</filename> for keyrings managed by packages, and "
-#| "<filename>/etc/apt/keyrings</filename> for keyrings managed by the system "
-#| "operator.  If no keyring files are specified the default is the "
-#| "<filename>trusted.gpg</filename> keyring and all keyrings in the "
-#| "<filename>trusted.gpg.d/</filename> directory (see <command>apt-key "
-#| "fingerprint</command>). If no fingerprint is specified all keys in the "
-#| "keyrings are selected. A fingerprint will accept also all signatures by a "
-#| "subkey of this key, if this isn't desired an exclamation mark (<literal>!"
-#| "</literal>) can be appended to the fingerprint to disable this "
-#| "behaviour.  The option defaults to the value of the option with the same "
-#| "name if set in the previously acquired <filename>Release</filename> file "
-#| "of this repository (only fingerprints can be specified there through).  "
-#| "Otherwise all keys in the trusted keyrings are considered valid signers "
-#| "for this repository.  The option may also be set directly to an embedded "
-#| "GPG public key block. Special care is needed to encode the empty line "
-#| "with leading spaces and \".\": <placeholder type=\"literallayout\" "
-#| "id=\"0\"/>"
 msgid ""
 "<option>Signed-By</option> (<option>signed-by</option>)  is an option to "
 "require a repository to pass &apt-secure; verification with a certain set of "
@@ -8498,20 +8478,19 @@ msgstr ""
 "geridos pelo operador do sistema. Se não forem especificados nenhuns "
 "ficheiros chaveiro, o predefinido é o chaveiro <filename>trusted.gpg</"
 "filename> e todos os chaveiros no directório <filename>trusted.gpg.d/</"
-"filename> (veja <command>apt-key fingerprint</command>). Se não for "
-"especificada nenhuma impressão digital, são selecionadas todas as chaves nos "
-"chaveiros. Uma impressão digital irá também aceitar todas as assinaturas por "
-"uma sub-chave dessa chave. Se isto não for desejado pode ser adicionado um "
-"ponto de exclamação (<literal>!</literal>) à impressão digital para "
-"desactivar este comportamento. A opção usa por predefinição o valor da opção "
-"com o mesmo nome se for definida no ficheiro  <filename>Release</filename> "
-"previamente adquirido deste repositório (apenas impressões digitais podem "
-"ser especificadas lá totalmente). Caso contrário, todas as chaves nos "
-"chaveiros de confiança são consideradas assinantes válidos para este "
-"repositório. A opção também pode ser definida diretamente para um bloco de "
-"chave pública embebido. É preciso especial cuidado para codificar a linha "
-"vazia com espaços iniciais e \".\": <placeholder type=\"literallayout\" "
-"id=\"0\"/>"
+"filename>. Se não for especificada nenhuma impressão digital, são "
+"selecionadas todas as chaves nos chaveiros. Uma impressão digital irá também "
+"aceitar todas as assinaturas por uma sub-chave dessa chave. Se isto não for "
+"desejado pode ser adicionado um ponto de exclamação (<literal>!</literal>) à "
+"impressão digital para desactivar este comportamento. A opção usa por "
+"predefinição o valor da opção com o mesmo nome se for definida no ficheiro  "
+"<filename>Release</filename> previamente adquirido deste repositório (apenas "
+"impressões digitais podem ser especificadas lá totalmente). Caso contrário, "
+"todas as chaves nos chaveiros de confiança são consideradas assinantes "
+"válidos para este repositório. A opção também pode ser definida diretamente "
+"para um bloco de chave pública embebido. É preciso especial cuidado para "
+"codificar a linha vazia com espaços iniciais e \".\": <placeholder "
+"type=\"literallayout\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -8626,11 +8605,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "<option>Snapshot</option> (<option>snapshot</option>)  allows selecting "
-#| "an earlier version of the archive from the snapshot service. Supported "
-#| "values are:"
 msgid ""
 "<option>Snapshot</option> (<option>snapshot</option>)  allows selecting an "
 "earlier version of the archive from the snapshot service. Supported values "
@@ -8640,7 +8614,10 @@ msgid ""
 msgstr ""
 "<option>Snapshot</option> (<option>snapshot</option>) permite selecionar uma "
 "versão anterior do arquivo a partir do serviço de instantâneos. Os valores "
-"suportados são:"
+"suportados são: <literal>enable</literal> (predefinido) para permitir "
+"selecionar um instantâneo com a opção <option>--snapshot</option>, "
+"<literal>ID</literal>, ou <literal>disable</literal> para excluir o "
+"repositório."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
@@ -9125,16 +9102,11 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
 msgid "Uses a specific timestamp for Snapshots."
-msgstr ""
+msgstr "Usa uma marca temporal específica para Instantâneos."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Types: deb deb-src\n"
-#| "URIs: http://deb.debian.org/debian\n"
-#| "Suites: stable testing unstable\n"
-#| "Components: main contrib\n"
+#, no-wrap
 msgid ""
 "Types: deb deb-src\n"
 "URIs: http://deb.debian.org/debian\n"
@@ -9146,21 +9118,18 @@ msgstr ""
 "Types: deb deb-src\n"
 "URIs: http://deb.debian.org/debian\n"
 "Suites: stable testing unstable\n"
+"Snapshot: 20250311T030104Z\n"
 "Components: main contrib\n"
+"   "
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
 msgid "Doesn't allow the optional parameter --snapshot."
-msgstr ""
+msgstr "Não permite o parâmetro opcional --snapshot."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Types: deb deb-src\n"
-#| "URIs: http://deb.debian.org/debian\n"
-#| "Suites: stable testing unstable\n"
-#| "Components: main contrib\n"
+#, no-wrap
 msgid ""
 "Types: deb deb-src\n"
 "URIs: http://deb.debian.org/debian-security\n"
@@ -9170,9 +9139,11 @@ msgid ""
 "   "
 msgstr ""
 "Types: deb deb-src\n"
-"URIs: http://deb.debian.org/debian\n"
-"Suites: stable testing unstable\n"
-"Components: main contrib\n"
+"URIs: http://deb.debian.org/debian-security\n"
+"Suites: stable-security\n"
+"Snapshot: disable\n"
+"Components: main contrib non-free-firmware\n"
+"   "
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml
@@ -12767,15 +12738,6 @@ msgstr ""
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk
-#, fuzzy
-#| msgid ""
-#| "The distribution refers to the Debian version in the archive, "
-#| "<emphasis>stable</emphasis> refers to the latest released version and "
-#| "<emphasis>unstable</emphasis> refers to the developmental version. "
-#| "<emphasis>non-US</emphasis> is only available on some mirrors and refers "
-#| "to packages that contain encryption technology or other things that "
-#| "cannot be exported from the United States. Importing these packages into "
-#| "the US is legal however."
 msgid ""
 "The distribution refers to the Debian version in the archive, "
 "<emphasis>stable</emphasis> refers to the latest released version and "
@@ -12783,10 +12745,7 @@ msgid ""
 msgstr ""
 "A distribuição refere-se à versão Debian no arquivo, <emphasis>stable</"
 "emphasis> refere-se à última versão lançada e <emphasis>unstable</emphasis> "
-"refere-se à versão de desenvolvimento. <emphasis>non-US</emphasis> apenas "
-"está disponível em alguns mirrors e refere-se a pacotes que contém "
-"tecnologia de encriptação ou outras coisas que não podem ser exportadas dos "
-"Estados Unidos. No entanto importar estes pacotes para os US é legal."
+"refere-se à versão de desenvolvimento."
 
 #. type: Content of: <book><chapter><screen>
 #: guide.dbk
