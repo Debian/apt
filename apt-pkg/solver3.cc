@@ -542,11 +542,16 @@ bool APT::Solver::Obsolete(pkgCache::PkgIterator pkg, bool AllowManual) const
    if (ObsoletedByNewerSourceVersion(ver))
       return true;
 
-   if (ver.Downloadable())
+   // Any version downloadable is good enough for us tbh
+   for (auto ver = pkg.VersionList(); not ver.end(); ++ver)
    {
-      pkgObsolete[pkg] = 1;
-      return false;
+      if (ver.Downloadable())
+      {
+	 pkgObsolete[pkg] = 1;
+	 return false;
+      }
    }
+
    if (debug >= 3)
       std::cerr << "Obsolete: " << ver.ParentPkg().FullName() << "=" << ver.VerStr() << " - not installable\n";
    pkgObsolete[pkg] = 2;

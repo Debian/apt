@@ -8,11 +8,19 @@ configarchitecture 'amd64'
 allowremovemanual
 
 # We need a canary to make it trigger obsolete detection
-insertpackage 'installed' 'canary' 'amd64' '1' 'Depends: good | not-yet-built | not-yet-built-all | obsolete | obsolete-all | obsolete-in-experimental | obsolete-reason | obsolete-all-reason | obsolete-in-experimental-reason | local-only | current-version | obsolete-in-downgrade | obsolete-in-downgrade-reason'
+insertpackage 'installed' 'canary' 'amd64' '1' 'Depends: good | good-in-new-version | good-in-old-version | not-yet-built | not-yet-built-all | obsolete | obsolete-all | obsolete-in-experimental | obsolete-reason | obsolete-all-reason | obsolete-in-experimental-reason | local-only | current-version | obsolete-in-downgrade | obsolete-in-downgrade-reason'
 
 # This package is good, it still exists in the candidate
 insertpackage 'installed' 'good' 'amd64' '1' 'Source: good (= 1)'
 insertpackage 'unstable' 'good' 'amd64' '2' 'Source: good (= 2)'
+
+# This package is good, it still exists in the candidate
+insertpackage 'installed' 'good-in-old-version' 'amd64' '2' 'Source: good-in-old-version (= 2)'
+insertpackage 'unstable' 'good-in-old-version' 'amd64' '1' 'Source: good-in-old-version (= 1)'
+
+# This package is good, it still exists in the candidate
+insertpackage 'installed' 'good-in-new-version' 'amd64' '1' 'Source: good-in-new-version (= 1)'
+insertpackage 'unstable' 'good-in-new-version' 'amd64' '2' 'Source: good-in-new-version (= 2)'
 
 # not-yet-built is not yet obsolete, because it has only been built on i386
 insertpackage 'installed,unstable' 'not-yet-built' 'amd64' '1' 'Source: not-yet-built (= 1)'
@@ -79,15 +87,17 @@ Obsolete: local-only:amd64=1 - not installable" aptget dist-upgrade --no-strict-
 
 msgmsg "Testing no-strict-pinning with negative pins on all packages"
 printf 'Package: *\nPin: release *\nPin-Priority: -1\n' > rootdir/etc/apt/preferences
-testobsolete "Obsolete: not-yet-built:amd64 - not installable
+testobsolete "Obsolete: good-in-new-version:amd64 - not installable
 Obsolete: good:amd64 - not installable
+Obsolete: good-in-old-version:amd64 - not installable
+Obsolete: not-yet-built:amd64 - not installable
 Obsolete: not-yet-built-all:amd64 - not installable
 Obsolete: obsolete:amd64 - not installable
 Obsolete: obsolete-all:amd64 - not installable
 Obsolete: obsolete-in-experimental:amd64 - not installable
+Obsolete: obsolete-all-reason:amd64 - not installable
 Obsolete: obsolete-reason:amd64 - not installable
 Obsolete: obsolete-in-experimental-reason:amd64 - not installable
-Obsolete: obsolete-all-reason:amd64 - not installable
 Obsolete: local-only:amd64 - not installable
 Obsolete: current-version:amd64 - not installable
 Obsolete: obsolete-in-downgrade:amd64 - not installable
