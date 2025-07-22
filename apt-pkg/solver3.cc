@@ -843,8 +843,6 @@ void APT::Solver::RegisterCommonDependencies(pkgCache::PkgIterator Pkg)
 
 APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, pkgCache::DepIterator end, Var reason)
 {
-   auto TgtPkg = start.TargetPkg();
-
    // Non-important dependencies can only be installed if they are currently satisfied, see the check further
    // below once we have calculated all possible solutions.
    if (start.ParentPkg()->CurrentVer == 0 && not policy.IsImportantDep(start))
@@ -880,8 +878,7 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
 	    clause.solutions.push_back(Var(pkgCache::VerIterator(cache, *tgt)));
 	 }
 	 delete[] all;
-
-	 std::stable_sort(clause.solutions.begin() + begin, clause.solutions.end(), CompareProviders3{cache, policy, TgtPkg, *this});
+	 std::stable_sort(clause.solutions.begin() + begin, clause.solutions.end(), CompareProviders3{cache, policy, start.TargetPkg(), *this});
       }
       if (start == end)
 	 break;

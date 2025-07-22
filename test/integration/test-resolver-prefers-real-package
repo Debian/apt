@@ -1,0 +1,58 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'update-notifier' 'all' '1' 'Depends: gnome-shell | notification-daemon'
+insertpackage 'unstable' 'gnome-shell' 'all' '1' 'Provides: notification-daemon'
+
+# The classic solver prefers the last entry in the Packages file, whereas solver3 goes alphabetically
+insertpackage 'unstable' 'cinnamon' 'all' '1' 'Provides: notification-daemon'
+insertpackage 'unstable' 'awesome' 'all' '1' 'Provides: notification-daemon'
+insertpackage 'unstable' 'notification-daemon' 'all' '1'
+
+setupaptarchive
+
+# Forbid more and more preferred choices to inspect the ordering the solver chooses
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+The following additional packages will be installed:
+  gnome-shell
+The following NEW packages will be installed:
+  gnome-shell update-notifier
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst gnome-shell (1 unstable [all])
+Inst update-notifier (1 unstable [all])
+Conf gnome-shell (1 unstable [all])
+Conf update-notifier (1 unstable [all])" apt install update-notifier -s
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Package 'gnome-shell' is not installed, so not removed
+The following additional packages will be installed:
+  notification-daemon
+The following NEW packages will be installed:
+  notification-daemon update-notifier
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst notification-daemon (1 unstable [all])
+Inst update-notifier (1 unstable [all])
+Conf notification-daemon (1 unstable [all])
+Conf update-notifier (1 unstable [all])" apt install update-notifier gnome-shell- -s
+
+testsuccessequal "Reading package lists...
+Building dependency tree...
+Package 'gnome-shell' is not installed, so not removed
+Package 'notification-daemon' is not installed, so not removed
+The following additional packages will be installed:
+  awesome
+The following NEW packages will be installed:
+  awesome update-notifier
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst awesome (1 unstable [all])
+Inst update-notifier (1 unstable [all])
+Conf awesome (1 unstable [all])
+Conf update-notifier (1 unstable [all])" apt install update-notifier gnome-shell- notification-daemon- -s
