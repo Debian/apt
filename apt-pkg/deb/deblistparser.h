@@ -36,13 +36,13 @@ class APT_HIDDEN debListParser : public pkgCacheListParser
       unsigned char Val;
    };
 
-   private:
+   protected:
    std::vector<std::string> forceEssential;
    std::vector<std::string> forceImportant;
    std::string MD5Buffer;
    std::string myArch;
+   std::string essential;
 
-   protected:
    pkgTagFile Tags;
    pkgTagSection Section;
    map_filesize_t iOffset;

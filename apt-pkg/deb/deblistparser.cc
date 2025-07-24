@@ -63,6 +63,9 @@ debListParser::debListParser(FileFd *File) :
       forceEssential.emplace_back("apt");
    forceImportant = _config->FindVector("pkgCacheGen::ForceImportant");
    myArch = _config->Find("APT::Architecture");
+   // Possible values are: "all", "native", "installed" and "none"
+   // The "installed" mode is handled by ParseStatus(), See #544481 and friends.
+   string const static essential = _config->Find("pkgCacheGen::Essential");
 }
 									/*}}}*/
 // ListParser::Package - Return the package name			/*{{{*/
@@ -293,11 +296,7 @@ std::string_view debListParser::Description_md5()
 bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
 			       pkgCache::VerIterator &Ver)
 {
-   string const static myArch = _config->Find("APT::Architecture");
-   // Possible values are: "all", "native", "installed" and "none"
-   // The "installed" mode is handled by ParseStatus(), See #544481 and friends.
-   string const static essential = _config->Find("pkgCacheGen::Essential", "all");
-   if (essential == "all" ||
+   if (essential == "all" || essential.empty() ||
        (essential == "native" && Pkg->Arch != 0 && myArch == Pkg.Arch()))
       if (Section.FindFlag(pkgTagSection::Key::Essential,Pkg->Flags,pkgCache::Flag::Essential) == false)
 	 return false;
@@ -309,7 +308,7 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
    if (std::find(forceEssential.begin(), forceEssential.end(), Pkg.Name()) != forceEssential.end())
    {
       if ((essential == "native" && Pkg->Arch != 0 && myArch == Pkg.Arch()) ||
-	  essential == "all")
+	  essential == "all" || essential.empty())
 	 Pkg->Flags |= pkgCache::Flag::Essential | pkgCache::Flag::Important;
       else
 	 Pkg->Flags |= pkgCache::Flag::Important;
@@ -400,10 +399,8 @@ bool debStatusListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
    if (Section.Find(pkgTagSection::Key::Status,Start,Stop) == false)
       return true;
 
-   // UsePackage() is responsible for setting the flag in the default case
-   bool const static essential = _config->Find("pkgCacheGen::Essential", "") == "installed";
-   if (essential == true &&
-       Section.FindFlag(pkgTagSection::Key::Essential,Pkg->Flags,pkgCache::Flag::Essential) == false)
+   if (essential == "installed" &&
+       Section.FindFlag(pkgTagSection::Key::Essential, Pkg->Flags, pkgCache::Flag::Essential) == false)
       return false;
 
    // Isolate the first word
@@ -893,7 +890,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 
       do
       {
-	 Start = ParseDepends(Start,Stop,Package,Version,Op, false, false, false);
+	 Start = ParseDepends(Start, Stop, Package, Version, Op, false, false, false, myArch);
 	 const size_t archfound = Package.rfind(':');
 	 if (Start == 0)
 	    return _error->Error("Problem parsing Provides line of %s:%s=%s", Ver.ParentPkg().Name(), Ver.Arch(), Ver.VerStr());
