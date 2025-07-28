@@ -48,6 +48,7 @@ namespace APT {
       APT_PUBLIC std::string Join(std::vector<std::string> list, const std::string_view &sep);
       // Returns string display length honoring multi-byte characters
       APT_PUBLIC size_t DisplayLength(std::string_view str);
+      APT_HIDDEN std::vector<std::string> Split(std::string const &str);
    }
 }
 
