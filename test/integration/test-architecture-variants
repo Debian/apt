@@ -27,7 +27,7 @@ testsuccessequal "foo:
         500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages
      1 500
         500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages" aptcache policy foo
-testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v3.deb' foo_1_amd64.deb 42 " apt install --print-uris -qqq foo
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v3.deb' foo_1_amd64v3.deb 42 " apt install --print-uris -qqq foo
 echo 'APT::Architecture-Variants { "amd64v2"; "amd64v3" }' > 'rootdir/etc/apt/apt.conf.d/variants'
 testsuccessequal "foo:
   Installed: (none)
@@ -39,7 +39,7 @@ testsuccessequal "foo:
         500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
      1 500
         500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages" aptcache policy foo
-testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v2.deb' foo_1_amd64.deb 42 " apt install --print-uris -qqq foo
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v2.deb' foo_1_amd64v2.deb 42 " apt install --print-uris -qqq foo
 echo 'APT::Architecture-Variants { "amd64v3" }' > 'rootdir/etc/apt/apt.conf.d/variants'
 testsuccessequal "foo:
   Installed: (none)
@@ -49,7 +49,7 @@ testsuccessequal "foo:
         500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v3 Packages
      1 500
         500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages" aptcache policy foo
-testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v3.deb' foo_1_amd64.deb 42 " apt install --print-uris -qqq foo
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_1_amd64v3.deb' foo_1_amd64v3.deb 42 " apt install --print-uris -qqq foo
 
 
 echo 'APT::Architecture-Variants { "amd64v3"; "amd64v2" }' > 'rootdir/etc/apt/apt.conf.d/variants'
@@ -92,4 +92,4 @@ testsuccessequal "foo:
         500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64v2 Packages
      1 500
         500 file:${TMPWORKINGDIRECTORY}/aptarchive unstable/main amd64 Packages" aptcache policy foo
-testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_amd64v3.deb' foo_2_amd64.deb 42 " apt dist-upgrade --print-uris -qqq
+testsuccessequal "'file:${TMPWORKINGDIRECTORY}/aptarchive/pool/main/foo/foo_2_amd64v3.deb' foo_2_amd64v3.deb 42 " apt dist-upgrade --print-uris -qqq
