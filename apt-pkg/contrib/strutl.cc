@@ -138,6 +138,17 @@ size_t DisplayLength(string_view str)
    return len;
 }
 
+// Splits by whitespace. There may be continuous spans of whitespace - they
+// will be considered as one.
+std::vector<std::string> Split(std::string const &s)
+{
+   std::vector<std::string> vec;
+   std::istringstream iss(s);
+   iss.imbue(std::locale::classic());
+   for (std::string current_s; iss >> current_s;)
+      vec.push_back(current_s);
+   return vec;
+}
 }
 }
 									/*}}}*/
