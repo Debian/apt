@@ -164,6 +164,21 @@ bool SQVMethod::VerifyGetSigners(const char *file, const char *outfile,
 	 keyFiles.push_back(Part);
       }
    }
+   else
+   {
+      std::string buf;
+      for (auto k : keyFiles)
+      {
+	 _error->PushToStack();
+	 FileFd keyFd(k, FileFd::ReadOnly);
+	 _error->RevertToStack();
+	 if (keyFd.IsOpen())
+	    continue;
+
+	 strprintf(buf, "The key(s) in the keyring %s are ignored as the file is not readable by user executing gpgv.\n", k.c_str());
+	 Warning(std::move(buf));
+      }
+   }
 
    if (keyFiles.empty())
       return _error->Error("The signatures couldn't be verified because no keyring is specified");
