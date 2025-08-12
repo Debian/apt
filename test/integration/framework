@@ -547,6 +547,7 @@ exec fakeroot gdb --quiet -ex run '${DPKG:-dpkg}' --args '${DPKG:-dpkg}' --root=
 EOF
 	chmod +x "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg" "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/gdb-dpkg"
 	echo "Dir::Bin::dpkg \"${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg\";" > rootdir/etc/apt/apt.conf.d/99dpkg
+	echo "Dir::dpkg::varianttable \"${TESTDIRECTORY}/varianttable\";" > rootdir/etc/apt/apt.conf.d/99variants
 	# Set the solver for the test case.
 	if [ "$APT_SOLVER" ]; then
 		echo "APT::Solver \"$APT_SOLVER\";" >> aptconfig.conf
