@@ -12,7 +12,6 @@ echo 'APT::Architecture-Variants { "amd64v3"; "amd64v2" }' > 'rootdir/etc/apt/ap
 insertpackage 'unstable' 'foo' 'amd64:amd64v2' '1'
 insertpackage 'unstable' 'foo' 'amd64' '1'
 insertpackage 'unstable' 'foo' 'amd64:amd64v3' '1'
-
 setupaptarchive  --no-update
 
 testsuccessequal "" aptget update -qq

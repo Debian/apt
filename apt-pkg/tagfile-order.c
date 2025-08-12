@@ -9,6 +9,7 @@ static const char *iTFRewritePackageOrder[] = {
    "Package",
    "Package-Type",
    "Architecture",
+   "Architecture-Variant",
    "Subarchitecture", // NO_KEY: Used only by d-i
    "Version",
 // "Revision",         // Obsolete (warning in dpkg)
@@ -71,6 +72,7 @@ static const char *iTFRewriteSourceOrder[] = {
    "Format",
    "Binary",
    "Architecture",
+   "Architecture-Variant",
    "Version",
    "Priority",
 // "Class", // Obsolete alias for Priority, warning by dpkg
