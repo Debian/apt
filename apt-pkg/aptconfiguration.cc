@@ -361,7 +361,8 @@ std::vector<Configuration::ArchitectureVariant> Configuration::getArchitectureVa
    auto const architectures = getArchitectures(cached);
    auto const autoDetect = configuredVariants.size() == 1 && configuredVariants.front() == "auto";
    auto const autoCpuFlags = getCpuFlags();
-   std::ifstream table("/usr/share/dpkg/varianttable");
+   auto tablepath = _config->FindFile("Dir::dpkg::varianttable", DPKG_DATADIR "/varianttable");
+   std::ifstream table(tablepath);
    auto isAutoVariant = [&](auto &var)
    {
       bool res = true;
