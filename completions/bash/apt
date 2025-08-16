@@ -49,7 +49,7 @@ _apt()
         "download" "changelog"
         "moo"
         "modernize-sources"
-        "depends" "rdepends"
+        "depends" "rdepends" "why" "why-not"
         "policy")
 
     local command i
@@ -176,7 +176,7 @@ _apt()
     # specific command arguments
     if [[ -v command ]]; then
         case $command in
-            remove|purge|autoremove|autopurge)
+            remove|purge|autoremove|autopurge|why)
                 if [[ -f /etc/debian_version ]]; then
                     # Debian system
                     COMPREPLY=( $( \
@@ -187,7 +187,7 @@ _apt()
                 fi
                 return 0
                 ;;
-            show|list|download|changelog|depends|rdepends)
+            show|list|download|changelog|depends|rdepends|why-not)
                 COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" \
                     2> /dev/null ) )
                 return 0
