@@ -595,42 +595,46 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
 	 continue;
       // The first Tag must be a request, so search for it
       if (LineStartsWithAndStrip(line, "Request:"))
-	 continue;
+	 break;
+   }
 
-      while (ReadLine(input, line) == true)
+   while (ReadLine(input, line))
+   {
+      // empty lines are the end of the request
+      if (line.empty() == true)
       {
-	 // empty lines are the end of the request
-	 if (line.empty() == true)
-	    return true;
+	 // Clear the architecture cache, since we may have set different ones
+	 APT::Configuration::getArchitectures(false);
+	 return true;
+      }
 
-	 std::list<std::string> *request = NULL;
-	 if (LineStartsWithAndStrip(line, "Install:"))
-	    request = &install;
-	 else if (LineStartsWithAndStrip(line, "Remove:"))
-	    request = &remove;
-	 else if (ReadFlag(flags, line, "Upgrade:", (Request::UPGRADE_ALL | Request::FORBID_REMOVE | Request::FORBID_NEW_INSTALL)) ||
+      std::list<std::string> *request = NULL;
+      if (LineStartsWithAndStrip(line, "Install:"))
+	 request = &install;
+      else if (LineStartsWithAndStrip(line, "Remove:"))
+	 request = &remove;
+      else if (ReadFlag(flags, line, "Upgrade:", (Request::UPGRADE_ALL | Request::FORBID_REMOVE | Request::FORBID_NEW_INSTALL)) ||
 	       ReadFlag(flags, line, "Dist-Upgrade:", Request::UPGRADE_ALL) ||
 	       ReadFlag(flags, line, "Upgrade-All:", Request::UPGRADE_ALL) ||
 	       ReadFlag(flags, line, "Forbid-New-Install:", Request::FORBID_NEW_INSTALL) ||
 	       ReadFlag(flags, line, "Forbid-Remove:", Request::FORBID_REMOVE) ||
 	       ReadFlag(flags, line, "Autoremove:", Request::AUTOREMOVE))
-	    ;
-	 else if (LineStartsWithAndStrip(line, "Architecture:"))
-	    _config->Set("APT::Architecture", line);
-	 else if (LineStartsWithAndStrip(line, "Architectures:"))
-	    _config->Set("APT::Architectures", SubstVar(line, " ", ","));
-	 else if (LineStartsWithAndStrip(line, "Machine-ID"))
-	    _config->Set("APT::Machine-ID", line);
-	 else if (LineStartsWithAndStrip(line, "Solver:"))
-	    ; // purely informational line
-	 else
-	    _error->Warning("Unknown line in EDSP Request stanza: %s", line.c_str());
+	 ;
+      else if (LineStartsWithAndStrip(line, "Architecture:"))
+	 _config->Set("APT::Architecture", line);
+      else if (LineStartsWithAndStrip(line, "Architectures:"))
+	 _config->Set("APT::Architectures", SubstVar(line, " ", ","));
+      else if (LineStartsWithAndStrip(line, "Machine-ID"))
+	 _config->Set("APT::Machine-ID", line);
+      else if (LineStartsWithAndStrip(line, "Solver:"))
+	 ; // purely informational line
+      else
+	 _error->Warning("Unknown line in EDSP Request stanza: %s", line.c_str());
 
-	 if (request == NULL)
-	    continue;
-	 auto const pkgs = VectorizeString(line, ' ');
-	 std::move(pkgs.begin(), pkgs.end(), std::back_inserter(*request));
-      }
+      if (request == NULL)
+	 continue;
+      auto const pkgs = VectorizeString(line, ' ');
+      std::move(pkgs.begin(), pkgs.end(), std::back_inserter(*request));
    }
    return false;
 }									/*}}}*/
