@@ -419,8 +419,11 @@ class APT_PUBLIC pkgCache::PrvIterator : public Iterator<Provides, PrvIterator> 
 	}
 
 	// Iteration
-	inline PrvIterator& operator ++() {if (S != Owner->ProvideP) S = Owner->ProvideP +
-	   (Type == PrvVer?S->NextPkgProv:S->NextProvides); return *this;}
+	inline PrvIterator& operator ++() {
+		if (S != Owner->ProvideP)
+			S = Owner->ProvideP + (Type == PrvVer ? S->NextPkgProv : S->NextProvides);
+		return *this;
+	}
 	inline PrvIterator operator++(int) { PrvIterator const tmp(*this); operator++(); return tmp; }
 
 	// Accessors
