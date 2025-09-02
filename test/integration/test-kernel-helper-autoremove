@@ -39,7 +39,7 @@ testprotected() {
 	testsuccess --nomsg grep '^\^linux-.*-100\\\.0\\\.0-1-generic\$$' protected.list
 
 	msgtest 'Check kernel autoremoval protection list includes' 'running kernel'
-	testsuccess --nomsg grep "^\\^linux-.*-$(uname -r | tr '[A-Z]' '[a-z]' | sed -e 's#\.#\\\\.#g')\\\$\$" protected.list
+	testsuccess --nomsg grep "^\\^linux-.*-$(uname -r | tr '[A-Z]' '[a-z]' | sed -e 's#\.#\\\\.#g' -e 's#\+#\\\\+#g')\\\$\$" protected.list
 
 	msgtest 'Check kernel autoremoval protection list does not include' 'metapackages'
 	testfailure --nomsg grep -e '^\^linux-image-amd64\$$' -e '^\^linux-image-686-pae\$$' -e ':i386' protected.list
