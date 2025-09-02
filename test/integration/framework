@@ -1627,7 +1627,9 @@ testfileequal() {
 
 testempty() {
 	msggroup 'testempty'
+	local PASS_ON_PARAM=''
 	if [ "$1" = '--nomsg' ]; then
+		PASS_ON_PARAM='--with-command'
 		shift
 	else
 		msgtest "Test for no output of" "$*"
@@ -1636,7 +1638,7 @@ testempty() {
 	if "$@" >"$COMPAREFILE" 2>&1 && test ! -s "$COMPAREFILE"; then
 		msgpass
 	else
-		msgfailoutput '' "$COMPAREFILE" "$@"
+		msgfailoutput $PASS_ON_PARAM '' "$COMPAREFILE" "$@"
 	fi
 	aptautotest 'testempty' "$@"
 	msggroup
@@ -1820,18 +1822,25 @@ catfile() {
 }
 msgfailoutput() {
 	msgreportheader 'msgfailoutput'
+	local WITH_COMMAND=false
+	if [ "$1" = '--with-command' ]; then
+		WITH_COMMAND=true
+		shift
+	fi
 	local MSG="$1"
 	local OUTPUT="$2"
 	shift 2
 	local CMD="$1"
+	echo >&2
+	if $WITH_COMMAND; then
+		echo "#### Command: $* ####"
+	fi
 	if [ "$1" = 'grep' -o "$1" = 'tail' -o "$1" = 'head' ]; then
-		echo >&2
 		while [ -n "$2" ]; do shift; done
 		echo "#### Complete file: $1 ####"
 		catfile "$1"
 		echo "#### $CMD output ####"
 	elif [ "$1" = 'test' ]; then
-		echo >&2
 		# doesn't support ! or non-file flags
 		msgfailoutputstatfile() {
 			local FILEFLAGS='^-[bcdefgGhkLOprsStuwx]$'
@@ -1854,7 +1863,6 @@ msgfailoutput() {
 		done
 		echo '#### test output ####'
 	elif [ "$1" = 'cmp' ]; then
-		echo >&2
 		while [ -n "$2" ]; do
 			echo "#### Complete file: $2 ####"
 			catfile "$2"
@@ -1920,7 +1928,9 @@ testsuccesswithglobalerror() {
 	local ERRORS="$2"
 	shift 2
 	msggroup "$TYPE"
+	local PASS_ON_PARAM=''
 	if [ "$1" = '--nomsg' ]; then
+		PASS_ON_PARAM='--with-command'
 		shift
 	else
 		msgtest 'Test for successful execution of' "$*"
@@ -1929,7 +1939,7 @@ testsuccesswithglobalerror() {
 	if "$@" >"${OUTPUT}" 2>&1; then
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if grep -q -E ' runtime error: ' "$OUTPUT"; then
-				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
+				msgfailoutput $PASS_ON_PARAM 'compiler detected undefined behavior' "$OUTPUT" "$@"
 			elif grep -E "^[${ERRORS}]: " "$OUTPUT" > "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" 2>&1; then
 				if [ "$IGNORE_PTY_NOT_MOUNTED" = '1' ]; then
 					if echo 'E: Can not write log (Is /dev/pts mounted?) - posix_openpt (2: No such file or directory)' \
@@ -1939,16 +1949,16 @@ testsuccesswithglobalerror() {
 						| cmp - "${TMPWORKINGDIRECTORY}/rootdir/tmp/checkforwarnings.output" >/dev/null 2>&1; then
 						msgpass
 					else
-						msgfailoutput 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
+						msgfailoutput $PASS_ON_PARAM 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
 					fi
 				else
-					msgfailoutput 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
+					msgfailoutput $PASS_ON_PARAM 'successful run, but output contains warnings/errors' "$OUTPUT" "$@"
 				fi
 			elif [ "$TYPE" = 'testsuccesswithnotice' ]; then
 				if grep -q -E "^N: " "$OUTPUT"; then
 					msgpass
 				else
-					msgfailoutput 'successful run, but output had no notices' "$OUTPUT" "$@"
+					msgfailoutput $PASS_ON_PARAM 'successful run, but output had no notices' "$OUTPUT" "$@"
 				fi
 			else
 				msgpass
@@ -1958,7 +1968,7 @@ testsuccesswithglobalerror() {
 		fi
 	else
 		local EXITCODE=$?
-		msgfailoutput "exitcode $EXITCODE" "$OUTPUT" "$@"
+		msgfailoutput $PASS_ON_PARAM "exitcode $EXITCODE" "$OUTPUT" "$@"
 	fi
 	aptautotest "$TYPE" "$@"
 	msggroup
@@ -1971,7 +1981,9 @@ testsuccess() {
 }
 testwarning() {
 	msggroup 'testwarning'
+	local PASS_ON_PARAM=''
 	if [ "$1" = '--nomsg' ]; then
+		PASS_ON_PARAM='--with-command'
 		shift
 	else
 		msgtest 'Test for successful execution with warnings of' "$*"
@@ -1980,11 +1992,11 @@ testwarning() {
 	if "$@" >"${OUTPUT}" 2>&1; then
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if grep -q -E ' runtime error: ' "$OUTPUT"; then
-				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
+				msgfailoutput $PASS_ON_PARAM 'compiler detected undefined behavior' "$OUTPUT" "$@"
 			elif grep -q -E '^E: ' "$OUTPUT"; then
-				msgfailoutput 'successful run, but output contains errors' "$OUTPUT" "$@"
+				msgfailoutput $PASS_ON_PARAM 'successful run, but output contains errors' "$OUTPUT" "$@"
 			elif ! grep -q -E '^W: ' "$OUTPUT"; then
-				msgfailoutput 'successful run, but output contains no warnings' "$OUTPUT" "$@"
+				msgfailoutput $PASS_ON_PARAM 'successful run, but output contains no warnings' "$OUTPUT" "$@"
 			else
 				msgpass
 			fi
@@ -1993,14 +2005,16 @@ testwarning() {
 		fi
 	else
 		local EXITCODE=$?
-		msgfailoutput "exitcode $EXITCODE" "$OUTPUT" "$@"
+		msgfailoutput $PASS_ON_PARAM "exitcode $EXITCODE" "$OUTPUT" "$@"
 	fi
 	aptautotest 'testwarning' "$@"
 	msggroup
 }
 testfailure() {
 	msggroup 'testfailure'
+	local PASS_ON_PARAM=''
 	if [ "$1" = '--nomsg' ]; then
+		PASS_ON_PARAM='--with-command'
 		shift
 	else
 		msgtest 'Test for failure in execution of' "$*"
@@ -2008,16 +2022,16 @@ testfailure() {
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
 	if "$@" >"${OUTPUT}" 2>&1; then
 		local EXITCODE=$?
-		msgfailoutput "exitcode $EXITCODE" "$OUTPUT" "$@"
+		msgfailoutput $PASS_ON_PARAM "exitcode $EXITCODE" "$OUTPUT" "$@"
 	else
 		local EXITCODE=$?
 		if expr match "$1" '^apt.*' >/dev/null; then
 			if grep -q -E ' runtime error: ' "$OUTPUT"; then
-				msgfailoutput 'compiler detected undefined behavior' "$OUTPUT" "$@"
+				msgfailoutput $PASS_ON_PARAM 'compiler detected undefined behavior' "$OUTPUT" "$@"
 			elif grep -q -E '==ERROR' "$OUTPUT"; then
-				msgfailoutput 'compiler sanitizers reported errors' "$OUTPUT" "$@"
+				msgfailoutput $PASS_ON_PARAM 'compiler sanitizers reported errors' "$OUTPUT" "$@"
 			elif ! grep -q -E '^E: ' "$OUTPUT"; then
-				msgfailoutput "run failed with exitcode ${EXITCODE}, but with no errors" "$OUTPUT" "$@"
+				msgfailoutput $PASS_ON_PARAM "run failed with exitcode ${EXITCODE}, but with no errors" "$OUTPUT" "$@"
 			else
 				msgpass
 			fi

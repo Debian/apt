@@ -29,8 +29,8 @@ testsuccess aptmark auto "$CURRENTKERNEL" "${CURRENTKERNEL}-dbg" "${CURRENTKERNE
 testsuccess aptmark hold "${CURRENTKERNEL}-rt"
 
 testprotected() {
-    testsuccess --nomsg apt -o Debug::PkgAutoRemove=1 autoremove -s
-    grep "Kernel protection regex" rootdir/tmp/testsuccess.output | cut -f2- -d: | tr '|' '\n' | sed 's/\s*//g' | sort -u > protected.list
+	testsuccess apt -o Debug::PkgAutoRemove=1 autoremove -s
+	grep "Kernel protection regex" rootdir/tmp/testsuccess.output | cut -f2- -d: | tr '|' '\n' | sed 's/\s*//g' | sort -u > protected.list
 
 	msgtest 'Check kernel autoremoval protection list' 'can be parsed'
 	testfailure --nomsg grep '^[A-Z]: ' protected.list
