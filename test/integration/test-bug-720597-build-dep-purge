@@ -64,3 +64,12 @@ The following packages will be REMOVED:
   pkgb
 0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
 Remv pkgb [1]' apt autoremove -s
+testsuccess apt purge pkgb pkgc -y
+testsuccess apt build-dep pkgc -y --mark-auto
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  pkgb
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv pkgb [1]' apt autoremove -s

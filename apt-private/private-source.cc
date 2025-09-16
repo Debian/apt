@@ -864,7 +864,7 @@ bool DoBuildDep(CommandLine &CmdL)
       return false;
 
    {
-      if (_config->FindB(AreDoingSatisfy ? "APT::Get::Satisfy-Automatic" : "APT::Get::Build-Dep-Automatic", false) == false)
+      if (_config->FindB(AreDoingSatisfy ? "APT::Get::Satisfy-Automatic" : "APT::Get::Build-Dep-Automatic", false) == false && _config->FindB("APT::Get::Mark-Auto", false) == false)
       {
 	 for (auto const &pkg: removeAgain)
 	 {
