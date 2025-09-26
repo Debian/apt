@@ -38,3 +38,33 @@ Commandline: dummy
 Comment: A test comment
 Install: pkg2:amd64 (1)
 End-Date: dummy" cathistory
+
+normalizedinfo() {
+    apt history-info 0 | sed -E \
+    -e 's/^( *-?Start time *: ).*/\1dummy/' \
+    -e 's/^( *-?End time *: ).*/\1dummy/' \
+    -e 's|^( *-?Command line *: ).*|\1dummy|'
+}
+
+testsuccessequal "Transaction ID: 0
+Start time: dummy
+End time: dummy
+Requested by: 
+Command line: dummy
+Packages changed:
+    Install pkg1:amd64 (1)
+" normalizedinfo
+ 
+# replace aribtrary command line and date with "dummy".
+normalizedlist() {
+    apt history-list | sed -E 's/^([0-9]+)[[:space:]]+'\
+'[^[:space:]]+[[:space:]]+'\
+'[0-9]{4}-[0-9]{2}-[0-9]{2}[[:space:]]+'\
+'[0-9]{2}:[0-9]{2}:[0-9]{2}/'\
+'\1  dummy                    dummy               /'
+}
+
+testsuccessequal "ID Command line             Date and Time          Action    Changes                  
+
+0  dummy                    dummy                  Install   1                        
+1  dummy                    dummy                  Install   1                        " normalizedlist

@@ -22,6 +22,7 @@
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-depends.h>
 #include <apt-private/private-download.h>
+#include <apt-private/private-history.h>
 #include <apt-private/private-install.h>
 #include <apt-private/private-list.h>
 #include <apt-private/private-main.h>
@@ -83,13 +84,17 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"remove", &DoInstall, _("remove packages")},
       {"autoremove", &DoInstall, _("automatically remove all unused packages")},
       {"auto-remove", &DoInstall, nullptr},
-      {"autopurge",&DoInstall, nullptr},
+      {"autopurge", &DoInstall, nullptr},
       {"purge", &DoInstall, nullptr},
 
       // system wide stuff
       {"update", &DoUpdate, _("update list of available packages")},
       {"upgrade", &DoUpgrade, _("upgrade the system by installing/upgrading packages")},
       {"full-upgrade", &DoDistUpgrade, _("upgrade the system by removing/installing/upgrading packages")},
+
+      // history stuff
+      {"history-list", &DoHistoryList, _("show list of history")},
+      {"history-info", &DoHistoryInfo, _("show info on specific transactions")},
 
       // misc
       {"edit-sources", &EditSources, _("edit the source information file")},
@@ -101,11 +106,11 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
 
       // for compat with muscle memory
       {"dist-upgrade", &DoDistUpgrade, nullptr},
-      {"showsrc",&ShowSrcPackage, nullptr},
-      {"depends",&Depends, nullptr},
-      {"rdepends",&RDepends, nullptr},
-      {"policy",&Policy, nullptr},
-      {"build-dep", &DoBuildDep,nullptr},
+      {"showsrc", &ShowSrcPackage, nullptr},
+      {"depends", &Depends, nullptr},
+      {"rdepends", &RDepends, nullptr},
+      {"policy", &Policy, nullptr},
+      {"build-dep", &DoBuildDep, nullptr},
       {"clean", &DoClean, nullptr},
       {"distclean", &DoDistClean, nullptr},
       {"dist-clean", &DoDistClean, nullptr},
@@ -116,8 +121,7 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"changelog", &DoChangelog, nullptr},
       {"info", &ShowPackage, nullptr},
 
-      {nullptr, nullptr, nullptr}
-   };
+      {nullptr, nullptr, nullptr}};
 }
 									/*}}}*/
 int main(int argc, const char *argv[])					/*{{{*/
