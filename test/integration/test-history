@@ -68,3 +68,22 @@ testsuccessequal "ID Command line             Date and Time          Action    C
 
 0  dummy                    dummy                  Install   1                        
 1  dummy                    dummy                  Install   1                        " normalizedlist
+
+msgmsg "Actionless group"
+cat > rootdir/var/log/apt/history.log << EOF
+Start-Date: dummy
+Commandline: install nothing
+End-Date: dummy
+EOF
+
+testsuccessequal "ID Command line             Date and Time          Action    Changes                  
+
+0  install nothing          dummy                            0                        " normalizedlist
+
+testsuccessequal "Transaction ID: 0
+Start time: dummy
+End time: dummy
+Requested by: 
+Command line: install nothing
+Packages changed:" normalizedinfo
+ 

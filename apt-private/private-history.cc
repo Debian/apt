@@ -103,7 +103,8 @@ static std::string GetKindString(const Entry &entry)
       kindGroup += ",";
    }
    // remove trailing ","
-   kindGroup.pop_back();
+   if (not kindGroup.empty())
+      kindGroup.pop_back();
    return kindGroup;
 }
 
