@@ -43,14 +43,14 @@ normalizedinfo() {
     apt history-info 0 | sed -E \
     -e 's/^( *-?Start time *: ).*/\1dummy/' \
     -e 's/^( *-?End time *: ).*/\1dummy/' \
-    -e 's|^( *-?Command line *: ).*|\1dummy|'
+    -e 's|^( *-?Command line *: ).*/(.*)|\1\2|'
 }
 
 testsuccessequal "Transaction ID: 0
 Start time: dummy
 End time: dummy
 Requested by: 
-Command line: dummy
+Command line: apt-get install pkg1
 Packages changed:
     Install pkg1:amd64 (1)
 " normalizedinfo
