@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2012-06-28 20:49+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -1326,6 +1326,35 @@ msgstr "Poslať scénár riešiteľovi"
 msgid "External planner failed without a proper error message"
 msgstr "Externý riešiteľ zlyhal bez uvedenia chybovej správy"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "Nepodarilo sa prečítať súbor „%s“ na zrkadle"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Nedá sa otvoriť súbor %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Nedá sa otvoriť súbor %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Nedá sa otvoriť súbor %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1846,6 +1875,118 @@ msgstr "Na %s nemáte dostatok voľného miesta."
 msgid "Unable to lock the download directory"
 msgstr "Adresár pre sťahovanie sa nedá zamknúť"
 
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Install"
+msgstr "Inštaluje sa %s"
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "Reinstall"
+msgstr " [Nainštalovaný]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu degradovaných, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "Odstránený balík %s"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "automatic"
+msgstr " [Nainštalovaný]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Neboli nájdené žiadne balíky"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Nie je možné preložiť „%s“"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s nie je platný balík DEB."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
+
 #: apt-private/private-install.cc
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
@@ -1899,8 +2040,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"Niektoré archívy sa nedajú stiahnuť. Skúste spustiť apt update alebo --"
-"fix-missing"
+"Niektoré archívy sa nedajú stiahnuť. Skúste spustiť apt update alebo --fix-"
+"missing"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -3360,6 +3501,15 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -4173,9 +4323,6 @@ msgstr "Prázdne súbory nemôžu byť platné archívy"
 #~ msgid "Unable to change to %s"
 #~ msgstr "Nedá sa prejsť do %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "Odstránený balík %s"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "Súbor balíkov %s je neaktuálny."
 
@@ -4186,9 +4333,6 @@ msgstr "Prázdne súbory nemôžu byť platné archívy"
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "Na zrkadle nebol nájdený súbor „%s“"
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "Nepodarilo sa prečítať súbor „%s“ na zrkadle"
 
 #, fuzzy
 #~ msgid "No entry found in mirror file '%s'"
@@ -4478,9 +4622,6 @@ msgstr "Prázdne súbory nemôžu byť platné archívy"
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "Vnútorná chyba, AllUpgrade pokazil veci"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s nie je platný balík DEB."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

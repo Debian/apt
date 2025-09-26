@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.6.0\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2023-04-19 15:15+0300\n"
 "Last-Translator: Mert Dirik <mertdirik@gmail.com>\n"
 "Language-Team: Debian l10n Turkish <debian-l10n-turkish@lists.debian.org>\n"
@@ -1363,6 +1363,35 @@ msgstr "Planlamacıya senaryo gönder"
 msgid "External planner failed without a proper error message"
 msgstr "Harici planlamacı düzgün bir hata iletisi göstermeden başarısız oldu"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "Yansı dosyası %s okunamıyor"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "%s dosyası açılamadı"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "%s dosyası açılamadı"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "%s dosyası açılamadı"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1895,6 +1924,124 @@ msgstr "%s içinde yeterli boş alanınız yok."
 #: apt-private/private-download.cc
 msgid "Unable to lock the download directory"
 msgstr "İndirme dizini kilitlenemiyor"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Install"
+msgstr "%s kuruluyor"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[kurulu]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu paketin sürümü düşürülecek, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "%s kaldırıldı"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Command line"
+msgstr "Komutlar:"
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[kurulu,otomatik]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Comment"
+msgstr "Komutlar:"
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Hiç paket bulunamadı"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "'%s' çözümlenemedi"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s geçerli bir DEB paketi değil."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3428,6 +3575,15 @@ msgstr "Sistemi yükselt (paket kurarak ve yükselterek)"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "Sistemi yükselt (paket kurarak, yükselterek ve kaldırarak)"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4267,9 +4423,6 @@ msgstr "Boş dosyalar geçerli birer arşiv dosyası olamazlar"
 #~ msgid "Unable to change to %s"
 #~ msgstr "%s olarak değiştirilemedi"
 
-#~ msgid "Removed %s"
-#~ msgstr "%s kaldırıldı"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "%s paket dosyası eş zamanlı değil."
 
@@ -4279,9 +4432,6 @@ msgstr "Boş dosyalar geçerli birer arşiv dosyası olamazlar"
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "'%s' yansı dosyası bulunamadı "
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "Yansı dosyası %s okunamıyor"
 
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "'%s' yansı dosyasında hiç girdi bulunmuyor"
@@ -4377,9 +4527,6 @@ msgstr "Boş dosyalar geçerli birer arşiv dosyası olamazlar"
 #~ "\n"
 #~ "apt-cache APT'nin ikili paket önbelleğindeki dosyaları\n"
 #~ "sorgulamakta kullanılan alt seviye bir araçtır.\n"
-
-#~ msgid "Commands:"
-#~ msgstr "Komutlar:"
 
 #~ msgid ""
 #~ "Options:\n"
@@ -4631,9 +4778,6 @@ msgstr "Boş dosyalar geçerli birer arşiv dosyası olamazlar"
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "İç hata, AllUpgrade bazı şeyleri bozdu"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s geçerli bir DEB paketi değil."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

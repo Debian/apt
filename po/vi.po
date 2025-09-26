@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2014-09-12 13:48+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -1341,6 +1341,35 @@ msgstr "Gửi kịch bản đến bộ phân giải"
 msgid "External planner failed without a proper error message"
 msgstr "Bộ phân giải bên ngoài gặp lỗi mà không trả về thông tin lỗi thích hợp"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "Không thể đọc tập tin bản sao “%s”"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Không thể mở tập tin %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Không thể mở tập tin %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Không thể mở tập tin %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1862,6 +1891,124 @@ msgstr "Bạn không có đủ dung lượng đĩa còn trống trong %s."
 #: apt-private/private-download.cc
 msgid "Unable to lock the download directory"
 msgstr "Không thể khoá thư mục tải về"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Install"
+msgstr "Đang cài đặt %s"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[đã cài đặt]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu bị hạ cấp, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "Đã gỡ bỏ %s"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Command line"
+msgstr "Các lệnh:"
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[đã cài đặt,tự động]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Comment"
+msgstr "Các lệnh:"
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Không tìm thấy gói"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Không thể phân giải “%s”"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s không phải là một gói DEB hợp lệ."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3376,6 +3523,15 @@ msgstr "nâng cấp các gói trong hệ thống"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "nâng cấp hệ thống bằng cách gỡ bỏ, cài đặt, nâng cấp các gói"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4209,9 +4365,6 @@ msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
 #~ msgid "Unable to change to %s"
 #~ msgstr "Không thể chuyển đổi sang %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "Đã gỡ bỏ %s"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "Tập tin gói %s không đồng bộ được."
 
@@ -4223,9 +4376,6 @@ msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "Không tìm thấy tập tin bản sao “%s” "
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "Không thể đọc tập tin bản sao “%s”"
 
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "Không tìm thấy điểm vào trong tập tin bản sao “%s”"
@@ -4321,9 +4471,6 @@ msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
 #~ "\n"
 #~ "apt-cache là một công cụ ở mức thấp dùng để truy vấn\n"
 #~ "thông tin từ các tập tin bộ nhớ tạm nhị phân của APT.\n"
-
-#~ msgid "Commands:"
-#~ msgstr "Các lệnh:"
 
 #~ msgid ""
 #~ "Options:\n"
@@ -4543,9 +4690,6 @@ msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
 
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "Lỗi nội bộ: Lệnh nâng cấp đã làm hỏng thứ gì đó"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s không phải là một gói DEB hợp lệ."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

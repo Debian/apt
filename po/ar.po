@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2006-10-20 21:28+0300\n"
 "Last-Translator: Ossama M. Khayat <okhayat@yahoo.com>\n"
 "Language-Team: Arabic <support@arabeyes.org>\n"
@@ -1282,6 +1282,31 @@ msgstr ""
 msgid "External planner failed without a proper error message"
 msgstr ""
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+msgid "Cannot find history files: %s"
+msgstr "فشل إغلاق الملف %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+msgid "Could not open file: %s"
+msgstr "فشل إغلاق الملف %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+msgid "Could not parse file: %s"
+msgstr "فشل إغلاق الملف %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+msgid "Could not close file: %s"
+msgstr "فشل إغلاق الملف %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1784,6 +1809,116 @@ msgstr "ليس هناك مساحة كافية في %s."
 msgid "Unable to lock the download directory"
 msgstr "تعذر قَفْل دليل التنزيل"
 
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "Install"
+msgstr "تم تثبيت %s"
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "Reinstall"
+msgstr " [مُثبّتة]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu مثبطة، "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "تم إزالة %s"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "automatic"
+msgstr " [مُثبّتة]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "لم يُعثر على أية حزم"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+msgid "Could not read: %s"
+msgstr "فشل إغلاق الملف %s"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s ليس حزمة DEB صالحة."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
+
 #: apt-private/private-install.cc
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
@@ -1833,8 +1968,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"تعذر إحضار بعض الأرشيف، ربما يمكنك محاولة تنفيذ apt update أو إضافة --"
-"fix-missing؟"
+"تعذر إحضار بعض الأرشيف، ربما يمكنك محاولة تنفيذ apt update أو إضافة --fix-"
+"missing؟"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -3202,6 +3337,15 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -3862,13 +4006,6 @@ msgstr ""
 #~ msgid "Duplicate conf file %s/%s"
 #~ msgstr "ملف تهيئة مُزدوج %s/%s"
 
-#~ msgid "Removed %s"
-#~ msgstr "تم إزالة %s"
-
-#, fuzzy
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "فشل إغلاق الملف %s"
-
 #, fuzzy
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "فشل إغلاق الملف %s"
@@ -3923,9 +4060,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "خطأ داخلي، عطب AllUpgrade بعض الأشياء"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s ليس حزمة DEB صالحة."
 
 #~ msgid "MD5Sum mismatch"
 #~ msgstr "MD5Sum غير متطابقة"

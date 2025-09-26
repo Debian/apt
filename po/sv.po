@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2025-02-12 22:07+0100\n"
 "Last-Translator: Peter Krefting <peter@softwolves.pp.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@lists.debian.org>\n"
@@ -1357,6 +1357,35 @@ msgstr "Skicka scenario till planerare"
 msgid "External planner failed without a proper error message"
 msgstr "Extern planerare misslyckades utan något informativt felmeddelande"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "Kan inte läsa spegelfilen ”%s”"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Kunde inte öppna filen %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Kunde inte öppna filen %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Kunde inte öppna filen %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1890,6 +1919,128 @@ msgstr "Du har inte tillräckligt mycket ledigt utrymme i %s."
 msgid "Unable to lock the download directory"
 msgstr "Kunde inte låsa hämtningskatalogen"
 
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing:"
+msgid "Install"
+msgstr "Installerar:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[installerat]"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Upgrading:"
+msgid "Upgrade"
+msgstr "Uppgraderar:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu att nedgradera, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "Tog bort %s"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Command line"
+msgstr "Kommandon:"
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[installerat,automatiskt]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Error:"
+msgid "Error"
+msgstr "Fel:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Comment"
+msgstr "Kommandon:"
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Inga paket hittades"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Kunde inte slå upp ”%s”"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s är inte ett giltigt DEB-paket."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
+
 #: apt-private/private-install.cc
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
@@ -1945,8 +2096,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"Vissa arkiv kunde inte hämtas. Prova att köra ”apt update” eller med --"
-"fix-missing."
+"Vissa arkiv kunde inte hämtas. Prova att köra ”apt update” eller med --fix-"
+"missing."
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -3404,6 +3555,15 @@ msgstr "uppgradera systemet genom att installera/uppgradera paket"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "uppgradera systemet genom att ta bort/installera/uppgradera paket"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4245,9 +4405,6 @@ msgstr "Tomma filer kan inte vara giltiga arkiv"
 #~ msgid "Unable to change to %s"
 #~ msgstr "Kunde inte byta till %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "Tog bort %s"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "Paketfilen %s är inte synkroniserad."
 
@@ -4258,9 +4415,6 @@ msgstr "Tomma filer kan inte vara giltiga arkiv"
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "Ingen spegelfil ”%s” hittades "
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "Kan inte läsa spegelfilen ”%s”"
 
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "Ingen post funnen i spegelfilen ”%s”"
@@ -4356,9 +4510,6 @@ msgstr "Tomma filer kan inte vara giltiga arkiv"
 #~ "\n"
 #~ "apt-cache är ett lågnivåverktyg för att hämta information\n"
 #~ "från APTs binära cachefiler\n"
-
-#~ msgid "Commands:"
-#~ msgstr "Kommandon:"
 
 #~ msgid ""
 #~ "Options:\n"
@@ -4617,9 +4768,6 @@ msgstr "Tomma filer kan inte vara giltiga arkiv"
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "Internt fel, AllUpgrade förstörde något"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s är inte ett giltigt DEB-paket."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

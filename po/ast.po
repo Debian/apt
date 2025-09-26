@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.18\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2010-10-02 23:35+0100\n"
 "Last-Translator: Iñigo Varela <ivarela@softastur.org>\n"
 "Language-Team: Asturian (ast)\n"
@@ -1321,6 +1321,34 @@ msgstr ""
 msgid "External planner failed without a proper error message"
 msgstr ""
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+msgid "Cannot find history files: %s"
+msgstr "Nun s'alcontró ficheru espeyu '%s'"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Nun se pudo abrir el ficheru %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Nun se pudo abrir el ficheru %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Nun se pudo abrir el ficheru %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1840,6 +1868,118 @@ msgstr "Nun tienes espaciu libre bastante en %s."
 #: apt-private/private-download.cc
 msgid "Unable to lock the download directory"
 msgstr "Nun pue bloquiase'l direutoriu de descarga"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Install"
+msgstr "Instalando %s"
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "Reinstall"
+msgstr " [Instaláu]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu desactualizaos, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "%s desinstaláu"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "automatic"
+msgstr " [Instaláu]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Nun s'alcontraron paquetes"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Nun se pudo resolver '%s'"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s nun ye un paquete DEB válidu."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3335,6 +3475,15 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -4148,9 +4297,6 @@ msgstr ""
 #~ msgid "Unable to change to %s"
 #~ msgstr "Nun se pudo cambiar a %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "%s desinstaláu"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "El ficheru de paquetes %s nun ta sincronizáu."
 
@@ -4161,10 +4307,6 @@ msgstr ""
 #~ "pal paquete %s."
 
 #~ msgid "No mirror file '%s' found "
-#~ msgstr "Nun s'alcontró ficheru espeyu '%s'"
-
-#, fuzzy
-#~ msgid "Can not read mirror file '%s'"
 #~ msgstr "Nun s'alcontró ficheru espeyu '%s'"
 
 #, fuzzy
@@ -4413,9 +4555,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "Error internu, AllUpgrade rompió coses"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s nun ye un paquete DEB válidu."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

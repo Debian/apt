@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~rc2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2017-03-02 23:51+0200\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <debian-l10n-danish@lists.debian.org>\n"
@@ -1361,6 +1361,35 @@ msgstr "Send scenarie til planlægger"
 msgid "External planner failed without a proper error message"
 msgstr "Ekstern planlægger mislykkedes uden en korrekt fejlbesked"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "Kan ikke læse spejlfil »%s«"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Kunne ikke åbne filen %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Kunne ikke åbne filen %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Kunne ikke åbne filen %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1889,6 +1918,119 @@ msgstr "Du har ikke nok ledig plads i %s."
 msgid "Unable to lock the download directory"
 msgstr "Kunne ikke låse nedhentningsmappen"
 
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Install"
+msgstr "Installerer %s"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[Installeret]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu nedgraderes, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "Fjernede %s"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[Installeret,automatisk]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Fandt ingen pakker"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Kunne ikke omsætte navnet »%s«"
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "'%s' not a valid ID."
+msgstr ""
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
+
 #: apt-private/private-install.cc
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
@@ -1942,8 +2084,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"Kunne ikke hente nogle af arkiverne. Prøv evt. at køre »apt update« "
-"eller prøv med --fix-missing."
+"Kunne ikke hente nogle af arkiverne. Prøv evt. at køre »apt update« eller "
+"prøv med --fix-missing."
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -3426,6 +3568,15 @@ msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 "full-upgrade - opgradere systemet ved at fjerne/installere/opgradere pakker"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4248,9 +4399,6 @@ msgstr "Tomme filer kan ikke være gyldige arkiver"
 #~ msgid "Unable to change to %s"
 #~ msgstr "Kunne ikke skifte til %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "Fjernede %s"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "Pakkefilen %s er ude af trit."
 
@@ -4261,9 +4409,6 @@ msgstr "Tomme filer kan ikke være gyldige arkiver"
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "Ingen spejlfil »%s« fundet "
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "Kan ikke læse spejlfil »%s«"
 
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "Ingen post fundet i spejlfil »%s«"

@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.30\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2025-02-26 11:30+0300\n"
 "Last-Translator: Алексей Шилин <shilin.aleksej@gmail.com>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -1386,6 +1386,35 @@ msgid "External planner failed without a proper error message"
 msgstr ""
 "Внешний планировщик завершился с ошибкой, не передав сообщения об ошибке"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "Невозможно прочитать файл на зеркале «%s»"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Не удалось открыть файл %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Не удалось открыть файл %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Не удалось открыть файл %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1925,6 +1954,128 @@ msgstr "Недостаточно свободного места в %s."
 msgid "Unable to lock the download directory"
 msgstr "Невозможно заблокировать каталог загрузки"
 
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing:"
+msgid "Install"
+msgstr "Установка:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[установлен]"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Upgrading:"
+msgid "Upgrade"
+msgstr "Обновление:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu пакетов заменено на старые версии, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "Удалён %s"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Command line"
+msgstr "Команды:"
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[установлен, автоматически]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Error:"
+msgid "Error"
+msgstr "Ошибка:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Comment"
+msgstr "Команды:"
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Не найдено ни одного пакета"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Не удалось разрешить «%s»"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s не является правильным DEB-пакетом."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
+
 #: apt-private/private-install.cc
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
@@ -1979,8 +2130,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"Не удалось получить некоторые архивы; возможно, нужно запустить apt "
-"update или попытаться повторить запуск с ключом --fix-missing?"
+"Не удалось получить некоторые архивы; возможно, нужно запустить apt update "
+"или попытаться повторить запуск с ключом --fix-missing?"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -3460,6 +3611,15 @@ msgstr "обновить систему, устанавливая/обновля
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "обновить систему, удаляя/устанавливая/обновляя пакеты"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4312,9 +4472,6 @@ msgstr "Пустые файлы не могут быть допустимыми 
 #~ msgid "Unable to change to %s"
 #~ msgstr "Невозможно сменить текущий каталог на %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "Удалён %s"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "Список пакетов %s рассинхронизирован."
 
@@ -4324,9 +4481,6 @@ msgstr "Пустые файлы не могут быть допустимыми 
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "Файл «%s» не найден на зеркале"
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "Невозможно прочитать файл на зеркале «%s»"
 
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "Не найден элемент в файл на зеркале «%s»"
@@ -4424,9 +4578,6 @@ msgstr "Пустые файлы не могут быть допустимыми 
 #~ "\n"
 #~ "apt-cache — низкоуровневый инструмент для поиска\n"
 #~ "информации в двоичных кэш-файлах APT\n"
-
-#~ msgid "Commands:"
-#~ msgstr "Команды:"
 
 #~ msgid ""
 #~ "Options:\n"
@@ -4649,9 +4800,6 @@ msgstr "Пустые файлы не могут быть допустимыми 
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "Внутренняя ошибка, AllUpgrade всё поломал"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s не является правильным DEB-пакетом."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

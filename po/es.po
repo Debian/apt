@@ -37,7 +37,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2016-01-26 01:51+0100\n"
 "Last-Translator: Manuel \"Venturi\" Porras Peralta "
 "<venturi@openmailbox.org>\n"
@@ -1461,6 +1461,35 @@ msgstr "Enviar situación al solucionador"
 msgid "External planner failed without a proper error message"
 msgstr "Falló solucionador externo sin un mensaje de error apropiado"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "No se puede leer el archivo de réplica «%s»"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "No pude abrir el fichero %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "No pude abrir el fichero %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "No pude abrir el fichero %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1994,6 +2023,124 @@ msgstr "No tiene suficiente espacio libre en %s."
 msgid "Unable to lock the download directory"
 msgstr "No se puede bloquear el directorio de descarga"
 
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Install"
+msgstr "Instalando %s"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[instalado]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu desactualizados, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "%s eliminado"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Command line"
+msgstr "Órdenes:"
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[instalado, automático]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Comment"
+msgstr "Órdenes:"
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "No se encontró ningún paquete"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "No se pudo resolver «%s»"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s no es un paquete DEB válido."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
+
 #: apt-private/private-install.cc
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
@@ -2048,8 +2195,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"No se pudieron obtener algunos archivos, ¿quizás deba ejecutar «apt "
-"update» o deba intentarlo de nuevo con --fix-missing?"
+"No se pudieron obtener algunos archivos, ¿quizás deba ejecutar «apt update» "
+"o deba intentarlo de nuevo con --fix-missing?"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -3545,6 +3692,15 @@ msgstr "actualiza el sistema instalando/actualizando paquetes"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "actualiza el sistema eliminando/instalando/actualizando paquetes"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4372,9 +4528,6 @@ msgstr "Los ficheros vacíos no pueden ser archivos válidos"
 #~ msgid "Unable to change to %s"
 #~ msgstr "No se pudo cambiar a %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "%s eliminado"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "El archivo de paquetes %s está desincronizado."
 
@@ -4386,9 +4539,6 @@ msgstr "Los ficheros vacíos no pueden ser archivos válidos"
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "No se encontró el archivo de réplica «%s»"
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "No se puede leer el archivo de réplica «%s»"
 
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "No se encontró ninguna entrada en el archivo de réplica «%s»"
@@ -4485,9 +4635,6 @@ msgstr "Los ficheros vacíos no pueden ser archivos válidos"
 #~ "\n"
 #~ "apt-cache es una herramienta de bajo nivel que se utiliza para consultar\n"
 #~ "información sobre los archivos binarios de caché de APT\n"
-
-#~ msgid "Commands:"
-#~ msgstr "Órdenes:"
 
 #~ msgid ""
 #~ "Options:\n"
@@ -4711,9 +4858,6 @@ msgstr "Los ficheros vacíos no pueden ser archivos válidos"
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "Error Interno, AllUpgrade rompió cosas"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s no es un paquete DEB válido."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

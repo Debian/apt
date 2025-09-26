@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2014-12-12 13:00+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@debian.org>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -1304,6 +1304,35 @@ msgstr "ส่งสภาวการณ์ไปยังกลไกการ
 msgid "External planner failed without a proper error message"
 msgstr "กลไกการแก้ปัญหาภายนอกทำงานล้มเหลวโดยไม่มีข้อความข้อผิดพลาดที่เหมาะสม"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "ไม่สามารถอ่านแฟ้มแหล่งสำเนา '%s'"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "ไม่สามารถเปิดแฟ้ม %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "ไม่สามารถเปิดแฟ้ม %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "ไม่สามารถเปิดแฟ้ม %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1816,6 +1845,124 @@ msgstr "คุณมีพื้นที่ว่างเหลือไม่
 #: apt-private/private-download.cc
 msgid "Unable to lock the download directory"
 msgstr "ไม่สามารถล็อคไดเรกทอรีดาวน์โหลด"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Install"
+msgstr "กำลังติดตั้ง %s"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[ติดตั้งอยู่]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "ปรับรุ่นลง %lu, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "ถอดถอน %s แล้ว"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Command line"
+msgstr "คำสั่ง:"
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[ติดตั้งอยู่,อัตโนมัติ]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Comment"
+msgstr "คำสั่ง:"
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "ไม่พบแพกเกจ"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "ไม่สามารถเปิดหาที่อยู่ '%s'"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s ไม่ใช่แพกเกจ DEB ที่ใช้การได้"
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3297,6 +3444,15 @@ msgstr "ปรับรุ่นระบบโดยติดตั้ง/ป�
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "ปรับรุ่นระบบโดยถอดถอน/ติดตั้ง/ปรับรุ่นแพกเกจต่างๆ"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4098,9 +4254,6 @@ msgstr "แฟ้มว่างเปล่าไม่สามารถเป
 #~ msgid "Unable to change to %s"
 #~ msgstr "ไม่สามารถเปลี่ยนไดเรกทอรีไปยัง %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "ถอดถอน %s แล้ว"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "ข้อมูลแฟ้ม Package %s ไม่ตรงกับความเป็นจริง"
 
@@ -4110,9 +4263,6 @@ msgstr "แฟ้มว่างเปล่าไม่สามารถเป
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "ไม่พบแฟ้มแหล่งสำเนา '%s'"
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "ไม่สามารถอ่านแฟ้มแหล่งสำเนา '%s'"
 
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "ไม่พบรายการในแฟ้มแหล่งสำเนา '%s'"
@@ -4199,9 +4349,6 @@ msgstr "แฟ้มว่างเปล่าไม่สามารถเป
 #~ "       apt-cache [ตัวเลือก] show pkg1 [pkg2 ...]\n"
 #~ "\n"
 #~ "apt-cache เป็นเครื่องมือระดับล่างสำหรับสืบค้นข้อมูลจากแฟ้มแคชไบนารีของ APT\n"
-
-#~ msgid "Commands:"
-#~ msgstr "คำสั่ง:"
 
 #~ msgid ""
 #~ "Options:\n"
@@ -4404,9 +4551,6 @@ msgstr "แฟ้มว่างเปล่าไม่สามารถเป
 
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "เกิดข้อผิดพลาดภายใน: การปรับรุ่นทำความเสียหาย"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s ไม่ใช่แพกเกจ DEB ที่ใช้การได้"
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

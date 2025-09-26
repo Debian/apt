@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -1288,6 +1288,34 @@ msgstr ""
 msgid "External planner failed without a proper error message"
 msgstr ""
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+msgid "Cannot find history files: %s"
+msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1809,6 +1837,117 @@ msgstr "%s ནང་ཁྱོད་ལུ་བར་སྟོང་དལཝ་
 #: apt-private/private-download.cc
 msgid "Unable to lock the download directory"
 msgstr "ཕབ་ལེན་འབད་ནིའི་སྣོད་ཡིག་འདི་ལྡེ་མིག་རྐྱབས་མ་ཚུགས་པས།"
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "Install"
+msgstr "གཞི་བཙུགས་འབད་ཡོད་པའི་%s།"
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "Reinstall"
+msgstr " [གཞི་བཙུགས་འབད་ཡོད།]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu་འདི་མར་ཕབ་འབད་ཡོད།"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "རྩ་བསྐྲད་བཏང་ཡོད་པའི་%s"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "automatic"
+msgstr " [གཞི་བཙུགས་འབད་ཡོད།]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "ཐུམ་སྒྲིལ་ཚུ་མ་ཐོབ།"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "'%s'མོས་མཐུན་འབད་མ་ཚུགས།"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s འདི་ནུས་ཅན་གྱི་ ཌི་ཨི་བི་ཅིག་མེན་པས།"
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3291,6 +3430,15 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -4106,9 +4254,6 @@ msgstr ""
 #~ msgid "Unable to change to %s"
 #~ msgstr "%s་ལུ་བསྒྱུར་བཅོས་འབད་མ་ཚུགས།"
 
-#~ msgid "Removed %s"
-#~ msgstr "རྩ་བསྐྲད་བཏང་ཡོད་པའི་%s"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "ཐུམ་སྒྲིལ་ཡིག་སྣོད་ %sའདི་མཉམ་འབྱུང་གི་ཕྱི་ཁར་ཨིན་པས།"
 
@@ -4116,10 +4261,6 @@ msgstr ""
 #~ "The package index files are corrupted. No Filename: field for package %s."
 #~ msgstr ""
 #~ "ཐུམ་སྒྲིལ་ ཟུར་ཐོ་ཡིག་སྣོད་ཚུ་ངན་ཅན་འགྱོ་ནུག  ཡིག་སྣོད་ཀྱི་མིང་མིན་འདུག: %s་ཐུམ་སྒྲིལ་གྱི་དོན་ལུ་ས་སྒོ།"
-
-#, fuzzy
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
 
 #, fuzzy
 #~ msgid "No entry found in mirror file '%s'"
@@ -4354,9 +4495,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "ནང་འགོད་འཛོལ་བ་  ཡར་བསྐྱེད་ཀྱི་ཅ་ཆས་ཆ་མཉམ་མེདཔ་ཐལ་ཡོད།"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s འདི་ནུས་ཅན་གྱི་ ཌི་ཨི་བི་ཅིག་མེན་པས།"
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

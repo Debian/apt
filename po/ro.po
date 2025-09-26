@@ -28,7 +28,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.35\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2025-03-29 00:56+0100\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
@@ -1427,6 +1427,34 @@ msgstr ""
 msgid "External planner failed without a proper error message"
 msgstr "Planificatorul extern a eșuat fără un mesaj de eroare relevant"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+msgid "Cannot find history files: %s"
+msgstr "Nu s-a putut deschide fișierul %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Nu s-a putut deschide fișierul %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Nu s-a putut deschide fișierul %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Nu s-a putut deschide fișierul %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1983,6 +2011,124 @@ msgstr "Nu aveți suficient spațiu liber în %s."
 #: apt-private/private-download.cc
 msgid "Unable to lock the download directory"
 msgstr "Nu s-a putut bloca directorul de descărcare"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing:"
+msgid "Install"
+msgstr "Se instalează:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[Instalat]"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Upgrading:"
+msgid "Upgrade"
+msgstr "Se înnoiește:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu retrogragradat(e), "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "Șters %s"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[Instalat, automat]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Error:"
+msgid "Error"
+msgstr "Eroare:"
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Nu s-au găsit pachete"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Nu s-a putut rezolva „%s”"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s nu este un pachet DEB valid."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3564,6 +3710,15 @@ msgstr "înnoiește sistemul prin instalarea/înnoirea pachetelor"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "înnoiește sistemul prin eliminarea/instalarea/înnoirea pachetelor"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4417,9 +4572,6 @@ msgstr "Fișierele goale nu pot fi arhive valide"
 #~ msgid "Unable to change to %s"
 #~ msgstr "Nu pot schimba la %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "Șters %s"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "Fișierul pachetului %s este desincronizat."
 
@@ -4428,10 +4580,6 @@ msgstr "Fișierele goale nu pot fi arhive valide"
 #~ msgstr ""
 #~ "Fișierele index de pachete sunt deteriorate. Fără câmpul 'nume fișier:' "
 #~ "la pachetul %s."
-
-#, fuzzy
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "Nu s-a putut deschide fișierul %s"
 
 #, fuzzy
 #~ msgid "No entry found in mirror file '%s'"
@@ -4675,9 +4823,6 @@ msgstr "Fișierele goale nu pot fi arhive valide"
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "Eroare internă, înnoire totală a defectat diverse chestiuni"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s nu este un pachet DEB valid."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

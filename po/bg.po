@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -1356,6 +1356,35 @@ msgstr ""
 "Външната програма за удовлетворяване на зависимости се провали без да изведе "
 "съобщение за грешка"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "Грешка при четене файла „%s“ от огледалния сървър"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Неуспех при отварянето на файла %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Неуспех при отварянето на файла %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Неуспех при отварянето на файла %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1882,6 +1911,118 @@ msgstr "Нямате достатъчно свободно пространст�
 msgid "Unable to lock the download directory"
 msgstr "Неуспех при заключването на директорията за изтегляне"
 
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Install"
+msgstr "Инсталиране на %s"
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "Reinstall"
+msgstr " [Инсталиран]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu върнати към по-стара версия, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "%s е премахнат"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "automatic"
+msgstr " [Инсталиран]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Няма намерени пакети"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Неуспех при намирането на IP адреса на „%s“"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s не е валиден DEB пакет."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
+
 #: apt-private/private-install.cc
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
@@ -1936,8 +2077,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"Неуспех при изтеглянето на някои архиви, може да изпълните „apt update“ "
-"или да опитате с „--fix-missing“?"
+"Неуспех при изтеглянето на някои архиви, може да изпълните „apt update“ или "
+"да опитате с „--fix-missing“?"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -3388,6 +3529,15 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -4212,9 +4362,6 @@ msgstr "Празни файлове не могат да бъдат валидн
 #~ msgid "Unable to change to %s"
 #~ msgstr "Неуспех при преминаването в %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "%s е премахнат"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "Пакетният файл %s не е синхронизиран."
 
@@ -4226,9 +4373,6 @@ msgstr "Празни файлове не могат да бъдат валидн
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "Файлът „%s“ на огледалния сървър не е намерен "
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "Грешка при четене файла „%s“ от огледалния сървър"
 
 #, fuzzy
 #~ msgid "No entry found in mirror file '%s'"
@@ -4536,9 +4680,6 @@ msgstr "Празни файлове не могат да бъдат валидн
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "Вътрешна грешка, „AllUpgrade“ счупи нещо в системата"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s не е валиден DEB пакет."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

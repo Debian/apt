@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2020-12-30 12:20+0200\n"
 "Last-Translator: Vangelis Skarmoutsos <skarmoutsosv@gmail.com>\n"
 "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
@@ -1307,6 +1307,34 @@ msgstr ""
 msgid "External planner failed without a proper error message"
 msgstr ""
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+msgid "Cannot find history files: %s"
+msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1831,6 +1859,120 @@ msgstr "Δεν διαθέτετε αρκετό ελεύθερο χώρο στο 
 msgid "Unable to lock the download directory"
 msgstr "Αδύνατο το κλείδωμα του καταλόγου μεταφόρτωσης"
 
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Install"
+msgstr "Εγκατάσταση του %s"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[εγκατεστημένα]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu υποβαθμισμένα, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "Αφαίρεσα το %s"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[εγκατεστημένα,αυτόματα]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Δε βρέθηκαν πακέτα"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Αδύνατη η εύρεση του '%s'"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "Το %s δεν είναι έγκυρο πακέτο DEB."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
+
 #: apt-private/private-install.cc
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
@@ -1885,8 +2027,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"Αδύνατη η μεταφόρτωση μερικών αρχείων, ίσως αν δοκιμάζατε με apt update "
-"ή το --fix-missing;"
+"Αδύνατη η μεταφόρτωση μερικών αρχείων, ίσως αν δοκιμάζατε με apt update ή το "
+"--fix-missing;"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -3292,6 +3434,15 @@ msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 "αναβάθμιση του συστήματος με την αφαίρεση/εγκατάσταση/αναβάθμιση πακέτων"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4107,9 +4258,6 @@ msgstr ""
 #~ msgid "Unable to change to %s"
 #~ msgstr "Αδύνατη η αλλαγή σε %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "Αφαίρεσα το %s"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "Το αρχείο πακέτου %s δεν είναι ενημερωμένο."
 
@@ -4118,10 +4266,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Κατεστραμμένα αρχεία ευρετηρίου πακέτων. Δεν υπάρχει πεδίο Filename: στο "
 #~ "πακέτο %s."
-
-#, fuzzy
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
 
 #, fuzzy
 #~ msgid "No entry found in mirror file '%s'"
@@ -4389,9 +4533,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "Εσωτερικό Σφάλμα, η διαδικασία αναβάθμισης χάλασε"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "Το %s δεν είναι έγκυρο πακέτο DEB."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

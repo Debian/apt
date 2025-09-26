@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2008-11-20 23:27+0530\n"
 "Last-Translator: Sampada <sampadanakhare@gmail.com>\n"
 "Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -1284,6 +1284,34 @@ msgstr ""
 msgid "External planner failed without a proper error message"
 msgstr ""
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+msgid "Cannot find history files: %s"
+msgstr "%s फाईल उघडता येत नाही"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "%s फाईल उघडता येत नाही"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "%s फाईल उघडता येत नाही"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "%s फाईल उघडता येत नाही"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1805,6 +1833,118 @@ msgstr "%s मध्ये तुमच्याकडे पुरेशी ज
 msgid "Unable to lock the download directory"
 msgstr "डाऊनलोड डिरेक्टरी कुलूपबंद करण्यास असमर्थ"
 
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Install"
+msgstr "%s संस्थापित होत आहे"
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "Reinstall"
+msgstr "[संस्थापित केले]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu मागील आवृत्तीकृत केले,"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "%s काढून टाकले"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+msgid "automatic"
+msgstr "[संस्थापित केले]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "पॅकेजेस सापडले नाहीत"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "%s रिझॉल्व्ह होऊ शकत नाही "
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s हे वैध डीईबी पॅकेज नाही "
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
+
 #: apt-private/private-install.cc
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
@@ -1858,8 +1998,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"काही आर्काइव्हज आणण्यास असमर्थ, कदाचित apt रन करुन अद्ययावत करा किंवा --fix- "
-"बरोबर प्रयत्न कराहरवलेले/गहाळ?"
+"काही आर्काइव्हज आणण्यास असमर्थ, कदाचित apt रन करुन अद्ययावत करा किंवा --fix- बरोबर "
+"प्रयत्न कराहरवलेले/गहाळ?"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -3276,6 +3416,15 @@ msgstr ""
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -4081,9 +4230,6 @@ msgstr ""
 #~ msgid "Unable to change to %s"
 #~ msgstr "%s मध्ये बदलण्यास असमर्थ"
 
-#~ msgid "Removed %s"
-#~ msgstr "%s काढून टाकले"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "पॅकेज संचिका %s सिंक्रोनाइज नाहीत"
 
@@ -4092,10 +4238,6 @@ msgstr ""
 #~ msgstr ""
 #~ "पॅकेज यादीची/सुचीची संचिका दूषित/खराब झालेली आहे. संचिका नाव नाही: पॅकेजकरीता क्षेत्र/"
 #~ "ठिकाण %s."
-
-#, fuzzy
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "%s फाईल उघडता येत नाही"
 
 #, fuzzy
 #~ msgid "No entry found in mirror file '%s'"
@@ -4317,9 +4459,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "अंतर्गत त्रुटी,ऑलअपग्रेडने स्टफला तोडले"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s हे वैध डीईबी पॅकेज नाही "
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2024-07-08 17:53+0200\n"
 "Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -1391,6 +1391,35 @@ msgid "External planner failed without a proper error message"
 msgstr ""
 "Zewnętrzny planista zawiódł, bez podania prawidłowego komunikatu o błędzie"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can't find authentication record for: %s"
+msgid "Cannot find history files: %s"
+msgstr "Nie udało się znaleźć wpisu uwierzytelnienia dla: %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Nie udało się otworzyć pliku %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Nie udało się otworzyć pliku %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Nie udało się otworzyć pliku %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1926,6 +1955,121 @@ msgstr "Niestety w %s nie ma wystarczającej ilości wolnego miejsca."
 #: apt-private/private-download.cc
 msgid "Unable to lock the download directory"
 msgstr "Nie udało się zablokować katalogu pobierania"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing:"
+msgid "Install"
+msgstr "Instalowane:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[zainstalowany]"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Upgrading:"
+msgid "Upgrade"
+msgstr "Aktualizowane:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu cofniętych wersji, "
+
+#: apt-private/private-history.cc
+msgid "Remove"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[zainstalowany,automatyczny]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Error:"
+msgid "Error"
+msgstr "Błąd:"
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Nie znaleziono żadnych pakietów"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Nie udało się przetłumaczyć nazwy \"%s\""
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "'%s' not a valid ID."
+msgstr ""
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3482,6 +3626,15 @@ msgstr "aktualizuje system instalując/aktualizując pakiety"
 #: cmdline/apt.cc
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "aktualizuje system usuwając/instalując/aktualizując pakiety"
+
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
 
 #. misc
 #: cmdline/apt.cc

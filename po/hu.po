@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -1390,6 +1390,35 @@ msgstr "A helyzet elküldése a solvernek"
 msgid "External planner failed without a proper error message"
 msgstr "A külső solver megfelelő hibaüzenet nélkül hibázott"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "A(z) „%s” tükörfájl nem olvasható"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Nem lehet megnyitni a(z) %s fájlt"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Nem lehet megnyitni a(z) %s fájlt"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Nem lehet megnyitni a(z) %s fájlt"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1915,6 +1944,124 @@ msgstr "Nincs elég szabad hely itt: %s."
 #: apt-private/private-download.cc
 msgid "Unable to lock the download directory"
 msgstr "Nem lehet zárolni a letöltési könyvtárat"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing %s"
+msgid "Install"
+msgstr "%s telepítése"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[telepítve]"
+
+#: apt-private/private-history.cc
+msgid "Upgrade"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu visszafejlesztendő, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "%s eltávolítva"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Command line"
+msgstr "Parancsok:"
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[telepítve, automatikus]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Error"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Comment"
+msgstr "Parancsok:"
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Nem találhatók csomagok"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Nem lehet feloldani a következőt: „%s”"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s nem egy érvényes DEB csomag."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3449,6 +3596,15 @@ msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 "a rendszer frissítése csomagok eltávolításával/telepítésével/frissítésével"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4272,9 +4428,6 @@ msgstr "Az üres fájlok biztosan nem érvényes csomagok"
 #~ msgid "Unable to change to %s"
 #~ msgstr "Nem sikerült ide váltani: %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "%s eltávolítva"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "%s csomagfájl nincs szinkronban."
 
@@ -4285,9 +4438,6 @@ msgstr "Az üres fájlok biztosan nem érvényes csomagok"
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "Nem található a(z) „%s” tükörfájl "
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "A(z) „%s” tükörfájl nem olvasható"
 
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "Nem található bejegyzés a(z) „%s” tükörfájlban"
@@ -4384,9 +4534,6 @@ msgstr "Az üres fájlok biztosan nem érvényes csomagok"
 #~ "\n"
 #~ "Az apt-cache egy alacsony szintű eszköz információk lekérdezésére\n"
 #~ "az APT bináris gyorsítótár-fájljaiból\n"
-
-#~ msgid "Commands:"
-#~ msgstr "Parancsok:"
 
 #~ msgid ""
 #~ "Options:\n"
@@ -4599,9 +4746,6 @@ msgstr "Az üres fájlok biztosan nem érvényes csomagok"
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "Belső hiba, az AllUpgrade megsértett valamit"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s nem egy érvényes DEB csomag."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

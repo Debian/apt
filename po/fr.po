@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2025-03-07 12:02+0100\n"
 "Last-Translator: bubu <bubub@no-log.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -1403,6 +1403,35 @@ msgstr "Envoi du scénario au planificateur"
 msgid "External planner failed without a proper error message"
 msgstr "Échec du planificateur externe sans message d'erreur adapté"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "Impossible de lire le fichier de miroir « %s »."
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "Impossible d'ouvrir le fichier %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "Impossible d'ouvrir le fichier %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "Impossible d'ouvrir le fichier %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1961,6 +1990,124 @@ msgstr "Pas assez d'espace disponible sur %s"
 #: apt-private/private-download.cc
 msgid "Unable to lock the download directory"
 msgstr "Impossible de verrouiller le répertoire de téléchargement"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing:"
+msgid "Install"
+msgstr "Installation de :"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[installé]"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Upgrading:"
+msgid "Upgrade"
+msgstr "Mis à jour :"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu remis à une version inférieure, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "%s supprimé"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[installé, automatique]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Error:"
+msgid "Error"
+msgstr "Erreur :"
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "Aucun paquet n'a été trouvé"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Ne parvient pas à résoudre « %s »"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s n'est pas un paquet Debian valide."
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3533,6 +3680,15 @@ msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr ""
 "mettre à jour le système en supprimant/installant/mettant à jour les paquets"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4365,9 +4521,6 @@ msgstr "Les fichiers vides ne peuvent être des archives valables"
 #~ msgid "Unable to change to %s"
 #~ msgstr "Impossible d'accéder à %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "%s supprimé"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "Fichier du paquet %s désynchronisé."
 
@@ -4379,9 +4532,6 @@ msgstr "Les fichiers vides ne peuvent être des archives valables"
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "Aucun fichier miroir « %s » n'a été trouvé"
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "Impossible de lire le fichier de miroir « %s »."
 
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "Pas d'entrée trouvée dans le fichier de miroir « %s »."
@@ -4719,9 +4869,6 @@ msgstr "Les fichiers vides ne peuvent être des archives valables"
 #~ msgstr ""
 #~ "Impossible de modifier %s avec mmap (sans échec particulier de mmap) : le "
 #~ "correctif semble être corrompu."
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s n'est pas un paquet Debian valide."
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

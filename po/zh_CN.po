@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 2.9.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-06-24 17:31+0000\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2025-07-31 18:13+0800\n"
 "Last-Translator: Tianyu Chen <sweetyfish@deepin.org>\n"
 "Language-Team: Chinese (simplified) <debian-l10n-chinese@lists.debian.org>\n"
@@ -1296,6 +1296,35 @@ msgstr "向安装顺序规划器发送情景"
 msgid "External planner failed without a proper error message"
 msgstr "外部安装顺序规划器出错，错误信息不恰当"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "无法读取镜像文件 %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "无法打开文件 %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "无法打开文件 %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "无法打开文件 %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1810,6 +1839,128 @@ msgstr "您在 %s 上没有足够的可用空间。"
 msgid "Unable to lock the download directory"
 msgstr "无法锁定下载目录"
 
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing:"
+msgid "Install"
+msgstr "将要安装："
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[已安装]"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Upgrading:"
+msgid "Upgrade"
+msgstr "将被升级："
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "降级了 %lu 个软件包，"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "已删除 %s"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Command line"
+msgstr "命令："
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[已安装，自动]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Error:"
+msgid "Error"
+msgstr "错误："
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Commands:"
+msgid "Comment"
+msgstr "命令："
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "没有发现匹配的软件包"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "无法解析域名“%s”"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "%s not a valid DEB package."
+msgid "'%s' not a valid ID."
+msgstr "%s 不是一个有效的 DEB 软件包。"
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
+
 #: apt-private/private-install.cc
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
@@ -1862,8 +2013,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"有几个软件包无法下载，要不运行 apt update 或者加上 --fix-missing 的选项再"
-"试试？"
+"有几个软件包无法下载，要不运行 apt update 或者加上 --fix-missing 的选项再试"
+"试？"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -3255,6 +3406,15 @@ msgstr "通过 安装/升级 软件来更新系统"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "通过 卸载/安装/升级 来更新系统"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4070,9 +4230,6 @@ msgstr "空文件不是有效归档"
 #~ msgid "Unable to change to %s"
 #~ msgstr "无法切换工作目录到 %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "已删除 %s"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "软件包文件 %s 尚未同步。"
 
@@ -4082,9 +4239,6 @@ msgstr "空文件不是有效归档"
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "没有找到镜像文件 %s"
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "无法读取镜像文件 %s"
 
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "在镜像文件 %s 中未找到所需条目"
@@ -4170,9 +4324,6 @@ msgstr "空文件不是有效归档"
 #~ "\n"
 #~ "apt-cache 是一个底层的工具，它可以在 APT 的\n"
 #~ "二进制缓存文件中查询信息\n"
-
-#~ msgid "Commands:"
-#~ msgstr "命令："
 
 #~ msgid ""
 #~ "Options:\n"
@@ -4369,9 +4520,6 @@ msgstr "空文件不是有效归档"
 #, fuzzy
 #~ msgid "Internal error, Upgrade broke stuff"
 #~ msgstr "内部错误，全部升级工具坏事了"
-
-#~ msgid "%s not a valid DEB package."
-#~ msgstr "%s 不是一个有效的 DEB 软件包。"
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

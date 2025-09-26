@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.4~beta1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-05-19 18:28+0200\n"
+"POT-Creation-Date: 2025-09-26 16:56+0000\n"
 "PO-Revision-Date: 2025-03-13 16:18+0100\n"
 "Last-Translator: poc senderi <pocsenderi@protonmail.com>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -1378,6 +1378,35 @@ msgstr "Envia l'escenari al planificador"
 msgid "External planner failed without a proper error message"
 msgstr "El planificador extern ha fallat sense un missatge d'error adequat"
 
+#: apt-pkg/history.cc
+#, c-format
+msgid "Unknown flag: %s"
+msgstr ""
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
+msgid "Cannot find history files: %s"
+msgstr "No es pot llegir el fitxer rèplica «%s»"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not open file: %s"
+msgstr "No s'ha pogut obrir el fitxer %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not parse file: %s"
+msgstr "No s'ha pogut obrir el fitxer %s"
+
+#: apt-pkg/history.cc
+#, fuzzy, c-format
+#| msgid "Could not open file %s"
+msgid "Could not close file: %s"
+msgstr "No s'ha pogut obrir el fitxer %s"
+
 #: apt-pkg/indexcopy.cc
 #, c-format
 msgid "Wrote %i records.\n"
@@ -1924,6 +1953,126 @@ msgstr "No teniu prou espai lliure a %s."
 msgid "Unable to lock the download directory"
 msgstr "No es pot bloquejar el directori de baixades"
 
+# No es fa servir "S'està instal·lant:" perquè és un títol i després ve una pregunta per veure si s'instal·larà o no. E.g. fent "apt install PAQUET" l'apt ensenya "Instal·lant" (llistat de paquets) i "Instal·lant les dependències:" (llistat de paquets). I a continuació "Voleu continuar?"
+# Amb "S'està instal·lant" ens sembla que l'acció està passant ara, i encara no passa.
+# Una alternativa a considerar és "S'instal·laran" però potser és massa diferent de l'origen.
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Installing:"
+msgid "Install"
+msgstr "Instal·lant:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed]"
+msgid "Reinstall"
+msgstr "[instal·lat]"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Upgrading:"
+msgid "Upgrade"
+msgstr "S'està actualitzant:"
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "%lu downgraded, "
+msgid "Downgrade"
+msgstr "%lu desactualitzats, "
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Removed %s"
+msgid "Remove"
+msgstr "S'ha suprimit el paquet %s"
+
+#: apt-private/private-history.cc
+msgid "Purge"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Undefined"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Command line"
+msgstr ""
+
+#. NOTE: if date format is different,
+#. this width needs to change
+#: apt-private/private-history.cc
+msgid "Date and Time"
+msgstr ""
+
+#. width for datestring
+#: apt-private/private-history.cc
+msgid "Action"
+msgstr ""
+
+#. 9 chars longest action type
+#: apt-private/private-history.cc
+msgid "Changes"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "[installed,automatic]"
+msgid "automatic"
+msgstr "[instal·lat, automàtic]"
+
+#: apt-private/private-history.cc
+msgid "Transaction ID"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Start time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "End time"
+msgstr ""
+
+#: apt-private/private-history.cc
+msgid "Requested by"
+msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "Error:"
+msgid "Error"
+msgstr "Error:"
+
+#: apt-private/private-history.cc
+msgid "Comment"
+msgstr ""
+
+#. For each performed action, print what it did to each package
+#: apt-private/private-history.cc
+#, fuzzy
+#| msgid "No packages found"
+msgid "Packages changed"
+msgstr "No s'han trobat paquets"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "No s'ha pogut resoldre «%s»"
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "'%s' not a valid ID."
+msgstr ""
+
+#: apt-private/private-history.cc
+#, c-format
+msgid "Transaction ID '%ld' out of bounds."
+msgstr ""
+
 #: apt-private/private-install.cc
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
@@ -1977,8 +2126,8 @@ msgid ""
 "Unable to fetch some archives, maybe run apt update or try with --fix-"
 "missing?"
 msgstr ""
-"No es poden obtenir alguns arxius. Voleu provar a executar «apt update» "
-"o intentar-ho amb «--fix-missing»?"
+"No es poden obtenir alguns arxius. Voleu provar a executar «apt update» o "
+"intentar-ho amb «--fix-missing»?"
 
 #: apt-private/private-install.cc
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -3471,6 +3620,15 @@ msgstr "actualitza el sistema instal·lant/actualitzant paquets"
 msgid "upgrade the system by removing/installing/upgrading packages"
 msgstr "actualitza el sistema eliminant/instal·lant/actualitzant paquets"
 
+#. history stuff
+#: cmdline/apt.cc
+msgid "show list of history"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "show info on specific transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 msgid "edit the source information file"
@@ -4315,9 +4473,6 @@ msgstr "Els fitxers buits no poden ser arxius vàlids"
 #~ msgid "Unable to change to %s"
 #~ msgstr "No es pot canviar a %s"
 
-#~ msgid "Removed %s"
-#~ msgstr "S'ha suprimit el paquet %s"
-
 #~ msgid "Package file %s is out of sync."
 #~ msgstr "El fitxer %s del paquet està desincronitzat."
 
@@ -4329,9 +4484,6 @@ msgstr "Els fitxers buits no poden ser arxius vàlids"
 
 #~ msgid "No mirror file '%s' found "
 #~ msgstr "No s'ha trobat el fitxer rèplica «%s»"
-
-#~ msgid "Can not read mirror file '%s'"
-#~ msgstr "No es pot llegir el fitxer rèplica «%s»"
 
 #~ msgid "No entry found in mirror file '%s'"
 #~ msgstr "No s'ha trobat l'entrada en el fitxer de rèplica «%s»"
