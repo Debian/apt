@@ -205,6 +205,9 @@ bool DoHistoryList(CommandLine &Cmd)
 {
    HistoryBuffer buf = {};
 
+   if (Cmd.FileSize() != 1)
+      return _error->Error("This command does not support any arguments");
+
    if (not ParseLogDir(buf))
       return _error->Error(_("Could not read: %s"),
 			   _config->FindFile("Dir::Log::History").data());
