@@ -93,8 +93,8 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       {"full-upgrade", &DoDistUpgrade, _("upgrade the system by removing/installing/upgrading packages")},
 
       // history stuff
-      {"history-list", &DoHistoryList, _("show list of history")},
-      {"history-info", &DoHistoryInfo, _("show info on specific transactions")},
+      {"history-list", &DoHistoryList, (_("show list of history"), nullptr)},
+      {"history-info", &DoHistoryInfo, (_("show info on specific transactions"), nullptr)},
 
       // misc
       {"edit-sources", &EditSources, _("edit the source information file")},
