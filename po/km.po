@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-09-26 16:56+0000\n"
+"POT-Creation-Date: 2025-10-02 14:49+0000\n"
 "PO-Revision-Date: 2006-10-10 09:48+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -1928,9 +1928,21 @@ msgstr "រក​កញ្ចប់​មិន​ឃើញ"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
-#| msgid "Could not resolve '%s'"
-msgid "Could not read: %s"
-msgstr "មិន​អាច​ដោះស្រាយ​ '%s' បានឡើយ"
+#| msgid "Couldn't find package %s"
+msgid "Could not find package %s"
+msgstr "មិន​អាច​រក​កញ្ចប់ %s បានទេ"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "but it is not installed"
+msgid "Tried to remove %s, but it is not installed"
+msgstr "ប៉ុន្តែ​វា​មិន​បាន​ដំឡើង​ទេ​"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Double add of diversion %s -> %s"
+msgid "Could not find given version %s of %s"
+msgstr "ការបន្ថែម​ស្ទួន នៃការបង្វែរ​ %s -> %s"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
@@ -1942,6 +1954,18 @@ msgstr "%s មិនមែន​ជា​កញ្ចប់​ DEB ត្រឹ�
 #, c-format
 msgid "Transaction ID '%ld' out of bounds."
 msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read %s"
+msgstr "មិន​អាច​ដោះស្រាយ​ '%s' បានឡើយ"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "មិន​អាច​ដោះស្រាយ​ '%s' បានឡើយ"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3424,6 +3448,18 @@ msgstr ""
 msgid "show info on specific transactions"
 msgstr ""
 
+#: cmdline/apt.cc
+msgid "redo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "undo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "rollback transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -4215,9 +4251,6 @@ msgstr ""
 
 #~ msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
 #~ msgstr "កំពុង​ព្យាយាម​សរសេរ​ជាន់​ពីលើ​ការបង្វែរ %s -> %s និង​ %s/%s"
-
-#~ msgid "Double add of diversion %s -> %s"
-#~ msgstr "ការបន្ថែម​ស្ទួន នៃការបង្វែរ​ %s -> %s"
 
 #~ msgid "Duplicate conf file %s/%s"
 #~ msgstr "ឯកសារ​កំណត់​រចនាសម្ព័ន្ធ​ស្ទួន​ %s/%s"

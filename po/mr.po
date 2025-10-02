@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-09-26 16:56+0000\n"
+"POT-Creation-Date: 2025-10-02 14:49+0000\n"
 "PO-Revision-Date: 2008-11-20 23:27+0530\n"
 "Last-Translator: Sampada <sampadanakhare@gmail.com>\n"
 "Language-Team: Marathi, janabhaaratii, C-DAC, Mumbai, India "
@@ -1930,9 +1930,21 @@ msgstr "पॅकेजेस सापडले नाहीत"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
-#| msgid "Could not resolve '%s'"
-msgid "Could not read: %s"
-msgstr "%s रिझॉल्व्ह होऊ शकत नाही "
+#| msgid "Couldn't find package %s"
+msgid "Could not find package %s"
+msgstr "%s पॅकेज सापडू शकले नाही"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "but it is not installed"
+msgid "Tried to remove %s, but it is not installed"
+msgstr "पण ते संस्थापित केले नाही"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Double add of diversion %s -> %s"
+msgid "Could not find given version %s of %s"
+msgstr "%s -> %s डायव्हर्जन दुप्पट मिळवा"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
@@ -1944,6 +1956,18 @@ msgstr "%s हे वैध डीईबी पॅकेज नाही "
 #, c-format
 msgid "Transaction ID '%ld' out of bounds."
 msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read %s"
+msgstr "%s रिझॉल्व्ह होऊ शकत नाही "
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "%s रिझॉल्व्ह होऊ शकत नाही "
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3425,6 +3449,18 @@ msgstr ""
 msgid "show info on specific transactions"
 msgstr ""
 
+#: cmdline/apt.cc
+msgid "redo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "undo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "rollback transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -4220,9 +4256,6 @@ msgstr ""
 
 #~ msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
 #~ msgstr "डायव्हर्जन पुनः लिहिण्यास प्रयत्न करत आहे,%s -> %s and %s/%s"
-
-#~ msgid "Double add of diversion %s -> %s"
-#~ msgstr "%s -> %s डायव्हर्जन दुप्पट मिळवा"
 
 #~ msgid "Duplicate conf file %s/%s"
 #~ msgstr "%s/%s संचिरित संचिकाची दुसरी प्रत/नक्कल"

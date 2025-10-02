@@ -37,7 +37,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-09-26 16:56+0000\n"
+"POT-Creation-Date: 2025-10-02 14:49+0000\n"
 "PO-Revision-Date: 2016-01-26 01:51+0100\n"
 "Last-Translator: Manuel \"Venturi\" Porras Peralta "
 "<venturi@openmailbox.org>\n"
@@ -2126,9 +2126,21 @@ msgstr "No se encontró ningún paquete"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
-#| msgid "Could not resolve '%s'"
-msgid "Could not read: %s"
-msgstr "No se pudo resolver «%s»"
+#| msgid "Couldn't find package %s"
+msgid "Could not find package %s"
+msgstr "No se pudo encontrar el paquete %s"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "but it is not installed"
+msgid "Tried to remove %s, but it is not installed"
+msgstr "pero no está instalado"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Can not find version '%s' of package '%s'"
+msgid "Could not find given version %s of %s"
+msgstr "No se pudo encontrar la versión «%s» del paquete «%s»"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
@@ -2140,6 +2152,18 @@ msgstr "%s no es un paquete DEB válido."
 #, c-format
 msgid "Transaction ID '%ld' out of bounds."
 msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read %s"
+msgstr "No se pudo resolver «%s»"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "No se pudo resolver «%s»"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3699,6 +3723,18 @@ msgstr ""
 
 #: cmdline/apt.cc
 msgid "show info on specific transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "redo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "undo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "rollback transactions"
 msgstr ""
 
 #. misc

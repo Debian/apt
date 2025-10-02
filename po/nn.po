@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-09-26 16:56+0000\n"
+"POT-Creation-Date: 2025-10-02 14:49+0000\n"
 "PO-Revision-Date: 2005-02-14 23:30+0100\n"
 "Last-Translator: Havard Korsvoll <korsvoll@skulelinux.no>\n"
 "Language-Team: Norwegian nynorsk <i18n-nn@lister.ping.uio.no>\n"
@@ -1932,9 +1932,21 @@ msgstr "Fann ingen pakkar"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
-#| msgid "Could not resolve '%s'"
-msgid "Could not read: %s"
-msgstr "Klarte ikkje slå opp «%s»"
+#| msgid "Couldn't find package %s"
+msgid "Could not find package %s"
+msgstr "Fann ikkje pakken %s"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "but it is not installed"
+msgid "Tried to remove %s, but it is not installed"
+msgstr "men er ikkje installert"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Double add of diversion %s -> %s"
+msgid "Could not find given version %s of %s"
+msgstr "Dobbel tilleggjing av avleiing %s -> %s"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
@@ -1946,6 +1958,18 @@ msgstr "%s er ingen gyldig DEB-pakke."
 #, c-format
 msgid "Transaction ID '%ld' out of bounds."
 msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read %s"
+msgstr "Klarte ikkje slå opp «%s»"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Klarte ikkje slå opp «%s»"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3437,6 +3461,18 @@ msgstr ""
 msgid "show info on specific transactions"
 msgstr ""
 
+#: cmdline/apt.cc
+msgid "redo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "undo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "rollback transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -4225,9 +4261,6 @@ msgstr ""
 
 #~ msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
 #~ msgstr "Prøver å skriva over ei avleiing, %s -> %s og %s/%s"
-
-#~ msgid "Double add of diversion %s -> %s"
-#~ msgstr "Dobbel tilleggjing av avleiing %s -> %s"
 
 #~ msgid "Duplicate conf file %s/%s"
 #~ msgstr "Dobbel oppsettsfil %s/%s"

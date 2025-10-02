@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-09-26 16:56+0000\n"
+"POT-Creation-Date: 2025-10-02 14:49+0000\n"
 "PO-Revision-Date: 2005-06-06 13:46+0100\n"
 "Last-Translator: Dafydd Harries <daf@muse.19inch.net>\n"
 "Language-Team: Welsh <cy@pengwyn.linux.org.uk>\n"
@@ -1961,9 +1961,22 @@ msgstr "Canfuwyd dim pecyn"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
-#| msgid "Could not resolve '%s'"
-msgid "Could not read: %s"
-msgstr "Methwyd datrys '%s'"
+#| msgid "Couldn't find package %s"
+msgid "Could not find package %s"
+msgstr "Methwyd canfod pecyn %s"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "but it is not installed"
+msgid "Tried to remove %s, but it is not installed"
+msgstr "ond nid yw wedi ei sefydlu"
+
+# FIXME: "the"
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Double add of diversion %s -> %s"
+msgid "Could not find given version %s of %s"
+msgstr "Ychwanegiad dwbl o'r dargyfeiriad %s -> %s"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
@@ -1975,6 +1988,18 @@ msgstr "Nid yw %s yn becyn DEB dilys."
 #, c-format
 msgid "Transaction ID '%ld' out of bounds."
 msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read %s"
+msgstr "Methwyd datrys '%s'"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Methwyd datrys '%s'"
 
 # FIXME: needs commas
 #: apt-private/private-install.cc
@@ -3482,6 +3507,18 @@ msgstr ""
 msgid "show info on specific transactions"
 msgstr ""
 
+#: cmdline/apt.cc
+msgid "redo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "undo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "rollback transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -4293,10 +4330,6 @@ msgstr ""
 
 #~ msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
 #~ msgstr "Yn ceisio trosysgrifo dargyfeiriad, %s -> %s a %s/%s"
-
-# FIXME: "the"
-#~ msgid "Double add of diversion %s -> %s"
-#~ msgstr "Ychwanegiad dwbl o'r dargyfeiriad %s -> %s"
 
 #~ msgid "Duplicate conf file %s/%s"
 #~ msgstr "Ffeil cyfluniad dyblyg %s/%s"

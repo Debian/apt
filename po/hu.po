@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-09-26 16:56+0000\n"
+"POT-Creation-Date: 2025-10-02 14:49+0000\n"
 "PO-Revision-Date: 2016-04-10 19:46+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@ubuntu.com>\n"
 "Language-Team: Hungarian <gnome-hu-list@gnome.org>\n"
@@ -2048,9 +2048,21 @@ msgstr "Nem találhatók csomagok"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
-#| msgid "Could not resolve '%s'"
-msgid "Could not read: %s"
-msgstr "Nem lehet feloldani a következőt: „%s”"
+#| msgid "Couldn't find package %s"
+msgid "Could not find package %s"
+msgstr "Az alábbi csomag nem található: %s"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "but it is not installed"
+msgid "Tried to remove %s, but it is not installed"
+msgstr "de az nincs telepítve"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Can not find version '%s' of package '%s'"
+msgid "Could not find given version %s of %s"
+msgstr "A(z) „%2$s” csomag „%1$s” verziója nem érhető el"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
@@ -2062,6 +2074,18 @@ msgstr "%s nem egy érvényes DEB csomag."
 #, c-format
 msgid "Transaction ID '%ld' out of bounds."
 msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read %s"
+msgstr "Nem lehet feloldani a következőt: „%s”"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Nem lehet feloldani a következőt: „%s”"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3603,6 +3627,18 @@ msgstr ""
 
 #: cmdline/apt.cc
 msgid "show info on specific transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "redo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "undo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "rollback transactions"
 msgstr ""
 
 #. misc

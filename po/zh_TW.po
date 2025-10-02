@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.2.X\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-09-26 16:56+0000\n"
+"POT-Creation-Date: 2025-10-02 14:49+0000\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-"
@@ -1918,9 +1918,21 @@ msgstr "未找到套件"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
-#| msgid "Could not resolve '%s'"
-msgid "Could not read: %s"
-msgstr "無法解析 '%s'"
+#| msgid "Couldn't find package %s"
+msgid "Could not find package %s"
+msgstr "無法找到套件 %s"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "but it is not installed"
+msgid "Tried to remove %s, but it is not installed"
+msgstr "但它卻尚未安裝"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Double add of diversion %s -> %s"
+msgid "Could not find given version %s of %s"
+msgstr "重複加入抽換資訊 %s -> %s"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
@@ -1932,6 +1944,18 @@ msgstr "%s 並不是正確的 DEB 套件。"
 #, c-format
 msgid "Transaction ID '%ld' out of bounds."
 msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read %s"
+msgstr "無法解析 '%s'"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "無法解析 '%s'"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3410,6 +3434,18 @@ msgstr ""
 msgid "show info on specific transactions"
 msgstr ""
 
+#: cmdline/apt.cc
+msgid "redo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "undo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "rollback transactions"
+msgstr ""
+
 #. misc
 #: cmdline/apt.cc
 #, fuzzy
@@ -4196,9 +4232,6 @@ msgstr ""
 
 #~ msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
 #~ msgstr "試圖改寫抽換資訊，%s -> %s 和 %s/%s"
-
-#~ msgid "Double add of diversion %s -> %s"
-#~ msgstr "重複加入抽換資訊 %s -> %s"
 
 #~ msgid "Duplicate conf file %s/%s"
 #~ msgstr "重複的設定檔 %s/%s"

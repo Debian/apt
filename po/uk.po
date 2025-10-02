@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 1.0.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-09-26 16:56+0000\n"
+"POT-Creation-Date: 2025-10-02 14:49+0000\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -2007,9 +2007,20 @@ msgstr "Не знайдено жодного пакунка"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
-#| msgid "Could not resolve '%s'"
-msgid "Could not read: %s"
-msgstr "Не можу знайти IP адрес для %s"
+#| msgid "Couldn't find package %s"
+msgid "Could not find package %s"
+msgstr "Не можу знайти пакунок %s"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "but it is not installed"
+msgid "Tried to remove %s, but it is not installed"
+msgstr "але він не встановлений"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+msgid "Could not find given version %s of %s"
+msgstr "Ігнорувати недоступну версію '%s' пакунку '%s'"
 
 #: apt-private/private-history.cc
 #, fuzzy, c-format
@@ -2021,6 +2032,18 @@ msgstr "%s не є правильним DEB пакунком."
 #, c-format
 msgid "Transaction ID '%ld' out of bounds."
 msgstr ""
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read %s"
+msgstr "Не можу знайти IP адрес для %s"
+
+#: apt-private/private-history.cc
+#, fuzzy, c-format
+#| msgid "Could not resolve '%s'"
+msgid "Could not read: %s"
+msgstr "Не можу знайти IP адрес для %s"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -3554,6 +3577,18 @@ msgstr ""
 
 #: cmdline/apt.cc
 msgid "show info on specific transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "redo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "undo transactions"
+msgstr ""
+
+#: cmdline/apt.cc
+msgid "rollback transactions"
 msgstr ""
 
 #. misc
