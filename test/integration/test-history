@@ -69,6 +69,48 @@ testsuccessequal "ID Command line             Date and Time          Action    C
 0  dummy                    dummy                  Install   1                        
 1  dummy                    dummy                  Install   1                        " normalizedlist
 
+################################################################################
+# Read previous history for manipulation
+################################################################################
+
+# Test history
+# 0 - Install pkg1
+# 1 - Install pkg2
+# 2 - Remove pkg1 (undo ID 0)
+# 3 - Install pkg1 (undo ID 2)
+# 4 - Remove pkg1 (redo ID 2)
+# 5 - Install pkg1 (rollback to ID 1)
+# 6 - Remove pkg1 (rollback to ID 2)
+
+testdpkginstalled pkg1
+# undo the first package install
+apt history-undo 0 -y >> /dev/null
+testdpkgnotinstalled pkg1
+# ...which generates a new id that we also undo
+apt history-undo 2 -y >>/dev/null
+testdpkginstalled pkg1
+
+# redo the removal
+apt history-redo 2 -y >> /dev/null
+testdpkgnotinstalled pkg1
+
+# rollback to ID 1 and it should be installed
+apt history-rollback 1 -y >> /dev/null 
+testdpkginstalled pkg1
+# rollback to ID 2 and it should be removed
+apt history-rollback 2 -y >> /dev/null
+testdpkgnotinstalled pkg1
+# rollback to ID 0 and it should be installed
+apt history-rollback 0 -y >> /dev/null
+testdpkginstalled pkg1
+# rollback to ID 4 and it should be removed
+apt history-rollback 4 -y >> /dev/null
+testdpkgnotinstalled pkg1
+
+################################################################################
+# Reset history log
+################################################################################
+
 msgmsg "Actionless group"
 cat > rootdir/var/log/apt/history.log << EOF
 Start-Date: dummy
@@ -86,4 +128,3 @@ End time: dummy
 Requested by: 
 Command line: install nothing
 Packages changed:" normalizedinfo
- 

@@ -1,25 +1,102 @@
 // Include files
 #include <config.h>
 
+#include <apt-pkg/algorithms.h>
+#include <apt-pkg/cachefile.h>
+#include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/history.h>
+#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/tagfile.h>
 
+#include <apt-private/private-cachefile.h>
 #include <apt-private/private-history.h>
+#include <apt-private/private-install.h>
 
+#include <cassert>
 #include <iomanip>
 #include <iostream>
+#include <span>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 
 #include <glob.h>
 #include <apti18n.h> // for coloring
 		     /*}}}*/
 
 using namespace APT::History;
+
+// =============================================================================
+// Internal API extensions
+// =============================================================================
+
+//
+
+static Kind ReflectKind(const Kind &kind)
+{
+   switch (kind)
+   {
+   case Kind::Install:
+   case Kind::Reinstall:
+      return Kind::Remove;
+   case Kind::Upgrade:
+      return Kind::Downgrade;
+   case Kind::Downgrade:
+      return Kind::Upgrade;
+   case Kind::Remove:
+   case Kind::Purge:
+      return Kind::Install;
+   default:
+      assert(false);
+      return kind;
+   }
+}
+
+std::vector<Change> APT::Internal::FlattenChanges(const Entry &entry)
+{
+   std::vector<Change> flattened;
+
+   size_t total_size = 0;
+   for (const auto &[_, changes] : entry.changeMap)
+      total_size += changes.size();
+   flattened.reserve(total_size);
+
+   for (const auto &[_, changes] : entry.changeMap)
+      flattened.insert(flattened.end(), changes.begin(), changes.end());
+   return flattened;
+}
+
+Change APT::Internal::InvertChange(const Change &change)
+{
+   Change inverse = change;
+   inverse.kind = ReflectKind(change.kind);
+
+   // tailor change after what action was performed
+   switch (change.kind)
+   {
+   case Kind::Upgrade:
+      std::swap(inverse.currentVersion, inverse.candidateVersion);
+      break;
+   case Kind::Downgrade:
+      std::swap(inverse.currentVersion, inverse.candidateVersion);
+      break;
+   default:
+      break;
+   }
+
+   return inverse;
+}
+
+// =============================================================================
+// Output formatting
+// =============================================================================
+
+//
 
 // ShortenCommand - Take a command and shorten it such that it adheres
 // to the given maximum length.
@@ -108,7 +185,12 @@ static std::string GetKindString(const Entry &entry)
    return kindGroup;
 }
 
-// PrintHistory - Take a history vector and print it.
+// =============================================================================
+// Output printing
+// =============================================================================
+
+//
+
 static void PrintHistoryVector(const HistoryBuffer buf, int columnWidth)
 {
    // Calculate the width of the ID column, esentially the number of digits
@@ -201,6 +283,174 @@ static void PrintDetailedEntry(const HistoryBuffer &buf, const size_t id)
    }
 }
 
+// =============================================================================
+// Transaction helpers
+// =============================================================================
+
+//
+
+class TransactionController
+{
+   public:
+   TransactionController(CacheFile &cache) : Cache(cache),
+					     Fix(Cache.GetDepCache()),
+					     InstallAction(Cache, &Fix, false),
+					     RemoveAction(Cache, &Fix),
+					     HeldBackPackages()
+   {
+   }
+
+   bool AppendChange(const Change &change)
+   {
+      auto pkg = Cache->FindPkg(change.package);
+      if (pkg.end())
+	 return _error->Error(_("Could not find package %s"), change.package.data());
+      if (IsRemoval(change.kind))
+      {
+	 auto ver = pkg.CurrentVer();
+	 if (ver == nullptr)
+	 {
+	    _error->Warning(_("Tried to remove %s, but it is not installed"), change.package.data());
+	    return true;
+	 }
+
+	 RemoveAction(ver);
+	 return true;
+      }
+
+      auto ver = pkg.VersionList();
+      for (; not ver.end(); ++ver)
+	 if (strcmp(ver.VerStr(), change.currentVersion.data()) == 0)
+	    break;
+      if (ver.end())
+	 return _error->Error(_("Could not find given version %s of %s"), change.currentVersion.data(),
+			      change.package.data());
+      InstallAction(ver);
+      return true;
+   }
+
+   bool CommitChanges()
+   {
+      InstallAction.doAutoInstall();
+      OpTextProgress Progress(*_config);
+      bool const resolver_fail = Fix.Resolve(true, &Progress);
+      if (resolver_fail == false && Cache->BrokenCount() == 0)
+	 return false;
+      if (CheckNothingBroken(Cache) == false)
+	 return false;
+      return InstallPackages(Cache, HeldBackPackages, false, true);
+   }
+
+   private:
+   // This must be a reference for lifetime safety
+   CacheFile &Cache;
+   pkgProblemResolver Fix;
+   TryToInstall InstallAction;
+   TryToRemove RemoveAction;
+   APT::PackageVector HeldBackPackages;
+};
+
+static bool ParseId(const char *str, size_t &id, size_t max)
+{
+   try
+   {
+      id = std::stoi(str);
+   }
+   catch (const std::invalid_argument &e)
+   {
+      return _error->Error(_("'%s' not a valid ID."), str);
+   }
+   if (max < id)
+      return _error->Error(_("Transaction ID '%ld' out of bounds."), id);
+
+   return true;
+}
+
+// =============================================================================
+// Entrypoints
+// =============================================================================
+
+//
+
+bool DoHistoryUndo(CommandLine &Cmd)
+{
+   HistoryBuffer buf = {};
+   if (not ParseLogDir(buf))
+      return _error->Error(_("Could not read %s"),
+			   _config->FindFile("Dir::Log::History").data());
+   size_t id = 0;
+   if (not ParseId(*(Cmd.FileList + 1), id, buf.size() - 1))
+      return false;
+
+   CacheFile Cache;
+   if (Cache.BuildCaches(true) == false)
+      return false;
+   TransactionController Controller(Cache);
+
+   for (const auto &change : APT::Internal::FlattenChanges(buf[id]))
+      if (not Controller.AppendChange(APT::Internal::InvertChange(change)))
+	 return false;
+
+   return Controller.CommitChanges();
+}
+
+bool DoHistoryRollback(CommandLine &Cmd)
+{
+   HistoryBuffer buf = {};
+   if (not ParseLogDir(buf))
+      return _error->Error(_("Could not read %s"),
+			   _config->FindFile("Dir::Log::History").data());
+
+   size_t rollbackId = 0;
+   if (not ParseId(*(Cmd.FileList + 1), rollbackId, buf.size()))
+      return false;
+   CacheFile Cache;
+   if (Cache.BuildCaches(true) == false)
+      return false;
+   TransactionController Controller(Cache);
+
+   // Map to keep the effective change of each package
+   std::unordered_map<std::string, Change> effectiveChangeMap;
+   // Plus 1 for zero indexing
+   size_t numChanges = buf.size() - (rollbackId + 1);
+   std::span<Entry> bufSpan(buf.end() - numChanges, numChanges);
+   // Iterate in reverse to process changes LIFO
+   for (auto it = bufSpan.rbegin(); it != bufSpan.rend(); ++it)
+      for (const auto &change : APT::Internal::FlattenChanges(*it))
+	 effectiveChangeMap[change.package] = APT::Internal::InvertChange(change);
+
+   for (const auto &[_, change] : effectiveChangeMap)
+   {
+      if (not Controller.AppendChange(change))
+	 return false;
+   }
+
+   return Controller.CommitChanges();
+}
+
+bool DoHistoryRedo(CommandLine &Cmd)
+{
+   HistoryBuffer buf = {};
+   if (not ParseLogDir(buf))
+      return _error->Error(_("Could not read %s"),
+			   _config->FindFile("Dir::Log::History").data());
+
+   size_t id = 0;
+   if (not ParseId(*(Cmd.FileList + 1), id, buf.size() - 1))
+      return false;
+
+   CacheFile Cache;
+   if (Cache.BuildCaches(true) == false)
+      return false;
+   TransactionController Controller(Cache);
+
+   for (const auto &change : APT::Internal::FlattenChanges(buf[id]))
+      if (not Controller.AppendChange(change))
+	 return false;
+
+   return Controller.CommitChanges();
+}
+
 bool DoHistoryList(CommandLine &Cmd)
 {
    HistoryBuffer buf = {};
@@ -226,16 +476,8 @@ bool DoHistoryInfo(CommandLine &Cmd)
    size_t id = 0;
    for (size_t i = 1; i < Cmd.FileSize(); i++)
    {
-      try
-      {
-	 id = std::stoi(*(Cmd.FileList + i));
-      }
-      catch (const std::invalid_argument &e)
-      {
-	 return _error->Error(_("'%s' not a valid ID."), *(Cmd.FileList + i));
-      }
-      if (buf.size() <= id)
-	 return _error->Error(_("Transaction ID '%ld' out of bounds."), id);
+      if (not ParseId(*(Cmd.FileList + i), id, buf.size() - 1))
+	 return false;
       PrintDetailedEntry(buf, id);
    }
 
