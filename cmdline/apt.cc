@@ -95,6 +95,9 @@ static std::vector<aptDispatchWithHelp> GetCommands()			/*{{{*/
       // history stuff
       {"history-list", &DoHistoryList, _("show list of history")},
       {"history-info", &DoHistoryInfo, _("show info on specific transactions")},
+      {"history-redo", &DoHistoryRedo, _("redo transactions")},
+      {"history-undo", &DoHistoryUndo, _("undo transactions")},
+      {"history-rollback", &DoHistoryRollback, _("rollback transactions")},
 
       // misc
       {"edit-sources", &EditSources, _("edit the source information file")},

@@ -16,6 +16,7 @@
 #include <apt-pkg/tagfile.h>
 
 #include <algorithm>
+#include <cassert>
 #include <cctype>
 
 #include <glob.h>
