@@ -741,10 +741,8 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseInterval)
 	    if (not I->Cycle()) // Queue got stuck, unstuck it.
 	       goto stop;
 	    fetchAfter = now; // need to time out in select() below
-	    if (I->Items->Owner->Status == pkgAcquire::Item::StatIdle)
-	    {
-	       _error->Warning("Tried to start delayed item %s, but failed", I->Items->Description.c_str());
-	    }
+	    if (Debug && I->Items->Owner->Status == pkgAcquire::Item::StatIdle)
+	       clog << "Tried to start delayed item but failed:" << I->Items->Description.c_str() << std::endl;
 	 }
 	 else if (f < fetchAfter || fetchAfter == time_point{})
 	 {
