@@ -3,6 +3,7 @@
 
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/debversion.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/init.h>
@@ -12,6 +13,7 @@
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-main.h>
 
+#include <cassert>
 #include <cstdarg>
 #include <cstdlib>
 #include <cstring>
@@ -420,6 +422,7 @@ std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const 
    addArg('q', "silent", "quiet", CommandLine::IntLevel);
    addArg('c', "config-file", 0, CommandLine::ConfigFile);
    addArg('o', "option", 0, CommandLine::ArbItem);
+   addArg(0, "cli-version", "APT::Version", CommandLine::HasArg);
    addArg(0, NULL, NULL, 0);
 
    return Args;
@@ -492,32 +495,30 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
    {
       _config->CndSet("Binary::apt-cdrom::APT::Internal::OpProgress::EraseLines", false);
    }
-   if (binary == "apt" || binary == "apt-config")
-   {
-      if (getenv("NO_COLOR") == nullptr && getenv("APT_NO_COLOR") == nullptr)
-	 _config->CndSet("Binary::apt::APT::Color", true);
-      _config->CndSet("Binary::apt::APT::Output-Version", 30);
-      _config->CndSet("Binary::apt::APT::Cache::Show::Version", 2);
-      _config->CndSet("Binary::apt::APT::Cache::AllVersions", false);
-      _config->CndSet("Binary::apt::APT::Cache::ShowVirtuals", true);
-      _config->CndSet("Binary::apt::APT::Cache::Search::Version", 2);
-      _config->CndSet("Binary::apt::APT::Cache::ShowDependencyType", true);
-      _config->CndSet("Binary::apt::APT::Cache::ShowVersion", true);
-      _config->CndSet("Binary::apt::APT::Get::Upgrade-Allow-New", true);
-      _config->CndSet("Binary::apt::APT::Cmd::Show-Update-Stats", true);
-      _config->CndSet("Binary::apt::DPkg::Progress-Fancy", true);
-      _config->CndSet("Binary::apt::APT::Keep-Downloaded-Packages", false);
-      _config->CndSet("Binary::apt::APT::Get::Update::InteractiveReleaseInfoChanges", true);
-      _config->CndSet("Binary::apt::APT::Cmd::Pattern-Only", true);
-      _config->CndSet("Binary::apt::Pager", true);
-
-      if (isatty(STDIN_FILENO))
-         _config->CndSet("Binary::apt::Dpkg::Lock::Timeout", -1);
-      else
-         _config->CndSet("Binary::apt::Dpkg::Lock::Timeout", 120);
-   }
-
    _config->Set("Binary", binary);
+
+   // Version specific configuration
+   _config->CndSet("Version::1.2::APT::Color",
+		   getenv("NO_COLOR") == nullptr && getenv("APT_NO_COLOR") == nullptr);
+   _config->CndSet("Version::3.0::APT::Output-Version", 30);
+   _config->CndSet("Version::1.1::APT::Cache::Show::Version", 2);
+   _config->CndSet("Version::1.1::APT::Cache::AllVersions", false);
+   _config->CndSet("Version::1.1::APT::Cache::ShowVirtuals", true);
+   _config->CndSet("Version::1.1::APT::Cache::Search::Version", 2);
+   _config->CndSet("Version::1.1::APT::Cache::ShowDependencyType", true);
+   _config->CndSet("Version::1.1::APT::Cache::ShowVersion", true);
+   _config->CndSet("Version::1.1::APT::Get::Upgrade-Allow-New", true);
+   _config->CndSet("Version::1.1::APT::Cmd::Show-Update-Stats", true);
+   _config->CndSet("Version::1.2::DPkg::Progress-Fancy", true);
+   _config->CndSet("Version::1.2::APT::Keep-Downloaded-Packages", false);
+   _config->CndSet("Version::1.5::APT::Get::Update::InteractiveReleaseInfoChanges", true);
+   _config->CndSet("Version::2.0::APT::Cmd::Pattern-Only", true);
+   _config->CndSet("Version::3.0::Pager", true);
+
+   if (isatty(STDIN_FILENO))
+      _config->CndSet("Version::2.0::Dpkg::Lock::Timeout", -1);
+   else
+      _config->CndSet("Version::2.0::Dpkg::Lock::Timeout", 120);
 }
 									/*}}}*/
 static void BinaryCommandSpecificConfiguration(char const * const Binary, char const * const Cmd)/*{{{*/
@@ -535,6 +536,48 @@ static void BinaryCommandSpecificConfiguration(char const * const Binary, char c
 }
 #undef CmdMatches
 									/*}}}*/
+
+static std::pair<std::optional<long unsigned int>, std::optional<long unsigned int>> parseCliVersion(std::string_view version)
+{
+   auto level = VectorizeString(version, '.');
+   long unsigned int first = 0, second = 0;
+   if (not StrToNum(level[0].data(), first, level[0].size(), 10))
+      return {};
+   if (level.size() <= 1)
+      return {first, {}};
+   if (not StrToNum(level[1].data(), second, level[1].size(), 10))
+      return {};
+
+   return {first, second};
+}
+
+bool cliVersionIsCompatible(std::string_view rawLevel, std::string_view rawPattern)
+{
+   auto level = parseCliVersion(rawLevel);
+   auto pattern = parseCliVersion(rawPattern);
+
+   assert(level.first);
+   assert(level.second);
+
+   // Requested an earlier major version
+   if (pattern.first && *level.first > *pattern.first)
+      return false;
+   // Requested a latter major version
+   if (pattern.first && *level.first < *pattern.first)
+      return (*level.second < 10); // Keep in mind 2.10 follows 2.8, not 2.9, but 3.0 follows 2.9
+   // Same major version, requested a higher pattern version (compatible usually)
+   if (pattern.second && *level.second < *pattern.second)
+      return (*level.second != 9); // X.9 is not compatible with X.10 onward
+   // Special case for short pattern, X.9 does not migrate to X+1
+   if (not pattern.second && level.second == 9)
+      return false;
+   // Same major version, requested a lower major version.
+   if (pattern.second && *level.second > *pattern.second)
+      return false;
+
+   return true;
+}
+
 std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD const Binary,/*{{{*/
       Configuration * const * const Cnf, pkgSystem ** const Sys, int const argc, const char *argv[],
       bool (*ShowHelp)(CommandLine &), std::vector<aptDispatchWithHelp> (*GetCommands)(void))
@@ -564,6 +607,7 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
       CmdCalled = CommandLine::GetCommand(Cmds.data(), argc, argv);
    if (CmdCalled != nullptr)
       BinaryCommandSpecificConfiguration(argv[0], CmdCalled);
+
    std::string const conf = "Binary::" + _config->Find("Binary");
    _config->MoveSubTree(conf.c_str(), nullptr);
 
@@ -573,7 +617,46 @@ std::vector<CommandLine::Dispatch> ParseCommandLine(CommandLine &CmdL, APT_CMD c
    auto Args = getCommandArgs(Binary, CmdCalled);
    CmdL = CommandLine(Args.data(), _config);
 
+   auto initVersion = []() -> bool
+   {
+      auto defaultVersion = parseCliVersion(PACKAGE_VERSION);
+      std::string requestedVersion = _config->Find("APT::Version");
+      if (requestedVersion.empty())
+      {
+	 if (_config->Find("Binary", "") == "apt")
+	    requestedVersion = PACKAGE_VERSION;
+	 else
+	    strprintf(requestedVersion, "0.%lu", *defaultVersion.first * 10 + *defaultVersion.second);
+      }
+      else
+      {
+	 // Check that the requested version is compatible with our version
+	 auto parsedRequestedVersion = parseCliVersion(requestedVersion);
+	 // This appends a 0 to the requested version if not specified.
+	 std::string cleanRequestedVersion;
+	 strprintf(cleanRequestedVersion, "%lu.%lu", *parsedRequestedVersion.first, parsedRequestedVersion.second ? *parsedRequestedVersion.second : 0);
+	 // Supported version "lowers" say 3.1 to 0.31, 1.21, 2.11 depending on requested major
+	 std::string supportedVersion;
+	 strprintf(supportedVersion, "%lu.%lu", *parsedRequestedVersion.first, (*defaultVersion.first - *parsedRequestedVersion.first) * 10 + *defaultVersion.second);
+	 if (not cliVersionIsCompatible(cleanRequestedVersion, supportedVersion))
+	    return _error->Error("Requested version %s is not supported in version %s (%s is)", requestedVersion.c_str(), PACKAGE_VERSION, supportedVersion.c_str());
+      }
+      if (auto Versions = _config->Tree("Version"))
+      {
+	 for (auto I = Versions->Child; I != NULL; I = I->Next)
+	 {
+	    auto sub = "Version::" + I->Tag;
+	    if (not cliVersionIsCompatible(I->Tag, requestedVersion))
+	       continue;
+	    // FIXME: 2.10 should not flow into 3.0
+	    _config->MoveSubTree(sub.c_str(), nullptr, false);
+	 }
+      }
+      return true;
+   };
+
    if (CmdL.Parse(argc,argv) == false ||
+       initVersion() == false ||
        (Sys != NULL && pkgInitSystem(*_config, *Sys) == false))
    {
       if (_config->FindB("version") == true)
