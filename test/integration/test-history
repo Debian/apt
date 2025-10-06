@@ -128,3 +128,7 @@ End time: dummy
 Requested by: 
 Command line: install nothing
 Packages changed:" normalizedinfo
+
+testfailureequal "E: Incorrect usage, no ID was given." apt history-redo
+testfailureequal "E: Incorrect usage, no ID was given." apt history-undo
+testfailureequal "E: Incorrect usage, no ID was given." apt history-rollback
