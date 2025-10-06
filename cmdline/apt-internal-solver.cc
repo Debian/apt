@@ -35,6 +35,7 @@
 #include <list>
 #include <sstream>
 #include <string>
+#include <libgen.h>
 #include <unistd.h>
 
 #include <apti18n.h>
@@ -119,7 +120,8 @@ int main(int argc,const char *argv[])					/*{{{*/
 		_config->Set("Debug::EDSP::WriteSolution", true);
 
 	_config->Set("APT::System", "Debian APT solver interface");
-	if (strcmp(basename(argv[0]), "solver3") == 0)
+	std::string self = argv[0];
+	if (strcmp(basename(self.data()), "solver3") == 0)
 	   _config->Set("APT::Solver", "3.0");
 	else if (_config->Find("APT::Solver") != "3.0")
 	   _config->Set("APT::Solver", "internal");
