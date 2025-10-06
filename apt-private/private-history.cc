@@ -352,6 +352,8 @@ class TransactionController
 
 static bool ParseId(const char *str, size_t &id, size_t max)
 {
+   if (str == nullptr)
+      return _error->Error(_("Incorrect usage, no ID was given."));
    try
    {
       id = std::stoi(str);
