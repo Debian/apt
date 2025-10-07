@@ -223,8 +223,8 @@ bool APT::Solver::Work::operator<(APT::Solver::Work const &b) const
 {
    if ((not clause->optional && size < 2) != (not b.clause->optional && b.size < 2))
       return not b.clause->optional && b.size < 2;
-   if (clause->optional != b.clause->optional)
-      return clause->optional;
+   if (clause->eager != b.clause->eager)
+      return not clause->eager;
    if (clause->group != b.clause->group)
       return clause->group > b.clause->group;
    if ((size < 2) != (b.size < 2))
@@ -955,6 +955,7 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
 	 if (unlikely(debug >= 3))
 	    std::cerr << "Promoting previously satisfied clause to hard dependency: " << clause.toString(cache, true) << std::endl;
 	 clause.optional = false;
+	 clause.eager = true;
       }
       else if (
 	 IsUpgrade && not(AllowRemove && AllowInstall)				    // promote Recommends to Depends in upgrade, not in dist-upgrade.
@@ -965,6 +966,7 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
 	 if (unlikely(debug >= 3))
 	    std::cerr << "Promoting new clause to hard dependency: " << clause.toString(cache) << std::endl;
 	 clause.optional = false;
+	 clause.eager = true;
       }
       else if (not existing.end() && importantToKeep(start) && satisfied)
       {
@@ -975,6 +977,7 @@ APT::Solver::Clause APT::Solver::TranslateOrGroup(pkgCache::DepIterator start, p
 	 clause.solutions.erase(std::remove_if(clause.solutions.begin(), clause.solutions.end(), [this](auto var)
 					       { return var.CastPkg(cache)->CurrentVer == nullptr; }),
 				clause.solutions.end());
+	 clause.eager = true;
       }
    }
 

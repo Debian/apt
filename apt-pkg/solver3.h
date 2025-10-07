@@ -406,10 +406,13 @@ struct APT::Solver::Clause
    // \brief A negative clause negates the solutions, that is X->A|B you get X->!(A|B), aka X->!A&!B
    bool negative;
 
+   // \brief An optional clause may be eager
+   bool eager;
+
    // Clauses merged with this clause
    std::forward_list<Clause> merged;
 
-   inline Clause(Var reason, Group group, bool optional = false, bool negative = false) : reason(reason), group(group), optional(optional), negative(negative) {}
+   inline Clause(Var reason, Group group, bool optional = false, bool negative = false) : reason(reason), group(group), optional(optional), negative(negative), eager(not optional) {}
 
    std::string toString(pkgCache &cache, bool pretty = false, bool showMerged = true) const;
 };
