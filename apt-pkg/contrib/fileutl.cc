@@ -899,6 +899,7 @@ pid_t ExecFork()
       return ExecFork(KeepFDs);
 }
 
+// Keep in mind that KeepFDs must be ordered for close_range() to work.
 pid_t ExecFork(std::set<int> KeepFDs)
 {
    // Fork off the process
