@@ -98,7 +98,8 @@ void PackageManagerProgressFd::StartDpkg()
 
    // FIXME: use SetCloseExec here once it taught about throwing
    //        exceptions instead of doing _exit(100) on failure
-   fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC); 
+   if (auto flags = fcntl(OutStatusFd, F_GETFD); flags >= 0)
+      fcntl(OutStatusFd, F_SETFD, flags | FD_CLOEXEC);
 
    // send status information that we are about to fork dpkg
    WriteToStatusFd(GetProgressFdString("pmstatus", "dpkg-exec", StepsDone, StepsTotal, _("Running dpkg")));
@@ -180,7 +181,8 @@ void PackageManagerProgressDeb822Fd::StartDpkg()
 {
    // FIXME: use SetCloseExec here once it taught about throwing
    //        exceptions instead of doing _exit(100) on failure
-   fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC); 
+   if (auto flags = fcntl(OutStatusFd, F_GETFD); flags >= 0)
+      fcntl(OutStatusFd, F_SETFD, flags | FD_CLOEXEC);
 
    WriteToStatusFd(GetProgressDeb822String("progress", nullptr, StepsDone, StepsTotal, _("Running dpkg")));
 }

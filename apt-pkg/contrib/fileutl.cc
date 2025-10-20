@@ -803,7 +803,8 @@ std::string flNormalize(std::string file)				/*{{{*/
 /* */
 void SetCloseExec(int Fd,bool Close)
 {
-   if (fcntl(Fd,F_SETFD,(Close == false)?0:FD_CLOEXEC) != 0)
+   auto flags = fcntl(Fd, F_GETFD);
+   if (flags < 0 || fcntl(Fd, F_SETFD, Close ? flags | FD_CLOEXEC : flags & ~FD_CLOEXEC) != 0)
    {
       cerr << "FATAL -> Could not set close on exec " << strerror(errno) << endl;
       exit(100);
@@ -922,7 +923,10 @@ pid_t ExecFork(std::set<int> KeepFDs)
       signal(SIGTSTP,SIG_DFL);
       auto safeSetCloseExec = [](int fd, bool close)
       {
-	 if (fcntl(fd, F_SETFD, close ? FD_CLOEXEC : 0) == 0 || errno == EBADF)
+	 auto flags = fcntl(fd, F_GETFD);
+	 if (flags < 0 && errno == EBADF)
+	    return;
+	 if (flags >= 0 && fcntl(fd, F_SETFD, close ? flags | FD_CLOEXEC : flags & ~FD_CLOEXEC) == 0)
 	    return;
 	 cerr << "FATAL -> Could not set close on exec " << strerror(errno) << endl;
 	 _Exit(100);
