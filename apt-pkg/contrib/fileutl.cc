@@ -85,6 +85,7 @@
 #include <endian.h>
 
 #if __gnu_linux__
+#include <linux/close_range.h>
 #include <sys/prctl.h>
 #endif
 
@@ -919,8 +920,37 @@ pid_t ExecFork(std::set<int> KeepFDs)
       signal(SIGCONT,SIG_DFL);
       signal(SIGTSTP,SIG_DFL);
 
-      DIR *dir = opendir("/proc/self/fd");
-      if (dir != NULL)
+#ifdef CLOSE_RANGE_CLOEXEC
+      // Close all our file descriptors using close_range() if available. This is substantially
+      // faster than the naive method and may be faster than the /proc/self/fd one.
+      {
+	 // Used for testing.
+	 auto DebugCloseRange = _config->FindB("Debug::CloseRange", false);
+	 int first = 3;
+	 for (auto keep : KeepFDs)
+	 {
+	    if (keep > first)
+	    {
+	       if (DebugCloseRange)
+		  std::clog << "close_range(" << first << ", " << keep - 1 << ")" << std::endl;
+	       if (close_range(first, keep - 1, CLOSE_RANGE_CLOEXEC))
+		  goto err;
+	    }
+	    first = keep + 1;
+	 }
+	 if (DebugCloseRange)
+	    std::clog << "close_range(" << first << ", " << ~0U << ")" << std::endl;
+	 if (close_range(first, ~0U, CLOSE_RANGE_CLOEXEC))
+	    goto err;
+
+	 return Process;
+      err:
+	 if (DebugCloseRange)
+	    std::clog << "close_range() failed" << std::endl;
+	 // fallthrough
+      }
+#endif
+      if (DIR *dir = opendir("/proc/self/fd"))
       {
 	 struct dirent *ent;
 	 while ((ent = readdir(dir)))
