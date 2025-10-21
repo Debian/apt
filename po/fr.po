@@ -12,9 +12,9 @@
 # bubu <bubub@no-log.org>, 2025.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.0.5\n"
+"Project-Id-Version: apt 3.1.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-10-02 14:49+0000\n"
+"POT-Creation-Date: 2025-10-21 19:16+0200\n"
 "PO-Revision-Date: 2025-03-07 12:02+0100\n"
 "Last-Translator: bubu <bubub@no-log.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -131,21 +131,21 @@ msgstr ""
 "Peut-être le réseau nécessite-t-il une authentification."
 
 #: apt-pkg/acquire-item.cc
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. OpenPGP signature "
 "verification failed: %s: %s"
 msgstr ""
 "Une erreur s'est produite lors du contrôle de la signature. Le dépôt n'est "
-"pas mis à jour et les fichiers d'index précédents seront utilisés. Erreur de "
-"GPG : %s : %s"
+"pas mis à jour et les fichiers d'index précédents seront utilisés. Échec de "
+"la vérification de signature OpenPGP : %s : %s"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
 #: apt-pkg/acquire-item.cc
 #, c-format
 msgid "OpenPGP signature verification failed: %s: %s"
-msgstr ""
+msgstr "La vérification de la signature OpenPGP a échoué : %s : %s"
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -253,8 +253,8 @@ msgid ""
 "Repositories should provide a clear-signed InRelease file, but none found at "
 "%s."
 msgstr ""
-"Les dépôts devraient fournir un fichier InRelease clairement signé, mais "
-"aucun n'a été trouvé à %s."
+"Les dépôts devraient fournir un fichier InRelease signé en clair, mais aucun "
+"n'a été trouvé à %s."
 
 #: apt-pkg/acquire-item.cc
 #, c-format
@@ -383,7 +383,7 @@ msgid ""
 "held packages."
 msgstr ""
 "Erreur, pkgProblem::Resolve a généré des ruptures, ce qui a pu être causé "
-"par les paquets devant être gardés en l'état."
+"par des paquets devant être gardés en l'état."
 
 #: apt-pkg/algorithms.cc
 msgid "Unable to correct problems, you have held broken packages."
@@ -655,39 +655,39 @@ msgstr "Type d'abréviation non reconnue : « %c »"
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
-msgstr "Erreur syntaxique %s:%u : le bloc commence sans aucun nom."
+msgstr "Erreur de syntaxe %s:%u : le bloc commence sans aucun nom."
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
-msgstr "Erreur syntaxique %s:%u : balise mal formée"
+msgstr "Erreur de syntaxe %s:%u : balise mal formée"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
-msgstr "Erreur syntaxique %s:%u : valeur suivie de choses illicites"
+msgstr "Erreur de syntaxe %s:%u : valeur suivie de choses illicites"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
-"Erreur syntaxique %s:%u : ces directives ne peuvent être appliquées qu'au "
+"Erreur de syntaxe %s:%u : ces directives ne peuvent être appliquées qu'au "
 "niveau le plus haut"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
-msgstr "Erreur syntaxique %s:%u: trop de niveaux d'imbrication d'includes"
+msgstr "Erreur de syntaxe %s:%u: trop de niveaux d'imbrication d'includes"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
-msgstr "Erreur syntaxique %s:%u : inclus à partir d'ici"
+msgstr "Erreur de syntaxe %s:%u : inclus à partir d'ici"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
-msgstr "Erreur syntaxique %s:%u : directive « %s » non tolérée"
+msgstr "Erreur de syntaxe %s:%u : directive « %s » non tolérée"
 
 #: apt-pkg/contrib/configuration.cc
 #, c-format
@@ -699,7 +699,7 @@ msgstr ""
 #: apt-pkg/contrib/configuration.cc
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
-msgstr "Erreur syntaxique %s:%u : valeur aberrante à la fin du fichier"
+msgstr "Erreur de syntaxe %s:%u : valeur aberrante à la fin du fichier"
 
 #. TRANSLATOR: This is a warning level displayed before the message
 #: apt-pkg/contrib/error.cc
@@ -825,7 +825,7 @@ msgstr "A attendu %s, mais il n'était pas présent"
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
-msgstr "Le sous-processus %s a commis une violation d'accès mémoire"
+msgstr "Le sous-processus %s a commis une erreur de segmentation."
 
 #: apt-pkg/contrib/fileutl.cc
 #, c-format
@@ -1491,7 +1491,7 @@ msgid ""
 msgstr ""
 "Impossible d'effectuer la configuration immédiate de « %s ». Veuillez "
 "consulter la page de manuel apt.conf(5) et notamment la section à propos de "
-"APT::Immediate-Configure, pour plus d'informations. (%d)"
+"APT::Immediate-Configure pour plus d'informations. (%d)"
 
 #: apt-pkg/packagemanager.cc
 #, c-format
@@ -1658,7 +1658,7 @@ msgstr ""
 #, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
 msgstr ""
-"Enregistrement non valable dans le fichier de préférences %s, aucune en-tête "
+"Enregistrement non valable dans le fichier de préférences %s, aucun en-tête "
 "« Package »."
 
 #: apt-pkg/policy.cc
@@ -1869,9 +1869,8 @@ msgid ""
 "is only available from another source\n"
 msgstr ""
 "Aucune version du paquet %s n'est disponible, mais il existe dans la base\n"
-"de données. Cela signifie en général que le paquet est manquant, qu'il est "
-"devenu obsolète\n"
-"ou qu'il n'est disponible que sur une autre source\n"
+"de données. Cela signifie en général que le paquet est manquant, qu'il est\n"
+"devenu obsolète ou qu'il n'est disponible que sur une autre source\n"
 
 #: apt-private/private-cacheset.cc
 msgid "However the following packages replace it:"
@@ -1923,14 +1922,13 @@ msgid ""
 "Package and version choices can be expressed via apt_preferences(5).\n"
 "Security details are available in apt-secure(8).\n"
 msgstr ""
-"Les options de configuration ainsi que la syntaxe sont détaillées dans "
+"Les options de configuration et la syntaxe sont détaillées dans "
 "apt.conf(5).\n"
 "Des informations sur la configuration des sources sont disponibles dans "
 "sources.list(5).\n"
-"Les choix de paquet ainsi que la version peuvent être renseignés grâce à "
+"Les choix de paquet et de version peuvent être renseignés grâce à "
 "apt_preferences(5).\n"
-"Les informations à propos de la sécurité sont disponibles dans apt-"
-"secure(8).\n"
+"Les informations sur la sécurité sont disponibles dans apt-secure(8).\n"
 
 #: apt-private/private-cmndline.cc
 msgid "This APT has Super Cow Powers."
@@ -2111,6 +2109,10 @@ msgid "Could not find given version %s of %s"
 msgstr "Impossible de trouver la version « %s » du paquet « %s »"
 
 #: apt-private/private-history.cc
+msgid "Incorrect usage, no ID was given."
+msgstr ""
+
+#: apt-private/private-history.cc
 #, fuzzy, c-format
 #| msgid "%s not a valid DEB package."
 msgid "'%s' not a valid ID."
@@ -2164,9 +2166,8 @@ msgid "Broken packages"
 msgstr "Paquets défectueux"
 
 #: apt-private/private-install.cc
-#, fuzzy
 msgid "Writing error report"
-msgstr "Erreur d'écriture"
+msgstr "Écriture du rapport d'erreur"
 
 #: apt-private/private-install.cc
 msgid ""
@@ -2217,7 +2218,7 @@ msgid ""
 "Held packages were changed and -y was used without --allow-change-held-"
 "packages."
 msgstr ""
-"Les paquets gelés ont été modifiés et -y a été utilisé sans --allow-change-"
+"Les paquets retenus ont été modifiés et -y a été utilisé sans --allow-change-"
 "held-packages."
 
 #: apt-private/private-install.cc
@@ -2227,13 +2228,13 @@ msgstr "Erreur interne. Le tri a été interrompu."
 #: apt-private/private-install.cc
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
-"Étrangement, les tailles ne correspondent pas. Veuillez le signaler par "
+"Étrange... Les tailles ne correspondent pas. Veuillez le signaler par "
 "courriel à apt@packages.debian.org"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "  Download size: %sB / %sB\n"
-msgstr "Taille du téléchargement : %sB / %sB\n"
+msgstr "Taille du téléchargement : %so / %so\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2245,14 +2246,14 @@ msgstr "Il est nécessaire de prendre %so/%so dans les archives.\n"
 #: apt-private/private-install.cc
 #, c-format
 msgid "  Download size: %sB\n"
-msgstr "Taille du téléchargement : %sB\n"
+msgstr "Taille du téléchargement : %so\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "Need to get %sB of archives.\n"
-msgstr "Il est nécessaire de prendre %sB dans les archives.\n"
+msgstr "Il est nécessaire de prendre %so dans les archives.\n"
 
 #: apt-private/private-install.cc
 #, c-format
@@ -2265,7 +2266,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB / %sB available\n"
-msgstr "Espace nécessaire : %sB / %sB disponible\n"
+msgstr "Espace nécessaire : %so / %so disponible\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2273,7 +2274,7 @@ msgstr "Espace nécessaire : %sB / %sB disponible\n"
 #, c-format
 msgid "More space needed than available: %sB > %sB, installation may fail"
 msgstr ""
-"Besoin de plus d'espace que disponible : %sB > %sB, l'installation risque "
+"Besoin de plus d'espace que disponible : %so > %so, l'installation risque "
 "d'échouer"
 
 #. TRANSLATOR: The required space between number and unit is already included
@@ -2284,7 +2285,7 @@ msgstr ""
 #: apt-private/private-install.cc
 #, c-format
 msgid "in %s:  %sB / %sB available\n"
-msgstr "dans %s : %sB / %sB disponible\n"
+msgstr "dans %s : %so / %so disponible\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -2294,25 +2295,25 @@ msgstr "dans %s : %sB / %sB disponible\n"
 msgid ""
 "More space needed in %s than available: %sB > %sB, installation may fail"
 msgstr ""
-"Besoin de plus d'espace dans %s que disponible : %sB > %sB, l'installation "
+"Besoin de plus d'espace dans %s que disponible : %so > %so, l'installation "
 "risque d'échouer"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "Space needed: %sB\n"
-msgstr "Espace nécessaire : %sB\n"
+msgstr "Espace nécessaire : %so\n"
 
 #: apt-private/private-install.cc
 #, c-format
 msgid "  Freed space: %sB\n"
-msgstr "  Espace libéré : %sB\n"
+msgstr "  Espace libéré : %so\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-install.cc
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "Après cette opération, %sB d'espace disque seront libérés.\n"
+msgstr "Après cette opération, %so d'espace disque seront libérés.\n"
 
 #: apt-private/private-install.cc
 msgid "Trivial Only specified but this is not a trivial operation."
@@ -2395,8 +2396,8 @@ msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
-"Il semble que l'outil de suppression automatique (« AutoRemover ») ait\n"
-"supprimé quelque chose, ce qui est inattendu. Veuillez envoyer un\n"
+"Il semble que l'outil de suppression automatique (« AutoRemover ») a\n"
+"supprimé quelque chose qui est inattendu. Veuillez envoyer un\n"
 "rapport de bogue pour le paquet « apt »."
 
 #: apt-private/private-install.cc
@@ -2435,7 +2436,7 @@ msgstr[1] ""
 
 #: apt-private/private-install.cc
 msgid "Result calculated by the 3.0 solver."
-msgstr ""
+msgstr "Résultat calculé par le solveur 3.0."
 
 #: apt-private/private-install.cc
 msgid "Suggested packages:"
@@ -2678,7 +2679,7 @@ msgstr "%lu mis à jour, %lu nouvellement installés, "
 #: apt-private/private-output.cc
 #, c-format
 msgid "Upgrading: %lu, Installing: %lu, "
-msgstr "Mise à niveau de : %lu. Installation de : %lu"
+msgstr "Mise à niveau de : %lu. Installation de : %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2688,7 +2689,7 @@ msgstr "%lu réinstallés, "
 #: apt-private/private-output.cc
 #, c-format
 msgid "Reinstalling: %lu, "
-msgstr "Réinstallation de : %lu."
+msgstr "Réinstallation de : %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2698,7 +2699,7 @@ msgstr "%lu remis à une version inférieure, "
 #: apt-private/private-output.cc
 #, c-format
 msgid "Downgrading: %lu, "
-msgstr "Rétrogradage de : %lu."
+msgstr "Rétrogradage de : %lu, "
 
 #: apt-private/private-output.cc
 #, c-format
@@ -2873,14 +2874,14 @@ msgstr "Saut du téléchargement du fichier « %s », déjà téléchargé\n"
 #: apt-private/private-source.cc
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Nécessité de prendre %sB/%sB dans les sources.\n"
+msgstr "Nécessité de prendre %so/%so dans les sources.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: apt-private/private-source.cc
 #, c-format
 msgid "Need to get %sB of source archives.\n"
-msgstr "Nécessité de prendre %sB dans les sources.\n"
+msgstr "Nécessité de prendre %so dans les sources.\n"
 
 #: apt-private/private-source.cc
 #, c-format
@@ -3242,11 +3243,9 @@ msgid ""
 msgstr ""
 "Usage : apt-config [options] commande\n"
 "\n"
-"apt-config est une interface pour lire le fichier de configuration utilisé "
-"par\n"
-"tous les outils APT, et généralement à des fins de débogage ou d'écriture\n"
-"de scripts pour l'interpréteur de commandes.\n"
-"\n"
+"apt-config est une interface pour lire le fichier de configuration utilisé\n"
+"par tous les outils APT, et généralement à des fins de débogage\n"
+"ou d'écriture de scripts pour l'interpréteur de commandes.\n"
 
 #: cmdline/apt-config.cc
 msgid "get configuration values via shell evaluation"
@@ -3473,7 +3472,7 @@ msgstr "En attente de la connexion du système"
 
 #: cmdline/apt-helper.cc
 msgid "drop privileges before running given command"
-msgstr "Se débarrasser des privilèges avant d'exécuter la commande donnée"
+msgstr "Abandonner des privilèges avant d'exécuter la commande donnée"
 
 #: cmdline/apt-helper.cc
 msgid "analyse a pattern"
@@ -3491,7 +3490,7 @@ msgstr ""
 "\n"
 "apt-internal-planner est une interface en ligne de commande\n"
 "permettant d'utiliser le planificateur interne pour la famille d'APT\n"
-"de manière externe à des fins de débogage ou équivalent\n"
+"comme planificateur externe à des fins de débogage ou autre\n"
 
 #: cmdline/apt-internal-solver.cc
 msgid ""
@@ -3505,9 +3504,7 @@ msgstr ""
 "\n"
 "apt-internal-solver est une interface en ligne de commande\n"
 "permettant d'utiliser la résolution interne pour la famille d'APT\n"
-"de manière externe à des fins de débogage ou équivalent\n"
-"\n"
-"\n"
+"comme un résolveur externe à des fins de débogage ou autre\n"
 
 #: cmdline/apt-mark.cc
 #, c-format
@@ -3636,11 +3633,10 @@ msgid ""
 msgstr ""
 "Usage : apt-sortpkgs [options] fichier1 [fichier2 ...]\n"
 "\n"
-"apt-sortpgks est un outil simple permettant de trier les informations à\n"
-"propos d'un paquet. Par défaut, il trie par information de paquets "
-"binaires,\n"
-"mais l'option -s peut être utilisée pour passer au tri par paquet source.\n"
-"\n"
+"apt-sortpgks est un outil simple permettant de trier les informations\n"
+"à propos d'un paquet. Par défaut, il trie par information\n"
+"de paquets binaires,mais l'option -s peut être utilisée pour passer au tri\n"
+"par paquet source.\n"
 
 #: cmdline/apt.cc
 msgid ""
@@ -3688,7 +3684,7 @@ msgstr "supprimer des paquets"
 
 #: cmdline/apt.cc
 msgid "automatically remove all unused packages"
-msgstr "Supprimer automatiquement tous les paquets inutilisés"
+msgstr "supprimer automatiquement tous les paquets inutilisés"
 
 #. system wide stuff
 #: cmdline/apt.cc
@@ -3740,7 +3736,7 @@ msgstr "satisfaire les chaînes de dépendances"
 
 #: cmdline/apt.cc
 msgid "produce a reason trace for the current state of the package"
-msgstr ""
+msgstr "produire une trace de l'état actuel du paquet"
 
 #: dselect/install
 msgid "Bad default setting!"
@@ -3868,9 +3864,9 @@ msgstr ""
 "d'un arbre de .dscs. L'option --source-override peut être employée pour\n"
 "spécifier un fichier src d'« override »\n"
 "\n"
-"Les commandes « packages » et « sources » devraient être démarrées à la\n"
-"racine de l'arbre. « BinaryPath » devrait pointer sur la base d'une\n"
-"recherche récursive et le fichier d'« override » devrait contenir les\n"
+"Les commandes « packages » et « sources » doivent être démarrées à la\n"
+"racine de l'arbre. « BinaryPath » doit pointer sur la base d'une\n"
+"recherche récursive et le fichier d'« override » doit contenir les\n"
 "drapeaux d'annulation. « Pathprefix » est ajouté au champ du nom de\n"
 "fichier s'il est présent. Exemple d'utilisation d'archive Debian :\n"
 "   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
@@ -3882,10 +3878,10 @@ msgstr ""
 "  -s=?   Fichier d'« override » pour les sources\n"
 "  -q     Silencieux\n"
 "  -d=?   Sélectionne la base de données optionnelle de cache\n"
-"  --no-delink Permet le mode de débogage délié\n"
+"  --no-delink Permet le mode de débogage de déliaison\n"
 "  --contents  Contrôle la génération de fichier\n"
-"  -c=? Lit ce fichier de configuration\n"
-"  -o=? Place une option de configuration arbitraire"
+"  -c=?   Lit ce fichier de configuration\n"
+"  -o=?   Place une option de configuration arbitraire"
 
 #: ftparchive/apt-ftparchive.cc
 msgid "No selections matched"
@@ -4001,12 +3997,12 @@ msgstr "Entrée « override » %s mal formée ligne %llu n° 1"
 #: ftparchive/override.cc
 #, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr "Entrée « override » %s mal formée %llu n° 2"
+msgstr "Entrée « override » %s mal formée ligne %llu n° 2"
 
 #: ftparchive/override.cc
 #, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr "Entrée « override » %s mal formée %llu n° 3"
+msgstr "Entrée « override » %s mal formée ligne %llu n° 3"
 
 #: ftparchive/writer.cc
 #, c-format
@@ -4057,7 +4053,7 @@ msgstr "*** Impossible de lier %s à %s"
 #: ftparchive/writer.cc
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
-msgstr " Seuil de déliaison de %sB atteint.\n"
+msgstr " Seuil de déliaison de %so atteint.\n"
 
 #: ftparchive/writer.cc
 msgid "Archive had no package field"
