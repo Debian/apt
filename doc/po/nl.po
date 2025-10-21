@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 3.0.0\n"
+"Project-Id-Version: apt-doc 3.1.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2025-06-13 12:44+0200\n"
-"PO-Revision-Date: 2025-04-15 20:43+0200\n"
+"POT-Creation-Date: 2025-10-21 19:19+0200\n"
+"PO-Revision-Date: 2025-08-28 22:52+0200\n"
 "Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
 "Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
 "Language: nl\n"
@@ -941,6 +941,10 @@ msgid ""
 "that they print the actual reason the solver picked rather than the "
 "potential strongest path."
 msgstr ""
+"Deze commando's printen de redenering van de oplosser. Ze lijken in veel "
+"gevallen op de equivalente aptitude-opdrachten, maar verschillen doordat ze "
+"de werkelijke reden die de oplosser heeft gekozen printen in plaats van de "
+"potentieel sterkste redenering."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
@@ -951,6 +955,11 @@ msgid ""
 "reason is given. If the package is not installed, no reason can be "
 "determined."
 msgstr ""
+"Het commando <option>why</option> bepaalt waarom een geïnstalleerd pakket is "
+"geïnstalleerd. Dit geeft redelijke feedback over waarom een automatisch "
+"geïnstalleerd pakket is geïnstalleerd; voor een handmatig geïnstalleerd "
+"pakket wordt geen andere reden gegeven. Als het pakket niet is "
+"geïnstalleerd, kan er geen reden worden vastgesteld."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
@@ -959,11 +968,14 @@ msgid ""
 "to not be installable. This may not always yield a result, even if a package "
 "is uninstallable."
 msgstr ""
+"Het commando <option>why-not</option> bepaalt waarom een ​​pakket niet "
+"installeerbaar werd geacht. Dit levert niet altijd een resultaat op, zelfs "
+"niet als een pakket niet-installeerbaar is."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml
 msgid "Both commands take a single argument, the name of a package."
-msgstr ""
+msgstr "Beide commando's hebben één argument nodig: de naam van een pakket."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt.8.xml
@@ -6465,16 +6477,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_preferences.5.xml
-#, fuzzy
-#| msgid ""
-#| "Note that the files in the <filename>/etc/apt/preferences.d</filename> "
-#| "directory are parsed in alphanumeric ascending order and need to obey the "
-#| "following naming convention: The files have either no or \"<literal>pref</"
-#| "literal>\" as filename extension and only contain alphanumeric, hyphen "
-#| "(-), underscore (_) and period (.) characters.  Otherwise APT will print "
-#| "a notice that it has ignored a file, unless that file matches a pattern "
-#| "in the <literal>Dir::Ignore-Files-Silently</literal> configuration list - "
-#| "in which case it will be silently ignored."
 msgid ""
 "Note that the files in the <filename>/etc/apt/preferences.d</filename> "
 "directory need to obey the following naming convention: The files have "
@@ -6485,14 +6487,14 @@ msgid ""
 "configuration list - in which case it will be silently ignored."
 msgstr ""
 "Noteer dat de bestanden uit de map <filename>/etc/apt/preferences.d</"
-"filename> in oplopende alfanumerieke volgorde ontleed worden en dat hun naam "
-"aan de volgende conventie moet beantwoorden: de bestanden hebben ofwel geen "
-"bestandsnaamextensie ofwel is dat \"<literal>pref</literal>\" en ze bevatten "
-"enkel alfanumerieke tekens, koppeltekens (-), lage streepjes (_) en punten "
-"(.). In het andere geval zal APT melding maken van het feit dat het een "
-"bestand overgeslagen heeft, tenzij dat bestand overeenkomt met een patroon "
-"uit de configuratielijst <literal>Dir::Ignore-Files-Silently</literal>. In "
-"dat laatste geval zal het stilzwijgend overgeslagen worden."
+"filename> een naam moeten hebben die aan de volgende conventie moet "
+"beantwoorden: de bestanden hebben ofwel geen bestandsnaamextensie ofwel is "
+"dat \"<literal>pref</literal>\" en ze bevatten enkel alfanumerieke tekens, "
+"koppeltekens (-), lage streepjes (_) en punten (.). In het andere geval zal "
+"APT melding maken van het feit dat het een bestand overgeslagen heeft, "
+"tenzij dat bestand overeenkomt met een patroon uit de configuratielijst "
+"<literal>Dir::Ignore-Files-Silently</literal>. In dat laatste geval zal het "
+"stilzwijgend overgeslagen worden."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_preferences.5.xml
@@ -6504,6 +6506,12 @@ msgid ""
 "<filename>/etc/apt/preferences.d/z-low-priority.pref</filename> would be "
 "parsed in that order."
 msgstr ""
+"<filename>/etc/apt/preferences</filename> wordt eerst verwerkt, gevolgd door "
+"de bestanden in <filename>/etc/apt/preferences.d</filename> in "
+"lexicografische volgorde. Bijvoorbeeld, <filename>/etc/apt/preferences.d/00-"
+"high-priority.pref</filename>, <filename>/etc/apt/preferences.d/50-mid-"
+"priority</filename> en <filename>/etc/apt/preferences.d/z-low-priority.pref</"
+"filename> worden in die volgorde verwerkt."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml
@@ -8025,6 +8033,13 @@ msgid ""
 "<filename>50-middle-preference.sources</filename> which is more-preferred "
 "than <filename>z-low-preference.list</filename>."
 msgstr ""
+"Als er meerdere bronlijsten worden gebruikt, zijn de meest gewenste bronnen "
+"die welke vermeld staan in <filename>/etc/apt/sources.list</filename>, "
+"gevolgd door elk bestand in <filename>/etc/apt/sources.list.d/</filename> in "
+"lexicografische volgorde:  bijvoorbeeld, <filename>00-high-preference.list</"
+"filename> heeft de voorkeur boven <filename>50-middle-preference.sources</"
+"filename>, wat weer de voorkeur heeft boven <filename>z-low-preference.list</"
+"filename>."
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml
@@ -8440,26 +8455,22 @@ msgid ""
 "defining which packages should be used from this repository. Others are not "
 "parsed."
 msgstr ""
+"<option>Include</option> (<option>include</option>) is een optie met "
+"meerdere waarden die definieert welke pakketten uit deze pakketbron moeten "
+"worden gebruikt. Andere worden niet verwerkt."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
-#, fuzzy
-#| msgid ""
-#| "<option>Architectures</option> (<option>arch</option>) is a multivalue "
-#| "option defining for which architectures information should be downloaded. "
-#| "If this option isn't set the default is all architectures as defined by "
-#| "the <option>APT::Architectures</option> config option."
 msgid ""
 "<option>Exclude</option> (<option>exclude</option>) is a multivalue option "
 "defining which packages should not be used from this repository. They will "
 "not be parsed.  This option is mutually exclusive with <option>Include</"
 "option>."
 msgstr ""
-"<option>Architectures</option> (<option>arch</option>) is een multi-waarde "
-"optie waarmee opgegeven wordt voor welke architecturen er informatie "
-"opgehaald moet worden. Indien deze optie niet ingesteld werd, geldt als "
-"standaard alle architecturen die in de configuratieoptie "
-"<literal>APT::Architectures</literal> gedefinieerd zijn."
+"<option>Exclude</option> (<option>exclude</option>) is een optie met "
+"meerdere waarden die definieert welke pakketten uit deze pakketbron niet "
+"mogen worden gebruikt. Deze worden niet verwerkt. Deze optie en "
+"<option>Include</option> sluiten elkaar uit."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml
