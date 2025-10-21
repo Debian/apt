@@ -803,7 +803,8 @@ std::string flNormalize(std::string file)				/*{{{*/
 /* */
 void SetCloseExec(int Fd,bool Close)
 {
-   if (fcntl(Fd,F_SETFD,(Close == false)?0:FD_CLOEXEC) != 0)
+   auto flags = fcntl(Fd, F_GETFD);
+   if (flags < 0 || fcntl(Fd, F_SETFD, Close ? flags | FD_CLOEXEC : flags & ~FD_CLOEXEC) != 0)
    {
       cerr << "FATAL -> Could not set close on exec " << strerror(errno) << endl;
       exit(100);
@@ -920,38 +921,27 @@ pid_t ExecFork(std::set<int> KeepFDs)
       signal(SIGWINCH,SIG_DFL);
       signal(SIGCONT,SIG_DFL);
       signal(SIGTSTP,SIG_DFL);
-
-#ifdef CLOSE_RANGE_CLOEXEC
-      // Close all our file descriptors using close_range() if available. This is substantially
-      // faster than the naive method and may be faster than the /proc/self/fd one.
+      auto safeSetCloseExec = [](int fd, bool close)
       {
-	 // Used for testing.
-	 auto DebugCloseRange = _config->FindB("Debug::CloseRange", false);
-	 int first = 3;
-	 for (auto keep : KeepFDs)
-	 {
-	    if (keep > first)
-	    {
-	       if (DebugCloseRange)
-		  std::clog << "close_range(" << first << ", " << keep - 1 << ")" << std::endl;
-	       if (close_range(first, keep - 1, CLOSE_RANGE_CLOEXEC))
-		  goto err;
-	    }
-	    first = keep + 1;
-	 }
-	 if (DebugCloseRange)
-	    std::clog << "close_range(" << first << ", " << ~0U << ")" << std::endl;
-	 if (close_range(first, ~0U, CLOSE_RANGE_CLOEXEC))
-	    goto err;
+	 auto flags = fcntl(fd, F_GETFD);
+	 if (flags < 0 && errno == EBADF)
+	    return;
+	 if (flags >= 0 && fcntl(fd, F_SETFD, close ? flags | FD_CLOEXEC : flags & ~FD_CLOEXEC) == 0)
+	    return;
+	 cerr << "FATAL -> Could not set close on exec " << strerror(errno) << endl;
+	 _Exit(100);
+      };
 
-	 return Process;
-      err:
-	 if (DebugCloseRange)
-	    std::clog << "close_range() failed" << std::endl;
-	 // fallthrough
-      }
+// If we don't have it, make the close_range() expression a failure; avoids #if inside the if/else
+#ifndef CLOSE_RANGE_CLOEXEC
+#define close_range(...) -1
 #endif
-      if (DIR *dir = opendir("/proc/self/fd"))
+      if (close_range(3, ~0U, CLOSE_RANGE_CLOEXEC) == 0)
+      {
+	 for (auto keep : KeepFDs)
+	    safeSetCloseExec(keep, false);
+      }
+      else if (DIR *dir = opendir("/proc/self/fd"))
       {
 	 struct dirent *ent;
 	 while ((ent = readdir(dir)))
@@ -959,16 +949,18 @@ pid_t ExecFork(std::set<int> KeepFDs)
 	    int fd = atoi(ent->d_name);
 	    // If fd > 0, it was a fd number and not . or ..
 	    if (fd >= 3 && KeepFDs.find(fd) == KeepFDs.end())
-	       fcntl(fd,F_SETFD,FD_CLOEXEC);
+	       safeSetCloseExec(fd, true);
 	 }
 	 closedir(dir);
-      } else {
+      }
+      else
+      {
 	 long ScOpenMax = sysconf(_SC_OPEN_MAX);
 	 // Close all of our FDs - just in case
 	 for (int K = 3; K != ScOpenMax; K++)
 	 {
 	    if(KeepFDs.find(K) == KeepFDs.end())
-	       fcntl(K,F_SETFD,FD_CLOEXEC);
+	       safeSetCloseExec(K, true);
 	 }
       }
    }
