@@ -31,7 +31,7 @@ test as root:
     - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
     - unbuffer ./test/integration/run-tests -q -j 4
 
-test solver3 and gpgv:
+test classic solver and gpgv:
   stage: test
   variables:
     APT_CMAKE_BUILD_OPTIONS: '-DWITH_DOC=OFF -DUSE_NLS=OFF'
@@ -39,7 +39,7 @@ test solver3 and gpgv:
     BUILD_PRE: 'rm /usr/bin/sqv'
   script:
     - CTEST_OUTPUT_ON_FAILURE=1 ninja -C build test
-    - unbuffer ./test/integration/run-tests -q -j 4 --solver 3.0 --skip solver3.broken
+    - unbuffer ./test/integration/run-tests -q -j 4 --solver internal
 
 test as user:
   image:

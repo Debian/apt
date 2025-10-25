@@ -514,6 +514,10 @@ static void BinarySpecificConfiguration(char const * const Binary)	/*{{{*/
    _config->CndSet("Version::1.5::APT::Get::Update::InteractiveReleaseInfoChanges", true);
    _config->CndSet("Version::2.0::APT::Cmd::Pattern-Only", true);
    _config->CndSet("Version::3.0::Pager", true);
+   _config->CndSet("Version::0.31::APT::Solver", "3.0");
+   _config->CndSet("Version::1.21::APT::Solver", "3.0");
+   _config->CndSet("Version::2.11::APT::Solver", "3.0");
+   _config->CndSet("Version::3.1::APT::Solver", "3.0");
 
    if (isatty(STDIN_FILENO))
       _config->CndSet("Version::2.0::Dpkg::Lock::Timeout", -1);
