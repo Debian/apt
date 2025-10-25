@@ -104,12 +104,23 @@ bool pkgCacheGenerator::Start()
       map_stringitem_t idxArchitectures;
 
       std::vector<std::string> archs = APT::Configuration::getArchitectures();
-      if (archs.size() > 1)
+      auto const &variants = APT::Configuration::getArchitectureVariants(true);
+      if (archs.size() > 1 || not variants.empty())
       {
 	 std::vector<std::string>::const_iterator a = archs.begin();
 	 std::string list = *a;
 	 for (++a; a != archs.end(); ++a)
 	    list.append(",").append(*a);
+	 if (not variants.empty())
+	 {
+	    list.append(";");
+	    for (auto const &variant : variants)
+	    {
+	       if (list.back() != ';')
+		  list.append(",");
+	       list.append(variant.name);
+	    }
+	 }
 	 idxArchitectures = WriteStringInMap(list);
 	 if (unlikely(idxArchitectures == 0))
 	    return false;
@@ -383,11 +394,20 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 
    auto Hash = List.VersionHash();
    std::string_view ListSHA256;
+   std::string_view ListArchVariant;
 
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
    auto DebList = dynamic_cast<debListParser *>(&List);
    if (DebList != nullptr)
       ListSHA256 = DebList->SHA256();
+   if (DebList != nullptr)
+      ListArchVariant = DebList->ArchVariant();
+
+   auto variants = _config->FindVector("APT::Architecture-Variants");
+   // Always add "no variant" at the back of the list. If it's already configured earlier, that wins
+   if (variants.empty() || variants.back() != "")
+      variants.push_back("");
+
    if (Ver.end() == false)
    {
       /* We know the list is sorted so we use that fact in the search.
@@ -425,6 +445,13 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 		     break;
 	       if (VF.end() == true)
 		  break;
+	    }
+
+	    // Variants are ordered by their index in the variant list.
+	    if (std::find(variants.begin(), variants.end(), Ver.ArchVariant()) > std::find(variants.begin(), variants.end(), ListArchVariant))
+	    {
+	       Res = 1;
+	       break;
 	    }
 	 }
 	 // proceed with the next till we have either the right

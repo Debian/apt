@@ -24,6 +24,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
+#include <optional>
 #include <string>
 #include <vector>
 #include <dirent.h>
@@ -311,6 +313,117 @@ bool Configuration::checkLanguage(std::string Lang, bool const All) {
 	Lang = SubstVar(Lang, "%5f", "_");
 	std::vector<std::string> const langs = getLanguages(All, true);
 	return (std::find(langs.begin(), langs.end(), Lang) != langs.end());
+}
+									/*}}}*/
+
+// getArchitectures - Return Vector of preferred Architectures		/*{{{*/
+
+static std::set<std::string> const &getCpuFlags()
+{
+   static std::set<std::string> flags;
+   if (not flags.empty())
+      return flags;
+
+   std::ifstream table(_config->FindFile("Dir::proc::cpuinfo", "/proc/cpuinfo"));
+   for (std::string line; std::getline(table, line);)
+   {
+      if (not APT::String::Startswith(line, "flags\t"))
+	 continue;
+
+      line = line.substr(line.find(':'));
+      line = line.substr(line.find_first_not_of(": "));
+      if (flags.empty())
+	 for (auto &&flag : APT::String::Split(line))
+	    flags.insert(std::move(flag));
+      else
+      {
+	 // Remove flags not present in this CPU
+	 auto split = APT::String::Split(line);
+	 std::set<std::string> newSet{split.begin(), split.end()};
+	 for (auto it = flags.begin(); it != flags.end();)
+	    if (newSet.find(*it) == newSet.end())
+	       it = flags.erase(it);
+	    else
+	       ++it;
+      }
+   }
+   return flags;
+}
+std::vector<Configuration::ArchitectureVariant> Configuration::getArchitectureVariants(bool cached)
+{
+   std::optional<std::vector<ArchitectureVariant>> static variants;
+   if (likely(cached) && variants)
+      return *variants;
+
+   variants.emplace();
+
+   auto const configuredVariants = _config->FindVector("APT::Architecture-Variants");
+   auto const architectures = getArchitectures(cached);
+   auto const autoDetect = configuredVariants.size() == 1 && configuredVariants.front() == "auto";
+   auto const autoCpuFlags = getCpuFlags();
+   auto tablepath = _config->FindFile("Dir::dpkg::varianttable", DPKG_DATADIR "/varianttable");
+   std::ifstream table(tablepath);
+   auto isAutoVariant = [&](auto &var)
+   {
+      bool res = true;
+      for (auto want : var.cpuflags)
+	 if (autoCpuFlags.find(want) == autoCpuFlags.end())
+	 {
+	    if (_config->FindB("Debug::Acquire::Variants", false))
+	       std::clog << "variant auto: " << var.name << ": missing: " << want << "\n";
+	    res = false;
+	 }
+      return res;
+   };
+   for (std::string line; std::getline(table, line);)
+   {
+      if (line[0] == '#' || line[0] == '\0')
+	 continue;
+      auto cols = APT::String::Split(line);
+      ArchitectureVariant var{cols[0], cols[1], VectorizeString(cols[2], ',')};
+      // Skip disabled architectures.
+      if (std::find(architectures.begin(), architectures.end(), var.base) == architectures.end())
+      {
+	 continue;
+      }
+      // See if this variant is configured or we detect it as auto
+      bool enabled = std::find(configuredVariants.begin(), configuredVariants.end(), cols[0]) != configuredVariants.end() || (autoDetect && isAutoVariant(var));
+      if (enabled)
+	 variants->push_back(std::move(var));
+   }
+
+   if (not autoDetect)
+      for (auto &var : configuredVariants)
+	 if (std::find_if(variants->begin(), variants->end(), [var](auto &v)
+			  { return v.name == var; }) == variants->end())
+	 {
+	    if (var == "auto")
+	       _error->Warning("Invalid value for APT::Architecture-Variants: auto cannot be combined with explicit variants");
+	    else
+	       _error->Warning("Invalid value for APT::Architecture-Variants: %s", var.c_str());
+	 }
+
+   // Build the supplants table
+   for (auto var = variants->begin(); var != variants->end(); ++var)
+   {
+      var->supplants.push_back(var->base);
+      for (auto var2 = var + 1; var2 != variants->end(); ++var2)
+	 if (var2->base == var->base)
+	    var->supplants.push_back(var2->name);
+   }
+
+   // Order variants by preference
+   std::sort(variants->begin(), variants->end(), [&](auto &a, auto &b)
+	     { return std::find(configuredVariants.begin(), configuredVariants.end(), a.name) < std::find(configuredVariants.begin(), configuredVariants.end(), b.name); });
+   if (_config->FindB("Debug::Acquire::Variants", false))
+   {
+      std::clog << "Variants enabled:";
+      for (auto &var : *variants)
+	 std::clog << " " << var.name;
+      std::clog << std::endl;
+   }
+
+   return *variants;
 }
 									/*}}}*/
 // getArchitectures - Return Vector of preferred Architectures		/*{{{*/

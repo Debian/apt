@@ -38,19 +38,6 @@ namespace APT {
    APT_HIDDEN extern std::unordered_map<std::string, std::vector<std::string>> ArchToTupleMap;
 }
 
-// Splits by whitespace. There may be continuous spans of whitespace - they
-// will be considered as one.
-static std::vector<std::string> split(std::string const & s)
-{
-   std::vector<std::string> vec;
-   std::istringstream iss(s);
-   iss.imbue(std::locale::classic());
-   for(std::string current_s; iss >> current_s; )
-      vec.push_back(current_s);
-   return vec;
-}
-
-
 // pkgInitArchTupleMap - Initialize the architecture tuple map				/*{{{*/
 // ---------------------------------------------------------------------
 /* This initializes */
@@ -67,7 +54,7 @@ static bool pkgInitArchTupleMap()
    {
       if (cpuline[0] == '#' || cpuline[0] == '\0')
          continue;
-      auto cpurow = split(cpuline);
+      auto cpurow = APT::String::Split(cpuline);
       auto cpu = APT::String::Strip(cpurow.at(0));
 
       cpus.emplace_back(cpu);
@@ -90,7 +77,7 @@ static bool pkgInitArchTupleMap()
       if (tupleline[0] == '#' || tupleline[0] == '\0')
          continue;
 
-      std::vector<std::string> tuplerow = split(tupleline);
+      std::vector<std::string> tuplerow = APT::String::Split(tupleline);
 
       auto tuple = APT::String::Strip(tuplerow.at(0));
       auto arch = APT::String::Strip(tuplerow.at(1));

@@ -193,6 +193,17 @@ bool pkgCache::ReMap(bool const &Errorchecks)
          list.append(",");
       list.append(arch);
    }
+   auto const variants = APT::Configuration::getArchitectureVariants(true);
+   if (not variants.empty())
+   {
+      list.append(";");
+      for (auto const &variant : variants)
+      {
+	 if (list.back() != ';')
+	    list.append(",");
+	 list.append(variant.name);
+      }
+   }
    if (_config->Find("APT::Architecture") != StrP + HeaderP->Architecture ||
 	 list != StrP + HeaderP->GetArchitectures())
       return _error->Error(_("The package cache was built for different architectures: %s vs %s"), StrP + HeaderP->GetArchitectures(), list.c_str());
