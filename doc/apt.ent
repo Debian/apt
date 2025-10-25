@@ -79,6 +79,35 @@
      </varlistentry>
 
      <varlistentry>
+      <term><option>--cli-version</option></term>
+     <listitem><para>Requests a specific CLI version. This is a pattern that takes
+    a MAJOR.MINOR version. You may omit the MINOR version, in which case the latest
+    supported minor level will be used.
+     </para>
+     <para>
+     Version tracks are presented as follows: The version 3.2 has equivalent versions
+     0.32, 1.22, and 2.12, implementing new features for their specified major versions.
+     </para>
+     <para>
+     A special case is the X.9 version pattern: A version like 2.9 is followed by 3.0,
+     but 2.10 follows directly on 2.8; given that we use odd version numbers as development
+     series (2.9 is the 3.0 development series).
+     </para>
+     <para>
+     This feature has been introduced in APT 3.1.10, and replaces the binary-specific
+configuration. You may use the <option>APT::Version</option> to similar effect on older
+binaries, for example, use <option>-o APT::Version=2</option> to make &apt; behave like
+the 2.x series.
+     </para>
+     <para>
+     The default value is the current APT version for &apt; and <literal>0.(10 * major + minor)</literal>
+     for the classic commands. The 0.X series is soft-deprecated and the other commands will
+     roll over to the 2.x series in the future.
+     </para>
+     </listitem>
+     </varlistentry>
+
+     <varlistentry>
       <term><option>--no-color</option></term>
       <term><option>--color</option></term>
 <listitem><para>Turn colors on or off. Colors are on by default on supported terminals for &apt; and

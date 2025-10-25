@@ -1,3 +1,20 @@
+apt (3.1.10) unstable; urgency=medium
+
+  The new --cli-version optionr equests a specific CLI version.
+
+  The default --cli-version is the current APT version for the apt(8) command
+  or 0.(10 * major + minor) for the other command.
+
+  If --cli-version is specified, the output of the apt(8) command may be
+  recorded. This allows for replacing legacy commands like apt-get(8) in
+  scripts.
+
+  The legacy commands may roll-over to the 2.X series in the future.
+  For further information on this mechanism, consult the apt(8) manual
+  page.
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 25 Oct 2025 17:27:38 +0200
+
 apt (2.9.24) unstable; urgency=medium
 
   /etc/apt/trusted.gpg is no longer trusted. Setting the Dir::Etc::trusted

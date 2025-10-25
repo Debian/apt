@@ -679,6 +679,10 @@ void Configuration::Clear(string const &Name)
 									/*}}}*/
 void Configuration::MoveSubTree(char const * const OldRootName, char const * const NewRootName)/*{{{*/
 {
+   return MoveSubTree(OldRootName, NewRootName, true);
+}
+void Configuration::MoveSubTree(char const *const OldRootName, char const *const NewRootName, bool Overwrite)
+{
    // prevent NewRoot being a subtree of OldRoot
    if (OldRootName == nullptr)
       return;
@@ -713,7 +717,10 @@ void Configuration::MoveSubTree(char const * const OldRootName, char const * con
 
       while (Top != 0 && Top->Next == 0)
       {
-	 Set(NewRoot + Top->FullTag(OldRoot), Top->Value);
+	 if (Overwrite)
+	    Set(NewRoot + Top->FullTag(OldRoot), Top->Value);
+	 else
+	    CndSet((NewRoot + Top->FullTag(OldRoot)).c_str(), Top->Value);
 	 Item const * const Tmp = Top;
 	 Top = Top->Parent;
 	 delete Tmp;
@@ -721,8 +728,10 @@ void Configuration::MoveSubTree(char const * const OldRootName, char const * con
 	 if (Top == Stop)
 	    return;
       }
-
-      Set(NewRoot + Top->FullTag(OldRoot), Top->Value);
+      if (Overwrite)
+	 Set(NewRoot + Top->FullTag(OldRoot), Top->Value);
+      else
+	 CndSet((NewRoot + Top->FullTag(OldRoot)).c_str(), Top->Value);
       Item const * const Tmp = Top;
       if (Top != 0)
 	 Top = Top->Next;

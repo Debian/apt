@@ -101,6 +101,7 @@ class APT_PUBLIC Configuration
    bool ExistsAny(const char *Name) const;
 
    void MoveSubTree(char const * const OldRoot, char const * const NewRoot);
+   void MoveSubTree(char const *const OldRoot, char const *const NewRoot, bool Overwrite);
 
    // clear a whole tree
    void Clear(const std::string &Name);

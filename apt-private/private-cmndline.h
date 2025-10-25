@@ -4,6 +4,7 @@
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/macros.h>
 
+#include <string_view>
 #include <vector>
 
 class Configuration;
@@ -39,4 +40,5 @@ APT_PUBLIC unsigned short DispatchCommandLine(CommandLine &CmdL, std::vector<Com
 
 APT_PUBLIC std::vector<CommandLine::Args> getCommandArgs(APT_CMD const Program, char const * const Cmd);
 
+APT_PUBLIC bool cliVersionIsCompatible(std::string_view level, std::string_view pattern);
 #endif
