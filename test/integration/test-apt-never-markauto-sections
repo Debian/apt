@@ -60,7 +60,7 @@ testfailuremsg 'E: Unable to satisfy dependencies. Reached two conflicting decis
         - texteditor:amd64 is selected for removal
    2. bad-texteditor:amd64 Depends texteditor
       but none of the choices are installable:
-      - texteditor:amd64 is selected for removal' aptget autoremove texteditor -s --solver 3.0 #-o Debug::pkgDepCache::AutoInstall=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
+      - texteditor:amd64 is selected for removal' aptget autoremove texteditor -s --solver 3.0 -o APT::Solver::RemoveManual=0 #-o Debug::pkgDepCache::AutoInstall=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
 testsuccessequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
@@ -69,7 +69,7 @@ The following packages will be REMOVED:
 0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
 Remv mydesktop [1]
 Remv mydesktop-core [1]
-Remv texteditor [1]' aptget autoremove texteditor -s --solver internal #-o Debug::pkgDepCache::AutoInstall=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
+Remv texteditor [1]' aptget autoremove texteditor -s  #-o Debug::pkgDepCache::AutoInstall=1 -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1
 testsuccess aptget autoremove texteditor -y --solver internal
 
 testdpkgnotinstalled mydesktop mydesktop-core texteditor

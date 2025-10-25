@@ -35,6 +35,30 @@ The following NEW packages will be installed:
 1 not fully installed or removed.
 Inst debhelper (1 stable [all])
 Conf debhelper (1 stable [all])
+Conf autopkgtest-satdep (1 stable [amd64])' apt install -fso Debug::APT::Solver=1 --solver 3.0 -o APT::Solver::RemoveManual=0
+testsuccessequal 'Reading package lists...
+Building dependency tree...
+Correcting dependencies...Install autopkgtest-satdep:amd64 ()
+[1] Install:autopkgtest-satdep:amd64 ()
+[1] Install:autopkgtest-satdep:amd64=1 (autopkgtest-satdep:amd64)
+[1] Install:debhelper:amd64=1 (autopkgtest-satdep:amd64)
+[1] Install:debhelper:amd64 (autopkgtest-satdep:amd64 -> debhelper:amd64=1)
+ Done
+Solving dependencies...Install debhelper:amd64 (M)
+Install autopkgtest-satdep:amd64 ()
+[1] Install:autopkgtest-satdep:amd64 ()
+[1] Install:autopkgtest-satdep:amd64=1 (autopkgtest-satdep:amd64)
+[1] Install:debhelper:amd64=1 (autopkgtest-satdep:amd64)
+[1] Install:debhelper:amd64 (autopkgtest-satdep:amd64 -> debhelper:amd64=1)
+
+The following additional packages will be installed:
+  debhelper
+The following NEW packages will be installed:
+  debhelper
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+1 not fully installed or removed.
+Inst debhelper (1 stable [all])
+Conf debhelper (1 stable [all])
 Conf autopkgtest-satdep (1 stable [amd64])' apt install -fso Debug::APT::Solver=1 --solver 3.0
 testsuccessequal 'Reading package lists...
 Building dependency tree...
