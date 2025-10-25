@@ -13,8 +13,8 @@ testfailuremsg "E: Unable to satisfy dependencies. Reached two conflicting decis
    2. postfix:i386=2.7.1-1 is not selected for install because:
       1. exim4-daemon-light:i386 is selected for install
       2. exim4-daemon-light:i386 Conflicts mail-transport-agent
-         [selected exim4-daemon-light:i386]" aptget install postfix --solver 3.0
-allowremovemanual
+         [selected exim4-daemon-light:i386]" aptget install postfix --solver 3.0 -o APT::Solver::RemoveManual=0 -s
+
 testfailureequal "Reading package lists...
 Building dependency tree...
 The following packages will be REMOVED:

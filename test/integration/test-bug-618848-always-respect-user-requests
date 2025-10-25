@@ -18,8 +18,8 @@ testfailuremsg "E: Unable to satisfy dependencies. Reached two conflicting decis
    1. exim4-daemon-light:i386 is selected for install
    2. exim4-daemon-light:i386 Depends libdb4.8
       but none of the choices are installable:
-      - libdb4.8:i386 is selected for removal" aptget remove libdb4.8 --solver 3.0 -s
-allowremovemanual
+      - libdb4.8:i386 is selected for removal" aptget remove libdb4.8 --solver 3.0 -o APT::Solver::RemoveManual=0 -s
+
 testsuccessequal "Reading package lists...
 Building dependency tree...
 The following packages will be REMOVED:

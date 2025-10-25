@@ -237,7 +237,7 @@ class Solver
    // \brief If set, removals are allowed.
    bool AllowRemove{_config->FindB("APT::Solver::Remove", not(requestFlags & EDSP::Request::FORBID_REMOVE))};
    // \brief If set, removal of manual packages is allowed.
-   bool AllowRemoveManual{AllowRemove && _config->FindB("APT::Solver::RemoveManual", false)};
+   bool AllowRemoveManual{AllowRemove && _config->FindB("APT::Solver::RemoveManual", true)};
    // \brief If set, installs are allowed.
    bool AllowInstall{_config->FindB("APT::Solver::Install", not(requestFlags & EDSP::Request::FORBID_NEW_INSTALL))};
    // \brief If set, we use strict pinning.
