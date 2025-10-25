@@ -1007,6 +1007,7 @@ void APT::Solver::UndoOne()
       auto &state = (*this)[solvedItem.assigned];
       state.decision = Decision::NONE;
       state.reason = nullptr;
+      state.reasonStr = nullptr;
       state.depth = 0;
    }
 
@@ -1070,6 +1071,8 @@ bool APT::Solver::Pop()
    // FIXME: There should be a reason!
    if (not choice.empty() && not Enqueue(choice, false, {}))
       return false;
+
+   (*this)[choice].reasonStr = "backtracked";
 
    if (unlikely(debug >= 2))
       std::cerr << "Backtracked to choice " << choice.toString(cache) << "\n";
@@ -1366,7 +1369,8 @@ bool APT::Solver::ToDepCache(pkgDepCache &depcache) const
       }
       else if (P->CurrentVer || depcache[P].Install())
       {
-	 depcache.MarkDelete(P, false, 0, not(*this)[P].reason);
+	 bool automatic = (not (*this)[P].reason) && (not (*this)[P].reasonStr);
+	 depcache.MarkDelete(P, false, 0, automatic);
 	 depcache[P].Marked = 0;
 	 depcache[P].Garbage = 1;
       }

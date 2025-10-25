@@ -477,6 +477,8 @@ struct APT::Solver::State
    // Vars < 0 are package ID, reasons > 0 are version IDs.
    const Clause *reason{};
 
+   const char *reasonStr{};
+
    // \brief The depth at which the decision has been taken
    depth_type depth{0};
 
