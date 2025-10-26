@@ -2,8 +2,8 @@
 set -e
 
 TESTTORUN=''
-export APT_SOLVER="${APT_SOLVER:-3.0}"
-export APT_SKIP_TEST_FILE="${APT_SKIP_TEST_FILE:-solver3.broken}"
+APT_SOLVER="${APT_SOLVER:-3.0}"
+APT_SKIP_TEST_FILE="${APT_SKIP_TEST_FILE:-solver3.broken}"
 while [ -n "$1" ]; do
 	if [ "$1" = "-q" ]; then
 		export MSGLEVEL=2
@@ -26,7 +26,7 @@ while [ -n "$1" ]; do
 		shift
 	elif [ "$1" = '--solver' ]; then
 		export APT_SOLVER="$2"
-		unset APT_SKIP_TEST_FILE
+		export APT_SKIP_TEST_FILE="/dev/null"
 		shift
 	elif [ "$1" = '--skip' ]; then
 		export APT_SKIP_TEST_FILE="$2"
