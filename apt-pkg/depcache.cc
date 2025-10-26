@@ -1853,10 +1853,6 @@ bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
       if (CV.Downloadable() == false)
 	 continue;
 
-      // Ignore siblings marked for deletion
-      if (PkgState[P->ID].Delete())
-	 continue;
-
       PkgState[Pkg->ID].iFlags |= AutoKept;
       if (unlikely(DebugMarker == true))
 	 std::clog << OutputInDepth(Depth) << "Ignore MarkInstall of " << APT::PrettyPkg(this, Pkg)

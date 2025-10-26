@@ -14,26 +14,17 @@ insertpackage 'installed,unstable' 'libgcc-s1' 'amd64' '14.2.0-18' 'Multi-Arch: 
 
 setupaptarchive
 
-testsuccessequal "Reading package lists...
-Building dependency tree...
-Solving dependencies...
-The following additional packages will be installed:
-  libc6:s390x libgcc-s1:s390x libgstreamer1.0-dev:s390x
-The following packages will be REMOVED:
-  libgcc-s1
-The following NEW packages will be installed:
-  libc6:s390x libgcc-s1:s390x libgstreamer1.0-dev:s390x
-  sbuild-build-depends-main-dummy:s390x
-0 upgraded, 4 newly installed, 1 to remove and 0 not upgraded.
-Remv libgcc-s1 [14.2.0-18]
-Inst libgcc-s1:s390x (14.2.0-17 unstable [s390x])
-Inst libc6:s390x (14.2.0-17 unstable [s390x])
-Inst libgstreamer1.0-dev:s390x (1.25.90-2 unstable [s390x])
-Inst sbuild-build-depends-main-dummy:s390x (0.invalid.0 unstable [s390x])
-Conf libgcc-s1:s390x (14.2.0-17 unstable [s390x])
-Conf libc6:s390x (14.2.0-17 unstable [s390x])
-Conf libgstreamer1.0-dev:s390x (1.25.90-2 unstable [s390x])
-Conf sbuild-build-depends-main-dummy:s390x (0.invalid.0 unstable [s390x])" apt install sbuild-build-depends-main-dummy --solver 3.0 -s
+testfailuremsg "E: Unable to satisfy dependencies. Reached two conflicting decisions:
+   1. libc6:s390x is selected for install because:
+      1. sbuild-build-depends-main-dummy:s390x=0.invalid.0 is selected for install
+      2. sbuild-build-depends-main-dummy:s390x Depends libgstreamer1.0-dev:s390x
+      3. libgstreamer1.0-dev:s390x Depends libc6:s390x (>= 2.34)
+   2. libc6:s390x Depends libgcc-s1:s390x
+      but none of the choices are installable:
+      - libgcc-s1:s390x is not selected for install because:
+        1. libgcc-s1:amd64 is selected for install
+        2. libgcc-s1:amd64 is available in version 14.2.0-18
+        3. libgcc-s1:s390x Breaks libgcc-s1 (!= 14.2.0-17)" apt install sbuild-build-depends-main-dummy --solver 3.0 libgcc-s1 -s
 
 testfailuremsg "E: Unable to satisfy dependencies. Reached two conflicting decisions:
    1. libc6:s390x is selected for install because:
