@@ -164,7 +164,7 @@ if [ "$MSGLEVEL" -le 1 ]; then
 	printf "${CTEST}Running testcases${CRESET}: "
 fi
 for testcase in $TESTLIST; do
-	if [ "$APT_SKIP_TEST_FILE" ] && grep -qFx "${testcase##*/}" "$APT_SKIP_TEST_FILE"; then
+	if [ "$APT_SKIP_TEST_FILE" ] && sed 's/ *#.*//' "$APT_SKIP_TEST_FILE" | grep -qFx "${testcase##*/}"; then
 		printf "${CTEST}Skipping Testcase ${CHIGH}${testcase##*/}${CRESET}\n"
 		continue
 	fi
