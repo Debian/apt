@@ -93,7 +93,7 @@ E: Trivial Only specified but this is not a trivial operation." aptget install d
 
 rm -f rootdir/var/lib/dpkg/status rootdir/var/lib/apt/extended_states
 
-if [ "$APT_SOLVER" = "3.0" ]; then
+if [ "$APT_SOLVER" != "internal" ]; then
 CONFLICTING='Reading package lists...
 Building dependency tree...
 Solving dependencies...Install dummy-archive:i386 ()

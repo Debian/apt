@@ -394,7 +394,7 @@ Inst needsselfprov12 (1 unstable [amd64])
 Conf selfprov (2 unstable [amd64])
 Conf needsselfprov12 (1 unstable [amd64])" aptget install needsselfprov12 -s --solver $solver
 	if [ "$solver" = 'apt' ]; then
-if [ "$APT_SOLVER" = "3.0" ]; then
+if [ "$APT_SOLVER" != "internal" ]; then
 TOPDEPENDS=" needsselfprov123 : Depends: selfprov (= 1)
                     Depends: selfprov (= 2)
                     Depends: selfprov (= 3)"

@@ -149,7 +149,7 @@ Conf $1 (1 unstable [amd64])" aptget install $1 foo:i386 -s
 testneedsfooallgood 'needsfooany'
 testneedsfooallgood 'needsfoover1'
 
-if [ "$APT_SOLVER" = "3.0" ]; then
+if [ "$APT_SOLVER" != "internal" ]; then
 NEEDSFOO2NATIVE="$BADPREFIX
 The following packages have unmet dependencies:
  needsfoover2 : Depends: foo:any (>= 2)

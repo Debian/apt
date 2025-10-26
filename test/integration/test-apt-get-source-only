@@ -29,7 +29,7 @@ DOWNLOADNOTFOO="Need to get 0 B/33 B of source archives.
 'file:${APTARCHIVE}/not-foo_1.0.dsc' not-foo_1.0.dsc 15 SHA256:db578a571c87d2555e90245732042845be4f481755f5b2f5786ac7a26bde9f4f
 'file:${APTARCHIVE}/not-foo_1.0.tar.gz' not-foo_1.0.tar.gz 18 SHA256:8701846f1cba0ca81c552ac0ec93e2a89ae113cf2872b9cd51b29b4a9ff6b122"
 
-if [ "$APT_SOLVER" = "3.0" ]; then
+if [ "$APT_SOLVER" != "internal" ]; then
 BUILDDEPFOO="Reading package lists...
 Building dependency tree...
 Some packages could not be installed. This may mean that you have

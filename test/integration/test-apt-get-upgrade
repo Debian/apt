@@ -66,7 +66,7 @@ Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
 Conf new-dep (1.0 stable [all])
 Conf upgrade-simple (2.0 unstable [all])
 Conf upgrade-with-new-dep (2.0 unstable [all])'
-if [ "$APT_SOLVER" = "3.0" ]; then
+if [ "$APT_SOLVER" != "internal" ]; then
 # FIXME: It would be better if we would keep back the upgrade rather than switch to sysvinit,
 # but it's not clear that is reliably possible.
 UPGRADENEW="Reading package lists...

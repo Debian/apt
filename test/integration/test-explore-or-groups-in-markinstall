@@ -95,7 +95,7 @@ The following NEW packages will be installed:
 }
 checkfoos 'd' 'Depends'
 # FIXME? The 3.0 solver solves Recommends after Depends, so they do not influence our decisions here.
-[ "$APT_SOLVER" = "3.0" ] || checkfoos 'r' 'Recommends'
+[ "$APT_SOLVER" != "internal" ] || checkfoos 'r' 'Recommends'
 
 testsuccessequal 'Reading package lists...
 Building dependency tree...
@@ -129,9 +129,9 @@ if $TEST_WITH_APTITUDE; then
 Need to get 0 B/84 B of archives. After unpacking 86.0 kB will be used.
 Would download/install/remove packages.'
 	testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-d-level2 -sy
-	[ "$APT_SOLVER" = "3.0" ] || testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-r-level2 -sy   # FIXME: See above for 3.0
+	[ "$APT_SOLVER" != "internal" ] || testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-r-level2 -sy   # FIXME: See above for 3.0
 	testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-d-conflict -sy
-	[ "$APT_SOLVER" = "3.0" ] || testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-r-conflict -sy # FIXME: See above for 3.0
+	[ "$APT_SOLVER" != "internal" ] || testsuccesstailequal 3 "$OKAYAPTITUDE" aptitude install foo-r-conflict -sy # FIXME: See above for 3.0
 fi
 
 BADSOLVETEXT='Reading package lists...
