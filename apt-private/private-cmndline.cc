@@ -21,6 +21,8 @@
 
 #include <algorithm>
 #include <iomanip>
+#include <optional>
+#include <utility>
 #include <vector>
 
 #include <apti18n.h>
