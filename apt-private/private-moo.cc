@@ -107,10 +107,16 @@ static bool DoMoo2(time_t const timenow)				/*{{{*/
 	 moo;
    else
    {
+      bool isTaweek = false;
+      if (struct tm taweek; localtime_r(&timenow, &taweek) && taweek.tm_mday >= 13 && taweek.tm_mday <= 19  && taweek.tm_mon == 10)
+	 isTaweek = true;
+      const std::array<std::string, 2> tcape = {"\033[1;34m_\033[35m__\033[97m_\033[35m__\033[34m_", "\033[34m\\"};
+      const std::array<std::string, 2> ccape = {"\033[31m_______", "\033[31m\\"};
+      const std::array<std::string, 2> &cape = isTaweek ? tcape : ccape;
       c1out <<
 	 OutputInDepth(depth, " ") << "         \033[1;97m(\033[0;33m__\033[1;97m)\033[0m\n" <<
-	 OutputInDepth(depth, " ") << " \033[31m_______\033[33m~(\033[1;34m..\033[0;33m)~\033[0m\n" <<
-	 OutputInDepth(depth, " ") << "   \033[33m,----\033[31m\\\033[33m(\033[1;4;35moo\033[0;33m)\033[0m\n" <<
+	 OutputInDepth(depth, " ") << " " << cape[0] << "\033[33m~(\033[1;34m..\033[0;33m)~\033[0m\n" <<
+	 OutputInDepth(depth, " ") << "   \033[33m,----" << cape[1] << "\033[33m(\033[1;4;35moo\033[0;33m)\033[0m\n" <<
 	 OutputInDepth(depth, " ") << "  \033[33m/|____|,'\033[0m\n" <<
 	 OutputInDepth(depth, " ") << " \033[1;5;97m*\033[0;33m /\\  /\\\033[0m\n" <<
 	 "\033[32m";
