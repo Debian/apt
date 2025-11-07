@@ -2,18 +2,10 @@ apt (3.1.10) unstable; urgency=medium
 
   The new solver is now the default.
 
-  The new --cli-version optionr equests a specific CLI version.
-
-  The default --cli-version is the current APT version for the apt(8) command
-  or 0.(10 * major + minor) for the other command.
-
-  If --cli-version is specified, the output of the apt(8) command may be
-  recorded. This allows for replacing legacy commands like apt-get(8) in
-  scripts.
-
-  The legacy commands may roll-over to the 2.X series in the future.
-  For further information on this mechanism, consult the apt(8) manual
-  page.
+  The new --cli-version option requests a specific CLI version, i.e.
+  makes apt(8) try to behave like that version of apt. Accordingly,
+  if specified, apt no longer warns about unstable interfaces.
+  See the apt(8) manual page for more details.
 
  -- Julian Andres Klode <jak@debian.org>  Sat, 25 Oct 2025 17:27:38 +0200
 
