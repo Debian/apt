@@ -55,9 +55,8 @@ public:
      * Deconstruct the object, set all weak pointers to NULL.
      */
     ~WeakPointable() {
-        std::set<WeakPointable**>::iterator iter = pointers.begin();
-        while (iter != pointers.end())
-            **(iter++) = NULL;
+       for (auto pointer : pointers)
+	  *pointer = nullptr;
     }
 };
 
