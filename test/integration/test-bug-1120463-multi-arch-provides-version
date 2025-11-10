@@ -1,0 +1,24 @@
+#!/bin/sh
+set -e
+
+TESTDIR="$(readlink -f "$(dirname "$0")")"
+. "$TESTDIR/framework"
+
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+# This first initializes a "dep-virt" provides, but then lazy-inits the
+# dep-virt:amd64 one when this is being used later on.
+# In bug 1120463, we accidentally copied version 1.0 instead of 2.0...
+insertpackage 'unstable' 'dep' 'amd64' '1.0' 'Provides: dep-virt (= 2.0)'
+insertpackage 'unstable' 'app' 'i386' '1.0' 'Depends: dep-virt:amd64 (= 2.0)'
+
+
+setupaptarchive
+
+testsuccess aptcache showpkg dep
+mv rootdir/tmp/testsuccess.output showpkg
+testsuccessequal "Provides: 
+1.0 - dep-virt:amd64 (= 2.0) dep-virt (= 2.0) " grep ^Provides -A1 showpkg
+
+

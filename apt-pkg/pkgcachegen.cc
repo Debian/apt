@@ -793,7 +793,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg, string_view Name,
 	       pkgCache::VerIterator V = Prv.OwnerVer();
 	       if (ArchA != V.ParentPkg().Arch())
 		  continue;
-	       if (NewProvides(V, Pkg, V->VerStr, pkgCache::Flag::MultiArchImplicit | pkgCache::Flag::ArchSpecific) == false)
+	       if (NewProvides(V, Pkg, Prv->ProvideVersion, pkgCache::Flag::MultiArchImplicit | pkgCache::Flag::ArchSpecific) == false)
 		  return false;
 	    }
 	    pkgCache::VerIterator V = PkgA.VersionList();
